@@ -38,6 +38,7 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
         get() = connectionFactory.connection
 
     private fun <T> RedisConnection.use(run: (RedisConnection) -> T?): T? {
+        @Suppress("ConvertTryFinallyToUseCall")
         try {
             return run(this)
         } finally {

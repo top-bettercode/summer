@@ -9,6 +9,7 @@ import java.time.Duration
  *
  * @author Peter Wu
  */
+@Suppress("ConfigurationProperties")
 @ConfigurationProperties("summer.logging.socket")
 open class SocketLoggingProperties {
     /**

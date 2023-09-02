@@ -45,6 +45,7 @@ import java.util.function.Supplier
  *
  * @author Peter Wu
  */
+@Suppress("SpringBootApplicationProperties")
 @SpringBootTest
 @TestPropertySource(properties = ["summer.security.enabled=false", "seata.enabled=false"])
 class BaseWebNoAuthTest : MockMvcRequestBuilders() {

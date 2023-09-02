@@ -46,11 +46,11 @@ open class ProfileExtension(
                 array.add(rootProject.file("gradle.properties"))
                 configProject { project ->
                     val defaultConfigYmlFile =
-                            project.file("${profile.configDir}/$profilesDefaultActive.yml")
+                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yml")
                     if (defaultConfigYmlFile.exists()) {
                         array.add(defaultConfigYmlFile)
                     }
-                    if (profilesActive != profilesDefaultActive) {
+                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                         val activeYmlFile =
                                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
                         if (activeYmlFile.exists()) {
@@ -58,11 +58,11 @@ open class ProfileExtension(
                         }
                     }
                     val defaultConfigYamlFile =
-                            project.file("${profile.configDir}/$profilesDefaultActive.yaml")
+                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yaml")
                     if (defaultConfigYamlFile.exists()) {
                         array.add(defaultConfigYamlFile)
                     }
-                    if (profilesActive != profilesDefaultActive) {
+                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                         val activeYamlFile =
                                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
                         if (activeYamlFile.exists()) {
@@ -70,11 +70,11 @@ open class ProfileExtension(
                         }
                     }
                     val defaultConfigFile =
-                            project.file("${profile.configDir}/$profilesDefaultActive.properties")
+                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.properties")
                     if (defaultConfigFile.exists()) {
                         array.add(defaultConfigFile)
                     }
-                    if (profilesActive != profilesDefaultActive) {
+                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                         val activeFile =
                                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
                         if (activeFile.exists()) {
@@ -107,9 +107,9 @@ open class ProfileExtension(
 
         internal fun Project.findActive(run: (String) -> String?): String? {
             val profiles = this.profiles
-            var active = run(simpleProfilesActiveName)
+            var active = run(SIMPLE_PROFILES_ACTIVE_NAME)
             return if (active.isNullOrBlank()) {
-                active = run(profilesActiveName)
+                active = run(PROFILES_ACTIVE_NAME)
                 return if (active.isNullOrBlank()) {
                     null
                 } else
@@ -124,8 +124,8 @@ open class ProfileExtension(
             return if (find == null) {
                 val filter = profiles.filter { it.startsWith(active) }
                 if (filter.isEmpty() || filter.size > 1) {
-                    log.warn("未找到适合的profiles.active:${active}配置文件,使用${profilesDefaultActive}默认配置")
-                    profilesDefaultActive
+                    log.warn("未找到适合的profiles.active:${active}配置文件,使用${PROFILES_DEFAULT_ACTIVE}默认配置")
+                    PROFILES_DEFAULT_ACTIVE
                 } else {
                     filter[0]
                 }
@@ -135,9 +135,9 @@ open class ProfileExtension(
         }
 
 
-        const val profilesDefaultActive: String = "default"
-        const val simpleProfilesActiveName: String = "P"
-        const val profilesActiveName: String = "profiles.active"
+        const val PROFILES_DEFAULT_ACTIVE: String = "default"
+        const val SIMPLE_PROFILES_ACTIVE_NAME: String = "P"
+        const val PROFILES_ACTIVE_NAME: String = "profiles.active"
 
         val Project.profileProperties: Properties
             get() {
@@ -167,12 +167,12 @@ open class ProfileExtension(
                 val profile = extensions.getByType(ProfileExtension::class.java)
                 configProject { project ->
                     val defaultConfigYmlFile =
-                            project.file("${profile.configDir}/$profilesDefaultActive.yml")
+                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yml")
                     val yaml = Yaml()
                     if (defaultConfigYmlFile.exists()) {
                         loadYml(defaultConfigYmlFile, yaml, props)
                     }
-                    if (profilesActive != profilesDefaultActive) {
+                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                         val activeYmlFile =
                                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
                         if (activeYmlFile.exists()) {
@@ -180,11 +180,11 @@ open class ProfileExtension(
                         }
                     }
                     val defaultConfigYamlFile =
-                            project.file("${profile.configDir}/$profilesDefaultActive.yaml")
+                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yaml")
                     if (defaultConfigYamlFile.exists()) {
                         loadYml(defaultConfigYamlFile, yaml, props)
                     }
-                    if (profilesActive != profilesDefaultActive) {
+                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                         val activeYamlFile =
                                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
                         if (activeYamlFile.exists()) {
@@ -192,12 +192,12 @@ open class ProfileExtension(
                         }
                     }
                     val defaultConfigFile =
-                            project.file("${profile.configDir}/$profilesDefaultActive.properties")
+                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.properties")
                     if (defaultConfigFile.exists()) {
                         props.load(defaultConfigFile.inputStream())
                     }
 
-                    if (profilesActive != profilesDefaultActive) {
+                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                         val activeFile =
                                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
                         if (activeFile.exists()) {
@@ -223,7 +223,7 @@ open class ProfileExtension(
                     props["app.packagePath"] = packageName.replace(".", "/")
                 }
 
-                props[profilesActiveName] = profilesActive
+                props[PROFILES_ACTIVE_NAME] = profilesActive
                 configProject { project ->
                     props.forEach { t, u ->
                         val k = t as String
@@ -275,10 +275,10 @@ open class ProfileExtension(
                 val findActive = findActive { name ->
                     systemProperties.getProperty(name)
                 } ?: findActive { name ->
-                    rootProject.findProperty(name) as? String
+                    rootProject.findProperty(name) as String?
                 }
                 return if (findActive.isNullOrBlank()) {
-                    profilesDefaultActive
+                    PROFILES_DEFAULT_ACTIVE
                 } else
                     findActive
             }

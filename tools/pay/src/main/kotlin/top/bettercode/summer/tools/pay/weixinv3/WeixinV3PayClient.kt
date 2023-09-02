@@ -1,5 +1,3 @@
-@file:Suppress("unused", "MemberVisibilityCanBePrivate", "CanBeParameter")
-
 package top.bettercode.summer.tools.pay.weixinv3
 
 import com.wechat.pay.java.core.RSAAutoCertificateConfig
@@ -36,6 +34,7 @@ import javax.servlet.http.HttpServletRequest
  *
  * @author Peter Wu
  */
+@Suppress("JoinDeclarationAndAssignment")
 @LogMarker(LOG_MARKER)
 open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
 

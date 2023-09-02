@@ -1,3 +1,4 @@
+
 import org.gradle.api.Project
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
@@ -10,7 +11,7 @@ val Project.isBoot: Boolean
 
 val Project.isCore: Boolean
     get() {
-        var projectCore = findProperty("project.core") as? String
+        var projectCore = findProperty("project.core") as String?
         if (projectCore.isNullOrBlank())
             projectCore = "^(core|.*-core)$"
         return name.matches(Regex(projectCore))

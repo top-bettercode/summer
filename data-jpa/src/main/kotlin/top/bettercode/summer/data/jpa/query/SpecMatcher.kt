@@ -38,7 +38,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     //--------------------------------------------
     init {
         this.probe = probe
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "LeakingThis")
         typed = this as M
     }
 

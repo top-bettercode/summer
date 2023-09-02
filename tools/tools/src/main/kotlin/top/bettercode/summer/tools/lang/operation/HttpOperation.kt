@@ -22,7 +22,7 @@ object HttpOperation {
 
     @JvmField
     val REQUEST_LOGGING_USERNAME = HttpOperation::class.java.name + ".username"
-    const val separatorLine = "------------------------------------------------------------"
+    const val SEPARATOR_LINE = "------------------------------------------------------------"
 
     fun toString(
             output: Operation,
@@ -40,13 +40,13 @@ object HttpOperation {
         stringBuilder.appendLine("REQUEST    TIME : ${TimeUtil.format(output.request.dateTime)}")
         stringBuilder.appendLine("RESPONSE   TIME : ${TimeUtil.format(output.response.dateTime)}")
         stringBuilder.appendLine("DURATION MILLIS : ${output.duration}")
-        stringBuilder.appendLine(separatorLine)
+        stringBuilder.appendLine(SEPARATOR_LINE)
         stringBuilder.append(toString(output.request, output.protocol, format, requestDecrypt))
         stringBuilder.appendLine()
         stringBuilder.append(toString(output.response, output.protocol, format, responseDecrypt))
         val stackTrace = output.response.stackTrace
         if (stackTrace.isNotBlank()) {
-            stringBuilder.appendLine(separatorLine)
+            stringBuilder.appendLine(SEPARATOR_LINE)
             stringBuilder.appendLine("StackTrace:")
             stringBuilder.appendLine(stackTrace)
         }

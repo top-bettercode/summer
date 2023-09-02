@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
  *
  * @author Peter Wu
  */
+@Suppress("LeakingThis", "JoinDeclarationAndAssignment")
 abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
 
     lateinit var username: String

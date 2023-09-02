@@ -111,7 +111,7 @@ object AutodocUtil {
         val result = this.convert()
         if (result is Map<*, *>) {
             @Suppress("UNCHECKED_CAST")
-            return result as? Map<String, Any?>
+            return result as Map<String, Any?>?
         }
         return null
     }

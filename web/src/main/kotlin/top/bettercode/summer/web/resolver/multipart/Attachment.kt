@@ -31,6 +31,8 @@ open class Attachment(var name: String?, @field:JsonUrl var path: String, @field
 
     companion object {
         protected val log: Logger = LoggerFactory.getLogger(Attachment::class.java)
+
+        @Suppress("ConstPropertyName")
         private const val serialVersionUID = 1L
     }
 }

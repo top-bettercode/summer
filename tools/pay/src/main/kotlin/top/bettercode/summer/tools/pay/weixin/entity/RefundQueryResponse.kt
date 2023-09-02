@@ -121,7 +121,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun isRefundOk(n: Int = 0): Boolean {
-        return other.get("refund_status_$n") == "SUCCESS"
+        return other["refund_status_$n"] == "SUCCESS"
     }
 
     @JsonIgnore
@@ -135,7 +135,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getOutRefundNo(n: Int = 0): String? {
-        return other["out_refund_no_$n"] as? String
+        return other["out_refund_no_$n"] as String?
     }
 
 
@@ -145,7 +145,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getRefundId(n: Int = 0): String? {
-        return other["refund_id_$n"] as? String
+        return other["refund_id_$n"] as String?
     }
 
 
@@ -155,7 +155,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getRefundChannel(n: Int = 0): String? {
-        return other["refund_channel_$n"] as? String
+        return other["refund_channel_$n"] as String?
     }
 
 
@@ -164,7 +164,7 @@ data class RefundQueryResponse(
      */
     @JsonIgnore
     fun getRefundFee(n: Int): Int? {
-        return other["refund_fee_$n"] as? Int
+        return other["refund_fee_$n"] as Int?
     }
 
 
@@ -173,7 +173,7 @@ data class RefundQueryResponse(
      */
     @JsonIgnore
     fun getCouponRefundFee(n: Int): Int? {
-        return other["coupon_refund_fee_$n"] as? Int
+        return other["coupon_refund_fee_$n"] as Int?
     }
 
 
@@ -183,7 +183,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponRefundCount(n: Int = 0): Int? {
-        return other["coupon_refund_count_$n"] as? Int
+        return other["coupon_refund_count_$n"] as Int?
     }
 
 
@@ -193,7 +193,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponRefundId(n: Int = 0): String? {
-        return other["coupon_refund_id_$n"] as? String
+        return other["coupon_refund_id_$n"] as String?
     }
 
 
@@ -203,7 +203,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponType(n: Int = 0): String? {
-        return other["coupon_type_$n"] as? String
+        return other["coupon_type_$n"] as String?
     }
 
 
@@ -212,7 +212,7 @@ data class RefundQueryResponse(
      */
     @JsonIgnore
     fun getCouponRefundFee(n: Int, m: Int): Int? {
-        return other["coupon_refund_fee_${n}_$m"] as? Int
+        return other["coupon_refund_fee_${n}_$m"] as Int?
     }
 
 
@@ -222,7 +222,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getRefundStatus(n: Int = 0): String? {
-        return other["refund_status_$n"] as? String
+        return other["refund_status_$n"] as String?
     }
 
 
@@ -232,7 +232,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getRefundAccount(n: Int = 0): String? {
-        return other["refund_account_$n"] as? String
+        return other["refund_account_$n"] as String?
     }
 
 
@@ -242,7 +242,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getRefundRecvAccout(n: Int = 0): String? {
-        return other["refund_recv_accout_$n"] as? String
+        return other["refund_recv_accout_$n"] as String?
     }
 
 
@@ -252,7 +252,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getRefundSuccessTime(n: Int = 0): String? {
-        return other["refund_success_time_$n"] as? String
+        return other["refund_success_time_$n"] as String?
     }
 
 

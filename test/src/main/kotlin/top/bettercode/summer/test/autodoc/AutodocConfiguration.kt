@@ -1,7 +1,5 @@
 package top.bettercode.summer.test.autodoc
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -37,7 +35,6 @@ class AutodocConfiguration(
         @Autowired(required = false)
         private val dataSourceProperties: DataSourceProperties? = null
 ) {
-    private val log: Logger = LoggerFactory.getLogger(AutodocConfiguration::class.java)
 
     @PostConstruct
     fun init() {

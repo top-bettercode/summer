@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  *
  * @author Peter Wu
  */
+@Suppress("ConfigurationProperties")
 @ConfigurationProperties("summer.logging.logstash")
 open class LogstashTcpSocketProperties {
     /**

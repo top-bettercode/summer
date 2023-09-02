@@ -39,7 +39,7 @@ class NavFilter(
             return
         }
         if (webEndpointProperties.basePath + "/doc" == servletPath || webEndpointProperties.basePath + "/doc/" == servletPath) {
-            val name = staticLocations + webEndpointProperties.basePath + "/doc/"
+            val name = STATIC_LOCATIONS + webEndpointProperties.basePath + "/doc/"
             val resource = resourceLoader.getResource(name)
             if (resource.exists()) {
                 val dic = resource.file
@@ -70,7 +70,7 @@ class NavFilter(
     }
 
     companion object {
-        private const val staticLocations = "classpath:/META-INF/resources"
+        private const val STATIC_LOCATIONS = "classpath:/META-INF/resources"
     }
 
     override fun getOrder(): Int {

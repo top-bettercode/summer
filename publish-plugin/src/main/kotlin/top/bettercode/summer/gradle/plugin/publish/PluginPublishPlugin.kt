@@ -62,8 +62,8 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
             }
         }
 
-        val gradlePlugin = (project.findProperty("gradlePlugin.${project.name}.plugins") as? String
-                ?: project.findProperty("gradlePlugin.plugins") as? String)?.split(",")
+        val gradlePlugin = (project.findProperty("gradlePlugin.${project.name}.plugins") as String?
+                ?: project.findProperty("gradlePlugin.plugins") as String?)?.split(",")
         project.extensions.configure(GradlePluginDevelopmentExtension::class.java) {
             gradlePlugin?.forEach { plugin ->
                 val pluginId = project.findProperty("gradlePlugin.plugins.$plugin.id") as String
@@ -78,15 +78,15 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
 
         project.tasks.withType(Javadoc::class.java) {
             with(it.options as StandardJavadocDocletOptions) {
-                encoding = project.findProperty("project.encoding") as? String ?: "UTF-8"
-                charSet = project.findProperty("project.encoding") as? String ?: "UTF-8"
+                encoding = project.findProperty("project.encoding") as String? ?: "UTF-8"
+                charSet = project.findProperty("project.encoding") as String? ?: "UTF-8"
                 isAuthor = true
                 isVersion = true
             }
         }
 
-        val projectUrl = project.findProperty("projectUrl") as? String
-        val projectVcsUrl = project.findProperty("vcsUrl") as? String
+        val projectUrl = project.findProperty("projectUrl") as String?
+        val projectVcsUrl = project.findProperty("vcsUrl") as String?
 
         project.tasks.withType(GenerateModuleMetadata::class.java) {
             it.enabled = false

@@ -143,8 +143,8 @@ open class TimeUtil(
     companion object {
 
         val DEFAULT_ZONE_ID: ZoneId = ZoneId.systemDefault()
-        private const val dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS"
-        private val dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
+        private const val DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS"
+        private val dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)
 
         @JvmStatic
         fun format(localDateTime: LocalDateTime): String {

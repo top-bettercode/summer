@@ -156,15 +156,15 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         buf.append("\">")
 
         val escapeMsg = Transform.escapeTags(msg)
-        if (collapse == true && escapeMsg.contains(HttpOperation.separatorLine)) {
+        if (collapse == true && escapeMsg.contains(HttpOperation.SEPARATOR_LINE)) {
             buf.append("<details>")
             buf.append("<summary>")
             buf.append("<pre>")
-            buf.append(escapeMsg.substringBefore(HttpOperation.separatorLine))
+            buf.append(escapeMsg.substringBefore(HttpOperation.SEPARATOR_LINE))
             buf.append("</pre>")
             buf.append("</summary>")
             buf.append("<pre>")
-            buf.append(escapeMsg.substringAfter(HttpOperation.separatorLine))
+            buf.append(escapeMsg.substringAfter(HttpOperation.SEPARATOR_LINE))
             buf.append("</pre>")
             buf.append("</details>")
         } else {

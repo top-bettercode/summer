@@ -254,7 +254,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
      */
     private fun skip(request: HttpServletRequest): Boolean {
         return if (properties.isCanSkip) {
-            request.getAttribute("SKIP_SIGN") as? Boolean ?: false
+            request.getAttribute("SKIP_SIGN") as Boolean? ?: false
         } else {
             false
         }
@@ -277,7 +277,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
         private val request: HttpServletRequest?
             get() {
                 val requestAttributes = RequestContextHolder
-                        .getRequestAttributes() as? ServletRequestAttributes
+                        .getRequestAttributes() as ServletRequestAttributes?
                 return requestAttributes?.request
             }
     }

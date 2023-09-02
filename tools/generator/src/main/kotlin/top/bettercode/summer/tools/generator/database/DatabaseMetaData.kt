@@ -20,6 +20,7 @@ import java.util.*
  */
 
 
+@Suppress("ConvertTryFinallyToUseCall")
 class DatabaseMetaData(
         private val datasource: DatabaseConfiguration
 ) : AutoCloseable {

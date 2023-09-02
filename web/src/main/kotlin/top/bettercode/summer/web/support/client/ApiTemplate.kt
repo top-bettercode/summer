@@ -12,7 +12,6 @@ import org.springframework.lang.Nullable
 import org.springframework.web.client.*
 import org.springframework.web.util.UriTemplateHandler
 import top.bettercode.summer.tools.lang.client.ClientHttpRequestWrapper
-import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import java.lang.reflect.Type
 import java.net.URI
 
@@ -29,6 +28,7 @@ open class ApiTemplate @JvmOverloads constructor(
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
         private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,
         protected val restTemplate: RestTemplate = object : RestTemplate() {
+            private val log: Logger = LoggerFactory.getLogger(this.javaClass)
             override fun createRequest(url: URI, method: HttpMethod): ClientHttpRequest {
                 return if (log.isInfoEnabled) {
                     ClientHttpRequestWrapper(collectionName!!, name!!, logMarker,

@@ -31,6 +31,7 @@ import java.net.URI
 /**
  * 抽象类
  */
+@Suppress("ObjectLiteralToLambda")
 abstract class AbstractPublishPlugin : Plugin<Project> {
 
     companion object {
@@ -39,19 +40,19 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                 p: PublishingExtension
         ) {
             project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
-                var mavenRepoName = project.findProperty("$it.name") as? String ?: it
-                var mavenRepoUrl = project.findProperty("$it.url") as? String
-                var mavenRepoUsername = project.findProperty("$it.username") as? String
-                var mavenRepoPassword = project.findProperty("$it.password") as? String
+                var mavenRepoName = project.findProperty("$it.name") as String? ?: it
+                var mavenRepoUrl = project.findProperty("$it.url") as String?
+                var mavenRepoUsername = project.findProperty("$it.username") as String?
+                var mavenRepoPassword = project.findProperty("$it.password") as String?
 
                 if (project.version.toString().endsWith("SNAPSHOT")) {
-                    mavenRepoName = project.findProperty("$it.snapshots.name") as? String
+                    mavenRepoName = project.findProperty("$it.snapshots.name") as String?
                             ?: mavenRepoName
-                    mavenRepoUrl = project.findProperty("$it.snapshots.url") as? String
+                    mavenRepoUrl = project.findProperty("$it.snapshots.url") as String?
                             ?: mavenRepoUrl
-                    mavenRepoUsername = project.findProperty("$it.snapshots.username") as? String
+                    mavenRepoUsername = project.findProperty("$it.snapshots.username") as String?
                             ?: mavenRepoUsername
-                    mavenRepoPassword = project.findProperty("$it.snapshots.password") as? String
+                    mavenRepoPassword = project.findProperty("$it.snapshots.password") as String?
                             ?: mavenRepoPassword
                 }
                 if (mavenRepoUrl != null)
@@ -96,15 +97,15 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
     protected fun configPublish(project: Project) {
         project.tasks.withType(Javadoc::class.java) {
             with(it.options as StandardJavadocDocletOptions) {
-                encoding = project.findProperty("project.encoding") as? String ?: "UTF-8"
-                charSet = project.findProperty("project.encoding") as? String ?: "UTF-8"
+                encoding = project.findProperty("project.encoding") as String? ?: "UTF-8"
+                charSet = project.findProperty("project.encoding") as String? ?: "UTF-8"
                 isAuthor = true
                 isVersion = true
             }
         }
 
-        val projectUrl = project.findProperty("projectUrl") as? String
-        val projectVcsUrl = project.findProperty("vcsUrl") as? String
+        val projectUrl = project.findProperty("projectUrl") as String?
+        val projectVcsUrl = project.findProperty("vcsUrl") as String?
 
         project.tasks.withType(GenerateModuleMetadata::class.java) {
             it.enabled = false
@@ -286,13 +287,13 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 //                it.stagingRepositoryId.set(stagingRepositoryId.toString())
 //            }
 //
-//            var mavenRepoUsername = project.findProperty("mavenRepo.username") as? String
-//            var mavenRepoPassword = project.findProperty("mavenRepo.password") as? String
+//            var mavenRepoUsername = project.findProperty("mavenRepo.username") as String?
+//            var mavenRepoPassword = project.findProperty("mavenRepo.password") as String?
 //
 //            if (project.version.toString().endsWith("SNAPSHOT")) {
-//                mavenRepoUsername = project.findProperty("mavenRepo.snapshots.username") as? String
+//                mavenRepoUsername = project.findProperty("mavenRepo.snapshots.username") as String?
 //                    ?: mavenRepoUsername
-//                mavenRepoPassword = project.findProperty("mavenRepo.snapshots.password") as? String
+//                mavenRepoPassword = project.findProperty("mavenRepo.snapshots.password") as String?
 //                    ?: mavenRepoPassword
 //            }
 //            it.username = mavenRepoUsername

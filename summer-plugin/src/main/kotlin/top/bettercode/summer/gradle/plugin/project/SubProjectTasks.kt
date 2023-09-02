@@ -19,6 +19,7 @@ import top.bettercode.summer.tools.lang.capitalized
  *
  * @author Peter Wu
  */
+@Suppress("ObjectLiteralToLambda")
 object SubProjectTasks {
 
     fun config(project: Project) {

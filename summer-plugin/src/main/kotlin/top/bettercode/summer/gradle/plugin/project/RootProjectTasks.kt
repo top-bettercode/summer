@@ -15,6 +15,7 @@ import top.bettercode.summer.tools.lang.capitalized
  *
  * @author Peter Wu
  */
+@Suppress("ObjectLiteralToLambda")
 object RootProjectTasks {
     fun config(project: Project) {
         project.tasks.apply {
@@ -97,7 +98,7 @@ object RootProjectTasks {
             }
 
             create("genDbScript") { t ->
-                t.group = GeneratorPlugin.genGroup
+                t.group = GeneratorPlugin.GEN_GROUP
                 val extension = project.extensions.getByType(GeneratorExtension::class.java)
                 val databaseModules = extension.databases.keys
                 t.dependsOn(databaseModules.map {

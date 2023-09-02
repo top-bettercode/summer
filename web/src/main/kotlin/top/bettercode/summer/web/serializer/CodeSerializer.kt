@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonCode
 import top.bettercode.summer.web.support.code.CodeServiceHolder
@@ -23,7 +22,6 @@ import java.util.*
  */
 @JacksonStdImpl
 class CodeSerializer(codeServiceRef: String?, private val codeType: String, private val useExtensionField: Boolean) : StdScalarSerializer<Serializable>(Serializable::class.java, false), ContextualSerializer {
-    private val log = LoggerFactory.getLogger(CodeSerializer::class.java)
     private val codeService: ICodeService
 
     @JvmOverloads

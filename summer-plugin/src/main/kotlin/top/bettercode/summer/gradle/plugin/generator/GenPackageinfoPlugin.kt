@@ -17,12 +17,13 @@ import java.io.File
  * @author Peter Wu
  */
 
+@Suppress("ObjectLiteralToLambda")
 class GenPackageinfoPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
         project.tasks.create("genPackageInfo") { task ->
-            task.group = GeneratorPlugin.genGroup
+            task.group = GeneratorPlugin.GEN_GROUP
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     project.allprojects { subProject ->
@@ -102,7 +103,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
         }
 
         project.tasks.create("genPackageInfoDoc") { task ->
-            task.group = GeneratorPlugin.genGroup
+            task.group = GeneratorPlugin.GEN_GROUP
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)

@@ -79,7 +79,8 @@ open class DistExtension(
 
     companion object {
         fun Project.findDistProperty(key: String) =
-                (findProperty("dist.${name}.$key") as? String ?: findProperty("dist.$key") as? String)
+                (findProperty("dist.${name}.$key") as String?
+                        ?: findProperty("dist.$key") as String?)
 
 
     }

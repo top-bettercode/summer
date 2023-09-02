@@ -73,7 +73,7 @@ object AuthenticationHelper {
      * @param authority 权限
      * @return 授权信息是否包含指定权限
      */
-    @JvmStatic
+        @JvmStatic
     fun hasAuthority(authority: String): Boolean {
         val authentication = authentication
                 ?: return false

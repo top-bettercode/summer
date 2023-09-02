@@ -21,7 +21,7 @@ class ConfigManager private constructor() {
    * 通过一个给定的路径构建一个配置管理器， 该管理器要求地址路径所在目录下必须存在config.properties文件
    */
     init {
-        val configContent = readFile(ClassPathResource(configFileName).inputStream)
+        val configContent = readFile(ClassPathResource(CONFIG_FILE_NAME).inputStream)
         allConfig = try {
             JSONObject(configContent)
         } catch (e: Exception) {
@@ -128,7 +128,7 @@ class ConfigManager private constructor() {
     }
 
     companion object {
-        private const val configFileName = "config.json"
+        private const val CONFIG_FILE_NAME = "config.json"
 
         // 涂鸦上传filename定义
         private const val SCRAWL_FILE_NAME = "scrawl"

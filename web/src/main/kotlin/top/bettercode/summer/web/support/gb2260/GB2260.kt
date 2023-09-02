@@ -8,11 +8,11 @@ import top.bettercode.summer.tools.lang.property.Settings
  */
 object GB2260 {
 
-    const val vnodeName = "市辖区"
+    const val VNODE_NAME = "市辖区"
 
     @JvmStatic
     fun isVnode(prefectureName: String?): Boolean {
-        return vnodeName == prefectureName
+        return VNODE_NAME == prefectureName
     }
 
     @JvmStatic
@@ -21,7 +21,7 @@ object GB2260 {
         codes.filter { it.key.endsWith("0000") }.map { (provinceCode, provinceName) ->
             var prefectures = codes.filter { it.key.startsWith(provinceCode.substring(0, 2)) && it.key.endsWith("00") && it.key != provinceCode }
             val municipality = if (prefectures.isEmpty() && codes.any { it.key.startsWith(provinceCode.trimEnd('0')) && it.key != provinceCode }) {
-                prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to vnodeName)
+                prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to VNODE_NAME)
                 true
             } else false
 

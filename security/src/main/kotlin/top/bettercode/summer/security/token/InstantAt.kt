@@ -15,6 +15,7 @@ open class InstantAt(val issuedAt: Instant?, val expiresAt: Instant?) : Serializ
                 (expiresAt.toEpochMilli() - System.currentTimeMillis()) / 1000L).toInt() else -1
 
     companion object {
+        @Suppress("ConstPropertyName")
         private const val serialVersionUID = 1L
     }
 }

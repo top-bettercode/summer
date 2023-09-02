@@ -23,5 +23,5 @@ class RawValuePlusSerializerTest {
         System.err.println(string)
     }
 
-    internal class BeanWithRaw(var name: String, @field:JsonRawValuePlus var raw: String?)
+        internal class BeanWithRaw(var name: String, @field:JsonRawValuePlus var raw: String?)
 }

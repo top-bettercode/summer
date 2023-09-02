@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  *
  * @author Peter Wu
  */
+@Suppress("ConfigurationProperties")
 @ConfigurationProperties("summer.logging.files")
 open class FilesProperties {
     var path: String? = null

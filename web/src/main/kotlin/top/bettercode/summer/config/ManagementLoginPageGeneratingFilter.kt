@@ -108,6 +108,9 @@ class ManagementLoginPageGeneratingFilter(
             if (username != null && password != null && (username.trim { it <= ' ' }
                             == managementAuthProperties.username) && (password
                             == managementAuthProperties.password)) {
+                if (managementAuthProperties.maxAge > 0) {
+                    request.session.maxInactiveInterval = managementAuthProperties.maxAge
+                }
                 request.session.setAttribute(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
                 val url = request.session.getAttribute(TARGET_URL_KEY)?.toString()
                         ?: webEndpointProperties.basePath

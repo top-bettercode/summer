@@ -139,7 +139,7 @@ data class RefundResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponType(n: Int = 0): String? {
-        return other["coupon_type_$n"] as? String
+        return other["coupon_type_$n"] as String?
     }
 
 
@@ -148,7 +148,7 @@ data class RefundResponse(
      */
     @JsonIgnore
     fun getCouponRefundFee(n: Int): Int? {
-        return other["coupon_refund_fee_$n"] as? Int
+        return other["coupon_refund_fee_$n"] as Int?
     }
 
 
@@ -158,7 +158,7 @@ data class RefundResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponRefundId(n: Int = 0): String? {
-        return other["coupon_refund_id_$n"] as? String
+        return other["coupon_refund_id_$n"] as String?
     }
 
 

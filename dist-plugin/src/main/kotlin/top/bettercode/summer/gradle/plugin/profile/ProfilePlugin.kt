@@ -7,10 +7,10 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.language.jvm.tasks.ProcessResources
+import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.PROFILES_ACTIVE_NAME
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileFiles
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileProperties
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
-import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActiveName
 import java.util.*
 
 /**
@@ -19,6 +19,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
+@Suppress("ObjectLiteralToLambda")
 class ProfilePlugin : Plugin<Project> {
 
     @Suppress("UnstableApiUsage")
@@ -28,18 +29,18 @@ class ProfilePlugin : Plugin<Project> {
         project.extensions.create("profile", ProfileExtension::class.java)
         project.extensions.configure(ProfileExtension::class.java) {
             it.extraVersion =
-                    (project.findProperty("profile.extra-version") as? String)?.toBoolean()
+                    (project.findProperty("profile.extra-version") as String?)?.toBoolean()
                             ?: false
             it.excludeOther =
-                    (project.findProperty("profile.exclude-other") as? String)?.toBoolean()
+                    (project.findProperty("profile.exclude-other") as String?)?.toBoolean()
                             ?: true
-            it.configDir = (project.findProperty("profile.conf-dir") as? String) ?: "conf"
-            it.configFile = (project.findProperty("profile.config-file") as? String) ?: ""
-            it.activeFileSuffix = (project.findProperty("profile.active-file-suffix") as? String)
+            it.configDir = (project.findProperty("profile.conf-dir") as String?) ?: "conf"
+            it.configFile = (project.findProperty("profile.config-file") as String?) ?: ""
+            it.activeFileSuffix = (project.findProperty("profile.active-file-suffix") as String?)
                     ?: ""
-            it.beginToken = (project.findProperty("profile.begin-token") as? String) ?: "@"
-            it.endToken = (project.findProperty("profile.end-token") as? String) ?: "@"
-            it.matchFiles = ((project.findProperty("profile.match-files") as? String)
+            it.beginToken = (project.findProperty("profile.begin-token") as String?) ?: "@"
+            it.endToken = (project.findProperty("profile.end-token") as String?) ?: "@"
+            it.matchFiles = ((project.findProperty("profile.match-files") as String?)
                     ?: "**/*.yml,**/*.yaml,**/*.properties,**/*.xml,**/*.conf").split(",").toSet()
         }
         val props = project.profileProperties
@@ -57,7 +58,7 @@ class ProfilePlugin : Plugin<Project> {
         project.tasks.getByName(JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
             it.doFirst(object : Action<Task> {
                 override fun execute(it: Task) {
-                    project.logger.lifecycle("$profilesActiveName:${project.profilesActive}")
+                    project.logger.lifecycle("$PROFILES_ACTIVE_NAME:${project.profilesActive}")
                 }
             })
             it as ProcessResources
@@ -71,7 +72,7 @@ class ProfilePlugin : Plugin<Project> {
             project: Project,
             hash: Hashtable<String, String>
     ) {
-        it.inputs.property(profilesActiveName, project.profilesActive)
+        it.inputs.property(PROFILES_ACTIVE_NAME, project.profilesActive)
         it.inputs.files(*project.profileFiles)
         val profile = project.extensions.getByType(ProfileExtension::class.java)
         it.doFirst(object : Action<Task> {

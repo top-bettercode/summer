@@ -19,6 +19,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
+@Suppress("ObjectLiteralToLambda")
 object CoreProjectTasks {
 
     fun config(project: Project) {
@@ -82,7 +83,7 @@ object CoreProjectTasks {
             }
 
             create("printMapper") {
-                it.group = GeneratorPlugin.printGroup
+                it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -92,7 +93,7 @@ object CoreProjectTasks {
                 })
             }
             create("printMybatisWhere") {
-                it.group = GeneratorPlugin.printGroup
+                it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -103,7 +104,7 @@ object CoreProjectTasks {
             }
 
             create("printSetter") {
-                it.group = GeneratorPlugin.printGroup
+                it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -114,7 +115,7 @@ object CoreProjectTasks {
             }
 
             create("printExcelCode") {
-                it.group = GeneratorPlugin.printGroup
+                it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -124,7 +125,7 @@ object CoreProjectTasks {
                 })
             }
             create("genDbDoc") {
-                it.group = GeneratorPlugin.genGroup
+                it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val dbDoc = DbDoc(project)
@@ -136,7 +137,7 @@ object CoreProjectTasks {
                 })
             }
             create("genDicCode") {
-                it.group = GeneratorPlugin.genGroup
+                it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -150,7 +151,7 @@ object CoreProjectTasks {
                 })
             }
             create("genErrorCode") { t ->
-                t.group = GeneratorPlugin.genGroup
+                t.group = GeneratorPlugin.GEN_GROUP
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val file = project.file("src/main/resources/error-code.properties")

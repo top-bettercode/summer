@@ -2,7 +2,9 @@ package top.bettercode.summer.data.jpa.querydsl
 
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
-import org.springframework.data.domain.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import java.util.*
 
 /**
@@ -41,7 +43,7 @@ interface RecycleQuerydslPredicateExecutor<T> {
      *
      * @param predicate must not be null.
      * @param sort      the [Sort] specification to sort the results by, may be
-     * [Sort.empty], must not be null.
+     * [Sort.empty()], must not be null.
      * @return all entities matching the given [Predicate].
      * @since 1.10
      */

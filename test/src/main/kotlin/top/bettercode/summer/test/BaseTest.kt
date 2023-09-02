@@ -12,6 +12,7 @@ import java.util.function.Supplier
  *
  * @author Peter Wu
  */
+@Suppress("SpringBootApplicationProperties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(properties = ["summer.security.enabled=false", "seata.enabled=false"])
 abstract class BaseTest : BaseLogTest() {

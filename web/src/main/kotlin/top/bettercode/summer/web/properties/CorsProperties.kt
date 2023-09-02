@@ -7,6 +7,7 @@ import org.springframework.web.cors.CorsConfiguration
  * @author Peter Wu
  * @since 0.1.12
  */
+@Suppress("ConfigurationProperties")
 @ConfigurationProperties("summer.security.cors")
 open class CorsProperties : CorsConfiguration() {
     var isEnable = true

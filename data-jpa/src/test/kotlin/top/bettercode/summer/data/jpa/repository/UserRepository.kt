@@ -54,7 +54,7 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
     @SelectProvider(type = UserSqlProvider::class, method = "selectByMybatisSize")
     fun selectByMybatisProviderSize(size: Size?): List<User?>?
 
-    class UserSqlProvider {
+        class UserSqlProvider {
         @Suppress("UNUSED_PARAMETER")
         fun selectByMybatisSize(size: Size?): String {
             // language=SQL

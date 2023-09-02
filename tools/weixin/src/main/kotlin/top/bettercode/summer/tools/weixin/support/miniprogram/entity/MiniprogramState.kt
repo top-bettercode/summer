@@ -6,7 +6,7 @@ package top.bettercode.summer.tools.weixin.support.miniprogram.entity
  */
 object MiniprogramState {
 
-    const val developer = "developer"
-    const val trial = "trial"
-    const val formal = "formal"
+    const val DEVELOPER = "developer"
+    const val TRIAL = "trial"
+    const val FORMAL = "formal"
 }

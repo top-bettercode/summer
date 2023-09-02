@@ -33,11 +33,12 @@ import java.util.*
  *
  * @author Peter Wu
  */
+@Suppress("ObjectLiteralToLambda")
 class GeneratorPlugin : Plugin<Project> {
     companion object {
-        const val genGroup = "gen"
-        const val printGroup = "print"
-        const val pumlGroup = "puml"
+        const val GEN_GROUP = "gen"
+        const val PRINT_GROUP = "print"
+        const val PUML_GROUP = "puml"
     }
 
     override fun apply(project: Project) {
@@ -57,42 +58,42 @@ class GeneratorPlugin : Plugin<Project> {
                     }).mapValues { (module, properties) ->
                         val database = DatabaseConfiguration()
                         database.module = module
-                        database.url = properties["url"] as? String ?: ""
+                        database.url = (properties["url"] as String?) ?: ""
                         database.driver =
-                                DatabaseDriver.fromProductName(properties["productName"] as? String
+                                DatabaseDriver.fromProductName((properties["productName"] as String?)
                                         ?: "")
-                        database.catalog = properties["catalog"] as? String?
-                        database.schema = properties["schema"] as? String?
-                        database.username = properties["username"] as? String ?: "root"
-                        database.password = properties["password"] as? String ?: "root"
-                        database.driverClass = properties["driverClass"] as? String ?: ""
-                        database.debug = (properties["debug"] as? String
+                        database.catalog = properties["catalog"] as String?
+                        database.schema = properties["schema"] as String?
+                        database.username = properties["username"] as String? ?: "root"
+                        database.password = properties["password"] as String? ?: "root"
+                        database.driverClass = properties["driverClass"] as String? ?: ""
+                        database.debug = (properties["debug"] as String?
                                 ?: "false").toBoolean()
                         database.queryIndex = (properties["queryIndex"]
                                 ?: findGeneratorProperty(project, "queryIndex"))?.toString()?.toBoolean()
                                 ?: true
 
                         database.tinyInt1isBit =
-                                (properties["tinyInt1isBit"] as? String ?: "false").toBoolean()
+                                (properties["tinyInt1isBit"] as String? ?: "false").toBoolean()
                         if (database.isOracle) {
                             database.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                         }
 
                         database.entityPrefix =
-                                properties["entityPrefix"] as? String ?: findGeneratorProperty(
+                                properties["entityPrefix"] as String? ?: findGeneratorProperty(
                                         project,
                                         "entityPrefix"
                                 ) ?: ""
 
                         database.tablePrefixes =
-                                (properties["tablePrefix"] as? String ?: findGeneratorProperty(
+                                (properties["tablePrefix"] as String? ?: findGeneratorProperty(
                                         project,
                                         "tablePrefix"
                                 ) ?: "").split(",")
                                         .filter { it.isNotBlank() }.toTypedArray()
 
                         database.tableSuffixes =
-                                (properties["tableSuffix"] as? String ?: findGeneratorProperty(
+                                (properties["tableSuffix"] as String? ?: findGeneratorProperty(
                                         project,
                                         "tableSuffix"
                                 ) ?: "").split(",")
@@ -161,11 +162,11 @@ class GeneratorPlugin : Plugin<Project> {
             extension.dir = findGeneratorProperty(project, "dir") ?: "src/main/java"
             extension.packageName =
                     (findGeneratorProperty(project, "packageName")
-                            ?: project.findProperty("app.packageName") as? String
+                            ?: project.findProperty("app.packageName") as String?
                             ?: "")
             extension.userModule =
                     (findGeneratorProperty(project, "userModule"))?.toBoolean() ?: true
-            extension.applicationName = project.findProperty("application.name") as? String
+            extension.applicationName = project.findProperty("application.name") as String?
                     ?: project.rootProject.name
             extension.projectName =
                     (findGeneratorProperty(project, "projectName") ?: project.name)
@@ -234,7 +235,7 @@ class GeneratorPlugin : Plugin<Project> {
                 module.capitalized()
             }]"
             project.tasks.create("printTableNames${prefix}") { task ->
-                task.group = printGroup
+                task.group = PRINT_GROUP
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val tableNames = tableHolder.tableNames()
@@ -248,7 +249,7 @@ class GeneratorPlugin : Plugin<Project> {
                 module.capitalized()
             }]"
             project.tasks.create("toPuml${prefix}") { task ->
-                task.group = pumlGroup
+                task.group = PUML_GROUP
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val tables =
@@ -269,7 +270,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
 
         project.tasks.create("pumlReformat") { task ->
-            task.group = pumlGroup
+            task.group = PUML_GROUP
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     PumlConverter.reformat(extension)
@@ -278,7 +279,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
 
         project.tasks.create("pumlToDatabase") { task ->
-            task.group = pumlGroup
+            task.group = PUML_GROUP
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     PumlConverter.toDatabase(extension)
@@ -287,7 +288,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
 
         project.tasks.create("pumlToDiagram") { task ->
-            task.group = pumlGroup
+            task.group = PUML_GROUP
             task.inputs.files(
                     File(project.gradle.gradleUserHomeDir, "gradle.properties"),
                     project.rootProject.file("gradle.properties")
@@ -336,7 +337,7 @@ class GeneratorPlugin : Plugin<Project> {
                         module.capitalized()
                     }]"
                     project.tasks.create("toDDL${suffix}") { task ->
-                        task.group = pumlGroup
+                        task.group = PUML_GROUP
                         task.inputs.files(
                                 File(project.gradle.gradleUserHomeDir, "gradle.properties"),
                                 project.rootProject.file("gradle.properties")
@@ -374,7 +375,7 @@ class GeneratorPlugin : Plugin<Project> {
                         })
                     }
                     project.tasks.create("toDDLUpdate${suffix}") { task ->
-                        task.group = pumlGroup
+                        task.group = PUML_GROUP
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
                                 MysqlToDDL.useQuote = extension.sqlQuote
@@ -428,7 +429,7 @@ class GeneratorPlugin : Plugin<Project> {
                         })
                     }
                     project.tasks.create("pumlBuild${suffix}") {
-                        it.group = pumlGroup
+                        it.group = PUML_GROUP
                         it.dependsOn("toDDLUpdate${suffix}", "toDDL${suffix}")
                     }
                 }
@@ -437,7 +438,7 @@ class GeneratorPlugin : Plugin<Project> {
     }
 
     private fun findGeneratorProperty(project: Project, key: String) =
-            (project.findProperty("generator.${project.name}.$key") as? String
-                    ?: project.findProperty("generator.$key") as? String)
+            (project.findProperty("generator.${project.name}.$key") as String?
+                    ?: project.findProperty("generator.$key") as String?)
 
 }

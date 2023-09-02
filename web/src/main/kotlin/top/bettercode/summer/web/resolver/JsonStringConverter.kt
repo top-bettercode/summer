@@ -2,7 +2,6 @@ package top.bettercode.summer.web.resolver
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
-import org.slf4j.LoggerFactory
 import org.springframework.core.convert.TypeDescriptor
 import org.springframework.core.convert.converter.ConditionalGenericConverter
 import org.springframework.core.convert.converter.GenericConverter
@@ -14,7 +13,6 @@ import java.io.IOException
  * @since 0.0.1
  */
 class JsonStringConverter(private val objectMapper: ObjectMapper) : ConditionalGenericConverter {
-    private val log = LoggerFactory.getLogger(JsonStringConverter::class.java)
     override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
         return true
     }

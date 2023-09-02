@@ -74,7 +74,7 @@ class CodeGen {
                                 "    @JvmOverloads"
                     }
     fun get${camelName.substringBefore("$").capitalized()}(n: Int${if (nameExist) "" else " = 0"}): $type? {
-        return other["$trueName${"\$n"}"] as? $type
+        return other["$trueName${"\$n"}"] as $type
     }
 
 """

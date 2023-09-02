@@ -1,5 +1,3 @@
-@file:Suppress("unused", "MemberVisibilityCanBePrivate")
-
 package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonInclude

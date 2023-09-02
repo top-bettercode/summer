@@ -57,15 +57,15 @@ object RequestConverter {
         val cookies = extractCookies(request, headers)
         val uri = URI.create(getRequestUri(request))
         val restUri =
-                (request.getAttribute(HttpOperation.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
+                (request.getAttribute(HttpOperation.BEST_MATCHING_PATTERN_ATTRIBUTE) as String?)
                         ?: request.servletPath
 
         @Suppress("UNCHECKED_CAST")
         val uriTemplateVariables =
-                request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
+                request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as Map<String, String>?
                         ?: mapOf()
         val remoteUser =
-                (request.getAttribute(HttpOperation.REQUEST_LOGGING_USERNAME) as? String)
+                (request.getAttribute(HttpOperation.REQUEST_LOGGING_USERNAME) as String?)
                         ?: request.remoteUser ?: "anonymous"
 
         val traceHttpServletRequestWrapper =
@@ -202,7 +202,7 @@ object RequestConverter {
             partHeaders.contentType = MediaType.parseMediaType(part.contentType)
         }
 
-        val content = (part as? TracePart)?.contentAsByteArray ?: try {
+        val content = (part as TracePart?)?.contentAsByteArray ?: try {
             FileCopyUtils.copyToByteArray(part.inputStream)
         } catch (e: Exception) {
             "Request part has been read.Can't record the original data.".toByteArray()

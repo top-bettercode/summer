@@ -20,15 +20,15 @@ class ProjectDistPlugin : Plugin<Project> {
 
     companion object {
         fun config(project: Project, isBoot: (Project) -> Boolean = { true }) {
-            project.description = project.findProperty("application.name") as? String
+            project.description = project.findProperty("application.name") as String?
 
             project.allprojects.forEach { subProject ->
                 subProject.plugins.apply("idea")
                 subProject.plugins.apply("java")
 
                 subProject.group = (subProject.findProperty("app.package")
-                        ?: subProject.findProperty("app.packageName")) as? String ?: ""
-                subProject.version = subProject.findProperty("app.version") as? String ?: "1.0"
+                        ?: subProject.findProperty("app.packageName")) as String? ?: ""
+                subProject.version = subProject.findProperty("app.version") as String? ?: "1.0"
 
                 //idea
                 subProject.extensions.configure(org.gradle.plugins.ide.idea.model.IdeaModel::class.java) { idea ->

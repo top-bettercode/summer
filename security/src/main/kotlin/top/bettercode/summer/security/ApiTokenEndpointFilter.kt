@@ -1,7 +1,6 @@
 package top.bettercode.summer.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -46,7 +45,6 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         formkeyService: IFormkeyService,
         tokenEndpointUri: String? = DEFAULT_TOKEN_ENDPOINT_URI
 ) : OncePerRequestFilter() {
-    private val log = LoggerFactory.getLogger(ApiTokenEndpointFilter::class.java)
     private val tokenEndpointMatcher: RequestMatcher
     private val revokeTokenEndpointMatcher: RequestMatcher
     private val revokeTokenService: IRevokeTokenService?

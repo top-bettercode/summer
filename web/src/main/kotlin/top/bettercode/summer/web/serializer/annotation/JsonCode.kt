@@ -21,6 +21,6 @@ annotation class JsonCode(
          */
         val extended: Boolean = true,
         /**
-         * @return codeService beanName default: [CodeServiceHolder.getDefault]
+         * @return codeService beanName default: [CodeServiceHolder.default]
          */
         val codeServiceRef: String = "") 

@@ -8,6 +8,7 @@ import com.baidu.ueditor.Encoder
  * @author hancong03@baidu.com
  */
 class MultiState : State {
+    @Suppress("MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING")
     override val isSuccess: Boolean
     private var info: String? = null
     private val intMap: MutableMap<String?, Long> = HashMap()
@@ -15,16 +16,16 @@ class MultiState : State {
     private val stateList: MutableList<String?> = ArrayList()
 
     constructor(state: Boolean) {
-        isSuccess = state
+        this.isSuccess = state
     }
 
     constructor(state: Boolean, info: String?) {
-        isSuccess = state
+        this.isSuccess = state
         this.info = info
     }
 
     constructor(state: Boolean, infoKey: Int) {
-        isSuccess = state
+        this.isSuccess = state
         info = AppInfo.getStateInfo(infoKey)
     }
 

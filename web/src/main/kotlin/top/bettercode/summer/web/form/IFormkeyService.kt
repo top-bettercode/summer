@@ -24,7 +24,7 @@ interface IFormkeyService {
         return checkRequest(request = request, formkey = formkey, ttl = ttl, message = message)
     }
 
-    fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?, ignoreHeaders: Array<String>? = null, ignoreParams: Array<String>? = null): Boolean {
+        fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?, ignoreHeaders: Array<String>? = null, ignoreParams: Array<String>? = null): Boolean {
         val formkey = getFormkey(request, formKeyName, autoFormKey, ignoreHeaders, ignoreParams)
         return checkRequest(request = request, formkey = formkey, ttl = ttl, message = message)
     }

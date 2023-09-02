@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 /**
  * @author Peter Wu
  */
+@Suppress("ConfigurationProperties")
 @ConfigurationProperties(prefix = "summer.wechat")
 open class OffiaccountProperties : WeixinProperties(), IOffiaccountProperties {
     //--------------------------------------------

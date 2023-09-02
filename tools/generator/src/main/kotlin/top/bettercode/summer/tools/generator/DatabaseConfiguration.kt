@@ -12,6 +12,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentSkipListSet
 
+@Suppress("ConvertTryFinallyToUseCall")
 data class DatabaseConfiguration(
         var url: String = "",
         var catalog: String? = null,

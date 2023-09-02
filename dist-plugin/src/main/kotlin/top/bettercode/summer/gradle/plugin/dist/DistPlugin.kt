@@ -32,6 +32,7 @@ import java.security.MessageDigest
  *
  * @author Peter Wu
  */
+@Suppress("ObjectLiteralToLambda")
 class DistPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {

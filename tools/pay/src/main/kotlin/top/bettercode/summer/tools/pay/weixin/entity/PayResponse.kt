@@ -154,7 +154,7 @@ open class PayResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponType(n: Int = 0): String? {
-        return other["coupon_type_$n"] as? String
+        return other["coupon_type_$n"] as String?
     }
 
 
@@ -164,7 +164,7 @@ open class PayResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponId(n: Int = 0): String? {
-        return other["coupon_id_$n"] as? String
+        return other["coupon_id_$n"] as String?
     }
 
 
@@ -173,7 +173,7 @@ open class PayResponse(
      */
     @JsonIgnore
     fun getCouponFee(n: Int): Int? {
-        return other["coupon_fee_$n"] as? Int
+        return other["coupon_fee_$n"] as Int?
     }
 
 

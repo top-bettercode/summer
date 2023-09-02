@@ -17,6 +17,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
+@Suppress("ObjectLiteralToLambda")
 class AutodocPlugin : Plugin<Project> {
 
     @Suppress("UnstableApiUsage")
@@ -35,12 +36,12 @@ class AutodocPlugin : Plugin<Project> {
             } else
                 File(project.projectDir, path)
             autodocExtension.projectName = findProperty(project, "project-name")
-                    ?: project.findProperty("application.name") as? String
+                    ?: project.findProperty("application.name") as String?
                             ?: "${project.name}接口文档"
-            autodocExtension.author = project.findProperty("autodoc.author") as? String ?: "autodoc"
-            var version = project.findProperty("autodoc.version") as? String
+            autodocExtension.author = project.findProperty("autodoc.author") as String? ?: "autodoc"
+            var version = project.findProperty("autodoc.version") as String?
             if (version.isNullOrBlank()) {
-                version = project.findProperty("app.version") as? String
+                version = project.findProperty("app.version") as String?
             }
             if (!version.isNullOrBlank()) {
                 autodocExtension.version = if (version.startsWith("v")) version else "v$version"
@@ -146,7 +147,7 @@ class AutodocPlugin : Plugin<Project> {
     }
 
     private fun findProperty(project: Project, key: String) =
-            (project.findProperty("autodoc.${project.name}.$key") as? String
-                    ?: project.findProperty("autodoc.$key") as? String)
+            (project.findProperty("autodoc.${project.name}.$key") as String?
+                    ?: project.findProperty("autodoc.$key") as String?)
 
 }

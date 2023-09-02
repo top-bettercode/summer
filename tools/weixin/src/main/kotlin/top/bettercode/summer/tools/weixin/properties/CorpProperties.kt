@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 /**
  * @author Peter Wu
  */
+@Suppress("ConfigurationProperties")
 @ConfigurationProperties(prefix = "summer.wechat.corp")
 open class CorpProperties : WeixinProperties(), ICorpProperties {
     /**

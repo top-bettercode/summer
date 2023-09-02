@@ -15,6 +15,7 @@ import java.util.*
  * @author Peter Wu
  * @since
  */
+@Suppress("ObjectLiteralToLambda")
 class Docker : Plugin<Project> {
 
     override fun apply(project: Project) {

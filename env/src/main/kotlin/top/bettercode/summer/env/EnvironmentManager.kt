@@ -7,7 +7,6 @@ import org.springframework.core.env.MapPropertySource
 import org.springframework.jmx.export.annotation.ManagedOperation
 import org.springframework.jmx.export.annotation.ManagedResource
 import org.springframework.stereotype.Component
-import java.util.*
 
 /**
  * Entry point for making local (but volatile) changes to the [Environment] of a running
@@ -17,19 +16,17 @@ import java.util.*
 @Component
 @ManagedResource
 class EnvironmentManager(private val environment: ConfigurableEnvironment) : ApplicationEventPublisherAware {
-    private val map: MutableMap<String, Any?>
-    private var publisher: ApplicationEventPublisher? = null
-
-    init {
+    private val map: MutableMap<String, Any?> by lazy {
         val sources = environment.propertySources
         if (sources.contains(MANAGER_PROPERTY_SOURCE)) {
             @Suppress("UNCHECKED_CAST") val map = sources[MANAGER_PROPERTY_SOURCE]!!
                     .source as MutableMap<String, Any?>
-            this.map = map
+            map
         } else {
-            this.map = LinkedHashMap()
+            LinkedHashMap()
         }
     }
+    private var publisher: ApplicationEventPublisher? = null
 
     override fun setApplicationEventPublisher(publisher: ApplicationEventPublisher) {
         this.publisher = publisher

@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = "summer.cache.caffeine")
 open class CaffeineCacheProperties {
     /**
-     * 存储缓存配置,key:name ,value:spec [CaffeineSpec]
+     * 存储缓存配置,key:name ,value:spec [com.github.benmanes.caffeine.cache.CaffeineSpec]
      */
     var caches: Map<String, String>? = null
         private set

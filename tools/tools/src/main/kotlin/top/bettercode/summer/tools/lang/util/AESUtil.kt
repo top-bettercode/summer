@@ -12,7 +12,7 @@ import javax.crypto.spec.SecretKeySpec
 object AESUtil {
     const val AES = "AES"
     const val ECB = "ECB"
-    const val PKCS5Padding = "PKCS5Padding"
+    const val PKCS_5_PADDING = "PKCS5Padding"
 
     /**
      * AES加密

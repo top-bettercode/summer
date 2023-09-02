@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.excel
  * @author Peter Wu
  */
 open class ExcelCell<T>(val row: Int, val column: Int, val isLastRow: Boolean, index: Int, var isFillColor: Boolean,
-                        val excelField: ExcelField<T, *>, @Suppress("MemberVisibilityCanBePrivate") val entity: T) {
+                        val excelField: ExcelField<T, *>, val entity: T) {
     var cellValue: Any? = null
 
     constructor(row: Int, column: Int, firstRow: Int, lastRow: Boolean,

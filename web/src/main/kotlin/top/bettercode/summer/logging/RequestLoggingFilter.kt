@@ -349,7 +349,7 @@ class RequestLoggingFilter(
 
     @Suppress("UNCHECKED_CAST")
     private fun <T> getAttribute(requestAttributes: RequestAttributes, name: String): T? {
-        return requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST) as? T
+        return requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST) as T?
     }
 
     override fun getOrder(): Int {
