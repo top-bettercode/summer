@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.pay.test
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
@@ -9,6 +10,7 @@ import java.io.File
  *
  * @author Peter Wu
  */
+@Disabled
 class CodeGen {
 
     @Test
@@ -74,7 +76,7 @@ class CodeGen {
                                 "    @JvmOverloads"
                     }
     fun get${camelName.substringBefore("$").capitalized()}(n: Int${if (nameExist) "" else " = 0"}): $type? {
-        return other["$trueName${"\$n"}"] as $type
+        return other["$trueName${"\$n"}"] as $type?
     }
 
 """
