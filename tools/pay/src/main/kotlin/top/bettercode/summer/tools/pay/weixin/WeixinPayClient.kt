@@ -2,9 +2,7 @@
 
 package top.bettercode.summer.tools.pay.weixin
 
-import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.OkHttpClient
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -31,8 +29,6 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 import javax.servlet.http.HttpServletRequest
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.javaField
 
 
 /**
@@ -117,21 +113,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * @param source 参数
      * @return 签名后字符串
      */
-    private fun getSign(source: Any): String {
+    private fun sign(source: Any): SignMap {
         //获取待签名字符串
-        val memberProperties = source::class.memberProperties
-        val otherProperties = memberProperties.filter { it.javaField?.getAnnotation(JsonAnySetter::class.java) != null }.flatMap {
-            (it.getter.call(source) as? Map<*, *>)?.entries?.map { entry -> Pair(entry.key.toString(), entry.value) }
-                    ?: emptyList()
-        }
+        val map: SignMap = this.objectMapper.convertValue(source, SignMap::class.java)
 
-        val properties = memberProperties.filter { it.javaField?.getAnnotation(JsonAnySetter::class.java) == null }.map {
-            Pair(it.javaField?.getAnnotation(JsonProperty::class.java)?.value
-                    ?: it.name, it.getter.call(source))
-        } + otherProperties
-        val preStr = properties.sortedBy { it.first }.mapNotNull {
-            val key = it.first
-            val value = it.second
+        val preStr = map.keys.sorted().mapNotNull {
+            val key = it
+            val value = map[key]
             if (value == null || value == "" || key.equals("sign", ignoreCase = true)) {
                 null
             } else {
@@ -141,7 +129,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         val stringSignTemp = "$preStr&key=${this.properties.apiKey}"
         if (IFormkeyService.log.isDebugEnabled)
             IFormkeyService.log.debug("等处理的字符中：$stringSignTemp")
-        return DigestUtils.md5DigestAsHex(stringSignTemp.toByteArray(charset("UTF-8"))).uppercase(Locale.getDefault())
+        val sign = DigestUtils.md5DigestAsHex(stringSignTemp.toByteArray()).uppercase()
+        map.sign = sign
+        return map
     }
 
     fun writeToXml(obj: Any): String {
@@ -160,14 +150,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         if (request.notifyUrl == null) {
             request.notifyUrl = properties.notifyUrl
         }
-        request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/unifiedorder",
-                request,
+                sign(request),
                 UnifiedOrderResponse::class.java
         )
         return if (response != null && response.isOk()) {
-            if (getSign(response) == response.sign) {
+            if (sign(response).sign == response.sign) {
                 if (response.isBizOk()) {
                     response
                 } else {
@@ -190,7 +179,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 nonceStr = RandomUtil.nextString2(32),
                 `package` = "prepay_id=${unifiedOrderResponse.prepayId}}",
                 signType = "MD5",
-                paySign = getSign(unifiedOrderResponse))
+                paySign = sign(unifiedOrderResponse).sign)
     }
 
     /**
@@ -201,14 +190,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
-        request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/orderquery",
-                request,
+                sign(request),
                 OrderQueryResponse::class.java
         )
         return if (response != null && response.isOk()) {
-            if (getSign(response) == response.sign) {
+            if (sign(response).sign == response.sign) {
                 if (response.isBizOk()) {
                     response
                 } else {
@@ -231,14 +219,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
-        request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/refundquery",
-                request,
+                sign(request),
                 RefundQueryResponse::class.java
         )
         return if (response != null && response.isOk()) {
-            if (getSign(response) == response.sign) {
+            if (sign(response).sign == response.sign) {
                 if (response.isBizOk()) {
                     response
                 } else {
@@ -261,7 +248,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         try {
             val response = objectMapper.readValue(request.inputStream, PayResponse::class.java)
             if (response != null && response.isOk()) {
-                if (getSign(response) == response.sign) {
+                if (sign(response).sign == response.sign) {
                     return if (response.isBizOk()) {
                         if (properties.mchId == response.mchId && properties.appid == response.appid) {
                             success(response)
@@ -334,14 +321,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         if (request.notifyUrl == null) {
             request.notifyUrl = properties.notifyUrl
         }
-        request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/secapi/pay/refund",
-                request,
+                sign(request),
                 RefundResponse::class.java
         )
         return if (response != null && response.isOk()) {
-            if (getSign(response) == response.sign) {
+            if (sign(response).sign == response.sign) {
                 if (response.isBizOk()) {
                     response
                 } else {
@@ -364,10 +350,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         request.mchid = properties.mchId
         if (request.mchAppid == null)
             request.mchAppid = properties.appid
-        request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers",
-                request,
+                sign(request),
                 TransfersResponse::class.java
         )
         return if (response != null && response.isOk()) {
@@ -390,10 +375,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
-        request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo",
-                request,
+                sign(request),
                 TransferInfoResponse::class.java
         )
         return if (response != null && response.isOk()) {
