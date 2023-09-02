@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest
  *
  *  https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_2_1.shtml
  *
- *
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
@@ -68,27 +67,59 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
         this.httpClient = DefaultHttpClientBuilder().okHttpClient(okHttpClient).config(config).build()
     }
 
+    /**
+     * 应用ID
+     */
+    val appid: String? by lazy {
+        this.properties.appid
+    }
+
+    /**
+     * 商家转账
+     *
+     * https://pay.weixin.qq.com/docs/merchant/apis/batch-transfer-to-balance/transfer-batch/initiate-batch-transfer.html
+     */
     val transferBatchService: TransferBatchService by lazy {
         TransferBatchService.Builder().httpClient(httpClient).encryptor(config.createEncryptor()).decryptor(config.createDecryptor()).build()
 
     }
 
+    /**
+     * APP支付
+     * https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_2_1.shtml
+     */
     val appService: AppService by lazy {
         AppService.Builder().httpClient(httpClient).build()
     }
 
+    /**
+     * H5支付
+     * https://pay.weixin.qq.com/docs/merchant/apis/h5-payment/direct-jsons/h5-prepay.html
+     */
     val h5Service: H5Service by lazy {
         H5Service.Builder().httpClient(httpClient).build()
     }
 
+    /**
+     * JSAPI支付
+     * https://pay.weixin.qq.com/docs/merchant/apis/jsapi-payment/direct-jsons/jsapi-prepay.html
+     */
     val jsapiService: JsapiService by lazy {
         JsapiService.Builder().httpClient(httpClient).build()
     }
 
+    /**
+     *Native支付
+     * https://pay.weixin.qq.com/docs/merchant/apis/native-payment/direct-jsons/native-prepay.html
+     */
     val nativePayService: NativePayService by lazy {
         NativePayService.Builder().httpClient(httpClient).build()
     }
 
+    /**
+     *退款
+     * https://pay.weixin.qq.com/docs/merchant/apis/refund/refunds/create.html
+     */
     val refundService: RefundService by lazy {
         RefundService.Builder().httpClient(httpClient).build()
     }
@@ -117,6 +148,7 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception) {
             // 如果处理失败，应返回 4xx/5xx 的状态码，例如 500 INTERNAL_SERVER_ERROR
+            log.error("handle notify failed", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

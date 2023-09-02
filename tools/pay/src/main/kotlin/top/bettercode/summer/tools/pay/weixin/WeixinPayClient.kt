@@ -154,8 +154,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1
      */
     fun unifiedorder(request: UnifiedOrderRequest): UnifiedOrderResponse {
-        request.appid = properties.appid
         request.mchId = properties.mchId
+        if (request.appid == null)
+            request.appid = properties.appid
         if (request.notifyUrl == null) {
             request.notifyUrl = properties.notifyUrl
         }
@@ -197,8 +198,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_2&index=4
      */
     fun orderquery(request: OrderQueryRequest): OrderQueryResponse {
-        request.appid = properties.appid
         request.mchId = properties.mchId
+        if (request.appid == null)
+            request.appid = properties.appid
         request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/orderquery",
@@ -226,8 +228,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_5&index=7
      */
     fun refundquery(request: RefundQueryRequest): RefundQueryResponse {
-        request.appid = properties.appid
         request.mchId = properties.mchId
+        if (request.appid == null)
+            request.appid = properties.appid
         request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/refundquery",
@@ -325,8 +328,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_4&index=6
      */
     fun refund(request: RefundRequest): RefundResponse {
-        request.appid = properties.appid
         request.mchId = properties.mchId
+        if (request.appid == null)
+            request.appid = properties.appid
         if (request.notifyUrl == null) {
             request.notifyUrl = properties.notifyUrl
         }
@@ -357,8 +361,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=14_2
      */
     fun transfers(request: TransfersRequest): TransfersResponse {
-        request.mchAppid = properties.appid
         request.mchid = properties.mchId
+        if (request.mchAppid == null)
+            request.mchAppid = properties.appid
         request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers",
@@ -382,8 +387,9 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=14_3
      */
     fun getTransferInfo(request: TransferInfoRequest): TransferInfoResponse {
-        request.appid = properties.appid
         request.mchId = properties.mchId
+        if (request.appid == null)
+            request.appid = properties.appid
         request.sign = getSign(request)
         val response = postForObject(
                 "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo",
