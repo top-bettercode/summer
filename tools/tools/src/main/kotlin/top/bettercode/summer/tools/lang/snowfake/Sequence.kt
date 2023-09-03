@@ -148,7 +148,7 @@ class Sequence {
                 if (network == null) {
                     id = 1L
                 } else {
-                    val mac = network.getHardwareAddress()
+                    val mac = network.hardwareAddress
                     if (null != mac) {
                         id = 0x000000FFL and mac[mac.size - 1].toLong() or (0x0000FF00L and (mac[mac.size - 2].toLong() shl 8)) shr 6
                         id %= (maxDatacenterId + 1)

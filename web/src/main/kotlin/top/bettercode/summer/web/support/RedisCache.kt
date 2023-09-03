@@ -68,7 +68,7 @@ constructor(
     @Suppress("UNCHECKED_CAST")
     operator fun <T> get(key: String, type: Class<T>?): T? {
         val value: Any? = fromStoreValue(lookup(key))
-        check(!(value != null && type != null && !type.isInstance(value))) { "Cached value is not of required type [" + type!!.getName() + "]: " + value }
+        check(!(value != null && type != null && !type.isInstance(value))) { "Cached value is not of required type [" + type!!.name + "]: " + value }
         return value as T
     }
 
@@ -222,7 +222,7 @@ constructor(
         }
         throw IllegalStateException(String.format(
                 "Cannot convert cache key %s to String. Please register a suitable Converter via 'RedisCacheConfiguration.configureKeyConverters(...)' or override '%s.toString()'.",
-                source, key.javaClass.getSimpleName()))
+                source, key.javaClass.simpleName))
     }
 
     /**

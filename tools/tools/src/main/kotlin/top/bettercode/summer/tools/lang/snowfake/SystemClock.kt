@@ -32,7 +32,7 @@ class SystemClock private constructor(private val period: Long) {
     private fun scheduleClockUpdating() {
         val scheduler = Executors.newSingleThreadScheduledExecutor { runnable: Runnable? ->
             val thread = Thread(runnable, "System Clock")
-            thread.setDaemon(true)
+            thread.isDaemon = true
             thread
         }
         scheduler.scheduleAtFixedRate({ now.set(System.currentTimeMillis()) }, period, period, TimeUnit.MILLISECONDS)
