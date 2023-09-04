@@ -12,15 +12,17 @@ object MysqlToDDL : ToDDL() {
         out.appendLine("$commentPrefix ${database.url.substringBefore("?")}")
         out.appendLine("$commentPrefix use ${database.schema};")
         out.appendLine()
-        //schema default collate change
-        database.use {
-            val defaultCollate = getSchemaDefaultCollate()
-            val defaultCharset = defaultCollate.substringBefore("_")
-            if (defaultCollate != database.collate || defaultCharset != database.charset) {
-                out.appendLine("$commentPrefix schema default collate change")
-                //alter database testffjp character set utf8mb4 collate utf8mb4_unicode_ci;
-                out.appendLine("ALTER DATABASE ${database.schema} CHARACTER SET ${database.charset} COLLATE ${database.collate};")
-                out.appendLine()
+        if (!database.noConnection) {
+            //schema default collate change
+            database.use {
+                val defaultCollate = getSchemaDefaultCollate()
+                val defaultCharset = defaultCollate.substringBefore("_")
+                if (defaultCollate != database.collate || defaultCharset != database.charset) {
+                    out.appendLine("$commentPrefix schema default collate change")
+                    //alter database testffjp character set utf8mb4 collate utf8mb4_unicode_ci;
+                    out.appendLine("ALTER DATABASE ${database.schema} CHARACTER SET ${database.charset} COLLATE ${database.collate};")
+                    out.appendLine()
+                }
             }
         }
         if (tables != oldTables) {

@@ -401,6 +401,7 @@ class GeneratorPlugin : Plugin<Project> {
                                     allTables.addAll(tables)
                                     val tableNames = tables.map { it.tableName }
                                     val oldTables = if (databaseFile.exists()) {
+                                        database.noConnection = true
                                         PumlConverter.toTables(databaseFile) {
                                             it.database = database
                                         }
