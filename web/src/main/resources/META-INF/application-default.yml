@@ -136,6 +136,7 @@ logging:
     net.sf: warn
     javax.activation: warn
     org.mongodb: warn
+    top.bettercode.summer.config.ManagementLoginPageGeneratingFilter: info
     top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter: info
     top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver: info
     top.bettercode.summer.web.filter: info
