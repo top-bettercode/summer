@@ -23,7 +23,7 @@ internal class ExampleSpecification<T>(example: Example<T>, escapeCharacter: Esc
 
     override fun toPredicate(
             root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder
-    ): Predicate {
+    ): Predicate? {
         return QueryByExamplePredicateBuilder.getPredicate(root, cb, example, escapeCharacter)
     }
 
