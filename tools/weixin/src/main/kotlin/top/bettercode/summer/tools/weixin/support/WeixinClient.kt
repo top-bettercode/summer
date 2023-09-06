@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.web.support.client.ApiTemplate
-import java.time.LocalDateTime
+import java.time.Duration
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
@@ -106,7 +106,7 @@ open class WeixinClient<T : IWeixinProperties>(
         return if (accessToken.isOk) {
             CachedValue(
                     accessToken.accessToken!!,
-                    LocalDateTime.now().plusSeconds(accessToken.expiresIn!!.toLong())
+                    Duration.ofSeconds(accessToken.expiresIn!!.toLong())
             )
         } else if (retries < properties.maxRetries && accessToken.errcode != 40164) {
             //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。

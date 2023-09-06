@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 import java.net.URLEncoder
-import java.time.LocalDateTime
+import java.time.Duration
 import java.util.*
 
 /**
@@ -63,7 +63,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         return if (jsapiTicket.isOk) {
             CachedValue(
                     jsapiTicket.ticket!!,
-                    LocalDateTime.now().plusSeconds(jsapiTicket.expiresIn!!.toLong())
+                    Duration.ofSeconds(jsapiTicket.expiresIn!!.toLong())
             )
         } else if (40001 == jsapiTicket.errcode) {
             clearCache()
