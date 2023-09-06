@@ -12,7 +12,7 @@ import top.bettercode.summer.tools.sap.connection.SapService
  * @author Peter Wu
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(prefix = "jco.client", name = ["ashost"])
+@ConditionalOnProperty(prefix = "summer.sap", name = ["ashost"])
 @EnableConfigurationProperties(SapProperties::class)
 class SapConfiguration {
     init {

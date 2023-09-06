@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties("jco.client")
+@ConfigurationProperties("summer.sap")
 open class SapProperties {
     var ashost: String? = null
     var sysnr: String? = null
