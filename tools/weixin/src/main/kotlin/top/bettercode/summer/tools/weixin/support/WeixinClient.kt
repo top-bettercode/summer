@@ -68,10 +68,8 @@ open class WeixinClient<T : IWeixinProperties>(
         cache.put(key, value)
     }
 
-    protected open fun putCacheIfAbsent(key: String, callable: Callable<CachedValue>): CachedValue? {
-        return cache.get(key) {
-            callable.call()
-        }
+    protected open fun getCache(key: String): CachedValue? {
+        return cache.getIfPresent(key)
     }
 
     protected open fun clearCache() {
@@ -80,7 +78,7 @@ open class WeixinClient<T : IWeixinProperties>(
 
     @Synchronized
     protected fun putIfAbsent(key: String, callable: Callable<CachedValue>): String {
-        val cachedValue = putCacheIfAbsent(key, callable)
+        val cachedValue = getCache(key)
         return if (cachedValue == null || cachedValue.expired) {
             val value = callable.call()
             putCache(key, value)

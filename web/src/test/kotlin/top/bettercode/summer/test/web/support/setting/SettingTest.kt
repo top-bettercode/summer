@@ -17,15 +17,15 @@ internal class SettingTest {
         val map: MutableMap<String, String> = HashMap()
         map[key] = "true"
         val setting = of(map)
-        val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(json(corsProperties, true))
-        val corsProperties2 = CorsProperties()
-        corsProperties2.isEnable = false
-        System.err.println(json(corsProperties2, true))
-        BeanUtils.copyProperties(corsProperties2, corsProperties)
-        System.err.println(json(corsProperties, true))
+        val testCorsProperties = setting.bind(TestCorsProperties::class.java)
+        System.err.println(json(testCorsProperties, true))
+        val testCorsProperties2 = TestCorsProperties()
+        testCorsProperties2.isEnable = false
+        System.err.println(json(testCorsProperties2, true))
+        BeanUtils.copyProperties(testCorsProperties2, testCorsProperties)
+        System.err.println(json(testCorsProperties, true))
         System.err.println(map)
-        Assertions.assertFalse(corsProperties.isEnable)
+        Assertions.assertFalse(testCorsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
         Assertions.assertEquals("false", setting[key])
     }
@@ -35,13 +35,13 @@ internal class SettingTest {
         val map: MutableMap<String, String> = HashMap()
         map[key] = "true"
         val setting = of(map)
-        val corsProperties = setting.bind(CorsProperties::class.java)
+        val testCorsProperties = setting.bind(TestCorsProperties::class.java)
 //        System.err.println(json(corsProperties, true))
 //        corsProperties.allowedOrigins = listOf("*", "orign")
-        corsProperties.isEnable = false
-        System.err.println(json(corsProperties, true))
+        testCorsProperties.isEnable = false
+        System.err.println(json(testCorsProperties, true))
         System.err.println(map)
-        Assertions.assertFalse(corsProperties.isEnable)
+        Assertions.assertFalse(testCorsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
         Assertions.assertEquals("false", setting[key])
     }
@@ -51,12 +51,12 @@ internal class SettingTest {
         val map: MutableMap<String, String> = HashMap()
         map[key] = "true"
         val setting = of(map)
-        val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(json(corsProperties, true))
+        val testCorsProperties = setting.bind(TestCorsProperties::class.java)
+        System.err.println(json(testCorsProperties, true))
         setting.put(key, "false")
-        System.err.println(json(corsProperties, true))
+        System.err.println(json(testCorsProperties, true))
         System.err.println(map)
-        Assertions.assertFalse(corsProperties.isEnable)
+        Assertions.assertFalse(testCorsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
         Assertions.assertEquals("false", setting[key])
     }
@@ -66,12 +66,12 @@ internal class SettingTest {
         val map: MutableMap<String, String> = HashMap()
         map[key] = "true"
         val setting = of(map)
-        val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(json(corsProperties, true))
+        val testCorsProperties = setting.bind(TestCorsProperties::class.java)
+        System.err.println(json(testCorsProperties, true))
         map[key] = "false"
-        System.err.println(json(corsProperties, true))
+        System.err.println(json(testCorsProperties, true))
         System.err.println(map)
-        Assertions.assertFalse(corsProperties.isEnable)
+        Assertions.assertFalse(testCorsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
         Assertions.assertEquals("false", setting[key])
     }
@@ -81,12 +81,12 @@ internal class SettingTest {
         val map: MutableMap<String, String> = HashMap()
         map[key] = "true"
         val setting = of(map)
-        val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(json(corsProperties, true))
+        val testCorsProperties = setting.bind(TestCorsProperties::class.java)
+        System.err.println(json(testCorsProperties, true))
         setting.put(key, "false")
-        System.err.println(json(corsProperties, true))
+        System.err.println(json(testCorsProperties, true))
         System.err.println(map)
-        Assertions.assertFalse(corsProperties.isEnable)
+        Assertions.assertFalse(testCorsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
         Assertions.assertEquals("false", setting[key])
     }
@@ -96,12 +96,12 @@ internal class SettingTest {
         val map: MutableMap<String, String> = HashMap()
         map[key] = "true"
         val setting = of(map)
-        val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(json(corsProperties, true))
+        val testCorsProperties = setting.bind(TestCorsProperties::class.java)
+        System.err.println(json(testCorsProperties, true))
         setting.put(key, "false")
-        System.err.println(json(corsProperties, true))
+        System.err.println(json(testCorsProperties, true))
         System.err.println(map)
-        Assertions.assertFalse(corsProperties.isEnable)
+        Assertions.assertFalse(testCorsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
         Assertions.assertEquals("false", setting[key])
     }

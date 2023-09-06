@@ -10,12 +10,12 @@ import org.springframework.web.cors.CorsConfiguration;
  */
 @SuppressWarnings("ConfigurationProperties")
 @ConfigurationProperties("summer.security.cors")
-public class CorsProperties extends CorsConfiguration {
+public class TestCorsProperties extends CorsConfiguration {
 
   private boolean enable = true;
   private String path = "/**";
 
-  public CorsProperties() {
+  public TestCorsProperties() {
     setAllowedOrigins(Collections.singletonList("*"));
     setAllowedMethods(Collections.singletonList("*"));
     //    setAllowCredentials(true);
