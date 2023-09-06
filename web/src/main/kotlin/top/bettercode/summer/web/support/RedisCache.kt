@@ -72,11 +72,12 @@ constructor(
         return value as T
     }
 
-    operator fun <T : Any> get(key: String, valueLoader: Callable<T>): T {
+    @JvmOverloads
+    operator fun <T : Any> get(key: String, valueLoader: Callable<T>, ttl: Duration = this.ttl): T {
         val result: Cache.ValueWrapper? = get(key)
         return if (result != null) {
             result.get() as T
-        } else getSynchronized(key, valueLoader)
+        } else getSynchronized(key, valueLoader, ttl)
     }
 
     operator fun get(key: String): Cache.ValueWrapper? {
@@ -95,7 +96,7 @@ constructor(
     }
 
     @Synchronized
-    private fun <T : Any> getSynchronized(key: String, valueLoader: Callable<T>): T {
+    private fun <T : Any> getSynchronized(key: String, valueLoader: Callable<T>, ttl: Duration = this.ttl): T {
         val result: Cache.ValueWrapper? = get(key)
         if (result != null) {
             return result.get() as T
@@ -105,7 +106,7 @@ constructor(
         } catch (e: Exception) {
             throw Cache.ValueRetrievalException(key, valueLoader, e)
         }
-        put(key, value)
+        put(key, value, ttl)
         return value
     }
 
