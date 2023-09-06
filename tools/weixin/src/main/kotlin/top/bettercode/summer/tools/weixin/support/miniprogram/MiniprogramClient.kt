@@ -22,7 +22,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         WeixinClient<IMiniprogramProperties>(
                 properties,
                 "第三方平台",
-                "微信公众号",
+                "微信小程序",
                 LOG_MARKER
         ), IMiniprogramClient {
 
