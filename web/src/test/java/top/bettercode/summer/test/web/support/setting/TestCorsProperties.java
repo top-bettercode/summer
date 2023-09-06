@@ -9,7 +9,7 @@ import org.springframework.web.cors.CorsConfiguration;
  * @since 0.1.12
  */
 @SuppressWarnings("ConfigurationProperties")
-@ConfigurationProperties("summer.security.cors")
+@ConfigurationProperties("summer.security.test-cors")
 public class TestCorsProperties extends CorsConfiguration {
 
   private boolean enable = true;

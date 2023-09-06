@@ -10,7 +10,7 @@ import top.bettercode.summer.web.support.setting.Setting.Companion.of
  * @author Peter Wu
  */
 internal class SettingTest {
-    var key = "summer.security.cors.enable"
+    var key = "summer.security.test-cors.enable"
 
     @Test
     fun testandset() {
