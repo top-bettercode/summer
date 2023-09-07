@@ -4,7 +4,6 @@ import org.apache.poi.ss.usermodel.CreationHelper
 import org.apache.poi.ss.usermodel.Drawing
 import org.apache.poi.xssf.usermodel.XSSFShape
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -13,45 +12,41 @@ import java.io.OutputStream
  */
 object ExcelImageCellWriterUtil {
     fun setImage(sheetName: String?, imageCells: List<ExcelCell<*>>,
-                 inputStream: InputStream?, outputStream: OutputStream?) {
-        try {
-            val wb = XSSFWorkbook(inputStream)
-            val sheet = wb.getSheet(sheetName)
-            val helper: CreationHelper = wb.creationHelper
-            val drawing: Drawing<XSSFShape> = sheet.createDrawingPatriarch()
-            for (cell in imageCells) {
-                if (cell is ExcelRangeCell<*> && cell.excelField.isMerge) {
-                    var lastRangeTop = cell.lastRangeTop
-                    val rowHeight = cell.lastRangeBottom - lastRangeTop
-                    if (rowHeight > 1) {
-                        lastRangeTop += rowHeight / 2
-                    }
-                    if (cell.newRange) {
-                        drawImage(cell.preCellValue, wb, drawing, helper, cell.column,
-                                lastRangeTop,
-                                lastRangeTop + 1)
-                        if (cell.isLastRow) {
-                            drawImage(cell.cellValue, wb, drawing, helper, cell.column,
-                                    cell.row,
-                                    cell.row + 1)
-                        }
-                    } else if (cell.isLastRow) {
-                        drawImage(cell.cellValue, wb, drawing, helper, cell.column,
-                                lastRangeTop,
-                                lastRangeTop + 1)
-                    }
-                } else {
-                    drawImage(cell.cellValue, wb, drawing, helper, cell.column,
-                            cell.row,
-                            cell.row + 1)
+                 inputStream: InputStream, outputStream: OutputStream) {
+        val wb = XSSFWorkbook(inputStream)
+        val sheet = wb.getSheet(sheetName)
+        val helper: CreationHelper = wb.creationHelper
+        val drawing: Drawing<XSSFShape> = sheet.createDrawingPatriarch()
+        for (cell in imageCells) {
+            if (cell is ExcelRangeCell<*> && cell.excelField.isMerge) {
+                var lastRangeTop = cell.lastRangeTop
+                val rowHeight = cell.lastRangeBottom - lastRangeTop
+                if (rowHeight > 1) {
+                    lastRangeTop += rowHeight / 2
                 }
+                if (cell.newRange) {
+                    drawImage(cell.preCellValue, wb, drawing, helper, cell.column,
+                            lastRangeTop,
+                            lastRangeTop + 1)
+                    if (cell.isLastRow) {
+                        drawImage(cell.cellValue, wb, drawing, helper, cell.column,
+                                cell.row,
+                                cell.row + 1)
+                    }
+                } else if (cell.isLastRow) {
+                    drawImage(cell.cellValue, wb, drawing, helper, cell.column,
+                            lastRangeTop,
+                            lastRangeTop + 1)
+                }
+            } else {
+                drawImage(cell.cellValue, wb, drawing, helper, cell.column,
+                        cell.row,
+                        cell.row + 1)
             }
-            wb.write(outputStream)
-            wb.close()
-            outputStream!!.close()
-        } catch (e: IOException) {
-            throw RuntimeException(e)
         }
+        wb.write(outputStream)
+        wb.close()
+        outputStream.close()
     }
 
     private fun drawImage(cellValue: Any?, wb: XSSFWorkbook, drawing: Drawing<XSSFShape>,

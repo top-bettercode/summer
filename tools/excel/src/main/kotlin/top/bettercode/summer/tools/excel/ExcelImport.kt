@@ -227,7 +227,7 @@ class ExcelImport private constructor(`is`: InputStream) {
         excelFields.forEachIndexed { index, excelField ->
             val validator = excelField.validator
             try {
-                validator?.accept(o)
+                validator?.invoke(o)
             } catch (e: Exception) {
                 val column = this.column + index
                 val cellValue = getCellValue(excelField, row, column)

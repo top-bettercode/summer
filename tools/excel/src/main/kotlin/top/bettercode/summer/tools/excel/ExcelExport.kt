@@ -464,8 +464,9 @@ class ExcelExport {
      */
     fun setImage(sheetName: String?) {
         Assert.notNull(imageByteArrayOutputStream, "不是支持图片插入的导出")
+        Assert.notNull(outputStream, "输出流未设置")
         ExcelImageCellWriterUtil.setImage(sheetName, imageCells,
-                ByteArrayInputStream(imageByteArrayOutputStream!!.toByteArray()), outputStream)
+                ByteArrayInputStream(imageByteArrayOutputStream!!.toByteArray()), outputStream!!)
     }
 
     companion object {
