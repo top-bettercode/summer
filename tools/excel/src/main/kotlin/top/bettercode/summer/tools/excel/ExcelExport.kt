@@ -279,6 +279,8 @@ class ExcelExport {
                 sheet!!.value(row, column)
             } else if (excelField.isImageColumn) {
                 sheet!!.value(excelCell.row, column)
+            } else if (excelField.isFormula) {
+                sheet!!.formula(row, column, cellValue as String?)
             } else if (cellValue is String) {
                 sheet!!.value(row, column, cellValue)
             } else if (cellValue is Number) {
@@ -632,8 +634,10 @@ class ExcelExport {
                 fileName
             }
             response.setHeader("Content-Disposition",
-                    "attachment;filename=$newFileName.xlsx;filename*=UTF-8''${URLEncoder
-                            .encode(fileName, "UTF-8")}.xlsx")
+                    "attachment;filename=$newFileName.xlsx;filename*=UTF-8''${
+                        URLEncoder
+                                .encode(fileName, "UTF-8")
+                    }.xlsx")
             response.contentType = "application/vnd.ms-excel; charset=utf-8"
             response.setHeader("Pragma", "No-cache")
             response.setHeader("Cache-Control", "no-cache")

@@ -14,6 +14,8 @@ open class ExcelCell<T>(val row: Int, val column: Int, val isLastRow: Boolean, i
     init {
         cellValue = if (excelField.isIndexColumn) {
             index
+        } else if (excelField.isFormula) {
+            excelField.nullValue
         } else {
             excelField.toCellValue(entity)
         }

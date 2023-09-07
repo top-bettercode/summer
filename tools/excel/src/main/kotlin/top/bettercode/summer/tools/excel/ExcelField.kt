@@ -87,7 +87,7 @@ open class ExcelField<T, P : Any?> {
     /**
      * 默认空值
      */
-    private var nullValue = ""
+    var nullValue = ""
 
     /**
      * 是否需要合并
@@ -109,6 +109,11 @@ open class ExcelField<T, P : Any?> {
      * 图片字段
      */
     val isImageColumn: Boolean
+
+    /**
+     * 公式字段
+     */
+    val isFormula: Boolean
 
     /**
      * 获取实体属性
@@ -325,6 +330,7 @@ open class ExcelField<T, P : Any?> {
         }
         isIndexColumn = indexColumn
         isImageColumn = imageColumn
+        isFormula = false
         init()
     }
 
@@ -341,13 +347,15 @@ open class ExcelField<T, P : Any?> {
         this.propertyGetter = propertyGetter
         isIndexColumn = indexColumn
         isImageColumn = imageColumn
+        isFormula = false
         init()
     }
 
-    constructor(title: String, indexColumn: Boolean, imageColumn: Boolean) {
+    constructor(title: String, indexColumn: Boolean, imageColumn: Boolean, formula: Boolean) {
         this.title = title
         isIndexColumn = indexColumn
         isImageColumn = imageColumn
+        isFormula = formula
         format = ExcelCell.DEFAULT_FORMAT
     }
 
@@ -663,7 +671,14 @@ open class ExcelField<T, P : Any?> {
         //--------------------------------------------
         @JvmStatic
         fun <T, P> index(title: String): ExcelField<T, P> {
-            return ExcelField(title, indexColumn = true, imageColumn = false)
+            return ExcelField(title, indexColumn = true, imageColumn = false, formula = false)
+        }
+
+        @JvmStatic
+        fun <T, P> formula(title: String, expression: String): ExcelField<T, P> {
+            val excelField = ExcelField<T, P>(title, indexColumn = false, imageColumn = false, formula = true)
+            excelField.nullValue = expression
+            return excelField
         }
 
         /**
