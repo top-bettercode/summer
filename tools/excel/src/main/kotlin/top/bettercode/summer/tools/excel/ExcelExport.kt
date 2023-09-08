@@ -53,8 +53,9 @@ class ExcelExport {
     private var includeComment = false
     private var finish = false
     private var includeDataValidation = false
-    private var fillColor = "808080"
-    private var fontColor = "FFFFFF"
+    private var defaultFillColor = Color.GRAY1
+    private var fillColor = defaultFillColor
+    private var fontColor = Color.BLACK
     private var fontName: String = "Arial"
 
 
@@ -363,7 +364,7 @@ class ExcelExport {
                 .borderStyle(BorderStyle.THIN)
                 .borderColor(Color.BLACK)
         if (excelCell.isFillColor) {
-            style.fillColor("F8F8F7")
+            style.fillColor(defaultFillColor)
         }
         if (excelField.height != -1.0) {
             sheet!!.rowHeight(row, excelField.height)
