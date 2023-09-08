@@ -40,6 +40,7 @@ dependencies {
         api("org.dhatim:fastexcel:0.15.2")
         api("org.dhatim:fastexcel-reader:0.15.2")
         api("org.apache.poi:poi-ooxml:5.2.3")
+        api("org.apache.poi:poi-scratchpad:5.2.3")
 
         api("org.mybatis:mybatis:3.5.13")
         api("org.mybatis:mybatis-spring:2.1.0")
