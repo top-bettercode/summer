@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.weixin.support
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.weixin.support.aes.DecryptMsg
 import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.PhoneInfo
@@ -45,7 +46,7 @@ interface IWeixinService {
             openid: String,
             encryptType: String,
             msgSignature: String,
-            content: String
+            content: DecryptMsg
     ) {
         logger.warn("$timestamp $nonce $openid $encryptType $msgSignature receive message: $content")
     }

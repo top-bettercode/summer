@@ -2,15 +2,14 @@ package top.bettercode.summer.tools.weixin.controller
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.WeixinToken
+import top.bettercode.summer.tools.weixin.support.aes.DecryptMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient
+import top.bettercode.summer.tools.weixin.support.aes.EncryptMsg
 import top.bettercode.summer.web.BaseController
 import javax.validation.constraints.NotBlank
 
@@ -22,7 +21,6 @@ class OffiaccountCallbackController(
         private val wechatService: IWeixinService,
         private val offiaccountClient: IOffiaccountClient
 ) : BaseController() {
-
     /*
    * 公众号OAuth回调接口
    */
@@ -70,7 +68,7 @@ class OffiaccountCallbackController(
     @ResponseBody
     @GetMapping(name = "公众号验证回调")
     fun access(signature: String?, echostr: String?, timestamp: String?, nonce: String?): Any? {
-        if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || offiaccountClient
+        if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || IOffiaccountClient
                         .shaHex(offiaccountClient.properties.token, timestamp, nonce) != signature
         ) {
             log.warn("非法请求.")
@@ -79,30 +77,34 @@ class OffiaccountCallbackController(
         return echostr
     }
 
+    /**
+     *消息加解密说明:
+     * https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Before_Develop/Message_encryption_and_decryption.html
+     *接收事件推送:
+     * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_event_pushes.html
+     */
     @Suppress("LocalVariableName")
     @ResponseBody
     @PostMapping(name = "公众号事件推送")
     fun receive(
             signature: String?, timestamp: String?,
             nonce: String?, openid: String?, encrypt_type: String?, msg_signature: String?,
-            content: String?
+            @RequestBody content: EncryptMsg?
     ): String? {
-        if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || openid.isNullOrBlank() || encrypt_type.isNullOrBlank() || msg_signature.isNullOrBlank() || content.isNullOrBlank()
-                || offiaccountClient.shaHex(
-                        offiaccountClient.properties.token,
-                        timestamp,
-                        nonce
-                ) != signature
+        if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || openid.isNullOrBlank() || encrypt_type.isNullOrBlank() || msg_signature.isNullOrBlank() || content == null
+                || content.encrypt.isNullOrBlank()
+                || IOffiaccountClient.shaHex(offiaccountClient.properties.token, timestamp, nonce, content.encrypt) != signature
         ) {
             log.warn("非法请求.")
         } else {
+            val decryptMsg = offiaccountClient.objectMapper.readValue(offiaccountClient.wxBizMsgCrypt.decrypt(content.encrypt), DecryptMsg::class.java)
             wechatService.receive(
                     timestamp,
                     nonce,
                     openid,
                     encrypt_type,
                     msg_signature,
-                    content
+                    decryptMsg
             )
         }
         return null

@@ -1,6 +1,9 @@
 package top.bettercode.summer.tools.weixin.support.offiaccount
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
+import top.bettercode.summer.tools.weixin.support.aes.WXBizMsgCrypt
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 
 /**
@@ -11,6 +14,10 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 interface IOffiaccountClient {
 
     val properties: IOffiaccountProperties
+
+    val wxBizMsgCrypt: WXBizMsgCrypt
+
+    val objectMapper: ObjectMapper
 
     fun getJsapiTicket(): String
 
@@ -37,6 +44,12 @@ interface IOffiaccountClient {
 
     fun jsSignUrl(url: String): JsapiSignature
 
-    fun shaHex(vararg str: String): String
+    companion object {
+        @JvmStatic
+        fun shaHex(vararg str: String): String {
+            str.sort()
+            return Sha1DigestUtil.shaHex(str.joinToString(""))
+        }
 
+    }
 }

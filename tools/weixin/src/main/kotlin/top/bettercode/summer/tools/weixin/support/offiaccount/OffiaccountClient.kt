@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinException
+import top.bettercode.summer.tools.weixin.support.aes.WXBizMsgCrypt
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 import java.net.URLEncoder
@@ -27,6 +28,10 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
                 "微信公众号",
                 LOG_MARKER
         ), IOffiaccountClient {
+
+    override val wxBizMsgCrypt: WXBizMsgCrypt by lazy {
+        WXBizMsgCrypt(properties.token, properties.aesKey, properties.appId)
+    }
 
     companion object {
         const val JSAPI_TICKET_KEY: String = "jsapi_ticket:"
@@ -159,9 +164,5 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         return JsapiSignature(signature, properties.appId, nonceStr, timestamp)
     }
 
-    override fun shaHex(vararg str: String): String {
-        str.sort()
-        return Sha1DigestUtil.shaHex(str.joinToString(""))
-    }
 
 }

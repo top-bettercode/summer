@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.weixin.support
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.http.MediaType
@@ -25,16 +26,16 @@ open class WeixinClient<T : IWeixinProperties>(
         collectionName: String,
         name: String,
         logMarker: String
-) :
-        ApiTemplate(
-                collectionName,
-                name,
-                logMarker,
-                properties.connectTimeout,
-                properties.readTimeout
-        ) {
+) : ApiTemplate(
+        collectionName,
+        name,
+        logMarker,
+        properties.connectTimeout,
+        properties.readTimeout
+) {
 
     private var lastAppId = properties.appId
+    val objectMapper: ObjectMapper
 
     companion object {
         const val BASE_ACCESS_TOKEN_KEY: String = "access_token"
@@ -51,7 +52,7 @@ open class WeixinClient<T : IWeixinProperties>(
                         return true
                     }
                 }
-        val objectMapper = messageConverter.objectMapper
+        objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
