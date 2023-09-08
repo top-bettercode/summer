@@ -1,8 +1,6 @@
 package top.bettercode.summer.tools.excel
 
-import org.dhatim.fastexcel.AbsoluteListDataValidation
-import org.dhatim.fastexcel.Workbook
-import org.dhatim.fastexcel.Worksheet
+import org.dhatim.fastexcel.*
 import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
 import org.springframework.util.StringUtils
@@ -42,12 +40,12 @@ class ExcelExport {
     /**
      * 当前行号
      */
-    private var r = 0
+    private var row = 0
 
     /**
      * 当前单元格号
      */
-    private var c = 0
+    private var column = 0
 
     /**
      * 是否包含批注
@@ -115,7 +113,7 @@ class ExcelExport {
      * @return row 行号，从0开始
      */
     fun getRow(): Int {
-        return r
+        return row
     }
 
     /**
@@ -123,7 +121,7 @@ class ExcelExport {
      * @return this ExcelExport
      */
     fun setRow(row: Int): ExcelExport {
-        r = row
+        this.row = row
         return this
     }
 
@@ -131,7 +129,7 @@ class ExcelExport {
      * @return column 列号，从0开始
      */
     fun getColumn(): Int {
-        return c
+        return column
     }
 
     /**
@@ -139,7 +137,7 @@ class ExcelExport {
      * @return this ExcelExport
      */
     fun setColumn(column: Int): ExcelExport {
-        c = column
+        this.column = column
         return this
     }
 
@@ -149,8 +147,8 @@ class ExcelExport {
      * @return this ExcelExport
      */
     fun setRowAndColumn(row: Int, column: Int): ExcelExport {
-        r = row
-        c = column
+        this.row = row
+        this.column = column
         return this
     }
 
@@ -177,46 +175,34 @@ class ExcelExport {
                     continue
                 }
                 val t = excelField.title
-                sheet!!.value(r, c, t)
+                sheet!!.value(row, column, t)
                 val width = excelField.width
                 if (width == -1.0) {
-                    columnWidths.put(c, t)
-                    sheet!!.width(c, columnWidths.width(c))
+                    columnWidths.put(column, t)
+                    sheet!!.width(column, columnWidths.width(column))
                 } else {
-                    sheet!!.width(c, width)
+                    sheet!!.width(column, width)
                 }
                 setHeaderStyle()
-                sheet!!.range(r + 1, c, r + 1000, c).style().format(excelField.format)
+                sheet!!.range(row + 1, column, row + 1000, column).style().format(excelField.format)
                 if (includeComment) {
                     val commentStr = excelField.comment
                     if (StringUtils.hasText(commentStr)) {
-                        sheet!!.comment(r, c, commentStr)
+                        sheet!!.comment(row, column, commentStr)
                     }
                 }
                 if (includeDataValidation && excelField.dataValidation.isNotEmpty()) {
                     val listDataValidation = AbsoluteListDataValidation(
-                            sheet!!.range(r + 1, c, Worksheet.MAX_ROWS - 1, c), excelField.dataValidation.joinToString(","))
+                            sheet!!.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), excelField.dataValidation.joinToString(","))
                     listDataValidation.add(sheet!!)
                 }
-                c++
+                column++
             }
         }
-        c = 0
-        r++
+        column = 0
+        row++
     }
 
-
-    private fun setHeaderStyle() {
-        sheet!!.style(r, c)
-                .horizontalAlignment(Alignment.CENTER.value)
-                .verticalAlignment(Alignment.CENTER.value)
-                .bold()
-                .fontName(fontName)
-                .fillColor(fillColor)
-                .fontColor(fontColor)
-                .borderStyle("thin").borderColor("000000")
-                .set()
-    }
 
     fun dataValidation(column: Int, dataValidation: Collection<String?>?): ExcelExport {
         return dataValidation(column, StringUtils.collectionToCommaDelimitedString(dataValidation))
@@ -225,7 +211,7 @@ class ExcelExport {
     fun dataValidation(column: Int, dataValidation: String?): ExcelExport {
         Assert.notNull(sheet, "请先初始化sheet")
         val listDataValidation = AbsoluteListDataValidation(
-                sheet!!.range(r + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation)
+                sheet!!.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation)
         listDataValidation.add(sheet!!)
         return this
     }
@@ -252,8 +238,8 @@ class ExcelExport {
         Assert.notNull(sheet, "表格未初始化")
         createHeader(excelFields)
         val iterator = list.iterator()
-        val firstRow = r
-        val firstColumn = c
+        val firstRow = row
+        val firstColumn = column
         while (iterator.hasNext()) {
             val e = converter(iterator.next())
             val lastRow = !iterator.hasNext()
@@ -261,11 +247,104 @@ class ExcelExport {
                 if (imageByteArrayOutputStream == null && excelField.isImageColumn) {
                     continue
                 }
-                setCell(ExcelCell(r, c, firstRow, lastRow, excelField, e))
-                c++
+                setCell(ExcelCell(row, column, firstRow, lastRow, excelField, e))
+                column++
             }
-            c = firstColumn
-            r++
+            column = firstColumn
+            row++
+        }
+        return this
+    }
+
+    /**
+     * @param <T>         E
+     * @param list        list
+     * @param excelFields 表格字段
+     * @return list 数据列表
+    </T> */
+    fun <T> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>): ExcelExport {
+        return setMergeData(list, excelFields) { o: T -> o }
+    }
+
+    /**
+     * 用于导出有合并行的Execel，第一个ExcelField为mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
+     *
+     * @param <T>         E
+     * @param list        list
+     * @param excelFields 表格字段
+     * @param converter   转换器
+     * @return list 数据列表
+    </T> */
+    fun <T> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>,
+                         converter: (T) -> T): ExcelExport {
+        Assert.notNull(sheet, "表格未初始化")
+        createHeader(excelFields)
+        val iterator = list.iterator()
+        val firstRow = row
+        val firstColumn = column
+        var index = 0
+        val firstField: ExcelField<T, *> = if (imageByteArrayOutputStream == null) {
+            Arrays.stream(excelFields).filter { o: ExcelField<T, *> -> !o.isImageColumn }.findFirst()
+                    .orElseThrow { ExcelException("无可导出项目") }
+        } else {
+            excelFields[0]
+        }
+        val mergeFirstColumn = firstField.isMerge
+        val lastMergeIds: MutableMap<Int, Any?> = HashMap()
+        val lastRangeTops: MutableMap<Int, Int> = HashMap()
+        var preEntity: T? = null
+        while (iterator.hasNext()) {
+            val e = converter(iterator.next())
+            val lastRow = !iterator.hasNext()
+            var mergeIndex = 0
+            val indexCells: MutableList<ExcelRangeCell<T>>? = if (mergeFirstColumn) null else ArrayList()
+            var merge: Boolean
+            for (excelField in excelFields) {
+                if (imageByteArrayOutputStream == null && excelField.isImageColumn) {
+                    continue
+                }
+                merge = excelField.isMerge
+                if (merge) {
+                    val mergeIdValue = excelField.mergeId(e)
+                    val lastMergeId = lastMergeIds[mergeIndex]
+                    var newRange = lastMergeId == null || lastMergeId != mergeIdValue
+                    if (newRange) {
+                        lastMergeIds[mergeIndex] = mergeIdValue
+                    }
+                    if (mergeIndex == 0 && newRange) {
+                        index++
+                    }
+                    if (lastRangeTops.getOrDefault(0, firstRow) == row) { //以第一个合并列为大分隔
+                        newRange = true
+                    }
+                    val lastRangeTop = lastRangeTops.getOrDefault(mergeIndex, firstRow)
+                    if (newRange) {
+                        lastRangeTops[mergeIndex] = row
+                    }
+                    val rangeCell = ExcelRangeCell(row, column, index, firstRow, lastRow,
+                            newRange, lastRangeTop, excelField, preEntity, e)
+                    setRangeCell(rangeCell)
+                    mergeIndex++
+                } else {
+                    val rangeCell = ExcelRangeCell(row, column, index, firstRow, lastRow,
+                            false, row, excelField, preEntity, e)
+                    if (!mergeFirstColumn && excelField.isIndexColumn) {
+                        indexCells!!.add(rangeCell)
+                    } else {
+                        setRangeCell(rangeCell)
+                    }
+                }
+                column++
+            }
+            if (!mergeFirstColumn) {
+                for (indexCell in indexCells!!) {
+                    indexCell.setFillColor(index)
+                    setRangeCell(indexCell)
+                }
+            }
+            column = firstColumn
+            preEntity = e
+            row++
         }
         return this
     }
@@ -281,8 +360,8 @@ class ExcelExport {
                 .wrapText(excelField.wrapText)
                 .format(format)
                 .fontName(fontName)
-                .borderStyle("thin")
-                .borderColor("000000")
+                .borderStyle(BorderStyle.THIN)
+                .borderColor(Color.BLACK)
         if (excelCell.isFillColor) {
             style.fillColor("F8F8F7")
         }
@@ -333,99 +412,6 @@ class ExcelExport {
         }
     }
 
-    /**
-     * @param <T>         E
-     * @param list        list
-     * @param excelFields 表格字段
-     * @return list 数据列表
-    </T> */
-    fun <T> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>): ExcelExport {
-        return setMergeData(list, excelFields) { o: T -> o }
-    }
-
-    /**
-     * 用于导出有合并行的Execel，第一个ExcelField为mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
-     *
-     * @param <T>         E
-     * @param list        list
-     * @param excelFields 表格字段
-     * @param converter   转换器
-     * @return list 数据列表
-    </T> */
-    fun <T> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>,
-                         converter: (T) -> T): ExcelExport {
-        Assert.notNull(sheet, "表格未初始化")
-        createHeader(excelFields)
-        val iterator = list.iterator()
-        val firstRow = r
-        val firstColumn = c
-        var index = 0
-        val firstField: ExcelField<T, *> = if (imageByteArrayOutputStream == null) {
-            Arrays.stream(excelFields).filter { o: ExcelField<T, *> -> !o.isImageColumn }.findFirst()
-                    .orElseThrow { ExcelException("无可导出项目") }
-        } else {
-            excelFields[0]
-        }
-        val mergeFirstColumn = firstField.isMerge
-        val lastMergeIds: MutableMap<Int, Any?> = HashMap()
-        val lastRangeTops: MutableMap<Int, Int> = HashMap()
-        var preEntity: T? = null
-        while (iterator.hasNext()) {
-            val e = converter(iterator.next())
-            val lastRow = !iterator.hasNext()
-            var mergeIndex = 0
-            val indexCells: MutableList<ExcelRangeCell<T>>? = if (mergeFirstColumn) null else ArrayList()
-            var merge: Boolean
-            for (excelField in excelFields) {
-                if (imageByteArrayOutputStream == null && excelField.isImageColumn) {
-                    continue
-                }
-                merge = excelField.isMerge
-                if (merge) {
-                    val mergeIdValue = excelField.mergeId(e)
-                    val lastMergeId = lastMergeIds[mergeIndex]
-                    var newRange = lastMergeId == null || lastMergeId != mergeIdValue
-                    if (newRange) {
-                        lastMergeIds[mergeIndex] = mergeIdValue
-                    }
-                    if (mergeIndex == 0 && newRange) {
-                        index++
-                    }
-                    if (lastRangeTops.getOrDefault(0, firstRow) == r) { //以第一个合并列为大分隔
-                        newRange = true
-                    }
-                    val lastRangeTop = lastRangeTops.getOrDefault(mergeIndex, firstRow)
-                    if (newRange) {
-                        lastRangeTops[mergeIndex] = r
-                    }
-                    val rangeCell = ExcelRangeCell(r, c, index, firstRow, lastRow,
-                            newRange, lastRangeTop, excelField, preEntity, e)
-                    setRangeCell(rangeCell)
-                    mergeIndex++
-                } else {
-                    val rangeCell = ExcelRangeCell(r, c, index, firstRow, lastRow,
-                            false, r, excelField, preEntity, e)
-                    if (!mergeFirstColumn && excelField.isIndexColumn) {
-                        indexCells!!.add(rangeCell)
-                    } else {
-                        setRangeCell(rangeCell)
-                    }
-                }
-                c++
-            }
-            if (!mergeFirstColumn) {
-                for (indexCell in indexCells!!) {
-                    indexCell.setFillColor(index)
-                    setRangeCell(indexCell)
-                }
-            }
-            c = firstColumn
-            preEntity = e
-            r++
-        }
-        return this
-    }
-
     private fun <T> setRangeCell(excelCell: ExcelRangeCell<T>) {
         val column = excelCell.column
         setCell(excelCell)
@@ -448,10 +434,31 @@ class ExcelExport {
                     .wrapText(excelField.wrapText)
                     .fontName(fontName)
                     .format(format)
-                    .borderStyle("thin")
-                    .borderColor("000000")
+                    .borderStyle(BorderStyle.THIN)
+                    .borderColor(Color.BLACK)
             style.set()
         }
+    }
+
+    private fun setHeaderStyle() {
+        style(row, column)
+                .fillColor(fillColor)
+                .fontColor(fontColor)
+                .bold()
+                .set()
+    }
+
+    fun style(row: Int, column: Int): StyleSetter {
+        return style(sheet!!.range(row, column, row, column))
+    }
+
+    fun style(range: Range): StyleSetter {
+        return range.style()
+                .horizontalAlignment(Alignment.CENTER.value)
+                .verticalAlignment(Alignment.CENTER.value)
+                .fontName(fontName)
+                .borderStyle(BorderStyle.THIN)
+                .borderColor(Color.BLACK)
     }
 
     fun <T> template(excelFields: Array<ExcelField<T, *>>): ExcelExport {

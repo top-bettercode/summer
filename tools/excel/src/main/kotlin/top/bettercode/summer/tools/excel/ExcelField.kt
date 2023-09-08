@@ -20,6 +20,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import java.util.function.Consumer
 import javax.validation.ConstraintViolationException
 import javax.validation.Validator
 import kotlin.collections.set
@@ -132,7 +133,7 @@ open class ExcelField<T, P : Any?> {
     /**
      * 属性字段值验证
      */
-    var validator: ((T) -> Unit)? = null
+    var validator: Consumer<T>? = null
 
     /**
      * 属性字段值转单元格值
@@ -248,7 +249,7 @@ open class ExcelField<T, P : Any?> {
         return this
     }
 
-    fun validator(validator: ((T) -> Unit)?): ExcelField<T, P> {
+    fun validator(validator: Consumer<T>?): ExcelField<T, P> {
         this.validator = validator
         return this
     }
