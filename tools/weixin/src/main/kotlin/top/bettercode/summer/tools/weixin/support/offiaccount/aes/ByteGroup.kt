@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.weixin.support.aes
+package top.bettercode.summer.tools.weixin.support.offiaccount.aes
 
 internal class ByteGroup {
     var byteContainer = ArrayList<Byte>()

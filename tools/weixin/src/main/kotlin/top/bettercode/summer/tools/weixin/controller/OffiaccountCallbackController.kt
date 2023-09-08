@@ -5,11 +5,12 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
+import top.bettercode.summer.tools.lang.util.XmlMapperUtil
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.WeixinToken
-import top.bettercode.summer.tools.weixin.support.aes.DecryptMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient
-import top.bettercode.summer.tools.weixin.support.aes.EncryptMsg
+import top.bettercode.summer.tools.weixin.support.offiaccount.aes.DecryptMsg
+import top.bettercode.summer.tools.weixin.support.offiaccount.aes.EncryptMsg
 import top.bettercode.summer.web.BaseController
 import javax.validation.constraints.NotBlank
 
@@ -99,7 +100,7 @@ class OffiaccountCallbackController(
         ) {
             log.warn("非法请求.")
         } else {
-            val decryptMsg = offiaccountClient.objectMapper.readValue(offiaccountClient.wxBizMsgCrypt.decrypt(content.encrypt), DecryptMsg::class.java)
+            val decryptMsg = XmlMapperUtil.fromXml(offiaccountClient.wxBizMsgCrypt.decrypt(content.encrypt), DecryptMsg::class.java)
             wechatService.receive(
                     timestamp,
                     nonce,

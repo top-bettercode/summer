@@ -1,9 +1,9 @@
-package top.bettercode.summer.tools.weixin.support.aes
+package top.bettercode.summer.tools.weixin.support.offiaccount.aes
 
 import org.springframework.util.Base64Utils
-import top.bettercode.summer.tools.weixin.support.aes.AesException
-import top.bettercode.summer.tools.weixin.support.aes.PKCS7Encoder.decode
-import top.bettercode.summer.tools.weixin.support.aes.PKCS7Encoder.encode
+import top.bettercode.summer.tools.weixin.support.offiaccount.aes.AesException
+import top.bettercode.summer.tools.weixin.support.offiaccount.aes.PKCS7Encoder.decode
+import top.bettercode.summer.tools.weixin.support.offiaccount.aes.PKCS7Encoder.encode
 import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient.Companion.shaHex
 import java.util.*
 import javax.crypto.Cipher

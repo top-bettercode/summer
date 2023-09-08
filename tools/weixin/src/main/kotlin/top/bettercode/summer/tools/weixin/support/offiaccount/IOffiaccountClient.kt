@@ -1,9 +1,8 @@
 package top.bettercode.summer.tools.weixin.support.offiaccount
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
-import top.bettercode.summer.tools.weixin.support.aes.WXBizMsgCrypt
+import top.bettercode.summer.tools.weixin.support.offiaccount.aes.WXBizMsgCrypt
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 
 /**
@@ -16,8 +15,6 @@ interface IOffiaccountClient {
     val properties: IOffiaccountProperties
 
     val wxBizMsgCrypt: WXBizMsgCrypt
-
-    val objectMapper: ObjectMapper
 
     fun getJsapiTicket(): String
 

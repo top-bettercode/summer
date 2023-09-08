@@ -1,13 +1,13 @@
 package top.bettercode.summer.tools.weixin.support
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.getForObject
+import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
 import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
@@ -35,7 +35,6 @@ open class WeixinClient<T : IWeixinProperties>(
 ) {
 
     private var lastAppId = properties.appId
-    val objectMapper: ObjectMapper
 
     companion object {
         const val BASE_ACCESS_TOKEN_KEY: String = "access_token"
@@ -52,11 +51,15 @@ open class WeixinClient<T : IWeixinProperties>(
                         return true
                     }
                 }
-        objectMapper = messageConverter.objectMapper
+        val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
         super.setMessageConverters(messageConverters)
+    }
+
+    fun writeToXml(obj: Any): String {
+        return objectMapper.writeValueAsString(obj)
     }
 
     private val cache: Cache<String, CachedValue> by lazy {

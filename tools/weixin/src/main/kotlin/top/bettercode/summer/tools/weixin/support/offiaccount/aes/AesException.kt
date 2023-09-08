@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.weixin.support.aes
+package top.bettercode.summer.tools.weixin.support.offiaccount.aes
 
 class AesException internal constructor(
         @JvmField val code: Int, exception: Exception? = null) : Exception(getMessage(code), exception) {

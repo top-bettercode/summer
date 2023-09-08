@@ -6,6 +6,7 @@ dependencies {
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
     api("org.springframework.boot:spring-boot-starter-web")
 
+    compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     compileOnly("com.squareup.okhttp3:okhttp")
     testImplementation("com.squareup.okhttp3:okhttp")
     compileOnly("org.jsoup:jsoup")
