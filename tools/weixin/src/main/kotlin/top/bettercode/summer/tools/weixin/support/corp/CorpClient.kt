@@ -40,12 +40,8 @@ open class CorpClient(properties: ICorpProperties) :
         log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
     }
 
-
-    fun getWebPageAccessToken(code: String): CorpWebPageAccessToken {
-        return getWebPageAccessToken(code, 1)
-    }
-
-    fun getWebPageAccessToken(code: String, retries: Int): CorpWebPageAccessToken {
+    @JvmOverloads
+    fun getWebPageAccessToken(code: String, retries: Int = 1): CorpWebPageAccessToken {
         val result = getForObject<CorpWebPageAccessToken>(
                 "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=CODE",
                 getBaseAccessToken()

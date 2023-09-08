@@ -44,11 +44,8 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         }
     }
 
-    fun getuserphonenumber(code: String): PhoneInfoResp {
-        return getuserphonenumber(code, 1)
-    }
-
-    fun getuserphonenumber(code: String, retries: Int): PhoneInfoResp {
+    @JvmOverloads
+    fun getuserphonenumber(code: String, retries: Int = 1): PhoneInfoResp {
         val result = postForObject<PhoneInfoResp>(
                 "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
                 mapOf("code" to code),
@@ -69,14 +66,8 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
     /**
      * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
      */
-    fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
-        return sendSubscribeMsg(request, 1)
-    }
-
-    /**
-     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
-     */
-    fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int): WeixinResponse {
+    @JvmOverloads
+    fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int = 1): WeixinResponse {
         if (request.miniprogramState == null) {
             request.miniprogramState = properties.miniprogramState
         }
@@ -105,15 +96,8 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
      * 发送统一服务消息
      * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/uniform-message/sendUniformMessage.html
      */
-    fun sendUniformMsg(request: UniformMsgRequest): WeixinResponse {
-        return sendUniformMsg(request, 1)
-    }
-
-    /**
-     * 发送统一服务消息
-     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/uniform-message/sendUniformMessage.html
-     */
-    fun sendUniformMsg(request: UniformMsgRequest, retries: Int): WeixinResponse {
+    @JvmOverloads
+    fun sendUniformMsg(request: UniformMsgRequest, retries: Int = 1): WeixinResponse {
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={0}",
                 request,
@@ -134,4 +118,5 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
             throw WeixinException("发送统一服务消息失败：${result.errmsg}", result)
         }
     }
+
 }

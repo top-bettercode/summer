@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
 @JacksonXmlRootElement(localName = "xml")
-data class VoiceMsg @JvmOverloads constructor(
-        @field:JsonProperty("Voice")
-        val voice: Media,
+class VoiceMsg @JvmOverloads constructor(
+
+        mediaId: String,
 
         @field:JsonProperty("ToUserName")
         val toUserName: String,
@@ -20,4 +20,9 @@ data class VoiceMsg @JvmOverloads constructor(
         @field:JsonProperty("CreateTime")
         val createTime: String = System.currentTimeMillis().toString(),
 
-        )
+        ) {
+
+    @field:JsonProperty("Voice")
+    val voice: Media = Media(mediaId)
+
+}

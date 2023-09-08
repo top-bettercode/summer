@@ -8,8 +8,10 @@ import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinException
+import top.bettercode.summer.tools.weixin.support.WeixinResponse
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.WXBizMsgCrypt
+import top.bettercode.summer.tools.weixin.support.offiaccount.custmsg.CustMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 import java.net.URLEncoder
 import java.time.Duration
@@ -52,11 +54,8 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
     }
 
-    fun getJsapiTicket(): String {
-        return getJsapiTicket(1)
-    }
-
-    fun getJsapiTicket(retries: Int): String {
+    @JvmOverloads
+    fun getJsapiTicket(retries: Int = 1): String {
         return putIfAbsent(JSAPI_TICKET_KEY + ":" + properties.appId) {
             getTicket(retries)
         }
@@ -122,14 +121,11 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         return getForObject("https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}", getBaseAccessToken(), openid, lang)
     }
 
-    fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
-        return sendTemplateMsg(request, 1)
-    }
-
     /**
      * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html
      */
-    fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult {
+    @JvmOverloads
+    fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int = 1): MsgResult {
         val result = postForObject<MsgResult>(
                 "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
                 request,
@@ -169,5 +165,26 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         return JsapiSignature(signature, properties.appId, nonceStr, timestamp)
     }
 
-
+    /**
+     * 客服接口-发消息
+     * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#%E5%AE%A2%E6%9C%8D%E6%8E%A5%E5%8F%A3-%E5%8F%91%E6%B6%88%E6%81%AF
+     */
+    @JvmOverloads
+    fun sendCustomMessage(request: CustMsg, retries: Int = 1): WeixinResponse {
+        val result = postForObject<WeixinResponse>(
+                "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}",
+                request,
+                getBaseAccessToken()
+        )
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            clearCache()
+            sendCustomMessage(request, retries)
+        } else if (retries < properties.maxRetries) {
+            sendCustomMessage(request, retries + 1)
+        } else {
+            throw WeixinException("发送客服消息失败：${result.errmsg}", result)
+        }
+    }
 }
