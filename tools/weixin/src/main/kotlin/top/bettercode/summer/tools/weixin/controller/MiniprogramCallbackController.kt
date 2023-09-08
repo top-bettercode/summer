@@ -11,7 +11,7 @@ import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.WeixinToken
-import top.bettercode.summer.tools.weixin.support.miniprogram.IMiniprogramClient
+import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient
 import top.bettercode.summer.web.BaseController
 import javax.validation.constraints.NotBlank
 
@@ -22,7 +22,7 @@ import javax.validation.constraints.NotBlank
 @RequestMapping(value = ["/wechat"], name = "微信")
 class MiniprogramCallbackController(
         private val wechatService: IWeixinService,
-        private val miniprogramClient: IMiniprogramClient
+        private val miniprogramClient: MiniprogramClient
 ) : BaseController() {
 
     //    @ClientAuthorize

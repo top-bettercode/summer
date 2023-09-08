@@ -24,13 +24,13 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
                 "第三方平台",
                 "微信小程序",
                 LOG_MARKER
-        ), IMiniprogramClient {
+        ) {
 
     companion object {
         const val LOG_MARKER = "wxmini"
     }
 
-    override fun jscode2session(code: String): JsSession {
+    fun jscode2session(code: String): JsSession {
         val session = getForObject<JsSession>(
                 "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
                 properties.appId,
@@ -44,11 +44,11 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         }
     }
 
-    override fun getuserphonenumber(code: String): PhoneInfoResp {
+    fun getuserphonenumber(code: String): PhoneInfoResp {
         return getuserphonenumber(code, 1)
     }
 
-    override fun getuserphonenumber(code: String, retries: Int): PhoneInfoResp {
+    fun getuserphonenumber(code: String, retries: Int): PhoneInfoResp {
         val result = postForObject<PhoneInfoResp>(
                 "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
                 mapOf("code" to code),
@@ -66,11 +66,17 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         }
     }
 
-    override fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
+    /**
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
+     */
+    fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
         return sendSubscribeMsg(request, 1)
     }
 
-    override fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int): WeixinResponse {
+    /**
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
+     */
+    fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int): WeixinResponse {
         if (request.miniprogramState == null) {
             request.miniprogramState = properties.miniprogramState
         }
@@ -95,11 +101,19 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         }
     }
 
-    override fun sendUniformMsg(request: UniformMsgRequest): WeixinResponse {
+    /**
+     * 发送统一服务消息
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/uniform-message/sendUniformMessage.html
+     */
+    fun sendUniformMsg(request: UniformMsgRequest): WeixinResponse {
         return sendUniformMsg(request, 1)
     }
 
-    override fun sendUniformMsg(request: UniformMsgRequest, retries: Int): WeixinResponse {
+    /**
+     * 发送统一服务消息
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/uniform-message/sendUniformMessage.html
+     */
+    fun sendUniformMsg(request: UniformMsgRequest, retries: Int): WeixinResponse {
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={0}",
                 request,

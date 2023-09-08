@@ -1,5 +1,5 @@
 package top.bettercode.summer.tools.weixin.support
 
-interface DuplicatedMessageChecker {
+interface IDuplicatedMessageChecker {
     fun isDuplicated(msgKey: String): Boolean
 }

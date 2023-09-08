@@ -27,15 +27,17 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
                 "第三方平台",
                 "微信公众号",
                 LOG_MARKER
-        ), IOffiaccountClient {
+        ) {
 
-    override val wxBizMsgCrypt: WXBizMsgCrypt by lazy {
+    val wxBizMsgCrypt: WXBizMsgCrypt by lazy {
         WXBizMsgCrypt(properties.token, properties.aesKey, properties.appId)
     }
 
     companion object {
         const val JSAPI_TICKET_KEY: String = "jsapi_ticket:"
         const val LOG_MARKER = "weixin"
+
+
     }
 
     init {
@@ -50,11 +52,11 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
     }
 
-    override fun getJsapiTicket(): String {
+    fun getJsapiTicket(): String {
         return getJsapiTicket(1)
     }
 
-    override fun getJsapiTicket(retries: Int): String {
+    fun getJsapiTicket(retries: Int): String {
         return putIfAbsent(JSAPI_TICKET_KEY + ":" + properties.appId) {
             getTicket(retries)
         }
@@ -80,7 +82,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         }
     }
 
-    override fun getWebPageAccessToken(code: String): WebPageAccessToken {
+    fun getWebPageAccessToken(code: String): WebPageAccessToken {
         return getForObject(
                 "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
                 properties.appId,
@@ -89,14 +91,14 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         )
     }
 
-    override fun getSnsapiUserinfo(accessToken: String, openid: String): SnsapiUserinfo {
+    fun getSnsapiUserinfo(accessToken: String, openid: String): SnsapiUserinfo {
         return getSnsapiUserinfo(accessToken, openid, "zh_CN")
     }
 
     /**
      * https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
      */
-    override fun getSnsapiUserinfo(
+    fun getSnsapiUserinfo(
             accessToken: String,
             openid: String,
             lang: String
@@ -109,22 +111,25 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         )
     }
 
-    override fun getUserInfo(openid: String): UserInfo {
+    /**
+     * https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html#UinonId
+     */
+    fun getUserInfo(openid: String): UserInfo {
         return getUserInfo(openid, "zh_CN")
     }
 
-    override fun getUserInfo(openid: String, lang: String): UserInfo {
+    fun getUserInfo(openid: String, lang: String): UserInfo {
         return getForObject("https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}", getBaseAccessToken(), openid, lang)
     }
 
-    override fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
+    fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
         return sendTemplateMsg(request, 1)
     }
 
     /**
      * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html
      */
-    override fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult {
+    fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult {
         val result = postForObject<MsgResult>(
                 "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
                 request,
@@ -149,7 +154,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
 
     //--------------------------------------------
 
-    override fun jsSignUrl(url: String): JsapiSignature {
+    fun jsSignUrl(url: String): JsapiSignature {
         val nonceStr = UUID.randomUUID().toString()
         val timestamp = (System.currentTimeMillis() / 1000).toString()
         val jsapiTicket = getJsapiTicket()

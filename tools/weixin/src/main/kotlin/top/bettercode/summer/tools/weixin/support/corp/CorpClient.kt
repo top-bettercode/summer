@@ -22,7 +22,7 @@ open class CorpClient(properties: ICorpProperties) :
                 "第三方平台",
                 "微信企业号",
                 LOG_MARKER
-        ), ICorpClient {
+        ) {
 
     companion object {
         const val LOG_MARKER = "wxcorp"
@@ -41,11 +41,11 @@ open class CorpClient(properties: ICorpProperties) :
     }
 
 
-    override fun getWebPageAccessToken(code: String): CorpWebPageAccessToken {
+    fun getWebPageAccessToken(code: String): CorpWebPageAccessToken {
         return getWebPageAccessToken(code, 1)
     }
 
-    override fun getWebPageAccessToken(code: String, retries: Int): CorpWebPageAccessToken {
+    fun getWebPageAccessToken(code: String, retries: Int): CorpWebPageAccessToken {
         val result = getForObject<CorpWebPageAccessToken>(
                 "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=CODE",
                 getBaseAccessToken()

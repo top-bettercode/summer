@@ -40,15 +40,8 @@ interface IWeixinService {
         throw UnsupportedOperationException()
     }
 
-    fun receive(
-            timestamp: String,
-            nonce: String,
-            openid: String,
-            encryptType: String,
-            msgSignature: String,
-            content: DecryptMsg
-    ) {
-        logger.warn("$timestamp $nonce $openid $encryptType $msgSignature receive message: $content")
+    fun receive(content: DecryptMsg): Any? {
+        return "success"
     }
 
 }

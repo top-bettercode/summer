@@ -8,7 +8,7 @@ import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.WeixinToken
-import top.bettercode.summer.tools.weixin.support.corp.ICorpClient
+import top.bettercode.summer.tools.weixin.support.corp.CorpClient
 import top.bettercode.summer.web.BaseController
 
 @ConditionalOnWebApplication
@@ -17,7 +17,7 @@ import top.bettercode.summer.web.BaseController
 @RequestMapping(value = ["/wechat"], name = "微信")
 class CorpCallbackController(
         private val wechatService: IWeixinService,
-        private val corpClient: ICorpClient
+        private val corpClient: CorpClient
 ) : BaseController() {
 
     /*

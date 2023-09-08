@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
-import top.bettercode.summer.tools.weixin.support.miniprogram.IMiniprogramClient
+import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.MiniData
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMsgRequest
 import java.time.format.DateTimeFormatter
@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter
 internal class MiniprogramClientTest : BaseTest() {
 
     @Autowired
-    lateinit var miniprogramClient: IMiniprogramClient
+    lateinit var miniprogramClient: MiniprogramClient
 
     @Test
     fun jscode2session() {

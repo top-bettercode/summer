@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.tools.weixin.controller.MiniprogramCallbackController
 import top.bettercode.summer.tools.weixin.properties.IMiniprogramProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinService
-import top.bettercode.summer.tools.weixin.support.miniprogram.IMiniprogramClient
 import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient
 
 @Configuration(proxyBeanMethods = false)
@@ -15,7 +14,7 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient
 class WeixinAppConfiguration(private val miniprogramProperties: IMiniprogramProperties) {
 
     @Bean
-    fun miniprogramClient(): IMiniprogramClient {
+    fun miniprogramClient(): MiniprogramClient {
         return MiniprogramClient(miniprogramProperties)
     }
 
@@ -24,7 +23,7 @@ class WeixinAppConfiguration(private val miniprogramProperties: IMiniprogramProp
     @Bean
     fun miniprogramCallbackController(
             wechatService: IWeixinService,
-            miniprogramClient: IMiniprogramClient
+            miniprogramClient: MiniprogramClient
     ): MiniprogramCallbackController {
         return MiniprogramCallbackController(wechatService, miniprogramClient)
     }

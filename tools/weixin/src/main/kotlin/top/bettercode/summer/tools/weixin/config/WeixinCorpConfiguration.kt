@@ -7,14 +7,13 @@ import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.tools.weixin.properties.ICorpProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.corp.CorpClient
-import top.bettercode.summer.tools.weixin.support.corp.ICorpClient
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnBean(ICorpProperties::class)
 class WeixinCorpConfiguration(private val corpProperties: ICorpProperties) {
 
     @Bean
-    fun corpClient(): ICorpClient {
+    fun corpClient(): CorpClient {
         return CorpClient(corpProperties)
     }
 
@@ -23,7 +22,7 @@ class WeixinCorpConfiguration(private val corpProperties: ICorpProperties) {
     @Bean
     fun corpCallbackController(
             wechatService: IWeixinService,
-            corpClient: ICorpClient
+            corpClient: CorpClient
     ): top.bettercode.summer.tools.weixin.controller.CorpCallbackController {
         return top.bettercode.summer.tools.weixin.controller.CorpCallbackController(
                 wechatService,

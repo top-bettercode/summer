@@ -1,10 +1,10 @@
 package top.bettercode.summer.tools.weixin.support.offiaccount.aes
 
 import org.springframework.util.Base64Utils
+import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.AesException
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.PKCS7Encoder.decode
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.PKCS7Encoder.encode
-import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient.Companion.shaHex
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -200,5 +200,11 @@ class WXBizMsgCrypt(token: String, encodingAesKey: String, appId: String) {
 
     companion object {
         var CHARSET = Charsets.UTF_8
+
+        @JvmStatic
+        fun shaHex(vararg str: String): String {
+            str.sort()
+            return Sha1DigestUtil.shaHex(str.joinToString(""))
+        }
     }
 }

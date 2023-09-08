@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.*
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.tools.lang.util.XmlMapperUtil
+import top.bettercode.summer.tools.weixin.support.IDuplicatedMessageChecker
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.WeixinToken
-import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient
+import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.DecryptMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.EncryptMsg
+import top.bettercode.summer.tools.weixin.support.offiaccount.aes.WXBizMsgCrypt
 import top.bettercode.summer.web.BaseController
 import javax.validation.constraints.NotBlank
 
@@ -20,8 +22,11 @@ import javax.validation.constraints.NotBlank
 @RequestMapping(value = ["/wechat"], name = "微信")
 class OffiaccountCallbackController(
         private val wechatService: IWeixinService,
-        private val offiaccountClient: IOffiaccountClient
+        private val offiaccountClient: OffiaccountClient,
+        private val duplicatedMessageChecker: IDuplicatedMessageChecker
 ) : BaseController() {
+
+
     /*
    * 公众号OAuth回调接口
    */
@@ -68,9 +73,8 @@ class OffiaccountCallbackController(
 
     @ResponseBody
     @GetMapping(name = "公众号验证回调")
-    fun access(signature: String?, echostr: String?, timestamp: String?, nonce: String?): Any? {
-        if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || IOffiaccountClient
-                        .shaHex(offiaccountClient.properties.token, timestamp, nonce) != signature
+    fun access(signature: String, echostr: String?, timestamp: String?, nonce: String?): Any? {
+        if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || WXBizMsgCrypt.shaHex(offiaccountClient.properties.token, timestamp, nonce) != signature
         ) {
             log.warn("非法请求.")
             return false
@@ -93,23 +97,22 @@ class OffiaccountCallbackController(
             signature: String?, timestamp: String?,
             nonce: String?, openid: String?, encrypt_type: String?, msg_signature: String?,
             @RequestBody content: EncryptMsg?
-    ): String? {
+    ): Any? {
         if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || openid.isNullOrBlank() || encrypt_type.isNullOrBlank() || msg_signature.isNullOrBlank() || content == null
                 || content.encrypt.isNullOrBlank()
-                || IOffiaccountClient.shaHex(offiaccountClient.properties.token, timestamp, nonce, content.encrypt) != signature
+                || WXBizMsgCrypt.shaHex(offiaccountClient.properties.token, timestamp, nonce, content.encrypt) != signature
         ) {
             log.warn("非法请求.")
         } else {
             val decryptMsg = XmlMapperUtil.fromXml(offiaccountClient.wxBizMsgCrypt.decrypt(content.encrypt), DecryptMsg::class.java)
-            wechatService.receive(
-                    timestamp,
-                    nonce,
-                    openid,
-                    encrypt_type,
-                    msg_signature,
-                    decryptMsg
-            )
+            if (!duplicatedMessageChecker.isDuplicated(decryptMsg.fromUserName + decryptMsg.createTime)) {
+                try {
+                    return wechatService.receive(decryptMsg)
+                } catch (e: Exception) {
+                    log.error(e.message, e)
+                }
+            }
         }
-        return null
+        return "success"
     }
 }
