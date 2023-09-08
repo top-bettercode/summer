@@ -56,6 +56,7 @@ class ExcelExport {
     private var finish = false
     private var includeDataValidation = false
     private var fillColor = "808080"
+    private var fontColor = "FFFFFF"
     private var fontName: String = "Arial"
 
 
@@ -90,6 +91,11 @@ class ExcelExport {
         return this
     }
 
+    fun fontColor(fontColor: String): ExcelExport {
+        this.fontColor = fontColor
+        return this
+    }
+
     fun fontName(fontName: String): ExcelExport {
         this.fontName = fontName
         return this
@@ -106,12 +112,26 @@ class ExcelExport {
     }
 
     /**
+     * @return row 行号，从0开始
+     */
+    fun getRow(): Int {
+        return r
+    }
+
+    /**
      * @param row 行号，从0开始
      * @return this ExcelExport
      */
     fun setRow(row: Int): ExcelExport {
         r = row
         return this
+    }
+
+    /**
+     * @return column 列号，从0开始
+     */
+    fun getColumn(): Int {
+        return c
     }
 
     /**
@@ -193,7 +213,7 @@ class ExcelExport {
                 .bold()
                 .fontName(fontName)
                 .fillColor(fillColor)
-                .fontColor("FFFFFF")
+                .fontColor(fontColor)
                 .borderStyle("thin").borderColor("000000")
                 .set()
     }

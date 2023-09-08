@@ -170,8 +170,9 @@ object RequestConverter {
         val parts = ArrayList<OperationRequestPart>()
         if (request is HttpServletRequest && request.contentType?.lowercase(Locale.getDefault())
                         ?.startsWith("multipart/") == true
-        )
-            parts.addAll(extractServletRequestParts(request))
+        ) {
+            parts.addAll(extractServletRequestParts(servletRequest))
+        }
         if (request is MultipartHttpServletRequest) {
             parts.addAll(extractMultipartRequestParts(request))
         }
@@ -202,7 +203,7 @@ object RequestConverter {
             partHeaders.contentType = MediaType.parseMediaType(part.contentType)
         }
 
-        val content = (part as TracePart?)?.contentAsByteArray ?: try {
+        val content = (part as? TracePart)?.contentAsByteArray ?: try {
             FileCopyUtils.copyToByteArray(part.inputStream)
         } catch (e: Exception) {
             "Request part has been read.Can't record the original data.".toByteArray()

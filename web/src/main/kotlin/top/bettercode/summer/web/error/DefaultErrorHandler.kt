@@ -28,7 +28,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
         var message: String? = null
         if (error is IllegalArgumentException) {
             val regex = "Parameter specified as non-null is null: .*parameter (.*)"
-            if (error.message!!.matches(regex.toRegex())) {
+            if (error.message?.matches(regex.toRegex()) == true) {
                 val paramName = error.message!!.replace(regex.toRegex(), "$1")
                 message = getText(paramName) + "不能为空"
             }

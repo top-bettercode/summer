@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
+import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.*
@@ -131,13 +132,14 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         return objectMapper.readTree(result.response.contentAsByteArray)
     }
 
-    private fun getFileName(result: MvcResult): String {
+    private fun getFileName(result: MvcResult): String? {
         var contentDisposition = result.response.getHeader("Content-Disposition")
-        contentDisposition = URLDecoder
-                .decode(
-                        contentDisposition!!.replace("UTF-8''", "")
-                                .replace(".*filename\\*?=(.*?)".toRegex(), "$1").trim('"'), "UTF-8")
-        return "build/$contentDisposition"
+        return if (contentDisposition != null) {
+            contentDisposition = URLDecoder.decode(contentDisposition.replace("UTF-8''", "").replace(".*filename\\*?=(.*?)".toRegex(), "$1").trim('"'), "UTF-8")
+            "build/$contentDisposition"
+        } else {
+            null
+        }
     }
 
     protected fun perform(requestBuilder: RequestBuilder): ResultActions {
@@ -156,9 +158,14 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     protected fun download(perform: ResultActions, fileName: String?) {
         var name = fileName
         val result = perform.andExpect(MockMvcResultMatchers.status().isOk()).andReturn()
+        val contentType = result.response.contentType
+        if (contentType != null && MediaType.APPLICATION_JSON.isCompatibleWith(MediaType.valueOf(contentType))) {
+            return
+        }
         if (name == null) {
             name = getFileName(result)
         }
+        if (name == null) return
         StreamUtils.copy(result.response.contentAsByteArray,
                 Files.newOutputStream(Paths.get(name)))
         try {
