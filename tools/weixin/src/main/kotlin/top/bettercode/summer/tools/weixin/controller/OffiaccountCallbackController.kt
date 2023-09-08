@@ -82,6 +82,8 @@ class OffiaccountCallbackController(
      * https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Before_Develop/Message_encryption_and_decryption.html
      *接收事件推送:
      * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_event_pushes.html
+     * 被动回复用户消息:
+     * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
      */
     @Suppress("LocalVariableName")
     @ResponseBody
