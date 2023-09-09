@@ -81,6 +81,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         super.loadDefaults(initializationContext, null)
         val context = loggerContext
         context.getLogger("org.jboss").level = Level.WARN
+        context.getLogger("org.hibernate").level = Level.WARN
         val environment = initializationContext.environment
         val warnSubject = LoggingUtil.warnSubject(environment)
         //smtp log
