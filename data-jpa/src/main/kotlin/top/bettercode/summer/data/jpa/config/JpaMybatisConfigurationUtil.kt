@@ -18,6 +18,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.core.io.support.ResourcePatternResolver
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory
 import org.springframework.core.type.classreading.MetadataReaderFactory
+import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.JpaExtRepository
@@ -37,6 +38,7 @@ object JpaMybatisConfigurationUtil {
 
     fun findConfigurationSources(beanFactory: ConfigurableListableBeanFactory): Map<String, ExtRepositoryConfigurationSource> {
         val beanNames = beanFactory.getBeanNamesForAnnotation(EnableJpaExtRepositories::class.java)
+        val keys = mutableSetOf<String>()
         return beanNames.associate {
             val beanDefinition = beanFactory.getBeanDefinition(it) as AbstractBeanDefinition
             if (!beanDefinition.hasBeanClass()) {
@@ -44,7 +46,10 @@ object JpaMybatisConfigurationUtil {
             }
             val beanClass = beanDefinition.beanClass
             val annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass, EnableJpaExtRepositories::class.java)!!
-            Pair(annotation.key, ExtRepositoryConfigurationSource(beanClass, annotation))
+            val key = annotation.key
+            Assert.isTrue(!keys.contains(key), "Duplicate repositoryConfiguration key $key")
+            keys.add(key)
+            Pair(key, ExtRepositoryConfigurationSource(beanClass, annotation))
         }
     }
 
