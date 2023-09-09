@@ -550,7 +550,7 @@ class ExcelExport {
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
-            setResponseHeader(request, response, fileName)
+            excelContentDisposition(request, response, fileName)
             val excelExport = of(response.outputStream)
             consumer.accept(excelExport)
             excelExport.finish()
@@ -570,7 +570,7 @@ class ExcelExport {
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
-            setResponseHeader(request, response, fileName)
+            excelContentDisposition(request, response, fileName)
             val excelExport = withImage(response.outputStream)
             consumer.accept(excelExport)
             excelExport.finish()
@@ -590,7 +590,7 @@ class ExcelExport {
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
-            setResponseHeader(request, response, fileName)
+            excelContentDisposition(request, response, fileName)
             val excelExport = of(response.outputStream)
             excelExport.sheet("sheet1")
             consumer.accept(excelExport)
@@ -629,7 +629,7 @@ class ExcelExport {
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
-            setResponseHeader(request, response, fileName)
+            excelContentDisposition(request, response, fileName)
             val tmpPath = System.getProperty("java.io.tmpdir")
             val file = File(tmpPath,
                     """summer${File.separator}excel-export${File.separator}$fileName${File.separator}$fileKey.xlsx""")
@@ -645,6 +645,12 @@ class ExcelExport {
             StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
         }
 
+        private fun excelContentDisposition(request: HttpServletRequest, response: HttpServletResponse,
+                                            fileName: String) {
+            response.reset()
+            attachmentContentDisposition(request, response, "$fileName.xlsx")
+        }
+
         /**
          * 输出到客户端
          *
@@ -653,21 +659,19 @@ class ExcelExport {
          * @param fileName 输出文件名
          * @throws IOException IOException
          */
-        private fun setResponseHeader(request: HttpServletRequest, response: HttpServletResponse,
-                                      fileName: String) {
-            response.reset()
+        @JvmStatic
+        @JvmOverloads
+        fun attachmentContentDisposition(request: HttpServletRequest, response: HttpServletResponse,
+                                         fileName: String, contentType: String = "application/vnd.ms-excel; charset=utf-8") {
             val agent = request.getHeader("USER-AGENT")
+            val encodeFileName = URLEncoder.encode(fileName, "UTF-8")
             val newFileName: String = if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
-                URLEncoder.encode(fileName, "UTF-8")
+                encodeFileName
             } else {
                 fileName
             }
-            response.setHeader("Content-Disposition",
-                    "attachment;filename=$newFileName.xlsx;filename*=UTF-8''${
-                        URLEncoder
-                                .encode(fileName, "UTF-8")
-                    }.xlsx")
-            response.contentType = "application/vnd.ms-excel; charset=utf-8"
+            response.setHeader("Content-Disposition", "attachment;filename=$newFileName;filename*=UTF-8''$encodeFileName")
+            response.contentType = contentType
             response.setHeader("Pragma", "No-cache")
             response.setHeader("Cache-Control", "no-cache")
             response.setDateHeader("Expires", 0)
