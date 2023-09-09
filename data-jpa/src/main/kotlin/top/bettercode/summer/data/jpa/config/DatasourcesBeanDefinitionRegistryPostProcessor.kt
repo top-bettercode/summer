@@ -49,15 +49,11 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                 environment).bind("summer.datasource.multi.datasources", Bindable
                 .mapOf(String::class.java, BaseDataSourceProperties::class.java)).orElse(null)
         val configurationSources = JpaMybatisConfigurationUtil.findConfigurationSources(beanFactory)
-        if (dataSources != null) {
+        if (configurationSources.size > 1) {
             val factory = beanFactory as DefaultListableBeanFactory
-            for ((key, properties) in dataSources) {
-                //dataSource
-                if ("false" == properties.url) {
-                    continue
-                }
-                val configurationSource = configurationSources[key]
-                        ?: throw RuntimeException("$key EnableJpaExtRepositories configuration bean not found")
+            configurationSources.forEach { (key, configurationSource) ->
+                val properties = dataSources[key]
+                        ?: throw RuntimeException("$key datasource config not found")
                 val jpaExtRepositories = configurationSource.annotation
                 val basePackages = JpaMybatisConfigurationUtil.getBasePackages(configurationSource)
                 val primary = "primary" == key
@@ -189,24 +185,24 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                 factory.registerBeanDefinition(mybatisConfigurationRef, beanDefinition)
             }
         } else {
+            Assert.isTrue(configurationSources.size == 1, "未配置 @EnableJpaExtRepositories")
             val factory = beanFactory as DefaultListableBeanFactory
-            Assert.isTrue(configurationSources.size == 1, "EnableJpaExtRepositories 配置异常")
             val configurationSource = configurationSources.values.first()
             val jpaExtRepositories = configurationSource.annotation
 
-            val dataSource = beanFactory.getBean(DataSource::class.java)
-            if (log.isInfoEnabled) {
-                if (dataSource is HikariDataSource) {
-                    if (!StringUtils.hasText(dataSource.poolName)) {
-                        dataSource.poolName = "${jpaExtRepositories.key}Pool"
-                    }
-                    log.info("init dataSource {} : {}", dataSource.poolName, dataSource.jdbcUrl)
-                }
-            }
             // mybatisConfiguration
             val basePackages = JpaMybatisConfigurationUtil.getBasePackages(configurationSource)
             val mybatisConfigurationRef = jpaExtRepositories.mybatisConfigurationRef
             val beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(Configuration::class.java) {
+                val dataSource = beanFactory.getBean(DataSource::class.java)
+                if (log.isInfoEnabled) {
+                    if (dataSource is HikariDataSource) {
+                        if (!StringUtils.hasText(dataSource.poolName)) {
+                            dataSource.poolName = "${jpaExtRepositories.key}Pool"
+                        }
+                        log.info("init dataSource {} : {}", dataSource.poolName, dataSource.jdbcUrl)
+                    }
+                }
                 val mybatisProperties = beanFactory.getBean(MybatisProperties::class.java)
                 return@genericBeanDefinition JpaMybatisConfigurationUtil.mybatisConfiguration(
                         mybatisProperties, resourceLoader, jpaExtRepositories.mapperLocations, basePackages)

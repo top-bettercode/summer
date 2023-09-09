@@ -150,22 +150,17 @@ object JpaMybatisConfigurationUtil {
             }
         }
 
+        val implementations = PACKAGE_SCAN_CLASS_RESOLVER.findImplementations(JpaExtRepository::class.java, *packages)
         if (mapperLocationsTmp.isEmpty()) {
             val locations: MutableSet<String> = HashSet()
             //    classpath*:/@app.packagePath@/modules/*/*/*.xml
-            val implementations = PACKAGE_SCAN_CLASS_RESOLVER.findImplementations(JpaExtRepository::class.java, *packages)
             for (implementation in implementations) {
-                mybatisConfiguration.addMapper(implementation)
                 val name = implementation.getPackage().name
                 locations.add("classpath*:/" + name.replace(".", "/") + "/*.xml")
             }
             mapperLocationsTmp = locations.toTypedArray()
-        } else {
-            val implementations = PACKAGE_SCAN_CLASS_RESOLVER.findImplementations(JpaExtRepository::class.java, *packages)
-            for (implementation in implementations) {
-                mybatisConfiguration.addMapper(implementation)
-            }
         }
+
         val mapperResources = resolveMapperLocations(mapperLocationsTmp)
         if (mybatisConfiguration.variables == null) {
             mybatisConfiguration.variables = configurationProperties
@@ -198,6 +193,13 @@ object JpaMybatisConfigurationUtil {
                 }
             }
         }
+
+        for (implementation in implementations) {
+            if (!mybatisConfiguration.hasMapper(implementation)) {
+                mybatisConfiguration.addMapper(implementation)
+            }
+        }
+
         return mybatisConfiguration
     }
 
