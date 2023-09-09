@@ -159,5 +159,13 @@ annotation class EnableJpaExtRepositories(
          * @return Configures the name of the [JpaExtProperties] bean definition to be used to
          * create repositories discovered through this annotation. Defaults to `jpaExtProperties`.
          */
-        val jpaExtPropertiesRef: String = "jpaExtProperties"
+        val jpaExtPropertiesRef: String = "jpaExtProperties",
+        /**
+         * Locations of MyBatis mapper files.
+         */
+        val mapperLocations: Array<String> = [],
+        /**
+         * key
+         */
+        val key: String = "primary"
 )

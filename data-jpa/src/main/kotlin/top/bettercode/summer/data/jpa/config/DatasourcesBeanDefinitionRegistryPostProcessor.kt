@@ -7,7 +7,6 @@ import org.hibernate.boot.model.naming.PhysicalNamingStrategy
 import org.hibernate.cfg.AvailableSettings
 import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils
-import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.beans.factory.support.BeanDefinitionBuilder
 import org.springframework.beans.factory.support.BeanDefinitionRegistry
@@ -30,6 +29,7 @@ import org.springframework.orm.hibernate5.SpringBeanContainer
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ObjectUtils
 import org.springframework.util.StringUtils
@@ -38,16 +38,17 @@ import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
 import kotlin.String
 
-class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPostProcessor, ResourceLoaderAware, EnvironmentAware {
+class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPostProcessor, ResourceLoaderAware, EnvironmentAware {
     private val log = LoggerFactory.getLogger(
-            MultiDatasourcesBeanDefinitionRegistryPostProcessor::class.java)
-    private var resourceLoader: ResourceLoader? = null
-    private var environment: Environment? = null
+            DatasourcesBeanDefinitionRegistryPostProcessor::class.java)
+    private lateinit var resourceLoader: ResourceLoader
+    private lateinit var environment: Environment
 
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
         val dataSources = Binder.get(
                 environment).bind("summer.datasource.multi.datasources", Bindable
                 .mapOf(String::class.java, BaseDataSourceProperties::class.java)).orElse(null)
+        val configurationSources = JpaMybatisConfigurationUtil.findConfigurationSources(beanFactory)
         if (dataSources != null) {
             val factory = beanFactory as DefaultListableBeanFactory
             for ((key, properties) in dataSources) {
@@ -55,8 +56,11 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                 if ("false" == properties.url) {
                     continue
                 }
+                val configurationSource = configurationSources[key]
+                        ?: throw RuntimeException("$key EnableJpaExtRepositories configuration bean not found")
+                val jpaExtRepositories = configurationSource.annotation
+                val basePackages = JpaMybatisConfigurationUtil.getBasePackages(configurationSource)
                 val primary = "primary" == key
-                val jpaExtRepositories = properties.extConfigClass.getAnnotation(EnableJpaExtRepositories::class.java)
                 val dataSourceBeanName = if (primary) "dataSource" else key + "DataSource"
                 var beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
                         HikariDataSource::class.java) {
@@ -79,7 +83,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                                 .bind("spring.datasource.hikari", Bindable.ofInstance(dataSource))
                     }
                     if (!StringUtils.hasText(dataSource.poolName)) {
-                        dataSource.poolName = key + "Pool"
+                        dataSource.poolName = "${key}Pool"
                     }
                     if (log.isInfoEnabled) {
                         log.info("init dataSource {} : {}", dataSource.poolName,
@@ -102,12 +106,9 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                 val entityManagerFactoryBeanName = jpaExtRepositories.entityManagerFactoryRef
                 beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
                         LocalContainerEntityManagerFactoryBean::class.java) {
-                    val builder = beanFactory.getBean(
-                            EntityManagerFactoryBuilder::class.java)
-                    val dataSource = beanFactory.getBean(dataSourceBeanName,
-                            DataSource::class.java)
-                    val hibernateProperties = beanFactory.getBean(
-                            HibernateProperties::class.java)
+                    val builder = beanFactory.getBean(EntityManagerFactoryBuilder::class.java)
+                    val dataSource = beanFactory.getBean(dataSourceBeanName, DataSource::class.java)
+                    val hibernateProperties = beanFactory.getBean(HibernateProperties::class.java)
                     val jpaProperties = beanFactory.getBean(JpaProperties::class.java)
                     val mappingResourceList = jpaProperties.mappingResources
                     val mappingResources = if (!ObjectUtils.isEmpty(mappingResourceList)) StringUtils.toStringArray(mappingResourceList) else emptyArray()
@@ -128,7 +129,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                     builder
                             .dataSource(dataSource)
                             .properties(vendorProperties)
-                            .packages(*jpaExtRepositories.basePackages)
+                            .packages(*basePackages)
                             .mappingResources(*mappingResources)
                             .build()
                 }
@@ -146,8 +147,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
 
                 //transactionManager
                 val transactionManagerBeanName = jpaExtRepositories.transactionManagerRef
-                beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-                        PlatformTransactionManager::class.java) {
+                beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(PlatformTransactionManager::class.java) {
                     val entityManagerFactory = beanFactory.getBean(
                             entityManagerFactoryBeanName,
                             EntityManagerFactory::class.java)
@@ -172,22 +172,10 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
 
                 // mybatisConfiguration
                 val mybatisConfigurationRef = jpaExtRepositories.mybatisConfigurationRef
-                beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-                        Configuration::class.java
-                ) {
-                    try {
-                        val mybatisProperties = beanFactory.getBean(MybatisProperties::class.java)
-                        var configuration = mybatisProperties.configuration
-                        if (configuration != null) {
-                            val newConfiguration = Configuration()
-                            BeanUtils.copyProperties(configuration, newConfiguration)
-                            configuration = newConfiguration
-                        }
-                        return@genericBeanDefinition JpaMybatisAutoConfiguration.mybatisConfiguration(beanFactory, configuration,
-                                mybatisProperties, resourceLoader, properties.mapperLocations)
-                    } catch (e: Exception) {
-                        throw RuntimeException(e)
-                    }
+                beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(Configuration::class.java) {
+                    val mybatisProperties = beanFactory.getBean(MybatisProperties::class.java)
+                    return@genericBeanDefinition JpaMybatisConfigurationUtil.mybatisConfiguration(
+                            mybatisProperties, resourceLoader, properties.mapperLocations + mybatisProperties.mapperLocations, basePackages)
                 }
                 if (primary) {
                     beanDefinitionBuilder.setPrimary(true)
@@ -200,6 +188,34 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                 beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, true)
                 factory.registerBeanDefinition(mybatisConfigurationRef, beanDefinition)
             }
+        } else {
+            val factory = beanFactory as DefaultListableBeanFactory
+            Assert.isTrue(configurationSources.size == 1, "EnableJpaExtRepositories 配置异常")
+            val configurationSource = configurationSources.values.first()
+            val jpaExtRepositories = configurationSource.annotation
+
+            val dataSource = beanFactory.getBean(DataSource::class.java)
+            if (log.isInfoEnabled) {
+                if (dataSource is HikariDataSource) {
+                    if (!StringUtils.hasText(dataSource.poolName)) {
+                        dataSource.poolName = "${jpaExtRepositories.key}Pool"
+                    }
+                    log.info("init dataSource {} : {}", dataSource.poolName, dataSource.jdbcUrl)
+                }
+            }
+            // mybatisConfiguration
+            val basePackages = JpaMybatisConfigurationUtil.getBasePackages(configurationSource)
+            val mybatisConfigurationRef = jpaExtRepositories.mybatisConfigurationRef
+            val beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(Configuration::class.java) {
+                val mybatisProperties = beanFactory.getBean(MybatisProperties::class.java)
+                return@genericBeanDefinition JpaMybatisConfigurationUtil.mybatisConfiguration(
+                        mybatisProperties, resourceLoader, jpaExtRepositories.mapperLocations, basePackages)
+            }
+            beanDefinitionBuilder.setPrimary(true)
+            val beanDefinition = beanDefinitionBuilder.beanDefinition
+            beanDefinition.isSynthetic = true
+            beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, true)
+            factory.registerBeanDefinition(mybatisConfigurationRef, beanDefinition)
         }
     }
 

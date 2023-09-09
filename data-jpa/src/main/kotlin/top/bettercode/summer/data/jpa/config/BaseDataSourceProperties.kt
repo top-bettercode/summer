@@ -20,11 +20,6 @@ class BaseDataSourceProperties {
     var password: String? = null
 
     /**
-     * 配置 [@EnableJpaExtRepositories][EnableJpaExtRepositories] 的类
-     */
-    lateinit var extConfigClass: Class<*>
-
-    /**
      * Locations of MyBatis mapper files.
      */
     var mapperLocations: Array<String> = arrayOf()

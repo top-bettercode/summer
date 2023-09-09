@@ -7,20 +7,17 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.support.GenericApplicationContext
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration
 import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.domain.UserMatcher
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher
 import top.bettercode.summer.data.jpa.query.SpecMatcher
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import top.bettercode.summer.tools.lang.util.StringUtil.json
-import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.util.*
 import java.util.function.Consumer
 import javax.persistence.Tuple
@@ -64,14 +61,6 @@ class SimpleJpaExtRepositoryTest {
         System.err.println("--------------------------------------------------------")
         repository.deleteAll()
         repository.cleanRecycleBin()
-    }
-
-    @Test
-    fun findDefaultMapperLocations() {
-        val applicationContext = ApplicationContextHolder.applicationContext as GenericApplicationContext
-        val defaultMapperLocations = JpaMybatisAutoConfiguration.findDefaultMapperLocations(
-                applicationContext.beanFactory)
-        System.err.println(defaultMapperLocations)
     }
 
     @Test

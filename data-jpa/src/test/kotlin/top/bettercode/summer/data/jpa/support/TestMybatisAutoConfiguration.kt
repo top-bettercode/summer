@@ -4,17 +4,15 @@ import org.apache.ibatis.session.SqlSessionFactory
 import org.apache.ibatis.type.TypeHandler
 import org.mybatis.spring.SqlSessionFactoryBean
 import org.mybatis.spring.SqlSessionTemplate
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ResourceLoader
-import org.springframework.util.Assert
 import org.springframework.util.ObjectUtils
 import org.springframework.util.StringUtils
-import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration
+import top.bettercode.summer.data.jpa.config.JpaMybatisConfigurationUtil
 import top.bettercode.summer.data.jpa.config.MybatisProperties
 import java.util.stream.Stream
 import javax.sql.DataSource
@@ -24,20 +22,7 @@ import javax.sql.DataSource
 class TestMybatisAutoConfiguration(
         private val properties: MybatisProperties,
         private val resourceLoader: ResourceLoader
-) : InitializingBean {
-    override fun afterPropertiesSet() {
-        checkConfigFileExists()
-    }
-
-    private fun checkConfigFileExists() {
-        if (properties.isCheckConfigLocation && StringUtils
-                        .hasText(properties.configLocation)) {
-            val resource = resourceLoader.getResource(properties.configLocation!!)
-            Assert.state(resource.exists(),
-                    "Cannot find config location: " + resource
-                            + " (please add config file or check your Mybatis configuration)")
-        }
-    }
+) {
 
     @Bean
     @ConditionalOnMissingBean
@@ -60,7 +45,7 @@ class TestMybatisAutoConfiguration(
             Stream.of(*typeHandlerClasses)
                     .forEach { typeHandler: Class<TypeHandler<*>> -> configuration.typeHandlerRegistry.register(typeHandler) }
         }
-        val mapperLocations = JpaMybatisAutoConfiguration.resolveMapperLocations(
+        val mapperLocations = JpaMybatisConfigurationUtil.resolveMapperLocations(
                 properties.mapperLocations)
         if (!ObjectUtils.isEmpty(mapperLocations)) {
             factory.setMapperLocations(*mapperLocations)
