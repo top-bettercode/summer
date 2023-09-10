@@ -11,14 +11,14 @@ open class ExcelCodePrint : ProjectGenerator() {
     override fun call() {
         val code = clazz(controllerType) {
 
-            val formClassName = formType.shortName
+            val excelClassName = className
 
             val filterColumns = columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
 
             import("top.bettercode.summer.tools.lang.util.ArrayUtil")
             field(
                     "excelFields",
-                    JavaType("top.bettercode.util.excel.ExcelField<${formClassName}, ?>[]"),
+                    JavaType("top.bettercode.util.excel.ExcelField<${excelClassName}, ?>[]"),
                     isFinal = true
             ) {
                 initializationString = "ArrayUtil.of(\n"
@@ -33,7 +33,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                                 ""
                             }
                     val propertyGetter =
-                            "${formClassName}::get${it.javaName.capitalized()}"
+                            "${excelClassName}::get${it.javaName.capitalized()}"
                     initializationString += "      ExcelField.of(\"${
                         it.remark.split(
                                 Regex(
@@ -88,7 +88,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                     name = "file"
                 }
 
-                +"List<$formClassName> list = ExcelImport.of(file).validateGroups(Default.class, CreateConstraint.class).getData(excelFields);"
+                +"List<$excelClassName> list = ExcelImport.of(file).validateGroups(Default.class, CreateConstraint.class).getData(excelFields);"
                 +"for (UserAdminForm form : list) {"
                 +"create(form);"
                 +"}"
