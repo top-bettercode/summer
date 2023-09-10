@@ -8,9 +8,8 @@ import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
-import top.bettercode.summer.tools.lang.util.MoneyUtil.toCent
-import top.bettercode.summer.tools.lang.util.MoneyUtil.toYun
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
+import top.bettercode.summer.web.resolver.UnitGenericConverter
 import top.bettercode.summer.web.support.code.CodeServiceHolder
 import java.io.Serializable
 import java.lang.invoke.SerializedLambda
@@ -131,6 +130,11 @@ open class ExcelField<T, P : Any?> {
     private lateinit var propertyConverter: (Any) -> P?
 
     /**
+     * 默认单元格值转属性字段值
+     */
+    private lateinit var defaultPropertyConverter: (Any) -> P?
+
+    /**
      * 属性字段值验证
      */
     var validator: Consumer<T>? = null
@@ -141,6 +145,11 @@ open class ExcelField<T, P : Any?> {
     private lateinit var cellConverter: (P) -> Any?
 
     /**
+     * 默认属性字段值转单元格值
+     */
+    private lateinit var defaultCellConverter: (P) -> Any?
+
+    /**
      * 实体类型
      */
     var entityType: Class<T>? = null
@@ -148,7 +157,7 @@ open class ExcelField<T, P : Any?> {
     /**
      * 属性字段类型
      */
-    var propertyType: Class<*>? = null
+    var propertyType: Class<P>? = null
 
     /**
      * 属性字段名称
@@ -162,12 +171,19 @@ open class ExcelField<T, P : Any?> {
         protected set
 
     //--------------------------------------------
-    @Suppress("UNCHECKED_CAST")
     @JvmOverloads
     fun yuan(scale: Int = 2): ExcelField<T, P> {
-        return cell { property: P -> toYun((property as Long), scale).toPlainString() }.property { yun: Any ->
-            toCent(yun as BigDecimal) as P
+        return unit(100, scale)
+    }
+
+    @JvmOverloads
+    fun unit(value: Int, scale: Int = 2): ExcelField<T, P> {
+        return cell { property: P ->
+            UnitGenericConverter.larger(number = property as Number, value = value, scale = scale).toPlainString()
         }
+                .property { cell: Any ->
+                    UnitGenericConverter.smaller(number = BigDecimal(cell.toString()), propertyType!!, value = value, scale = scale)
+                }
     }
 
     /**
@@ -280,7 +296,7 @@ open class ExcelField<T, P : Any?> {
                     field.isAccessible = true
                     val get = field.get(propertyGetter)
                     if (get is PropertyReference) {
-                        propertyType = get.returnType.javaType as Class<*>
+                        propertyType = get.returnType.javaType as Class<P>
                         entityType = (get.owner as KClass<*>).java as Class<T>
                         propertyName = get.name
                     }
@@ -293,7 +309,7 @@ open class ExcelField<T, P : Any?> {
                 val serializedLambda = writeReplace.invoke(propertyGetter) as SerializedLambda
                 val implMethodName = serializedLambda.implMethodName
                 val methodSignature = SignatureAttribute.toMethodSignature(serializedLambda.instantiatedMethodType)
-                propertyType = ClassUtils.forName(methodSignature.returnType.jvmTypeName(), null)
+                propertyType = ClassUtils.forName(methodSignature.returnType.jvmTypeName(), null) as Class<P>
                 propertyName = resolvePropertyName(implMethodName)
                 entityType = ClassUtils.forName(methodSignature.parameterTypes[0].jvmTypeName(), null) as Class<T>
                 //$lamda-0
@@ -304,7 +320,7 @@ open class ExcelField<T, P : Any?> {
                             writeMethod = entityType!!.getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
                         } catch (e: NoSuchMethodException) {
                             if (ClassUtils.isPrimitiveWrapper(propertyType!!)) {
-                                propertyType = primitiveWrapperTypeMap[propertyType!!]
+                                propertyType = primitiveWrapperTypeMap[propertyType!!] as Class<P>
                                 writeMethod = entityType!!.getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
                             } else {
                                 throw e
@@ -401,7 +417,7 @@ open class ExcelField<T, P : Any?> {
                 }
             }
         }
-        propertyConverter = { cellValue: Any? ->
+        defaultPropertyConverter = { cellValue: Any? ->
             when (propertyType) {
                 String::class.java -> {
                     cellValue.toString()
@@ -506,7 +522,10 @@ open class ExcelField<T, P : Any?> {
                 else -> throw IllegalArgumentException("不支持的数据类型:" + propertyType!!.name)
             } as P?
         }
-        cellConverter = { property: P ->
+
+        propertyConverter = defaultPropertyConverter
+
+        defaultCellConverter = { property: P ->
             if (propertyType == String::class.java || propertyType == Date::class.java) {
                 property
             } else if (propertyType == Boolean::class.javaPrimitiveType || propertyType == Boolean::class.javaObjectType || propertyType == Boolean::class.java) {
@@ -539,6 +558,8 @@ open class ExcelField<T, P : Any?> {
                 property.toString()
             }
         }
+
+        cellConverter = defaultCellConverter
     }
 
     //--------------------------------------------

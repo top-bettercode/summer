@@ -1,0 +1,81 @@
+package top.bettercode.summer.web.resolver
+
+import org.springframework.core.convert.TypeDescriptor
+import org.springframework.core.convert.converter.ConditionalGenericConverter
+import org.springframework.core.convert.converter.GenericConverter
+import org.springframework.util.StringUtils
+import top.bettercode.summer.web.support.ApplicationContextHolder
+import java.math.BigDecimal
+import java.math.RoundingMode
+
+/**
+ * 数量单位转换
+ */
+class UnitGenericConverter : ConditionalGenericConverter {
+
+    override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
+        return targetType.hasAnnotation(UnitConveter::class.java)
+    }
+
+    override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
+        return setOf(
+                GenericConverter.ConvertiblePair(String::class.java, BigDecimal::class.java),
+                GenericConverter.ConvertiblePair(String::class.java, Long::class.java),
+                GenericConverter.ConvertiblePair(String::class.java, Long::class.javaObjectType),
+                GenericConverter.ConvertiblePair(String::class.java, Long::class.javaPrimitiveType!!),
+                GenericConverter.ConvertiblePair(String::class.java, Int::class.java),
+                GenericConverter.ConvertiblePair(String::class.java, Int::class.javaObjectType),
+                GenericConverter.ConvertiblePair(String::class.java, Int::class.javaPrimitiveType!!),
+        )
+    }
+
+    override fun convert(`object`: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
+        return if (!StringUtils.hasText(`object` as String)) {
+            null
+        } else {
+            val unitConveter = targetType.getAnnotation(UnitConveter::class.java)!!
+            smaller(number = `object`.toString(), type = targetType.type, value = unitConveter.value, scale = unitConveter.scale)
+        }
+    }
+
+    companion object {
+
+        @JvmStatic
+        @JvmOverloads
+        fun smaller(number: Number, value: Int = 100, scale: Int = 2): Long {
+            return smaller(number = number, type = Long::class.java, value = value, scale = scale)
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun <T> smaller(number: Number, type: Class<T>, value: Int = 100, scale: Int = 2): T {
+            return smaller(number = number.toString(), type = type, value = value, scale = scale)
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun <T> smaller(number: String, type: Class<T>, value: Int = 100, scale: Int = 2): T {
+            val result = BigDecimal(number).multiply(BigDecimal(value)).setScale(scale, RoundingMode.HALF_UP)
+            return ApplicationContextHolder.conversionService.convert(result, type)!!
+        }
+
+
+        @JvmStatic
+        @JvmOverloads
+        fun larger(number: Number, value: Int = 100, scale: Int = 2): BigDecimal {
+            return larger(number = number, type = BigDecimal::class.java, value = value, scale = scale)
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun <T> larger(number: Number, type: Class<T>, value: Int = 100, scale: Int = 2): T {
+            val result = BigDecimal(number.toString()).divide(BigDecimal(value), scale, RoundingMode.HALF_UP)
+            return if (type == BigDecimal::class.java) {
+                @Suppress("UNCHECKED_CAST")
+                result as T
+            } else {
+                ApplicationContextHolder.conversionService.convert(result, type)!!
+            }
+        }
+    }
+}

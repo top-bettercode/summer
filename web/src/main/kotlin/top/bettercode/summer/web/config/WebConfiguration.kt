@@ -18,7 +18,6 @@ import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 @Configuration(proxyBeanMethods = false)
 class WebConfiguration {
 
-
     @Bean
     fun packageScanClassResolver(applicationContext: ApplicationContext): PackageScanClassResolver {
         return PackageScanClassResolver(applicationContext.classLoader)

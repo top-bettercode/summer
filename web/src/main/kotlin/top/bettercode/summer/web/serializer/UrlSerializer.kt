@@ -28,12 +28,15 @@ import kotlin.reflect.full.primaryConstructor
  * @author Peter Wu
  */
 @JacksonStdImpl
-class UrlSerializer @JvmOverloads constructor(private val formatExpression: String? = null, private var urlFieldName: String = "",
-                                              private val useExtensionField: Boolean = true,
-                                              private val asMap: Boolean = true,
-                                              private val separator: String = "",
-                                              private val defaultValue: String = "",
-                                              private val mapperType: KClass<out JsonUrlMapper> = JsonUrlMapper::class) : StdScalarSerializer<Any>(Any::class.java, false), ContextualSerializer {
+class UrlSerializer @JvmOverloads
+constructor(private val formatExpression: String? = null,
+            private var urlFieldName: String = "",
+            private val useExtensionField: Boolean = true,
+            private val asMap: Boolean = true,
+            private val separator: String = "",
+            private val defaultValue: String = "",
+            private val mapperType: KClass<out JsonUrlMapper> = JsonUrlMapper::class)
+    : StdScalarSerializer<Any>(Any::class.java, false), ContextualSerializer {
     private val mapper: JsonUrlMapper
         get() = if (mapperType == JsonUrlMapper::class) {
             defaultMapper

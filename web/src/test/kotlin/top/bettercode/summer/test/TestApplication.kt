@@ -3,7 +3,7 @@ package top.bettercode.summer.test
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
-import top.bettercode.summer.web.resolver.CentConverter
+import top.bettercode.summer.web.resolver.UnitGenericConverter
 
 /**
  * @author Peter Wu
@@ -12,8 +12,8 @@ import top.bettercode.summer.web.resolver.CentConverter
 class TestApplication {
 
     @Bean
-    fun centConverter(): CentConverter {
-        return CentConverter()
+    fun unitGenericConverter(): UnitGenericConverter {
+        return UnitGenericConverter()
     }
 
     companion object {
