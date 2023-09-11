@@ -1,7 +1,7 @@
 package top.bettercode.summer.test.web
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import top.bettercode.summer.web.resolver.UnitConveter
+import top.bettercode.summer.web.resolver.UnitConverter
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
 import top.bettercode.summer.web.serializer.annotation.JsonDefault
 import top.bettercode.summer.web.serializer.annotation.JsonUrl
@@ -30,7 +30,7 @@ open class DataDicBean {
     var code: String? = null
     open var intCode: Int? = null
 
-    @UnitConveter
+    @UnitConverter
     var price: Long? = null
 
     @JsonUrl

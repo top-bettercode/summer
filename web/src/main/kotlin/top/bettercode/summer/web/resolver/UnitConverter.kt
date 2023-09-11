@@ -16,7 +16,7 @@ import top.bettercode.summer.web.serializer.UnitSerializer
 @JacksonAnnotationsInside
 @JsonSerialize(using = UnitSerializer::class)
 @JsonDeserialize(using = UnitDeserializer::class)
-annotation class UnitConveter(
+annotation class UnitConverter(
         /**
          * 单位转换进制
          */

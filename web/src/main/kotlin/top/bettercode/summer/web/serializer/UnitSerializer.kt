@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.NumberSerializer
-import top.bettercode.summer.web.resolver.UnitConveter
+import top.bettercode.summer.web.resolver.UnitConverter
 import top.bettercode.summer.web.resolver.UnitGenericConverter
 
 @JacksonStdImpl
@@ -25,8 +25,8 @@ constructor(private val unitValue: Int = 100,
 
     override fun createContextual(prov: SerializerProvider?, property: BeanProperty?): JsonSerializer<*> {
         if (property != null) {
-            val annotation = property.getAnnotation(UnitConveter::class.java)
-                    ?: throw RuntimeException("未注解@" + UnitConveter::class.java.name)
+            val annotation = property.getAnnotation(UnitConverter::class.java)
+                    ?: throw RuntimeException("未注解@" + UnitConverter::class.java.name)
 
             return UnitSerializer(annotation.value, annotation.scale)
         }

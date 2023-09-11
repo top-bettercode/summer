@@ -14,7 +14,7 @@ import java.math.RoundingMode
 class UnitGenericConverter : ConditionalGenericConverter {
 
     override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
-        return targetType.hasAnnotation(UnitConveter::class.java)
+        return targetType.hasAnnotation(UnitConverter::class.java)
     }
 
     override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
@@ -33,8 +33,8 @@ class UnitGenericConverter : ConditionalGenericConverter {
         return if (!StringUtils.hasText(`object` as String)) {
             null
         } else {
-            val unitConveter = targetType.getAnnotation(UnitConveter::class.java)!!
-            smaller(number = `object`.toString(), type = targetType.type, value = unitConveter.value, scale = unitConveter.scale)
+            val unitConverter = targetType.getAnnotation(UnitConverter::class.java)!!
+            smaller(number = `object`.toString(), type = targetType.type, value = unitConverter.value, scale = unitConverter.scale)
         }
     }
 
