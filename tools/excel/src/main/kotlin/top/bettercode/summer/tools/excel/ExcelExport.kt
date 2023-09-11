@@ -168,6 +168,19 @@ class ExcelExport {
         return this
     }
 
+    @JvmOverloads
+    fun createTitle(title: String, cells: Int, fillColor: String = this.fillColor, fontColor: String = this.fontColor, fontSize: Int = 16): ExcelExport {
+        sheet!!.value(row, column, title)
+        style(sheet!!.range(row, column, row, column + cells - 1))
+                .fillColor(fillColor)
+                .fontColor(fontColor)
+                .fontSize(fontSize)
+                .bold()
+                .set()
+
+        return this
+    }
+
     fun <T> createHeader(excelFields: Array<ExcelField<T, out Any?>>) {
         // Create header
         run {
