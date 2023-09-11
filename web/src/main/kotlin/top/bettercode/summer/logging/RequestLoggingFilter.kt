@@ -99,7 +99,11 @@ class RequestLoggingFilter(
         try {
             filterChain.doFilter(requestToUse, responseToUse)
         } finally {
-            record(requestToUse, responseToUse, uri)
+            try {
+                record(requestToUse, responseToUse, uri)
+            } catch (e: Exception) {
+                log.error(e.message, e)
+            }
         }
     }
 
