@@ -38,13 +38,6 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
      */
     var primitiveTypeWrapper: JavaType? = null
 
-    /**
-     * Gets the  primitive type.
-     *
-     * @return Returns the primitiveType.
-     */
-    var primitiveType: JavaType? = null
-
     val typeArguments: MutableList<JavaType>
 
     // the following three values are used for dealing with wildcard types
@@ -102,6 +95,57 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
             sb.append("[]")
         }
         sb.toString()
+    }
+
+    /**
+     * Gets the  primitive type.
+     *
+     * @return Returns the primitiveType.
+     */
+    val primitiveType: JavaType? by lazy {
+        if (!isPrimitiveWrapper)
+            return@lazy null
+        when (fullyQualifiedNameWithoutTypeParameters) {
+            "java.lang.Void" -> {
+                void
+            }
+
+            "java.lang.Integer" -> {
+                int
+            }
+
+            "java.lang.Byte" -> {
+                byte
+            }
+
+            "java.lang.Short" -> {
+                short
+            }
+
+            "java.lang.Long" -> {
+                long
+            }
+
+            "java.lang.Character" -> {
+                char
+            }
+
+            "java.lang.Float" -> {
+                float
+            }
+
+            "java.lang.Double" -> {
+                double
+            }
+
+            "java.lang.Boolean" -> {
+                boolean
+            }
+
+            else -> {
+                null
+            }
+        }
     }
 
     private fun isAssignableFrom(className: String): Boolean {
@@ -308,6 +352,49 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
             }
 
             isExplicitlyImported = JAVA_LANG != packageName
+            if (!isExplicitlyImported) {
+                when (fullyQualifiedNameWithoutTypeParameters) {
+                    "java.lang.Void" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Integer" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Byte" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Short" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Long" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Character" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Float" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Double" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    "java.lang.Boolean" -> {
+                        isPrimitiveWrapper = true
+                    }
+
+                    else -> {
+                        isPrimitiveWrapper = false
+                    }
+                }
+            }
         } else {
             shortNameWithoutTypeArguments = fullyQualifiedNameWithoutTypeParameters
             isExplicitlyImported = false
@@ -364,59 +451,9 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
                     primitiveTypeWrapper = null
                 }
             }
-
-            when (fullyQualifiedNameWithoutTypeParameters) {
-                "java.lang.Void" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = void
-                }
-
-                "java.lang.Integer" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = int
-                }
-
-                "java.lang.Byte" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = byte
-                }
-
-                "java.lang.Short" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = short
-                }
-
-                "java.lang.Long" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = long
-                }
-
-                "java.lang.Character" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = char
-                }
-
-                "java.lang.Float" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = float
-                }
-
-                "java.lang.Double" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = double
-                }
-
-                "java.lang.Boolean" -> {
-                    isPrimitiveWrapper = true
-                    primitiveType = boolean
-                }
-
-                else -> {
-                    isPrimitiveWrapper = false
-                    primitiveType = null
-                }
-            }
         }
+
+
     }
 
     private fun genericParse(genericSpecification: String) {
