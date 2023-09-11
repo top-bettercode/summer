@@ -168,7 +168,7 @@ object CoreProjectTasks {
                                         } else if (isWeightToConverter) {
                                             ".unit(1000, 3)"
                                         } else if (isDateConverter) {
-                                            ".format($format)"
+                                            ".format(\"$format\")"
                                         } else if (isConverter) {
                                             ".converter(${converter})"
                                         } else {

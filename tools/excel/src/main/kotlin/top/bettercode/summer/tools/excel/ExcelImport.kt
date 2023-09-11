@@ -48,7 +48,8 @@ class ExcelImport private constructor(`is`: InputStream) {
     /**
      * 工作表对象
      */
-    private var sheet: Sheet?
+    var sheet: Sheet?
+        private set
 
     /**
      * 构造函数
@@ -63,10 +64,15 @@ class ExcelImport private constructor(`is`: InputStream) {
         } catch (e: ExcelReaderException) {
             throw ExcelException("Excel读取失败，仅支持.xlsx格式Excel文件", e)
         }
-        sheet = workbook.firstSheet
+        try {
+            sheet = workbook.firstSheet
+        } catch (e: Exception) {
+            throw ExcelException("Excel读取失败，文档中没有工作表", e)
+        }
         setRowAndColumn(1, 0)
         log.debug("Initialize success.")
     }
+
 
     /**
      * @param row 行号，从0开始

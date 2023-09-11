@@ -27,6 +27,10 @@ class ColumnWidths @JvmOverloads constructor(private val maxWidth: Int = 50) {
                 .toDouble()
     }
 
+    fun clear() {
+        colWidths.clear()
+    }
+
     companion object {
         @JvmStatic
         fun getWidth(`val`: Any): Double {

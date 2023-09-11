@@ -107,6 +107,8 @@ class ExcelExport {
     fun sheet(sheetname: String?): ExcelExport {
         sheet = workbook.newWorksheet(sheetname)
         setRowAndColumn(0, 0)
+        imageCells.clear()
+        columnWidths.clear()
         return this
     }
 
@@ -206,9 +208,7 @@ class ExcelExport {
                     }
                 }
                 if (includeDataValidation && excelField.dataValidation.isNotEmpty()) {
-                    val listDataValidation = AbsoluteListDataValidation(
-                            sheet!!.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), excelField.dataValidation.joinToString(","))
-                    listDataValidation.add(sheet!!)
+                    dataValidation(column, excelField.dataValidation.joinToString(","))
                 }
                 column++
             }
@@ -218,8 +218,8 @@ class ExcelExport {
     }
 
 
-    fun dataValidation(column: Int, dataValidation: Collection<String?>?): ExcelExport {
-        return dataValidation(column, StringUtils.collectionToCommaDelimitedString(dataValidation))
+    fun dataValidation(column: Int, dataValidation: Iterable<String>): ExcelExport {
+        return dataValidation(column, dataValidation.joinToString(","))
     }
 
     fun dataValidation(column: Int, dataValidation: String?): ExcelExport {
@@ -508,6 +508,7 @@ class ExcelExport {
         Assert.notNull(outputStream, "输出流未设置")
         ExcelImageCellWriterUtil.setImage(sheetName, imageCells,
                 ByteArrayInputStream(imageByteArrayOutputStream!!.toByteArray()), outputStream!!)
+        imageCells.clear()
     }
 
     companion object {
