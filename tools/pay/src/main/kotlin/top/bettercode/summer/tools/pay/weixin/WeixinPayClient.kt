@@ -341,6 +341,35 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
     }
 
     /**
+     * 关闭订单
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_3&index=5
+     */
+    fun closeOrder(request: CloseOrderRequest): CloseOrderResponse {
+        request.mchId = properties.mchId
+        if (request.appid == null)
+            request.appid = properties.appid
+        val response = postForObject(
+                "https://api.mch.weixin.qq.com/pay/closeorder",
+                sign(request),
+                CloseOrderResponse::class.java
+        )
+        return if (response != null && response.isOk()) {
+            if (sign(response).sign == response.sign) {
+                if (response.isBizOk()) {
+                    response
+                } else {
+                    throw WeixinPayException("订单：${request.outTradeNo}关闭失败:${response.errCodeDes}", response)
+                }
+            } else {
+                throw WeixinPayException("订单：${request.outTradeNo}关闭失败:结果签名验证失败,${response.returnMsg}", response)
+            }
+        } else {
+            throw WeixinPayException("订单：${request.outTradeNo}关闭失败:${response?.returnMsg ?: "无结果响应"}", response)
+        }
+
+    }
+
+    /**
      * 付款
      * https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=14_2
      */

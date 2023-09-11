@@ -15,7 +15,7 @@ class CodeGen {
 
     @Test
     fun gen() {
-        val javaName = "RefundResponse.txt".substringBeforeLast(".")
+        val javaName = "CloseRequest.txt".substringBeforeLast(".")
         gen(javaName)
     }
 
