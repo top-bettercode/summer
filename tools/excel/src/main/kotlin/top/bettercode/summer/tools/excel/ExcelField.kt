@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.excel
 
 import javassist.bytecode.BadBytecode
 import javassist.bytecode.SignatureAttribute
-import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
@@ -314,7 +313,7 @@ open class ExcelField<T, P : Any?> {
                 entityType = ClassUtils.forName(methodSignature.parameterTypes[0].jvmTypeName(), null) as Class<T>
                 //$lamda-0
                 if (!propertyName!!.contains("lambda\$new$") && !propertyName!!.contains("\$lambda")) {
-                    try {
+                    propertySetter = ExcelCellSetter { entity, property ->
                         var writeMethod: Method
                         try {
                             writeMethod = entityType!!.getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
@@ -327,13 +326,7 @@ open class ExcelField<T, P : Any?> {
                             }
                         }
                         val fWriteMethod = writeMethod
-                        propertySetter = ExcelCellSetter { entity, property -> ReflectionUtils.invokeMethod(fWriteMethod, entity, property) }
-                    } catch (e: NoSuchMethodException) {
-                        val log = LoggerFactory.getLogger(ExcelField::class.java)
-                        if (log.isDebugEnabled) {
-                            log.debug("自动识别属性{} setter方法失败", propertyName)
-                        }
-                        propertyName = null
+                        ReflectionUtils.invokeMethod(fWriteMethod, entity, property)
                     }
                 } else {
                     propertyName = null
