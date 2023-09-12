@@ -156,6 +156,12 @@ object CoreProjectTasks {
                                     val isConverter = line.contains("converter")
                                     // converter = WeightToConverter.class
                                     val converter = line.substringAfter("converter = ").substringBefore(")")
+                                    //comment = "（根据设置的属性数量来增加内容，规格按照顺序来）"
+                                    val comment = if (line.contains("comment = \"")) {
+                                        line.substringAfter("comment = \"").substringBefore("\"")
+                                    } else {
+                                        ""
+                                    }
 
                                     val readName = findReadName(readLines, i)
                                     //ExcelField.of("商品分类名称", OrderReceivablesCusto::getCommoTyName),
@@ -174,7 +180,7 @@ object CoreProjectTasks {
                                         } else {
                                             ""
                                         }
-                                    },
+                                    }${if (comment.isNotBlank()) ".comment(\"$comment\")" else ""},
                     """.trimIndent())
 
                                 }
