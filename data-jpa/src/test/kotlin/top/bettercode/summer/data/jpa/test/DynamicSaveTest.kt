@@ -63,6 +63,13 @@ class DynamicSaveTest {
     }
 
     @Test
+    fun dynamicSaveForm() {
+        val dave = UserForm()
+        dave.lastName = "Form"
+        repository.dynamicSave(dave)
+    }
+
+    @Test
     fun staticSaveTest() {
         var dave = StaticUser(null, "Matthews")
         dave = staticUserRepository!!.save(dave)

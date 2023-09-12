@@ -39,7 +39,7 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.save(s)
     }
 
-    override fun <S : T> dynamicSave(s: S): S? {
+    override fun <S : T> dynamicSave(s: S): S {
         return repository.dynamicSave(s)
     }
 

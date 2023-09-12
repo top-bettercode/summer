@@ -16,7 +16,7 @@ import javax.persistence.Version
 @Entity
 @Table(name = "t_user")
 @EntityListeners(AuditingEntityListener::class)
-class User : BaseUser {
+open class User : BaseUser {
 
 
     /**

@@ -24,7 +24,7 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
      * @param <S> 类型
      * @return 结果
     </S> */
-    fun <S : T> dynamicSave(s: S): S?
+    fun <S : T> dynamicSave(s: S): S
 
     fun <S : T> saveAll(entities: Iterable<S>): List<S>
 

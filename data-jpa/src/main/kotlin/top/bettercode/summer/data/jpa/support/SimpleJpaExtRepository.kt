@@ -2,6 +2,7 @@ package top.bettercode.summer.data.jpa.support
 
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import org.springframework.beans.BeanUtils
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.query.EscapeCharacter
@@ -183,20 +184,32 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return try {
             mdc = mdcPutId(".dynamicSave")
             extJpaSupport.logicalDeletedAttribute?.setFalseIf(s)
-            if (isNew(s, true)) {
-                entityManager.persist(s)
-                s
+
+            var form = false
+            val entity: T = if (s::class.java != domainClass) {
+                val newInstance = domainClass.getConstructor().newInstance()
+                BeanUtils.copyProperties(s, newInstance)
+                form = true
+                newInstance
             } else {
-                val optional = findById(entityInformation.getId(s)!!)
+                s
+            }
+            if (isNew(entity, true)) {
+                entityManager.persist(entity)
+            } else {
+                val optional = findById(entityInformation.getId(entity)!!)
                 if (optional.isPresent) {
                     val exist = optional.get()
-                    s.nullFrom(exist)
-                    entityManager.merge(s)
+                    entity.nullFrom(exist)
+                    entityManager.merge(entity)
                 } else {
-                    entityManager.persist(s)
-                    s
+                    entityManager.persist(entity)
                 }
             }
+            if (form) {
+                BeanUtils.copyProperties(entity, s)
+            }
+            s
         } finally {
             cleanMdc(mdc)
         }
