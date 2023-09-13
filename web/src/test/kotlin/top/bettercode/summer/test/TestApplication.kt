@@ -3,7 +3,7 @@ package top.bettercode.summer.test
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
-import top.bettercode.summer.web.resolver.UnitGenericConverter
+import top.bettercode.summer.web.resolver.UnitConverter
 
 /**
  * @author Peter Wu
@@ -12,8 +12,8 @@ import top.bettercode.summer.web.resolver.UnitGenericConverter
 class TestApplication {
 
     @Bean
-    fun unitGenericConverter(): UnitGenericConverter {
-        return UnitGenericConverter()
+    fun unitGenericConverter(): UnitConverter {
+        return UnitConverter()
     }
 
     companion object {

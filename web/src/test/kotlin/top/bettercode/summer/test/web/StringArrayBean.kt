@@ -1,7 +1,7 @@
 package top.bettercode.summer.test.web
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import top.bettercode.summer.web.resolver.UnitConverter
+import top.bettercode.summer.web.resolver.Unit
 import top.bettercode.summer.web.serializer.annotation.JsonArray
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
 import top.bettercode.summer.web.serializer.annotation.JsonDefault
@@ -30,7 +30,7 @@ class StringArrayBean {
     var code: String? = null
     var intCode: Int? = null
 
-    @UnitConverter
+    @Unit
     var price: Long? = null
 
     @JsonUrl

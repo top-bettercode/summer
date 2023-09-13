@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer
+import top.bettercode.summer.web.resolver.Unit
 import top.bettercode.summer.web.resolver.UnitConverter
-import top.bettercode.summer.web.resolver.UnitGenericConverter
 
 /**
  * @author Peter Wu
@@ -21,14 +21,14 @@ constructor(private val value: Int = 100,
 
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Number {
-        return UnitGenericConverter.smaller(number = p.toString(), type = type, value = value, scale = scale)
+        return UnitConverter.smaller(number = p.toString(), type = type, value = value, scale = scale)
     }
 
 
     override fun createContextual(prov: DeserializationContext?, property: BeanProperty?): JsonDeserializer<*> {
         if (property != null) {
-            val annotation = property.getAnnotation(UnitConverter::class.java)
-                    ?: throw RuntimeException("未注解@" + UnitConverter::class.java.name)
+            val annotation = property.getAnnotation(Unit::class.java)
+                    ?: throw RuntimeException("未注解@" + Unit::class.java.name)
 
             @Suppress("UNCHECKED_CAST")
             return UnitDeserializer(annotation.value, annotation.scale, property.type.rawClass as Class<out Number>)

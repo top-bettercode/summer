@@ -12,7 +12,7 @@ import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.form.FormDuplicateCheck
-import top.bettercode.summer.web.resolver.UnitConverter
+import top.bettercode.summer.web.resolver.Unit
 import top.bettercode.summer.web.support.code.CodeService
 import top.bettercode.summer.web.support.code.ICodeService
 import top.bettercode.summer.web.validator.ChinaCell
@@ -26,7 +26,7 @@ import java.util.*
 class WebTestController : BaseController() {
     @FormDuplicateCheck
     @RequestMapping(value = ["/webtest"])
-    fun test(@Validated form: DataDicBean, @UnitConverter cent: Long?, a: Date?, @ChinaCell cell: String?): Any {
+    fun test(@Validated form: DataDicBean, @Unit cent: Long?, a: Date?, @ChinaCell cell: String?): Any {
         System.err.println(a)
         System.err.println(cent)
         Assert.isTrue(cent == 2200L, "cent != 2200")

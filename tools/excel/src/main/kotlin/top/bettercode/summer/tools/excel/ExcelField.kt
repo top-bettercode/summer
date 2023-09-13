@@ -8,7 +8,7 @@ import org.springframework.util.ReflectionUtils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
-import top.bettercode.summer.web.resolver.UnitGenericConverter
+import top.bettercode.summer.web.resolver.UnitConverter
 import top.bettercode.summer.web.support.code.CodeServiceHolder
 import java.io.Serializable
 import java.lang.invoke.SerializedLambda
@@ -178,10 +178,10 @@ open class ExcelField<T, P : Any?> {
     @JvmOverloads
     fun unit(value: Int, scale: Int = 2): ExcelField<T, P> {
         return cell { property: P ->
-            UnitGenericConverter.larger(number = property as Number, value = value, scale = scale).toPlainString()
+            UnitConverter.larger(number = property as Number, value = value, scale = scale).toPlainString()
         }
                 .property { cell: Any ->
-                    UnitGenericConverter.smaller(number = BigDecimal(cell.toString()), propertyType!!, value = value, scale = scale)
+                    UnitConverter.smaller(number = BigDecimal(cell.toString()), propertyType!!, value = value, scale = scale)
                 }
     }
 
