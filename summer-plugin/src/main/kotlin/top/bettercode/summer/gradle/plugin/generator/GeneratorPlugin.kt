@@ -116,10 +116,6 @@ class GeneratorPlugin : Plugin<Project> {
                                 ?: findGeneratorProperty(project, "dbSecurityRepository"))?.toString()?.toBoolean()
                                 ?: database.isDefault
 
-                        database.charset = (properties["charset"]
-                                ?: findGeneratorProperty(project, "charset"))?.toString()
-                                ?: "utf8mb4"
-
                         database.collate = (properties["collate"]
                                 ?: findGeneratorProperty(project, "collate"))?.toString()
                                 ?: "utf8mb4_unicode_ci"

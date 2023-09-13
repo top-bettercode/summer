@@ -125,7 +125,6 @@ class DatabaseMetaData(
                 val remarks = getString("REMARKS")?.replace("[\t\n\r]".toRegex(), "")?.trim() ?: ""
                 val engine: String = getEngine(name)
                 val collate: String = getCollate(name)
-                val charset = collate.substringBefore("_")
 
                 val columns = columns(name)
                 fixImportedKeys(schema, name, columns)
@@ -162,7 +161,6 @@ class DatabaseMetaData(
                         indexes = indexes,
                         pumlColumns = columns.toMutableList(),
                         engine = engine,
-                        charset = charset,
                         collate = collate
                 )
                 call(table)

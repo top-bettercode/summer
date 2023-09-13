@@ -16,11 +16,10 @@ object MysqlToDDL : ToDDL() {
             //schema default collate change
             database.use {
                 val defaultCollate = getSchemaDefaultCollate()
-                val defaultCharset = defaultCollate.substringBefore("_")
-                if (defaultCollate != database.collate || defaultCharset != database.charset) {
+                if (defaultCollate != database.collate) {
                     out.appendLine("$commentPrefix schema default collate change")
                     //alter database testffjp character set utf8mb4 collate utf8mb4_unicode_ci;
-                    out.appendLine("ALTER DATABASE ${database.schema} CHARACTER SET ${database.charset} COLLATE ${database.collate};")
+                    out.appendLine("ALTER DATABASE ${database.schema} CHARACTER SET ${database.collate.substringBefore("_")} COLLATE ${database.collate};")
                     out.appendLine()
                 }
             }
@@ -147,7 +146,7 @@ object MysqlToDDL : ToDDL() {
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendLine(") DEFAULT CHARSET = ${database.charset} COLLATE ${database.collate} ${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
+        pw.appendLine(") DEFAULT CHARSET = ${table.charset} COLLATE ${table.collate} ${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
             table.remarks.replace("\\", "\\\\")
         }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine}" else ""};")
 

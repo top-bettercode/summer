@@ -73,11 +73,6 @@ data class DatabaseConfiguration(
     var dbSecurityRepository: Boolean = true
 
     /**
-     * 编码
-     */
-    var charset: String = "utf8mb4"
-
-    /**
      * 编码排序
      */
     var collate: String = "utf8mb4_unicode_ci"

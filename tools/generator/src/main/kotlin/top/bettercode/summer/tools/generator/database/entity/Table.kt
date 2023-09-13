@@ -38,10 +38,6 @@ data class Table(
         val subModuleName: String = "database",
         val physicalOptions: String = "",
         val engine: String = "",
-        /**
-         * 编码
-         */
-        var charset: String = "utf8mb4",
 
         /**
          * 编码排序
@@ -93,7 +89,6 @@ data class Table(
 
         if (tableName != other.tableName) return false
         if (engine != other.engine) return false
-        if (charset != other.charset) return false
         if (collate != other.collate) return false
         if (remarks != other.remarks) return false
         if (physicalOptions != other.physicalOptions) return false
@@ -106,7 +101,6 @@ data class Table(
     override fun hashCode(): Int {
         var result = tableName.hashCode()
         result = 31 * result + engine.hashCode()
-        result = 31 * result + charset.hashCode()
         result = 31 * result + collate.hashCode()
         result = 31 * result + remarks.hashCode()
         result = 31 * result + physicalOptions.hashCode()
@@ -121,6 +115,14 @@ data class Table(
     }
 
     //--------------------------------------------
+
+
+    /**
+     * 编码
+     */
+    val charset: String
+        get() = collate.substringBefore("_")
+
     private var _database: DatabaseConfiguration? = null
     var database: DatabaseConfiguration
         get() = _database
