@@ -203,10 +203,18 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     }
 
     fun equal(propertyName: String, criteria: Any?): M {
+        return eq(propertyName, criteria)
+    }
+
+    fun eq(propertyName: String, criteria: Any?): M {
         return criteria(propertyName, criteria, PathMatcher.EQ)
     }
 
     fun notEqual(propertyName: String, criteria: Any?): M {
+        return ne(propertyName, criteria)
+    }
+
+    fun ne(propertyName: String, criteria: Any?): M {
         return criteria(propertyName, criteria, PathMatcher.NE)
     }
 

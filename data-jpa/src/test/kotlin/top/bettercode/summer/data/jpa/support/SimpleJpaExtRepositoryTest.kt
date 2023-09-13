@@ -476,7 +476,7 @@ class SimpleJpaExtRepositoryTest {
         //SpecMatcher类的公开方法名，按类似 "asc", "desc","path"的方法打印
         val type = SpecMatcher::class.java
         val methods = type.methods
-        val s = methods.map { it.name }.distinct().joinToString {
+        val s = methods.map { it.name }.filter { !it.contains("$") }.distinct().joinToString {
             "\"${it}\""
         }
         System.err.println(s)

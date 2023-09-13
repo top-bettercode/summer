@@ -253,10 +253,18 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
         get() = this.withMatcher(PathMatcher.IS_NOT_NULL_OR_EMPTY)
 
     fun equal(): M {
+        return eq()
+    }
+
+    fun eq(): M {
         return this.withMatcher(PathMatcher.EQ)
     }
 
     fun notEqual(): M {
+        return ne()
+    }
+
+    fun ne(): M {
         return this.withMatcher(PathMatcher.NE)
     }
 
@@ -309,11 +317,20 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
     }
 
     //--------------------------------------------
+
     fun equal(criteria: Any?): M {
+        return eq(criteria)
+    }
+
+    fun eq(criteria: Any?): M {
         return withMatcher(criteria, PathMatcher.EQ)
     }
 
     fun notEqual(criteria: Any?): M {
+        return ne(criteria)
+    }
+
+    fun ne(criteria: Any?): M {
         return withMatcher(criteria, PathMatcher.NE)
     }
 

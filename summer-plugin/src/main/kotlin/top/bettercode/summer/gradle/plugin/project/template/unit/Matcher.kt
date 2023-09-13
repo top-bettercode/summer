@@ -89,7 +89,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         val matcherType =
                 JavaType("top.bettercode.summer.data.jpa.query.PathMatcher")
         val existMethodNames = arrayOf(
-                "between", "all", "any", "lt", "criteriaUpdate", "asc", "containing", "toPredicate", "createCriteriaUpdate", "notEqual", "gt", "ge", "like", "notLike", "criteria", "starting", "sortBy", "notIn", "getMatchMode", "ending", "notStarting", "notEnding", "notContaining", "in", "desc", "le", "path", "equal", "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "or", "and"
+                "between", "ne", "all", "any", "lt", "criteriaUpdate", "asc", "containing", "toPredicate", "createCriteriaUpdate", "notEqual", "gt", "ge", "like", "notLike", "criteria", "starting", "sortBy", "notIn", "getMatchMode", "getIdAttribute", "setIdAttribute", "getVersionAttribute", "setVersionAttribute", "ending", "notStarting", "notEnding", "notContaining", "in", "desc", "le", "path", "eq", "equal", "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "or", "and"
         )
         //primaryKey
         val primaryKeyMethodName = if (primaryKeyName in existMethodNames) "${primaryKeyName}Field" else primaryKeyName
