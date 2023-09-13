@@ -12,7 +12,7 @@ import top.bettercode.summer.web.resolver.UnitConverter
 class TestApplication {
 
     @Bean
-    fun unitGenericConverter(): UnitConverter {
+    fun unitConverter(): UnitConverter {
         return UnitConverter()
     }
 

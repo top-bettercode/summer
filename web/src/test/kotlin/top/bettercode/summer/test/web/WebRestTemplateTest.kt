@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import top.bettercode.summer.web.RespEntity
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,8 +36,9 @@ class WebRestTemplateTest {
     fun test() {
         val entity = restTemplate
                 .getForEntity("/webtest?price=12&cent=22&a=1585549626000&cell=18221161113&number1=1",
-                        String::class.java)
+                        RespEntity::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
+        Assertions.assertEquals("200", entity.body.status)
     }
 
     @Test
