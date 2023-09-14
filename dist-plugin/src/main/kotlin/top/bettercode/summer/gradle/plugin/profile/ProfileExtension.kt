@@ -45,46 +45,41 @@ open class ProfileExtension(
                 array.add(File(gradle.gradleUserHomeDir, "gradle.properties"))
                 array.add(rootProject.file("gradle.properties"))
                 configProject { project ->
-                    val defaultConfigYmlFile =
-                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yml")
-                    if (defaultConfigYmlFile.exists()) {
-                        array.add(defaultConfigYmlFile)
-                    }
-                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
-                        val activeYmlFile =
-                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
-                        if (activeYmlFile.exists()) {
-                            array.add(activeYmlFile)
-                        }
-                    }
-                    val defaultConfigYamlFile =
-                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yaml")
-                    if (defaultConfigYamlFile.exists()) {
-                        array.add(defaultConfigYamlFile)
-                    }
-                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
-                        val activeYamlFile =
-                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
-                        if (activeYamlFile.exists()) {
-                            array.add(activeYamlFile)
-                        }
-                    }
-                    val defaultConfigFile =
-                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.properties")
-                    if (defaultConfigFile.exists()) {
-                        array.add(defaultConfigFile)
-                    }
-                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
-                        val activeFile =
-                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
-                        if (activeFile.exists()) {
-                            array.add(activeFile)
-                        }
-                    }
+                    addActiveFile(project, profile, array, ".yml")
+                    addActiveFile(project, profile, array, ".yaml")
+                    addActiveFile(project, profile, array, ".properties")
                 }
 
                 return array.toTypedArray()
             }
+
+        private fun Project.addActiveFile(project: Project, profile: ProfileExtension, array: MutableList<File>, suffix: String = "") {
+            val defaultConfigFile =
+                    project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE$suffix")
+            if (defaultConfigFile.exists()) {
+                array.add(defaultConfigFile)
+            }
+            if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
+                val activeFile = activeFile(project, profile, profilesActive, suffix)
+                if (activeFile.exists()) {
+                    if (profilesActive.contains("test")) {
+                        val testFile = activeFile(project, profile, "test", suffix)
+                        if (testFile.exists()) {
+                            array.add(testFile)
+                        }
+                    } else if (profilesActive.contains("release")) {
+                        val releaseFile = activeFile(project, profile, "release", suffix)
+                        if (releaseFile.exists()) {
+                            array.add(releaseFile)
+                        }
+                    }
+                    array.add(activeFile)
+                }
+            }
+        }
+
+        private fun activeFile(project: Project, profile: ProfileExtension, active: String, suffix: String): File =
+                project.file("${profile.configDir}/$active${profile.activeFileSuffix}$suffix")
 
         internal val Project.profiles: Set<String>
             get() {
@@ -166,44 +161,10 @@ open class ProfileExtension(
 
                 val profile = extensions.getByType(ProfileExtension::class.java)
                 configProject { project ->
-                    val defaultConfigYmlFile =
-                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yml")
                     val yaml = Yaml()
-                    if (defaultConfigYmlFile.exists()) {
-                        loadYml(defaultConfigYmlFile, yaml, props)
-                    }
-                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
-                        val activeYmlFile =
-                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
-                        if (activeYmlFile.exists()) {
-                            loadYml(activeYmlFile, yaml, props)
-                        }
-                    }
-                    val defaultConfigYamlFile =
-                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.yaml")
-                    if (defaultConfigYamlFile.exists()) {
-                        loadYml(defaultConfigYamlFile, yaml, props)
-                    }
-                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
-                        val activeYamlFile =
-                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
-                        if (activeYamlFile.exists()) {
-                            loadYml(activeYamlFile, yaml, props)
-                        }
-                    }
-                    val defaultConfigFile =
-                            project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE.properties")
-                    if (defaultConfigFile.exists()) {
-                        props.load(defaultConfigFile.inputStream())
-                    }
-
-                    if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
-                        val activeFile =
-                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
-                        if (activeFile.exists()) {
-                            props.load(activeFile.inputStream())
-                        }
-                    }
+                    loadActiveFile(project, profile, yaml, props, ".yml")
+                    loadActiveFile(project, profile, yaml, props, ".yaml")
+                    loadActiveFile(project, profile, yaml, props, ".properties")
                 }
                 if (profile.configFile.isNotBlank()) {
                     val uri = uri(profile.configFile)
@@ -234,6 +195,38 @@ open class ProfileExtension(
                 }
                 return props
             }
+
+        private fun Project.loadActiveFile(project: Project, profile: ProfileExtension, yaml: Yaml, props: Properties, suffix: String = "") {
+            val defaultConfigFile = project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE$suffix")
+            if (defaultConfigFile.exists()) {
+                loadProps(suffix, props, defaultConfigFile, yaml)
+            }
+            if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
+                val activeFile = activeFile(project, profile, profilesActive, suffix)
+                if (activeFile.exists()) {
+                    if (profilesActive.contains("test")) {
+                        val testFile = activeFile(project, profile, "test", suffix)
+                        if (testFile.exists()) {
+                            loadProps(suffix, props, testFile, yaml)
+                        }
+                    } else if (profilesActive.contains("release")) {
+                        val releaseFile = activeFile(project, profile, "release", suffix)
+                        if (releaseFile.exists()) {
+                            loadProps(suffix, props, releaseFile, yaml)
+                        }
+                    }
+                    loadProps(suffix, props, activeFile, yaml)
+                }
+            }
+        }
+
+        private fun loadProps(suffix: String, props: Properties, releaseFile: File, yaml: Yaml) {
+            if (suffix == ".properties") {
+                props.load(releaseFile.inputStream())
+            } else {
+                loadYml(releaseFile, yaml, props)
+            }
+        }
 
         private fun loadYml(
                 defaultConfigYmlFile: File,
