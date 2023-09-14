@@ -117,7 +117,10 @@ open class ProfileExtension(
         private fun findActive(profiles: Set<String>, active: String): String {
             val find = profiles.find { it == active }
             return if (find == null) {
-                val filter = profiles.filter { it.startsWith(active) }
+                var filter = profiles.filter { it.startsWith(active) }
+                if (filter.isEmpty()) {
+                    filter = profiles.filter { it.contains(active) }
+                }
                 if (filter.isEmpty() || filter.size > 1) {
                     log.warn("未找到适合的profiles.active:${active}配置文件,使用${PROFILES_DEFAULT_ACTIVE}默认配置")
                     PROFILES_DEFAULT_ACTIVE
