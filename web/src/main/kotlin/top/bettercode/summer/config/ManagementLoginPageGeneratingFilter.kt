@@ -112,8 +112,13 @@ class ManagementLoginPageGeneratingFilter(
                     request.session.maxInactiveInterval = managementAuthProperties.maxAge
                 }
                 request.session.setAttribute(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
-                val url = request.session.getAttribute(TARGET_URL_KEY)?.toString()
+                var url = request.session.getAttribute(TARGET_URL_KEY)?.toString()
                         ?: webEndpointProperties.basePath
+                request.session.removeAttribute(TARGET_URL_KEY)
+                val hash = request.getParameter("hash")
+                if (!hash.isNullOrBlank()) {
+                    url += hash
+                }
                 sendRedirect(request, response, url)
                 return
             }
@@ -241,7 +246,8 @@ class ManagementLoginPageGeneratingFilter(
         display: block;
         width: 100%;
       }
-    </style>  </head>
+    </style>
+    </head>
   <body>
      <div class="container">
 """
@@ -251,6 +257,7 @@ class ManagementLoginPageGeneratingFilter(
                 .append(contextPath)
                 .append(authenticationUrl)
                 .append("\">\n")
+                .append("<input type=\"hidden\" id=\"hash\" name=\"hash\" value=\"\">")
                 .append("        <h2 class=\"form-signin-heading\">Please sign in</h2>\n")
                 .append(createError(loginError, errorMsg))
                 .append(createLogoutSuccess(logoutSuccess))
@@ -270,6 +277,11 @@ class ManagementLoginPageGeneratingFilter(
                 .append("        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Sign in</button>\n")
                 .append("      </form>\n")
         sb.append("</div>\n")
+        sb.append("""
+    <script>
+        document.getElementById("hash").value = window.location.hash;
+    </script>
+            """)
         sb.append("</body></html>")
         return sb.toString()
     }
