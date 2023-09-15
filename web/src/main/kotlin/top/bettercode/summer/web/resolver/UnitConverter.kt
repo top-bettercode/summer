@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.log10
 
 /**
  * 数量单位转换
@@ -42,19 +43,19 @@ class UnitConverter : ConditionalGenericConverter {
 
         @JvmStatic
         @JvmOverloads
-        fun smaller(number: Number, value: Int = 100, scale: Int = 2): Long {
+        fun smaller(number: Number, value: Int = 100, scale: Int = log10(value.toDouble()).toInt()): Long {
             return smaller(number = number, type = Long::class.java, value = value, scale = scale)
         }
 
         @JvmStatic
         @JvmOverloads
-        fun <T> smaller(number: Number, type: Class<T>, value: Int = 100, scale: Int = 2): T {
+        fun <T> smaller(number: Number, type: Class<T>, value: Int = 100, scale: Int = log10(value.toDouble()).toInt()): T {
             return smaller(number = number.toString(), type = type, value = value, scale = scale)
         }
 
         @JvmStatic
         @JvmOverloads
-        fun <T> smaller(number: String, type: Class<T>, value: Int = 100, scale: Int = 2): T {
+        fun <T> smaller(number: String, type: Class<T>, value: Int = 100, scale: Int = log10(value.toDouble()).toInt()): T {
             val result = BigDecimal(number).multiply(BigDecimal(value)).setScale(scale, RoundingMode.HALF_UP)
             return ApplicationContextHolder.conversionService.convert(result, type)!!
         }
@@ -62,13 +63,13 @@ class UnitConverter : ConditionalGenericConverter {
 
         @JvmStatic
         @JvmOverloads
-        fun larger(number: Number, value: Int = 100, scale: Int = 2): BigDecimal {
+        fun larger(number: Number, value: Int = 100, scale: Int = log10(value.toDouble()).toInt()): BigDecimal {
             return larger(number = number, type = BigDecimal::class.java, value = value, scale = scale)
         }
 
         @JvmStatic
         @JvmOverloads
-        fun <T> larger(number: Number, type: Class<T>, value: Int = 100, scale: Int = 2): T {
+        fun <T> larger(number: Number, type: Class<T>, value: Int = 100, scale: Int = log10(value.toDouble()).toInt()): T {
             val result = BigDecimal(number.toString()).divide(BigDecimal(value), scale, RoundingMode.HALF_UP)
             return if (type == BigDecimal::class.java) {
                 @Suppress("UNCHECKED_CAST")
