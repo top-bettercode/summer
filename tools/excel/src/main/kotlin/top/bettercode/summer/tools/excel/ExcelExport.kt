@@ -319,7 +319,7 @@ class ExcelExport {
                 }
                 merge = excelField.isMerge
                 if (merge) {
-                    val mergeIdValue = excelField.mergeId(e)
+                    val mergeIdValue = excelField.getMergeId(e)
                     val lastMergeId = lastMergeIds[mergeIndex]
                     var newRange = lastMergeId == null || lastMergeId != mergeIdValue
                     if (newRange) {
