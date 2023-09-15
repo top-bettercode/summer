@@ -427,35 +427,35 @@ class ExcelField<T, P : Any?> {
             val codeService = CodeServiceHolder[codeServiceRef]
             if (property is String) {
                 val code = property.toString()
-                if (code.contains(",")) {
-                    val split = code.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                    return@cell StringUtils.arrayToCommaDelimitedString(Arrays.stream<String>(split).map<String> { s: String -> codeService.getDicCodes(codeType)!!.getName(s.trim { it <= ' ' }) }.toArray())
+                val separator = ","
+                if (code.contains(separator)) {
+                    val split = code.split(separator).filter { it.isNotBlank() }.map { it.trim() }
+                    return@cell split.joinToString(separator) { s: String -> codeService.getDicCodes(codeType)!!.getName(s) }
                 } else {
                     return@cell codeService.getDicCodes(codeType)!!.getName(code)
                 }
             } else {
                 return@cell codeService.getDicCodes(codeType)!!.getName((property as Serializable))
             }
-        }.property { cellValue: Any -> getCode(codeServiceRef, codeType, cellValue.toString()) }
-    }
+        }.property { cellValue: Any ->
+            val codeService = CodeServiceHolder[codeServiceRef]
+            val separator = ","
+            val value = cellValue.toString()
+            @Suppress("UNCHECKED_CAST")
+            return@property if (value.contains(separator)) {
+                val split = value.split(separator).filter { it.isNotBlank() }.map { it.trim() }
 
-    //--------------------------------------------
-    @Suppress("UNCHECKED_CAST")
-    private fun getCode(codeServiceRef: String, codeType: String, cellValue: String): P? {
-        val codeService = CodeServiceHolder[codeServiceRef]
-        return if (cellValue.contains(",")) {
-            val split = cellValue.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            StringUtils.arrayToCommaDelimitedString(Arrays.stream(split).map { s: String ->
-                val code = codeService.getDicCodes(codeType)!!.getCode(s.trim { it <= ' ' })
-                        ?: throw IllegalArgumentException("无\"$s\"对应的类型")
-                code
-            }.toArray()) as P?
-        } else {
-            val code = codeService.getDicCodes(codeType)!!.getCode(cellValue)
-                    ?: throw IllegalArgumentException("无\"$cellValue\"对应的类型")
-            code as P?
+                split.joinToString(separator) { s: String ->
+                    codeService.getDicCodes(codeType)!!.getCode(s)?.toString()
+                            ?: throw IllegalArgumentException("无\"$s\"对应的类型")
+                }
+            } else {
+                codeService.getDicCodes(codeType)!!.getCode(value)
+                        ?: throw IllegalArgumentException("无\"$cellValue\"对应的类型")
+            } as P?
         }
     }
+
 
     //--------------------------------------------
     fun getter(propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {

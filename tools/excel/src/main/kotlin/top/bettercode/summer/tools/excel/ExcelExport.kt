@@ -434,7 +434,6 @@ class ExcelExport {
                     .merge()
             val excelField = excelCell.excelField
             val width = excelField.width
-            val format = excelField.format
             if (width == -1.0) {
                 sheet!!.width(column, columnWidths.width(column))
             } else {
@@ -447,7 +446,7 @@ class ExcelExport {
                     .verticalAlignment(Alignment.CENTER.value)
                     .wrapText(excelField.wrapText)
                     .fontName(fontName)
-                    .format(format)
+                    .format(excelField.format)
                     .borderStyle(BorderStyle.THIN)
                     .borderColor(Color.BLACK)
             style.set()
