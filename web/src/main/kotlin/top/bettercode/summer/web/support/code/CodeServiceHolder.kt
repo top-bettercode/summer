@@ -22,7 +22,7 @@ object CodeServiceHolder {
     operator fun get(beanName: String): ICodeService {
         val codeService = CODE_SERVICE_MAP.computeIfAbsent(
                 if (StringUtils.hasText(beanName)) beanName else DEFAULT_BEAN_NAME
-        ) { s: String -> if (ApplicationContextHolder.isInitialized) ApplicationContextHolder.getBean(s, ICodeService::class.java) else null }
+        ) { s: String -> ApplicationContextHolder.getBean(s, ICodeService::class.java) }
         return codeService ?: PROPERTIES_CODESERVICE
     }
 }
