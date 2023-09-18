@@ -206,11 +206,14 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         //file log
         if (existProperty(environment, "summer.logging.files.path")) {
 
-            var command = environment.getProperty("sun.java.command")
-            if (command?.contains("Gradle Test") == true) {
-                command = null
+            var defaultPackage = environment.getProperty("summer.logging.spilt-marker.package")
+            if (defaultPackage == null) {
+                var command = environment.getProperty("sun.java.command")
+                if (command?.contains("Gradle Test") == true) {
+                    command = null
+                }
+                defaultPackage = command?.substringBeforeLast('.')
             }
-            val defaultPackage = command?.substringBeforeLast('.')
             val spilts = bind(environment, "summer.logging.spilt")
             val defaultLevel = rootLevel ?: "debug"
             val markers = defaultSpiltMarkers(defaultPackage).associateWith { defaultLevel }.toMutableMap()
