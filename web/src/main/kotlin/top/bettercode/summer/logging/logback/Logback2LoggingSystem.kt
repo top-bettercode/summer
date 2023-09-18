@@ -206,7 +206,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         //file log
         if (existProperty(environment, "summer.logging.files.path")) {
 
-            var defaultPackage = environment.getProperty("summer.logging.spilt-marker.package")
+            var defaultPackage = environment.getProperty("summer.logging.spilt-markers.package")
             if (defaultPackage == null) {
                 var command = environment.getProperty("sun.java.command")
                 if (command?.contains("Gradle Test") == true) {
