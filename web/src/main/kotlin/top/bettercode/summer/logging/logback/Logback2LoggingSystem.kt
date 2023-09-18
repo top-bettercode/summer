@@ -127,7 +127,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 try {
                     val logsPath = environment.getProperty("summer.logging.files.path") ?: "logs"
                     val managementPath =
-                            environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
+                            environment.getProperty("management.endpoints.web.base-path")
+                                    ?: "/actuator"
                     val slackAppender = SlackAppender(
                             slackProperties, warnSubject, logsPath, managementPath, fileLogPattern
                     )
@@ -205,9 +206,14 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         //file log
         if (existProperty(environment, "summer.logging.files.path")) {
 
+            var command = environment.getProperty("sun.java.command")
+            if (command?.contains("Gradle Test") == true) {
+                command = null
+            }
+            val defaultPackage = command?.substringBeforeLast('.')
             val spilts = bind(environment, "summer.logging.spilt")
             val defaultLevel = rootLevel ?: "debug"
-            val markers = defaultSpiltMarkers.associateWith { defaultLevel }.toMutableMap()
+            val markers = defaultSpiltMarkers(defaultPackage).associateWith { defaultLevel }.toMutableMap()
             markers[HttpOperation.REQUEST_LOG_MARKER] = defaultLevel
             markers.putAll(bind(environment, "summer.logging.spilt-marker"))
 
@@ -668,18 +674,21 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         const val FILE_LOG_PATTERN =
                 "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
         private val packageScanClassResolver = PackageScanClassResolver()
-        val defaultSpiltMarkers: List<String>
-                by lazy {
-                    val clazzs: Set<Class<*>> = packageScanClassResolver.findByFilter({ type ->
-                        try {
-                            type.isAnnotationPresent(LogMarker::class.java)
-                        } catch (e: Exception) {
-                            false
-                        }
-                    }, "top.bettercode.summer"
-                    )
-                    clazzs.map { it.getAnnotation(LogMarker::class.java).value }
+        fun defaultSpiltMarkers(defaultPackageName: String? = null): List<String> {
+            var packageNames = arrayOf("top.bettercode.summer")
+            if (defaultPackageName != null) {
+                packageNames += defaultPackageName
+            }
+            val clazzs: Set<Class<*>> = packageScanClassResolver.findByFilter({ type ->
+                try {
+                    type.isAnnotationPresent(LogMarker::class.java)
+                } catch (e: Exception) {
+                    false
                 }
+            }, *packageNames
+            )
+            return clazzs.map { it.getAnnotation(LogMarker::class.java).value }
+        }
     }
 
 }

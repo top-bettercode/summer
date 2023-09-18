@@ -16,7 +16,7 @@ class LoggingTest {
 
     @Test
     fun defaultSpiltMarkers() {
-        val defaultSpiltMarkers = Logback2LoggingSystem.defaultSpiltMarkers
+        val defaultSpiltMarkers = Logback2LoggingSystem.defaultSpiltMarkers()
         System.err.println(defaultSpiltMarkers)
     }
 
