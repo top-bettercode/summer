@@ -33,17 +33,18 @@ dependencies {
         api("com.oracle.database.security:osdt_core:21.9.0.0")
         api("com.oracle.database.security:osdt_cert:21.9.0.0")
 
-        api("org.asciidoctor:asciidoctorj:2.5.7")
-        api("org.asciidoctor:asciidoctorj-diagram:2.2.4")
-        api("org.asciidoctor:asciidoctorj-pdf:2.3.4")
+        api("org.asciidoctor:asciidoctorj:2.5.10")
+        //高版本asciidoctorj-diagram要求JDK11
+        api("org.asciidoctor:asciidoctorj-diagram:2.2.7")
+        api("org.asciidoctor:asciidoctorj-pdf:2.3.9")
 
-        api("org.dhatim:fastexcel:0.15.2")
-        api("org.dhatim:fastexcel-reader:0.15.2")
+        api("org.dhatim:fastexcel:0.15.7")
+        api("org.dhatim:fastexcel-reader:0.15.7")
         api("org.apache.poi:poi-ooxml:5.2.3")
         api("org.apache.poi:poi-scratchpad:5.2.3")
 
         api("org.mybatis:mybatis:3.5.13")
-        api("org.mybatis:mybatis-spring:2.1.0")
+        api("org.mybatis:mybatis-spring:2.1.1")
         api("org.mybatis.generator:mybatis-generator-core:1.4.2")
 
         api("com.querydsl:querydsl-apt:5.0.0:jpa")
@@ -56,25 +57,24 @@ dependencies {
 
         api("net.logstash.logback:logstash-logback-encoder:7.3")
 
-        api("com.auth0:java-jwt:4.3.0")
-        api("org.bouncycastle:bcprov-jdk18on:1.72")
+        api("com.auth0:java-jwt:4.4.0")
+        api("org.bouncycastle:bcprov-jdk18on:1.76")
         api("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5")
 
-        api("com.tencentcloudapi:tencentcloud-sdk-java:3.1.722")
+        api("com.tencentcloudapi:tencentcloud-sdk-java:3.1.865")
         api("com.qcloud:vod_api:2.1.5")
 
-        api("commons-codec:commons-codec:1.15")
-        api("org.json:json:20230227")
+        api("commons-codec:commons-codec:1.16.0")
+        api("org.json:json:20230618")
         api("org.javassist:javassist:3.29.2-GA")
         api("org.dom4j:dom4j:2.1.4")
-        api("org.jsoup:jsoup:1.15.4")
+        api("org.jsoup:jsoup:1.16.1")
         api("org.atteo:evo-inflector:1.3")
         api("com.github.axet:kaptcha:0.0.9")
         api("com.github.stuxuhai:jpinyin:1.1.8")
-        api("net.sourceforge.plantuml:plantuml:1.2023.5")
+        api("net.sourceforge.plantuml:plantuml:1.2023.11")
         api("javax.mail:mail:1.4.7")
         api("com.github.easonjim:com.sap.conn.jco.sapjco3:3.0.11")
-        api("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
         api("com.google.code.findbugs:annotations:3.0.1")
 
         api("net.java.dev.jna:jna:5.13.0")

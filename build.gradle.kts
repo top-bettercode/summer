@@ -50,7 +50,8 @@ allprojects {
 
         repositories {
             mavenLocal()
-            maven("https://maven.aliyun.com/repository/public/")
+//            maven("https://maven.aliyun.com/repository/public/")
+//            maven("https://repo.huaweicloud.com/repository/maven/")
             mavenCentral()
             maven("https://maven.aliyun.com/repository/gradle-plugin/")
             gradlePluginPortal()
