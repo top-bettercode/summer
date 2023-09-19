@@ -1,45 +1,50 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
+import io.micrometer.core.instrument.util.StringUtils
 import net.sf.jsqlparser.expression.Alias
 import net.sf.jsqlparser.expression.Function
 import net.sf.jsqlparser.expression.Parenthesis
+import net.sf.jsqlparser.parser.CCJSqlParser
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select.*
-import org.springframework.util.StringUtils
 import java.util.*
 
 /**
  * sql解析类，提供更智能的count查询sql
- *
- * @author liuzh
  */
 object CountSqlParser {
-
     //<editor-fold desc="聚合函数">
     private val skipFunctions = Collections.synchronizedSet(HashSet<String>())
     private val falseFunctions = Collections.synchronizedSet(HashSet<String>())
 
-    /*
-   * 获取智能的countSql
-   */
-    fun getSmartCountSql(sql: String?): String {
+    fun parse(statementReader: String?): Statement {
+        return CCJSqlParserUtil.parse(statementReader
+        ) { parser: CCJSqlParser -> parser.withSquareBracketQuotation(true) }
+    }
+
+    /**
+     * 获取智能的countSql
+     *
+     */
+    fun getSmartCountSql(sql: String): String {
         return getSmartCountSql(sql, "0")
     }
 
-    /*
-   * 获取智能的countSql
-   *
-   */
-    fun getSmartCountSql(sql: String?, countColumn: String): String {
+    /**
+     * 获取智能的countSql
+     *
+     * @param countColumn 列名，默认 0
+     */
+    fun getSmartCountSql(sql: String, countColumn: String): String {
         //解析SQL
         //特殊sql不需要去掉order by时，使用注释前缀
-        if (sql!!.contains(KEEP_ORDERBY)) {
+        if (sql.contains(KEEP_ORDERBY) || keepOrderBy()) {
             return getSimpleCountSql(sql, countColumn)
         }
         val stmt: Statement = try {
-            CCJSqlParserUtil.parse(sql)
+            parse(sql)
         } catch (e: Throwable) {
             //无法解析的用一般方法返回count语句
             return getSimpleCountSql(sql, countColumn)
@@ -57,49 +62,65 @@ object CountSqlParser {
         processWithItemsList(select.withItemsList)
         //处理为count查询
         sqlToCount(select, countColumn)
-        return select.toString()
+        var result = select.toString()
+        if (selectBody is PlainSelect) {
+            val token = selectBody.astNode.jjtGetFirstToken().specialToken
+            if (token != null) {
+                val hints = token.toString().trim { it <= ' ' }
+                // 这里判断是否存在hint, 且result是不包含hint的
+                if (hints.startsWith("/*") && hints.endsWith("*/") && !result.startsWith("/*")) {
+                    result = hints + result
+                }
+            }
+        }
+        return result
     }
-
 
     /**
      * 获取普通的Count-sql
      *
-     * @param sql  原查询sql
-     * @param name name
+     * @param sql 原查询sql
      * @return 返回count查询sql
      */
-    fun getSimpleCountSql(sql: String?, name: String): String {
-        return ("select count("
-                + name
-                + ") from ( \n"
-                + sql
-                + "\n ) tmp_count")
+    fun getSimpleCountSql(sql: String): String {
+        return getSimpleCountSql(sql, "0")
     }
 
-    /*
-   * 将sql转换为count查询
-   */
+    /**
+     * 获取普通的Count-sql
+     *
+     * @param sql 原查询sql
+     * @return 返回count查询sql
+     */
+    fun getSimpleCountSql(sql: String, name: String): String {
+        return """select count($name) from ($sql) tmp_count"""
+    }
+
+    /**
+     * 将sql转换为count查询
+     *
+     */
     fun sqlToCount(select: Select, name: String) {
         val selectBody = select.selectBody
         // 是否能简化count查询
-        val countItems: MutableList<SelectItem> = ArrayList()
-        countItems.add(SelectExpressionItem(Column("count($name)")))
+        val countItem: List<SelectItem> = listOf(SelectExpressionItem(Column("count($name)")))
         if (selectBody is PlainSelect && isSimpleCount(selectBody)) {
-            selectBody.selectItems = countItems
+            selectBody.selectItems = countItem
         } else {
             val plainSelect = PlainSelect()
             val subSelect = SubSelect()
             subSelect.selectBody = selectBody
             subSelect.alias = TABLE_ALIAS
             plainSelect.fromItem = subSelect
-            plainSelect.selectItems = countItems
+            plainSelect.selectItems = countItem
             select.selectBody = plainSelect
         }
     }
 
-    /*
-   * 是否可以用简单的count查询方式
-   */
+    /**
+     * 是否可以用简单的count查询方式
+     *
+     */
     fun isSimpleCount(select: PlainSelect): Boolean {
         //包含group by的时候不可以
         if (select.groupBy != null) {
@@ -124,19 +145,19 @@ object CountSqlParser {
                 if (expression is Function) {
                     val name = expression.name
                     if (name != null) {
-                        val name1 = name.uppercase(Locale.getDefault())
-                        if (skipFunctions.contains(name1)) {
+                        val upperName = name.uppercase(Locale.getDefault())
+                        if (skipFunctions.contains(upperName)) {
                             //go on
-                        } else if (falseFunctions.contains(name1)) {
+                        } else if (falseFunctions.contains(upperName)) {
                             return false
                         } else {
                             for (aggregateFunction in AGGREGATE_FUNCTIONS) {
-                                if (name1.startsWith(aggregateFunction)) {
-                                    falseFunctions.add(name1)
+                                if (upperName.startsWith(aggregateFunction)) {
+                                    falseFunctions.add(upperName)
                                     return false
                                 }
                             }
-                            skipFunctions.add(name1)
+                            skipFunctions.add(upperName)
                         }
                     }
                 } else if (expression is Parenthesis
@@ -150,15 +171,16 @@ object CountSqlParser {
         return true
     }
 
-    /*
-   * 处理selectBody去除Order by
-   */
+    /**
+     * 处理selectBody去除Order by
+     *
+     */
     fun processSelectBody(selectBody: SelectBody?) {
         if (selectBody != null) {
             if (selectBody is PlainSelect) {
                 processPlainSelect(selectBody)
             } else if (selectBody is WithItem) {
-                if (selectBody.subSelect != null) {
+                if (selectBody.subSelect != null && !keepSubSelectOrderBy()) {
                     processSelectBody(selectBody.subSelect.selectBody)
                 }
             } else {
@@ -176,9 +198,10 @@ object CountSqlParser {
         }
     }
 
-    /*
-   * 处理PlainSelect类型的selectBody
-   */
+    /**
+     * 处理PlainSelect类型的selectBody
+     *
+     */
     fun processPlainSelect(plainSelect: PlainSelect) {
         if (!orderByHashParameters(plainSelect.orderByElements)) {
             plainSelect.orderByElements = null
@@ -196,61 +219,69 @@ object CountSqlParser {
         }
     }
 
-    /*
-   * 处理WithItem
-   */
+    /**
+     * 处理WithItem
+     *
+     */
     fun processWithItemsList(withItemsList: List<WithItem>?) {
         if (!withItemsList.isNullOrEmpty()) {
             for (item in withItemsList) {
-                if (item.subSelect != null) {
+                if (item.subSelect != null && !keepSubSelectOrderBy()) {
                     processSelectBody(item.subSelect.selectBody)
                 }
             }
         }
     }
 
-    /*
-   * 处理子查询
-   */
+    /**
+     * 处理子查询
+     *
+     */
     fun processFromItem(fromItem: FromItem?) {
-        when (fromItem) {
-            is SubJoin -> {
-                if (fromItem.joinList != null && fromItem.joinList.size > 0) {
-                    for (join in fromItem.joinList) {
-                        if (join.rightItem != null) {
-                            processFromItem(join.rightItem)
-                        }
+        if (fromItem is SubJoin) {
+            if (fromItem.joinList != null && fromItem.joinList.size > 0) {
+                for (join in fromItem.joinList) {
+                    if (join.rightItem != null) {
+                        processFromItem(join.rightItem)
                     }
                 }
-                if (fromItem.left != null) {
-                    processFromItem(fromItem.left)
-                }
             }
-
-            is SubSelect -> {
-                if (fromItem.selectBody != null) {
-                    processSelectBody(fromItem.selectBody)
-                }
+            if (fromItem.left != null) {
+                processFromItem(fromItem.left)
             }
-
-            is ValuesList -> {
+        } else if (fromItem is SubSelect) {
+            if (fromItem.selectBody != null && !keepSubSelectOrderBy()) {
+                processSelectBody(fromItem.selectBody)
             }
-
-            is LateralSubSelect -> {
-                if (fromItem.subSelect != null) {
-                    val subSelect = fromItem.subSelect
-                    if (subSelect.selectBody != null) {
-                        processSelectBody(subSelect.selectBody)
-                    }
+        } else if (fromItem is LateralSubSelect) {
+            if (fromItem.subSelect != null) {
+                val subSelect = fromItem.subSelect
+                if (subSelect.selectBody != null && !keepSubSelectOrderBy()) {
+                    processSelectBody(subSelect.selectBody)
                 }
             }
         }
         //Table时不用处理
     }
 
-    /*
-   * 判断Orderby是否包含参数，有参数的不能去
-   */
+    /**
+     * 保留 order by
+     */
+    private fun keepOrderBy(): Boolean {
+        return false
+    }
+
+    /**
+     * 保留子查询 order by
+     */
+    private fun keepSubSelectOrderBy(): Boolean {
+        return false
+    }
+
+    /**
+     * 判断Orderby是否包含参数，有参数的不能去
+     *
+     */
     fun orderByHashParameters(orderByElements: List<OrderByElement>?): Boolean {
         if (orderByElements == null) {
             return false
@@ -264,13 +295,13 @@ object CountSqlParser {
     }
 
     const val KEEP_ORDERBY = "/*keep orderby*/"
-    private val TABLE_ALIAS: Alias = Alias("table_count")
+    private val TABLE_ALIAS: Alias = Alias("table_count", false)
 
     /**
      * 聚合函数，以下列函数开头的都认为是聚合函数
      */
-    private val AGGREGATE_FUNCTIONS: MutableSet<String> = HashSet(listOf(
-            *("APPROX_COUNT_DISTINCT," +
+    private val AGGREGATE_FUNCTIONS: MutableSet<String> = mutableSetOf(
+            "APPROX_COUNT_DISTINCT," +
                     "ARRAY_AGG," +
                     "AVG," +
                     "BIT_," +  //"BIT_AND," +
@@ -337,23 +368,18 @@ object CountSqlParser {
                     //"VARIANCE," +
                     //"VARIANCE_SAMP," +
                     //"VARP," +
-                    "XMLAGG").split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()))
+                    "XMLAGG".split(","))
 
-    //</editor-fold>
-    init {
-        TABLE_ALIAS.isUseAs = false
-    }
-
-    /*
-* 添加到聚合函数，可以是逗号隔开的多个函数前缀
-*/
+    /**
+     * 添加到聚合函数，可以是逗号隔开的多个函数前缀
+     *
+     */
     fun addAggregateFunctions(functions: String) {
-        if (StringUtils.hasText(functions)) {
-            val funs = functions.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        if (StringUtils.isNotEmpty(functions)) {
+            val funs = functions.split(",")
             for (`fun` in funs) {
                 AGGREGATE_FUNCTIONS.add(`fun`.uppercase(Locale.getDefault()))
             }
         }
     }
-
 }
