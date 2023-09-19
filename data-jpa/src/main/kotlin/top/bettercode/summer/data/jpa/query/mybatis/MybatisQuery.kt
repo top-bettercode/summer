@@ -8,9 +8,8 @@ import javax.persistence.*
  * @author Peter Wu
  */
 class MybatisQuery(
-        val queryString: String,
         val query: Query,
-        val mybatisParam: MybatisParam
+        val countQuery: Query?
 ) : Query {
 
     override fun getResultList(): List<*> {

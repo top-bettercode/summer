@@ -200,7 +200,7 @@ object JpaExtQueryLookupStrategy {
             return try {
                 lookupStrategy.resolveQuery(method, em, namedQueries)
             } catch (e: IllegalStateException) {
-                if (method.mappedStatement != null) {
+                if (method.mybatisQueryMethod != null) {
                     MybatisJpaQuery(method, em)
                 } else {
                     createStrategy.resolveQuery(method, em, namedQueries)

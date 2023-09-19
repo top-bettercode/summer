@@ -1,7 +1,5 @@
 package org.springframework.data.jpa.repository.query
 
-import org.apache.ibatis.mapping.MappedStatement
-import org.apache.ibatis.mapping.SqlCommandType
 import org.hibernate.query.NativeQuery
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -12,7 +10,8 @@ import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryM
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.data.util.ParsingUtils
 import org.springframework.util.Assert
-import top.bettercode.summer.data.jpa.query.mybatis.*
+import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
+import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
 import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.util.regex.Pattern
 import java.util.stream.Collectors
@@ -21,57 +20,9 @@ import javax.persistence.Query
 
 class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJpaQuery(method, em) {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
-    private val metadataCache = QueryMetadataCache()
-    private val mappedStatement: MappedStatement
-    private val countMappedStatement: MappedStatement?
-    private val countSqlParser = CountSqlParser()
-    private var nestedResultMapType: NestedResultMapType? = null
-    private val resultTransformer: MybatisResultTransformer
-    private val isModifyingQuery: Boolean
-    private val querySize: Int?
-    private val paramed: Boolean = method.paramed
 
-    init {
-        mappedStatement = method.mappedStatement!!
-        val sqlCommandType = mappedStatement.sqlCommandType
-        isModifyingQuery = SqlCommandType.UPDATE == sqlCommandType || SqlCommandType.DELETE == sqlCommandType || SqlCommandType.INSERT == sqlCommandType
-        MybatisResultSetHandler.validateResultMaps(mappedStatement)
-        resultTransformer = MybatisResultTransformer(mappedStatement)
-        val pageQuery = method.isPageQuery
-        if (pageQuery) {
-            val nestedResultMapId: String? = MybatisResultSetHandler.findNestedResultMap(mappedStatement)
-            if (nestedResultMapId != null) {
-                sqlLog.info(
-                        "{} may return incorrect paginated data. Please check result maps definition {}.",
-                        mappedStatement.id, nestedResultMapId)
-            }
-        }
-        nestedResultMapType = if (method.isSliceQuery) {
-            MybatisResultSetHandler.findNestedResultMapType(mappedStatement)
-        } else {
-            null
-        }
-        val countMappedStatement: MappedStatement?
-        if (pageQuery) {
-            countMappedStatement = try {
-                mappedStatement.configuration
-                        .getMappedStatement(mappedStatement.id + "_COUNT")
-            } catch (ignored: Exception) {
-                null
-            }
-            this.countMappedStatement = countMappedStatement
-        } else {
-            this.countMappedStatement = null
-        }
-        val querySize = method.getQuerySize()
-        if (querySize != null) {
-            val value = querySize.value
-            Assert.isTrue(value > 0, "size 必须大于0")
-            this.querySize = value
-        } else {
-            this.querySize = null
-        }
-    }
+    private val metadataCache = QueryMetadataCache()
+    private val mybatisQueryMethod: MybatisQueryMethod = method.mybatisQueryMethod!!
 
     public override fun doCreateQuery(accessor: JpaParametersParameterAccessor): Query {
         val parameterBinder = parameterBinder.get() as MybatisParameterBinder
@@ -85,15 +36,30 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                 if (sort.isUnsorted && size != null) size.sort else sort)
         val query = entityManager.createNativeQuery(sortedQueryString)
         @Suppress("DEPRECATION")
-        query.unwrap(NativeQuery::class.java).setResultTransformer(resultTransformer)
+        query.unwrap(NativeQuery::class.java).setResultTransformer(mybatisQueryMethod.resultTransformer)
         val metadata = metadataCache.getMetadata(sortedQueryString, query)
         // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
         // parameters in the query do not change.
-        if (querySize != null) {
+        if (mybatisQueryMethod.querySize != null) {
             query.setFirstResult(0)
-            query.setMaxResults(querySize)
+            query.setMaxResults(mybatisQueryMethod.querySize)
         }
-        return parameterBinder.bindAndPrepare(MybatisQuery(queryString, query, mybatisParam),
+        val countQuery: Query? =
+                if (accessor.pageable.isPaged) {
+                    val countMappedStatement = mybatisQueryMethod.countMappedStatement
+                    val countQueryString: String = if (countMappedStatement != null) {
+                        val countBoundSql = countMappedStatement.getBoundSql(mybatisParam.parameterObject)
+                        countBoundSql.sql
+                    } else {
+                        CountSqlParser.getSmartCountSql(queryString)
+                    }
+                    val countQuery = entityManager.createNativeQuery(countQueryString)
+                    val countMmetadata = metadataCache.getMetadata(countQueryString, countQuery)
+                    parameterBinder.bind(countMmetadata.withQuery(countQuery), mybatisParam)
+                    if (queryMethod.applyHintsToCountQuery()) applyHints(countQuery, queryMethod) else countQuery
+                } else null
+
+        return parameterBinder.bindAndPrepare(MybatisQuery(query, countQuery),
                 metadata, accessor, mybatisParam)
     }
 
@@ -102,12 +68,12 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
     }
 
     override fun createBinder(): ParameterBinder {
-        return MybatisParameterBinder(queryMethod.parameters, paramed, mappedStatement)
+        return MybatisParameterBinder(queryMethod.parameters, mybatisQueryMethod.paramed, mybatisQueryMethod.mappedStatement)
     }
 
     override fun getExecution(): JpaQueryExecution {
         val method = queryMethod
-        val sqlLogId = mappedStatement.id
+        val sqlLogId = mybatisQueryMethod.mappedStatement.id
         return if (method.isPageQuery) {
             object : PagedExecution() {
                 override fun doExecute(
@@ -120,23 +86,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         val total: Long
                         val resultList: List<*>?
                         if (accessor.pageable.isPaged) {
-                            val queryMethod = queryMethod
-                            var countQueryString: String? = null
-                            val mybatisParam = mybatisQuery.mybatisParam
-                            if (countMappedStatement != null) {
-                                val boundSql = countMappedStatement.getBoundSql(
-                                        mybatisParam.parameterObject)
-                                countQueryString = boundSql.sql
-                            }
-                            val queryString = countQueryString ?: countSqlParser.getSmartCountSql(
-                                    mybatisQuery.queryString)
-                            val em = entityManager
-                            var countQuery = em.createNativeQuery(queryString)
-                            val metadata = metadataCache.getMetadata(queryString,
-                                    countQuery)
-                            (parameterBinder.get() as MybatisParameterBinder).bind(metadata.withQuery(countQuery),
-                                    mybatisParam)
-                            countQuery = if (queryMethod.applyHintsToCountQuery()) applyHints(countQuery, queryMethod) else countQuery
+                            val countQuery = mybatisQuery.countQuery!!
                             val totals = countQuery.resultList
                             total = if (totals.size == 1) JpaUtil.convert(totals[0], Long::class.javaObjectType)!! else totals.size.toLong()
                             if (sqlLog.isDebugEnabled) {
@@ -181,7 +131,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     }
                 }
             }
-        } else if (isModifyingQuery || method.isModifyingQuery) {
+        } else if (mybatisQueryMethod.isModifyingQuery || method.isModifyingQuery) {
             object : ModifyingExecution(method, entityManager) {
                 override fun doExecute(
                         query: AbstractJpaQuery,
@@ -236,14 +186,15 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     return try {
                         MDC.put("id", sqlLogId)
                         val pageable = accessor.pageable
+                        val nestedResultMapType = mybatisQueryMethod.nestedResultMapType
                         if (pageable.isPaged && nestedResultMapType != null) {
-                            if (nestedResultMapType!!.isCollection) {
-                                throw UnsupportedOperationException(nestedResultMapType!!.nestedResultMapId
+                            if (nestedResultMapType.isCollection) {
+                                throw UnsupportedOperationException(nestedResultMapType.nestedResultMapId
                                         + " collection resultmap not support page query")
                             } else {
                                 sqlLog.info(
                                         "{} may return incorrect paginated data. Please check result maps definition {}.",
-                                        sqlLogId, nestedResultMapType?.nestedResultMapId)
+                                        sqlLogId, nestedResultMapType.nestedResultMapId)
                             }
                         }
                         val result = super.doExecute(query, accessor) as SliceImpl<*>
