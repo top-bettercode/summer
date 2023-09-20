@@ -12,6 +12,7 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.lang.operation.OperationRequestPart
 import top.bettercode.summer.tools.lang.operation.Parameters
+import top.bettercode.summer.tools.lang.operation.RequestConverter
 import java.io.File
 import java.net.URI
 
@@ -42,7 +43,7 @@ data class DocCollection(
             docOperation.collectionName = name
             docOperation.name = operationName
             if (docOperation.protocol.isBlank()) {
-                docOperation.protocol = "HTTP/1.1"
+                docOperation.protocol = RequestConverter.DEFAULT_PROTOCOL
             }
             docOperation.request.apply {
                 this as DocOperationRequest

@@ -38,6 +38,8 @@ object RequestConverter {
 
     const val SCHEME_HTTPS = "https"
 
+    const val DEFAULT_PROTOCOL = "HTTP/1.1"
+
     const val STANDARD_PORT_HTTP = 80
 
     const val STANDARD_PORT_HTTPS = 443

@@ -64,7 +64,7 @@ class ClientHttpRequestWrapper(
                 val operation = Operation(
                         collectionName = collectionName,
                         name = name,
-                        protocol = "HTTP/1.1",
+                        protocol = RequestConverter.DEFAULT_PROTOCOL,
                         request = RequestConverter.convert(this, dateTime!!),
                         response = operationResponse
                 )
