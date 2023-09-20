@@ -62,7 +62,8 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                 val operation = Operation(
                         collectionName = collectionName,
                         name = name,
-                        protocol = RequestConverter.DEFAULT_PROTOCOL,
+                        protocol = chain.connection()?.protocol()?.toString()
+                                ?: RequestConverter.DEFAULT_PROTOCOL,
                         request = convert(request, dateTime!!),
                         response = operationResponse
                 )
