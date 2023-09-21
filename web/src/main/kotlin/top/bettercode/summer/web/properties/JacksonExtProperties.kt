@@ -24,6 +24,11 @@ open class JacksonExtProperties {
     var isDefaultEmpty = true
 
     /**
+     * Feature that controls whether null object should be serialized as empty.
+     */
+    var isNullObjectAsEmpty = false
+
+    /**
      * specifying the packages to scan for mixIn annotation.
      */
     var mixInAnnotationBasePackages = arrayOf<String>()

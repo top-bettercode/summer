@@ -19,8 +19,11 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-class CustomNullSerializer(private val writer: BeanPropertyWriter, private val defaultValue: String?,
-                           private val fieldName: String?, private val extendedValue: String?, private val jacksonExtProperties: JacksonExtProperties) : StdSerializer<Any>(Any::class.java) {
+class CustomNullSerializer(private val writer: BeanPropertyWriter,
+                           private val defaultValue: String?,
+                           private val fieldName: String?,
+                           private val extendedValue: String?,
+                           private val jacksonExtProperties: JacksonExtProperties) : StdSerializer<Any>(Any::class.java) {
     private val type: Class<*> = writer.type.rawClass
     private val isArray: Boolean = type.isArray || MutableCollection::class.java.isAssignableFrom(type) && !MutableMap::class.java
             .isAssignableFrom(type)
@@ -127,7 +130,7 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
             gen.writeString("")
         } else if (isArray) {
             gen.writeObject(Collections.EMPTY_LIST)
-        } else if (type.classLoader != null || MutableMap::class.java.isAssignableFrom(type)) {
+        } else if (jacksonExtProperties.isNullObjectAsEmpty && (type.classLoader != null || MutableMap::class.java.isAssignableFrom(type))) {
             gen.writeObject(emptyMap<Any, Any>())
         } else {
             gen.writeObject(value)
