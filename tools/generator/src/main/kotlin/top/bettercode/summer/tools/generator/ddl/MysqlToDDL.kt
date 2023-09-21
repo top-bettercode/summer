@@ -54,7 +54,7 @@ object MysqlToDDL : ToDDL() {
                         val oldColumns = oldTable.columns
                         val columns = table.columns
                         val oldPrimaryKeys = oldTable.primaryKeys.toMutableSet()
-                        val primaryKeys = table.primaryKeys
+                        val primaryKeys = table.primaryKeys.toSet()
 
 
                         val oldColumnNames = oldColumns.map { it.columnName }
@@ -86,13 +86,11 @@ object MysqlToDDL : ToDDL() {
 
                         if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1) {
                             val oldPrimaryKey = oldPrimaryKeys.first()
-                            val primaryKey = primaryKeys[0]
+                            val primaryKey = primaryKeys.first()
                             if (oldPrimaryKey != primaryKey) {
                                 lines.add("ALTER TABLE $schema$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
                                     columnDef(primaryKey, quote)
                                 } COMMENT '${primaryKey.remarks.replace("\\", "\\\\")}';")
-                                oldColumns.remove(oldPrimaryKey)
-                                columns.remove(primaryKey)
                             }
                         } else if (oldPrimaryKeys != primaryKeys) {
                             if (oldPrimaryKeys.isNotEmpty())
