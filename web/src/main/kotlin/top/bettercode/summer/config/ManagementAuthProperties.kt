@@ -20,7 +20,7 @@ open class ManagementAuthProperties {
     /**
      * 访问授权有效时间，单位：秒
      */
-    var maxAge = -1
+    var maxAge = 12 * 60 * 60
     var username = "madmin"
     var password: String? = null
     val authKey: String
