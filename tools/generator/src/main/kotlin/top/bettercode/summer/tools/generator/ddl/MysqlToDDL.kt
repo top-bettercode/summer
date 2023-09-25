@@ -12,7 +12,7 @@ object MysqlToDDL : ToDDL() {
         out.appendLine("$commentPrefix ${database.url.substringBefore("?")}")
         out.appendLine("$commentPrefix use ${database.schema};")
         out.appendLine()
-        if (!database.noConnection) {
+        if (!database.offline) {
             //schema default collate change
             database.use {
                 val defaultCollate = getSchemaDefaultCollate()

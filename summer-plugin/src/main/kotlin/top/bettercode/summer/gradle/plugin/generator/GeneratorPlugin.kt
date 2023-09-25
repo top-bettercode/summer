@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
@@ -67,8 +68,8 @@ class GeneratorPlugin : Plugin<Project> {
                         database.username = properties["username"] as String? ?: "root"
                         database.password = properties["password"] as String? ?: "root"
                         database.driverClass = properties["driverClass"] as String? ?: ""
-                        database.debug = (properties["debug"] as String?
-                                ?: "false").toBoolean()
+                        database.debug = (properties["debug"] as String? ?: "false").toBoolean()
+                        database.offline = (properties["offline"] as String? ?: "false").toBoolean()
                         database.queryIndex = (properties["queryIndex"]
                                 ?: findGeneratorProperty(project, "queryIndex"))?.toString()?.toBoolean()
                                 ?: true
@@ -383,7 +384,6 @@ class GeneratorPlugin : Plugin<Project> {
 
                                 val databasePumlDir =
                                         extension.file(extension.pumlSrc + "/database")
-                                val databaseFile = File(databasePumlDir, "${module}.puml")
                                 val unit =
                                         FileUnit(
                                                 "${extension.sqlOutput}/update/v${project.version}${
@@ -396,8 +396,13 @@ class GeneratorPlugin : Plugin<Project> {
                                             tableHolder.tables(tableName = extension.tableNames)
                                     allTables.addAll(tables)
                                     val tableNames = tables.map { it.tableName }
+
+                                    val databaseName = project.profilesActive
+                                    val currentPumlFile = File(databasePumlDir, "current/$module-$databaseName.puml")
+
+                                    val databaseFile = if (database.offline) currentPumlFile else File(databasePumlDir, "${module}.puml")
                                     val oldTables = if (databaseFile.exists()) {
-                                        database.noConnection = true
+                                        database.offline = true
                                         PumlConverter.toTables(databaseFile) {
                                             it.database = database
                                         }
@@ -417,6 +422,15 @@ class GeneratorPlugin : Plugin<Project> {
                                         else -> {
                                             throw IllegalArgumentException("不支持的数据库")
                                         }
+                                    }
+                                    if (database.offline) {
+                                        val mutableOldTables = oldTables.toMutableList()
+                                        for (table in tables) {
+                                            mutableOldTables.removeIf { it.tableName == table.tableName }
+                                            mutableOldTables.add(table)
+                                        }
+                                        mutableOldTables.sortBy { it.tableName }
+                                        PumlConverter.compile(database, mutableOldTables, currentPumlFile)
                                     }
                                 }
                                 unit.writeTo(

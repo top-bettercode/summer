@@ -153,7 +153,7 @@ data class DatabaseConfiguration(
 
         }
 
-    var noConnection: Boolean = false
+    var offline: Boolean = false
 
     var module: String = DEFAULT_MODULE_NAME
 
