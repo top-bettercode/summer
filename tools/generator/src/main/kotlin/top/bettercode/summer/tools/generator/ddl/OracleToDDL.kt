@@ -15,7 +15,7 @@ object OracleToDDL : ToDDL() {
             out: Writer,
             database: DatabaseConfiguration
     ) {
-        out.appendLine("$commentPrefix ${database.url.substringBefore("?")}")
+        out.appendLine("$commentPrefix ${database.url.substringBefore("?")} schema:${database.schema}")
         out.appendLine()
         if (tables != oldTables) {
             val schema = if (database.includeSchema) {
