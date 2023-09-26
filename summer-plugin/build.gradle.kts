@@ -23,4 +23,5 @@ dependencies {
     api("com.oracle.database.jdbc:ojdbc8")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 }
