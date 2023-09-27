@@ -68,6 +68,12 @@ class GeneratorPlugin : Plugin<Project> {
                         database.username = properties["username"] as String? ?: "root"
                         database.password = properties["password"] as String? ?: "root"
                         database.driverClass = properties["driverClass"] as String? ?: ""
+
+                        database.sshHost = properties["sshHost"] as String?
+                        database.sshPort = (properties["sshPort"] as String?)?.toInt() ?: 22
+                        database.sshUsername = properties["sshUsername"] as String?
+                        database.sshPassword = properties["sshPassword"] as String?
+
                         database.debug = (properties["debug"] as String? ?: "false").toBoolean()
                         database.offline = (properties["offline"] as String? ?: "false").toBoolean()
                         database.queryIndex = (properties["queryIndex"]
@@ -375,67 +381,69 @@ class GeneratorPlugin : Plugin<Project> {
                         task.group = PUML_GROUP
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                MysqlToDDL.useQuote = extension.sqlQuote
-                                OracleToDDL.useQuote = extension.sqlQuote
-                                MysqlToDDL.useForeignKey = extension.useForeignKey
-                                OracleToDDL.useForeignKey = extension.useForeignKey
                                 val database = extension.database(module)
-                                val deleteTablesWhenUpdate = database.dropTablesWhenUpdate
+                                database.sshProxy {
+                                    MysqlToDDL.useQuote = extension.sqlQuote
+                                    OracleToDDL.useQuote = extension.sqlQuote
+                                    MysqlToDDL.useForeignKey = extension.useForeignKey
+                                    OracleToDDL.useForeignKey = extension.useForeignKey
+                                    val deleteTablesWhenUpdate = database.dropTablesWhenUpdate
 
-                                val databasePumlDir =
-                                        extension.file(extension.pumlSrc + "/database")
-                                val unit =
-                                        FileUnit(
-                                                "${extension.sqlOutput}/update/v${project.version}${
-                                                    if (defaultModule) "" else "-${module}"
-                                                }.sql"
-                                        )
-                                val allTables = mutableListOf<Table>()
-                                unit.use { pw ->
-                                    val tables =
-                                            tableHolder.tables(tableName = extension.tableNames)
-                                    allTables.addAll(tables)
-                                    val tableNames = tables.map { it.tableName }
-
-                                    val databaseName = project.profilesActive
-                                    val currentPumlFile = File(databasePumlDir, "current/$module-$databaseName.puml")
-
-                                    val databaseFile = if (database.offline) currentPumlFile else File(databasePumlDir, "${module}.puml")
-                                    val oldTables = if (databaseFile.exists()) {
-                                        database.offline = true
-                                        PumlConverter.toTables(databaseFile) {
-                                            it.database = database
-                                        }
-                                    } else {
-                                        if (tableNames.isNotEmpty() || deleteTablesWhenUpdate) {
-                                            database.tables(tableName = (if (deleteTablesWhenUpdate) emptyList() else tableNames).toTypedArray()
+                                    val databasePumlDir =
+                                            extension.file(extension.pumlSrc + "/database")
+                                    val unit =
+                                            FileUnit(
+                                                    "${extension.sqlOutput}/update/v${project.version}${
+                                                        if (defaultModule) "" else "-${module}"
+                                                    }.sql"
                                             )
-                                        } else emptyList()
-                                    }
-                                    when (database.driver) {
-                                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(oldTables, tables, pw, database)
+                                    val allTables = mutableListOf<Table>()
+                                    unit.use { pw ->
+                                        val tables =
+                                                tableHolder.tables(tableName = extension.tableNames)
+                                        allTables.addAll(tables)
+                                        val tableNames = tables.map { it.tableName }
 
-                                        DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(oldTables, tables, pw, database)
+                                        val databaseName = project.profilesActive
+                                        val currentPumlFile = File(databasePumlDir, "current/$module-$databaseName.puml")
 
-                                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(oldTables, tables, pw, database)
+                                        val databaseFile = if (database.offline) currentPumlFile else File(databasePumlDir, "${module}.puml")
+                                        val oldTables = if (databaseFile.exists()) {
+                                            database.offline = true
+                                            PumlConverter.toTables(databaseFile) {
+                                                it.database = database
+                                            }
+                                        } else {
+                                            if (tableNames.isNotEmpty() || deleteTablesWhenUpdate) {
+                                                database.tables(tableName = (if (deleteTablesWhenUpdate) emptyList() else tableNames).toTypedArray()
+                                                )
+                                            } else emptyList()
+                                        }
+                                        when (database.driver) {
+                                            DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(oldTables, tables, pw, database)
 
-                                        else -> {
-                                            throw IllegalArgumentException("不支持的数据库")
+                                            DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(oldTables, tables, pw, database)
+
+                                            DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(oldTables, tables, pw, database)
+
+                                            else -> {
+                                                throw IllegalArgumentException("不支持的数据库")
+                                            }
+                                        }
+                                        if (database.offline) {
+                                            val mutableOldTables = oldTables.toMutableList()
+                                            for (table in tables) {
+                                                mutableOldTables.removeIf { it.tableName == table.tableName }
+                                                mutableOldTables.add(table)
+                                            }
+                                            mutableOldTables.sortBy { it.tableName }
+                                            PumlConverter.compile(database, mutableOldTables, currentPumlFile)
                                         }
                                     }
-                                    if (database.offline) {
-                                        val mutableOldTables = oldTables.toMutableList()
-                                        for (table in tables) {
-                                            mutableOldTables.removeIf { it.tableName == table.tableName }
-                                            mutableOldTables.add(table)
-                                        }
-                                        mutableOldTables.sortBy { it.tableName }
-                                        PumlConverter.compile(database, mutableOldTables, currentPumlFile)
-                                    }
+                                    unit.writeTo(
+                                            if (project.file(extension.sqlOutput).exists()) project.projectDir else project.rootDir
+                                    )
                                 }
-                                unit.writeTo(
-                                        if (project.file(extension.sqlOutput).exists()) project.projectDir else project.rootDir
-                                )
                             }
                         })
                     }

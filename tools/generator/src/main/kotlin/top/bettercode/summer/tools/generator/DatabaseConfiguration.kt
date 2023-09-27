@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.generator
 
+import com.jcraft.jsch.JSch
+import com.jcraft.jsch.Session
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
@@ -11,6 +13,7 @@ import java.sql.DriverManager
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentSkipListSet
+import java.util.regex.Pattern
 
 @Suppress("ConvertTryFinallyToUseCall")
 data class DatabaseConfiguration(
@@ -86,6 +89,11 @@ data class DatabaseConfiguration(
      * 生成代码排除表
      */
     var excludeGenTableNames: Array<String> = arrayOf("api_token")
+
+    var sshHost: String? = null
+    var sshPort: Int = 22
+    var sshUsername: String? = null
+    var sshPassword: String? = null
 
     /**
      * ClassName
@@ -169,6 +177,34 @@ data class DatabaseConfiguration(
         set(value) = properties.set("tinyInt1isBit", value.toString())
         get() = properties.getProperty("tinyInt1isBit")?.toBoolean() ?: false
 
+    fun sshProxy(run: () -> Unit) {
+        if (available) {
+            val session: Session? = if (!url.contains("localhost") && sshHost != null &&
+                    sshUsername != null && sshPassword != null) {
+                getDbHostPort(driver, url)?.let {
+                    val jsch = JSch()
+                    val session: Session = jsch.getSession(sshUsername, sshHost, 22)
+                    session.setPassword(sshPassword)
+                    val config = Properties()
+                    config["StrictHostKeyChecking"] = "no"
+                    session.setConfig(config)
+                    session.connect()
+
+                    // 建立SSH代理端口转发，将本地端口与数据库服务器建立连接
+                    session.setPortForwardingL(it.second, it.first, it.second)
+                    // 替换 host
+                    url = url.replace(it.first, "localhost")
+                    session
+                }
+            } else null
+            try {
+                run()
+            } finally {
+                session?.disconnect()
+            }
+        }
+    }
+
     inline fun <T> use(metaData: DatabaseMetaData.() -> T): T {
         if (available) {
             Class.forName(driverClass).getConstructor().newInstance()
@@ -248,4 +284,38 @@ data class DatabaseConfiguration(
         return result.sortedBy { it.tableName }
     }
 
+    companion object {
+        fun getDbHostPort(driver: DatabaseDriver, dbUrl: String): Pair<String, Int>? {
+            // 获取数据库主机名或 IP 地址
+            val dbHostPortPattern = Pattern.compile(
+                    when (driver) {
+                        DatabaseDriver.MYSQL ->
+                            "jdbc:mysql://(.+?)(:(\\d+))?/.*"
+
+                        DatabaseDriver.ORACLE ->
+                            "jdbc:oracle:thin:@(.+?)(:(\\d+))?:.*"
+
+                        else -> return null
+                    }
+            )
+
+            val defaultPort = when (driver) {
+                DatabaseDriver.MYSQL -> 3306
+                DatabaseDriver.ORACLE -> 1521
+                else -> return null
+            }
+
+            val matcher = dbHostPortPattern.matcher(dbUrl)
+            return if (matcher.find()) {
+                val dbHost = matcher.group(1)
+                val groupCount = matcher.groupCount()
+                val dbPort = if (groupCount == 2) matcher.group(2)?.toInt()
+                        ?: defaultPort else defaultPort
+                Pair(dbHost, dbPort)
+            } else {
+                null
+            }
+        }
+
+    }
 }

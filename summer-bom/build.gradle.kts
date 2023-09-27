@@ -80,6 +80,7 @@ dependencies {
         api("net.java.dev.jna:jna:5.13.0")
         api("com.squareup.okhttp3:okhttp:4.11.0")
         api("com.github.wechatpay-apiv3:wechatpay-java:0.2.11")
+        api("com.jcraft:jsch:0.1.55")
 
         api(project(":env"))
         api(project(":web"))

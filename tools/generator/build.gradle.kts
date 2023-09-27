@@ -6,6 +6,7 @@ dependencies {
     api(project(":tools:tools"))
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    api("com.jcraft:jsch")
 
     compileOnly("org.asciidoctor:asciidoctorj")
     compileOnly("org.asciidoctor:asciidoctorj-diagram")
