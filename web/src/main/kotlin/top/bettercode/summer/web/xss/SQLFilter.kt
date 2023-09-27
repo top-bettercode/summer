@@ -1,6 +1,5 @@
 package top.bettercode.summer.web.xss
 
-import org.springframework.util.StringUtils
 import java.util.*
 
 /**
@@ -15,14 +14,14 @@ object SQLFilter {
      */
     fun sqlInject(str: String): String? {
         var s = str
-        if (!StringUtils.hasText(s)) {
+        if (s.isBlank()) {
             return null
         }
         //去掉'|"|;|\字符
-        s = StringUtils.replace(s, "'", "")
-        s = StringUtils.replace(s, "\"", "")
-        s = StringUtils.replace(s, ";", "")
-        s = StringUtils.replace(s, "\\", "")
+        s = s.replace("'", "")
+        s = s.replace("\"", "")
+        s = s.replace(";", "")
+        s = s.replace("\\", "")
 
         //转换成小写
         s = s.lowercase(Locale.getDefault())

@@ -3,7 +3,6 @@ package top.bettercode.summer.web.xss
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.util.StreamUtils
-import org.springframework.util.StringUtils
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import javax.servlet.ReadListener
@@ -32,7 +31,7 @@ class XssHttpServletRequestWrapper(
 
         //为空，直接返回
         var json = StreamUtils.copyToString(super.getInputStream(), StandardCharsets.UTF_8)
-        if (!StringUtils.hasText(json)) {
+        if (json.isNullOrBlank()) {
             return super.getInputStream()
         }
 
@@ -58,7 +57,7 @@ class XssHttpServletRequestWrapper(
 
     override fun getParameter(name: String): String {
         var value = super.getParameter(xssEncode(name))
-        if (StringUtils.hasText(value)) {
+        if (!value.isNullOrBlank()) {
             value = xssEncode(value)
         }
         return value
@@ -90,7 +89,7 @@ class XssHttpServletRequestWrapper(
 
     override fun getHeader(name: String): String {
         var value = super.getHeader(xssEncode(name))
-        if (StringUtils.hasText(value)) {
+        if (!value.isNullOrBlank()) {
             value = xssEncode(value)
         }
         return value

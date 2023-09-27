@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonStringReplace
 
 /**
@@ -30,7 +29,7 @@ class StringReplaceSerializer : StdScalarSerializer<String>, ContextualSerialize
     }
 
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
-        gen.writeString(if (StringUtils.hasText(value) && StringUtils.hasText(target)) value
+        gen.writeString(if (value.isNotBlank() && target.isNotBlank()) value
                 .replace(target, replacement) else value)
     }
 
@@ -44,7 +43,7 @@ class StringReplaceSerializer : StdScalarSerializer<String>, ContextualSerialize
     }
 
     override fun isEmpty(prov: SerializerProvider, value: String): Boolean {
-        return !StringUtils.hasText(value)
+        return value.isBlank()
     }
 
     override fun serializeWithType(value: String, gen: JsonGenerator, provider: SerializerProvider,

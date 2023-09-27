@@ -20,7 +20,6 @@ import org.springframework.core.type.classreading.CachingMetadataReaderFactory
 import org.springframework.core.type.classreading.MetadataReaderFactory
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
-import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.io.IOException
@@ -85,8 +84,8 @@ object JpaMybatisConfigurationUtil {
         val mybatisConfiguration: Configuration =
                 if (properties.configuration == null) {
                     val configLocation = properties.configLocation
-                    if (StringUtils.hasText(configLocation)) {
-                        configResource = resourceLoader.getResource(configLocation!!)
+                    if (!configLocation.isNullOrBlank()) {
+                        configResource = resourceLoader.getResource(configLocation)
                         xmlConfigBuilder = XMLConfigBuilder(configResource.inputStream, null,
                                 configurationProperties)
                         xmlConfigBuilder.configuration
@@ -105,7 +104,7 @@ object JpaMybatisConfigurationUtil {
                     newConfiguration
                 }
         val typeAliasesPackage = properties.typeAliasesPackage
-        if (StringUtils.hasText(typeAliasesPackage)) {
+        if (!typeAliasesPackage.isNullOrBlank()) {
             scanClasses(typeAliasesPackage, properties.typeAliasesSuperType).stream()
                     .filter { clazz: Class<*> -> !clazz.isAnonymousClass }.filter { clazz: Class<*> -> !clazz.isInterface }
                     .filter { clazz: Class<*> -> !clazz.isMemberClass }
@@ -121,7 +120,7 @@ object JpaMybatisConfigurationUtil {
             }
         }
         val typeHandlersPackage = properties.typeHandlersPackage
-        if (StringUtils.hasText(typeHandlersPackage)) {
+        if (!typeHandlersPackage.isNullOrBlank()) {
             scanClasses(typeHandlersPackage, TypeHandler::class.java).stream()
                     .filter { clazz: Class<*> -> !clazz.isAnonymousClass }
                     .filter { clazz: Class<*> -> !clazz.isInterface }
@@ -218,8 +217,9 @@ object JpaMybatisConfigurationUtil {
 
     private fun scanClasses(packagePatterns: String?, assignableType: Class<*>?): Set<Class<*>> {
         val classes: MutableSet<Class<*>> = HashSet()
-        val packagePatternArray = StringUtils.tokenizeToStringArray(packagePatterns,
-                ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS)
+        val packagePatternArray = packagePatterns?.split(
+                ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS.toRegex()
+        ) ?: emptyList()
         for (packagePattern in packagePatternArray) {
             val resources = RESOURCE_PATTERN_RESOLVER.getResources(
                     ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX

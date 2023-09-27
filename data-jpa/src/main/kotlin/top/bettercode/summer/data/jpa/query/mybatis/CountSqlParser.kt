@@ -1,6 +1,5 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
-import io.micrometer.core.instrument.util.StringUtils
 import net.sf.jsqlparser.expression.Alias
 import net.sf.jsqlparser.expression.Function
 import net.sf.jsqlparser.expression.Parenthesis
@@ -375,7 +374,7 @@ object CountSqlParser {
      *
      */
     fun addAggregateFunctions(functions: String) {
-        if (StringUtils.isNotEmpty(functions)) {
+        if (functions.isNotBlank()) {
             val funs = functions.split(",")
             for (`fun` in funs) {
                 AGGREGATE_FUNCTIONS.add(`fun`.uppercase(Locale.getDefault()))

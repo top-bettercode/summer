@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.sap.connection.pojo
 
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.tools.sap.annotation.SapField
 
@@ -35,7 +34,7 @@ open class EsMessage {
 
     val isOk: Boolean
         //--------------------------------------------
-        get() = StringUtils.hasText(type) && "E" != type
+        get() = !type.isNullOrBlank() && "E" != type
     val isSuccess: Boolean
         get() = "S" == type
 }

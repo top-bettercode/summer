@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.lang.util
 
 import org.springframework.util.MultiValueMap
-import org.springframework.util.StringUtils
 
 /**
  * 参数工具类
@@ -17,7 +16,7 @@ object ParameterUtil {
      */
     @JvmStatic
     fun hasParameter(params: Map<String, Array<String>>, key: String): Boolean {
-        return params.containsKey(key) && StringUtils.hasText(params[key]?.get(0))
+        return params.containsKey(key) && !params[key]?.get(0).isNullOrBlank()
     }
 
     /**
@@ -37,7 +36,7 @@ object ParameterUtil {
      */
     @JvmStatic
     fun hasParameter(params: MultiValueMap<String, String>, key: String): Boolean {
-        return params.containsKey(key) && StringUtils.hasText(params.getFirst(key))
+        return params.containsKey(key) && !params.getFirst(key).isNullOrBlank()
     }
 
     /**

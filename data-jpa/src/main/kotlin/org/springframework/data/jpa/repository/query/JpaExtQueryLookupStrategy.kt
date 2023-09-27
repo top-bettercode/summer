@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.QueryLookupStrategy
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider
 import org.springframework.data.repository.query.RepositoryQuery
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import java.lang.reflect.Method
 import javax.persistence.EntityManager
@@ -135,7 +134,7 @@ object JpaExtQueryLookupStrategy {
             if (method.isProcedureQuery) {
                 return JpaQueryFactory.INSTANCE.fromProcedureAnnotation(method, em)
             }
-            if (StringUtils.hasText(method.annotatedQuery)) {
+            if (!method.annotatedQuery.isNullOrBlank()) {
                 if (method.hasAnnotatedQueryName()) {
                     LOG.warn(String.format(
                             "Query method %s is annotated with both, a query and a query name. Using the declared query.",
@@ -164,11 +163,11 @@ object JpaExtQueryLookupStrategy {
                 method: JpaQueryMethod, namedQueries: NamedQueries,
                 em: EntityManager
         ): String? {
-            if (StringUtils.hasText(method.countQuery)) {
+            if (!method.countQuery.isNullOrBlank()) {
                 return method.countQuery
             }
             val queryName = method.namedCountQueryName
-            if (!StringUtils.hasText(queryName)) {
+            if (queryName.isNullOrBlank()) {
                 return method.countQuery
             }
             if (namedQueries.hasQuery(queryName)) {

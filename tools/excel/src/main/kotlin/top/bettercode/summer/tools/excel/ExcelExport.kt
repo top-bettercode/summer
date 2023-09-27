@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.excel
 import org.dhatim.fastexcel.*
 import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
-import org.springframework.util.StringUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.io.*
@@ -203,7 +202,7 @@ class ExcelExport {
                 sheet!!.range(row + 1, column, row + 1000, column).style().format(excelField.format)
                 if (includeComment) {
                     val commentStr = excelField.comment
-                    if (StringUtils.hasText(commentStr)) {
+                    if (commentStr.isNotBlank()) {
                         sheet!!.comment(row, column, commentStr)
                     }
                 }

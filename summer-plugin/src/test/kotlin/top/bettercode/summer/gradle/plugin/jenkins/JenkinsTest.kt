@@ -3,6 +3,7 @@ package top.bettercode.summer.gradle.plugin.jenkins
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.util.Assert
 import java.io.File
@@ -21,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec
 
 class JenkinsTest {
 
+    @Disabled
     @Test
     fun decrypt() {
         val jenkinsDir = ""

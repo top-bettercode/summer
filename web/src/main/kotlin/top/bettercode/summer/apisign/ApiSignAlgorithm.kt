@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.util.DigestUtils
 import org.springframework.util.MultiValueMap
-import org.springframework.util.StringUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import javax.servlet.http.HttpServletRequest
@@ -36,13 +35,13 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
         if (skip(request)) {
             return
         }
-        if (!StringUtils.hasText(sign)) {
+        if (sign.isNullOrBlank()) {
             if (log.isWarnEnabled) {
                 log.warn("客户端签名为空")
             }
             throw IllegalSignException()
         }
-        if (sign!!.length != 32) {
+        if (sign.length != 32) {
             if (log.isWarnEnabled) {
                 log.warn("客户端签名长度不匹配{}：{}", sign.length, sign)
             }

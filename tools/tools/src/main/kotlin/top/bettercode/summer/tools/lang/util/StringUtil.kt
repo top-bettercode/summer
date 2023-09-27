@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
-import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.Charset
 import java.time.LocalDate
@@ -577,11 +576,7 @@ object StringUtil {
 
     @JvmStatic
     fun trimMoneyTrailing(value: String): String {
-        return if (value.contains(".")) StringUtils.trimTrailingCharacter(
-                StringUtils.trimTrailingCharacter(
-                        value, '0'
-                ), '.'
-        ) else value
+        return if (value.contains(".")) value.trimEnd('0').trimEnd('.') else value
     }
 
     internal val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")

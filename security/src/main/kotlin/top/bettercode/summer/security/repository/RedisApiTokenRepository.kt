@@ -6,7 +6,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.connection.RedisPipelineException
 import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
-import org.springframework.util.StringUtils
 import top.bettercode.summer.security.token.ApiToken
 import java.lang.reflect.Method
 import java.nio.charset.StandardCharsets
@@ -19,7 +18,7 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
     private var redisconnectionset20: Method? = null
 
     init {
-        keyPrefix = if (StringUtils.hasText(prefix)) {
+        keyPrefix = if (prefix.isNotBlank()) {
             "$API_AUTH$prefix:"
         } else {
             API_AUTH

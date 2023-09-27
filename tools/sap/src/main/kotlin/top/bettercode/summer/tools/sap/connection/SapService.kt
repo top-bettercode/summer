@@ -8,7 +8,6 @@ import org.slf4j.MarkerFactory
 import org.springframework.beans.BeanWrapperImpl
 import org.springframework.util.Assert
 import org.springframework.util.ReflectionUtils
-import org.springframework.util.StringUtils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
@@ -101,7 +100,7 @@ class SapService(properties: SapProperties) {
                 result
             } else {
                 val msgText = result.message
-                throw SapSysException(if (StringUtils.hasText(msgText)) msgText else "RFC请求失败")
+                throw SapSysException(if (!msgText.isNullOrBlank()) msgText else "RFC请求失败")
             }
         } catch (e: Exception) {
             throwable = e
@@ -139,7 +138,7 @@ class SapService(properties: SapProperties) {
                 durationMillis = System.currentTimeMillis() - start
             }
             var exception = printException(function)
-            if (!StringUtils.hasText(exception) && throwable != null) {
+            if (exception.isBlank() && throwable != null) {
                 exception = valueOf(throwable)
             }
             if (throwable != null || !isSuccess) {

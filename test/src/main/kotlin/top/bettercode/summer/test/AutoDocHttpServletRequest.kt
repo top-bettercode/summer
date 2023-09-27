@@ -1,7 +1,6 @@
 package top.bettercode.summer.test
 
 import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.util.StringUtils
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
@@ -37,7 +36,7 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
 
     override fun getParameter(name: String?): String? {
         return if (extParams.any { name.equals(it.key, true) }) {
-            StringUtils.arrayToCommaDelimitedString(extParams[name])
+            extParams[name]?.joinToString(",")
         } else
             super.getParameter(name)
     }
@@ -69,7 +68,7 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
 
     override fun getHeader(name: String): String? {
         return if (extHeaders.any { name.equals(it.key, true) }) {
-            StringUtils.arrayToCommaDelimitedString(extHeaders[name])
+            extHeaders[name]?.joinToString(",")
         } else {
             super.getHeader(name)
         }

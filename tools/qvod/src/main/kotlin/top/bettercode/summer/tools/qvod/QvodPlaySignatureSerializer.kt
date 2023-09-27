@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
 /**
@@ -23,7 +22,7 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
         val fileIdName = gen.outputContext.currentName
         var playSignature = ""
         var appId: Long? = null
-        if (StringUtils.hasText(value)) {
+        if (value.isNotBlank()) {
             playSignature = qvodClient.playSignature(value)
             appId = qvodClient.properties.appId
         }

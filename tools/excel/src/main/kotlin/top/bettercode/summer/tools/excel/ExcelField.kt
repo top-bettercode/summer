@@ -4,7 +4,8 @@ import javassist.bytecode.SignatureAttribute
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
-import org.springframework.util.StringUtils
+import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.resolver.UnitConverter
@@ -333,7 +334,7 @@ class ExcelField<T, P : Any?> {
                 }
 
                 propertyType != null && MutableCollection::class.java.isAssignableFrom(propertyType!!) -> {
-                    StringUtils.collectionToCommaDelimitedString(property as Collection<*>)
+                    (property as Collection<*>).joinToString(",")
                 }
 
                 isImageColumn -> {
@@ -369,12 +370,12 @@ class ExcelField<T, P : Any?> {
 
     private val writeMethod: Method by lazy {
         try {
-            entityType!!.getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
+            entityType!!.getMethod("set" + propertyName!!.capitalized(), propertyType)
         } catch (e: NoSuchMethodException) {
             if (ClassUtils.isPrimitiveWrapper(propertyType!!)) {
                 @Suppress("UNCHECKED_CAST")
                 propertyType = primitiveWrapperTypeMap[propertyType!!] as Class<P>
-                entityType!!.getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
+                entityType!!.getMethod("set" + propertyName!!.capitalized(), propertyType)
             } else {
                 throw e
             }
@@ -663,7 +664,7 @@ class ExcelField<T, P : Any?> {
     }
 
     fun isEmptyCell(cellValue: Any?): Boolean {
-        return cellValue == null || cellValue is CharSequence && !StringUtils.hasText(cellValue as CharSequence?)
+        return cellValue == null || cellValue is CharSequence && (cellValue as CharSequence?).isNullOrBlank()
     }
 
     //--------------------------------------------
@@ -675,7 +676,7 @@ class ExcelField<T, P : Any?> {
         } else if (name.startsWith("is")) {
             name = name.substring(2)
         }
-        return StringUtils.uncapitalize(name)
+        return name.decapitalized()
     }
 
     //--------------------------------------------

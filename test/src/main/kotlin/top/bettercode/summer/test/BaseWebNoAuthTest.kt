@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.util.StreamUtils
-import org.springframework.util.StringUtils
 import org.springframework.web.context.WebApplicationContext
 import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.RequestLoggingProperties
@@ -96,7 +95,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     protected fun embeddedDatabase(): Boolean {
-        return !StringUtils.hasText(ApplicationContextHolder.getProperty("spring.datasource.url"))
+        return ApplicationContextHolder.getProperty("spring.datasource.url").isNullOrBlank()
     }
 
     protected fun notFound(): Supplier<out RuntimeException?> {

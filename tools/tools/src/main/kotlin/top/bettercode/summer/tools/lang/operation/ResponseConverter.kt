@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.lang.operation
 
 import org.springframework.http.HttpHeaders
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.client.ClientHttpResponseWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
 import javax.servlet.ServletResponse
@@ -100,14 +99,14 @@ object ResponseConverter {
     }
 
     private fun appendIfAvailable(header: StringBuilder, value: String?) {
-        if (StringUtils.hasText(value)) {
+        if (!value.isNullOrBlank()) {
             header.append("")
             header.append(value)
         }
     }
 
     private fun appendIfAvailable(header: StringBuilder, name: String, value: String?) {
-        if (StringUtils.hasText(value)) {
+        if (!value.isNullOrBlank()) {
             header.append(name)
             header.append(value)
         }

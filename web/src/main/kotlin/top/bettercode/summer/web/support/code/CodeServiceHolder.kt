@@ -1,6 +1,5 @@
 package top.bettercode.summer.web.support.code
 
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.property.Settings.dicCode
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.util.concurrent.ConcurrentHashMap
@@ -21,7 +20,7 @@ object CodeServiceHolder {
     @JvmStatic
     operator fun get(beanName: String): ICodeService {
         val codeService = CODE_SERVICE_MAP.computeIfAbsent(
-                if (StringUtils.hasText(beanName)) beanName else DEFAULT_BEAN_NAME
+                beanName.ifBlank { DEFAULT_BEAN_NAME }
         ) { s: String -> ApplicationContextHolder.getBean(s, ICodeService::class.java) }
         return codeService ?: PROPERTIES_CODESERVICE
     }

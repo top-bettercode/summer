@@ -17,7 +17,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.DigestUtils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.springframework.util.StringUtils
 import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.security.token.ApiAccessToken
 import top.bettercode.summer.test.autodoc.Autodoc.collectionName
@@ -63,7 +62,7 @@ class Security200Test {
         params.add("username", username)
         params.add("password", password)
         val headers = HttpHeaders()
-        if (StringUtils.hasText(tag)) {
+        if (!tag.isNullOrBlank()) {
             headers.add("tag", tag)
         }
         val entity = clientRestTemplate

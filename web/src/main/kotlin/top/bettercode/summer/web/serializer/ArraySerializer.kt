@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonArray
 
 /**
@@ -26,10 +25,10 @@ class ArraySerializer @JvmOverloads constructor(
             val outputContext = gen.outputContext
             val fieldName = outputContext.currentName
             gen.writeObjectField(fieldName + "Array",
-                    if (StringUtils.hasText(value)) value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else arrayOf(0))
+                    if (value.isNotBlank()) value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else arrayOf(0))
         } else {
             gen.writeObject(
-                    if (StringUtils.hasText(value)) value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else arrayOf(0))
+                    if (value.isNotBlank()) value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else arrayOf(0))
         }
     }
 

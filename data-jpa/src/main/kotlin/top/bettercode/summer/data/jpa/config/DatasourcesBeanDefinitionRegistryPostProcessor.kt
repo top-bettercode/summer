@@ -32,7 +32,6 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ObjectUtils
-import org.springframework.util.StringUtils
 import java.util.stream.Collectors
 import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
@@ -66,7 +65,7 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                     dataSourceProperties.password = properties.password
                     val dataSource = dataSourceProperties.initializeDataSourceBuilder()
                             .type(HikariDataSource::class.java).build()
-                    if (StringUtils.hasText(dataSourceProperties.name)) {
+                    if (!dataSourceProperties.name.isNullOrBlank()) {
                         dataSource.poolName = dataSourceProperties.name
                     }
                     val hikari = properties.hikari
@@ -78,7 +77,7 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                         Binder.get(environment)
                                 .bind("spring.datasource.hikari", Bindable.ofInstance(dataSource))
                     }
-                    if (!StringUtils.hasText(dataSource.poolName)) {
+                    if (dataSource.poolName.isNullOrBlank()) {
                         dataSource.poolName = "${key}Pool"
                     }
                     if (log.isInfoEnabled) {
@@ -107,7 +106,7 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                     val hibernateProperties = beanFactory.getBean(HibernateProperties::class.java)
                     val jpaProperties = beanFactory.getBean(JpaProperties::class.java)
                     val mappingResourceList = jpaProperties.mappingResources
-                    val mappingResources = if (!ObjectUtils.isEmpty(mappingResourceList)) StringUtils.toStringArray(mappingResourceList) else emptyArray()
+                    val mappingResources = if (!ObjectUtils.isEmpty(mappingResourceList)) mappingResourceList.toTypedArray() else emptyArray()
                     val physicalNamingStrategy = beanFactory.getBeanProvider(PhysicalNamingStrategy::class.java)
                     val implicitNamingStrategy = beanFactory.getBeanProvider(
                             ImplicitNamingStrategy::class.java)
@@ -197,7 +196,7 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                 val dataSource = beanFactory.getBean(DataSource::class.java)
                 if (log.isInfoEnabled) {
                     if (dataSource is HikariDataSource) {
-                        if (!StringUtils.hasText(dataSource.poolName)) {
+                        if (dataSource.poolName.isNullOrBlank()) {
                             dataSource.poolName = "${jpaExtRepositories.key}Pool"
                         }
                         log.info("init dataSource {} : {}", dataSource.poolName, dataSource.jdbcUrl)

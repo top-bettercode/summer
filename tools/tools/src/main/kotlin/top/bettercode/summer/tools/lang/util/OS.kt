@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.lang.util
 
 import org.slf4j.LoggerFactory
-import org.springframework.util.StringUtils
 
 enum class OS {
     /**
@@ -61,7 +60,7 @@ enum class OS {
 
         fun parse(osName: String): OS {
             var name = osName
-            if (!StringUtils.hasText(name)) {
+            if (name.isBlank()) {
                 logger.debug(
                         "JVM system property 'os.name' is undefined. It is therefore not possible to detect the current OS."
                 )

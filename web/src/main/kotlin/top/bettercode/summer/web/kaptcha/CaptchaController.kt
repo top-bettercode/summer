@@ -3,7 +3,6 @@ package top.bettercode.summer.web.kaptcha
 import com.google.code.kaptcha.Producer
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
-import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.RequestMapping
 import top.bettercode.summer.logging.annotation.NoRequestLogging
 import javax.imageio.ImageIO
@@ -28,7 +27,7 @@ class CaptchaController(private val producer: Producer,
         }
         //生成图片验证码
         val image = producer.createImage(text)
-        if (!StringUtils.hasText(id)) {
+        if (id.isNullOrBlank()) {
             id = request.requestedSessionId
         }
         captchaService.save(id, text)

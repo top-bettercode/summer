@@ -10,7 +10,6 @@ import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.context.request.RequestAttributes
 import org.springframework.web.context.request.WebRequest
@@ -64,9 +63,9 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
             if (includeStackTrace) {
                 addStackTrace(respEntity, error)
             }
-            if (!StringUtils.hasText(message)) {
+            if (message.isNullOrBlank()) {
                 message = handleMessage(error.javaClass)
-                if (StringUtils.hasText(error.message) && (!StringUtils.hasText(message) || error.message?.contains("Exception") != true)) {
+                if (!error.message.isNullOrBlank() && (message.isNullOrBlank() || error.message?.contains("Exception") != true)) {
                     message = error.message
                 }
             }
@@ -80,7 +79,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
                         httpStatusCode = responseStatus.code.value()
                     }
                     val reason = responseStatus.reason
-                    if (!StringUtils.hasText(message) && StringUtils.hasText(reason)) {
+                    if (message.isNullOrBlank() && reason.isNotBlank()) {
                         message = reason
                     }
                 }
@@ -92,7 +91,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
             httpStatusCode = getStatus(webRequest).value()
         }
         statusCode = statusCode ?: httpStatusCode.toString()
-        if (!StringUtils.hasText(message)) {
+        if (message.isNullOrBlank()) {
             message = if (httpStatusCode == 404) {
                 "resource.not.found"
             } else {
@@ -116,8 +115,8 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
     private fun handleHttpStatusCode(throwableClass: Class<out Throwable>): Int? {
         val key = throwableClass.name + ".code"
         val value = exceptionHandle[key]
-        return if (StringUtils.hasText(value)) {
-            value!!.toInt()
+        return if (!value.isNullOrBlank()) {
+            value.toInt()
         } else {
             null
         }

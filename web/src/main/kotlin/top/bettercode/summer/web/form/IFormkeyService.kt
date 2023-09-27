@@ -6,7 +6,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.server.ServletServerHttpRequest
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.operation.RequestConverter.getRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.util.Sha512DigestUtils.shaHex
@@ -57,7 +56,7 @@ interface IFormkeyService {
     fun getFormkey(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ignoreHeaders: Array<String>?, ignoreParams: Array<String>?): String? {
         var digestFormkey: String? = null
         var formkey = request!!.getHeader(formKeyName)
-        val hasFormKey = StringUtils.hasText(formkey)
+        val hasFormKey = !formkey.isNullOrBlank()
         if (hasFormKey || autoFormKey) {
             if (log.isTraceEnabled) {
                 log.trace(request.servletPath + " formDuplicateCheck")

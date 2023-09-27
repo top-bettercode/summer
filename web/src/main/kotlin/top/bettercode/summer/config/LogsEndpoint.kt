@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
-import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.RequestHeader
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
@@ -487,12 +486,8 @@ class LogsEndpoint(
     }
 
     private fun trimTrailing(value: String): String {
-        return if (value.contains(".")) StringUtils
-                .trimTrailingCharacter(
-                        StringUtils.trimTrailingCharacter(
-                                value, '0'
-                        ), '.'
-                ) else value
+        return if (value.contains(".")) value.trimEnd('0')
+                .trimEnd('.') else value
     }
 
 }

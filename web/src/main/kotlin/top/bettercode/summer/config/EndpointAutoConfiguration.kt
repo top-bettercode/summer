@@ -15,7 +15,6 @@ import org.springframework.context.annotation.*
 import org.springframework.core.env.Environment
 import org.springframework.core.io.ResourceLoader
 import org.springframework.core.type.AnnotatedTypeMetadata
-import org.springframework.util.StringUtils
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import javax.servlet.http.HttpServletResponse
@@ -63,7 +62,7 @@ class EndpointAutoConfiguration {
             managementAuthProperties: ManagementAuthProperties,
             webEndpointProperties: WebEndpointProperties
     ): ManagementLoginPageGeneratingFilter {
-        if (!StringUtils.hasText(managementAuthProperties.password)) {
+        if (managementAuthProperties.password.isNullOrBlank()) {
             managementAuthProperties.password = RandomUtil.nextString2(6)
             log.info(
                     "默认日志访问用户名密码：{}:{}", managementAuthProperties.username,
@@ -124,7 +123,7 @@ class EndpointAutoConfiguration {
     internal class LogsEndpointCondition : Condition {
 
         override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-            return StringUtils.hasText(context.environment.getProperty("summer.logging.files.path"))
+            return !context.environment.getProperty("summer.logging.files.path").isNullOrBlank()
         }
     }
 

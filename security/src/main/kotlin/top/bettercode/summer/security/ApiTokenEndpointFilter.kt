@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
 import top.bettercode.summer.security.authorization.UserDetailsAuthenticationToken
 import top.bettercode.summer.security.authorize.ClientAuthorize
@@ -55,8 +54,8 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
 
     init {
         val securityProperties = apiTokenService.securityProperties
-        basicCredentials = if (StringUtils.hasText(securityProperties.clientId) && StringUtils.hasText(
-                        securityProperties.clientSecret)) {
+        basicCredentials = if (!securityProperties.clientId.isNullOrBlank() &&
+                !securityProperties.clientSecret.isNullOrBlank()) {
             securityProperties.clientId + ":" + securityProperties.clientSecret
         } else {
             null
@@ -160,8 +159,8 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
             }
         } else {
             val accessToken = bearerTokenResolver.resolve(request)
-            if (StringUtils.hasText(accessToken)) {
-                val apiToken = apiTokenRepository.findByAccessToken(accessToken!!)
+            if (!accessToken.isNullOrBlank()) {
+                val apiToken = apiTokenRepository.findByAccessToken(accessToken)
                 if (apiToken != null && !apiToken.accessToken.isExpired && securityProperties.supportScopes.contains(apiToken.scope)) {
                     try {
                         val scope = apiToken.scope
@@ -233,7 +232,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         var header = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (header != null) {
             header = header.trim { it <= ' ' }
-            if (StringUtils.startsWithIgnoreCase(header, "Basic") && !header.equals("Basic", ignoreCase = true)) {
+            if (header.startsWith("Basic", true) && !header.equals("Basic", ignoreCase = true)) {
                 val encodedBasicCredentials = String(
                         decode(header.substring(6).toByteArray(StandardCharsets.UTF_8)), StandardCharsets.UTF_8)
                 if (basicCredentials == encodedBasicCredentials) {

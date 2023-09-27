@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.util.Base64Utils
-import org.springframework.util.StringUtils
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.security.authorize.ClientAuthorize
 import top.bettercode.summer.security.config.ApiSecurityProperties
@@ -67,13 +66,13 @@ class AutodocAuthWebMvcConfigurer(
                     if (securityProperties.isCompatibleAccessToken) {
                         val authorization = request.getHeader(
                                 SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
-                        if (!StringUtils.hasText(authorization)) {
+                        if (authorization.isNullOrBlank()) {
                             request.header(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN,
                                     "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
                         }
                     } else {
                         val authorization = request.getHeader(HttpHeaders.AUTHORIZATION)
-                        if (!StringUtils.hasText(authorization)) {
+                        if (authorization.isNullOrBlank()) {
                             request.header(HttpHeaders.AUTHORIZATION,
                                     "bearer xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
                         }

@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.lang.snowfake
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.util.StringUtils
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.net.NetworkInterface
@@ -123,7 +122,7 @@ class Sequence {
             val mpid = StringBuilder()
             mpid.append(datacenterId)
             val name = ManagementFactory.getRuntimeMXBean().name
-            if (StringUtils.hasText(name)) {
+            if (!name.isNullOrBlank()) {
                 /*
        * GET jvmPid
        */

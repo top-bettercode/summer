@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.excel
 
 import org.springframework.context.MessageSource
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
 import java.time.format.DateTimeParseException
@@ -44,7 +43,7 @@ class ExcelErrorHandler(messageSource: MessageSource,
                 it.key + separator + it.value
             }
         }
-        if (StringUtils.hasText(message)) {
+        if (!message.isNullOrBlank()) {
             respEntity.message = message
         }
     }

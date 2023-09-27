@@ -43,14 +43,14 @@ class MuipartFileToAttachmentConverter(private val multipartProperties: SummerMu
                 } else {
                     values.iterator().next()
                 }
-                if (!StringUtils.hasText(fileType)) {
+                if (fileType.isNullOrBlank()) {
                     fileType = multipartProperties.defaultFileType
                 }
             }
             var filePath = File.separator + fileType + File.separator
             filePath += LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
             val originalFilename = source.originalFilename
-            val hasOriginalName = StringUtils.hasText(originalFilename)
+            val hasOriginalName = !originalFilename.isNullOrBlank()
             val extension = if (hasOriginalName) getExtension(originalFilename!!) else ""
             var path: String
             if (multipartProperties.isKeepOriginalFilename) {

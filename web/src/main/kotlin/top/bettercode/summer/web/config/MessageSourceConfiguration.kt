@@ -18,7 +18,6 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.util.ConcurrentReferenceHashMap
-import org.springframework.util.StringUtils
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnMissingBean(value = [MessageSource::class], search = SearchStrategy.CURRENT)
@@ -36,8 +35,7 @@ class MessageSourceConfiguration {
     fun messageSource(applicationContext: ApplicationContext,
                       messageSourceProperties: MessageSourceProperties): MessageSource {
         var basename = messageSourceProperties.basename
-        val messageNames = StringUtils.commaDelimitedListToSet(
-                StringUtils.trimAllWhitespace(basename))
+        val messageNames = basename.trim().split(",").toMutableList()
         val defaultMessagesName = "messages"
         val classLoader = applicationContext.classLoader!!
         if (messageNames.contains(defaultMessagesName) && ResourceBundleCondition.getResources(classLoader, defaultMessagesName).isEmpty()) {
@@ -50,7 +48,7 @@ class MessageSourceConfiguration {
                 messageNames.add(CORE_MESSAGES)
             }
         }
-        basename = StringUtils.collectionToCommaDelimitedString(messageNames)
+        basename = messageNames.joinToString(",")
         messageSourceProperties.basename = basename
         val messageSource = ResourceBundleMessageSource()
         if (messageNames.isNotEmpty()) {
@@ -84,10 +82,9 @@ class MessageSourceConfiguration {
 
         private fun getMatchOutcomeForBasename(context: ConditionContext,
                                                basename: String): ConditionOutcome {
-            val message = ConditionMessage
-                    .forCondition("ResourceBundle")
-            for (name in StringUtils.commaDelimitedListToStringArray(
-                    StringUtils.trimAllWhitespace(basename))) {
+            val message = ConditionMessage.forCondition("ResourceBundle")
+            val messageNames = basename.trim().split(",").toMutableList()
+            for (name in messageNames) {
                 for (resource in getResources(context.classLoader!!, name)) {
                     if (resource!!.exists()) {
                         return ConditionOutcome

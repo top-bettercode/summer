@@ -4,7 +4,6 @@ import org.springframework.boot.autoconfigure.data.AbstractRepositoryConfigurati
 import org.springframework.core.env.Environment
 import org.springframework.data.repository.config.BootstrapMode
 import org.springframework.data.repository.config.RepositoryConfigurationExtension
-import org.springframework.util.StringUtils
 
 /**
  * [ImportBeanDefinitionRegistrar] used to auto-configure Spring Data JPA Repositories.
@@ -36,11 +35,9 @@ internal class JpaExtRepositoriesAutoConfigureRegistrar : AbstractRepositoryConf
     }
 
     private fun configureBootstrapMode(environment: Environment) {
-        val property = environment
-                .getProperty("spring.data.jpa.repositories.bootstrap-mode")
-        if (StringUtils.hasText(property)) {
-            bootstrapMode = BootstrapMode
-                    .valueOf(property!!.uppercase())
+        val property = environment.getProperty("spring.data.jpa.repositories.bootstrap-mode")
+        if (!property.isNullOrBlank()) {
+            bootstrapMode = BootstrapMode.valueOf(property.uppercase())
         }
     }
 

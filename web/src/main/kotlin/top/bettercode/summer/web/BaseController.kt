@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.MessageSource
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.ParameterUtil.hasParameter
 import top.bettercode.summer.tools.lang.util.ParameterUtil.hasParameterKey
 import top.bettercode.summer.web.error.ErrorAttributes
@@ -105,7 +104,7 @@ open class BaseController : Response() {
     }
 
     protected fun hasText(param: String?, paramName: String?) {
-        require(StringUtils.hasText(param)) { getText("param.notnull", paramName) ?: "" }
+        require(!param.isNullOrBlank()) { getText("param.notnull", paramName) ?: "" }
     }
 
     protected fun notNull(param: Any?, paramName: String?) {

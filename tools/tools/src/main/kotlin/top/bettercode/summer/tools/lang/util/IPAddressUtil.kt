@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.lang.util
 
-import org.springframework.util.StringUtils
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.LineNumberReader
@@ -68,7 +67,7 @@ object IPAddressUtil {
      */
     @JvmStatic
     fun isExtranet(ipAddress: String): Boolean {
-        if (!StringUtils.hasText(ipAddress)) {
+        if (ipAddress.isBlank()) {
             throw IllegalArgumentException("ipAddress 不能为空")
         }
         return !ipAddress.matches(

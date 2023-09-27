@@ -3,7 +3,6 @@ package top.bettercode.summer.web.error
 import org.hibernate.validator.internal.engine.path.PathImpl
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.validator.NoPropertyPath
@@ -54,7 +53,7 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
             errors[property] = msg
         }
         message = errors.values.joinToString()
-        if (!StringUtils.hasText(message)) {
+        if (message.isBlank()) {
             message = "data.valid.failed"
         }
         respEntity.message = message

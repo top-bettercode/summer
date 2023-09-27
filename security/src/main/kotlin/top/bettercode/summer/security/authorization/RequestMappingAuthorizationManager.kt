@@ -8,7 +8,6 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.util.AntPathMatcher
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
@@ -112,7 +111,7 @@ class RequestMappingAuthorizationManager(
             if (securityService.supportsAnonymous()) {
                 if (log.isDebugEnabled) {
                     log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
-                            StringUtils.collectionToCommaDelimitedString(userAuthorities),
+                            userAuthorities.joinToString(),
                             request.servletPath,
                             authorities)
                 }
@@ -124,7 +123,7 @@ class RequestMappingAuthorizationManager(
         }
         if (log.isDebugEnabled) {
             log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
-                    StringUtils.collectionToCommaDelimitedString(userAuthorities),
+                    userAuthorities.joinToString(),
                     request.servletPath,
                     authorities)
         }
@@ -170,7 +169,7 @@ class RequestMappingAuthorizationManager(
                     val url = methodUrl[1]
                     for (u in url.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
                         val urlMatcher = AntPathRequestMatcher(u)
-                        if (StringUtils.hasText(method)) {
+                        if (method.isNotBlank()) {
                             Assert.isNull(configAuthorities[urlMatcher],
                                     "\"" + u + "\"对应RequestMapping不包含请求方法描述，请使用通用路径\"" + u
                                             + "\"配置权限")

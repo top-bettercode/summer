@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import org.springframework.core.convert.TypeDescriptor
 import org.springframework.core.convert.converter.ConditionalGenericConverter
 import org.springframework.core.convert.converter.GenericConverter
-import org.springframework.util.StringUtils
 import java.io.IOException
 
 /**
@@ -22,7 +21,7 @@ class JsonStringConverter(private val objectMapper: ObjectMapper) : ConditionalG
     }
 
     override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
-        if (!StringUtils.hasText(source as String)) {
+        if ((source as String).isBlank()) {
             return null
         }
         val collectionType = TypeFactory

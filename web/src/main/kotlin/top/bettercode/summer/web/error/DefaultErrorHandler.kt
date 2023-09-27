@@ -4,7 +4,6 @@ import org.springframework.context.MessageSource
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotWritableException
-import org.springframework.util.StringUtils
 import org.springframework.validation.BindException
 import org.springframework.validation.FieldError
 import org.springframework.web.HttpMediaTypeNotAcceptableException
@@ -80,7 +79,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
                     sb.append(" OR ")
                 }
                 sb.append('"')
-                sb.append(StringUtils.arrayToDelimitedString(conditions, ", "))
+                sb.append(conditions.joinToString())
                 sb.append('"')
             }
             message = sb.toString()
@@ -89,7 +88,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             respEntity.status = error.code
             respEntity.errors = error.data
         }
-        if (StringUtils.hasText(message)) {
+        if (!message.isNullOrBlank()) {
             respEntity.message = message
         }
     }
@@ -133,7 +132,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             errors[field] = msg
         }
         message = errors.values.joinToString()
-        if (!StringUtils.hasText(message)) {
+        if (message.isBlank()) {
             message = "data.valid.failed"
         }
         return message

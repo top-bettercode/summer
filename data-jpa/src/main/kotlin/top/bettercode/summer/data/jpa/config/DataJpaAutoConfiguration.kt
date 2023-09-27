@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServletRequest
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(MybatisProperties::class)
-class DataJpaAutoConfiguration(
-) {
+class DataJpaAutoConfiguration {
 
     @Bean
     fun datasourcesBeanDefinitionRegistryPostProcessor(): DatasourcesBeanDefinitionRegistryPostProcessor {

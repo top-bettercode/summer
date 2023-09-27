@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ResourceLoader
 import org.springframework.util.ObjectUtils
-import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.config.JpaMybatisConfigurationUtil
 import top.bettercode.summer.data.jpa.config.MybatisProperties
 import java.util.stream.Stream
@@ -30,8 +29,8 @@ class TestMybatisAutoConfiguration(
         val factory = SqlSessionFactoryBean()
         factory.setDataSource(dataSource)
         val configLocation = properties.configLocation
-        if (StringUtils.hasText(configLocation)) {
-            factory.setConfigLocation(resourceLoader.getResource(configLocation!!))
+        if (!configLocation.isNullOrBlank()) {
+            factory.setConfigLocation(resourceLoader.getResource(configLocation))
         }
         val configuration = properties.configuration!!
         factory.setConfiguration(configuration)

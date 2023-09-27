@@ -8,12 +8,10 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonCode
 import top.bettercode.summer.web.support.code.CodeServiceHolder
 import top.bettercode.summer.web.support.code.ICodeService
 import java.io.Serializable
-import java.util.*
 
 /**
  * code name Serializer
@@ -37,9 +35,9 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
         val codeName: String
         val trueCodeType = getCodeType(fieldName)
         codeName = if (value is String && value.contains(",")) {
-            val split = value.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            StringUtils.arrayToCommaDelimitedString(
-                    Arrays.stream(split).map { s: String -> getName(trueCodeType, s.trim { it <= ' ' }) }.toArray())
+            value.split(",").joinToString(",") {
+                getName(trueCodeType, it)
+            }
         } else {
             getName(trueCodeType, value)
         }

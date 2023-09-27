@@ -5,7 +5,6 @@ import org.springframework.context.MessageSource
 import org.springframework.dao.InvalidDataAccessApiUsageException
 import org.springframework.http.HttpStatus
 import org.springframework.orm.jpa.JpaSystemException
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
 import javax.servlet.http.HttpServletRequest
@@ -54,7 +53,7 @@ class DataJpaErrorHandler(
                 message = "更新的数据在数据库中不存在"
             }
         }
-        if (StringUtils.hasText(message)) {
+        if (!message.isNullOrBlank()) {
             respEntity.message = message
         }
     }

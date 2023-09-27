@@ -6,7 +6,6 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.format.FormatterRegistry
-import org.springframework.util.StringUtils
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
@@ -82,7 +81,7 @@ class SummerWebMvcConfigurer(private val formkeyService: IFormkeyService,
 
 
     private fun legalDate(source: String?): Boolean {
-        return StringUtils.hasLength(source) && "null" != source && "0" != source
+        return !source.isNullOrBlank() && "null" != source && "0" != source
     }
 
 }

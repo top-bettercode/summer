@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
 import org.springframework.core.type.AnnotatedTypeMetadata
-import org.springframework.util.StringUtils
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
@@ -48,11 +47,11 @@ class ApiSignConfiguration {
     internal class ApiSignCondition : Condition {
 
         override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-            return (StringUtils.hasText(context.environment.getProperty("summer.sign.client-secret")) || StringUtils.hasText(
-                    context.environment.getProperty("summer.sign.clientSecret")
-            )) && (StringUtils.hasText(context.environment.getProperty("summer.sign.handler-type-prefix")) || StringUtils.hasText(
-                    context.environment.getProperty("summer.sign.handlerTypePrefix")
-            ))
+            return (!context.environment.getProperty("summer.sign.client-secret").isNullOrBlank()
+                    || !context.environment.getProperty("summer.sign.clientSecret").isNullOrBlank()
+                    ) &&
+                    (!context.environment.getProperty("summer.sign.handler-type-prefix").isNullOrBlank() || !context.environment.getProperty("summer.sign.handlerTypePrefix").isNullOrBlank()
+                            )
         }
     }
 }

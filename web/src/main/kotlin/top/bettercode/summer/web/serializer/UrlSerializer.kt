@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import org.springframework.core.env.Environment
-import org.springframework.util.StringUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import top.bettercode.summer.tools.lang.operation.RequestConverter.getRequestPath
@@ -64,7 +63,7 @@ constructor(private val formatExpression: String? = null,
         val type: Class<*> = v.javaClass
         val mapper = mapper
         if (type == String::class.java) {
-            if (!StringUtils.hasText(v as String)) {
+            if ((v as String).isBlank()) {
                 v = defaultValue
             }
             if (separator.isEmpty()) {
@@ -98,7 +97,7 @@ constructor(private val formatExpression: String? = null,
 
     private fun genCollection(value: Any, gen: JsonGenerator, mapper: JsonUrlMapper?,
                               stream: Stream<*>) {
-        val urls = stream.map { obj: Any? -> mapper!!.mapper(obj) }.filter { str: String? -> StringUtils.hasText(str) }
+        val urls = stream.map { obj: Any? -> mapper!!.mapper(obj) }.filter { str: String? -> !str.isNullOrBlank() }
                 .map { s: String? ->
                     if (asMap) {
                         return@map PathUrl(s, convert(s, formatExpression))
@@ -158,16 +157,16 @@ constructor(private val formatExpression: String? = null,
         @JvmStatic
         @JvmOverloads
         fun convert(path: String?, formatExpression: String? = null): String? {
-            return if (StringUtils.hasText(path)) {
+            return if (!path.isNullOrBlank()) {
                 @Suppress("HttpUrlsUsage")
-                if (path!!.startsWith("http://") || path.startsWith("https://")) {
+                if (path.startsWith("http://") || path.startsWith("https://")) {
                     return path
                 }
                 var format: String?
-                if (StringUtils.hasText(formatExpression)) {
+                if (!formatExpression.isNullOrBlank()) {
                     format = formatCache[formatExpression]
                     if (format == null) {
-                        format = environment!!.resolvePlaceholders(formatExpression!!)
+                        format = environment!!.resolvePlaceholders(formatExpression)
                         if (!format.contains("%s")) {
                             format = "$format%s"
                         }
@@ -184,7 +183,7 @@ constructor(private val formatExpression: String? = null,
                     if (requestAttributes != null) {
                         val request = requestAttributes.request
                         val requestPath = getRequestPath(request)
-                        if (StringUtils.hasText(requestPath)) {
+                        if (requestPath.isNotBlank()) {
                             url = String.format("%s%s", requestPath, url)
                         }
                     }

@@ -51,7 +51,7 @@ class BigDecimalSerializer @JvmOverloads constructor(private val scale: Int = 2,
 
     private fun reduceFraction(plainString: String): String {
         return if (plainString.contains(".")) StringUtils
-                .trimTrailingCharacter(StringUtils.trimTrailingCharacter(plainString, '0'), '.') else plainString
+                .trimTrailingCharacter(plainString.trimEnd('0'), '.') else plainString
     }
 
     override fun createContextual(prov: SerializerProvider, property: BeanProperty?): JsonSerializer<*> {

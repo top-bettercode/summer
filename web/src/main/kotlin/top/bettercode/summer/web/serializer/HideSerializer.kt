@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonHide
 import java.util.*
 
@@ -20,7 +19,7 @@ import java.util.*
 @JacksonStdImpl
 class HideSerializer @JvmOverloads constructor(private val beginKeep: Int = 0, private val endKeep: Int = 0, private val alwaysHide: Boolean = true) : StdScalarSerializer<String>(String::class.java, false), ContextualSerializer {
     fun convert(value: String): String {
-        if (StringUtils.hasText(value)) {
+        if (value.isNotBlank()) {
             val keep = beginKeep + endKeep
             if (value.length > keep) {
                 val chars = value.toCharArray()
@@ -55,7 +54,7 @@ class HideSerializer @JvmOverloads constructor(private val beginKeep: Int = 0, p
     }
 
     override fun isEmpty(prov: SerializerProvider, value: String): Boolean {
-        return !StringUtils.hasText(value)
+        return value.isBlank()
     }
 
     override fun serializeWithType(value: String?, gen: JsonGenerator, provider: SerializerProvider,

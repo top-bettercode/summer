@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.weixin.properties
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.weixin.support.WeixinToken
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -34,7 +33,7 @@ interface IOffiaccountProperties : IWeixinProperties {
             ""
         }
         return (wechatBaseUrl + wechatWebOauthUrl + "?access_token=" + token + "&"
-                + IWeixinProperties.OPEN_ID_NAME + "=" + openId + "&hasBound=" + StringUtils.hasText(token) + "&forceLogin="
+                + IWeixinProperties.OPEN_ID_NAME + "=" + openId + "&hasBound=" + token.isNotBlank() + "&forceLogin="
                 + forceLogin + "&state=" + (state ?: "") + "&msg=" + encodeMsg + "&_timer="
                 + System.currentTimeMillis())
     }

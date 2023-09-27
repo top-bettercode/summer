@@ -5,7 +5,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.util.FileCopyUtils
 import org.springframework.util.StreamUtils
-import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.servlet.HandlerMapping
@@ -212,7 +211,7 @@ object RequestConverter {
         }
         return OperationRequestPart(
                 part.name,
-                if (StringUtils.hasText(part.submittedFileName))
+                if (!part.submittedFileName.isNullOrBlank())
                     part.submittedFileName
                 else
                     null, partHeaders,
@@ -232,7 +231,7 @@ object RequestConverter {
 
     private fun createOperationRequestPart(file: MultipartFile): OperationRequestPart {
         val partHeaders = HttpHeaders()
-        if (StringUtils.hasText(file.contentType)) {
+        if (!file.contentType.isNullOrBlank()) {
             partHeaders.contentType = MediaType.parseMediaType(file.contentType!!)
         }
         val content = try {
@@ -242,7 +241,7 @@ object RequestConverter {
         }
         return OperationRequestPart(
                 file.name,
-                if (StringUtils.hasText(file.originalFilename))
+                if (!file.originalFilename.isNullOrBlank())
                     file.originalFilename
                 else
                     null,

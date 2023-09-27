@@ -1,6 +1,5 @@
 package top.bettercode.summer.web.support.packagescan
 
-import org.apache.tomcat.util.buf.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.core.io.support.ResourcePatternResolver
@@ -128,7 +127,7 @@ open class PackageScanClassResolver @JvmOverloads constructor(classLoader: Class
             val packageName = type.getPackage().name
             val packageNameParts = listOf(*packageName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
             for (i in packageNameParts.indices) {
-                val thisPackage = StringUtils.join(packageNameParts.subList(0, i + 1), '/')
+                val thisPackage = packageNameParts.subList(0, i + 1).joinToString("/")
                 addFoundClass(thisPackage, type)
             }
         }

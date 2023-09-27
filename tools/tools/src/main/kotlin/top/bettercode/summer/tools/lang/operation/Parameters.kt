@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.lang.operation
 
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.StringUtils
 import java.io.UnsupportedEncodingException
 import java.net.URI
 import java.net.URLEncoder
@@ -86,7 +85,7 @@ class Parameters : LinkedMultiValueMap<String, String>() {
     }
 
     private fun urlEncodeUTF8(s: String): String {
-        if (!StringUtils.hasLength(s)) {
+        if (s.isEmpty()) {
             return ""
         }
         try {

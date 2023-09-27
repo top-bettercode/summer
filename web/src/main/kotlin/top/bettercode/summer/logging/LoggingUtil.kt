@@ -3,7 +3,6 @@ package top.bettercode.summer.logging
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.operation.RequestConverter
 import top.bettercode.summer.tools.lang.util.IPAddressUtil
 import top.bettercode.summer.web.support.ApplicationContextHolder
@@ -18,7 +17,7 @@ object LoggingUtil {
 
     val apiHost: String? by lazy {
         val apiHost = ApplicationContextHolder.getProperty("summer.logging.api-host")
-        if (StringUtils.hasText(apiHost)) {
+        if (!apiHost.isNullOrBlank()) {
             return@lazy apiHost
         }
 

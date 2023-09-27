@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.HtmlUtil.parseHtml
 import top.bettercode.summer.tools.lang.util.HtmlUtil.subParseHtml
 import top.bettercode.summer.web.serializer.annotation.JsonHtmlParser
@@ -30,7 +29,7 @@ class HtmlParserSerializer : StdScalarSerializer<String>, ContextualSerializer {
 
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         var v: String? = value
-        if (StringUtils.hasText(v)) {
+        if (!v.isNullOrBlank()) {
             v = if (length == -1) {
                 parseHtml(v)
             } else {
@@ -50,7 +49,7 @@ class HtmlParserSerializer : StdScalarSerializer<String>, ContextualSerializer {
     }
 
     override fun isEmpty(prov: SerializerProvider, value: String): Boolean {
-        return !StringUtils.hasText(value)
+        return value.isBlank()
     }
 
     override fun serializeWithType(value: String, gen: JsonGenerator, provider: SerializerProvider,

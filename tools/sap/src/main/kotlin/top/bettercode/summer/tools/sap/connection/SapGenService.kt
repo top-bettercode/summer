@@ -5,7 +5,6 @@ import com.sap.conn.jco.JCoField
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import org.springframework.util.CollectionUtils
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.javaName
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.JavaType.Companion.dateInstance
@@ -15,6 +14,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.Method
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.SourceSet
+import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
 import java.io.File
 import java.nio.file.Files
@@ -215,13 +215,13 @@ class SapGenService(private val sapService: SapService) {
             field.javadoc("/**", " * $description", " */")
             val getMethod = Method()
             getMethod.visibility = JavaVisibility.PUBLIC
-            getMethod.name = "get" + StringUtils.capitalize(fieldName)
+            getMethod.name = "get" + fieldName.capitalized()
             getMethod.javadoc("/**", " * @return $description", " */")
             getMethod.bodyLine("return this.$fieldName;")
             val setMethod = Method()
             setMethod.visibility = JavaVisibility.PUBLIC
-            setMethod.name = "set" + StringUtils.capitalize(fieldName)
-            setMethod.javadoc("/**", " * 设置$description", " *", " * @param $fieldName $description", " * @return " + if (StringUtils.hasText(desc)) desc else classType.shortName, " */")
+            setMethod.name = "set" + fieldName.capitalized()
+            setMethod.javadoc("/**", " * 设置$description", " *", " * @param $fieldName $description", " * @return " + desc.ifBlank { classType.shortName }, " */")
             setMethod.bodyLine("this.$fieldName = $fieldName;")
             setMethod.bodyLine("return this;")
             getMethod.returnType = type

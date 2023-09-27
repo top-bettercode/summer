@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.sap.connection
 
 import com.sap.conn.jco.ext.DestinationDataEventListener
 import com.sap.conn.jco.ext.DestinationDataProvider
-import org.springframework.util.StringUtils
 import java.util.*
 
 class DestinationDataProviderImpl : DestinationDataProvider {
@@ -12,7 +11,7 @@ class DestinationDataProviderImpl : DestinationDataProvider {
     }
 
     override fun getDestinationProperties(destName: String): Properties {
-        if (!StringUtils.hasText(destName)) {
+        if (destName.isBlank()) {
             throw NullPointerException("Destinantion name is empty.")
         }
         check(provider.isNotEmpty()) { "Data provider is empty." }

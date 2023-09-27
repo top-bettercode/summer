@@ -6,7 +6,6 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.transaction.TransactionSystemException
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.RespEntity
 import java.sql.SQLRecoverableException
 import javax.servlet.http.HttpServletRequest
@@ -48,26 +47,26 @@ class DataErrorHandler(messageSource: MessageSource,
                 val columnName = getText(
                         specificCauseMessage.replace(duplicateRegex.toRegex(), "$1"))
                 message = getText("duplicate.entry", columnName)
-                if (!StringUtils.hasText(message)) {
+                if (message.isBlank()) {
                     message = "data.valid.failed"
                 }
             } else if (specificCauseMessage.matches(dataTooLongRegex.toRegex())) {
                 val columnName = getText(
                         specificCauseMessage.replace(dataTooLongRegex.toRegex(), "$1"))
                 message = getText("data.too.long", columnName)
-                if (!StringUtils.hasText(message)) {
+                if (message.isBlank()) {
                     message = "data.valid.failed"
                 }
             } else if (specificCauseMessage.matches(outOfRangeRegex.toRegex())) {
                 val columnName = getText(
                         specificCauseMessage.replace(outOfRangeRegex.toRegex(), "$1"))
                 message = getText("data Out of range", columnName)
-                if (!StringUtils.hasText(message)) {
+                if (message.isBlank()) {
                     message = "data.valid.failed"
                 }
             } else if (specificCauseMessage.startsWith(constraintSubfix)) {
                 message = "cannot.delete.update.parent"
-                if (!StringUtils.hasText(message)) {
+                if (message.isBlank()) {
                     message = "data.valid.failed"
                 }
             } else if (specificCauseMessage.matches(incorrectRegex.toRegex())) {
@@ -115,7 +114,7 @@ class DataErrorHandler(messageSource: MessageSource,
                 }
             }
         }
-        if (StringUtils.hasText(message)) {
+        if (!message.isNullOrBlank()) {
             respEntity.message = message
         }
     }

@@ -7,7 +7,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
-import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import top.bettercode.summer.data.jpa.query.SpecPath.BetweenValue
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
@@ -81,7 +80,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     private fun setPathDefaultValue(path: String, from: Path<*>, type: ManagedType<*>, probe: Any, probeType: Class<*>, currentNode: PathNode) {
         val beanWrapper = DirectFieldAccessFallbackBeanWrapper(probe)
         for (attribute in type.singularAttributes) {
-            val currentPath = if (!StringUtils.hasText(path)) attribute.name else path + "." + attribute.name
+            val currentPath = if (path.isBlank()) attribute.name else path + "." + attribute.name
             val specPath = path(currentPath)
             if (specPath.isIgnored) {
                 continue

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.DirectFieldAccessFallbackBeanWrapper
 import top.bettercode.summer.web.properties.JacksonExtProperties
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
@@ -32,11 +31,11 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter,
         val outputContext = gen.outputContext
         val fieldName = outputContext.currentName
         var defaultValue: Any? = defaultValue
-        if ("" == this.defaultValue && StringUtils.hasText(this.fieldName)) {
+        if ("" == this.defaultValue && !this.fieldName.isNullOrBlank()) {
             val o = gen.currentValue
             val beanWrapper = DirectFieldAccessFallbackBeanWrapper(
                     o)
-            defaultValue = beanWrapper.getPropertyValue(this.fieldName!!)
+            defaultValue = beanWrapper.getPropertyValue(this.fieldName)
         }
         if (defaultValue == null) {
             if (jacksonExtProperties.isDefaultEmpty) {
@@ -46,7 +45,7 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter,
                 serializeExtend(gen, fieldName, false)
             }
         } else {
-            if (defaultValue is String && !StringUtils.hasText(defaultValue as String?)) {
+            if (defaultValue is String && defaultValue.isBlank()) {
                 if (serializeJsonCode(value, gen, provider, fieldName)) {
                     return
                 }
@@ -96,7 +95,7 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter,
 
     private fun serializeExtend(gen: JsonGenerator, fieldName: String,
                                 defaultEmpty: Boolean) {
-        val value = if (StringUtils.hasText(extendedValue)) extendedValue else if (defaultEmpty) "" else null
+        val value = if (!extendedValue.isNullOrBlank()) extendedValue else if (defaultEmpty) "" else null
         val jsonCode = writer.getAnnotation(JsonCode::class.java)
         if (jsonCode != null && jsonCode.extended) {
             gen.writeStringField(fieldName + "Name", value)

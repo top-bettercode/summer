@@ -2,7 +2,6 @@ package top.bettercode.summer.security.token
 
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
-import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.RequestMethod
 import top.bettercode.summer.security.support.SecurityParameterNames
 import java.util.regex.Pattern
@@ -81,7 +80,7 @@ class MultipleBearerTokenResolver {
 
     private fun resolveFromAuthorizationHeader(request: HttpServletRequest): String? {
         val authorization = request.getHeader(bearerTokenHeaderName)
-        if (!StringUtils.startsWithIgnoreCase(authorization, "bearer")) {
+        if (authorization?.startsWith("bearer", true) != true) {
             return null
         }
         val matcher = authorizationPattern.matcher(authorization)

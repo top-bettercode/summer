@@ -7,7 +7,7 @@ import org.springframework.cglib.proxy.MethodInterceptor
 import org.springframework.cglib.proxy.MethodProxy
 import org.springframework.core.convert.ConversionService
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
+import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.property.MapPropertySource
 import top.bettercode.summer.tools.lang.property.PropertySource
 import java.lang.reflect.Method
@@ -58,7 +58,7 @@ class Setting private constructor(private val source: PropertySource) {
         val annotation = target.getAnnotation(ConfigurationProperties::class.java)
         Assert.notNull(annotation, target.name + "无ConfigurationProperties注解")
         var prefix = annotation.value
-        if (!StringUtils.hasText(prefix)) {
+        if (prefix.isBlank()) {
             prefix = annotation.prefix
         }
         return bind(prefix, target)
@@ -83,7 +83,7 @@ class Setting private constructor(private val source: PropertySource) {
                 return@MethodInterceptor get(name, o, method, objects, methodProxy, methodName.substring(2))
             } else if (methodName.startsWith("set") && objects.size == 1) {
                 val result = methodProxy.invokeSuper(o, objects)
-                val propertyName = StringUtils.uncapitalize(methodName.substring(3))
+                val propertyName = methodName.substring(3).decapitalized()
                 val key = "$name.$propertyName"
                 if (result != null) {
                     val value = conversionService.convert(objects[0], String::class.java)
@@ -103,7 +103,7 @@ class Setting private constructor(private val source: PropertySource) {
     private operator fun get(name: String, o: Any, method: Method, objects: Array<Any>,
                              methodProxy: MethodProxy, propertyName: String): Any? {
         var pName = propertyName
-        pName = StringUtils.uncapitalize(pName)
+        pName = pName.decapitalized()
         val key = "$name.$pName"
         var result: Any? = get(key)
         if (result == null) {

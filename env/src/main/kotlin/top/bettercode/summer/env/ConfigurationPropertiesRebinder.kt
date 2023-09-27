@@ -8,7 +8,6 @@ import org.springframework.jmx.export.annotation.ManagedAttribute
 import org.springframework.jmx.export.annotation.ManagedOperation
 import org.springframework.jmx.export.annotation.ManagedResource
 import org.springframework.stereotype.Component
-import org.springframework.util.StringUtils
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -83,7 +82,7 @@ class ConfigurationPropertiesRebinder(private val beans: ConfigurationProperties
             val neverRefresh = applicationContext!!.environment
                     .getProperty("spring.cloud.refresh.never-refreshable",
                             "com.zaxxer.hikari.HikariDataSource")
-            return StringUtils.commaDelimitedListToSet(neverRefresh)
+            return neverRefresh.split(",").toSet()
         }
 
     @get:ManagedAttribute

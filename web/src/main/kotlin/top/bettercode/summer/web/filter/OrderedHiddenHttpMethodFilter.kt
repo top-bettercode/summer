@@ -2,7 +2,6 @@ package top.bettercode.summer.web.filter
 
 import org.springframework.core.Ordered
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
 import org.springframework.web.filter.HiddenHttpMethodFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -45,7 +44,7 @@ class OrderedHiddenHttpMethodFilter : HiddenHttpMethodFilter(), Ordered {
     override fun doFilterInternal(request: HttpServletRequest,
                                   response: HttpServletResponse, filterChain: FilterChain) {
         val paramValue = request.getParameter(this.methodParam)
-        if (StringUtils.hasLength(paramValue)) {
+        if (!paramValue.isNullOrEmpty()) {
             val method1 = request.method
             val method = paramValue.uppercase()
             if ("POST" == method1 && "PUT" == method || "GET" == method1 && "DELETE" == method) {

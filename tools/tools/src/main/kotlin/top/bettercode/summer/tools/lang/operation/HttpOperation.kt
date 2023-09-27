@@ -4,7 +4,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -124,13 +123,13 @@ object HttpOperation {
         var queryString = request.uri.rawQuery
         val uniqueParameters = request.parameters.getUniqueParameters(request.uri)
         if (uniqueParameters.isNotEmpty() && (forceParametersInUri || includeParametersInUri(request))) {
-            queryString = if (StringUtils.hasText(queryString)) {
+            queryString = if (!queryString.isNullOrBlank()) {
                 queryString + "&" + uniqueParameters.toQueryString()
             } else {
                 uniqueParameters.toQueryString()
             }
         }
-        if (StringUtils.hasText(queryString)) {
+        if (!queryString.isNullOrBlank()) {
             rpath = "$rpath?$queryString"
         }
         return rpath
@@ -178,12 +177,12 @@ object HttpOperation {
         val httpRequest = StringWriter()
         val writer = PrintWriter(httpRequest)
         val content = if (format) request.prettyContentAsString else request.contentAsString
-        if (StringUtils.hasText(content)) {
+        if (content.isNotBlank()) {
             writer.printf("%n%s", content)
         } else if (isPutOrPost(request)) {
             if (request.parts.isEmpty()) {
                 val queryString = request.parameters.toQueryString()
-                if (StringUtils.hasText(queryString)) {
+                if (queryString.isNotBlank()) {
                     writer.println()
                     writer.print(queryString)
                 }
@@ -237,7 +236,7 @@ object HttpOperation {
             contentType: MediaType?, writer: PrintWriter
     ) {
         writer.printf("Content-Disposition: form-data; name=%s", name)
-        if (StringUtils.hasText(filename)) {
+        if (!filename.isNullOrBlank()) {
             writer.printf("; filename=%s", filename)
         }
         writer.printf("%n")

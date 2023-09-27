@@ -3,7 +3,6 @@ package top.bettercode.summer.web.resolver
 import org.springframework.core.convert.TypeDescriptor
 import org.springframework.core.convert.converter.ConditionalGenericConverter
 import org.springframework.core.convert.converter.GenericConverter
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -31,7 +30,7 @@ class UnitConverter : ConditionalGenericConverter {
     }
 
     override fun convert(`object`: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
-        return if (!StringUtils.hasText(`object` as String)) {
+        return if ((`object` as String).isBlank()) {
             null
         } else {
             val unit = targetType.getAnnotation(Unit::class.java)!!

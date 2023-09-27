@@ -14,7 +14,6 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.util.DigestUtils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.sms.SmsException
 import top.bettercode.summer.tools.sms.SmsSysException
 import top.bettercode.summer.tools.sms.SmsTemplate
@@ -109,7 +108,7 @@ class SimpleB2mSmsTemplate(
                 )
         )
         content.forEach { (key: String, value: String) ->
-            if (StringUtils.hasText(key) && StringUtils.hasText(value)) {
+            if (key.isNotBlank() && value.isNotBlank()) {
                 params[key] = value
             }
         }

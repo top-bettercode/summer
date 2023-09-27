@@ -1,7 +1,6 @@
 package top.bettercode.summer.web.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.util.StringUtils
 import org.springframework.web.context.request.NativeWebRequest
 import java.time.Duration
 import javax.servlet.http.HttpServletRequest
@@ -74,7 +73,7 @@ open class SummerWebProperties {
     //--------------------------------------------
     fun wrapEnable(request: NativeWebRequest): Boolean {
         val wrapResponse = request.getHeader(wrapName)
-        return if (StringUtils.hasText(wrapResponse)) {
+        return if (!wrapResponse.isNullOrBlank()) {
             "true" == wrapResponse
         } else {
             isWrapEnable
@@ -83,7 +82,7 @@ open class SummerWebProperties {
 
     fun wrapEnable(request: HttpServletRequest): Boolean {
         val wrapResponse = request.getHeader(wrapName)
-        return if (StringUtils.hasText(wrapResponse)) {
+        return if (!wrapResponse.isNullOrBlank()) {
             "true" == wrapResponse
         } else {
             isWrapEnable
@@ -92,7 +91,7 @@ open class SummerWebProperties {
 
     fun okEnable(request: NativeWebRequest): Boolean {
         val okResponse = request.getHeader(okName)
-        return if (StringUtils.hasText(okResponse)) {
+        return if (!okResponse.isNullOrBlank()) {
             "true" == okResponse
         } else {
             isOkEnable
@@ -101,7 +100,7 @@ open class SummerWebProperties {
 
     fun okEnable(request: HttpServletRequest): Boolean {
         val okResponse = request.getHeader(okName)
-        return if (StringUtils.hasText(okResponse)) {
+        return if (!okResponse.isNullOrBlank()) {
             "true" == okResponse
         } else {
             isOkEnable
