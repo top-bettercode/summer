@@ -16,8 +16,8 @@ open class ProfileExtension(
                 "**/*.xml",
                 "**/*.conf"
         ),
-        var configDir: String = "conf",
-        var configFile: String = "",
+        var envDir: String = "env",
+        var envFile: String = "",
         var activeFileSuffix: String = "",
         var beginToken: String = "@",
         var endToken: String = "@",
@@ -27,6 +27,7 @@ open class ProfileExtension(
         val profileClosure: MutableMap<String, MutableSet<Project.(ProfileExtension) -> Unit>> = mutableMapOf()
 ) {
 
+    val confDir: String = "conf"
 
     companion object {
 
@@ -54,10 +55,9 @@ open class ProfileExtension(
             }
 
         private fun Project.addActiveFile(project: Project, profile: ProfileExtension, array: MutableList<File>, suffix: String = "") {
-            val defaultConfigFile =
-                    project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE$suffix")
-            if (defaultConfigFile.exists()) {
-                array.add(defaultConfigFile)
+            val defaultEnvFile = activeFile(project, profile, PROFILES_DEFAULT_ACTIVE, suffix)
+            if (defaultEnvFile.exists()) {
+                array.add(defaultEnvFile)
             }
             if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                 val activeFile = activeFile(project, profile, profilesActive, suffix)
@@ -78,17 +78,26 @@ open class ProfileExtension(
             }
         }
 
-        private fun activeFile(project: Project, profile: ProfileExtension, active: String, suffix: String): File =
-                project.file("${profile.configDir}/$active${profile.activeFileSuffix}$suffix")
+        private fun activeFile(project: Project, profile: ProfileExtension, active: String, suffix: String): File {
+            var file = project.file("${profile.envDir}/$active${profile.activeFileSuffix}$suffix")
+            if (!file.exists()) {
+                file = project.file("${profile.confDir}/$active${profile.activeFileSuffix}$suffix")
+            }
+            return file
+        }
+
 
         internal val Project.profiles: Set<String>
             get() {
                 val profile = extensions.getByType(ProfileExtension::class.java)
                 val set = mutableSetOf<String>()
                 configProject { project ->
-                    val configFile = project.file(profile.configDir)
-                    if (configFile.exists()) {
-                        set.addAll(configFile.listFiles()?.filter { it.isFile }?.map {
+                    var envFile = project.file(profile.envDir)
+                    if (!envFile.exists()) {
+                        envFile = project.file(profile.confDir)
+                    }
+                    if (envFile.exists()) {
+                        set.addAll(envFile.listFiles()?.filter { it.isFile }?.map {
                             if (profile.activeFileSuffix.isNotBlank()) it.nameWithoutExtension.substringBeforeLast(
                                     profile.activeFileSuffix
                             ) else it.nameWithoutExtension
@@ -169,8 +178,8 @@ open class ProfileExtension(
                     loadActiveFile(project, profile, yaml, props, ".yaml")
                     loadActiveFile(project, profile, yaml, props, ".properties")
                 }
-                if (profile.configFile.isNotBlank()) {
-                    val uri = uri(profile.configFile)
+                if (profile.envFile.isNotBlank()) {
+                    val uri = uri(profile.envFile)
                     if (uri.scheme.isNullOrEmpty()) {
                         val configFile = File(uri)
                         if (configFile.exists())
@@ -200,9 +209,9 @@ open class ProfileExtension(
             }
 
         private fun Project.loadActiveFile(project: Project, profile: ProfileExtension, yaml: Yaml, props: Properties, suffix: String = "") {
-            val defaultConfigFile = project.file("${profile.configDir}/$PROFILES_DEFAULT_ACTIVE$suffix")
-            if (defaultConfigFile.exists()) {
-                loadProps(suffix, props, defaultConfigFile, yaml)
+            val defaultEnvFile = activeFile(project, profile, PROFILES_DEFAULT_ACTIVE, suffix)
+            if (defaultEnvFile.exists()) {
+                loadProps(suffix, props, defaultEnvFile, yaml)
             }
             if (profilesActive != PROFILES_DEFAULT_ACTIVE) {
                 val activeFile = activeFile(project, profile, profilesActive, suffix)

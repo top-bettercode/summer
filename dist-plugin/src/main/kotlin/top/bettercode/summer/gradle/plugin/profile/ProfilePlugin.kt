@@ -34,8 +34,8 @@ class ProfilePlugin : Plugin<Project> {
             it.excludeOther =
                     (project.findProperty("profile.exclude-other") as String?)?.toBoolean()
                             ?: true
-            it.configDir = (project.findProperty("profile.conf-dir") as String?) ?: "conf"
-            it.configFile = (project.findProperty("profile.config-file") as String?) ?: ""
+            it.envDir = (project.findProperty("profile.env-dir") as String?) ?: "env"
+            it.envFile = (project.findProperty("profile.env-file") as String?) ?: ""
             it.activeFileSuffix = (project.findProperty("profile.active-file-suffix") as String?)
                     ?: ""
             it.beginToken = (project.findProperty("profile.begin-token") as String?) ?: "@"
