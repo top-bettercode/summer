@@ -50,7 +50,7 @@ class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : Clie
     }
 
     override fun getStatusText(): String {
-        return response.statusText
+        return response.statusText?:""
     }
 
     override fun close() {

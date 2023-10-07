@@ -129,7 +129,7 @@ object RequestConverter {
         val uri = request.uri
 
         headers.add(HttpHeaders.HOST, uri.authority)
-        headers.addAll(request.headers)
+        headers.putAll(request.headers)
         headers.remove(HttpHeaders.COOKIE)
 
         val restUri = uri.toString()

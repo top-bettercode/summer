@@ -24,11 +24,13 @@ abstract class AbstractOperationMessage(
     val prettyContentAsString: String
         @JsonIgnore
         get() = RequestConverter.toString(try {
-            this.headers.contentType
+            this.headers.contentType?.charset
+        } catch (e: NoSuchMethodError) {
+            null
         } catch (e: Exception) {
             log.warn("解析contentType失败", e)
             null
-        }?.charset, prettyContent)
+        }, prettyContent)
 
     var contentAsString: String
         get() = RequestConverter.toString(this.headers.contentType?.charset, content)
