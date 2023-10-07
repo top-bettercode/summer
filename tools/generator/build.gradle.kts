@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(project(":tools:tools"))
+    api("org.springframework:spring-webmvc")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     api("com.jcraft:jsch")

@@ -3,9 +3,9 @@ package top.bettercode.summer.gradle.plugin.jenkins
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.springframework.util.Assert
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -79,7 +79,7 @@ class JenkinsTest {
                 val cipher = getCipher(ALGORITHM)
                 val secret: SecretKey
                 val payloadKey = load(secretsDir)
-                Assert.notNull(payloadKey, "secrets not found")
+                Assertions.assertNotNull(payloadKey, "secrets not found")
                 // Due to the stupid US export restriction JDK only ships 128bit version.
                 secret = SecretKeySpec(payloadKey, 0, 128 / 8, KEY_ALGORITHM)
 

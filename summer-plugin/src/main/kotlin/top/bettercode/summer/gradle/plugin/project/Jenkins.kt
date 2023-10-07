@@ -1,13 +1,13 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import org.slf4j.LoggerFactory
-import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.getForObject
 import top.bettercode.summer.tools.lang.capitalized
+
 
 /**
  *
@@ -18,11 +18,17 @@ class Jenkins(private val url: String, auth: String) {
     private val restTemplate: RestTemplate
 
     init {
-        val split = auth.split(":")
-        val builder = RestTemplateBuilder().basicAuthentication(split[0], split[1])
-        restTemplate = builder.errorHandler(object : DefaultResponseErrorHandler() {
+        val (username, password) = auth.split(":")
+        restTemplate = RestTemplate()
+
+        restTemplate.interceptors.add { request, body, execution ->
+            val headers = request.headers
+            headers.setBasicAuth(username, password)
+            execution.execute(request, body)
+        }
+        restTemplate.errorHandler = (object : DefaultResponseErrorHandler() {
             override fun handleError(response: ClientHttpResponse) {}
-        }).build()
+        })
     }
 
 
