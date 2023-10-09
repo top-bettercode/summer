@@ -511,6 +511,9 @@ class ExcelField<T, P : Any?> {
                         propertyType = get.returnType.javaType as Class<P>
                         entityType = (get.owner as KClass<*>).java as Class<T>
                         propertyName = get.name
+                        propertySetter = ExcelCellSetter { entity, property ->
+                            ReflectionUtils.invokeMethod(writeMethod, entity, property)
+                        }
                     }
                 } catch (_: NoSuchFieldException) {
                 }
