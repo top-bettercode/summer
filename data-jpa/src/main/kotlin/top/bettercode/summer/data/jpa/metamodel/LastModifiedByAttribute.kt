@@ -1,7 +1,7 @@
 package top.bettercode.summer.data.jpa.metamodel
 
 import org.springframework.data.domain.AuditorAware
-import top.bettercode.summer.data.jpa.support.JpaUtil
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import javax.persistence.criteria.CriteriaUpdate
 import javax.persistence.metamodel.SingularAttribute
 
@@ -19,7 +19,7 @@ class LastModifiedByAttribute<X, T>(
     fun setLastModifiedBy(criteriaUpdate: CriteriaUpdate<X>) {
         val auditor = auditorAware?.currentAuditor?.orElse(null)
         if (auditor != null) {
-            criteriaUpdate.set(this.singularAttribute, JpaUtil.convert(auditor, this.javaType))
+            criteriaUpdate.set(this.singularAttribute, ApplicationContextHolder.conversionService.convert(auditor, this.javaType))
         }
     }
 

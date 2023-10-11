@@ -1,7 +1,5 @@
 package top.bettercode.summer.data.jpa.metamodel
 
-import top.bettercode.summer.data.jpa.support.JpaUtil
-import java.time.LocalDateTime
 import java.time.temporal.TemporalAccessor
 import java.util.*
 import javax.persistence.criteria.CriteriaBuilder
@@ -28,8 +26,8 @@ class VersionAttribute<X, T>(singularAttribute: SingularAttribute<X, T>) : Singu
             val path = root.get<Number>(this.name)
             criteriaUpdate.set(path, builder.sum(path, 1))
         } else if (isDateType) {
-            criteriaUpdate.set(this.singularAttribute, JpaUtil.convert(LocalDateTime.now(), javaType)
-            )
+            @Suppress("UNCHECKED_CAST")
+            criteriaUpdate.set(this.singularAttribute, LastModifiedDateAttribute.now(javaType) as T)
         } else {
             throw UnsupportedOperationException("Unsupported version type: $javaType")
         }
