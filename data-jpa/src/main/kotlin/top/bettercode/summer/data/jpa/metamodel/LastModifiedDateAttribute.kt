@@ -24,10 +24,10 @@ class LastModifiedDateAttribute<X, T>(singularAttribute: SingularAttribute<X, T>
     companion object {
         fun now(javaType: Class<*>): Any {
             val now: Any = when (javaType) {
-                Date::class.java -> Date()
                 LocalDateTime::class.java -> LocalDateTime.now()
-                java.sql.Date::class.java -> java.sql.Date(System.currentTimeMillis())
+                Date::class.java -> Date()
                 LocalDate::class.java -> LocalDate.now()
+                java.sql.Date::class.java -> java.sql.Date(System.currentTimeMillis())
                 else -> ApplicationContextHolder.conversionService.convert(LocalDateTime.now(), javaType)
             }
             return now
