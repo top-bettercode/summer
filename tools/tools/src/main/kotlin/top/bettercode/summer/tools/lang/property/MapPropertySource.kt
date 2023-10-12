@@ -42,13 +42,13 @@ open class MapPropertySource(protected val source: MutableMap<String, String>) :
             typeName = "java.lang.String"
         }
         val type: Class<*> = when (typeName) {
-            "boolean" -> Boolean::class.javaPrimitiveType!!
-            "byte" -> Byte::class.javaPrimitiveType!!
-            "short" -> Short::class.javaPrimitiveType!!
-            "int" -> Int::class.javaPrimitiveType!!
-            "long" -> Long::class.javaPrimitiveType!!
-            "float" -> Float::class.javaPrimitiveType!!
-            "double" -> Double::class.javaPrimitiveType!!
+            "boolean" -> Boolean::class.java
+            "byte" -> Byte::class.java
+            "short" -> Short::class.java
+            "int" -> Int::class.java
+            "long" -> Long::class.java
+            "float" -> Float::class.java
+            "double" -> Double::class.java
             else -> Class.forName(typeName)
         }
 

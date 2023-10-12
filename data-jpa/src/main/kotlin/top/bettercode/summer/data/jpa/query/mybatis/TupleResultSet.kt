@@ -52,31 +52,31 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun getBoolean(i: Int): Boolean {
-        return getObject(i, Boolean::class.javaPrimitiveType!!)!!
+        return getObject(i, Boolean::class.java)!!
     }
 
     override fun getByte(i: Int): Byte {
-        return getObject(i, Byte::class.javaPrimitiveType!!)!!
+        return getObject(i, Byte::class.java)!!
     }
 
     override fun getShort(i: Int): Short {
-        return getObject(i, Short::class.javaPrimitiveType!!)!!
+        return getObject(i, Short::class.java)!!
     }
 
     override fun getInt(i: Int): Int {
-        return getObject(i, Int::class.javaPrimitiveType!!)!!
+        return getObject(i, Int::class.java)!!
     }
 
     override fun getLong(i: Int): Long {
-        return getObject(i, Long::class.javaPrimitiveType!!)!!
+        return getObject(i, Long::class.java)!!
     }
 
     override fun getFloat(i: Int): Float {
-        return getObject(i, Float::class.javaPrimitiveType!!)!!
+        return getObject(i, Float::class.java)!!
     }
 
     override fun getDouble(i: Int): Double {
-        return getObject(i, Double::class.javaPrimitiveType!!)!!
+        return getObject(i, Double::class.java)!!
     }
 
     @Deprecated("")
@@ -118,31 +118,31 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun getBoolean(s: String): Boolean {
-        return getObject(s, Boolean::class.javaPrimitiveType!!)!!
+        return getObject(s, Boolean::class.java)!!
     }
 
     override fun getByte(s: String): Byte {
-        return getObject(s, Byte::class.javaPrimitiveType!!)!!
+        return getObject(s, Byte::class.java)!!
     }
 
     override fun getShort(s: String): Short {
-        return getObject(s, Short::class.javaPrimitiveType!!)!!
+        return getObject(s, Short::class.java)!!
     }
 
     override fun getInt(s: String): Int {
-        return getObject(s, Int::class.javaPrimitiveType!!)!!
+        return getObject(s, Int::class.java)!!
     }
 
     override fun getLong(s: String): Long {
-        return getObject(s, Long::class.javaPrimitiveType!!)!!
+        return getObject(s, Long::class.java)!!
     }
 
     override fun getFloat(s: String): Float {
-        return getObject(s, Float::class.javaPrimitiveType!!)!!
+        return getObject(s, Float::class.java)!!
     }
 
     override fun getDouble(s: String): Double {
-        return getObject(s, Double::class.javaPrimitiveType!!)!!
+        return getObject(s, Double::class.java)!!
     }
 
     @Deprecated("")

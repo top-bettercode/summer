@@ -74,19 +74,19 @@ class ExcelField<T, P : Any?> {
 
     private val defaultFormat: String? by lazy {
         when (propertyType) {
-            Int::class.javaObjectType, Int::class.javaPrimitiveType, Int::class.java -> {
+            Int::class.javaObjectType, Int::class.java, Int::class.java -> {
                 "0"
             }
 
-            Long::class.javaObjectType, Long::class.javaPrimitiveType, Long::class.java -> {
+            Long::class.javaObjectType, Long::class.java, Long::class.java -> {
                 "0"
             }
 
-            Double::class.javaObjectType, Double::class.javaPrimitiveType, Double::class.java -> {
+            Double::class.javaObjectType, Double::class.java, Double::class.java -> {
                 "0.00"
             }
 
-            Float::class.javaObjectType, Float::class.javaPrimitiveType, Float::class.java -> {
+            Float::class.javaObjectType, Float::class.java, Float::class.java -> {
                 "0.00"
             }
 
@@ -176,17 +176,17 @@ class ExcelField<T, P : Any?> {
                     cellValue.toString()
                 }
 
-                Boolean::class.javaObjectType, Boolean::class.javaPrimitiveType, Boolean::class.java -> {
+                Boolean::class.javaObjectType, Boolean::class.java, Boolean::class.java -> {
                     cellValue as? Boolean ?: toBoolean(cellValue.toString())
                 }
 
-                Int::class.javaObjectType, Int::class.javaPrimitiveType, Int::class.java -> {
+                Int::class.javaObjectType, Int::class.java, Int::class.java -> {
                     if (cellValue is String) {
                         BigDecimal(cellValue).toInt()
                     } else (cellValue as BigDecimal).toInt()
                 }
 
-                Long::class.javaObjectType, Long::class.javaPrimitiveType, Long::class.java -> when {
+                Long::class.javaObjectType, Long::class.java, Long::class.java -> when {
                     isDateField -> {
                         when (cellValue) {
                             is LocalDateTime -> {
@@ -220,7 +220,7 @@ class ExcelField<T, P : Any?> {
                     }
                 }
 
-                Double::class.javaObjectType, Double::class.javaPrimitiveType, Double::class.java -> {
+                Double::class.javaObjectType, Double::class.java, Double::class.java -> {
                     when (cellValue) {
                         is String -> {
                             BigDecimal(cellValue).toDouble()
@@ -230,7 +230,7 @@ class ExcelField<T, P : Any?> {
                     }
                 }
 
-                Float::class.javaObjectType, Float::class.javaPrimitiveType, Float::class.java -> {
+                Float::class.javaObjectType, Float::class.java, Float::class.java -> {
                     when (cellValue) {
                         is String -> {
                             BigDecimal(cellValue).toFloat()
@@ -297,7 +297,7 @@ class ExcelField<T, P : Any?> {
                     property
                 }
 
-                propertyType == Boolean::class.javaPrimitiveType || propertyType == Boolean::class.javaObjectType || propertyType == Boolean::class.java -> {
+                propertyType == Boolean::class.java || propertyType == Boolean::class.javaObjectType || propertyType == Boolean::class.java -> {
                     if (property as Boolean) "是" else "否"
                 }
 
@@ -309,7 +309,7 @@ class ExcelField<T, P : Any?> {
                     property
                 }
 
-                isDateField && (propertyType == Long::class.javaObjectType || propertyType == Long::class.javaPrimitiveType || propertyType == Long::class.java) -> {
+                isDateField && (propertyType == Long::class.javaObjectType || propertyType == Long::class.java || propertyType == Long::class.java) -> {
                     of((property as Long)).toDate()
                 }
 
@@ -720,14 +720,14 @@ class ExcelField<T, P : Any?> {
         val primitiveWrapperTypeMap: MutableMap<Class<*>, Class<*>> = IdentityHashMap(8)
 
         init {
-            primitiveWrapperTypeMap[Boolean::class.javaObjectType] = Boolean::class.javaPrimitiveType!!
-            primitiveWrapperTypeMap[Byte::class.javaObjectType] = Byte::class.javaPrimitiveType!!
-            primitiveWrapperTypeMap[Char::class.javaObjectType] = Char::class.javaPrimitiveType!!
-            primitiveWrapperTypeMap[Double::class.javaObjectType] = Double::class.javaPrimitiveType!!
-            primitiveWrapperTypeMap[Float::class.javaObjectType] = Float::class.javaPrimitiveType!!
-            primitiveWrapperTypeMap[Int::class.javaObjectType] = Int::class.javaPrimitiveType!!
-            primitiveWrapperTypeMap[Long::class.javaObjectType] = Long::class.javaPrimitiveType!!
-            primitiveWrapperTypeMap[Short::class.javaObjectType] = Short::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Boolean::class.javaObjectType] = Boolean::class.java
+            primitiveWrapperTypeMap[Byte::class.javaObjectType] = Byte::class.java
+            primitiveWrapperTypeMap[Char::class.javaObjectType] = Char::class.java
+            primitiveWrapperTypeMap[Double::class.javaObjectType] = Double::class.java
+            primitiveWrapperTypeMap[Float::class.javaObjectType] = Float::class.java
+            primitiveWrapperTypeMap[Int::class.javaObjectType] = Int::class.java
+            primitiveWrapperTypeMap[Long::class.javaObjectType] = Long::class.java
+            primitiveWrapperTypeMap[Short::class.javaObjectType] = Short::class.java
             primitiveWrapperTypeMap[Void::class.javaObjectType] = Void.TYPE
         }
     }

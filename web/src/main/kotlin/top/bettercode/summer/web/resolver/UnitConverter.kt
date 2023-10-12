@@ -22,10 +22,10 @@ class UnitConverter : ConditionalGenericConverter {
                 GenericConverter.ConvertiblePair(String::class.java, BigDecimal::class.java),
                 GenericConverter.ConvertiblePair(String::class.java, Long::class.java),
                 GenericConverter.ConvertiblePair(String::class.java, Long::class.javaObjectType),
-                GenericConverter.ConvertiblePair(String::class.java, Long::class.javaPrimitiveType!!),
+                GenericConverter.ConvertiblePair(String::class.java, Long::class.java),
                 GenericConverter.ConvertiblePair(String::class.java, Int::class.java),
                 GenericConverter.ConvertiblePair(String::class.java, Int::class.javaObjectType),
-                GenericConverter.ConvertiblePair(String::class.java, Int::class.javaPrimitiveType!!),
+                GenericConverter.ConvertiblePair(String::class.java, Int::class.java),
         )
     }
 
