@@ -391,12 +391,11 @@ class GeneratorPlugin : Plugin<Project> {
 
                                     val databasePumlDir =
                                             extension.file(extension.pumlSrc + "/database")
-                                    val unit =
-                                            FileUnit(
-                                                    "${extension.sqlOutput}/update/v${project.version}${
-                                                        if (defaultModule) "" else "-${module}"
-                                                    }.sql"
-                                            )
+                                    val unit = FileUnit(
+                                            "${extension.sqlOutput}/update/v${project.version}${
+                                                if (defaultModule) "" else "-${module}"
+                                            }${if (project != project.rootProject) "/${project.name}" else ""}.sql"
+                                    )
                                     val allTables = mutableListOf<Table>()
                                     unit.use { pw ->
                                         val tables =

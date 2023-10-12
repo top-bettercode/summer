@@ -177,13 +177,20 @@ object RootProjectTasks {
                                 if (updateDdl.exists()) {
                                     +updateDdl.readText()
                                 } else {
-                                    +"$commentPrefix ${database.url.substringBefore("?")}"
-                                    when (database.driver) {
-                                        DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                            +"$commentPrefix use ${database.schema};"
-                                        }
+                                    val listFiles = project.rootProject.file("database/update/v${project.version}$suffix").listFiles()
+                                    if (listFiles.isNullOrEmpty()) {
+                                        +"$commentPrefix ${database.url.substringBefore("?")}"
+                                        when (database.driver) {
+                                            DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                                +"$commentPrefix use ${database.schema};"
+                                            }
 
-                                        else -> {
+                                            else -> {
+                                            }
+                                        }
+                                    } else {
+                                        listFiles.filter { it.isFile }.forEach {
+                                            +it.readText()
                                         }
                                     }
                                 }
