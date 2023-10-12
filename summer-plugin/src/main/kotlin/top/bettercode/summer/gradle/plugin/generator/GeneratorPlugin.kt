@@ -358,7 +358,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 MysqlToDDL.useForeignKey = extension.useForeignKey
                                 OracleToDDL.useForeignKey = extension.useForeignKey
                                 val sqlName = if (defaultModule) "schema" else module
-                                val output = FileUnit("${extension.sqlOutput}/ddl/$sqlName.sql")
+                                val output = FileUnit("${extension.sqlOutput}/ddl/$sqlName${if (project != project.rootProject) "/${project.name}" else ""}.sql")
                                 val tables = tableHolder.tables(tableName = extension.tableNames)
                                 val datasource = extension.database(module)
                                 when (datasource.driver) {

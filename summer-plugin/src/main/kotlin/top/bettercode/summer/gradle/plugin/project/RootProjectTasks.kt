@@ -163,6 +163,13 @@ object RootProjectTasks {
                                 if (schema.exists()) {
                                     +schema.readText()
                                     +""
+                                } else {
+                                    val listFiles = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}").listFiles()
+                                    if (!listFiles.isNullOrEmpty()) {
+                                        listFiles.filter { it.isFile }.forEach {
+                                            +it.readText()
+                                        }
+                                    }
                                 }
                                 project.rootProject.file("database/init/$suffix").listFiles()
                                         ?.filter { it.isFile }
