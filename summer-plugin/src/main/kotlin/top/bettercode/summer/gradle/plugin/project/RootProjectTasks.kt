@@ -101,13 +101,27 @@ object RootProjectTasks {
                 t.group = GeneratorPlugin.GEN_GROUP
                 val extension = project.extensions.getByType(GeneratorExtension::class.java)
                 val databaseModules = extension.databases.keys
-                t.dependsOn(databaseModules.map {
-                    "toDDL${
-                        if (GeneratorExtension.isDefaultModule(it)) "" else "[${
-                            it.capitalized()
-                        }]"
-                    }"
-                })
+                if (project.rootProject.file(extension.pumlSrc).exists()) {
+                    t.dependsOn(databaseModules.map {
+                        "toDDL${
+                            if (GeneratorExtension.isDefaultModule(it)) "" else "[${
+                                it.capitalized()
+                            }]"
+                        }"
+                    })
+                } else {
+                    project.subprojects.forEach { p ->
+                        if (p.file(extension.pumlSrc).exists()) {
+                            t.dependsOn(databaseModules.map {
+                                "${p.name}:toDDL${
+                                    if (GeneratorExtension.isDefaultModule(it)) "" else "[${
+                                        it.capitalized()
+                                    }]"
+                                }"
+                            })
+                        }
+                    }
+                }
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         extension.databases.forEach { (module, database) ->
