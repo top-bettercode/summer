@@ -2,6 +2,7 @@
 import org.gradle.api.Project
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
+import java.io.File
 
 
 val Project.isBoot: Boolean
@@ -36,4 +37,8 @@ fun Project.profileClosure(closure: Project.(ProfileExtension) -> Unit) {
 fun Project.profileClosure(active: String, closure: Project.(ProfileExtension) -> Unit) {
     val profile = project.extensions.getByType(ProfileExtension::class.java)
     profile.profileClosure.computeIfAbsent(active) { mutableSetOf() }.add(closure)
+}
+
+fun File.notEmptyDir(): Boolean {
+    return exists() && listFiles()?.isNotEmpty() ?: false
 }

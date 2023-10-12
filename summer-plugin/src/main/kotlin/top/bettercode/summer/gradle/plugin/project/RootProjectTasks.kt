@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
+import notEmptyDir
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -101,7 +102,7 @@ object RootProjectTasks {
                 t.group = GeneratorPlugin.GEN_GROUP
                 val extension = project.extensions.getByType(GeneratorExtension::class.java)
                 val databaseModules = extension.databases.keys
-                if (project.rootProject.file(extension.pumlSrc).exists()) {
+                if (project.rootProject.file(extension.pumlSrc).notEmptyDir()) {
                     t.dependsOn(databaseModules.map {
                         "toDDL${
                             if (GeneratorExtension.isDefaultModule(it)) "" else "[${
@@ -111,7 +112,7 @@ object RootProjectTasks {
                     })
                 } else {
                     project.subprojects.forEach { p ->
-                        if (p.file(extension.pumlSrc).exists()) {
+                        if (p.file(extension.pumlSrc).notEmptyDir()) {
                             t.dependsOn(databaseModules.map {
                                 "${p.name}:toDDL${
                                     if (GeneratorExtension.isDefaultModule(it)) "" else "[${

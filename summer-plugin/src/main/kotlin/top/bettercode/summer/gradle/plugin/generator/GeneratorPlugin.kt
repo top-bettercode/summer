@@ -6,6 +6,7 @@ import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.ISourceFileReader
 import net.sourceforge.plantuml.SourceFileReader
+import notEmptyDir
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -224,7 +225,7 @@ class GeneratorPlugin : Plugin<Project> {
 
         val extension = project.extensions.getByType(GeneratorExtension::class.java)
 
-        if (project.rootProject.file(extension.pumlSrc).exists()) {
+        if (project.rootProject.file(extension.pumlSrc).notEmptyDir()) {
             if (!project.rootProject.tasks.names.contains("pumlReformat"))
                 configPuml(project.rootProject, extension)
         } else {
