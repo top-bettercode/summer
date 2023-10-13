@@ -23,7 +23,7 @@ dependencies {
         api("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
         api("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
 
-        api("com.gradle.publish:plugin-publish-plugin:1.1.0")
+        api("com.gradle.publish:plugin-publish-plugin:1.2.1")
         api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
         api("mysql:mysql-connector-java:8.0.32")

@@ -16,6 +16,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-gradle-plugin:2.6.13")
     //--------------------------------------------
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
-    implementation("com.gradle.publish:plugin-publish-plugin:1.1.0")
+    implementation("com.gradle.publish:plugin-publish-plugin:1.2.1")
 //    implementation("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 }
