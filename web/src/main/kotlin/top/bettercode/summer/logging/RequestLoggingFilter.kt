@@ -27,7 +27,6 @@ import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils
 import top.bettercode.summer.tools.lang.util.StringUtil
-import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
 import java.time.LocalDateTime
 import javax.servlet.FilterChain
@@ -181,21 +180,13 @@ class RequestLoggingFilter(
                 if ((error == null || error is ClientAbortException) && !requestTimeout) {
                     log.info(marker, msg)
                 } else {
-                    if (error != null &&
+                    if (error != null && httpStatusCode >= 400 &&
                             ((isDebugEnabled && !properties.ignoredErrorStatusCode.contains(
                                     httpStatusCode
-                            ))
-                                    || httpStatusCode >= 500)
+                            )) || httpStatusCode >= 500)
                     ) {
                         val initialComment =
-                                "$uriName($restUri)：${
-                                    if (httpStatusCode == 200) {
-                                        when (error) {
-                                            is SystemException -> error.code
-                                            else -> httpStatusCode.toString()
-                                        }
-                                    } else httpStatusCode.toString()
-                                }|${
+                                "$uriName($restUri)：$httpStatusCode|${
                                     getMessage(requestAttributes) ?: "${error.javaClass.name}:${
                                         error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                                     }"
