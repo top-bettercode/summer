@@ -167,7 +167,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 if (primaryKey.columnDef != null)
                     annotation("@org.hibernate.annotations.ColumnDefault(\"${primaryKey.columnDef}\")")
-                annotation(columnAnnotation(primaryKey))
+                annotation(columnAnnotation(primaryKey, database.driver))
             } else {
                 javadoc {
                     +"/** ${remarks}主键 */"
@@ -245,7 +245,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     }
                 if (it.columnDef != null)
                     annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")
-                annotation(columnAnnotation(it))
+                annotation(columnAnnotation(it, database.driver))
                 if (it.createdDate) {
                     annotation("@org.springframework.data.annotation.CreatedDate")
                 }

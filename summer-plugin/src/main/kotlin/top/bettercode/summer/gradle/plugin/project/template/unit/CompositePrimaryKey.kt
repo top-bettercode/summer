@@ -69,7 +69,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     javadoc {
                         +"/** ${it.docRemark} */"
                     }
-                annotation(columnAnnotation(it))
+                annotation(columnAnnotation(it, database.driver))
                 if (it.columnDef != null)
                     annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")
                 if (it.numericBooleanType) {
