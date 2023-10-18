@@ -103,8 +103,8 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
 
     fun convert(request: Request, dateTime: LocalDateTime): OperationRequest {
         val headers = HttpHeaders()
-        for (header in request.headers) {
-            headers.add(header.first, header.second)
+        for (name in request.headers.names()) {
+            headers.add(name, request.headers[name])
         }
         val requestBody = request.body
         val content = if (requestBody != null) {
@@ -153,8 +153,8 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
 
     fun convert(response: Response): OperationResponse {
         val headers = HttpHeaders()
-        for (header in response.headers) {
-            headers.add(header.first, header.second)
+        for (name in response.headers.names()) {
+            headers.add(name, response.headers[name])
         }
         val responseBody = response.body
         val content = if (responseBody != null) {

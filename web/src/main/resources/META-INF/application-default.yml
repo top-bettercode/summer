@@ -145,3 +145,4 @@ logging:
     top.bettercode.summer.logging.RequestContentReadFilter: info
     top.bettercode.summer.web.support.client.ApiTemplate: info
     okhttp3.internal: info
+    com.wechat.pay: info
