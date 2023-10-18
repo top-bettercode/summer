@@ -49,7 +49,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         val result = postForObject<PhoneInfoResp>(
                 "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
                 mapOf("code" to code),
-                getBaseAccessToken()
+                getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -74,7 +74,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
                 request,
-                getBaseAccessToken()
+                getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -101,7 +101,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={0}",
                 request,
-                getBaseAccessToken()
+                getStableAccessToken()
         )
         return if (result.isOk) {
             result

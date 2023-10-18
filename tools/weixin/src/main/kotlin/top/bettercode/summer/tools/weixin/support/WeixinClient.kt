@@ -7,10 +7,12 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.getForObject
+import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
 import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
+import top.bettercode.summer.tools.weixin.support.offiaccount.entity.StableTokenRequest
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.time.Duration
 import java.util.concurrent.Callable
@@ -38,6 +40,7 @@ open class WeixinClient<T : IWeixinProperties>(
 
     companion object {
         const val BASE_ACCESS_TOKEN_KEY: String = "access_token"
+        const val STABLE_ACCESS_TOKEN_KEY: String = "stable_access_token"
     }
 
     init {
@@ -118,4 +121,34 @@ open class WeixinClient<T : IWeixinProperties>(
         }
     }
 
+    @JvmOverloads
+    fun getStableAccessToken(retries: Int = 1): String {
+        return putIfAbsent(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
+            getStableToken(true, retries)
+        }
+    }
+
+    /**
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-access-token/getStableAccessToken.html
+     */
+    private fun getStableToken(forceRefresh: Boolean, retries: Int = 1): CachedValue {
+        val accessToken = postForObject<BasicAccessToken>(
+                "https://api.weixin.qq.com/cgi-bin/stable_token",
+                StableTokenRequest(
+                        properties.appId,
+                        properties.secret,
+                        forceRefresh)
+        )
+        return if (accessToken.isOk) {
+            CachedValue(
+                    accessToken.accessToken!!,
+                    Duration.ofSeconds(accessToken.expiresIn!!.toLong())
+            )
+        } else if (retries < properties.maxRetries && accessToken.errcode != 40164) {
+            //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。
+            getStableToken(forceRefresh = forceRefresh, retries = retries + 1)
+        } else {
+            throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
+        }
+    }
 }

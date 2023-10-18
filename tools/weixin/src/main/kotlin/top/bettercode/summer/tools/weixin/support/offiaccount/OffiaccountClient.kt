@@ -64,7 +64,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
     private fun getTicket(retries: Int): CachedValue {
         val jsapiTicket = getForObject<JsapiTicket>(
                 "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
-                getBaseAccessToken()
+                getStableAccessToken()
         )
         return if (jsapiTicket.isOk) {
             CachedValue(
@@ -100,14 +100,27 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
     fun getSnsapiUserinfo(
             accessToken: String,
             openid: String,
-            lang: String
+            lang: String,
+            retries: Int = 1
     ): SnsapiUserinfo {
-        return getForObject(
+        val result = getForObject<SnsapiUserinfo>(
                 "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}&lang={2}",
                 accessToken,
                 openid,
                 lang
         )
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            //40001 access_token无效
+            clearCache()
+            getSnsapiUserinfo(accessToken, openid, lang)
+        } else if (retries < properties.maxRetries) {
+            getSnsapiUserinfo(accessToken, openid, lang, retries + 1)
+        } else {
+            throw WeixinException("${result.errmsg}", result)
+        }
+
     }
 
     /**
@@ -117,8 +130,19 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         return getUserInfo(openid, "zh_CN")
     }
 
-    fun getUserInfo(openid: String, lang: String): UserInfo {
-        return getForObject("https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}", getBaseAccessToken(), openid, lang)
+    fun getUserInfo(openid: String, lang: String, retries: Int = 1): UserInfo {
+        val result = getForObject<UserInfo>("https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}", getStableAccessToken(), openid, lang)
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            //40001 access_token无效
+            clearCache()
+            getUserInfo(openid, lang)
+        } else if (retries < properties.maxRetries) {
+            getUserInfo(openid, lang, retries + 1)
+        } else {
+            throw WeixinException("${result.errmsg}", result)
+        }
     }
 
     /**
@@ -129,7 +153,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         val result = postForObject<MsgResult>(
                 "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
                 request,
-                getBaseAccessToken()
+                getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -174,7 +198,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}",
                 request,
-                getBaseAccessToken()
+                getStableAccessToken()
         )
         return if (result.isOk) {
             result
