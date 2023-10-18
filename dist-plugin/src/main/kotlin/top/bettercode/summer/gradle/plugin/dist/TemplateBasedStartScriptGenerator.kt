@@ -48,10 +48,9 @@ class TemplateBasedStartScriptGenerator(
             val nativeLibArgs = dist.nativeLibArgs(project)
             if (defaultJvmOpts.contains(nativeLibArgs)) {
                 defaultJvmOpts.remove(nativeLibArgs)
-                defaultJvmOpts += if (windows)
-                    "-Djava.library.path=%APP_HOME%\\native"
-                else
-                    "-Djava.library.path=\$APP_HOME/native"
+                defaultJvmOpts += dist.startScriptNativeLibArgs(project, windows)
+            } else if (includeNative) {
+                defaultJvmOpts += dist.startScriptNativeLibArgs(project, windows)
             }
 
             val classpath = details.classpath
@@ -139,7 +138,7 @@ class TemplateBasedStartScriptGenerator(
             if (includeNative) {
                 text = StringBuilder(text).insert(
                         text.indexOf("# Use the maximum available") - 1,
-                        "\nexport LD_LIBRARY_PATH=\\\$LD_LIBRARY_PATH:\\\$APP_HOME/native\n"
+                        "\nexport LD_LIBRARY_PATH=\\\$LD_LIBRARY_PATH:${dist.ldLibraryPath(project)}\n"
                 ).toString()
             }
         }

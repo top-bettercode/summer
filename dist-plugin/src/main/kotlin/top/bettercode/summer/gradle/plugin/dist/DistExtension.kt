@@ -29,6 +29,10 @@ open class DistExtension(
          */
         var nativePath: String = "native",
         /**
+         * 相对当前项目的build路径
+         */
+        var buildNativePath: String = "",
+        /**
          * 老版本路径 用于生成更新包
          */
         var prevArchiveSrc: String = ""
@@ -57,8 +61,75 @@ open class DistExtension(
 
     val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
 
+    fun includeNative(project: Project): Boolean {
+        return buildNativePath.isNotBlank() || project.file(nativePath).exists()
+    }
+
+    private val isWindows: Boolean = Os.isFamily(Os.FAMILY_WINDOWS)
+
+
+    fun nativePath(project: Project): String {
+        var libArgs = ""
+        val hasBuildNative = buildNativePath.isNotBlank()
+        if (hasBuildNative)
+            libArgs += project.file("build/$buildNativePath").absolutePath
+
+        if (project.file(nativePath).exists()) {
+            val pathSeparator: String = if (hasBuildNative) if (isWindows) {
+                ";"
+            } else {
+                ":"
+            } else ""
+            libArgs += pathSeparator + project.file(nativePath).absolutePath
+        }
+
+        return libArgs
+    }
+
     fun nativeLibArgs(project: Project): String {
-        return "-Djava.library.path=${project.file(nativePath).absolutePath}"
+        return "-Djava.library.path=${nativePath(project)}"
+    }
+
+    fun startScriptNativeLibArgs(project: Project, windows: Boolean): String {
+        var libArgs = "-Djava.library.path="
+
+        val hasBuildNative = buildNativePath.isNotBlank()
+        if (hasBuildNative)
+            libArgs += if (windows)
+                "%APP_HOME%\\build\\native"
+            else
+                "\$APP_HOME/build/native"
+
+        if (project.file(nativePath).exists()) {
+            val pathSeparator: String = if (hasBuildNative) if (windows) {
+                ";"
+            } else {
+                ":"
+            } else ""
+
+            libArgs += pathSeparator + if (windows)
+                "%APP_HOME%\\native"
+            else
+                ":\$APP_HOME/native"
+        }
+
+        return libArgs
+    }
+
+    fun ldLibraryPath(project: Project): String {
+        var ldLibraryPath = ""
+        val hasBuildNative = buildNativePath.isNotBlank()
+        if (hasBuildNative)
+            ldLibraryPath += "\\\$APP_HOME/build/native"
+
+        if (project.file(nativePath).exists()) {
+            val pathSeparator: String = if (hasBuildNative) {
+                ":"
+            } else ""
+
+            ldLibraryPath += "$pathSeparator\\\$APP_HOME/native"
+        }
+        return ldLibraryPath
     }
 
     fun jvmArgs(project: Project): Set<String> {
@@ -71,9 +142,8 @@ open class DistExtension(
         if (project.extensions.findByName("profile") != null) {
             jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
         }
-        if (project.file(nativePath).exists()) {
+        if (includeNative(project))
             jvmArgs += nativeLibArgs(project)
-        }
         return jvmArgs
     }
 

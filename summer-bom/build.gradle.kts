@@ -81,6 +81,7 @@ dependencies {
         api("com.squareup.okhttp3:okhttp:4.11.0")
         api("com.github.wechatpay-apiv3:wechatpay-java:0.2.11")
         api("com.jcraft:jsch:0.1.55")
+        api("com.google.ortools:ortools-java:9.7.2996")
 
         api(project(":env"))
         api(project(":web"))
@@ -107,6 +108,7 @@ dependencies {
         api(project(":tools:sap"))
         api(project(":tools:configuration-processor"))
         api(project(":tools:pay"))
+        api(project(":tools:optimal"))
     }
 }
 

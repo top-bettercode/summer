@@ -33,6 +33,7 @@ include(":tools:amap")
 include(":tools:sap")
 include(":tools:configuration-processor")
 include(":tools:pay")
+include(":tools:optimal")
 
 
 include(":summer-bom")

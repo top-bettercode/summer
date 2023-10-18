@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.sap.config
 import com.sap.conn.jco.rt.JCoRuntimeFactory
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
-import top.bettercode.summer.tools.lang.util.OS
+import top.bettercode.summer.tools.lang.util.Os
 import java.io.File
 import java.nio.file.Files
 
@@ -27,10 +27,10 @@ object SapNativeLibLoader {
             targetFolder.mkdirs()
         }
         val libraryName: String
-        val currentOs = OS.CURRENT_OS
-        libraryName = when (currentOs) {
-            OS.MAC -> "libsapjco3.jnilib"
-            OS.WINDOWS -> "sapjco3.dll"
+        val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
+        libraryName = when {
+            Os.isFamily(Os.FAMILY_MAC) -> "libsapjco3.jnilib"
+            isWindows -> "sapjco3.dll"
             else -> "libsapjco3.so"
         }
         val targetPath = File(targetFolder, libraryName).absoluteFile
@@ -41,7 +41,7 @@ object SapNativeLibLoader {
         val libraryPath = targetFolder.absolutePath
         val nativeSystemProperty = "java.library.path"
         var systemNativePath = System.getProperty(nativeSystemProperty)
-        val pathSeparator: String = if (OS.WINDOWS.isCurrentOs) {
+        val pathSeparator: String = if (isWindows) {
             ";"
         } else {
             ":"

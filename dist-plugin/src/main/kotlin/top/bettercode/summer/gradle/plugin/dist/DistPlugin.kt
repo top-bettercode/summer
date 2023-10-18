@@ -49,6 +49,7 @@ class DistPlugin : Plugin<Project> {
             dist.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
             dist.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
             dist.nativePath = project.findDistProperty("native-path") ?: "native"
+            dist.buildNativePath = project.findDistProperty("build-native-path") ?: ""
             dist.runUser = project.findDistProperty("run-user") ?: ""
             dist.jdkArchiveSrc = project.findDistProperty("jdk-archive-src") ?: ""
             dist.prevArchiveSrc = project.findDistProperty("prev-archive-src") ?: ""
@@ -245,7 +246,7 @@ class DistPlugin : Plugin<Project> {
                 if (!mainClassName.isNullOrBlank()) {
                     application.mainClass.set(mainClassName)
                 }
-                val includeNative = jvmArgs.contains(dist.nativeLibArgs(project))
+                val includeNative = dist.includeNative(project)
                 project.tasks.getByName("startScripts") { task ->
                     task as CreateStartScripts
                     task.unixStartScriptGenerator =
@@ -278,12 +279,12 @@ class DistPlugin : Plugin<Project> {
                 else
                     task.jvmArgs = jvmArgs.toList()
                 if (Os.isFamily(Os.FAMILY_UNIX))
-                    task.environment("LD_LIBRARY_PATH", project.file(dist.nativePath))
+                    task.environment("LD_LIBRARY_PATH", dist.nativePath(project))
             }
 
             project.tasks.withType(JavaExec::class.java) { task ->
                 if (Os.isFamily(Os.FAMILY_UNIX))
-                    task.environment("LD_LIBRARY_PATH", project.file(dist.nativePath))
+                    task.environment("LD_LIBRARY_PATH", dist.nativePath(project))
             }
         }
     }
