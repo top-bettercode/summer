@@ -49,7 +49,7 @@ class DistPlugin : Plugin<Project> {
             dist.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
             dist.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
             dist.nativePath = project.findDistProperty("native-path") ?: "native"
-            dist.buildNativePath = project.findDistProperty("build-native-path") ?: ""
+            dist.buildNative = project.findDistProperty("build-native")?.toBoolean() ?: false
             dist.runUser = project.findDistProperty("run-user") ?: ""
             dist.jdkArchiveSrc = project.findDistProperty("jdk-archive-src") ?: ""
             dist.prevArchiveSrc = project.findDistProperty("prev-archive-src") ?: ""
