@@ -73,7 +73,7 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
         this.privacyDecryptor = this.config.createDecryptor()
 
         // 解析公钥
-        this.publicKey = PemUtil.loadX509FromStream(ClassPathResource(properties.publicKeyPath!!).inputStream).publicKey
+        this.publicKey = PemUtil.loadX509FromStream(ClassPathResource(properties.certificatePath!!).inputStream).publicKey
 
         this.notificationParser = NotificationParser(config)
 

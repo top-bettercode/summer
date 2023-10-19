@@ -27,9 +27,9 @@ data class WeixinV3PayProperties @JvmOverloads constructor(
          */
         var privateKeyPath: String? = null,
         /**
-         * 商户 API 公钥证书路径
+         * 商户 API 证书路径
          */
-        var publicKeyPath: String? = null,
+        var certificatePath: String? = null,
         /**
          * 平台证书序列号
          */
