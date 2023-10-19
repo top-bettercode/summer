@@ -1,11 +1,13 @@
 package top.bettercode.summer.tools.pay.weixinv3
 
 import com.wechat.pay.java.core.RSAAutoCertificateConfig
+import com.wechat.pay.java.core.cipher.PrivacyDecryptor
 import com.wechat.pay.java.core.exception.ValidationException
 import com.wechat.pay.java.core.http.AbstractHttpClient
 import com.wechat.pay.java.core.http.DefaultHttpClientBuilder
 import com.wechat.pay.java.core.notification.NotificationParser
 import com.wechat.pay.java.core.notification.RequestParam
+import com.wechat.pay.java.core.util.PemUtil
 import com.wechat.pay.java.service.payments.app.AppService
 import com.wechat.pay.java.service.payments.h5.H5Service
 import com.wechat.pay.java.service.payments.jsapi.JsapiService
@@ -16,14 +18,24 @@ import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.util.Base64Utils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
 import top.bettercode.summer.tools.pay.properties.WeixinV3PayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
+import java.nio.charset.StandardCharsets
+import java.security.InvalidKeyException
+import java.security.NoSuchAlgorithmException
+import java.security.PublicKey
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
+import javax.crypto.BadPaddingException
+import javax.crypto.Cipher
+import javax.crypto.IllegalBlockSizeException
+import javax.crypto.NoSuchPaddingException
 import javax.servlet.http.HttpServletRequest
 
 
@@ -47,6 +59,8 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
     val config: RSAAutoCertificateConfig
     val notificationParser: NotificationParser
     val httpClient: AbstractHttpClient
+    private val publicKey: PublicKey
+    private val privacyDecryptor: PrivacyDecryptor
 
     init {
         this.config = RSAAutoCertificateConfig.Builder()
@@ -55,6 +69,12 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
                 .merchantSerialNumber(properties.merchantSerialNumber)
                 .apiV3Key(properties.apiV3Key)
                 .build()
+
+        this.privacyDecryptor = this.config.createDecryptor()
+
+        // 解析公钥
+        this.publicKey = PemUtil.loadX509FromStream(ClassPathResource(properties.publicKeyPath!!).inputStream).publicKey
+
         this.notificationParser = NotificationParser(config)
 
         val okHttpClient = OkHttpClient.Builder()
@@ -150,5 +170,28 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
             log.error("handle notify failed", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         }
+    }
+
+    fun publicEncrypt(data: String): String {
+        return try {
+            val cipher: Cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding")
+            cipher.init(Cipher.ENCRYPT_MODE, this.publicKey)
+            val cipherdata: ByteArray = cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
+            Base64Utils.encodeToString(cipherdata)
+        } catch (e: NoSuchAlgorithmException) {
+            throw RuntimeException("当前Java环境不支持RSA v1.5/OAEP", e)
+        } catch (e: NoSuchPaddingException) {
+            throw RuntimeException("当前Java环境不支持RSA v1.5/OAEP", e)
+        } catch (e: InvalidKeyException) {
+            throw IllegalArgumentException("无效的证书", e)
+        } catch (e: IllegalBlockSizeException) {
+            throw IllegalBlockSizeException("加密原串的长度不能超过214字节")
+        } catch (e: BadPaddingException) {
+            throw IllegalBlockSizeException("加密原串的长度不能超过214字节")
+        }
+    }
+
+    fun privacyDecrypt(data: String): String {
+        return privacyDecryptor.decrypt(data)
     }
 }
