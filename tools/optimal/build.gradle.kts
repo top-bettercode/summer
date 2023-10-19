@@ -19,7 +19,7 @@ dependencies {
 
 tasks {
     test {
-        environment("LD_LIBRARY_PATH", file("build/native").absolutePath)
+        environment("LD_LIBRARY_PATH", file("native").absolutePath)
     }
 
     "jar"(Jar::class) {

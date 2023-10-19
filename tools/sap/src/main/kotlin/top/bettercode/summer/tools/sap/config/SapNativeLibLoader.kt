@@ -16,8 +16,6 @@ object SapNativeLibLoader {
 
     /**
      * Extract and load native library in the provided folder.
-     *
-     * @throws Exception The provisioning failure exception.
      */
     @Synchronized
     fun loadNativeLib() {

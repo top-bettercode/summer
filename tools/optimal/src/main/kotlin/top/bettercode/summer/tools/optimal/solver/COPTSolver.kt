@@ -1,7 +1,5 @@
 package top.bettercode.summer.tools.optimal.solver
 
-import copt.*
-import top.bettercode.summer.tools.optimal.OptimalNativeLibLoader
 import top.bettercode.summer.tools.optimal.solver.`var`.COPTExprVar
 import top.bettercode.summer.tools.optimal.solver.`var`.COPTVar
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
@@ -18,28 +16,22 @@ class COPTSolver @JvmOverloads constructor(
         override val name: String = "COPTSolver",
         logging: Boolean = false) : Solver() {
 
-    val model: Model
-
-    companion object {
-        init {
-            OptimalNativeLibLoader.loadNativeLib()
-        }
-    }
+    val model: copt.Model
 
     init {
-        val env = Envr()
+        val env = copt.Envr()
         this.model = env.createModel(name)
-        this.model.setIntParam(IntParam.Logging, if (logging) 1 else 0)
+        this.model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
     }
 
     private fun expr(`var`: IVar) =
-            if (`var` is COPTExprVar) `var`.getDelegate() else Expr(`var`.getDelegate<Var>(), `var`.coeff)
+            if (`var` is COPTExprVar) `var`.getDelegate() else copt.Expr(`var`.getDelegate(), `var`.coeff)
 
     override fun boolVarArray(count: Int): Array<IVar> {
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
-            array[i] = COPTVar(this.model.addVar(0.0, 1.0, 1.0, Consts.BINARY, "b" + (numVariables + i + 1)))
+            array[i] = COPTVar(this.model.addVar(0.0, 1.0, 1.0, copt.Consts.BINARY, "b" + (numVariables + i + 1)))
         }
         return array.requireNoNulls()
     }
@@ -48,7 +40,7 @@ class COPTSolver @JvmOverloads constructor(
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
-            array[i] = COPTVar(this.model.addVar(lb, ub, 1.0, Consts.INTEGER, "i" + (numVariables + i + 1)))
+            array[i] = COPTVar(this.model.addVar(lb, ub, 1.0, copt.Consts.INTEGER, "i" + (numVariables + i + 1)))
         }
         return array.requireNoNulls()
     }
@@ -57,146 +49,146 @@ class COPTSolver @JvmOverloads constructor(
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
-            array[i] = COPTVar(this.model.addVar(lb, ub, 1.0, Consts.CONTINUOUS, "n" + (numVariables + i + 1)))
+            array[i] = COPTVar(this.model.addVar(lb, ub, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + i + 1)))
         }
         return array.requireNoNulls()
     }
 
     override fun boolVar(): IVar {
         val numVariables = numVariables()
-        return COPTVar(this.model.addVar(0.0, 1.0, 1.0, Consts.BINARY, "b" + (numVariables + 1)))
+        return COPTVar(this.model.addVar(0.0, 1.0, 1.0, copt.Consts.BINARY, "b" + (numVariables + 1)))
     }
 
     override fun intVar(lb: Double, ub: Double): IVar {
         val numVariables = numVariables()
-        return COPTVar(this.model.addVar(lb, ub, 1.0, Consts.INTEGER, "i" + (numVariables + 1)))
+        return COPTVar(this.model.addVar(lb, ub, 1.0, copt.Consts.INTEGER, "i" + (numVariables + 1)))
     }
 
     override fun numVar(lb: Double, ub: Double): IVar {
         val numVariables = numVariables()
-        return COPTVar(this.model.addVar(lb, ub, 1.0, Consts.CONTINUOUS, "n" + (numVariables + 1)))
+        return COPTVar(this.model.addVar(lb, ub, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1)))
     }
 
     override fun ge(vars: Array<IVar>, lb: Double) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
     }
 
     override fun ge(vars: Array<IVar>, lb: IVar) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
     }
 
     override fun le(vars: Array<IVar>, ub: Double) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.LESS_EQUAL, ub, "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
     }
 
     override fun le(vars: Array<IVar>, ub: IVar) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
     }
 
     override fun eq(vars: Array<IVar>, value: Double) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.EQUAL, value, "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (size + 1))
     }
 
     override fun eq(vars: Array<IVar>, value: IVar) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.EQUAL, expr(value), "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.EQUAL, expr(value), "c" + (size + 1))
     }
 
     /**
      * 两数之间
      */
     override fun between(vars: Array<IVar>, lb: Double, ub: Double) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.GREATER_EQUAL, lb, "c" + (size + 1))
-        this.model.addConstr(expr, Consts.LESS_EQUAL, ub, "c" + (size + 2))
+        this.model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 2))
     }
 
     /**
      * 两数之间
      */
     override fun between(vars: Array<IVar>, lb: IVar, ub: IVar) {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
-        this.model.addConstr(expr, Consts.LESS_EQUAL, expr(ub), "c" + (size + 2))
+        this.model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 2))
     }
 
     override fun ge(`var`: IVar, lb: Double) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
     }
 
     override fun ge(`var`: IVar, lb: IVar) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
     }
 
     override fun le(`var`: IVar, ub: Double) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.LESS_EQUAL, ub, "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
     }
 
     override fun le(`var`: IVar, ub: IVar) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
     }
 
     override fun eq(`var`: IVar, value: Double) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.EQUAL, value, "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.EQUAL, value, "c" + (size + 1))
     }
 
     override fun eq(`var`: IVar, value: IVar) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.EQUAL, expr(value), "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.EQUAL, expr(value), "c" + (size + 1))
     }
 
     override fun between(`var`: IVar, lb: Double, ub: Double) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.GREATER_EQUAL, lb, "c" + (size + 1))
-        this.model.addConstr(expr(`var`), Consts.LESS_EQUAL, ub, "c" + (size + 2))
+        this.model.addConstr(expr(`var`), copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.LESS_EQUAL, ub, "c" + (size + 2))
     }
 
     override fun between(`var`: IVar, lb: IVar, ub: IVar) {
         val size = numConstraints()
-        this.model.addConstr(expr(`var`), Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
-        this.model.addConstr(expr(`var`), Consts.LESS_EQUAL, expr(ub), "c" + (size + 2))
+        this.model.addConstr(expr(`var`), copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        this.model.addConstr(expr(`var`), copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 2))
     }
 
     /**
@@ -224,7 +216,7 @@ class COPTSolver @JvmOverloads constructor(
      *
      */
     override fun geIf(`var`: IVar, value: Double, bool: IVar) {
-        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr(`var`), Consts.GREATER_EQUAL, value)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr(`var`), copt.Consts.GREATER_EQUAL, value)
     }
 
     /**
@@ -242,7 +234,7 @@ class COPTSolver @JvmOverloads constructor(
      *
      */
     override fun geIfNot(`var`: IVar, value: Double, bool: IVar) {
-        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr(`var`), Consts.GREATER_EQUAL, value)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr(`var`), copt.Consts.GREATER_EQUAL, value)
     }
 
     /**
@@ -260,7 +252,7 @@ class COPTSolver @JvmOverloads constructor(
      *
      */
     override fun leIf(`var`: IVar, value: Double, bool: IVar) {
-        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr(`var`), Consts.LESS_EQUAL, value)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr(`var`), copt.Consts.LESS_EQUAL, value)
     }
 
     /**
@@ -277,7 +269,7 @@ class COPTSolver @JvmOverloads constructor(
      *
      */
     override fun leIfNot(`var`: IVar, value: Double, bool: IVar) {
-        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr(`var`), Consts.LESS_EQUAL, value)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr(`var`), copt.Consts.LESS_EQUAL, value)
     }
 
 
@@ -290,7 +282,7 @@ class COPTSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun eqIf(`var`: IVar, value: Double, bool: IVar) {
-        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr(`var`), Consts.EQUAL, value)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr(`var`), copt.Consts.EQUAL, value)
     }
 
     /**
@@ -302,7 +294,7 @@ class COPTSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun eqIfNot(`var`: IVar, value: Double, bool: IVar) {
-        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr(`var`), Consts.EQUAL, value)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr(`var`), copt.Consts.EQUAL, value)
     }
 
     /**
@@ -315,8 +307,8 @@ class COPTSolver @JvmOverloads constructor(
      */
     override fun betweenIf(`var`: IVar, lb: Double, ub: Double, bool: IVar) {
         val expr = expr(`var`)
-        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr, Consts.GREATER_EQUAL, lb)
-        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr, Consts.LESS_EQUAL, ub)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr, copt.Consts.GREATER_EQUAL, lb)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 1, expr, copt.Consts.LESS_EQUAL, ub)
     }
 
     /**
@@ -329,47 +321,47 @@ class COPTSolver @JvmOverloads constructor(
      */
     override fun betweenIfNot(`var`: IVar, lb: Double, ub: Double, bool: IVar) {
         val expr = expr(`var`)
-        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr, Consts.GREATER_EQUAL, lb)
-        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr, Consts.LESS_EQUAL, ub)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr, copt.Consts.GREATER_EQUAL, lb)
+        this.model.addGenConstrIndicator(bool.getDelegate(), 0, expr, copt.Consts.LESS_EQUAL, ub)
     }
 
     override fun sum(vars: Array<IVar>): IVar {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (i in vars.indices) {
             val v = vars[i]
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         val numVariables = numVariables()
-        val sum = this.model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, Consts.CONTINUOUS, "n" + (numVariables + 1))
+        val sum = this.model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
         val size = numConstraints()
-        this.model.addConstr(expr, Consts.EQUAL, sum, "c" + (size + 1))
+        this.model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
         return COPTVar(sum)
     }
 
     override fun minimize(vars: Array<IVar>): IVar {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (i in vars.indices) {
             val v = vars[i]
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        this.model.setObjective(expr, Consts.MINIMIZE)
+        this.model.setObjective(expr, copt.Consts.MINIMIZE)
         return COPTExprVar(expr)
     }
 
     override fun maximize(vars: Array<IVar>): IVar {
-        val expr = Expr()
+        val expr = copt.Expr()
         for (i in vars.indices) {
             val v = vars[i]
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        this.model.setObjective(expr, Consts.MAXIMIZE)
+        this.model.setObjective(expr, copt.Consts.MAXIMIZE)
         return COPTExprVar(expr)
     }
 
     override fun atMostOne(vars: Array<IVar>) {
-        val varArry: Array<Var> = vars.map { it.getDelegate<Var>() }.toTypedArray()
+        val varArry: Array<copt.Var> = vars.map { it.getDelegate<copt.Var>() }.toTypedArray()
         val weights = vars.map { it.coeff }.toTypedArray().toDoubleArray()
-        model.addSos(varArry, weights, Consts.SOS_TYPE1)
+        model.addSos(varArry, weights, copt.Consts.SOS_TYPE1)
     }
 
     /**
@@ -397,13 +389,13 @@ class COPTSolver @JvmOverloads constructor(
 
     override fun isOptimal(): Boolean {
         val status = getStatus()
-        return Status.OPTIMAL == status
+        return copt.Status.OPTIMAL == status
     }
 
     override fun getResultStatus(): String {
         val status = getStatus()
         try {
-            val fields = Status::class.java.getFields()
+            val fields = copt.Status::class.java.getFields()
             for (field in fields) {
                 if (field[null] == status) {
                     return field.name
@@ -415,19 +407,19 @@ class COPTSolver @JvmOverloads constructor(
     }
 
     private fun getStatus(): Int {
-        var status = model.getIntAttr(IntAttr.MipStatus)
+        var status = model.getIntAttr(copt.IntAttr.MipStatus)
         if (status == 0) {
-            status = model.getIntAttr(IntAttr.LpStatus)
+            status = model.getIntAttr(copt.IntAttr.LpStatus)
         }
         return status
     }
 
     override fun numVariables(): Int {
-        return this.model.getIntAttr(IntAttr.Cols)
+        return this.model.getIntAttr(copt.IntAttr.Cols)
     }
 
     override fun numConstraints(): Int {
-        return this.model.getIntAttr(IntAttr.Rows)
+        return this.model.getIntAttr(copt.IntAttr.Rows)
     }
 
 }

@@ -29,10 +29,6 @@ open class DistExtension(
          */
         var nativePath: String = "native",
         /**
-         * 相对当前项目的build路径
-         */
-        var buildNative: Boolean = false,
-        /**
          * 老版本路径 用于生成更新包
          */
         var prevArchiveSrc: String = ""
@@ -62,7 +58,7 @@ open class DistExtension(
     val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
 
     fun includeNative(project: Project): Boolean {
-        return buildNative || project.file(nativePath).exists()
+        return project.file(nativePath).exists()
     }
 
     private val isWindows: Boolean = Os.isFamily(Os.FAMILY_WINDOWS)
@@ -70,15 +66,13 @@ open class DistExtension(
 
     fun nativePath(project: Project): String {
         var libArgs = ""
-        if (buildNative)
-            libArgs += project.file("build${File.separator}native").absolutePath
 
         if (project.file(nativePath).exists()) {
-            val pathSeparator: String = if (buildNative) if (isWindows) {
+            val pathSeparator: String = if (isWindows) {
                 ";"
             } else {
                 ":"
-            } else ""
+            }
             libArgs += pathSeparator + project.file(nativePath).absolutePath
         }
 
@@ -92,19 +86,12 @@ open class DistExtension(
     fun startScriptNativeLibArgs(project: Project, windows: Boolean): String {
         var libArgs = "-Djava.library.path="
 
-        if (buildNative)
-            libArgs += if (windows)
-                "%APP_HOME%\\build\\native"
-            else
-                "\$APP_HOME/build/native"
-
         if (project.file(nativePath).exists()) {
-            val pathSeparator: String = if (buildNative) if (windows) {
+            val pathSeparator: String = if (windows) {
                 ";"
             } else {
                 ":"
-            } else ""
-
+            }
             libArgs += pathSeparator + if (windows)
                 "%APP_HOME%\\native"
             else
@@ -116,13 +103,9 @@ open class DistExtension(
 
     fun ldLibraryPath(project: Project): String {
         var ldLibraryPath = ""
-        if (buildNative)
-            ldLibraryPath += "\\\$APP_HOME/build/native"
 
         if (project.file(nativePath).exists()) {
-            val pathSeparator: String = if (buildNative) {
-                ":"
-            } else ""
+            val pathSeparator = ":"
 
             ldLibraryPath += "$pathSeparator\\\$APP_HOME/native"
         }
