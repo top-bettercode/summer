@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.pay.weixin
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.OkHttpClient
+import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.http.MediaType
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory
@@ -68,9 +69,8 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         val certLocation = properties.certLocation
         if (certLocation != null) {
             //指定读取证书格式为PKCS12
-            val patternResolver = PathMatchingResourcePatternResolver()
             val keyStore = KeyStore.getInstance("PKCS12")
-            val certFileResource = patternResolver.getResource(certLocation)
+            val certFileResource = ClassPathResource(certLocation)
             val certInputStream: InputStream = certFileResource.inputStream
             val certStorePassword = (properties.certStorePassword
                     ?: throw IllegalArgumentException("certStorePassword is null"))
