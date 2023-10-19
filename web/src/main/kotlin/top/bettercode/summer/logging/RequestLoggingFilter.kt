@@ -180,10 +180,10 @@ class RequestLoggingFilter(
                 if ((error == null || error is ClientAbortException) && !requestTimeout) {
                     log.info(marker, msg)
                 } else {
-                    if (error != null && httpStatusCode >= 400 &&
-                            ((isDebugEnabled && !properties.ignoredErrorStatusCode.contains(
-                                    httpStatusCode
-                            )) || httpStatusCode >= 500)
+                    if (error != null
+                            && httpStatusCode >= 400
+                            && !properties.ignoredErrorStatusCode.contains(httpStatusCode)
+                            && (isDebugEnabled || httpStatusCode >= 500)
                     ) {
                         val initialComment =
                                 "$uriName($restUri)：$httpStatusCode|${
