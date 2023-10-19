@@ -1,5 +1,3 @@
-import java.util.stream.Collectors
-
 plugins {
     `java-library`
 }
@@ -23,8 +21,7 @@ tasks {
     }
 
     "jar"(Jar::class) {
-        from(fileTree(mapOf("dir" to "libs")).files.stream().map { zipTree(it) }
-                .collect(Collectors.toList()))
+        from(fileTree(mapOf("dir" to "libs")).files.map { zipTree(it) })
     }
 
 }
