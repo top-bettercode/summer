@@ -17,6 +17,7 @@ import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.PumlTableHolder
+import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
 import top.bettercode.summer.tools.generator.ddl.OracleToDDL
@@ -478,8 +479,36 @@ class GeneratorPlugin : Plugin<Project> {
 
                                         tableHolder.files.forEach { file ->
                                             val tables = tableHolder.getTables(file)
-                                            val tableNames = tables.map { it.tableName }
-                                            PumlConverter.compile(database, oldTables.filter { tableNames.contains(it.tableName) }.sortedBy { tableNames.indexOf(it.tableName) }, file)
+                                                    .filter { table ->
+                                                        val oldTable = oldTables.find { it.tableName == table.tableName }
+                                                        if (oldTable != null) {
+                                                            table.primaryKeyNames = oldTable.primaryKeyNames
+                                                            table.indexes = oldTable.indexes
+                                                            val pumlColumns = table.pumlColumns.filterIsInstance<Column>()
+                                                            table.pumlColumns = oldTable.pumlColumns
+                                                            table.pumlColumns.filterIsInstance<Column>().forEach { col ->
+                                                                val newCol = pumlColumns.find { it.columnName == col.columnName }
+                                                                if (newCol != null) {
+                                                                    col.remarks = newCol.remarks
+                                                                    col.idgenerator = newCol.idgenerator
+                                                                    col.idgeneratorParam = newCol.idgeneratorParam
+                                                                    col.sequence = newCol.sequence
+                                                                    col.sequenceStartWith = newCol.sequenceStartWith
+                                                                    col.version = newCol.version
+                                                                    col.logicalDelete = newCol.logicalDelete
+                                                                    col.createdDate = newCol.createdDate
+                                                                    col.createdBy = newCol.createdBy
+                                                                    col.lastModifiedDate = newCol.lastModifiedDate
+                                                                    col.lastModifiedBy = newCol.lastModifiedBy
+                                                                    col.asBoolean = newCol.asBoolean
+                                                                }
+                                                            }
+                                                            true
+                                                        } else {
+                                                            false
+                                                        }
+                                                    }
+                                            PumlConverter.compile(database, tables, file)
                                         }
                                     }
                                 } else {

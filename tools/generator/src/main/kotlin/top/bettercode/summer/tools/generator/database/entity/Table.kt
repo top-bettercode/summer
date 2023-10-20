@@ -30,7 +30,7 @@ data class Table(
          * 主键
          */
         var primaryKeyNames: List<String>,
-        val indexes: MutableList<Indexed>,
+        var indexes: MutableList<Indexed>,
         /**
          * 字段
          */

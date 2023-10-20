@@ -36,7 +36,7 @@ data class Column(
         /**
          * 注释说明
          */
-        val remarks: String,
+        var remarks: String,
         /**
          * 是否可为空
          */
@@ -45,20 +45,21 @@ data class Column(
          * 默认值
          */
         var columnDef: String?,
+        var unsigned: Boolean = false,
+        var autoIncrement: Boolean = false,
+        var generatedColumn: Boolean = false,
+        var isForeignKey: Boolean = false,
+        var pktableName: String? = null,
+        var pkcolumnName: String? = null,
         var extra: String = "",
         var unique: Boolean = false,
         var indexed: Boolean = false,
         var isPrimary: Boolean = false,
-        var unsigned: Boolean = false,
-        var isForeignKey: Boolean = false,
-        var pktableName: String? = null,
-        var pkcolumnName: String? = null,
-        var autoIncrement: Boolean = false,
-        val idgenerator: String = "",
-        val idgeneratorParam: String = "",
-        val sequence: String = "",
-        val sequenceStartWith: Long = 1,
-        var generatedColumn: Boolean = false,
+
+        var idgenerator: String = "",
+        var idgeneratorParam: String = "",
+        var sequence: String = "",
+        var sequenceStartWith: Long = 1,
         var version: Boolean = false,
         var logicalDelete: Boolean = false,
         var createdDate: Boolean = false,
