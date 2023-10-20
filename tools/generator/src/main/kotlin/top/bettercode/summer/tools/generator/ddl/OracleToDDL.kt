@@ -18,6 +18,7 @@ object OracleToDDL : ToDDL() {
         out.appendLine("$commentPrefix ${database.url.substringBefore("?")} schema:${database.schema}")
         out.appendLine()
         if (tables != oldTables) {
+            val notOnlyComment = !database.extension.setting("onlyComment", "false").toBoolean()
             val schema = if (database.includeSchema) {
                 "$quote${database.schema}$quote."
             } else {
@@ -25,7 +26,7 @@ object OracleToDDL : ToDDL() {
             }
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
-            if (database.dropTablesWhenUpdate)
+            if (notOnlyComment && database.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).filter { "api_token" != it }
                         .forEach { tableName ->
                             out.appendLine("$commentPrefix DROP $schema$tableName")
@@ -39,7 +40,8 @@ object OracleToDDL : ToDDL() {
             tables.forEach { table ->
                 val tableName = table.tableName
                 if (newTableNames.contains(tableName)) {
-                    appendTable(prefixTableName = schema, table = table, pw = out, database = database)
+                    if (notOnlyComment)
+                        appendTable(prefixTableName = schema, table = table, pw = out, database = database)
                 } else {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
@@ -61,7 +63,7 @@ object OracleToDDL : ToDDL() {
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
-                        if (database.dropColumnsWhenUpdate) {
+                        if (notOnlyComment && database.dropColumnsWhenUpdate) {
                             if (dropColumnNames.isNotEmpty()) {
                                 oldPrimaryKeys.removeIf { pk -> dropColumnNames.contains(pk.columnName) }
                                 lines.add(
@@ -78,28 +80,30 @@ object OracleToDDL : ToDDL() {
                         columns.forEach { column ->
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
-                                lines.add(
-                                        "ALTER TABLE $schema$quote$tableName$quote ADD ${
-                                            columnDef(
-                                                    column,
-                                                    quote
-                                            )
-                                        };"
-                                )
-                                lines.add(
-                                        "COMMENT ON COLUMN $schema$quote$tableName$quote.$quote$columnName$quote IS '${
-                                            column.remarks.replace(
-                                                    "\\",
-                                                    "\\\\"
-                                            )
-                                        }';"
-                                )
-                                addFk(schema, column, lines, tableName, columnName)
+                                if (notOnlyComment) {
+                                    lines.add(
+                                            "ALTER TABLE $schema$quote$tableName$quote ADD ${
+                                                columnDef(
+                                                        column,
+                                                        quote
+                                                )
+                                            };"
+                                    )
+                                    lines.add(
+                                            "COMMENT ON COLUMN $schema$quote$tableName$quote.$quote$columnName$quote IS '${
+                                                column.remarks.replace(
+                                                        "\\",
+                                                        "\\\\"
+                                                )
+                                            }';"
+                                    )
+                                    addFk(schema, column, lines, tableName, columnName)
+                                }
                             } else {
                                 val oldColumn = oldColumns.find { it.columnName == columnName }!!
                                 if (column != oldColumn) {
                                     val updateColumnDef = updateColumnDef(column, oldColumn, quote)
-                                    if (updateColumnDef.isNotBlank())
+                                    if (notOnlyComment && updateColumnDef.isNotBlank())
                                         lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY $updateColumnDef;")
                                     if (oldColumn.remarks != column.remarks)
                                         lines.add(
@@ -110,20 +114,23 @@ object OracleToDDL : ToDDL() {
                                                     )
                                                 }';"
                                         )
-                                    updateFk(schema, column, oldColumn, lines, tableName)
+                                    if (notOnlyComment)
+                                        updateFk(schema, column, oldColumn, lines, tableName)
                                 }
                             }
                         }
-                        if (oldPrimaryKeys != primaryKeys) {
-                            if (oldPrimaryKeys.isNotEmpty())
-                                lines.add("ALTER TABLE $schema$quote$tableName$quote DROP PRIMARY KEY;")
-                            if (table.primaryKeyNames.isNotEmpty()) {
-                                lines.add("ALTER TABLE $schema$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
+                        if (notOnlyComment) {
+                            if (oldPrimaryKeys != primaryKeys) {
+                                if (oldPrimaryKeys.isNotEmpty())
+                                    lines.add("ALTER TABLE $schema$quote$tableName$quote DROP PRIMARY KEY;")
+                                if (table.primaryKeyNames.isNotEmpty()) {
+                                    lines.add("ALTER TABLE $schema$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
+                                }
                             }
-                        }
 
-                        if (database.queryIndex)
-                            updateIndexes(schema, oldTable, table, lines, dropColumnNames)
+                            if (database.queryIndex)
+                                updateIndexes(schema, oldTable, table, lines, dropColumnNames)
+                        }
                         if (lines.isNotEmpty()) {
                             out.appendLine("$commentPrefix $tableName")
                             lines.forEach { out.appendLine(it) }
