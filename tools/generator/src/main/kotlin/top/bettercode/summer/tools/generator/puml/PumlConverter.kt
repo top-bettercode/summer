@@ -23,8 +23,7 @@ object PumlConverter {
             puml: File,
             call: (Table) -> Unit = {}
     ): List<Table> {
-        return toTableOrAnys(puml, call).filterIsInstance<Table>().sortedBy { it.tableName }
-                .toList()
+        return toTableOrAnys(puml, call).filterIsInstance<Table>()
     }
 
     private fun toTableOrAnys(

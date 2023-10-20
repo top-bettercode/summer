@@ -16,6 +16,7 @@ import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
+import top.bettercode.summer.tools.generator.PumlTableHolder
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
 import top.bettercode.summer.tools.generator.ddl.OracleToDDL
@@ -443,6 +444,46 @@ class GeneratorPlugin : Plugin<Project> {
                                     unit.writeTo(
                                             if (project.file(extension.sqlOutput).exists()) project.projectDir else project.rootDir
                                     )
+                                }
+                            }
+                        })
+                    }
+                    project.tasks.create("toPumlUpdate${suffix}") { task ->
+                        task.group = PUML_GROUP
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                if (tableHolder is PumlTableHolder) {
+                                    val database = extension.database(module)
+                                    database.sshProxy {
+                                        MysqlToDDL.useQuote = extension.sqlQuote
+                                        OracleToDDL.useQuote = extension.sqlQuote
+                                        MysqlToDDL.useForeignKey = extension.useForeignKey
+                                        OracleToDDL.useForeignKey = extension.useForeignKey
+
+                                        val databasePumlDir =
+                                                extension.file(extension.pumlSrc + "/database")
+
+                                        val databaseName = project.profilesActive
+                                        val currentPumlFile = File(databasePumlDir, "current/$module-$databaseName.puml")
+
+                                        val databaseFile = if (database.offline) currentPumlFile else File(databasePumlDir, "${module}.puml")
+                                        val oldTables = if (databaseFile.exists()) {
+                                            database.offline = true
+                                            PumlConverter.toTables(databaseFile) {
+                                                it.database = database
+                                            }
+                                        } else {
+                                            database.tables(tableName = emptyArray())
+                                        }
+
+                                        tableHolder.files.forEach { file ->
+                                            val tables = tableHolder.getTables(file)
+                                            val tableNames = tables.map { it.tableName }
+                                            PumlConverter.compile(database, oldTables.filter { tableNames.contains(it.tableName) }.sortedBy { tableNames.indexOf(it.tableName) }, file)
+                                        }
+                                    }
+                                } else {
+                                    project.logger.lifecycle("不支持puml更新")
                                 }
                             }
                         })

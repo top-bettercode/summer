@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.generator.database.entity
 
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.lang.decapitalized
+import java.io.File
 
 /**
  *
@@ -42,7 +43,8 @@ data class Table(
         /**
          * 编码排序
          */
-        var collate: String = "utf8mb4_unicode_ci"
+        var collate: String = "utf8mb4_unicode_ci",
+        var file: File? = null
 ) {
 
     val primaryKeys: MutableList<Column>
