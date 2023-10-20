@@ -24,4 +24,5 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+    testImplementation("org.jdom:jdom2:2.0.6")
 }

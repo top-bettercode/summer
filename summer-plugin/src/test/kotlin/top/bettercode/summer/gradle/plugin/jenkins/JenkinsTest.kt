@@ -1,10 +1,11 @@
 package top.bettercode.summer.gradle.plugin.jenkins
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import org.jdom2.Document
+import org.jdom2.Element
+import org.jdom2.input.SAXBuilder
+import org.jdom2.output.Format
+import org.jdom2.output.XMLOutputter
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.PrintWriter
@@ -22,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec
 
 class JenkinsTest {
 
-    @Disabled
+    //    @Disabled
     @Test
     fun decrypt() {
         val jenkinsDir = ""
@@ -30,31 +31,30 @@ class JenkinsTest {
     }
 
     fun decrypt(jenkinsDir: File, encryptFile: File) {
-        val xmlMapper = XmlMapper()
-        val map = xmlMapper.readValue<MutableMap<String, Any?>>(encryptFile)
-        decrypt(jenkinsDir, map)
+
+        // 创建SAXBuilder
+        val saxBuilder = SAXBuilder()
+        val document: Document = saxBuilder.build(encryptFile)
+
+        // 找到要更新的字段，例如将第一个item的价格字段修改为15.99
+        val rootElement: Element = document.rootElement
+
+        decrypt(jenkinsDir, rootElement)
+
+        // 将修改后的XML写回文件
+        val outputter = XMLOutputter(Format.getPrettyFormat())
         val decryptFile = File(encryptFile.parent, encryptFile.nameWithoutExtension + "-decrypt." + encryptFile.extension)
-        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT).writeValue(decryptFile, map)
+        outputter.output(document, decryptFile.outputStream())
     }
 
-    fun decrypt(jenkinsDir: File, map: MutableMap<String, Any?>) {
-        map.forEach {
-            val name = it.key
-            val value = it.value
-            if (name == "secretPassword" || name == "secretPassphrase") {
-                val decryptValue = decrypt(File(jenkinsDir, "secrets"), value.toString())
-                map[name] = decryptValue
-            } else if (value is MutableMap<*, *>) {
-                @Suppress("UNCHECKED_CAST")
-                decrypt(jenkinsDir, value as MutableMap<String, Any?>)
-            } else if (value is List<*>) {
-                value.forEach { v ->
-                    if (v is MutableMap<*, *>) {
-                        @Suppress("UNCHECKED_CAST")
-                        decrypt(jenkinsDir, v as MutableMap<String, Any?>)
-                    }
-                }
-            }
+    fun decrypt(jenkinsDir: File, element: Element) {
+        if (element.name == "secretPassword" || element.name == "secretPassphrase") {
+            val encryptStr = element.text
+            val decryptValue = decrypt(File(jenkinsDir, "secrets"), encryptStr)
+            element.text = decryptValue
+        }
+        element.content.filterIsInstance<Element>().forEach { content ->
+            decrypt(jenkinsDir, content)
         }
     }
 
