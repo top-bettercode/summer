@@ -6,18 +6,19 @@ import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.*
 import javax.persistence.*
 
+@Suppress("LeakingThis")
 @Entity
 @Table(name = "t_user")
-class PhysicalUser {
+open class PhysicalUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Int? = null
-    var firstName: String? = null
-    var lastName: String? = null
+    open var id: Int? = null
+    open var firstName: String? = null
+    open var lastName: String? = null
 
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault("0")
-    var deleted: Boolean? = null
+    open var deleted: Boolean? = null
 
     constructor()
     constructor(firstName: String?, lastName: String?) {

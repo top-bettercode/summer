@@ -411,7 +411,6 @@ class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
         return this.withMatcher(PathMatcher.IN)
     }
 
-    @SafeVarargs
     fun notIn(vararg criteria: P): M {
         this.isSetCriteria = true
         this.criterias = criteria.toList()

@@ -8,10 +8,11 @@ import javax.persistence.Embeddable
 /**
  * 客商档案 主键 对应表名：BD_CVDOC
  */
+@Suppress("LeakingThis")
 @Embeddable
-class EmployeeKey : Serializable {
-    var id: Int? = null
-    var id2: Int? = null
+open class EmployeeKey : Serializable {
+    open var id: Int? = null
+    open var id2: Int? = null
 
     constructor()
     constructor(id: Int?, id2: Int?) {

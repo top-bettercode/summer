@@ -10,18 +10,19 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
+@Suppress("LeakingThis")
 @MappedSuperclass
 open class BaseUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Int? = null
-    var firstName: String? = null
-    var lastName: String? = null
+    open var id: Int? = null
+    open var firstName: String? = null
+    open var lastName: String? = null
 
     @LogicalDelete
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault("0")
-    var deleted: Boolean? = null
+    open var deleted: Boolean? = null
 
     constructor()
     constructor(firstName: String?, lastName: String?) {

@@ -34,7 +34,6 @@ object ArrayUtil {
      * @param <T> T
      * @return 数组
     </T> */
-    @SafeVarargs
     @JvmStatic
     fun <T> of(vararg items: T): Array<out T> {
         return items

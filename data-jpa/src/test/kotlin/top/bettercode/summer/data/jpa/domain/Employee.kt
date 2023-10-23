@@ -8,18 +8,19 @@ import top.bettercode.summer.tools.lang.util.StringUtil.json
 import javax.persistence.EmbeddedId
 import javax.persistence.Entity
 
+@Suppress("LeakingThis")
 @DynamicUpdate
 @Entity
-class Employee {
+open class Employee {
     @EmbeddedId
-    var employeeKey: EmployeeKey? = null
-    var firstName: String? = null
-    var lastName: String? = null
+    open var employeeKey: EmployeeKey? = null
+    open var firstName: String? = null
+    open var lastName: String? = null
 
     @LogicalDelete
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault("0")
-    var deleted: Boolean? = null
+    open var deleted: Boolean? = null
 
     constructor()
     constructor(employeeKey: EmployeeKey?, firstName: String?, lastName: String?) {

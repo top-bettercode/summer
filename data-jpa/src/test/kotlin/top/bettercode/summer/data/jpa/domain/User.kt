@@ -23,43 +23,25 @@ open class User : BaseUser {
      * 修改人
      */
     @LastModifiedBy
-    var lastModifiedBy: String? = null
-        private set
+    open var lastModifiedBy: String? = null
 
     /**
      * 修改时间 默认值：CURRENT_TIMESTAMP
      */
     @LastModifiedDate
-    var lastModifiedDate: LocalDateTime? = null
-        private set
+    open var lastModifiedDate: LocalDateTime? = null
 
     /**
      * 创建时间 默认值：CURRENT_TIMESTAMP
      */
     @CreatedDate
-    var createdDate: LocalDateTime? = null
-        private set
+    open var createdDate: LocalDateTime? = null
 
     @Version
     @ColumnDefault("0")
-    var version: Int? = null
-        private set
+    open var version: Int? = null
 
     constructor()
     constructor(firstName: String?, lastName: String?) : super(firstName, lastName)
 
-    fun setLastModifiedDate(lastModifiedDate: LocalDateTime?): User {
-        this.lastModifiedDate = lastModifiedDate
-        return this
-    }
-
-    fun setCreatedDate(createdDate: LocalDateTime?): User {
-        this.createdDate = createdDate
-        return this
-    }
-
-    fun setVersion(version: Int?): User {
-        this.version = version
-        return this
-    }
 }

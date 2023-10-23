@@ -361,8 +361,12 @@ class SimpleJpaExtRepositoryTest {
                 UserMatcher.matching().lastName().containing("Beauford")
                         .any { matcher: UserMatcher ->
                             matcher.id().equal(carterId).firstName()
-                                    .containing(" Cart ").firstName().trim()
+                                    .containing(" Cart ")
+                                    .firstName().trim()
                         }.firstName().desc().lastName().asc()
+                        .id().between(1, 6)
+                        .id().`in`(1, 2, 3, 4, 5, 6)
+
         val all = repository.findAll(matcher)
         System.err.println(json(all, true))
     }

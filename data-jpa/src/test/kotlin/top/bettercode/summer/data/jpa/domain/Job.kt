@@ -13,17 +13,17 @@ import javax.persistence.Id
 
 @DynamicUpdate
 @Entity
-class Job {
+open class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "jobid")
     @GenericGenerator(name = "jobid", strategy = "uuid2")
-    var id: String? = null
-    var name: String? = null
+    open var id: String? = null
+    open var name: String? = null
 
     @LogicalDelete
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault("0")
-    var deleted: Boolean? = null
+    open var deleted: Boolean? = null
     override fun toString(): String {
         return json(this)
     }
