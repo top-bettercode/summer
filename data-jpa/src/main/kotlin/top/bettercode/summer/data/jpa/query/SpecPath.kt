@@ -3,16 +3,14 @@ package top.bettercode.summer.data.jpa.query
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.util.Assert
-import top.bettercode.summer.tools.lang.util.ValueEnum
 import java.util.*
-import java.util.stream.Collectors
 import javax.persistence.criteria.*
 import javax.persistence.criteria.CriteriaBuilder.Trimspec
 
 /**
  * @author Peter Wu
  */
-class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
+class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
         private val specMatcher: M,
         /**
          * name of the attribute
@@ -43,21 +41,31 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
     /**
      * 条件查询值
      */
-    var criteria: Any? = ValueEnum.NOT_SET
+    var criteria: P? = null
+        private set
+
+    /**
+     * 条件查询值2,用于范围查询
+     */
+    var criteria2: P? = null
+        private set
+
+    /**
+     * 集合条件查询值,用于范围查询
+     */
+    var criterias: Collection<P>? = null
         private set
 
     /**
      * 更新值
      */
-    var criteriaUpdate: Any? = ValueEnum.NOT_SET
+    var criteriaUpdate: P? = null
         private set
 
     //--------------------------------------------
-    val isSetCriteria: Boolean
-        get() = criteria != ValueEnum.NOT_SET
+    var isSetCriteria: Boolean = false
 
-    val isSetCriteriaUpdate: Boolean
-        get() = criteriaUpdate != ValueEnum.NOT_SET
+    var isSetCriteriaUpdate: Boolean = false
 
     //--------------------------------------------
     fun toPath(root: Root<T>): Path<*> {
@@ -95,15 +103,10 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
         if (!isSetCriteria) {
             return null
         }
-        var criteria = this.criteria
         if (criteria != null) {
             when (matcher) {
                 PathMatcher.BETWEEN -> {
-                    Assert.isTrue(criteria is BetweenValue<*>,
-                            "BETWEEN matcher with wrong criteria")
-                    val betweenValue = criteria as BetweenValue<*>
-                    return criteriaBuilder.between(path as Expression<Comparable<Comparable<*>>>, betweenValue.first as Comparable<Comparable<*>>,
-                            betweenValue.second as Comparable<Comparable<*>>)
+                    return criteriaBuilder.between(path as Expression<Comparable<Comparable<*>>>, criteria as Comparable<Comparable<*>>, criteria2 as Comparable<Comparable<*>>)
                 }
 
                 PathMatcher.GT -> return criteriaBuilder.greaterThan(path as Expression<Comparable<Comparable<*>>>, criteria as Comparable<Comparable<*>>)
@@ -114,38 +117,39 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
             }
         }
         if (pathJavaType == String::class.java) {
+            var criteria = this.criteria
             var stringExpression: Expression<String> = path as Expression<String>
-            val ignoreCase = ignoreCase
-            if (ignoreCase) {
-                stringExpression = criteriaBuilder.lower(stringExpression)
-                if (criteria is String) {
-                    criteria = criteria.toString().lowercase(Locale.getDefault())
+            if (criteria != null) {
+                val ignoreCase = ignoreCase
+                if (ignoreCase) {
+                    stringExpression = criteriaBuilder.lower(stringExpression)
+                    if (criteria is String) {
+                        criteria = criteria.lowercase(Locale.getDefault()) as P
+                    }
                 }
-            }
-            if (trimspec != null && criteria is String) {
-                when (trimspec) {
-                    Trimspec.LEADING -> criteria = criteria.trimStart()
-                    Trimspec.TRAILING -> criteria = criteria.trimEnd()
-                    Trimspec.BOTH -> criteria = criteria.trim()
-                    else -> {}
+                if (trimspec != null && criteria is String) {
+                    when (trimspec) {
+                        Trimspec.LEADING -> criteria = criteria.trimStart() as P
+                        Trimspec.TRAILING -> criteria = criteria.trimEnd() as P
+                        Trimspec.BOTH -> criteria = criteria.trim() as P
+                        else -> {}
+                    }
                 }
             }
             when (matcher) {
                 PathMatcher.EQ -> return criteriaBuilder.equal(stringExpression, criteria)
                 PathMatcher.NE -> return criteriaBuilder.notEqual(stringExpression, criteria)
                 PathMatcher.IN -> {
-                    Assert.isTrue(criteria is Collection<*>, "IN matcher with wrong criteria")
-                    val collect = (criteria as Collection<*>).stream()
-                            .map { s: Any? -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
-                            .collect(Collectors.toList())
+                    Assert.notNull(criterias, "IN matcher with wrong criteria")
+                    val collect = criterias!!
+                            .map { s: P -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
                     return stringExpression.`in`(collect)
                 }
 
                 PathMatcher.NOT_IN -> {
-                    Assert.isTrue(criteria is Collection<*>, "NOT IN matcher with wrong criteria")
-                    val notInCollect = (criteria as Collection<*>).stream()
-                            .map { s: Any? -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
-                            .collect(Collectors.toList())
+                    Assert.notNull(criterias, "IN matcher with wrong criteria")
+                    val notInCollect = criterias!!
+                            .map { s: P -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
                     return criteriaBuilder.not(stringExpression.`in`(notInCollect))
                 }
 
@@ -153,8 +157,8 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
             }
             if (criteria != null) {
                 when (matcher) {
-                    PathMatcher.LIKE -> return criteriaBuilder.like(stringExpression, criteria as String?)
-                    PathMatcher.NOT_LIKE -> return criteriaBuilder.notLike(stringExpression, criteria as String?)
+                    PathMatcher.LIKE -> return criteriaBuilder.like(stringExpression, criteria as String)
+                    PathMatcher.NOT_LIKE -> return criteriaBuilder.notLike(stringExpression, criteria as String)
                     PathMatcher.STARTING -> return criteriaBuilder.like(stringExpression, starting(criteria))
                     PathMatcher.NOT_STARTING -> return criteriaBuilder.notLike(stringExpression, starting(criteria))
                     PathMatcher.ENDING -> return criteriaBuilder.like(stringExpression, ending(criteria))
@@ -169,15 +173,13 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
                 PathMatcher.EQ -> return criteriaBuilder.equal(path, criteria)
                 PathMatcher.NE -> return criteriaBuilder.notEqual(path, criteria)
                 PathMatcher.IN -> {
-                    Assert.isTrue(criteria is Collection<*>, "IN matcher with wrong criteria")
-                    val collect = criteria as Collection<*>?
-                    return path.`in`(collect)
+                    Assert.notNull(criterias, "IN matcher with wrong criteria")
+                    return path.`in`(criterias)
                 }
 
                 PathMatcher.NOT_IN -> {
-                    Assert.isTrue(criteria is Collection<*>, "IN matcher with wrong criteria")
-                    val notInCollect = criteria as Collection<*>?
-                    return criteriaBuilder.not(path.`in`(notInCollect))
+                    Assert.notNull(criterias, "IN matcher with wrong criteria")
+                    return criteriaBuilder.not(path.`in`(criterias))
                 }
 
                 else -> {}
@@ -186,12 +188,14 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
         return null
     }
 
-    fun criteria(criteria: Any?): SpecPath<T, M> {
+    fun criteria(criteria: P?): SpecPath<P, T, M> {
+        this.isSetCriteria = true
         this.criteria = criteria
         return this
     }
 
-    fun criteriaUpdate(criteriaUpdate: Any?): M {
+    fun criteriaUpdate(criteriaUpdate: P?): M {
+        this.isSetCriteriaUpdate = true
         this.criteriaUpdate = criteriaUpdate
         return specMatcher
     }
@@ -215,7 +219,7 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
     }
 
     @JvmOverloads
-    fun trim(trimspec: Trimspec? = Trimspec.BOTH): M {
+    fun trim(trimspec: Trimspec = Trimspec.BOTH): M {
         this.trimspec = trimspec
         return specMatcher
     }
@@ -230,7 +234,7 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
         return specMatcher
     }
 
-    fun withMatcher(criteria: Any?, matcher: PathMatcher): M {
+    fun withMatcher(criteria: P?, matcher: PathMatcher): M {
         this.criteria(criteria)
         return this.withMatcher(matcher)
     }
@@ -318,93 +322,108 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
 
     //--------------------------------------------
 
-    fun equal(criteria: Any?): M {
+    fun equal(criteria: P?): M {
         return eq(criteria)
     }
 
-    fun eq(criteria: Any?): M {
+    fun eq(criteria: P?): M {
         return withMatcher(criteria, PathMatcher.EQ)
     }
 
-    fun notEqual(criteria: Any?): M {
+    fun notEqual(criteria: P?): M {
         return ne(criteria)
     }
 
-    fun ne(criteria: Any?): M {
+    fun ne(criteria: P?): M {
         return withMatcher(criteria, PathMatcher.NE)
     }
 
-    fun <Y : Comparable<Y>?> gt(criteria: Y): M {
+    fun gt(criteria: P): M {
         return withMatcher(criteria, PathMatcher.GT)
     }
 
-    fun <Y : Comparable<Y>?> ge(criteria: Y): M {
+    fun ge(criteria: P): M {
         return withMatcher(criteria, PathMatcher.GE)
     }
 
-    fun <Y : Comparable<Y>?> lt(criteria: Y): M {
+    fun lt(criteria: P): M {
         return withMatcher(criteria, PathMatcher.LT)
     }
 
-    fun <Y : Comparable<Y>?> le(criteria: Y): M {
+    fun le(criteria: P): M {
         return withMatcher(criteria, PathMatcher.LE)
     }
 
-    fun <Y : Comparable<Y>> between(first: Y, second: Y): M {
-        return withMatcher(BetweenValue(first, second), PathMatcher.BETWEEN)
+    fun between(first: P, second: P): M {
+        this.criteria2 = second
+        return withMatcher(first, PathMatcher.BETWEEN)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun like(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.LIKE)
+        return withMatcher(criteria as P?, PathMatcher.LIKE)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun starting(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.STARTING)
+        return withMatcher(criteria as P?, PathMatcher.STARTING)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun ending(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.ENDING)
+        return withMatcher(criteria as P?, PathMatcher.ENDING)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun containing(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.CONTAINING)
+        return withMatcher(criteria as P?, PathMatcher.CONTAINING)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun notStarting(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.NOT_STARTING)
+        return withMatcher(criteria as P?, PathMatcher.NOT_STARTING)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun notEnding(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.NOT_ENDING)
+        return withMatcher(criteria as P?, PathMatcher.NOT_ENDING)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun notContaining(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.NOT_CONTAINING)
+        return withMatcher(criteria as P?, PathMatcher.NOT_CONTAINING)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun notLike(criteria: String?): M {
-        return withMatcher(criteria, PathMatcher.NOT_LIKE)
+        return withMatcher(criteria as P?, PathMatcher.NOT_LIKE)
+    }
+
+    fun `in`(vararg criteria: P): M {
+        this.isSetCriteria = true
+        this.criterias = criteria.toList()
+        return this.withMatcher(PathMatcher.IN)
+    }
+
+    fun `in`(criterias: Collection<P>): M {
+        this.isSetCriteria = true
+        this.criterias = criterias
+        return this.withMatcher(PathMatcher.IN)
     }
 
     @SafeVarargs
-    fun <E> `in`(vararg criteria: E): M {
-        return withMatcher(listOf(*criteria), PathMatcher.IN)
+    fun notIn(vararg criteria: P): M {
+        this.isSetCriteria = true
+        this.criterias = criteria.toList()
+        return this.withMatcher(PathMatcher.NOT_IN)
     }
 
-    fun `in`(criteria: Collection<*>?): M {
-        return withMatcher(criteria, PathMatcher.IN)
+    fun notIn(criterias: Collection<P>): M {
+        this.isSetCriteria = true
+        this.criterias = criterias
+        return this.withMatcher(PathMatcher.NOT_IN)
     }
 
-    @SafeVarargs
-    fun <E> notIn(vararg criteria: E): M {
-        return withMatcher(listOf(*criteria), PathMatcher.NOT_IN)
-    }
-
-    fun notIn(criteria: Collection<*>?): M {
-        return withMatcher(criteria, PathMatcher.NOT_IN)
-    }
-
-    internal class BetweenValue<Y : Comparable<Y>?>(val first: Y, val second: Y)
     companion object {
         private val log = LoggerFactory.getLogger(SpecPath::class.java)
 

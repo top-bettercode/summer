@@ -82,10 +82,6 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return new ${type.shortName}(SpecMatcherMode.ANY, probe);"
         }
 
-        val pathType =
-                JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
-                        entityType, type
-                )
         val matcherType =
                 JavaType("top.bettercode.summer.data.jpa.query.PathMatcher")
         val existMethodNames = arrayOf(
@@ -95,7 +91,10 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         val primaryKeyMethodName = if (primaryKeyName in existMethodNames) "${primaryKeyName}Field" else primaryKeyName
         val remark = if (isCompositePrimaryKey) "${remarks}主键" else primaryKey.remark
         val paramRemark = if (isCompositePrimaryKey) "@param $primaryKeyName 主键" else primaryKey.paramRemark
-        method(primaryKeyMethodName, pathType) {
+        method(primaryKeyMethodName, JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
+                primaryKeyType,
+                entityType, type
+        )) {
             javadoc {
                 +"/**"
                 +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
@@ -156,7 +155,10 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             primaryKeys.forEach {
                 val methodName =
                         if (it.javaName == "spec") "specField" else it.javaName
-                method(methodName, pathType) {
+                method(methodName, JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
+                        it.javaType,
+                        entityType, type
+                )) {
                     javadoc {
                         +"/**"
                         +" * @return ${it.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
@@ -217,7 +219,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         otherColumns.forEach {
             val javaName = if (it.javaName in existMethodNames) "${it.javaName}Field" else it.javaName
-            method(javaName, pathType) {
+            method(javaName, JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(it.javaType, entityType, type)) {
                 javadoc {
                     +"/**"
                     +" * @return ${it.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"

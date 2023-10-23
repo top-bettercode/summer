@@ -6,7 +6,9 @@ import top.bettercode.summer.data.jpa.query.SpecMatcher;
 import top.bettercode.summer.data.jpa.query.SpecMatcherMode;
 import top.bettercode.summer.data.jpa.query.SpecPath;
 
-/** 后台用户 SpecMatcher */
+/**
+ * 后台用户 SpecMatcher
+ */
 public class UserMatcher extends SpecMatcher<User, UserMatcher> {
 
   private static final long serialVersionUID = 1L;
@@ -54,7 +56,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
   /**
    * @return 主键 相关Matcher
    */
-  public SpecPath<User, UserMatcher> id() {
+  public SpecPath<Integer, User, UserMatcher> id() {
     return super.path("id");
   }
 
@@ -68,7 +70,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
   }
 
   /**
-   * @param id 主键
+   * @param id      主键
    * @param matcher PathMatcher
    * @return 主键 相关Matcher
    */
@@ -80,7 +82,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
   /**
    * @return 用户名称 相关Matcher
    */
-  public SpecPath<User, UserMatcher> firstName() {
+  public SpecPath<String, User, UserMatcher> firstName() {
     return super.path("firstName");
   }
 
@@ -103,7 +105,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
 
   /**
    * @param firstName 用户名称
-   * @param matcher PathMatcher
+   * @param matcher   PathMatcher
    * @return 用户名称 相关Matcher
    */
   public UserMatcher firstName(String firstName, PathMatcher matcher) {
@@ -114,7 +116,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
   /**
    * @return 用户名称 相关Matcher
    */
-  public SpecPath<User, UserMatcher> lastName() {
+  public SpecPath<String, User, UserMatcher> lastName() {
     return super.path("lastName");
   }
 
@@ -129,7 +131,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
 
   /**
    * @param lastName 用户名称
-   * @param matcher PathMatcher
+   * @param matcher  PathMatcher
    * @return 用户名称 相关Matcher
    */
   public UserMatcher lastName(String lastName, PathMatcher matcher) {
@@ -140,7 +142,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
   /**
    * @return 版本号 相关Matcher
    */
-  public SpecPath<User, UserMatcher> version() {
+  public SpecPath<Integer, User, UserMatcher> version() {
     return super.path("version");
   }
 
@@ -166,7 +168,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
   /**
    * @return 逻辑删除 相关Matcher
    */
-  public SpecPath<User, UserMatcher> deleted() {
+  public SpecPath<Boolean, User, UserMatcher> deleted() {
     return super.path("deleted");
   }
 
@@ -192,7 +194,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
   /**
    * @return 修改时间 相关Matcher
    */
-  public SpecPath<User, UserMatcher> lastModifiedDate() {
+  public SpecPath<LocalDateTime, User, UserMatcher> lastModifiedDate() {
     return super.path("lastModifiedDate");
   }
 
@@ -207,7 +209,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
 
   /**
    * @param lastModifiedDate 修改时间 默认值：CURRENT_TIMESTAMP
-   * @param matcher PathMatcher
+   * @param matcher          PathMatcher
    * @return 修改时间 相关Matcher
    */
   public UserMatcher lastModifiedDate(LocalDateTime lastModifiedDate, PathMatcher matcher) {

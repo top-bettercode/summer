@@ -323,7 +323,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll34() {
         val spec = DefaultSpecMatcher.matching<User?>().equal("id", carterId)
-                .containing("firstName", " Cart ").path("firstName").trim()
+                .containing("firstName", " Cart ").path<String>("firstName").trim()
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(spec)
         System.err.println(json(all, true))
@@ -332,10 +332,10 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll35() {
         val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> = DefaultSpecMatcher.matching<User?>()
-                .path("lastName").containing("Beauford")
+                .path<String>("lastName").containing("Beauford")
                 .any { specMatcher: DefaultSpecMatcher<User?> ->
                     specMatcher.equal("id", carterId)
-                            .containing("firstName", " Cart ").path("firstName").trim()
+                            .containing("firstName", " Cart ").path<String>("firstName").trim()
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)
@@ -345,10 +345,10 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll351() {
         val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> = DefaultSpecMatcher.matching<User?>()
-                .path("lastName").containing("Beauford")
+                .path<String>("lastName").containing("Beauford")
                 .all { specMatcher: DefaultSpecMatcher<User?> ->
                     specMatcher.equal("id", carterId)
-                            .containing("firstName", " Cart ").path("firstName").trim()
+                            .containing("firstName", " Cart ").path<String>("firstName").trim()
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)

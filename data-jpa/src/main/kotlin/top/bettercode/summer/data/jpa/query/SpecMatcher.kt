@@ -8,7 +8,6 @@ import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
-import top.bettercode.summer.data.jpa.query.SpecPath.BetweenValue
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
@@ -62,7 +61,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
             val predicate = it.toPredicate(root, criteriaBuilder)
             if (predicate != null) {
                 predicates.add(predicate)
-            } else if (it is SpecPath<*, *>) {
+            } else if (it is SpecPath<*, *, *>) {
                 if (idAttribute != null && it.propertyName == idAttribute?.name) {
                     this.idAttribute = null
                 } else if (versionAttribute != null && it.propertyName == versionAttribute?.name) {
@@ -81,11 +80,11 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         val beanWrapper = DirectFieldAccessFallbackBeanWrapper(probe)
         for (attribute in type.singularAttributes) {
             val currentPath = if (path.isBlank()) attribute.name else path + "." + attribute.name
-            val specPath = path(currentPath)
+            val specPath: SpecPath<Any, T, M> = path(currentPath)
             if (specPath.isIgnored) {
                 continue
             }
-            val attributeValue = try {
+            val attributeValue: Any? = try {
                 beanWrapper.getPropertyValue(attribute.name)
             } catch (e: Exception) {
                 log.debug("获取属性值失败", e)
@@ -120,7 +119,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     override fun createCriteriaUpdate(domainClass: Class<T>, criteriaBuilder: CriteriaBuilder, extJpaSupport: ExtJpaSupport<T>): CriteriaUpdate<T> {
         val criteriaUpdate = criteriaBuilder.createCriteriaUpdate(domainClass)
         criteriaUpdate.from(domainClass)
-        specPredicates.values.filter { it is SpecPath<*, *> }.map { it as SpecPath<T, M> }.forEach {
+        specPredicates.values.filter { it is SpecPath<*, *, *> }.map { it as SpecPath<*, T, M> }.forEach {
             if (it.isSetCriteriaUpdate) {
                 criteriaUpdate[it.propertyName] = it.criteriaUpdate
             }
@@ -138,10 +137,12 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return criteriaUpdate
     }
 
-    fun path(propertyName: String): SpecPath<T, M> {
+    fun <P> path(propertyName: String): SpecPath<P, T, M> {
         Assert.hasText(propertyName, "propertyName can not be blank.")
-        return specPredicates.computeIfAbsent(propertyName
-        ) { s: String -> SpecPath(typed, s) } as SpecPath<T, M>
+        val predicate = specPredicates.computeIfAbsent(propertyName
+        ) { s: String -> return@computeIfAbsent SpecPath<P, T, M>(typed, s) }
+        @Suppress("UNCHECKED_CAST")
+        return predicate as SpecPath<P, T, M>
     }
 
     //--------------------------------------------
@@ -188,32 +189,32 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return this.sortBy(Sort.Direction.DESC, *propertyName)
     }
 
-    fun criteriaUpdate(propertyName: String, criteriaUpdate: Any?): M {
-        return path(propertyName).criteriaUpdate(criteriaUpdate)
+    fun <P> criteriaUpdate(propertyName: String, criteriaUpdate: P?): M {
+        return path<P>(propertyName).criteriaUpdate(criteriaUpdate)
     }
 
-    fun criteria(propertyName: String, criteria: Any?): M {
-        path(propertyName).criteria(criteria)
+    fun <P> criteria(propertyName: String, criteria: P?): M {
+        path<P>(propertyName).criteria(criteria)
         return typed
     }
 
-    fun criteria(propertyName: String, criteria: Any?, matcher: PathMatcher): M {
-        return path(propertyName).criteria(criteria).withMatcher(matcher)
+    fun <P> criteria(propertyName: String, criteria: P?, matcher: PathMatcher): M {
+        return path<P>(propertyName).criteria(criteria).withMatcher(matcher)
     }
 
-    fun equal(propertyName: String, criteria: Any?): M {
-        return eq(propertyName, criteria)
+    fun <P> equal(propertyName: String, criteria: P?): M {
+        return eq<P>(propertyName, criteria)
     }
 
-    fun eq(propertyName: String, criteria: Any?): M {
+    fun <P> eq(propertyName: String, criteria: P?): M {
         return criteria(propertyName, criteria, PathMatcher.EQ)
     }
 
-    fun notEqual(propertyName: String, criteria: Any?): M {
+    fun <P> notEqual(propertyName: String, criteria: P?): M {
         return ne(propertyName, criteria)
     }
 
-    fun ne(propertyName: String, criteria: Any?): M {
+    fun <P> ne(propertyName: String, criteria: P?): M {
         return criteria(propertyName, criteria, PathMatcher.NE)
     }
 
@@ -233,11 +234,8 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return criteria(propertyName, criteria, PathMatcher.LE)
     }
 
-    fun <Y : Comparable<Y>?> between(
-            propertyName: String, first: Y,
-            second: Y
-    ): M {
-        return criteria(propertyName, BetweenValue(first, second), PathMatcher.BETWEEN)
+    fun <Y : Comparable<Y>?> between(propertyName: String, first: Y, second: Y): M {
+        return path<Y>(propertyName).between(first, second)
     }
 
     fun like(propertyName: String, criteria: String?): M {
@@ -272,22 +270,20 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return criteria(propertyName, criteria, PathMatcher.NOT_LIKE)
     }
 
-    @SafeVarargs
     fun <E> `in`(propertyName: String, vararg criteria: E): M {
-        return criteria(propertyName, listOf(*criteria), PathMatcher.IN)
+        return path<E>(propertyName).`in`(*criteria)
     }
 
-    fun `in`(propertyName: String, criteria: Collection<*>?): M {
-        return criteria(propertyName, criteria, PathMatcher.IN)
+    fun <E> `in`(propertyName: String, criteria: Collection<E>): M {
+        return path<E>(propertyName).`in`(criteria)
     }
 
-    @SafeVarargs
     fun <E> notIn(propertyName: String, vararg criteria: E): M {
-        return criteria(propertyName, listOf(*criteria), PathMatcher.NOT_IN)
+        return path<E>(propertyName).notIn(*criteria)
     }
 
-    fun notIn(propertyName: String, criteria: Collection<*>?): M {
-        return criteria(propertyName, criteria, PathMatcher.NOT_IN)
+    fun <E> notIn(propertyName: String, criteria: Collection<E>): M {
+        return path<E>(propertyName).notIn(criteria)
     }
 
     companion object {
