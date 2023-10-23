@@ -151,7 +151,6 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     }
 
     fun all(other: T?, matcher: (M) -> M): M {
-
         val constructor = typed.javaClass.declaredConstructors[0]
         constructor.isAccessible = true
         @Suppress("UNCHECKED_CAST") val otherMatcher = constructor.newInstance(SpecMatcherMode.ALL, other) as M
