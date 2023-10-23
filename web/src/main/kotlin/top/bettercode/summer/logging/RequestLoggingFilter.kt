@@ -276,7 +276,7 @@ class RequestLoggingFilter(
             httpStatusCode: Int,
             uri: String
     ): Boolean {
-        return if (properties.isForceRecord || handler != null ||
+        return if (log.isTraceEnabled || properties.isForceRecord || handler != null ||
                 include(properties.includePath, uri)
                 || includeError(error) || !HttpStatus.valueOf(httpStatusCode).is2xxSuccessful
         ) {
