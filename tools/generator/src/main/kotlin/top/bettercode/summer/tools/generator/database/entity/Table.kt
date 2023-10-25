@@ -43,7 +43,7 @@ data class Table(
         /**
          * 编码排序
          */
-        var collate: String = "utf8mb4_unicode_ci",
+        var collate: String? = null,
         var file: File? = null
 ) {
 
@@ -91,7 +91,7 @@ data class Table(
 
         if (tableName != other.tableName) return false
         if (engine != other.engine) return false
-        if (collate != other.collate) return false
+        if (collate != null && other.collate != null && collate != other.collate) return false
         if (remarks != other.remarks) return false
         if (physicalOptions != other.physicalOptions) return false
         if (primaryKeyNames.toSet() != other.primaryKeyNames.toSet()) return false
@@ -103,7 +103,6 @@ data class Table(
     override fun hashCode(): Int {
         var result = tableName.hashCode()
         result = 31 * result + engine.hashCode()
-        result = 31 * result + collate.hashCode()
         result = 31 * result + remarks.hashCode()
         result = 31 * result + physicalOptions.hashCode()
         result = 31 * result + primaryKeyNames.hashCode()
@@ -122,8 +121,8 @@ data class Table(
     /**
      * 编码
      */
-    val charset: String
-        get() = collate.substringBefore("_")
+    val charset: String?
+        get() = collate?.substringBefore("_")
 
     private var _database: DatabaseConfiguration? = null
     var database: DatabaseConfiguration

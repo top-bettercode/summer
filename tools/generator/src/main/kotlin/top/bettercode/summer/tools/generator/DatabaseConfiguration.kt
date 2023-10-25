@@ -78,7 +78,7 @@ data class DatabaseConfiguration(
     /**
      * 编码排序
      */
-    var collate: String = "utf8mb4_unicode_ci"
+    var collate: String? = null
 
     /**
      * 排除表

@@ -128,7 +128,6 @@ class GeneratorPlugin : Plugin<Project> {
 
                         database.collate = (properties["collate"]
                                 ?: findGeneratorProperty(project, "collate"))?.toString()
-                                ?: "utf8mb4_unicode_ci"
 
                         database.excludeTableNames = (properties["excludeTableNames"]
                                 ?: findGeneratorProperty(project, "excludeTableNames")

@@ -17,11 +17,10 @@ object MysqlToDDL : ToDDL() {
         if (!database.offline && notOnlyComment) {
             //schema default collate change
             database.use {
-                val defaultCollate = getSchemaDefaultCollate()
-                if (defaultCollate != database.collate) {
+                if (database.collate != null && getSchemaDefaultCollate() != database.collate) {
                     out.appendLine("$commentPrefix schema default collate change")
                     //alter database testffjp character set utf8mb4 collate utf8mb4_unicode_ci;
-                    out.appendLine("ALTER DATABASE ${database.schema} CHARACTER SET ${database.collate.substringBefore("_")} COLLATE ${database.collate};")
+                    out.appendLine("ALTER DATABASE ${database.schema} CHARACTER SET ${database.collate!!.substringBefore("_")} COLLATE ${database.collate};")
                     out.appendLine()
                 }
             }
@@ -122,7 +121,7 @@ object MysqlToDDL : ToDDL() {
                         }
                         if (notOnlyComment) {
                             //charset change
-                            if (oldTable.charset != table.charset || oldTable.collate != table.collate) {
+                            if (oldTable.collate != null && table.collate != null && (oldTable.charset != table.charset || oldTable.collate != table.collate)) {
                                 lines.add("ALTER TABLE $schema$quote$tableName$quote CONVERT TO CHARACTER SET ${table.charset} COLLATE ${table.collate};")
                             }
                         }
@@ -160,7 +159,7 @@ object MysqlToDDL : ToDDL() {
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendLine(") DEFAULT CHARSET = ${table.charset} COLLATE ${table.collate} ${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
+        pw.appendLine(")${if (table.collate.isNullOrBlank()) "" else " DEFAULT CHARSET = ${table.charset} COLLATE ${table.collate}"}${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
             table.remarks.replace("\\", "\\\\")
         }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine}" else ""};")
 
