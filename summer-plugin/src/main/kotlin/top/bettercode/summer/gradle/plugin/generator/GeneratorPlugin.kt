@@ -122,8 +122,8 @@ class GeneratorPlugin : Plugin<Project> {
                                 ?: findGeneratorProperty(project, "include-schema"))?.toString()?.toBoolean()
                                 ?: true
 
-                        database.dbSecurityRepository = (properties["dbSecurityRepository"]
-                                ?: findGeneratorProperty(project, "dbSecurityRepository"))?.toString()?.toBoolean()
+                        database.storeToken = (properties["storeToken"]
+                                ?: findGeneratorProperty(project, "storeToken"))?.toString()?.toBoolean()
                                 ?: database.isDefault
 
                         database.collate = (properties["collate"]

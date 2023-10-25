@@ -73,7 +73,7 @@ data class DatabaseConfiguration(
     /**
      * 权限使用数据库表
      */
-    var dbSecurityRepository: Boolean = true
+    var storeToken: Boolean = true
 
     /**
      * 编码排序
