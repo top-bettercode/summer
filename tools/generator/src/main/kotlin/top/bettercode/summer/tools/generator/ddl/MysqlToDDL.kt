@@ -14,6 +14,7 @@ object MysqlToDDL : ToDDL() {
         out.appendLine()
         val notOnlyCollate = !database.extension.setting("onlyCollate", "false").toBoolean()
         val notOnlyComment = !database.extension.setting("onlyComment", "false").toBoolean()
+        val noComment = !database.extension.setting("noComment", "false").toBoolean()
         if (!database.offline && notOnlyComment) {
             //schema default collate change
             database.use {
@@ -83,9 +84,19 @@ object MysqlToDDL : ToDDL() {
                                     val oldColumn = oldColumns.find { it.columnName == columnName }!!
                                     if (column != oldColumn) {
                                         if (notOnlyComment) {
-                                            lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
-                                                columnDef(column, quote)
-                                            } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
+                                            if (noComment) {
+                                                val columnDef = columnDef(column, quote)
+                                                val oldColumnDef = columnDef(oldColumn, quote)
+                                                if (columnDef != oldColumnDef) {
+                                                    lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
+                                                        columnDef(column, quote)
+                                                    } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
+                                                }
+                                            } else {
+                                                lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
+                                                    columnDef(column, quote)
+                                                } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
+                                            }
                                             updateFk(schema, column, oldColumn, lines, tableName)
                                         } else if (oldColumn.remarks != column.remarks) {
                                             lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
