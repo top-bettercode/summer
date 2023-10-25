@@ -278,6 +278,21 @@ open class Generator {
         ).apply(apply)
     }
 
+    fun file(
+            file: File,
+            overwrite: Boolean = true,
+            sourceSet: SourceSet = SourceSet.ROOT,
+            directorySet: DirectorySet = DirectorySet.RESOURCES,
+            apply: FileUnit.() -> Unit = { }
+    ): FileUnit {
+        return FileUnit(
+                file = file,
+                overwrite = overwrite,
+                sourceSet = sourceSet,
+                directorySet = directorySet
+        ).apply(apply)
+    }
+
     fun properties(
             name: String,
             overwrite: Boolean = false,

@@ -89,7 +89,7 @@ object PumlConverter {
                         engine = null
                         isField = false
                     } else if (!line.startsWith("'")) {
-                        val lineDef = line.trim().split("--")
+                        val lineDef = line.trim().replace(" +".toRegex(), " ").split("--")
                         val fieldDef = lineDef[0]
                         val fieldDefs = fieldDef.split(" +: +".toRegex())
                         val columnName = fieldDefs[0].trim()
