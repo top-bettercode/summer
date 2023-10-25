@@ -37,7 +37,7 @@ class PlantUML(
 
     override fun call() {
         if (tableName.length > 30) {
-            log.warn("数据库对象的命名最好不要超过 30 个字符")
+            log.warn("表名：${tableName} 最好不要超过 30 个字符")
         }
         destFile.appendText(
                 """entity $tableName {
@@ -50,7 +50,7 @@ class PlantUML(
             if (it is Column) {
                 val isPrimary = it.isPrimary
                 if (it.columnName.length > 30) {
-                    log.warn("数据库对象的命名最好不要超过 30 个字符")
+                    log.warn("${table.tableName}表字段名：${it.columnName} 最好不要超过 30 个字符")
                 }
                 var prettyRemarks = it.prettyRemarks
                 if (prettyRemarks.isBlank()) {
