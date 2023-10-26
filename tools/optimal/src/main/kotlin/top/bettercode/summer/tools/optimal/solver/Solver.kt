@@ -12,10 +12,8 @@ abstract class Solver {
 
     /**
      * 极小的正数，用于描述误差，大于 转换为 大于等于
-     *
-     * copt 支持1e-5
      */
-    var epsilon: Double = 1e-5
+    var epsilon: Double = 1e-6
 
     abstract fun boolVarArray(count: Int): Array<IVar>
     abstract fun intVarArray(count: Int, lb: Double, ub: Double): Array<IVar>

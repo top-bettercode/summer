@@ -23,6 +23,9 @@ class COPTSolver @JvmOverloads constructor(
         val env = copt.Envr()
         this.model = env.createModel(name)
         this.model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
+        this.model.setDblParam(copt.DblParam.FeasTol, epsilon / 10)
+        this.model.setDblParam(copt.DblParam.DualTol, epsilon / 10)
+        this.model.setDblParam(copt.DblParam.IntTol, epsilon / 10)
     }
 
     private fun expr(`var`: IVar) =
