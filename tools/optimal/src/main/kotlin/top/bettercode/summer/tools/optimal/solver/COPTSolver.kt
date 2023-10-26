@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
  * https://github.com/COPT-Public/COPT-Release
  *
  * No license found. The size is limited to 2000 variables and 2000 constraints
+ * No license found. LP size is limited to 10000 variables and 10000 constraints
  *
  * @author Peter Wu
  */
@@ -87,6 +88,16 @@ class COPTSolver @JvmOverloads constructor(
         this.model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
     }
 
+    override fun gt(vars: Array<IVar>, lb: IVar) {
+        val expr = copt.Expr()
+        for (v in vars) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        expr.addConstant(-epsilon)
+        val size = numConstraints()
+        this.model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+    }
+
     override fun le(vars: Array<IVar>, ub: Double) {
         val expr = copt.Expr()
         for (v in vars) {
@@ -101,6 +112,16 @@ class COPTSolver @JvmOverloads constructor(
         for (v in vars) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
+        val size = numConstraints()
+        this.model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+    }
+
+    override fun lt(vars: Array<IVar>, ub: IVar) {
+        val expr = copt.Expr()
+        for (v in vars) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        expr.addConstant(epsilon)
         val size = numConstraints()
         this.model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
     }
@@ -159,6 +180,13 @@ class COPTSolver @JvmOverloads constructor(
         this.model.addConstr(expr(`var`), copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
     }
 
+    override fun gt(`var`: IVar, lb: IVar) {
+        val size = numConstraints()
+        val expr = expr(`var`)
+        expr.addConstant(-epsilon)
+        this.model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+    }
+
     override fun le(`var`: IVar, ub: Double) {
         val size = numConstraints()
         this.model.addConstr(expr(`var`), copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
@@ -167,6 +195,13 @@ class COPTSolver @JvmOverloads constructor(
     override fun le(`var`: IVar, ub: IVar) {
         val size = numConstraints()
         this.model.addConstr(expr(`var`), copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+    }
+
+    override fun lt(`var`: IVar, ub: IVar) {
+        val size = numConstraints()
+        val expr = expr(`var`)
+        expr.addConstant(epsilon)
+        this.model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
     }
 
     override fun eq(`var`: IVar, value: Double) {
@@ -364,27 +399,16 @@ class COPTSolver @JvmOverloads constructor(
         model.addSos(varArry, weights, copt.Consts.SOS_TYPE1)
     }
 
-    /**
-     * 最多n个非零变量
-     */
-    override fun atMost(vars: Array<IVar>, n: Int) {
-        val count = vars.size
-        if (n >= count) {
-            return
-        }
-        val boolVarArray = boolVarArray(count)
-        eq(boolVarArray, n.toDouble())
-        for (i in vars.indices) {
-            eqIfNot(vars[i], 0.0, boolVarArray[i])
-        }
-    }
-
     override fun setTimeLimit(seconds: Int) {
         this.model.setDblParam("TimeLimit", seconds.toDouble())
     }
 
     override fun solve() {
         this.model.solve()
+    }
+
+    override fun clear() {
+        this.model.clear()
     }
 
     override fun isOptimal(): Boolean {

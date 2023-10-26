@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.optimal
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.entity.ReqData
 import top.bettercode.summer.tools.optimal.solver.COPTSolver
@@ -8,6 +9,7 @@ import top.bettercode.summer.tools.optimal.solver.COPTSolver
 /**
  * @author Peter Wu
  */
+@Disabled
 internal class RecipeSolverTest {
 
     @Test

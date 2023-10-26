@@ -11,7 +11,7 @@ class MPObjectiveVar(private val _delegate: MPObjective,
 ) : IVar {
 
     override val value: Double
-        get() = _delegate.value()
+        get() = IVar.convertDecimal(_delegate.value())
 
     override fun coeff(coeff: Double): IVar {
         return MPObjectiveVar(_delegate, coeff)

@@ -11,7 +11,7 @@ class MPVar(private val _delegate: MPVariable,
 ) : IVar {
 
     override val value: Double
-        get() = _delegate.solutionValue()
+        get() = IVar.convertDecimal(_delegate.solutionValue())
 
     override fun coeff(coeff: Double): IVar {
         return MPVar(_delegate, coeff)

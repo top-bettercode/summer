@@ -11,7 +11,7 @@ class COPTExprVar(private val _delegate: Expr,
 ) : IVar {
 
     override val value: Double
-        get() = _delegate.evaluate()
+        get() = IVar.convertDecimal(_delegate.evaluate())
 
     override fun coeff(coeff: Double): IVar {
         return COPTExprVar(_delegate, coeff)

@@ -12,7 +12,7 @@ class COPTVar(private val _delegate: Var,
 ) : IVar {
 
     override val value: Double
-        get() = _delegate.get(DblInfo.Value)
+        get() = IVar.convertDecimal(_delegate.get(DblInfo.Value))
 
     override fun coeff(coeff: Double): IVar {
         return COPTVar(_delegate, coeff)
