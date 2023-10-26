@@ -738,7 +738,7 @@ class SolverTest {
     fun atLeastOne(solver: Solver): Int {
         val numVarArray = solver.numVarArray(20, 0.0, 1000.0)
         solver.atLeastOne(numVarArray)
-        solver.maximize(numVarArray)
+        solver.minimize(numVarArray)
         solver.solve()
         numVarArray.forEach {
             System.err.println(it.value)
@@ -763,7 +763,7 @@ class SolverTest {
     fun atLeast(solver: Solver): Int {
         val numVarArray = solver.numVarArray(20, 0.0, 1000.0)
         solver.atLeast(numVarArray, 5)
-        solver.maximize(numVarArray)
+        solver.minimize(numVarArray)
         solver.solve()
         numVarArray.forEach {
             System.err.println(it.value)
