@@ -19,21 +19,32 @@ class SolverTest {
 
     @Test
     fun ge() {
-        ge(solver = cbcSolver)
-        ge(solver = scipSolver)
-        ge(solver = coptSolver)
-        ge(solver = cbcSolver, `var` = true)
-        ge(solver = scipSolver, `var` = true)
-        ge(solver = coptSolver, `var` = true)
-        ge(solver = cbcSolver, array = true)
-        ge(solver = scipSolver, array = true)
-        ge(solver = coptSolver, array = true)
-        ge(solver = cbcSolver, array = true, `var` = true)
-        ge(solver = scipSolver, array = true, `var` = true)
-        ge(solver = coptSolver, array = true, `var` = true)
+        val ge = ge(solver = cbcSolver)
+        val ge1 = ge(solver = scipSolver)
+        val ge2 = ge(solver = coptSolver)
+        val ge3 = ge(solver = cbcSolver, `var` = true)
+        val ge4 = ge(solver = scipSolver, `var` = true)
+        val ge5 = ge(solver = coptSolver, `var` = true)
+        val ge6 = ge(solver = cbcSolver, array = true)
+        val ge7 = ge(solver = scipSolver, array = true)
+        val ge8 = ge(solver = coptSolver, array = true)
+        val ge9 = ge(solver = cbcSolver, array = true, `var` = true)
+        val ge10 = ge(solver = scipSolver, array = true, `var` = true)
+        val ge11 = ge(solver = coptSolver, array = true, `var` = true)
+        Assertions.assertEquals(ge, ge1)
+        Assertions.assertEquals(ge, ge2)
+        Assertions.assertEquals(ge, ge3)
+        Assertions.assertEquals(ge, ge4)
+        Assertions.assertEquals(ge, ge5)
+        Assertions.assertEquals(ge, ge6)
+        Assertions.assertEquals(ge, ge7)
+        Assertions.assertEquals(ge, ge8)
+        Assertions.assertEquals(ge, ge9)
+        Assertions.assertEquals(ge, ge10)
+        Assertions.assertEquals(ge, ge11)
     }
 
-    fun ge(solver: Solver, array: Boolean = false, `var`: Boolean = false) {
+    fun ge(solver: Solver, array: Boolean = false, `var`: Boolean = false): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         if (array) {
             if (`var`)
@@ -51,25 +62,37 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertEquals(10.0, numVar1.value)
+        return numVar1.value
     }
 
     @Test
     fun gt() {
-        gt(solver = cbcSolver)
-        gt(solver = scipSolver)
-        gt(solver = coptSolver)
-        gt(solver = cbcSolver, `var` = true)
-        gt(solver = scipSolver, `var` = true)
-        gt(solver = coptSolver, `var` = true)
-        gt(solver = cbcSolver, array = true)
-        gt(solver = scipSolver, array = true)
-        gt(solver = coptSolver, array = true)
-        gt(solver = cbcSolver, array = true, `var` = true)
-        gt(solver = scipSolver, array = true, `var` = true)
-        gt(solver = coptSolver, array = true, `var` = true)
+        val gt = gt(solver = cbcSolver)
+        val gt1 = gt(solver = scipSolver)
+        val gt2 = gt(solver = coptSolver)
+        val gt3 = gt(solver = cbcSolver, `var` = true)
+        val gt4 = gt(solver = scipSolver, `var` = true)
+        val gt6 = gt(solver = coptSolver, `var` = true)
+        val gt5 = gt(solver = cbcSolver, array = true)
+        val gt7 = gt(solver = scipSolver, array = true)
+        val gt8 = gt(solver = coptSolver, array = true)
+        val gt9 = gt(solver = cbcSolver, array = true, `var` = true)
+        val gt10 = gt(solver = scipSolver, array = true, `var` = true)
+        val gt11 = gt(solver = coptSolver, array = true, `var` = true)
+        Assertions.assertEquals(gt, gt1)
+        Assertions.assertEquals(gt, gt2)
+        Assertions.assertEquals(gt, gt3)
+        Assertions.assertEquals(gt, gt4)
+        Assertions.assertEquals(gt, gt5)
+        Assertions.assertEquals(gt, gt6)
+        Assertions.assertEquals(gt, gt7)
+        Assertions.assertEquals(gt, gt8)
+        Assertions.assertEquals(gt, gt9)
+        Assertions.assertEquals(gt, gt10)
+        Assertions.assertEquals(gt, gt11)
     }
 
-    fun gt(solver: Solver, array: Boolean = false, `var`: Boolean = false) {
+    fun gt(solver: Solver, array: Boolean = false, `var`: Boolean = false): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         if (array) {
             if (`var`)
@@ -87,26 +110,38 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value > 10.0)
+        return numVar1.value
     }
 
     @Test
     fun le() {
-        le(solver = cbcSolver)
-        le(solver = scipSolver)
-        le(solver = coptSolver)
-        le(solver = cbcSolver, `var` = true)
-        le(solver = scipSolver, `var` = true)
-        le(solver = coptSolver, `var` = true)
-        le(solver = cbcSolver, array = true)
-        le(solver = scipSolver, array = true)
-        le(solver = coptSolver, array = true)
-        le(solver = cbcSolver, array = true, `var` = true)
-        le(solver = scipSolver, array = true, `var` = true)
-        le(solver = coptSolver, array = true, `var` = true)
+        val le = le(solver = cbcSolver)
+        val le1 = le(solver = scipSolver)
+        val le2 = le(solver = coptSolver)
+        val le3 = le(solver = cbcSolver, `var` = true)
+        val le4 = le(solver = scipSolver, `var` = true)
+        val le5 = le(solver = coptSolver, `var` = true)
+        val le6 = le(solver = cbcSolver, array = true)
+        val le7 = le(solver = scipSolver, array = true)
+        val le8 = le(solver = coptSolver, array = true)
+        val le9 = le(solver = cbcSolver, array = true, `var` = true)
+        val le10 = le(solver = scipSolver, array = true, `var` = true)
+        val le11 = le(solver = coptSolver, array = true, `var` = true)
+        Assertions.assertEquals(le, le1)
+        Assertions.assertEquals(le, le2)
+        Assertions.assertEquals(le, le3)
+        Assertions.assertEquals(le, le4)
+        Assertions.assertEquals(le, le5)
+        Assertions.assertEquals(le, le6)
+        Assertions.assertEquals(le, le7)
+        Assertions.assertEquals(le, le8)
+        Assertions.assertEquals(le, le9)
+        Assertions.assertEquals(le, le10)
+        Assertions.assertEquals(le, le11)
     }
 
 
-    fun le(solver: Solver, array: Boolean = false, `var`: Boolean = false) {
+    fun le(solver: Solver, array: Boolean = false, `var`: Boolean = false): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         if (array) {
             if (`var`)
@@ -124,25 +159,37 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertEquals(10.0, numVar1.value)
+        return numVar1.value
     }
 
     @Test
     fun lt() {
-        lt(solver = cbcSolver)
-        lt(solver = scipSolver)
-        lt(solver = coptSolver)
-        lt(solver = cbcSolver, `var` = true)
-        lt(solver = scipSolver, `var` = true)
-        lt(solver = coptSolver, `var` = true)
-        lt(solver = cbcSolver, array = true)
-        lt(solver = scipSolver, array = true)
-        lt(solver = coptSolver, array = true)
-        lt(solver = cbcSolver, array = true, `var` = true)
-        lt(solver = scipSolver, array = true, `var` = true)
-        lt(solver = coptSolver, array = true, `var` = true)
+        val lt = lt(solver = cbcSolver)
+        val lt1 = lt(solver = scipSolver)
+        val lt2 = lt(solver = coptSolver)
+        val lt3 = lt(solver = cbcSolver, `var` = true)
+        val lt4 = lt(solver = scipSolver, `var` = true)
+        val lt5 = lt(solver = coptSolver, `var` = true)
+        val lt6 = lt(solver = cbcSolver, array = true)
+        val lt7 = lt(solver = scipSolver, array = true)
+        val lt8 = lt(solver = coptSolver, array = true)
+        val lt9 = lt(solver = cbcSolver, array = true, `var` = true)
+        val lt10 = lt(solver = scipSolver, array = true, `var` = true)
+        val lt11 = lt(solver = coptSolver, array = true, `var` = true)
+        Assertions.assertEquals(lt, lt1)
+        Assertions.assertEquals(lt, lt2)
+        Assertions.assertEquals(lt, lt3)
+        Assertions.assertEquals(lt, lt4)
+        Assertions.assertEquals(lt, lt5)
+        Assertions.assertEquals(lt, lt6)
+        Assertions.assertEquals(lt, lt7)
+        Assertions.assertEquals(lt, lt8)
+        Assertions.assertEquals(lt, lt9)
+        Assertions.assertEquals(lt, lt10)
+        Assertions.assertEquals(lt, lt11)
     }
 
-    fun lt(solver: Solver, array: Boolean = false, `var`: Boolean = false) {
+    fun lt(solver: Solver, array: Boolean = false, `var`: Boolean = false): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         if (array) {
             if (`var`)
@@ -160,26 +207,38 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value < 10.0)
+        return numVar1.value
     }
 
     @Test
     fun eq() {
-        eq(solver = cbcSolver)
-        eq(solver = scipSolver)
-        eq(solver = coptSolver)
-        eq(solver = cbcSolver, `var` = true)
-        eq(solver = scipSolver, `var` = true)
-        eq(solver = coptSolver, `var` = true)
-        eq(solver = cbcSolver, array = true)
-        eq(solver = scipSolver, array = true)
-        eq(solver = coptSolver, array = true)
-        eq(solver = cbcSolver, array = true, `var` = true)
-        eq(solver = scipSolver, array = true, `var` = true)
-        eq(solver = coptSolver, array = true, `var` = true)
+        val eq = eq(solver = cbcSolver)
+        val eq1 = eq(solver = scipSolver)
+        val eq2 = eq(solver = coptSolver)
+        val eq3 = eq(solver = cbcSolver, `var` = true)
+        val eq4 = eq(solver = scipSolver, `var` = true)
+        val eq5 = eq(solver = coptSolver, `var` = true)
+        val eq6 = eq(solver = cbcSolver, array = true)
+        val eq7 = eq(solver = scipSolver, array = true)
+        val eq8 = eq(solver = coptSolver, array = true)
+        val eq9 = eq(solver = cbcSolver, array = true, `var` = true)
+        val eq10 = eq(solver = scipSolver, array = true, `var` = true)
+        val eq11 = eq(solver = coptSolver, array = true, `var` = true)
+        Assertions.assertEquals(eq, eq1)
+        Assertions.assertEquals(eq, eq2)
+        Assertions.assertEquals(eq, eq3)
+        Assertions.assertEquals(eq, eq4)
+        Assertions.assertEquals(eq, eq5)
+        Assertions.assertEquals(eq, eq6)
+        Assertions.assertEquals(eq, eq7)
+        Assertions.assertEquals(eq, eq8)
+        Assertions.assertEquals(eq, eq9)
+        Assertions.assertEquals(eq, eq10)
+        Assertions.assertEquals(eq, eq11)
     }
 
 
-    fun eq(solver: Solver, array: Boolean = false, `var`: Boolean = false) {
+    fun eq(solver: Solver, array: Boolean = false, `var`: Boolean = false): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         if (array) {
             if (`var`)
@@ -202,25 +261,37 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertEquals(10.0, numVar1.value)
+        return numVar1.value
     }
 
     @Test
     fun between() {
-        between(solver = cbcSolver)
-        between(solver = scipSolver)
-        between(solver = coptSolver)
-        between(solver = cbcSolver, `var` = true)
-        between(solver = scipSolver, `var` = true)
-        between(solver = coptSolver, `var` = true)
-        between(solver = cbcSolver, array = true)
-        between(solver = scipSolver, array = true)
-        between(solver = coptSolver, array = true)
-        between(solver = cbcSolver, array = true, `var` = true)
-        between(solver = scipSolver, array = true, `var` = true)
-        between(solver = coptSolver, array = true, `var` = true)
+        val bt = between(solver = cbcSolver)
+        val bt1 = between(solver = scipSolver)
+        val bt2 = between(solver = coptSolver)
+        val bt3 = between(solver = cbcSolver, `var` = true)
+        val bt4 = between(solver = scipSolver, `var` = true)
+        val bt5 = between(solver = coptSolver, `var` = true)
+        val bt6 = between(solver = cbcSolver, array = true)
+        val bt7 = between(solver = scipSolver, array = true)
+        val bt8 = between(solver = coptSolver, array = true)
+        val bt9 = between(solver = cbcSolver, array = true, `var` = true)
+        val bt10 = between(solver = scipSolver, array = true, `var` = true)
+        val bt11 = between(solver = coptSolver, array = true, `var` = true)
+        Assertions.assertEquals(bt, bt1)
+        Assertions.assertEquals(bt, bt2)
+        Assertions.assertEquals(bt, bt3)
+        Assertions.assertEquals(bt, bt4)
+        Assertions.assertEquals(bt, bt5)
+        Assertions.assertEquals(bt, bt6)
+        Assertions.assertEquals(bt, bt7)
+        Assertions.assertEquals(bt, bt8)
+        Assertions.assertEquals(bt, bt9)
+        Assertions.assertEquals(bt, bt10)
+        Assertions.assertEquals(bt, bt11)
     }
 
-    fun between(solver: Solver, array: Boolean = false, `var`: Boolean = false) {
+    fun between(solver: Solver, array: Boolean = false, `var`: Boolean = false): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         if (array) {
             if (`var`)
@@ -247,16 +318,19 @@ class SolverTest {
         Assertions.assertTrue(numVar1.value >= 10.0)
         Assertions.assertTrue(numVar1.value <= 20.0)
         Assertions.assertTrue(numVar1.value == 20.0)
+        return numVar1.value
     }
 
     @Test
     fun geIf() {
-        geIf(solver = cbcSolver)
-        geIf(solver = scipSolver)
-        geIf(solver = coptSolver)
+        val ge = geIf(solver = cbcSolver)
+        val ge1 = geIf(solver = scipSolver)
+        val ge2 = geIf(solver = coptSolver)
+        Assertions.assertEquals(ge, ge1)
+        Assertions.assertEquals(ge, ge2)
     }
 
-    fun geIf(solver: Solver) {
+    fun geIf(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.geIf(numVar1, 10.0, boolVar)
@@ -272,16 +346,19 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value >= 10.0)
+        return numVar1.value
     }
 
     @Test
     fun geIfNot() {
-        geIfNot(solver = cbcSolver)
-        geIfNot(solver = scipSolver)
-        geIfNot(solver = coptSolver)
+        val ge = geIfNot(solver = cbcSolver)
+        val ge1 = geIfNot(solver = scipSolver)
+        val ge2 = geIfNot(solver = coptSolver)
+        Assertions.assertEquals(ge, ge1)
+        Assertions.assertEquals(ge, ge2)
     }
 
-    fun geIfNot(solver: Solver) {
+    fun geIfNot(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.geIfNot(numVar1, 10.0, boolVar)
@@ -297,17 +374,20 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value >= 10.0)
+        return numVar1.value
     }
 
     @Test
     fun gtIf() {
-        gtIf(solver = cbcSolver)
-        gtIf(solver = scipSolver)
-        gtIf(solver = coptSolver)
+        val gt = gtIf(solver = cbcSolver)
+        val gt1 = gtIf(solver = scipSolver)
+        val gt2 = gtIf(solver = coptSolver)
+        Assertions.assertEquals(gt, gt1)
+        Assertions.assertEquals(gt, gt2)
     }
 
 
-    fun gtIf(solver: Solver) {
+    fun gtIf(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.gtIf(numVar1, 10.0, boolVar)
@@ -323,16 +403,19 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value > 10.0)
+        return numVar1.value
     }
 
     @Test
     fun gtIfNot() {
-        gtIfNot(solver = cbcSolver)
-        gtIfNot(solver = scipSolver)
-        gtIfNot(solver = coptSolver)
+        val gt = gtIfNot(solver = cbcSolver)
+        val gt1 = gtIfNot(solver = scipSolver)
+        val gt2 = gtIfNot(solver = coptSolver)
+        Assertions.assertEquals(gt, gt1)
+        Assertions.assertEquals(gt, gt2)
     }
 
-    fun gtIfNot(solver: Solver) {
+    fun gtIfNot(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.gtIfNot(numVar1, 10.0, boolVar)
@@ -348,17 +431,20 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value > 10.0)
+        return numVar1.value
     }
 
     @Test
     fun leIf() {
-        leIf(solver = coptSolver)
-        leIf(solver = scipSolver)
-        leIf(solver = cbcSolver)
+        val le = leIf(solver = coptSolver)
+        val le1 = leIf(solver = scipSolver)
+        val le2 = leIf(solver = cbcSolver)
+        Assertions.assertEquals(le, le1)
+        Assertions.assertEquals(le, le2)
     }
 
 
-    fun leIf(solver: Solver) {
+    fun leIf(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.leIf(numVar1, 10.0, boolVar)
@@ -374,16 +460,19 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value <= 10.0)
+        return numVar1.value
     }
 
     @Test
     fun leIfNot() {
-        leIfNot(solver = coptSolver)
-        leIfNot(solver = scipSolver)
-        leIfNot(solver = cbcSolver)
+        val le = leIfNot(solver = coptSolver)
+        val le1 = leIfNot(solver = scipSolver)
+        val le2 = leIfNot(solver = cbcSolver)
+        Assertions.assertEquals(le, le1)
+        Assertions.assertEquals(le, le2)
     }
 
-    fun leIfNot(solver: Solver) {
+    fun leIfNot(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.leIfNot(numVar1, 10.0, boolVar)
@@ -399,17 +488,20 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value <= 10.0)
+        return numVar1.value
     }
 
     @Test
     fun ltIf() {
-        ltIf(solver = coptSolver)
-        ltIf(solver = scipSolver)
-        ltIf(solver = cbcSolver)
+        val lt = ltIf(solver = coptSolver)
+        val lt1 = ltIf(solver = scipSolver)
+        val lt2 = ltIf(solver = cbcSolver)
+        Assertions.assertEquals(lt, lt1)
+        Assertions.assertEquals(lt, lt2)
     }
 
 
-    fun ltIf(solver: Solver) {
+    fun ltIf(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.ltIf(numVar1, 10.0, boolVar)
@@ -425,16 +517,19 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value < 10.0)
+        return numVar1.value
     }
 
     @Test
     fun ltIfNot() {
-        ltIfNot(solver = coptSolver)
-        ltIfNot(solver = scipSolver)
-        ltIfNot(solver = cbcSolver)
+        val lt = ltIfNot(solver = coptSolver)
+        val lt1 = ltIfNot(solver = scipSolver)
+        val lt2 = ltIfNot(solver = cbcSolver)
+        Assertions.assertEquals(lt, lt1)
+        Assertions.assertEquals(lt, lt2)
     }
 
-    fun ltIfNot(solver: Solver) {
+    fun ltIfNot(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.ltIfNot(numVar1, 10.0, boolVar)
@@ -450,16 +545,19 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value < 10.0)
+        return numVar1.value
     }
 
     @Test
     fun eqIf() {
-        eqIf(solver = coptSolver)
-        eqIf(solver = scipSolver)
-        eqIf(solver = cbcSolver)
+        val eq = eqIf(solver = coptSolver)
+        val eq1 = eqIf(solver = scipSolver)
+        val eq2 = eqIf(solver = cbcSolver)
+        Assertions.assertEquals(eq, eq1)
+        Assertions.assertEquals(eq, eq2)
     }
 
-    fun eqIf(solver: Solver) {
+    fun eqIf(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.eqIf(numVar1, 10.0, boolVar)
@@ -475,16 +573,19 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value == 10.0)
+        return numVar1.value
     }
 
     @Test
     fun eqIfNot() {
-        eqIfNot(solver = coptSolver)
-        eqIfNot(solver = scipSolver)
-        eqIfNot(solver = cbcSolver)
+        val eq = eqIfNot(solver = coptSolver)
+        val eq1 = eqIfNot(solver = scipSolver)
+        val eq2 = eqIfNot(solver = cbcSolver)
+        Assertions.assertEquals(eq, eq1)
+        Assertions.assertEquals(eq, eq2)
     }
 
-    fun eqIfNot(solver: Solver) {
+    fun eqIfNot(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.eqIfNot(numVar1, 10.0, boolVar)
@@ -500,16 +601,19 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value == 10.0)
+        return numVar1.value
     }
 
     @Test
     fun betweenIf() {
-        betweenIf(solver = coptSolver)
-        betweenIf(solver = scipSolver)
-        betweenIf(solver = cbcSolver)
+        val bt = betweenIf(solver = coptSolver)
+        val bt1 = betweenIf(solver = scipSolver)
+        val bt2 = betweenIf(solver = cbcSolver)
+        Assertions.assertEquals(bt, bt1)
+        Assertions.assertEquals(bt, bt2)
     }
 
-    fun betweenIf(solver: Solver) {
+    fun betweenIf(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.betweenIf(numVar1, 10.0, 20.0, boolVar)
@@ -534,16 +638,19 @@ class SolverTest {
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value in 10.0..20.0)
         Assertions.assertTrue(numVar1.value == 20.0)
+        return numVar1.value
     }
 
     @Test
     fun betweenIfNot() {
-        betweenIfNot(solver = coptSolver)
-        betweenIfNot(solver = scipSolver)
-        betweenIfNot(solver = cbcSolver)
+        val bt = betweenIfNot(solver = coptSolver)
+        val bt1 = betweenIfNot(solver = scipSolver)
+        val bt2 = betweenIfNot(solver = cbcSolver)
+        Assertions.assertEquals(bt, bt1)
+        Assertions.assertEquals(bt, bt2)
     }
 
-    fun betweenIfNot(solver: Solver) {
+    fun betweenIfNot(solver: Solver): Double {
         val numVar1 = solver.numVar(0.0, 100.0)
         val boolVar = solver.boolVar()
         solver.betweenIfNot(numVar1, 10.0, 20.0, boolVar)
@@ -568,16 +675,19 @@ class SolverTest {
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(numVar1.value in 10.0..20.0)
         Assertions.assertTrue(numVar1.value == 20.0)
+        return numVar1.value
     }
 
     @Test
     fun atMostOne() {
-        atMostOne(solver = cbcSolver)
-        atMostOne(solver = scipSolver)
-        atMostOne(solver = coptSolver)
+        val m = atMostOne(solver = cbcSolver)
+        val m1 = atMostOne(solver = scipSolver)
+        val m2 = atMostOne(solver = coptSolver)
+        Assertions.assertEquals(m, m1)
+        Assertions.assertEquals(m, m2)
     }
 
-    fun atMostOne(solver: Solver) {
+    fun atMostOne(solver: Solver): Int {
         val numVarArray = solver.numVarArray(20, 0.0, 1000.0)
         solver.atMostOne(numVarArray)
         solver.maximize(numVarArray)
@@ -589,16 +699,19 @@ class SolverTest {
         System.err.println(size)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertEquals(size, 1)
+        return size
     }
 
     @Test
     fun atMost() {
-        atMost(solver = cbcSolver)
-        atMost(solver = scipSolver)
-        atMost(solver = coptSolver)
+        val m = atMost(solver = cbcSolver)
+        val m1 = atMost(solver = scipSolver)
+        val m2 = atMost(solver = coptSolver)
+        Assertions.assertEquals(m, m1)
+        Assertions.assertEquals(m, m2)
     }
 
-    fun atMost(solver: Solver) {
+    fun atMost(solver: Solver): Int {
         val numVarArray = solver.numVarArray(20, 0.0, 1000.0)
         solver.atMost(numVarArray, 5)
         solver.maximize(numVarArray)
@@ -610,16 +723,19 @@ class SolverTest {
         System.err.println(size)
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertEquals(size, 5)
+        return size
     }
 
     @Test
     fun atLeastOne() {
-        atLeastOne(solver = cbcSolver)
-        atLeastOne(solver = scipSolver)
-        atLeastOne(solver = coptSolver)
+        val l = atLeastOne(solver = cbcSolver)
+        val l1 = atLeastOne(solver = scipSolver)
+        val l2 = atLeastOne(solver = coptSolver)
+        Assertions.assertEquals(l, l1)
+        Assertions.assertEquals(l, l2)
     }
 
-    fun atLeastOne(solver: Solver) {
+    fun atLeastOne(solver: Solver): Int {
         val numVarArray = solver.numVarArray(20, 0.0, 1000.0)
         solver.atLeastOne(numVarArray)
         solver.maximize(numVarArray)
@@ -632,16 +748,19 @@ class SolverTest {
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(size >= 1)
         Assertions.assertTrue(size <= 20)
+        return size
     }
 
     @Test
     fun atLeast() {
-        atLeast(solver = cbcSolver)
-        atLeast(solver = scipSolver)
-        atLeast(solver = coptSolver)
+        val l = atLeast(solver = cbcSolver)
+        val l1 = atLeast(solver = scipSolver)
+        val l2 = atLeast(solver = coptSolver)
+        Assertions.assertEquals(l, l1)
+        Assertions.assertEquals(l, l2)
     }
 
-    fun atLeast(solver: Solver) {
+    fun atLeast(solver: Solver): Int {
         val numVarArray = solver.numVarArray(20, 0.0, 1000.0)
         solver.atLeast(numVarArray, 5)
         solver.maximize(numVarArray)
@@ -654,6 +773,7 @@ class SolverTest {
         Assertions.assertTrue(solver.isOptimal(), "result:" + solver.getResultStatus())
         Assertions.assertTrue(size >= 5)
         Assertions.assertTrue(size <= 20)
+        return size
     }
 
     @Test
