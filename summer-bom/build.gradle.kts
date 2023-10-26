@@ -83,6 +83,8 @@ dependencies {
         api("com.jcraft:jsch:0.1.55")
         api("com.google.ortools:ortools-java:9.7.2996")
 
+        api("io.swagger:swagger-annotations:1.6.12")
+
         api(project(":env"))
         api(project(":web"))
         api(project(":data-jpa"))

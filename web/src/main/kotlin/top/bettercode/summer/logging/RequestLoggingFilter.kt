@@ -222,10 +222,10 @@ class RequestLoggingFilter(
             val collectionName = AnnotatedElementUtils.getMergedAnnotation(
                     handler.beanType,
                     RequestMapping::class.java
-            )?.name ?: ""
-            val operationName = handler.getMethodAnnotation(RequestMapping::class.java)?.name ?: ""
-            val requestLoggingAnno =
-                    AnnotatedUtils.getAnnotation(handler, RequestLogging::class.java)
+            )?.name ?: SwaggerUtil.getCollectionName(handler) ?: ""
+            val operationName = handler.getMethodAnnotation(RequestMapping::class.java)?.name
+                    ?: SwaggerUtil.getOperationName(handler) ?: ""
+            val requestLoggingAnno = AnnotatedUtils.getAnnotation(handler, RequestLogging::class.java)
 
             var encryptHeaders = requestLoggingAnno?.encryptHeaders
             if (encryptHeaders.isNullOrEmpty()) {

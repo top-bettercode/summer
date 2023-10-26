@@ -16,6 +16,8 @@ dependencies {
 
     api("org.springframework.boot:spring-boot-starter-actuator")
 
+    compileOnly("io.swagger:swagger-annotations")
+
     compileOnly("javax.mail:mail")
 
     compileOnly("net.logstash.logback:logstash-logback-encoder")
