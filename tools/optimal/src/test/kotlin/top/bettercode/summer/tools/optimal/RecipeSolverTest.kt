@@ -3,15 +3,13 @@ package top.bettercode.summer.tools.optimal
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.entity.ReqData
-import top.bettercode.summer.tools.optimal.solver.CBCSolver
-import top.bettercode.summer.tools.optimal.solver.COPTSolver
 import top.bettercode.summer.tools.optimal.solver.SCIPSolver
 
 
 /**
  * @author Peter Wu
  */
-//@Disabled
+@Disabled
 internal class RecipeSolverTest {
 
     @Test

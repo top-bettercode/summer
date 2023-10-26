@@ -1,13 +1,13 @@
 package top.bettercode.summer.tools.optimal
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.beans.BeanUtils
 import top.bettercode.summer.tools.optimal.entity.*
 import top.bettercode.summer.tools.optimal.result.Recipe
 import top.bettercode.summer.tools.optimal.result.RecipeResult
 import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.beans.BeanUtils
 import java.math.BigDecimal
 
 class RecipeSolver(val solver: Solver) {
@@ -245,7 +245,7 @@ class RecipeSolver(val solver: Solver) {
             val expr2 = solver.sum(conditionVarArry2)
             val value = condition.value.toDouble()
             val value2 = condition2.value.toDouble()
-            solver.geIf(expr, value + solver.epsilon, boolVar)
+            solver.gtIf(expr, value, boolVar)
             solver.leIfNot(expr, value, boolVar)
             solver.geIf(expr2, value2, boolVar)
         }
@@ -342,7 +342,7 @@ class RecipeSolver(val solver: Solver) {
                     if (reqData.isLimitResultMaterials) {
                         materialVarsMap.forEach { (materialName: String, mpVariable: IVar) ->
                             if (useMaterials.contains(materialName)) {
-                                solver.ge(mpVariable, solver.epsilon)
+                                solver.gt(mpVariable, 0.0)
                             } else {
                                 solver.eq(mpVariable, 0.0)
                             }
