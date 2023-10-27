@@ -15,4 +15,6 @@ class SCIPSolver @JvmOverloads constructor(
         /**
          * 变量默认上界
          */
-        dub: Double = 1000.0) : MPExtSolver(type = MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING, name = "SCIPSolver", dlb = dlb, dub = dub)
+        dub: Double = 1000.0,
+        epsilon: Double = 1e-6,
+) : MPExtSolver(type = MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING, dlb = dlb, dub = dub, epsilon = epsilon, name = "SCIPSolver")

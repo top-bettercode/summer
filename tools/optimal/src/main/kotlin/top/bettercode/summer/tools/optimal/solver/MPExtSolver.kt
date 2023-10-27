@@ -15,7 +15,6 @@ open class MPExtSolver @JvmOverloads constructor(
          * OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING
          */
         type: MPSolver.OptimizationProblemType,
-        final override val name: String = "MPSolver",
         /**
          * 变量默认下界
          */
@@ -24,7 +23,10 @@ open class MPExtSolver @JvmOverloads constructor(
         /**
          * 变量默认上界
          */
-        var dub: Double = 1000.0) : Solver() {
+        var dub: Double = 1000.0,
+        final override val epsilon: Double = 1e-6,
+        final override val name: String = "MPSolver"
+) : Solver() {
 
     companion object {
         init {
@@ -84,71 +86,71 @@ open class MPExtSolver @JvmOverloads constructor(
         return MPVar(solver.makeNumVar(lb, ub, "n" + (numVariables + 1)))
     }
 
-    override fun ge(vars: Array<IVar>, lb: Double) {
+    override fun Array<IVar>.ge(lb: Double) {
         val constraint = solver.makeConstraint(lb, Double.POSITIVE_INFINITY)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
     /**
-     * vars>=lb
-     * vars-lb>=0
+     * this>=lb
+     * this-lb>=0
      */
-    override fun ge(vars: Array<IVar>, lb: IVar) {
+    override fun Array<IVar>.ge(lb: IVar) {
         val constraint = solver.makeConstraint(0.0, Double.POSITIVE_INFINITY)
         constraint.setCoefficient(lb.getDelegate(), -lb.coeff)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
-    override fun gt(vars: Array<IVar>, lb: IVar) {
+    override fun Array<IVar>.gt(lb: IVar) {
         val constraint = solver.makeConstraint(epsilon, Double.POSITIVE_INFINITY)
         constraint.setCoefficient(lb.getDelegate(), -lb.coeff)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
-    override fun le(vars: Array<IVar>, ub: Double) {
+    override fun Array<IVar>.le(ub: Double) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, ub)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
     /**
-     *  vars<=ub
-     *  vars-ub<=0
+     *  this<=ub
+     *  this-ub<=0
      */
-    override fun le(vars: Array<IVar>, ub: IVar) {
+    override fun Array<IVar>.le(ub: IVar) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, 0.0)
         constraint.setCoefficient(ub.getDelegate(), -ub.coeff)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
-    override fun lt(vars: Array<IVar>, ub: IVar) {
+    override fun Array<IVar>.lt(ub: IVar) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, -epsilon)
         constraint.setCoefficient(ub.getDelegate(), -ub.coeff)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
-    override fun eq(vars: Array<IVar>, value: Double) {
+    override fun Array<IVar>.eq(value: Double) {
         val constraint = solver.makeConstraint(value, value)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
-    override fun eq(vars: Array<IVar>, value: IVar) {
+    override fun Array<IVar>.eq(value: IVar) {
         val constraint = solver.makeConstraint(0.0, 0.0)
         constraint.setCoefficient(value.getDelegate(), -value.coeff)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
@@ -156,94 +158,85 @@ open class MPExtSolver @JvmOverloads constructor(
     /**
      * 两数之间
      */
-    override fun between(vars: Array<IVar>, lb: Double, ub: Double) {
+    override fun Array<IVar>.between(lb: Double, ub: Double) {
         val constraint = solver.makeConstraint(lb, ub)
-        for (v in vars) {
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
     }
 
     /**
-     * lb<=vars<=ub
-     * vars-lb>=0
-     * vars-ub<=0
+     * lb<=this<=ub
+     * this-lb>=0
+     * this-ub<=0
      */
-    override fun between(vars: Array<IVar>, lb: IVar, ub: IVar) {
-        ge(vars, lb)
-        le(vars, ub)
+    override fun Array<IVar>.between(lb: IVar, ub: IVar) {
+        this.ge(lb)
+        this.le(ub)
     }
 
-    override fun ge(`var`: IVar, lb: Double) {
+    override fun IVar.ge(lb: Double) {
         val constraint = solver.makeConstraint(lb, Double.POSITIVE_INFINITY)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
     }
 
     /**
-     * `var`>=lb
-     * `var`-lb>=0
+     * this>=lb
+     * this-lb>=0
      */
-    override fun ge(`var`: IVar, lb: IVar) {
+    override fun IVar.ge(lb: IVar) {
         val constraint = solver.makeConstraint(0.0, Double.POSITIVE_INFINITY)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
         constraint.setCoefficient(lb.getDelegate(), -lb.coeff)
     }
 
-    override fun gt(`var`: IVar, lb: IVar) {
+    override fun IVar.gt(lb: IVar) {
         val constraint = solver.makeConstraint(epsilon, Double.POSITIVE_INFINITY)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
         constraint.setCoefficient(lb.getDelegate(), -lb.coeff)
     }
 
-    override fun le(`var`: IVar, ub: Double) {
+    override fun IVar.le(ub: Double) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, ub)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
     }
 
     /**
-     * `var`<=ub
+     * this<=ub
      */
-    override fun le(`var`: IVar, ub: IVar) {
+    override fun IVar.le(ub: IVar) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, 0.0)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
         constraint.setCoefficient(ub.getDelegate(), -ub.coeff)
     }
 
-    override fun lt(`var`: IVar, ub: IVar) {
+    override fun IVar.lt(ub: IVar) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, -epsilon)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
         constraint.setCoefficient(ub.getDelegate(), -ub.coeff)
     }
 
-    override fun eq(`var`: IVar, value: Double) {
+    override fun IVar.eq(value: Double) {
         val constraint = solver.makeConstraint(value, value)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
     }
 
-    override fun eq(`var`: IVar, value: IVar) {
+    override fun IVar.eq(value: IVar) {
         val constraint = solver.makeConstraint(0.0, 0.0)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
         constraint.setCoefficient(value.getDelegate(), -value.coeff)
     }
 
-    override fun between(`var`: IVar, lb: Double, ub: Double) {
+    override fun IVar.between(lb: Double, ub: Double) {
         val constraint = solver.makeConstraint(lb, ub)
-        constraint.setCoefficient(`var`.getDelegate(), `var`.coeff)
+        constraint.setCoefficient(this.getDelegate(), this.coeff)
     }
 
-    override fun between(`var`: IVar, lb: IVar, ub: IVar) {
-        ge(`var`, lb)
-        le(`var`, ub)
+    override fun IVar.between(lb: IVar, ub: IVar) {
+        ge(lb)
+        le(ub)
     }
 
-    /**
-     * lb <= dividend/divisor <= ub
-     * `var`2*lb <= `var`1
-     * `var`1    <= `var`2*ub
-     */
-    override fun between(dividend: IVar, divisor: IVar, lb: Double, ub: Double) {
-        le(divisor.coeff(lb), dividend)
-        ge(divisor.coeff(ub), dividend)
-    }
 
     /**
      * <pre>
@@ -259,8 +252,8 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      *
      */
-    override fun geIf(`var`: IVar, value: Double, bool: IVar) {
-        ge(arrayOf(`var`, bool.coeff(-(value - dlb))), dlb)
+    override fun IVar.geIf(value: Double, bool: IVar) {
+        arrayOf(this, bool.coeff(-(value - dlb))).ge(dlb)
     }
 
     /**
@@ -277,8 +270,8 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      *
      */
-    override fun geIfNot(`var`: IVar, value: Double, bool: IVar) {
-        ge(arrayOf(`var`, bool.coeff((value - dlb))), value)
+    override fun IVar.geIfNot(value: Double, bool: IVar) {
+        arrayOf(this, bool.coeff((value - dlb))).ge(value)
     }
 
     /**
@@ -295,8 +288,8 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      *
      */
-    override fun leIf(`var`: IVar, value: Double, bool: IVar) {
-        le(arrayOf(`var`, bool.coeff(-(value - dub))), dub)
+    override fun IVar.leIf(value: Double, bool: IVar) {
+        arrayOf(this, bool.coeff(-(value - dub))).le(dub)
     }
 
     /**
@@ -312,8 +305,8 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      *
      */
-    override fun leIfNot(`var`: IVar, value: Double, bool: IVar) {
-        le(arrayOf(`var`, bool.coeff((value - dub))), value)
+    override fun IVar.leIfNot(value: Double, bool: IVar) {
+        arrayOf(this, bool.coeff((value - dub))).le(value)
     }
 
     /**
@@ -324,9 +317,9 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      * </pre>
      */
-    override fun eqIf(`var`: IVar, value: Double, bool: IVar) {
-        geIf(`var`, value, bool)
-        leIf(`var`, value, bool)
+    override fun IVar.eqIf(value: Double, bool: IVar) {
+        geIf(value, bool)
+        leIf(value, bool)
     }
 
     /**
@@ -337,9 +330,9 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      * </pre>
      */
-    override fun eqIfNot(`var`: IVar, value: Double, bool: IVar) {
-        geIfNot(`var`, value, bool)
-        leIfNot(`var`, value, bool)
+    override fun IVar.eqIfNot(value: Double, bool: IVar) {
+        geIfNot(value, bool)
+        leIfNot(value, bool)
     }
 
     /**
@@ -350,9 +343,9 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      * </pre>
      */
-    override fun betweenIf(`var`: IVar, lb: Double, ub: Double, bool: IVar) {
-        geIf(`var`, lb, bool)
-        leIf(`var`, ub, bool)
+    override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
+        geIf(lb, bool)
+        leIf(ub, bool)
     }
 
 
@@ -364,28 +357,28 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      * </pre>
      */
-    override fun betweenIfNot(`var`: IVar, lb: Double, ub: Double, bool: IVar) {
-        geIfNot(`var`, lb, bool)
-        leIfNot(`var`, ub, bool)
+    override fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar) {
+        geIfNot(lb, bool)
+        leIfNot(ub, bool)
     }
 
-    override fun sum(vars: Array<IVar>): IVar {
+    override fun Array<IVar>.sum(): IVar {
         val numVariables = numVariables()
         val sum = solver.makeNumVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, "n" + (numVariables + 1))
 
         val constraint = solver.makeConstraint(0.0, 0.0)
         constraint.setCoefficient(sum, -1.0)
-        for (i in vars.indices) {
-            val v = vars[i]
+        for (i in this.indices) {
+            val v = this[i]
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
         return MPVar(sum)
     }
 
-    override fun minimize(vars: Array<IVar>): IVar {
+    override fun Array<IVar>.minimize(): IVar {
         val objective = solver.objective()
-        for (i in vars.indices) {
-            val v = vars[i]
+        for (i in this.indices) {
+            val v = this[i]
             objective.setCoefficient(v.getDelegate(), v.coeff)
         }
 
@@ -393,10 +386,10 @@ open class MPExtSolver @JvmOverloads constructor(
         return MPObjectiveVar(objective)
     }
 
-    override fun maximize(vars: Array<IVar>): IVar {
+    override fun Array<IVar>.maximize(): IVar {
         val objective = solver.objective()
-        for (i in vars.indices) {
-            val v = vars[i]
+        for (i in this.indices) {
+            val v = this[i]
             objective.setCoefficient(v.getDelegate(), v.coeff)
         }
 

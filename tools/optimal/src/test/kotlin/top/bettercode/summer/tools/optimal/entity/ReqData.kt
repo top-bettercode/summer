@@ -1,8 +1,5 @@
 package top.bettercode.summer.tools.optimal.entity
 
-import top.bettercode.summer.tools.optimal.*
-import top.bettercode.summer.tools.optimal.form.ComponentsForm
-import top.bettercode.summer.tools.optimal.form.MaterialPriceForm
 import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.core.io.ClassPathResource
@@ -11,6 +8,9 @@ import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
 import top.bettercode.summer.tools.lang.util.FileUtil
+import top.bettercode.summer.tools.optimal.*
+import top.bettercode.summer.tools.optimal.form.ComponentsForm
+import top.bettercode.summer.tools.optimal.form.MaterialPriceForm
 import java.math.BigDecimal
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -29,7 +29,7 @@ class ReqData(
     var minMaterialWeight = 0.0
 
     /** 目标重量，单位KG  */
-    var targetWeight: BigDecimal = BigDecimal.valueOf(1000)
+    var targetWeight: Double = 1000.0
 
     /** 原料进料口最大数，-1不限  */
     var numMaxMaterials = -1
@@ -120,7 +120,7 @@ class ReqData(
             for (materialNameFragment in materialReq!!.keys) {
                 val limit = materialReq!![materialNameFragment]!!
                 val min = limit.min
-                if (min != null && min > BigDecimal.ZERO) {
+                if (min != null && min > 0.0) {
                     if (materialName!!.contains(materialNameFragment)) {
                         return@Predicate true
                     }
@@ -132,7 +132,7 @@ class ReqData(
                 val limit = componentTarget[index]!!
                 if (limit.materials != null) {
                     val value = m.components?.get(index)?.value
-                    if (value != null && value > BigDecimal.ZERO) {
+                    if (value != null && value > 0.0) {
                         return@Predicate limit.materials!!.contains(materialName)
                     }
                 }
@@ -250,7 +250,7 @@ class ReqData(
         for (materialNameFragment in materialReq!!.keys) {
             val limit = materialReq!![materialNameFragment]
             val min = limit?.min
-            if (min != null && min > BigDecimal.ZERO) {
+            if (min != null && min > 0.0) {
                 materialNameFragments.add(materialNameFragment)
             }
         }
@@ -446,8 +446,8 @@ class ReqData(
                         .getCellAsNumber(index)
                         .orElseThrow { RuntimeException("找不到用量") }
                 val limit = materialReq!!.computeIfAbsent(materialNameFragment) { _: String? -> Limit() }
-                limit.min = (minUse)
-                limit.max = (maxUse)
+                limit.min = minUse.toDouble()
+                limit.max = maxUse.toDouble()
             }
             index++
         }
@@ -523,58 +523,58 @@ class ReqData(
                         ExcelField.of("大类", ComponentsForm::category),
                         ExcelField.of("原料名称", ComponentsForm::name),
                         ExcelField.of("原料形态", ComponentsForm::form),
-                        ExcelField.of("氮含量", ComponentsForm::nitrogen).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("磷含量", ComponentsForm::phosphorus).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("钾含量", ComponentsForm::potassium).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("氯离子", ComponentsForm::chlorine).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("水分", ComponentsForm::water).defaultValue(BigDecimal.ZERO),
+                        ExcelField.of("氮含量", ComponentsForm::nitrogen).defaultValue(0.0),
+                        ExcelField.of("磷含量", ComponentsForm::phosphorus).defaultValue(0.0),
+                        ExcelField.of("钾含量", ComponentsForm::potassium).defaultValue(0.0),
+                        ExcelField.of("氯离子", ComponentsForm::chlorine).defaultValue(0.0),
+                        ExcelField.of("水分", ComponentsForm::water).defaultValue(0.0),
                         ExcelField.of("水溶磷率", ComponentsForm::waterSolublePhosphorusRate)
-                                .defaultValue(BigDecimal.ZERO),
+                                .defaultValue(0.0),
                         ExcelField.of("水溶磷", ComponentsForm::waterSolublePhosphorus)
-                                .defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("硝态氮", ComponentsForm::nitrateNitrogen).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("硼", ComponentsForm::boron).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("锌", ComponentsForm::zinc).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("锰", ComponentsForm::manganese).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("铜", ComponentsForm::copper).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("铁", ComponentsForm::iron).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("钼", ComponentsForm::molybdenum).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("镁", ComponentsForm::magnesium).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("硫", ComponentsForm::sulfur).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("钙", ComponentsForm::calcium).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("有机质（%）", ComponentsForm::organicMatter).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("腐植酸", ComponentsForm::humicAcid).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("黄腐酸", ComponentsForm::fulvicAcid).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("活性菌", ComponentsForm::activeBacteria).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("硅", ComponentsForm::silicon).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标23", ComponentsForm::index23).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标24", ComponentsForm::index24).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标25", ComponentsForm::index25).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标26", ComponentsForm::index26).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标27", ComponentsForm::index27).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标28", ComponentsForm::index28).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标29", ComponentsForm::index29).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标30", ComponentsForm::index30).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标31", ComponentsForm::index31).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标32", ComponentsForm::index32).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标33", ComponentsForm::index33).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标34", ComponentsForm::index34).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标35", ComponentsForm::index35).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标36", ComponentsForm::index36).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标37", ComponentsForm::index37).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标38", ComponentsForm::index38).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标39", ComponentsForm::index39).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标40", ComponentsForm::index40).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标41", ComponentsForm::index41).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标42", ComponentsForm::index42).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标43", ComponentsForm::index43).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标44", ComponentsForm::index44).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标45", ComponentsForm::index45).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标46", ComponentsForm::index46).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标47", ComponentsForm::index47).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标48", ComponentsForm::index48).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标49", ComponentsForm::index49).defaultValue(BigDecimal.ZERO),
-                        ExcelField.of("指标50", ComponentsForm::index50).defaultValue(BigDecimal.ZERO))
+                                .defaultValue(0.0),
+                        ExcelField.of("硝态氮", ComponentsForm::nitrateNitrogen).defaultValue(0.0),
+                        ExcelField.of("硼", ComponentsForm::boron).defaultValue(0.0),
+                        ExcelField.of("锌", ComponentsForm::zinc).defaultValue(0.0),
+                        ExcelField.of("锰", ComponentsForm::manganese).defaultValue(0.0),
+                        ExcelField.of("铜", ComponentsForm::copper).defaultValue(0.0),
+                        ExcelField.of("铁", ComponentsForm::iron).defaultValue(0.0),
+                        ExcelField.of("钼", ComponentsForm::molybdenum).defaultValue(0.0),
+                        ExcelField.of("镁", ComponentsForm::magnesium).defaultValue(0.0),
+                        ExcelField.of("硫", ComponentsForm::sulfur).defaultValue(0.0),
+                        ExcelField.of("钙", ComponentsForm::calcium).defaultValue(0.0),
+                        ExcelField.of("有机质（%）", ComponentsForm::organicMatter).defaultValue(0.0),
+                        ExcelField.of("腐植酸", ComponentsForm::humicAcid).defaultValue(0.0),
+                        ExcelField.of("黄腐酸", ComponentsForm::fulvicAcid).defaultValue(0.0),
+                        ExcelField.of("活性菌", ComponentsForm::activeBacteria).defaultValue(0.0),
+                        ExcelField.of("硅", ComponentsForm::silicon).defaultValue(0.0),
+                        ExcelField.of("指标23", ComponentsForm::index23).defaultValue(0.0),
+                        ExcelField.of("指标24", ComponentsForm::index24).defaultValue(0.0),
+                        ExcelField.of("指标25", ComponentsForm::index25).defaultValue(0.0),
+                        ExcelField.of("指标26", ComponentsForm::index26).defaultValue(0.0),
+                        ExcelField.of("指标27", ComponentsForm::index27).defaultValue(0.0),
+                        ExcelField.of("指标28", ComponentsForm::index28).defaultValue(0.0),
+                        ExcelField.of("指标29", ComponentsForm::index29).defaultValue(0.0),
+                        ExcelField.of("指标30", ComponentsForm::index30).defaultValue(0.0),
+                        ExcelField.of("指标31", ComponentsForm::index31).defaultValue(0.0),
+                        ExcelField.of("指标32", ComponentsForm::index32).defaultValue(0.0),
+                        ExcelField.of("指标33", ComponentsForm::index33).defaultValue(0.0),
+                        ExcelField.of("指标34", ComponentsForm::index34).defaultValue(0.0),
+                        ExcelField.of("指标35", ComponentsForm::index35).defaultValue(0.0),
+                        ExcelField.of("指标36", ComponentsForm::index36).defaultValue(0.0),
+                        ExcelField.of("指标37", ComponentsForm::index37).defaultValue(0.0),
+                        ExcelField.of("指标38", ComponentsForm::index38).defaultValue(0.0),
+                        ExcelField.of("指标39", ComponentsForm::index39).defaultValue(0.0),
+                        ExcelField.of("指标40", ComponentsForm::index40).defaultValue(0.0),
+                        ExcelField.of("指标41", ComponentsForm::index41).defaultValue(0.0),
+                        ExcelField.of("指标42", ComponentsForm::index42).defaultValue(0.0),
+                        ExcelField.of("指标43", ComponentsForm::index43).defaultValue(0.0),
+                        ExcelField.of("指标44", ComponentsForm::index44).defaultValue(0.0),
+                        ExcelField.of("指标45", ComponentsForm::index45).defaultValue(0.0),
+                        ExcelField.of("指标46", ComponentsForm::index46).defaultValue(0.0),
+                        ExcelField.of("指标47", ComponentsForm::index47).defaultValue(0.0),
+                        ExcelField.of("指标48", ComponentsForm::index48).defaultValue(0.0),
+                        ExcelField.of("指标49", ComponentsForm::index49).defaultValue(0.0),
+                        ExcelField.of("指标50", ComponentsForm::index50).defaultValue(0.0))
 
         // 读取 Excel
         var componentsForms = ExcelImport.of(ClassPathResource("配方报价管理系统需求清单.xlsx").inputStream)
@@ -716,7 +716,7 @@ class ReqData(
             val costMap: MutableMap<String, Long> = HashMap()
             for (i in 1 until costLines.size) {
                 val split = costLines[i].split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                costMap[split[0]] = BigDecimal(split[1]).toLong()
+                costMap[split[0]] = split[1].toLong()
             }
             return costMap
         }
@@ -752,7 +752,7 @@ class ReqData(
         const val vitriol = "硫酸"
 
         /** 液氨 对应 碳铵 使用量比例  */
-        val la2CAUseRatio = BigDecimal("4.7647")
+        val la2CAUseRatio = 4.7647
         fun isNeedLiquidAmmon(materialNameFragment: String?, materialName: String?): Boolean {
             val needLiquidAmmon: Boolean = when (materialNameFragment) {
                 "硫酸" -> {

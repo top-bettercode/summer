@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver.`var`
 
 import copt.Expr
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 
 /**
  *
@@ -11,7 +12,7 @@ class COPTExprVar(private val _delegate: Expr,
 ) : IVar {
 
     override val value: Double
-        get() = IVar.convertDecimal(_delegate.evaluate())
+        get() = _delegate.evaluate().scale()
 
     override fun coeff(coeff: Double): IVar {
         return COPTExprVar(_delegate, coeff)

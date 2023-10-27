@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.optimal.form
 
-import java.math.BigDecimal
 
 /**
  * 原料成份: 总养分 氮含量 磷含量 钾含量 氯离子 水分 水溶磷率 水溶磷 硝态氮 硼 锌 锰 铜 铁 钼 镁 硫 钙 有机质（%） 腐植酸 黄腐酸 活性菌 硅 指标23 指标24 指标25
@@ -19,101 +18,101 @@ class ComponentsForm {
     var form: String? = null
 
     // 氮含量
-    var nitrogen: BigDecimal? = null
+    var nitrogen: Double? = null
 
     // 磷含量
-    var phosphorus: BigDecimal? = null
+    var phosphorus: Double? = null
 
     // 钾含量
-    var potassium: BigDecimal? = null
+    var potassium: Double? = null
 
     // 氯离子
-    var chlorine: BigDecimal? = null
+    var chlorine: Double? = null
 
     // 水分
-    var water: BigDecimal? = null
+    var water: Double? = null
 
     // 水溶磷率
-    var waterSolublePhosphorusRate: BigDecimal? = null
+    var waterSolublePhosphorusRate: Double? = null
 
     // 水溶磷
-    var waterSolublePhosphorus: BigDecimal? = null
+    var waterSolublePhosphorus: Double? = null
 
     // 硝态氮
-    var nitrateNitrogen: BigDecimal? = null
+    var nitrateNitrogen: Double? = null
 
     // 硼
-    var boron: BigDecimal? = null
+    var boron: Double? = null
 
     // 锌
-    var zinc: BigDecimal? = null
+    var zinc: Double? = null
 
     // 锰
-    var manganese: BigDecimal? = null
+    var manganese: Double? = null
 
     // 铜
-    var copper: BigDecimal? = null
+    var copper: Double? = null
 
     // 铁
-    var iron: BigDecimal? = null
+    var iron: Double? = null
 
     // 钼
-    var molybdenum: BigDecimal? = null
+    var molybdenum: Double? = null
 
     // 镁
-    var magnesium: BigDecimal? = null
+    var magnesium: Double? = null
 
     // 硫
-    var sulfur: BigDecimal? = null
+    var sulfur: Double? = null
 
     // 钙
-    var calcium: BigDecimal? = null
+    var calcium: Double? = null
 
     // 有机质（%）
-    var organicMatter: BigDecimal? = null
+    var organicMatter: Double? = null
 
     // 腐植酸
-    var humicAcid: BigDecimal? = null
+    var humicAcid: Double? = null
 
     // 黄腐酸
-    var fulvicAcid: BigDecimal? = null
+    var fulvicAcid: Double? = null
 
     // 活性菌
-    var activeBacteria: BigDecimal? = null
+    var activeBacteria: Double? = null
 
     // 硅
-    var silicon: BigDecimal? = null
+    var silicon: Double? = null
 
     // 指标23-50，类型和名称根据需要修改
-    var index23: BigDecimal? = null
-    var index24: BigDecimal? = null
-    var index25: BigDecimal? = null
-    var index26: BigDecimal? = null
-    var index27: BigDecimal? = null
-    var index28: BigDecimal? = null
-    var index29: BigDecimal? = null
-    var index30: BigDecimal? = null
-    var index31: BigDecimal? = null
-    var index32: BigDecimal? = null
-    var index33: BigDecimal? = null
-    var index34: BigDecimal? = null
-    var index35: BigDecimal? = null
-    var index36: BigDecimal? = null
-    var index37: BigDecimal? = null
-    var index38: BigDecimal? = null
-    var index39: BigDecimal? = null
-    var index40: BigDecimal? = null
-    var index41: BigDecimal? = null
-    var index42: BigDecimal? = null
-    var index43: BigDecimal? = null
-    var index44: BigDecimal? = null
-    var index45: BigDecimal? = null
-    var index46: BigDecimal? = null
-    var index47: BigDecimal? = null
-    var index48: BigDecimal? = null
-    var index49: BigDecimal? = null
-    var index50: BigDecimal? = null
-    val totalNutrient: BigDecimal
+    var index23: Double? = null
+    var index24: Double? = null
+    var index25: Double? = null
+    var index26: Double? = null
+    var index27: Double? = null
+    var index28: Double? = null
+    var index29: Double? = null
+    var index30: Double? = null
+    var index31: Double? = null
+    var index32: Double? = null
+    var index33: Double? = null
+    var index34: Double? = null
+    var index35: Double? = null
+    var index36: Double? = null
+    var index37: Double? = null
+    var index38: Double? = null
+    var index39: Double? = null
+    var index40: Double? = null
+    var index41: Double? = null
+    var index42: Double? = null
+    var index43: Double? = null
+    var index44: Double? = null
+    var index45: Double? = null
+    var index46: Double? = null
+    var index47: Double? = null
+    var index48: Double? = null
+    var index49: Double? = null
+    var index50: Double? = null
+    val totalNutrient: Double
         // --------------------------------------------
-        get() = nitrogen!!.add(phosphorus).add(potassium)
+        get() = nitrogen!! + phosphorus!! + potassium!!
 }

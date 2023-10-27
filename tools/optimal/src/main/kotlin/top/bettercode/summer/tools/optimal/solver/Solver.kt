@@ -1,6 +1,8 @@
 package top.bettercode.summer.tools.optimal.solver
 
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
+import kotlin.math.abs
+import kotlin.math.log10
 
 /**
  *
@@ -13,110 +15,120 @@ abstract class Solver {
     /**
      * 极小的正数，用于描述误差，大于 转换为 大于等于
      */
-    var epsilon: Double = 1e-6
+    open val epsilon: Double = 1e-6
 
+    /**
+     * 小数点后的位数
+     */
+    val scale get() = abs(log10(epsilon)).toInt()
     abstract fun boolVarArray(count: Int): Array<IVar>
     abstract fun intVarArray(count: Int, lb: Double, ub: Double): Array<IVar>
     abstract fun numVarArray(count: Int, lb: Double, ub: Double): Array<IVar>
     abstract fun boolVar(): IVar
     abstract fun intVar(lb: Double, ub: Double): IVar
     abstract fun numVar(lb: Double, ub: Double): IVar
-    abstract fun ge(vars: Array<IVar>, lb: Double)
+    abstract fun Array<IVar>.ge(lb: Double)
 
-    fun gt(vars: Array<IVar>, lb: Double) {
-        ge(vars, lb + epsilon)
+    fun Array<IVar>.gt(lb: Double) {
+        ge(lb + epsilon)
     }
 
-    abstract fun ge(vars: Array<IVar>, lb: IVar)
-    abstract fun gt(vars: Array<IVar>, lb: IVar)
-    abstract fun le(vars: Array<IVar>, ub: Double)
+    abstract fun Array<IVar>.ge(lb: IVar)
+    abstract fun Array<IVar>.gt(lb: IVar)
+    abstract fun Array<IVar>.le(ub: Double)
 
-    fun lt(vars: Array<IVar>, ub: Double) {
-        le(vars, ub - epsilon)
+    fun Array<IVar>.lt(ub: Double) {
+        le(ub - epsilon)
     }
 
-    abstract fun le(vars: Array<IVar>, ub: IVar)
-    abstract fun lt(vars: Array<IVar>, ub: IVar)
-    abstract fun eq(vars: Array<IVar>, value: Double)
-    abstract fun eq(vars: Array<IVar>, value: IVar)
-    abstract fun between(vars: Array<IVar>, lb: Double, ub: Double)
-    abstract fun between(vars: Array<IVar>, lb: IVar, ub: IVar)
-    abstract fun ge(`var`: IVar, lb: Double)
+    abstract fun Array<IVar>.le(ub: IVar)
+    abstract fun Array<IVar>.lt(ub: IVar)
+    abstract fun Array<IVar>.eq(value: Double)
+    abstract fun Array<IVar>.eq(value: IVar)
+    abstract fun Array<IVar>.between(lb: Double, ub: Double)
+    abstract fun Array<IVar>.between(lb: IVar, ub: IVar)
+    abstract fun IVar.ge(lb: Double)
 
-    fun gt(`var`: IVar, lb: Double) {
-        ge(`var`, lb + epsilon)
+    fun IVar.gt(lb: Double) {
+        ge(lb + epsilon)
     }
 
-    abstract fun ge(`var`: IVar, lb: IVar)
-    abstract fun gt(`var`: IVar, lb: IVar)
-    abstract fun le(`var`: IVar, ub: Double)
+    abstract fun IVar.ge(lb: IVar)
+    abstract fun IVar.gt(lb: IVar)
+    abstract fun IVar.le(ub: Double)
 
-    fun lt(`var`: IVar, ub: Double) {
-        le(`var`, ub - epsilon)
+    fun IVar.lt(ub: Double) {
+        le(ub - epsilon)
     }
 
-    abstract fun le(`var`: IVar, ub: IVar)
-    abstract fun lt(`var`: IVar, ub: IVar)
-    abstract fun eq(`var`: IVar, value: Double)
-    abstract fun eq(`var`: IVar, value: IVar)
-    abstract fun between(`var`: IVar, lb: Double, ub: Double)
-    abstract fun between(`var`: IVar, lb: IVar, ub: IVar)
+    abstract fun IVar.le(ub: IVar)
+    abstract fun IVar.lt(ub: IVar)
+    abstract fun IVar.eq(value: Double)
+    abstract fun IVar.eq(value: IVar)
+    abstract fun IVar.between(lb: Double, ub: Double)
+    abstract fun IVar.between(lb: IVar, ub: IVar)
 
     /**
      * lb <= dividend/divisor <= ub
+     * divisor*lb <= dividend
+     * dividend   <= divisor*ub
      */
-    abstract fun between(dividend: IVar, divisor: IVar, lb: Double, ub: Double)
-    abstract fun geIf(`var`: IVar, value: Double, bool: IVar)
-
-    fun gtIf(`var`: IVar, value: Double, bool: IVar) {
-        geIf(`var`, value + epsilon, bool)
+    fun between(dividend: IVar, divisor: IVar, lb: Double, ub: Double) {
+        divisor.coeff(lb).le(dividend)
+        divisor.coeff(ub).ge(dividend)
     }
 
-    abstract fun geIfNot(`var`: IVar, value: Double, bool: IVar)
+    abstract fun IVar.geIf(value: Double, bool: IVar)
 
-    fun gtIfNot(`var`: IVar, value: Double, bool: IVar) {
-        geIfNot(`var`, value + epsilon, bool)
+    fun IVar.gtIf(value: Double, bool: IVar) {
+        geIf(value + epsilon, bool)
     }
 
-    abstract fun leIf(`var`: IVar, value: Double, bool: IVar)
+    abstract fun IVar.geIfNot(value: Double, bool: IVar)
 
-    fun ltIf(`var`: IVar, value: Double, bool: IVar) {
-        leIf(`var`, value - epsilon, bool)
+    fun IVar.gtIfNot(value: Double, bool: IVar) {
+        geIfNot(value + epsilon, bool)
     }
 
-    abstract fun leIfNot(`var`: IVar, value: Double, bool: IVar)
+    abstract fun IVar.leIf(value: Double, bool: IVar)
 
-    fun ltIfNot(`var`: IVar, value: Double, bool: IVar) {
-        leIfNot(`var`, value - epsilon, bool)
+    fun IVar.ltIf(value: Double, bool: IVar) {
+        leIf(value - epsilon, bool)
     }
 
-    abstract fun eqIf(`var`: IVar, value: Double, bool: IVar)
-    abstract fun eqIfNot(`var`: IVar, value: Double, bool: IVar)
-    abstract fun betweenIf(`var`: IVar, lb: Double, ub: Double, bool: IVar)
-    abstract fun betweenIfNot(`var`: IVar, lb: Double, ub: Double, bool: IVar)
-    abstract fun sum(vars: Array<IVar>): IVar
-    abstract fun minimize(vars: Array<IVar>): IVar
-    abstract fun maximize(vars: Array<IVar>): IVar
+    abstract fun IVar.leIfNot(value: Double, bool: IVar)
+
+    fun IVar.ltIfNot(value: Double, bool: IVar) {
+        leIfNot(value - epsilon, bool)
+    }
+
+    abstract fun IVar.eqIf(value: Double, bool: IVar)
+    abstract fun IVar.eqIfNot(value: Double, bool: IVar)
+    abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
+    abstract fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar)
+    abstract fun Array<IVar>.sum(): IVar
+    abstract fun Array<IVar>.minimize(): IVar
+    abstract fun Array<IVar>.maximize(): IVar
 
     /**
      * 最多1个非零变量,至少size-1个零
      */
-    open fun atMostOne(vars: Array<IVar>) {
-        atMost(vars, 1)
+    open fun Array<IVar>.atMostOne() {
+        atMost(1)
     }
 
     /**
      * 最多n个非零变量,至少size-n个零
      */
-    fun atMost(vars: Array<IVar>, n: Int) {
-        val count = vars.size
+    fun Array<IVar>.atMost(n: Int) {
+        val count = size
         if (n >= count) {
             return
         }
         val boolVarArray = boolVarArray(count)
-        eq(boolVarArray, n.toDouble())
-        for (i in vars.indices) {
-            eqIfNot(vars[i], 0.0, boolVarArray[i])
+        boolVarArray.eq(n.toDouble())
+        for (i in indices) {
+            this[i].eqIfNot(0.0, boolVarArray[i])
         }
     }
 
@@ -124,32 +136,32 @@ abstract class Solver {
      * 最少1个非零变量,最多size-1个零
      */
     @JvmOverloads
-    fun atLeastOne(vars: Array<IVar>, gt: Boolean = true) {
-        atLeast(vars, 1, gt)
+    fun Array<IVar>.atLeastOne(gt: Boolean = true) {
+        atLeast(1, gt)
     }
 
     /**
      * 最少n个非零变量,最多size-n个零
      */
     @JvmOverloads
-    fun atLeast(vars: Array<IVar>, n: Int, gt: Boolean = true) {
-        val count = vars.size
+    fun Array<IVar>.atLeast(n: Int, gt: Boolean = true) {
+        val count = size
         if (n >= count) {
-            for (i in vars.indices) {
+            for (i in indices) {
                 if (gt)
-                    gt(vars[i], 0.0)
+                    this[i].gt(0.0)
                 else
-                    lt(vars[i], 0.0)
+                    this[i].lt(0.0)
             }
             return
         }
         val boolVarArray = boolVarArray(count)
-        eq(boolVarArray, n.toDouble())
-        for (i in vars.indices) {
+        boolVarArray.eq(n.toDouble())
+        for (i in indices) {
             if (gt)
-                gtIf(vars[i], 0.0, boolVarArray[i])
+                this[i].gtIf(0.0, boolVarArray[i])
             else
-                ltIf(vars[i], 0.0, boolVarArray[i])
+                this[i].ltIf(0.0, boolVarArray[i])
         }
     }
 

@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.optimal.result
 
-import top.bettercode.summer.tools.optimal.entity.*
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.Color
 import org.dhatim.fastexcel.Workbook
@@ -8,9 +7,9 @@ import org.dhatim.fastexcel.Worksheet
 import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.excel.Alignment
 import top.bettercode.summer.tools.excel.ColumnWidths
+import top.bettercode.summer.tools.optimal.entity.*
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import java.io.File
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.nio.file.Files
 import java.util.stream.Collectors
 
@@ -91,10 +90,8 @@ class RecipeResult // --------------------------------------------
                     value(
                             sheet,
                             r,
-                            cc + index, components[index]
-                            ?.value
-                            ?.multiply(BigDecimal.valueOf(100))
-                            ?.setScale(2, RoundingMode.HALF_UP)
+                            cc + index, (components[index]
+                    !!.value!! * 100.0).scale(2)
                             .toString() + "%")
                 }
             }
@@ -111,7 +108,7 @@ class RecipeResult // --------------------------------------------
                 sheet.width(2, ColumnWidths.getWidth("最小用量") + 2)
                 r = 0
                 value(sheet, r, 0, "配方成本：")
-                value(sheet, r, 1, recipe.cost?.setScale(2, RoundingMode.HALF_UP))
+                value(sheet, r, 1, recipe.cost?.scale(2))
                 r++
                 value(sheet, r, 0, "产品量：")
                 val targetWeight = reqData.targetWeight
@@ -120,7 +117,7 @@ class RecipeResult // --------------------------------------------
                 if (reqData.isAllowDrying) {
                     value(sheet, r, 2, "至少需要哄干的水分：")
                     sheet.range(r, 2, r, 3).merge()
-                    value(sheet, r, 4, dryWater!!.setScale(2, RoundingMode.HALF_UP))
+                    value(sheet, r, 4, dryWater!!.scale(2))
                 }
                 r++
                 val notMixMaterials = reqData.notMixMaterials
@@ -181,7 +178,7 @@ class RecipeResult // --------------------------------------------
                 value(sheet, r, c++, "最小用量")
                 value(sheet, r, c++, "最大用量")
                 var liquidAmmonia: String = ReqData.liquidAmmonia
-                var la2CAUseRatio = BigDecimal.ONE
+                var la2CAUseRatio = 1.0
                 if (recipe.isHascliquidAmmonia) {
                     la2CAUseRatio = ReqData.la2CAUseRatio
                     liquidAmmonia = ReqData.cliquidAmmonia
@@ -211,27 +208,28 @@ class RecipeResult // --------------------------------------------
                     var weight = componentRecipe!![index]?.max
                     val water: Boolean = Components.isWater(index)
                     if (water) {
-                        weight = weight!!.subtract(dryWater)
+                        weight = weight!! - dryWater!!
                     }
-                    value(sheet, r++, c1, weight!!.setScale(2, RoundingMode.HALF_UP))
+                    value(sheet, r++, c1, weight!!.scale(2))
                     value(
                             sheet,
                             r++,
-                            c1, limit?.max?.multiply(BigDecimal.valueOf(100))?.setScale(2, RoundingMode.HALF_UP)
+                            c1, (limit?.max!! * 100.0).scale(2)
                             .toString() + "%")
                     value(
                             sheet,
                             r++,
-                            c1, limit?.min?.multiply(BigDecimal.valueOf(100))?.setScale(2, RoundingMode.HALF_UP)
+                            c1, (limit.min!! * (100.0)).scale(2)
                             .toString() + "%")
-                    var v = weight.divide(targetWeight, 4, RoundingMode.HALF_UP)
-                    if (Components.isWaterSolublePhosphorusRate(index)) v = weight.divide(componentRecipe.phosphorus?.max, 4, RoundingMode.HALF_UP)
-                    val valid = v >= limit?.min && v <= limit?.max
+                    var v = (weight / targetWeight).scale(4)
+                    if (Components.isWaterSolublePhosphorusRate(index))
+                        v = (weight / componentRecipe.phosphorus!!.max!!).scale(4)
+                    val valid = v >= limit.min!! && v <= limit.max!!
                     value(
                             sheet,
                             r++,
                             c1,
-                            v.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).toString() + "%",
+                            ((v * 100.0).scale(2)).toString() + "%",
                             valid)
                 }
                 var m = 0
@@ -278,10 +276,10 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc++,
-                                    recipe
-                                            .minLiquidAmmoniaWeight
-                                            ?.multiply(la2CAUseRatio)
-                                            ?.setScale(2, RoundingMode.HALF_UP),
+                                    (recipe
+                                            .minLiquidAmmoniaWeight!!
+                                            * (la2CAUseRatio))
+                                            .scale(2),
                                     mergeRow)
                             // 耗液氨系数
                             value(sheet, r + m, cc++, "", mergeRow)
@@ -291,10 +289,10 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc++,
-                                    recipe
+                                    (recipe
                                             .maxLiquidAmmoniaWeight
-                                            ?.multiply(la2CAUseRatio)
-                                            ?.setScale(2, RoundingMode.HALF_UP),
+                                    !! * (la2CAUseRatio))
+                                            .scale(2),
                                     mergeRow)
                         } else {
                             cc += 3
@@ -312,17 +310,17 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc,
-                                    normal?.min?.multiply(la2CAUseRatio)?.setScale(9, RoundingMode.HALF_UP))
+                                    (normal?.min!! * (la2CAUseRatio)).scale(9))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "系数")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        originExcess
+                                        (originExcess
                                                 .min
-                                                ?.multiply(la2CAUseRatio)
-                                                ?.setScale(9, RoundingMode.HALF_UP))
+                                        !! * (la2CAUseRatio))
+                                                .scale(9))
                             } else {
                                 cc++
                             }
@@ -332,20 +330,20 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc,
-                                    vitriolNormal
-                                            ?.multiply(normal?.min)
-                                            ?.multiply(la2CAUseRatio)
-                                            ?.setScale(2, RoundingMode.HALF_UP))
+                                    (vitriolNormal
+                                    !! * (normal.min)
+                                    !! * (la2CAUseRatio))
+                                            .scale(2))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "数量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        vitriolExcess
-                                                ?.multiply(originExcess.min)
-                                                ?.multiply(la2CAUseRatio)
-                                                ?.setScale(2, RoundingMode.HALF_UP))
+                                        (vitriolExcess
+                                        !! * (originExcess.min)
+                                        !! * (la2CAUseRatio))
+                                                .scale(2))
                             } else {
                                 cc++
                             }
@@ -354,17 +352,17 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc,
-                                    normal?.max?.multiply(la2CAUseRatio)?.setScale(9, RoundingMode.HALF_UP))
+                                    (normal.max!! * (la2CAUseRatio)).scale(9))
                             if (vitriolExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "系数")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        originExcess
+                                        (originExcess
                                                 ?.max
-                                                ?.multiply(la2CAUseRatio)
-                                                ?.setScale(9, RoundingMode.HALF_UP))
+                                        !! * (la2CAUseRatio))
+                                                .scale(9))
                             } else {
                                 cc++
                             }
@@ -373,20 +371,19 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc,
-                                    vitriolNormal
-                                            ?.multiply(normal?.max)
-                                            ?.multiply(la2CAUseRatio)
-                                            ?.setScale(2, RoundingMode.HALF_UP))
+                                    (vitriolNormal * (normal.max)
+                                    !! * (la2CAUseRatio))
+                                            .scale(2))
                             if (vitriolExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "数量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        vitriolExcess
-                                                .multiply(originExcess?.max)
-                                                .multiply(la2CAUseRatio)
-                                                .setScale(2, RoundingMode.HALF_UP))
+                                        (vitriolExcess
+                                                * (originExcess!!.max!!)
+                                                * (la2CAUseRatio))
+                                                .scale(2))
                             } else {
                                 cc++
                             }
@@ -405,7 +402,7 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc++,
-                                    limit?.min?.multiply(la2CAUseRatio)?.setScale(9, RoundingMode.HALF_UP),
+                                    (limit?.min!! * (la2CAUseRatio)).scale(9),
                                     mergeRow)
                             // 耗液氨数量
                             sheet.comment(r + m, cc, limname + "最小耗" + liquidAmmonia + "数量")
@@ -413,10 +410,10 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc++,
-                                    solutionValue
-                                            ?.multiply(limit?.min)
-                                            ?.multiply(la2CAUseRatio)
-                                            ?.setScale(2, RoundingMode.HALF_UP),
+                                    (solutionValue
+                                    !! * (limit.min)
+                                    !! * (la2CAUseRatio))
+                                            .scale(2),
                                     mergeRow)
 
                             // 耗液氨系数
@@ -425,7 +422,7 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc++,
-                                    limit?.max?.multiply(la2CAUseRatio)?.setScale(9, RoundingMode.HALF_UP),
+                                    (limit.max!! * (la2CAUseRatio)).scale(9),
                                     mergeRow)
                             // 耗液氨数量
                             sheet.comment(r + m, cc, limname + "最大耗" + liquidAmmonia + "数量")
@@ -433,10 +430,9 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc++,
-                                    solutionValue
-                                            ?.multiply(limit?.max)
-                                            ?.multiply(la2CAUseRatio)
-                                            ?.setScale(2, RoundingMode.HALF_UP),
+                                    (solutionValue * (limit.max)
+                                    !! * (la2CAUseRatio))
+                                            .scale(2),
                                     mergeRow)
                         } else {
                             val liquiName = if (reqData.isLimitVitriol) vitriolMaterialRatioMap!!.keys.stream()
@@ -458,31 +454,31 @@ class RecipeResult // --------------------------------------------
                                         sheet,
                                         r + m,
                                         cc,
-                                        solutionValue!!.multiply(normal?.min).setScale(2, RoundingMode.HALF_UP))
+                                        (solutionValue!! * (normal!!.min!!)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最小过量硫酸量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        solutionValue.multiply(excess?.min).setScale(2, RoundingMode.HALF_UP))
+                                        (solutionValue * (excess!!.min)!!).scale(2))
                                 // 硫酸系数
                                 sheet.comment(r + m, cc, "所需最大硫酸系数")
-                                value(sheet, r + m, cc, normal?.max)
+                                value(sheet, r + m, cc, normal.max)
                                 sheet.comment(r + m + 1, cc, "所需最大过量硫酸系数")
-                                value(sheet, r + m + 1, cc++, excess?.max)
+                                value(sheet, r + m + 1, cc++, excess.max)
                                 // 硫酸量
                                 sheet.comment(r + m, cc, "所需最大硫酸量")
                                 value(
                                         sheet,
                                         r + m,
                                         cc,
-                                        solutionValue.multiply(normal?.max).setScale(2, RoundingMode.HALF_UP))
+                                        (solutionValue * (normal.max)!!).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最大过量硫酸量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        solutionValue.multiply(excess?.max).setScale(2, RoundingMode.HALF_UP))
+                                        (solutionValue * (excess.max)!!).scale(2))
                             } else {
                                 cc += 4
                             }
@@ -490,7 +486,7 @@ class RecipeResult // --------------------------------------------
                     }
 
                     // 投料量
-                    value(sheet, r + m, cc++, solutionValue!!.setScale(2, RoundingMode.HALF_UP), mergeRow)
+                    value(sheet, r + m, cc++, solutionValue!!.scale(2), mergeRow)
 
                     // 成本
                     val price = material.price!!
@@ -498,9 +494,7 @@ class RecipeResult // --------------------------------------------
                             sheet,
                             r + m,
                             cc++,
-                            solutionValue
-                                    .multiply(BigDecimal.valueOf(price))
-                                    .divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP),
+                            (solutionValue * price / 1000).scale(2),
                             mergeRow)
                     // 单价
                     value(sheet, r + m, cc, price, mergeRow)
@@ -511,10 +505,8 @@ class RecipeResult // --------------------------------------------
                         value(
                                 sheet,
                                 r + m,
-                                c + index, components[index]
-                                ?.value
-                                ?.multiply(BigDecimal.valueOf(100))
-                                ?.setScale(2, RoundingMode.HALF_UP)
+                                c + index, (components[index]
+                        !!.value!! * 100.0).scale(2)
                                 .toString() + "%",
                                 mergeRow)
                     }
@@ -570,7 +562,7 @@ class RecipeResult // --------------------------------------------
             }
         }
 
-        fun value(sheet: Worksheet, r: Int, c: Int, value: BigDecimal?, mergeRow: Int) {
+        fun value(sheet: Worksheet, r: Int, c: Int, value: Double?, mergeRow: Int) {
             sheet.value(r, c, value)
             style(sheet, r, c, null)
             if (mergeRow > 0) {
@@ -581,7 +573,7 @@ class RecipeResult // --------------------------------------------
             }
         }
 
-        fun value(sheet: Worksheet, r: Int, c: Int, value: BigDecimal?) {
+        fun value(sheet: Worksheet, r: Int, c: Int, value: Double?) {
             sheet.value(r, c, value)
             style(sheet, r, c, null)
         }

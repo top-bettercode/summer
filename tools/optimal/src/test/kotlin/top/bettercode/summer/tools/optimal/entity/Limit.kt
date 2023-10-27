@@ -7,34 +7,26 @@ import java.math.BigDecimal
  *
  * @author Peter Wu
  */
-class Limit {
-    // --------------------------------------------
-    // --------------------------------------------
-    /** 最小限制值  */
-    var min: BigDecimal? = null
+data class Limit(
+        // --------------------------------------------
+        // --------------------------------------------
+        /** 最小限制值  */
+        var min: Double? = null,
 
-    /** 最大限制值  */
-    var max: BigDecimal? = null
+        /** 最大限制值  */
+        var max: Double? = null,
 
-    /** 限用原料名称  */
-    var materials: List<String>? = null
-
-    val value: BigDecimal?
+        /** 限用原料名称  */
+        var materials: List<String>? = null
+) {
+    val value: Double?
         get() = min
 
     // --------------------------------------------
-    constructor()
-    constructor(value: BigDecimal?) {
-        this.min = value
-        this.max = value
-    }
+    constructor(value: Double?) : this(min = value, max = value)
+    constructor(min: BigDecimal?, max: BigDecimal?) : this(min = min?.toDouble(), max = max?.toDouble())
 
-    constructor(min: BigDecimal?, max: BigDecimal?) {
-        this.min = min
-        this.max = max
-    }
-
-    constructor(materials: List<String>) {
+    constructor(materials: List<String>) : this(min = null, max = null, materials = materials) {
         this.materials = materials
     }
 }

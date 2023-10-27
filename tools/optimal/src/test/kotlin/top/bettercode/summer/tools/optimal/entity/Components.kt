@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.optimal.entity
 
-import java.math.RoundingMode
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import java.util.*
 import java.util.stream.Collectors
 
@@ -455,7 +455,7 @@ class Components : LinkedHashMap<Int, Limit?>() {
         // --------------------------------------------
         get() = keys.stream()
                 .filter { k: Int -> !isWater(k) }
-                .map { k: Int? -> get(k)?.value?.setScale(4, RoundingMode.HALF_UP).toString() }
+                .map { k: Int? -> get(k)?.value?.scale(4).toString() }
                 .collect(Collectors.joining(","))
 
     companion object {

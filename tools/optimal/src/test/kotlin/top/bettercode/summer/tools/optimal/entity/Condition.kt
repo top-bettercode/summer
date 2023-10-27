@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.optimal.entity
 
-import java.math.BigDecimal
 
 /**
  * 限制条件
@@ -15,12 +14,12 @@ class Condition(var desc: String) {
     var type: Int? = null
 
     /** 值  */
-    var value: BigDecimal
+    var value: Double
 
     init {
         val split = desc.split(">=|<=|=|>|<".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         materialNameFragment = split[0]
-        value = BigDecimal(split[1])
+        value = split[1].toDouble()
         val typeStr = desc.replace(".*(=|>|<|>=|<=).*".toRegex(), "$1")
         type = when (typeStr) {
             "=" -> 0

@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver.`var`
 
 import com.google.ortools.linearsolver.MPVariable
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 
 /**
  *
@@ -11,7 +12,7 @@ class MPVar(private val _delegate: MPVariable,
 ) : IVar {
 
     override val value: Double
-        get() = IVar.convertDecimal(_delegate.solutionValue())
+        get() = _delegate.solutionValue().scale()
 
     override fun coeff(coeff: Double): IVar {
         return MPVar(_delegate, coeff)
