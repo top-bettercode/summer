@@ -21,21 +21,27 @@ abstract class AbstractOperationMessage(
         @JsonIgnore
         get() = PrettyPrintingContentModifier.modifyContent(content)
 
+    val contentType = try {
+        this.headers.contentType
+    } catch (e: Exception) {
+        log.warn("解析contentType失败", e)
+        null
+    }
+
+    private val charset = try {
+        contentType?.charset
+    } catch (e: NoSuchMethodError) {
+        null
+    }
+
     val prettyContentAsString: String
         @JsonIgnore
-        get() = RequestConverter.toString(try {
-            this.headers.contentType?.charset
-        } catch (e: NoSuchMethodError) {
-            null
-        } catch (e: Exception) {
-            log.warn("解析contentType失败", e)
-            null
-        }, prettyContent)
+        get() = RequestConverter.toString(charset, prettyContent)
 
     var contentAsString: String
-        get() = RequestConverter.toString(this.headers.contentType?.charset, content)
+        get() = RequestConverter.toString(charset, content)
         set(value) {
-            content = value.toByteArray(this.headers.contentType?.charset ?: Charsets.UTF_8)
+            content = value.toByteArray(charset ?: Charsets.UTF_8)
         }
 
     override fun equals(other: Any?): Boolean {

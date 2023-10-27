@@ -118,7 +118,7 @@ object PostmanGenerator {
         val httpHeaders = response.headersExt
         httpHeaders.removeIf { it.name == HttpHeaders.HOST || it.name == HttpHeaders.CONTENT_LENGTH }
 
-        val contentType = response.headers.contentType
+        val contentType = response.contentType
         return Response(
                 name,
                 request,
@@ -147,10 +147,10 @@ object PostmanGenerator {
                     raw = request.prettyContentAsString,
                     options = when {
                         MediaType.APPLICATION_JSON
-                                .isCompatibleWith(request.headers.contentType) -> Body.rawLanguage()
+                                .isCompatibleWith(request.contentType) -> Body.rawLanguage()
 
                         MediaType.APPLICATION_XML
-                                .isCompatibleWith(request.headers.contentType) -> Body.rawLanguage("xml")
+                                .isCompatibleWith(request.contentType) -> Body.rawLanguage("xml")
 
                         else -> Body.rawLanguage("text")
                     }

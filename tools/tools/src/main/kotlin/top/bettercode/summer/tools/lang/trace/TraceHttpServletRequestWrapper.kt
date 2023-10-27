@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.lang.trace
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.util.StreamUtils
 import top.bettercode.summer.tools.lang.operation.RequestConverter
@@ -23,6 +25,8 @@ class TraceHttpServletRequestWrapper
  * @param request The request to wrap
  * @throws IllegalArgumentException if the request is null
  */(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
+    private val log: Logger = LoggerFactory.getLogger(TraceHttpServletRequestWrapper::class.java)
+
     private val byteArrayOutputStream = ByteArrayOutputStream()
     private var servletInputStream: TraceServletInputStream? = null
     private var servletReader: BufferedReader? = null
@@ -32,11 +36,18 @@ class TraceHttpServletRequestWrapper
         get() = byteArrayOutputStream.toByteArray()
 
 
+    private val charset = if (!contentType.isNullOrBlank()) try {
+        MediaType.parseMediaType(
+                contentType
+        ).charset
+    } catch (e: Exception) {
+        log.warn("解析contentType失败", e)
+        null
+    } else null
+
     val content: String
         get() = RequestConverter.toString(
-                if (!contentType.isNullOrBlank()) MediaType.parseMediaType(
-                        contentType
-                ).charset else null, byteArrayOutputStream.toByteArray()
+                charset, byteArrayOutputStream.toByteArray()
         )
 
     fun read() {

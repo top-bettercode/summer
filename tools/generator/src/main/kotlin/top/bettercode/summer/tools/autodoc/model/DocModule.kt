@@ -144,7 +144,7 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
         exec.add("  pm.expect(pm.response.responseTime).to.be.below($maxResponseTime);")
         exec.add("});")
         exec.add("")
-        if (operation.response.headers.contentType?.isCompatibleWith(MediaType.APPLICATION_JSON) == true) {
+        if (operation.response.contentType?.isCompatibleWith(MediaType.APPLICATION_JSON) == true) {
             exec.add("pm.test('验证返回json格式', function () {")
             exec.add("  pm.response.to.be.json;")
             if (operation.request.restUri == autodoc.authUri) {

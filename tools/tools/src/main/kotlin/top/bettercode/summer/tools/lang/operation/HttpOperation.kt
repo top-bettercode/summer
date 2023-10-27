@@ -137,7 +137,7 @@ object HttpOperation {
 
     private fun includeParametersInUri(request: OperationRequest): Boolean {
         return (request.method == HttpMethod.GET.name || request.method == HttpMethod.DELETE.name) || (request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
-                .isCompatibleWith(request.headers.contentType))
+                .isCompatibleWith(request.contentType))
     }
 
     private fun getHeaders(request: OperationRequest): HttpHeaders {
@@ -227,7 +227,7 @@ object HttpOperation {
     private fun writePart(part: OperationRequestPart, writer: PrintWriter) {
         writePart(
                 part.name, part.contentAsString, part.submittedFileName,
-                part.headers.contentType, writer
+                part.contentType, writer
         )
     }
 
