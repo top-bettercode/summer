@@ -415,7 +415,7 @@ class GeneratorPlugin : Plugin<Project> {
                                                 it.database = database
                                             }
                                         } else {
-                                            if (tableNames.isNotEmpty() || deleteTablesWhenUpdate) {
+                                            if (!database.offline && (tableNames.isNotEmpty() || deleteTablesWhenUpdate)) {
                                                 database.tables(tableName = (if (deleteTablesWhenUpdate) emptyList() else tableNames).toTypedArray()
                                                 )
                                             } else emptyList()
