@@ -54,6 +54,7 @@ class ExcelExport {
     private var includeDataValidation = false
     private val defaultFillColor = "F8F8F7"
     private var fillColor = defaultFillColor
+    private var headerFillColor = defaultFillColor
     private var fontColor = Color.BLACK
     private var fontName: String = "Arial"
 
@@ -86,6 +87,11 @@ class ExcelExport {
 
     fun fillColor(fillColor: String): ExcelExport {
         this.fillColor = fillColor
+        return this
+    }
+
+    fun headerFillColor(fillColor: String): ExcelExport {
+        this.headerFillColor = fillColor
         return this
     }
 
@@ -454,7 +460,7 @@ class ExcelExport {
 
     private fun setHeaderStyle() {
         style(row, column)
-                .fillColor(fillColor)
+                .fillColor(headerFillColor)
                 .fontColor(fontColor)
                 .bold()
                 .set()
