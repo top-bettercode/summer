@@ -6,7 +6,6 @@ import org.springframework.beans.BeanUtils
 import top.bettercode.summer.tools.optimal.entity.*
 import top.bettercode.summer.tools.optimal.result.Recipe
 import top.bettercode.summer.tools.optimal.result.RecipeResult
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.defaultScale
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
@@ -316,7 +315,7 @@ class RecipeSolver(val solver: Solver) {
                                 if (Components.isWaterSolublePhosphorusRate(index)) {
                                     value *= components.phosphorus!!.value!!
                                 }
-                                limit.max = (limit.max!! + (value * solutionValue)).scale(defaultScale)
+                                limit.max = (limit.max!! + (value * solutionValue)).scale()
                             }
                         }
                     }
@@ -332,7 +331,7 @@ class RecipeSolver(val solver: Solver) {
                     if (liquidAmmoniaVal != null) {
                         recipe.liquidAmmoniaWeight = liquidAmmoniaVal.value
                     }
-                    recipe.dryWater = (weight - targetWeight).scale(defaultScale)
+                    recipe.dryWater = (weight - targetWeight).scale()
                     val recipeCount = recipeResult.recipeCount
                     // 前十个每3元价差一推，后十个每5元价差一推。
                     System.err.println("====================solve size: $recipeCount")

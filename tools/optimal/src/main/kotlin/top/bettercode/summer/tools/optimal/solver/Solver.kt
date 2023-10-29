@@ -8,19 +8,28 @@ import kotlin.math.log10
  *
  * @author Peter Wu
  */
-abstract class Solver {
+abstract class Solver(
+        val name: String,
 
-    abstract val name: String
-
-    /**
-     * 极小的正数，用于描述误差，大于 转换为 大于等于
-     */
-    open val epsilon: Double = 1e-6
+        /**
+         * 极小的正数，用于描述误差，大于 转换为 大于等于
+         */
+        protected val epsilon: Double = 1e-6
+) {
 
     /**
      * 小数点后的位数
      */
     val scale get() = abs(log10(epsilon)).toInt()
+
+    abstract fun setTimeLimit(seconds: Int)
+    abstract fun solve()
+    abstract fun clear()
+    abstract fun isOptimal(): Boolean
+    abstract fun getResultStatus(): String
+    abstract fun numVariables(): Int
+    abstract fun numConstraints(): Int
+
     abstract fun boolVarArray(count: Int): Array<IVar>
     abstract fun intVarArray(count: Int, lb: Double, ub: Double): Array<IVar>
     abstract fun numVarArray(count: Int, lb: Double, ub: Double): Array<IVar>
@@ -165,11 +174,4 @@ abstract class Solver {
         }
     }
 
-    abstract fun setTimeLimit(seconds: Int)
-    abstract fun solve()
-    abstract fun clear()
-    abstract fun isOptimal(): Boolean
-    abstract fun getResultStatus(): String
-    abstract fun numVariables(): Int
-    abstract fun numConstraints(): Int
 }

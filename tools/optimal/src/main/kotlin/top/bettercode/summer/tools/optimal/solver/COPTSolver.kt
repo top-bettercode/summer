@@ -14,11 +14,10 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
  * @author Peter Wu
  */
 class COPTSolver @JvmOverloads constructor(
-        override val epsilon: Double = 1e-6,
+        epsilon: Double = 1e-6,
         logging: Boolean = false,
-        override val name: String = "COPTSolver"
-) : Solver() {
-
+        name: String = "COPTSolver"
+) : Solver(name, epsilon) {
 
     val model: copt.Model
 
@@ -29,6 +28,53 @@ class COPTSolver @JvmOverloads constructor(
         model.setDblParam(copt.DblParam.FeasTol, epsilon / 10)
         model.setDblParam(copt.DblParam.DualTol, epsilon / 10)
         model.setDblParam(copt.DblParam.IntTol, epsilon / 10)
+    }
+
+    override fun setTimeLimit(seconds: Int) {
+        model.setDblParam("TimeLimit", seconds.toDouble())
+    }
+
+    override fun solve() {
+        model.solve()
+    }
+
+    override fun clear() {
+        model.clear()
+    }
+
+    override fun isOptimal(): Boolean {
+        val status = getStatus()
+        return copt.Status.OPTIMAL == status
+    }
+
+    override fun getResultStatus(): String {
+        val status = getStatus()
+        try {
+            val fields = copt.Status::class.java.getFields()
+            for (field in fields) {
+                if (field[null] == status) {
+                    return field.name
+                }
+            }
+        } catch (ignored: Exception) {
+        }
+        return "未知状态:$status"
+    }
+
+    private fun getStatus(): Int {
+        var status = model.getIntAttr(copt.IntAttr.MipStatus)
+        if (status == 0) {
+            status = model.getIntAttr(copt.IntAttr.LpStatus)
+        }
+        return status
+    }
+
+    override fun numVariables(): Int {
+        return model.getIntAttr(copt.IntAttr.Cols)
+    }
+
+    override fun numConstraints(): Int {
+        return model.getIntAttr(copt.IntAttr.Rows)
     }
 
     private fun expr(`var`: IVar) =
@@ -393,53 +439,6 @@ class COPTSolver @JvmOverloads constructor(
         val varArry: Array<copt.Var> = this.map { it.getDelegate<copt.Var>() }.toTypedArray()
         val weights = this.map { it.coeff }.toTypedArray().toDoubleArray()
         model.addSos(varArry, weights, copt.Consts.SOS_TYPE1)
-    }
-
-    override fun setTimeLimit(seconds: Int) {
-        model.setDblParam("TimeLimit", seconds.toDouble())
-    }
-
-    override fun solve() {
-        model.solve()
-    }
-
-    override fun clear() {
-        model.clear()
-    }
-
-    override fun isOptimal(): Boolean {
-        val status = getStatus()
-        return copt.Status.OPTIMAL == status
-    }
-
-    override fun getResultStatus(): String {
-        val status = getStatus()
-        try {
-            val fields = copt.Status::class.java.getFields()
-            for (field in fields) {
-                if (field[null] == status) {
-                    return field.name
-                }
-            }
-        } catch (ignored: Exception) {
-        }
-        return "未知状态:$status"
-    }
-
-    private fun getStatus(): Int {
-        var status = model.getIntAttr(copt.IntAttr.MipStatus)
-        if (status == 0) {
-            status = model.getIntAttr(copt.IntAttr.LpStatus)
-        }
-        return status
-    }
-
-    override fun numVariables(): Int {
-        return model.getIntAttr(copt.IntAttr.Cols)
-    }
-
-    override fun numConstraints(): Int {
-        return model.getIntAttr(copt.IntAttr.Rows)
     }
 
 }

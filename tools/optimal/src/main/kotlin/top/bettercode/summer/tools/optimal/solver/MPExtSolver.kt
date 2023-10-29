@@ -24,9 +24,9 @@ open class MPExtSolver @JvmOverloads constructor(
          * 变量默认上界
          */
         var dub: Double = 1000.0,
-        final override val epsilon: Double = 1e-6,
-        final override val name: String = "MPSolver"
-) : Solver() {
+        epsilon: Double = 1e-6,
+        name: String = "MPSolver"
+) : Solver(name, epsilon) {
 
     companion object {
         init {
@@ -42,6 +42,33 @@ open class MPExtSolver @JvmOverloads constructor(
         solver = MPSolver(name, type)
     }
 
+    override fun setTimeLimit(seconds: Int) {
+        solver.setTimeLimit(seconds * 1000L)
+    }
+
+    override fun solve() {
+        resultStatus = solver.solve()
+    }
+
+    override fun clear() {
+        solver.clear()
+    }
+
+    override fun isOptimal(): Boolean {
+        return MPSolver.ResultStatus.OPTIMAL == resultStatus
+    }
+
+    override fun getResultStatus(): String {
+        return resultStatus.name
+    }
+
+    override fun numVariables(): Int {
+        return solver.numVariables()
+    }
+
+    override fun numConstraints(): Int {
+        return solver.numConstraints()
+    }
 
     override fun boolVarArray(count: Int): Array<IVar> {
         val array = arrayOfNulls<IVar>(count)
@@ -397,31 +424,4 @@ open class MPExtSolver @JvmOverloads constructor(
         return MPObjectiveVar(objective)
     }
 
-    override fun setTimeLimit(seconds: Int) {
-        solver.setTimeLimit(seconds * 1000L)
-    }
-
-    override fun solve() {
-        resultStatus = solver.solve()
-    }
-
-    override fun clear() {
-        solver.clear()
-    }
-
-    override fun isOptimal(): Boolean {
-        return MPSolver.ResultStatus.OPTIMAL == resultStatus
-    }
-
-    override fun getResultStatus(): String {
-        return resultStatus.name
-    }
-
-    override fun numVariables(): Int {
-        return solver.numVariables()
-    }
-
-    override fun numConstraints(): Int {
-        return solver.numConstraints()
-    }
 }
