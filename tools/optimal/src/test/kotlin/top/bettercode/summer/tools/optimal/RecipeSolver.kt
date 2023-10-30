@@ -259,12 +259,12 @@ class RecipeSolver(val solver: Solver) {
             // 求解
             var e = System.currentTimeMillis()
             val recipeResult = RecipeResult(name, reqData)
-            System.err.println("==================================================")
+            log.trace("==================================================")
             while ((e - s) / 1000 < reqData.timeout
                     && recipeResult.recipeCount < reqData.maxResult) {
                 recipeResult.addSolveCount()
                 solve()
-                System.err.println(
+                log.trace(
                         "solve times: " + recipeResult.solveCount + " 耗时：" + (e - s) + "ms " + "变量数量："
                                 + numVariables() + " 约束数量："
                                 + numConstraints())
@@ -334,7 +334,7 @@ class RecipeSolver(val solver: Solver) {
                     recipe.dryWater = (weight - targetWeight).scale()
                     val recipeCount = recipeResult.recipeCount
                     // 前十个每3元价差一推，后十个每5元价差一推。
-                    System.err.println("====================solve size: $recipeCount")
+                    log.trace("====================solve size: $recipeCount")
                     val cost = objective.value
                     recipe.cost = (cost)
                     if (first) {
