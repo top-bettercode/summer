@@ -21,6 +21,7 @@ abstract class AbstractOperationMessage(
         @JsonIgnore
         get() = PrettyPrintingContentModifier.modifyContent(content)
 
+    @JsonIgnore
     val contentType = try {
         this.headers.contentType
     } catch (e: Exception) {
