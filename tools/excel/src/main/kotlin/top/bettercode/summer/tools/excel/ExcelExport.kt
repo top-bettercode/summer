@@ -56,6 +56,7 @@ class ExcelExport {
     private var fillColor = defaultFillColor
     private var headerFillColor = defaultFillColor
     private var fontColor = Color.BLACK
+    private var headerFontColor = Color.BLACK
     private var fontName: String = "Arial"
 
 
@@ -97,6 +98,11 @@ class ExcelExport {
 
     fun fontColor(fontColor: String): ExcelExport {
         this.fontColor = fontColor
+        return this
+    }
+
+    fun headerFontColor(fontColor: String): ExcelExport {
+        this.headerFontColor = fontColor
         return this
     }
 
@@ -176,7 +182,7 @@ class ExcelExport {
     }
 
     @JvmOverloads
-    fun createTitle(title: String, cells: Int, fillColor: String = this.fillColor, fontColor: String = this.fontColor, fontSize: Int = 16): ExcelExport {
+    fun createTitle(title: String, cells: Int, fillColor: String = this.headerFillColor, fontColor: String = this.headerFontColor, fontSize: Int = 16): ExcelExport {
         sheet!!.value(row, column, title)
         style(sheet!!.range(row, column, row, column + cells - 1))
                 .fillColor(fillColor)
@@ -461,7 +467,7 @@ class ExcelExport {
     private fun setHeaderStyle() {
         style(row, column)
                 .fillColor(headerFillColor)
-                .fontColor(fontColor)
+                .fontColor(headerFontColor)
                 .bold()
                 .set()
     }
