@@ -63,15 +63,6 @@ class ExcelField<T, P : Any?> {
      */
     var dataValidation: Array<out String> = emptyArray()
 
-    /**
-     * 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
-     * 示例：yyyy"年"m"月"d"日" hh"时"mm"分"ss"秒"
-     */
-    var format: String? = null
-        get() {
-            return field ?: defaultFormat
-        }
-
     private val defaultFormat: String? by lazy {
         when (propertyType) {
             Int::class.javaObjectType, Int::class.java, Int::class.java -> {
@@ -105,17 +96,15 @@ class ExcelField<T, P : Any?> {
     }
 
     /**
-     * 导出字段水平对齐方式
-     *
-     *
-     * Define horizontal alignment. [here](https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx).
+     * cell 样式
      */
-    var align = Alignment.CENTER
-
-    /**
-     * 是否自动换行
-     */
-    var wrapText = true
+    val cellStyle: Style = Style()
+        get() {
+            if (field.valueFormatting == null) {
+                field.valueFormatting = defaultFormat
+            }
+            return field
+        }
 
     /**
      * 列宽度，-1表示自动计算
@@ -400,11 +389,12 @@ class ExcelField<T, P : Any?> {
 
     /**
      * @param format 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
+     * 示例：yyyy"年"m"月"d"日" hh"时"mm"分"ss"秒"
      * @return this
      */
     @JvmOverloads
     fun date(format: String = ExcelCell.DEFAULT_DATE_TIME_FORMAT): ExcelField<T, P> {
-        this.format = format
+        this.cellStyle.format(format)
         isDateField = true
         return this
     }
@@ -553,7 +543,7 @@ class ExcelField<T, P : Any?> {
         this.isIndexColumn = indexColumn
         this.isFormula = formula
         this.isImageColumn = false
-        this.format = ExcelCell.DEFAULT_FORMAT
+        this.cellStyle.format(ExcelCell.DEFAULT_FORMAT)
     }
 
     //--------------------------------------------
@@ -579,15 +569,27 @@ class ExcelField<T, P : Any?> {
 
     /**
      * @param format 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
+     * 示例：yyyy"年"m"月"d"日" hh"时"mm"分"ss"秒"
      * @return this
      */
     fun format(format: String?): ExcelField<T, P> {
-        this.format = format
+        this.cellStyle.format(format)
         return this
     }
 
+    /**
+     * 导出字段水平对齐方式
+     *
+     *
+     * Define horizontal alignment. [here](https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx).
+     */
     fun align(align: Alignment): ExcelField<T, P> {
-        this.align = align
+        this.cellStyle.horizontalAlignment(align.value)
+        return this
+    }
+
+    fun wrapText(wrapText: Boolean): ExcelField<T, P> {
+        this.cellStyle.wrapText(wrapText)
         return this
     }
 
@@ -598,11 +600,6 @@ class ExcelField<T, P : Any?> {
 
     fun height(height: Double): ExcelField<T, P> {
         this.height = height
-        return this
-    }
-
-    fun wrapText(wrapText: Boolean): ExcelField<T, P> {
-        this.wrapText = wrapText
         return this
     }
 

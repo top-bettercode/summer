@@ -5,6 +5,7 @@ import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import top.bettercode.summer.tools.excel.Style.Companion.style
 import java.io.*
 import java.net.URLEncoder
 import java.nio.file.Files
@@ -52,13 +53,25 @@ class ExcelExport {
     private var includeComment = false
     private var finish = false
     private var includeDataValidation = false
-    private val defaultFillColor = "F8F8F7"
-    private var fillColor = defaultFillColor
-    private var headerFillColor = "808080"
-    private var fontColor = Color.BLACK
-    private var headerFontColor = Color.WHITE
-    private var fontName: String = "Arial"
 
+    private var fillColor = "F8F8F7"
+
+    private val cellStyle: Style = Style().apply {
+        fontColor(Color.BLACK)
+        fontName("Arial")
+        horizontalAlignment(Alignment.CENTER.value)
+        verticalAlignment(Alignment.CENTER.value)
+        borderStyle(BorderStyle.THIN)
+        borderColor(Color.BLACK)
+    }
+    private val headerStyle: Style = Style().apply {
+        fillColor("808080")
+        fontColor(Color.WHITE)
+        fontName("Arial")
+        horizontalAlignment(Alignment.CENTER.value)
+        verticalAlignment(Alignment.CENTER.value)
+        bold()
+    }
 
     private val columnWidths = ColumnWidths()
     private val imageCells: MutableList<ExcelCell<*>> = ArrayList()
@@ -86,29 +99,12 @@ class ExcelExport {
         workbook = Workbook(outputStream, "", "1.0")
     }
 
-    fun fillColor(fillColor: String): ExcelExport {
-        this.fillColor = fillColor
-        return this
+    fun cellStyle(): Style {
+        return this.cellStyle
     }
 
-    fun headerFillColor(fillColor: String): ExcelExport {
-        this.headerFillColor = fillColor
-        return this
-    }
-
-    fun fontColor(fontColor: String): ExcelExport {
-        this.fontColor = fontColor
-        return this
-    }
-
-    fun headerFontColor(fontColor: String): ExcelExport {
-        this.headerFontColor = fontColor
-        return this
-    }
-
-    fun fontName(fontName: String): ExcelExport {
-        this.fontName = fontName
-        return this
+    fun headerStyle(): Style {
+        return this.headerStyle
     }
 
     /**
@@ -182,15 +178,11 @@ class ExcelExport {
     }
 
     @JvmOverloads
-    fun createTitle(title: String, cells: Int, fillColor: String = this.headerFillColor, fontColor: String = this.headerFontColor, fontSize: Int = 16): ExcelExport {
+    fun createTitle(title: String, cells: Int, headerStyle: Style = this.headerStyle): ExcelExport {
         sheet!!.value(row, column, title)
-        style(sheet!!.range(row, column, row, column + cells - 1))
-                .fillColor(fillColor)
-                .fontColor(fontColor)
-                .fontSize(fontSize)
-                .bold()
-                .set()
-
+        val styleSetter = sheet!!.range(row, column, row, column + cells - 1).style()
+        styleSetter.style(headerStyle)
+        styleSetter.set()
         return this
     }
 
@@ -211,7 +203,8 @@ class ExcelExport {
                     sheet!!.width(column, width)
                 }
                 setHeaderStyle()
-                sheet!!.range(row + 1, column, row + 1000, column).style().format(excelField.format)
+                val styleSetter = style(sheet!!.range(row + 1, column, row + 1000, column))
+                styleSetter.style(excelField.cellStyle)
                 if (includeComment) {
                     val commentStr = excelField.comment
                     if (commentStr.isNotBlank()) {
@@ -377,23 +370,16 @@ class ExcelExport {
     private fun <T> setCell(excelCell: ExcelCell<T>) {
         val column = excelCell.column
         val row = excelCell.row
-        val style = sheet!!.style(row, column)
+        val styleSetter = style(row, column)
         val excelField = excelCell.excelField
-        val format = excelField.format
-        style.horizontalAlignment(excelField.align.value)
-                .verticalAlignment(Alignment.CENTER.value)
-                .wrapText(excelField.wrapText)
-                .format(format)
-                .fontName(fontName)
-                .borderStyle(BorderStyle.THIN)
-                .borderColor(Color.BLACK)
+        styleSetter.style(excelField.cellStyle)
         if (excelCell.isFillColor) {
-            style.fillColor(fillColor)
+            styleSetter.fillColor(fillColor)
         }
         if (excelField.height != -1.0) {
             sheet!!.rowHeight(row, excelField.height)
         }
-        style.set()
+        styleSetter.set()
         if (excelField.isImageColumn) {
             imageCells.add(excelCell)
         }
@@ -428,7 +414,7 @@ class ExcelExport {
         val width = excelField.width
         if (width == -1.0) {
             val cellValue = excelCell.cellValue
-            columnWidths.put(column, if (excelField.isDateField) format else cellValue)
+            columnWidths.put(column, if (excelField.isDateField) excelField.cellStyle.valueFormatting else cellValue)
             if (excelCell.isLastRow) {
                 sheet!!.width(column, columnWidths.width(column))
             }
@@ -450,26 +436,17 @@ class ExcelExport {
             } else {
                 sheet!!.width(column, width)
             }
-            val style = sheet!!
-                    .range(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column)
-                    .style()
-            style.horizontalAlignment(excelField.align.value)
-                    .verticalAlignment(Alignment.CENTER.value)
-                    .wrapText(excelField.wrapText)
-                    .fontName(fontName)
-                    .format(excelField.format)
-                    .borderStyle(BorderStyle.THIN)
-                    .borderColor(Color.BLACK)
-            style.set()
+            val styleSetter = style(sheet!!.range(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column))
+            styleSetter.style(excelField.cellStyle)
+
+            styleSetter.set()
         }
     }
 
     private fun setHeaderStyle() {
-        style(row, column)
-                .fillColor(headerFillColor)
-                .fontColor(headerFontColor)
-                .bold()
-                .set()
+        val styleSetter = sheet!!.range(row, column, row, column).style()
+        styleSetter.style(headerStyle)
+        styleSetter.set()
     }
 
     fun style(row: Int, column: Int): StyleSetter {
@@ -477,12 +454,9 @@ class ExcelExport {
     }
 
     fun style(range: Range): StyleSetter {
-        return range.style()
-                .horizontalAlignment(Alignment.CENTER.value)
-                .verticalAlignment(Alignment.CENTER.value)
-                .fontName(fontName)
-                .borderStyle(BorderStyle.THIN)
-                .borderColor(Color.BLACK)
+        val styleSetter = range.style()
+        styleSetter.style(cellStyle)
+        return styleSetter
     }
 
     fun <T> template(excelFields: Array<ExcelField<T, *>>): ExcelExport {
