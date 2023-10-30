@@ -70,6 +70,8 @@ class ExcelExport {
         fontName("Arial")
         horizontalAlignment(Alignment.CENTER.value)
         verticalAlignment(Alignment.CENTER.value)
+        borderStyle(BorderStyle.THIN)
+        borderColor(Color.BLACK)
         bold()
     }
 
