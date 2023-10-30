@@ -544,18 +544,6 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun export(fileName: String, consumer: ExcelExport.() -> Unit) {
-            export(fileName) { excelExport -> excelExport.consumer() }
-        }
-
-        /**
-         * 输出数据流
-         *
-         * @param fileName 输出文件名
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
         fun export(fileName: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -566,18 +554,6 @@ class ExcelExport {
             val excelExport = of(response.outputStream)
             consumer.accept(excelExport)
             excelExport.finish()
-        }
-
-        /**
-         * 输出数据流
-         *
-         * @param fileName 输出文件名
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
-        fun exportWithImage(fileName: String, consumer: ExcelExport.() -> Unit) {
-            exportWithImage(fileName) { excelExport -> excelExport.consumer() }
         }
 
         /**
@@ -608,18 +584,6 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun sheet(fileName: String, consumer: ExcelExport.() -> Unit) {
-            sheet(fileName) { excelExport -> excelExport.consumer() }
-        }
-
-        /**
-         * 输出数据流
-         *
-         * @param fileName 输出文件名
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
         fun sheet(fileName: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -631,19 +595,6 @@ class ExcelExport {
             excelExport.sheet("sheet1")
             consumer.accept(excelExport)
             excelExport.finish()
-        }
-
-        /**
-         * 文件缓存输出
-         *
-         * @param fileName 输出文件名
-         * @param fileKey  文件唯一key
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
-        fun cache(fileName: String, fileKey: String, consumer: ExcelExport.() -> Unit) {
-            cache(fileName, fileKey) { excelExport -> excelExport.consumer() }
         }
 
         /**
