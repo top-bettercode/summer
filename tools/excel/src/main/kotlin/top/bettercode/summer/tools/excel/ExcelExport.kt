@@ -5,7 +5,7 @@ import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import top.bettercode.summer.tools.excel.Style.Companion.style
+import top.bettercode.summer.tools.excel.CellStyle.Companion.style
 import java.io.*
 import java.net.URLEncoder
 import java.nio.file.Files
@@ -56,7 +56,7 @@ class ExcelExport {
 
     private var fillColor = "F8F8F7"
 
-    private val cellStyle: Style = Style().apply {
+    private val cellStyle: CellStyle = CellStyle().apply {
         fontColor(Color.BLACK)
         fontName("Arial")
         horizontalAlignment(Alignment.CENTER.value)
@@ -64,7 +64,7 @@ class ExcelExport {
         borderStyle(BorderStyle.THIN)
         borderColor(Color.BLACK)
     }
-    private val headerStyle: Style = Style().apply {
+    private val headerStyle: CellStyle = CellStyle().apply {
         fillColor("808080")
         fontColor(Color.WHITE)
         fontName("Arial")
@@ -99,11 +99,11 @@ class ExcelExport {
         workbook = Workbook(outputStream, "", "1.0")
     }
 
-    fun cellStyle(): Style {
+    fun cellStyle(): CellStyle {
         return this.cellStyle
     }
 
-    fun headerStyle(): Style {
+    fun headerStyle(): CellStyle {
         return this.headerStyle
     }
 
@@ -178,7 +178,7 @@ class ExcelExport {
     }
 
     @JvmOverloads
-    fun createTitle(title: String, cells: Int, headerStyle: Style = this.headerStyle): ExcelExport {
+    fun createTitle(title: String, cells: Int, headerStyle: CellStyle = this.headerStyle): ExcelExport {
         sheet!!.value(row, column, title)
         val styleSetter = sheet!!.range(row, column, row, column + cells - 1).style()
         styleSetter.style(headerStyle)

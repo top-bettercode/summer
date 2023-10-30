@@ -7,7 +7,7 @@ import org.dhatim.fastexcel.StyleSetter
 import java.math.BigDecimal
 import java.util.*
 
-class Style {
+class CellStyle {
     /**
      * Value formatting.
      */
@@ -97,7 +97,7 @@ class Style {
     var protectionOptions: MutableMap<ProtectionOption, Boolean>? = null
 
     companion object {
-        fun StyleSetter.style(style: Style): StyleSetter {
+        fun StyleSetter.style(style: CellStyle): StyleSetter {
             style.valueFormatting?.let { format(it) }
             style.fillColor?.let { fillColor(it) }
             style.alternateShadingFillColor?.let { shadeAlternateRows(it) }
@@ -131,7 +131,7 @@ class Style {
  * page](https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/ee857658(v=office.14)?redirectedfrom=MSDN).
      * @return This style setter.
      */
-    fun format(numberingFormat: String?): Style {
+    fun format(numberingFormat: String?): CellStyle {
         valueFormatting = numberingFormat
         return this
     }
@@ -142,7 +142,7 @@ class Style {
      * @param rgb RGB fill color. See [Color] for predefined values.
      * @return This style setter.
      */
-    fun fillColor(rgb: String?): Style {
+    fun fillColor(rgb: String?): CellStyle {
         fillColor = rgb
         return this
     }
@@ -153,7 +153,7 @@ class Style {
      * @param rgb RGB shading color.
      * @return This style setter.
      */
-    fun shadeAlternateRows(rgb: String?): Style {
+    fun shadeAlternateRows(rgb: String?): CellStyle {
         alternateShadingFillColor = rgb
         return this
     }
@@ -165,7 +165,7 @@ class Style {
      * @param eachNRows shading frequency.
      * @return This style setter.
      */
-    fun shadeRows(rgb: String?, eachNRows: Int): Style {
+    fun shadeRows(rgb: String?, eachNRows: Int): CellStyle {
         shadingFillColor = rgb
         this.eachNRows = eachNRows
         return this
@@ -177,7 +177,7 @@ class Style {
      * @param rgb RGB font color.
      * @return This style setter.
      */
-    fun fontColor(rgb: String?): Style {
+    fun fontColor(rgb: String?): CellStyle {
         fontColor = rgb
         return this
     }
@@ -188,7 +188,7 @@ class Style {
      * @param name Font name.
      * @return This style setter.
      */
-    fun fontName(name: String?): Style {
+    fun fontName(name: String?): CellStyle {
         fontName = name
         return this
     }
@@ -199,7 +199,7 @@ class Style {
      * @param size Font size, in points.
      * @return This style setter.
      */
-    fun fontSize(size: BigDecimal?): Style {
+    fun fontSize(size: BigDecimal?): CellStyle {
         fontSize = size
         return this
     }
@@ -210,7 +210,7 @@ class Style {
      * @param size Font size, in points.
      * @return This style setter.
      */
-    fun fontSize(size: Int): Style {
+    fun fontSize(size: Int): CellStyle {
         fontSize = BigDecimal.valueOf(size.toLong())
         return this
     }
@@ -220,7 +220,7 @@ class Style {
      *
      * @return This style setter.
      */
-    fun bold(): Style {
+    fun bold(): CellStyle {
         bold = true
         return this
     }
@@ -230,7 +230,7 @@ class Style {
      *
      * @return This style setter.
      */
-    fun italic(): Style {
+    fun italic(): CellStyle {
         italic = true
         return this
     }
@@ -240,7 +240,7 @@ class Style {
      *
      * @return This style setter.
      */
-    fun underlined(): Style {
+    fun underlined(): CellStyle {
         underlined = true
         return this
     }
@@ -252,7 +252,7 @@ class Style {
      * [here](https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/cc880467(v=office.14)?redirectedfrom=MSDN).
      * @return This style setter.
      */
-    fun horizontalAlignment(alignment: String?): Style {
+    fun horizontalAlignment(alignment: String?): CellStyle {
         horizontalAlignment = alignment
         return this
     }
@@ -264,7 +264,7 @@ class Style {
      * [here](https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/cc802119(v=office.14)?redirectedfrom=MSDN).
      * @return This style setter.
      */
-    fun verticalAlignment(alignment: String?): Style {
+    fun verticalAlignment(alignment: String?): CellStyle {
         verticalAlignment = alignment
         return this
     }
@@ -275,7 +275,7 @@ class Style {
      * @param wrapText `true` to enable text wrapping (default is `false`).
      * @return This style setter.
      */
-    fun wrapText(wrapText: Boolean): Style {
+    fun wrapText(wrapText: Boolean): CellStyle {
         this.wrapText = wrapText
         return this
     }
@@ -286,7 +286,7 @@ class Style {
      * @param degrees rotation of text in cell
      * @return This style setter
      */
-    fun rotation(degrees: Int): Style {
+    fun rotation(degrees: Int): CellStyle {
         rotation = degrees
         return this
     }
@@ -298,7 +298,7 @@ class Style {
      * @param borderStyle Border style.
      * @return This style setter.
      */
-    fun borderStyle(borderStyle: BorderStyle?): Style {
+    fun borderStyle(borderStyle: BorderStyle?): CellStyle {
         this.borderStyle = borderStyle
         return this
     }
@@ -311,7 +311,7 @@ class Style {
      * [here](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.borderstylevalues?view=openxml-2.8.1).
      * @return This style setter.
      */
-    fun borderStyle(borderStyle: String?): Style {
+    fun borderStyle(borderStyle: String?): CellStyle {
         borderStyleStr = borderStyle
         return this
     }
@@ -324,7 +324,7 @@ class Style {
      * @param borderStyle Border style.
      * @return This style setter.
      */
-    fun borderStyle(side: BorderSide, borderStyle: BorderStyle): Style {
+    fun borderStyle(side: BorderSide, borderStyle: BorderStyle): CellStyle {
         if (borderStyles == null) {
             borderStyles = EnumMap(BorderSide::class.java)
         }
@@ -341,7 +341,7 @@ class Style {
      * [here](https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/cc844549(v=office.14)?redirectedfrom=MSDN).
      * @return This style setter.
      */
-    fun borderStyle(side: BorderSide, borderStyle: String): Style {
+    fun borderStyle(side: BorderSide, borderStyle: String): CellStyle {
         if (borderStyleStrs == null) {
             borderStyleStrs = EnumMap(BorderSide::class.java)
         }
@@ -356,7 +356,7 @@ class Style {
      * @param borderColor RGB border color.
      * @return This style setter.
      */
-    fun borderColor(borderColor: String?): Style {
+    fun borderColor(borderColor: String?): CellStyle {
         this.borderColor = borderColor
         return this
     }
@@ -369,7 +369,7 @@ class Style {
      * @param borderColor RGB border color.
      * @return This style setter.
      */
-    fun borderColor(side: BorderSide, borderColor: String): Style {
+    fun borderColor(side: BorderSide, borderColor: String): CellStyle {
         if (borderColors == null) {
             borderColors = EnumMap(BorderSide::class.java)
         }
@@ -384,7 +384,7 @@ class Style {
      * @param value  The value to set for the given option.
      * @return This style setter.
      */
-    fun protectionOption(option: ProtectionOption, value: Boolean): Style {
+    fun protectionOption(option: ProtectionOption, value: Boolean): CellStyle {
         if (protectionOptions == null) {
             protectionOptions = EnumMap(ProtectionOption::class.java)
         }

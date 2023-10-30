@@ -98,7 +98,7 @@ class ExcelField<T, P : Any?> {
     /**
      * cell 样式
      */
-    val cellStyle: Style = Style()
+    val cellStyle: CellStyle = CellStyle()
         get() {
             if (field.valueFormatting == null) {
                 field.valueFormatting = defaultFormat
