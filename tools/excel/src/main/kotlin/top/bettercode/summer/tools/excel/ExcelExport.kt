@@ -542,7 +542,19 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun export(fileName: String, consumer: Consumer<ExcelExport?>) {
+        fun export(fileName: String, consumer: ExcelExport.() -> Unit) {
+            export(fileName) { excelExport -> excelExport.consumer() }
+        }
+
+        /**
+         * 输出数据流
+         *
+         * @param fileName 输出文件名
+         * @param consumer 处理生成excel
+         * @throws IOException IOException
+         */
+        @JvmStatic
+        fun export(fileName: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
@@ -562,7 +574,19 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun exportWithImage(fileName: String, consumer: Consumer<ExcelExport?>) {
+        fun exportWithImage(fileName: String, consumer: ExcelExport.() -> Unit) {
+            exportWithImage(fileName) { excelExport -> excelExport.consumer() }
+        }
+
+        /**
+         * 输出数据流
+         *
+         * @param fileName 输出文件名
+         * @param consumer 处理生成excel
+         * @throws IOException IOException
+         */
+        @JvmStatic
+        fun exportWithImage(fileName: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
@@ -582,7 +606,19 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun sheet(fileName: String, consumer: Consumer<ExcelExport?>) {
+        fun sheet(fileName: String, consumer: ExcelExport.() -> Unit) {
+            sheet(fileName) { excelExport -> excelExport.consumer() }
+        }
+
+        /**
+         * 输出数据流
+         *
+         * @param fileName 输出文件名
+         * @param consumer 处理生成excel
+         * @throws IOException IOException
+         */
+        @JvmStatic
+        fun sheet(fileName: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
@@ -604,7 +640,20 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun cache(fileName: String, fileKey: String, consumer: Consumer<ExcelExport?>) {
+        fun cache(fileName: String, fileKey: String, consumer: ExcelExport.() -> Unit) {
+            cache(fileName, fileKey) { excelExport -> excelExport.consumer() }
+        }
+
+        /**
+         * 文件缓存输出
+         *
+         * @param fileName 输出文件名
+         * @param fileKey  文件唯一key
+         * @param consumer 处理生成excel
+         * @throws IOException IOException
+         */
+        @JvmStatic
+        fun cache(fileName: String, fileKey: String, consumer: Consumer<ExcelExport>) {
             cacheOutput(fileName, fileKey) { outputStream ->
                 val excelExport = of(outputStream)
                 consumer.accept(excelExport)
@@ -643,8 +692,7 @@ class ExcelExport {
             StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
         }
 
-        private fun excelContentDisposition(request: HttpServletRequest, response: HttpServletResponse,
-                                            fileName: String) {
+        private fun excelContentDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String) {
             response.reset()
             attachmentContentDisposition(request, response, "$fileName.xlsx")
         }
@@ -659,8 +707,7 @@ class ExcelExport {
          */
         @JvmStatic
         @JvmOverloads
-        fun attachmentContentDisposition(request: HttpServletRequest, response: HttpServletResponse,
-                                         fileName: String, contentType: String = "application/vnd.ms-excel; charset=utf-8") {
+        fun attachmentContentDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String, contentType: String = "application/vnd.ms-excel; charset=utf-8") {
             val agent = request.getHeader("USER-AGENT")
             val encodeFileName = URLEncoder.encode(fileName, "UTF-8")
             val newFileName: String = if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
