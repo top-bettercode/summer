@@ -54,9 +54,9 @@ class ExcelExport {
     private var includeDataValidation = false
     private val defaultFillColor = "F8F8F7"
     private var fillColor = defaultFillColor
-    private var headerFillColor = defaultFillColor
+    private var headerFillColor = "808080"
     private var fontColor = Color.BLACK
-    private var headerFontColor = Color.BLACK
+    private var headerFontColor = Color.WHITE
     private var fontName: String = "Arial"
 
 
