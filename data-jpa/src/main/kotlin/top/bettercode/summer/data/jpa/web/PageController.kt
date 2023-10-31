@@ -99,13 +99,13 @@ open class PageController : BaseController() {
     }
 
     @JvmOverloads
-    protected fun <T, R> pagedResources(`object`: Page<T?>, mapper: Function<T?, R?>? = null): PagedResources<Any?> {
+    protected fun <T, R> pagedResources(`object`: Page<T?>, mapper: Function<T?, R?>? = null): Any {
         val number = if (properties!!.pageable.isOneIndexedParameters) `object`.number + 1 else `object`.number
         val content = if (mapper == null) `object`.content else `object`.content.stream().map(mapper).collect(Collectors.toList())
         return pagedResources(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(), `object`.totalElements, content)
     }
 
-    protected open fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: T?): PagedResources<T?> {
+    protected open fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: T?): Any {
         return PagedResources(number, size, totalPages, totalElements, content)
     }
 }
