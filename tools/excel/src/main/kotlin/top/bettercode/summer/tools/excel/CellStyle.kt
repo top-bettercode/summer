@@ -8,10 +8,14 @@ import java.math.BigDecimal
 import java.util.*
 
 class CellStyle {
+
+    var defaultValueFormatting: String? = null
+
     /**
      * Value formatting.
      */
     var valueFormatting: String? = null
+        get() = field ?: defaultValueFormatting
 
     /**
      * RGB fill color.

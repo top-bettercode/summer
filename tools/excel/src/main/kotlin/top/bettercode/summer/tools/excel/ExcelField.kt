@@ -99,12 +99,6 @@ class ExcelField<T, P : Any?> {
      * cell 样式
      */
     val cellStyle: CellStyle = CellStyle()
-        get() {
-            if (field.valueFormatting == null) {
-                field.valueFormatting = defaultFormat
-            }
-            return field
-        }
 
     /**
      * 列宽度，-1表示自动计算
@@ -536,6 +530,8 @@ class ExcelField<T, P : Any?> {
         Assert.notNull(propertyType, "propertyType 不能为空")
 
         isDateField = propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
+
+        this.cellStyle.defaultValueFormatting = defaultFormat
     }
 
     constructor(title: String, indexColumn: Boolean, formula: Boolean) {
