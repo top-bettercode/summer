@@ -105,7 +105,7 @@ open class PageController : BaseController() {
         return pagedResources(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(), `object`.totalElements, content)
     }
 
-    protected open fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: T?): Any {
+    protected open fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: Collection<T?>): Any {
         return PagedResources(number, size, totalPages, totalElements, content)
     }
 }

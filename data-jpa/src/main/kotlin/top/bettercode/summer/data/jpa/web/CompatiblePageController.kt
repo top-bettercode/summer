@@ -5,7 +5,7 @@ package top.bettercode.summer.data.jpa.web
  */
 open class CompatiblePageController : PageController() {
 
-    override fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: T?): Any {
+    override fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: Collection<T?>): Any {
         return CompatiblePagedResources(number, size, totalPages, totalElements, content)
     }
 

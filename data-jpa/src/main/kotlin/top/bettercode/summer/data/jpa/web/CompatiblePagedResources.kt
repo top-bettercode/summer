@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.web
 
 import com.fasterxml.jackson.annotation.JsonView
+import org.springframework.data.domain.Page
 
 /**
  * @author Peter Wu
@@ -19,4 +20,8 @@ class CompatiblePagedResources<T>(
          * 总数
          */
         @field:JsonView(Any::class) var total: Long,
-        @field:JsonView(Any::class) var list: T)
+        @field:JsonView(Any::class) var list: Collection<T>) {
+    constructor(page: Page<T>) : this(page.number.toLong(), page.size.toLong(), page.totalPages.toLong(), page.totalElements,
+            page.content)
+
+}
