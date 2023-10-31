@@ -19,10 +19,6 @@ open class PageController : BaseController() {
     @Autowired
     private lateinit var properties: SpringDataWebProperties
 
-    override fun of(`object`: Any): RespExtra<*>? {
-        return super.of(page(`object`))
-    }
-
     @JvmOverloads
     protected fun <T, R> ok(`object`: Page<T?>, mapper: Function<T?, R?>? = null): ResponseEntity<*> {
         return super.ok(pagedResources(`object`, mapper))
@@ -73,6 +69,21 @@ open class PageController : BaseController() {
         return super.ok(pagedResources)
     }
 
+    fun <T> of(`object`: Page<T?>): RespExtra<*>? {
+        return super.of(page<T, Any>(`object`))
+    }
+
+    fun <T> of(`object`: PageableList<T?>): RespExtra<*>? {
+        return super.of(page<T, Any>(`object`))
+    }
+
+    fun <T> of(`object`: Collection<T?>): RespExtra<*>? {
+        return super.of(page<T, Any>(`object`))
+    }
+
+    fun <T> of(`object`: Array<T?>): RespExtra<*>? {
+        return super.of(page<T, Any>(`object`))
+    }
 
     @JvmOverloads
     protected fun <T, R> pagedResources(`object`: Page<T?>, mapper: Function<T?, R?>? = null): Any {
