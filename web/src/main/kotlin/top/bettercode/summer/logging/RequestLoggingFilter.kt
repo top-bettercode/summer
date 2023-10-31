@@ -8,6 +8,7 @@ import org.slf4j.MarkerFactory
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.AnnotatedElementUtils
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,6 +30,7 @@ import top.bettercode.summer.tools.lang.util.AnnotatedUtils
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
 import java.time.LocalDateTime
+import java.util.*
 import javax.servlet.FilterChain
 import javax.servlet.RequestDispatcher
 import javax.servlet.http.HttpServletRequest
@@ -117,7 +119,7 @@ class RequestLoggingFilter(
             val error = getError(requestAttributes)
             val httpStatusCode = getStatus(requestAttributes)
             if (needRecord(requestToUse, handler, error, httpStatusCode, uri)) {
-                val config: RequestLoggingConfig = requestLoggingConfig(requestToUse, handler)
+                val config: RequestLoggingConfig = requestLoggingConfig(requestToUse, responseToUse, handler)
                 val operationResponse = ResponseConverter.convert(responseToUse)
                 if (error != null) {
                     if (config.includeTrace) {
@@ -205,6 +207,7 @@ class RequestLoggingFilter(
 
     private fun requestLoggingConfig(
             request: HttpServletRequest,
+            response: HttpServletResponse,
             handler: HandlerMethod?
     ): RequestLoggingConfig {
         var bestPattern = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE)
@@ -217,7 +220,11 @@ class RequestLoggingFilter(
                 HttpOperation.BEST_MATCHING_PATTERN_ATTRIBUTE,
                 bestPattern
         )
-
+        val isMultipart = request.contentType?.lowercase(Locale.getDefault())
+                ?.startsWith("multipart/") == true
+        val isFile = !response.getHeader(HttpHeaders.CONTENT_DISPOSITION).isNullOrBlank()
+        val includeRequestBody = if (isMultipart) false else properties.isIncludeRequestBody
+        val includeResponseBody = if (isFile) false else properties.isIncludeResponseBody
         return if (handler != null) {
             var collectionName = AnnotatedElementUtils.getMergedAnnotation(
                     handler.beanType,
@@ -246,13 +253,13 @@ class RequestLoggingFilter(
                 timeoutAlarmSeconds = properties.timeoutAlarmSeconds
             }
             RequestLoggingConfig(
-                    includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false || properties.isForceRecord,
-                    includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false || properties.isForceRecord,
+                    includeRequestBody = includeRequestBody && requestLoggingAnno?.includeRequestBody != false || properties.isForceRecord,
+                    includeResponseBody = includeResponseBody && requestLoggingAnno?.includeResponseBody != false || properties.isForceRecord,
                     includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false || properties.isForceRecord,
                     encryptHeaders = encryptHeaders,
                     encryptParameters = encryptParameters,
                     format = properties.isFormat,
-                    ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true,
+                    ignoredTimeout = isMultipart || isFile || requestLoggingAnno?.ignoredTimeout == true,
                     timeoutAlarmSeconds = timeoutAlarmSeconds,
                     logMarker = requestLoggingAnno?.logMarker ?: REQUEST_LOG_MARKER,
                     collectionName = collectionName,
@@ -260,13 +267,13 @@ class RequestLoggingFilter(
             )
         } else
             RequestLoggingConfig(
-                    includeRequestBody = properties.isIncludeRequestBody,
-                    includeResponseBody = properties.isIncludeResponseBody,
+                    includeRequestBody = includeRequestBody,
+                    includeResponseBody = includeResponseBody,
                     includeTrace = properties.isIncludeTrace,
                     encryptHeaders = properties.encryptHeaders,
                     encryptParameters = properties.encryptParameters,
                     format = properties.isFormat,
-                    ignoredTimeout = false,
+                    ignoredTimeout = isMultipart || isFile,
                     timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
                     logMarker = REQUEST_LOG_MARKER,
                     collectionName = "",
