@@ -69,20 +69,32 @@ open class PageController : BaseController() {
         return super.ok(pagedResources)
     }
 
-    fun <T> of(`object`: Page<T?>): RespExtra<*>? {
-        return super.of(page<T, Any>(`object`))
+    @JvmOverloads
+    fun <T, R> of(`object`: Page<T?>, mapper: Function<T?, R?>? = null): RespExtra<*>? {
+        return super.of(pagedResources(`object`, mapper))
     }
 
-    fun <T> of(`object`: PageableList<T?>): RespExtra<*>? {
-        return super.of(page<T, Any>(`object`))
+    @JvmOverloads
+    fun <T, R> of(`object`: PageableList<T?>, mapper: Function<T?, R?>? = null): RespExtra<*>? {
+        return super.of(pagedResources(`object`.toPage(), mapper))
     }
 
-    fun <T> of(`object`: Collection<T?>): RespExtra<*>? {
-        return super.of(page<T, Any>(`object`))
+    @JvmOverloads
+    fun <T, R> of(`object`: Collection<T?>, mapper: Function<T?, R?>? = null): RespExtra<*>? {
+        val number = if (properties.pageable.isOneIndexedParameters) 1 else 0
+        val size = `object`.size
+        val collect = if (mapper == null) `object` else `object`.stream().map(mapper).collect(Collectors.toList())
+        val pagedResources = pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+        return super.of(pagedResources)
     }
 
-    fun <T> of(`object`: Array<T?>): RespExtra<*>? {
-        return super.of(page<T, Any>(`object`))
+    @JvmOverloads
+    fun <T, R> of(`object`: Array<T?>, mapper: Function<T?, R?>? = null): RespExtra<*>? {
+        val number = if (properties.pageable.isOneIndexedParameters) 1 else 0
+        val size = `object`.size
+        val collect = if (mapper == null) `object`.toList() else `object`.toList().stream().map(mapper).collect(Collectors.toList())
+        val pagedResources = pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+        return super.of(pagedResources)
     }
 
     @JvmOverloads
