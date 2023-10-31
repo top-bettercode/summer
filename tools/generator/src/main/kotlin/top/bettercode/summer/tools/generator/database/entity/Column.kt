@@ -114,10 +114,7 @@ data class Column(
     val javaName: String = GeneratorExtension.javaName(this.columnName)
 
     val defaultDesc: String by lazy {
-        val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith(
-                "TEXT",
-                true
-        ) || typeName.startsWith("TINYTEXT", true) || typeName.startsWith("MEDIUMTEXT", true)
+        val isString = JavaType.stringInstance == javaType
         if (columnDef == null) "" else {
             val qt = if (isString) "'" else ""
             (" DEFAULT $qt$columnDef$qt")
