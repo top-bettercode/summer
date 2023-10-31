@@ -20,93 +20,92 @@ open class PageController : BaseController() {
     private val properties: SpringDataWebProperties? = null
 
     override fun of(`object`: Any): RespExtra<*>? {
-        return super.of(pagedResources(`object`)!!)
+        return super.of(page(`object`))
     }
 
-    override fun ok(`object`: Any?): ResponseEntity<*> {
-        return when (`object`) {
-            is Page<*> -> {
-                super.ok(pagedResources(`object`))
-            }
-
-            is PageableList<*> -> {
-                super.ok(pagedResources(`object`.toPage()))
-            }
-
-            else -> {
-                super.ok(`object`)
-            }
-        }
+    fun <T> ok(`object`: Page<T?>): ResponseEntity<*> {
+        return super.ok(pagedResources<T, Any>(`object`, null))
     }
 
-    protected fun ok(`object`: Any?, mapper: Function<Any?, Any?>): ResponseEntity<*> {
-        return super.ok(when (`object`) {
-            is Page<*> -> {
-                pagedResources(`object`, mapper)
-            }
-
-            is PageableList<*> -> {
-                pagedResources(`object`.toPage(), mapper)
-            }
-
-            is Collection<*> -> {
-                `object`.stream().map(mapper).collect(Collectors.toList())
-            }
-
-            is Array<*> -> {
-                `object`.toList().stream().map(mapper).collect(Collectors.toList())
-            }
-
-            else -> {
-                `object`
-            }
-        })
+    fun <T> ok(`object`: PageableList<T?>): ResponseEntity<*> {
+        return super.ok(pagedResources<T, Any>(`object`.toPage(), null))
     }
 
-    @JvmOverloads
-    protected fun page(`object`: Any?, mapper: Function<Any?, Any?>? = null): ResponseEntity<*> {
+    protected fun <T, R> ok(`object`: Page<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
+        return super.ok(pagedResources(`object`, mapper))
+    }
+
+    protected fun <T, R> ok(`object`: PageableList<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
+        return super.ok(pagedResources(`object`.toPage(), mapper))
+    }
+
+    protected fun <T, R> ok(`object`: Collection<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
+        return super.ok(`object`.stream().map(mapper).collect(Collectors.toList()))
+    }
+
+    protected fun <T, R> ok(`object`: Array<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
+        return super.ok(`object`.toList().stream().map(mapper).collect(Collectors.toList()))
+    }
+
+    fun <T> page(`object`: Page<T?>): ResponseEntity<*> {
+        return super.ok(pagedResources<T, Any>(`object`, null))
+    }
+
+    fun <T> page(`object`: PageableList<T?>): ResponseEntity<*> {
+        return super.ok(pagedResources<T, Any>(`object`.toPage(), null))
+    }
+
+    fun <T> page(`object`: Collection<T?>): ResponseEntity<*> {
+        val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
+        val size = `object`.size
+        val pagedResources = pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), `object`)
+        return super.ok(pagedResources)
+    }
+
+    fun <T> page(`object`: Array<T?>): ResponseEntity<*> {
+        val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
+        val size = `object`.size
+        val pagedResources = pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), `object`.toList())
+
+        return super.ok(pagedResources)
+    }
+
+    protected fun page(`object`: Any?): ResponseEntity<*> {
+        return super.ok(`object`)
+    }
+
+    protected fun <T, R> page(`object`: Array<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
+        val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
+        val size = `object`.size
+        val collect = `object`.toList().stream().map(mapper).collect(Collectors.toList())
+        val pagedResources = pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+        return super.ok(pagedResources)
+    }
+
+    protected fun <T, R> page(`object`: Collection<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
+        val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
+        val size = `object`.size
+        val collect = `object`.stream().map(mapper).collect(Collectors.toList())
+        val pagedResources = pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+        return super.ok(pagedResources)
+    }
+
+    protected fun <T, R> page(`object`: PageableList<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
+        return super.ok(pagedResources(`object`.toPage(), mapper))
+    }
+
+    protected fun <T, R> page(`object`: Page<T?>, mapper: Function<T?, R?>): ResponseEntity<*> {
         return super.ok(pagedResources(`object`, mapper))
     }
 
     @JvmOverloads
-    protected fun pagedResources(`object`: Any?, mapper: Function<Any?, Any?>? = null): Any? {
-        return when (`object`) {
-            is Page<*> -> {
-                pagedResources(`object`, mapper)
-            }
-
-            is PageableList<*> -> {
-                pagedResources(`object`.toPage(), mapper)
-            }
-
-            is Collection<*> -> {
-                val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
-                val size = `object`.size
-                val collect = if (mapper == null) `object` else `object`.stream().map(mapper).collect(Collectors.toList())
-                pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
-            }
-
-            is Array<*> -> {
-                val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
-                val size = `object`.size
-                val collect = if (mapper == null) `object`.toList() else `object`.toList().stream().map(mapper).collect(Collectors.toList())
-                pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
-            }
-
-            else -> {
-                `object`
-            }
-        }
-    }
-
-    @JvmOverloads
-    protected fun pagedResources(`object`: Page<*>, mapper: Function<Any?, Any?>? = null): Any {
+    protected fun <T, R> pagedResources(`object`: Page<T?>, mapper: Function<T?, R?>? = null): PagedResources<Any?> {
         val number = if (properties!!.pageable.isOneIndexedParameters) `object`.number + 1 else `object`.number
         val content = if (mapper == null) `object`.content else `object`.content.stream().map(mapper).collect(Collectors.toList())
         return pagedResources(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(), `object`.totalElements, content)
     }
 
-    protected open fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: T?): Any {
+    protected open fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: T?): PagedResources<T?> {
         return PagedResources(number, size, totalPages, totalElements, content)
     }
 }
