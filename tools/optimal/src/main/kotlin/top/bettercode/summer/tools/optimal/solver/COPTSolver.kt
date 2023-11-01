@@ -25,9 +25,8 @@ class COPTSolver @JvmOverloads constructor(
         val env = copt.Envr()
         model = env.createModel(name)
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
-        model.setDblParam(copt.DblParam.FeasTol, epsilon / 10)
-        model.setDblParam(copt.DblParam.DualTol, epsilon / 10)
-        model.setDblParam(copt.DblParam.IntTol, epsilon / 10)
+        model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
+        model.setDblParam(copt.DblParam.FeasTol, 1e-9)
     }
 
     override fun setTimeLimit(seconds: Int) {
