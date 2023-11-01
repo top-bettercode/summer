@@ -33,7 +33,7 @@ class TestController {
 
     @RequestMapping("/testNoRead")
     fun testNoRead(request: String?): Any {
-        Thread.sleep(5 * 1000)
+//        Thread.sleep(5 * 1000)
         return request ?: "null"
     }
 

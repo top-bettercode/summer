@@ -88,7 +88,7 @@ class SecurityErrorTest {
                 .postForEntity("/oauth/token", HttpEntity(params),
                         String::class.java)
         System.err.println(entity.body)
-        Thread.sleep((5 * 1000).toLong())
+//        Thread.sleep((5 * 1000).toLong())
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, entity.statusCode)
     }
 }

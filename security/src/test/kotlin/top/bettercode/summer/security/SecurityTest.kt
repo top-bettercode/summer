@@ -83,7 +83,7 @@ class SecurityTest {
         requiredParameters("grant_type", "scope", "username", "password")
         val accessToken = getApiAccessToken(null)
         Assertions.assertNotNull(accessToken)
-        Thread.sleep(1000)
+//        Thread.sleep(1000)
     }
 
     /**
@@ -102,7 +102,7 @@ class SecurityTest {
         val entity2 = clientRestTemplate
                 .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
-        Thread.sleep(1000)
+//        Thread.sleep(1000)
     }
 
     @Test
@@ -131,7 +131,7 @@ class SecurityTest {
         val entity2 = clientRestTemplate
                 .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
         Assertions.assertEquals(HttpStatus.NO_CONTENT, entity2.statusCode)
-        Thread.sleep(1000)
+//        Thread.sleep(1000)
     }
 
     @Test
