@@ -8,6 +8,7 @@ dependencies {
 
     compileOnly("ch.qos.logback:logback-classic")
     compileOnly("org.springframework:spring-webmvc")
+    testImplementation("org.springframework:spring-webmvc")
     compileOnly("javax.servlet:javax.servlet-api")
 
     compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")

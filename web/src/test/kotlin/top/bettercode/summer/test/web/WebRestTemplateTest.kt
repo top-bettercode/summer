@@ -24,7 +24,7 @@ class WebRestTemplateTest {
     @Autowired
     lateinit var environment: Environment
 
-    @Value("\${logging.level.org.springframework.boot.SpringApplication}")
+    @Value("\${logging.level.root}")
     var logLevel: String? = null
 
     @Test
