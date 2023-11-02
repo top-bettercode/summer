@@ -12,7 +12,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder
 import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings
@@ -46,7 +45,7 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
         val dataSources = Binder.get(
                 environment).bind("summer.datasource.multi.datasources", Bindable
-                .mapOf(String::class.java, BaseDataSourceProperties::class.java)).orElse(null)
+                .mapOf(String::class.java, DataSourceExtProperties::class.java)).orElse(null)
         val configurationSources = JpaMybatisConfigurationUtil.findConfigurationSources(beanFactory)
         if (configurationSources.size > 1) {
             val factory = beanFactory as DefaultListableBeanFactory
@@ -59,27 +58,18 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                 val dataSourceBeanName = if (primary) "dataSource" else key + "DataSource"
                 var beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
                         HikariDataSource::class.java) {
-                    val dataSourceProperties = DataSourceProperties()
-                    dataSourceProperties.url = properties.url
-                    dataSourceProperties.username = properties.username
-                    dataSourceProperties.password = properties.password
-                    val dataSource = dataSourceProperties.initializeDataSourceBuilder()
-                            .type(HikariDataSource::class.java).build()
-                    if (!dataSourceProperties.name.isNullOrBlank()) {
-                        dataSource.poolName = dataSourceProperties.name
-                    }
-                    val hikari = properties.hikari
-                    if (hikari != null) {
-                        val hikariConfigKey = "summer.datasource.multi.datasources.$key.hikari"
-                        Binder.get(environment)
-                                .bind(hikariConfigKey, Bindable.ofInstance(dataSource))
-                    } else {
-                        Binder.get(environment)
-                                .bind("spring.datasource.hikari", Bindable.ofInstance(dataSource))
+                    val dataSource = properties.initializeDataSourceBuilder().type(HikariDataSource::class.java).build()
+                    if (!properties.name.isNullOrBlank()) {
+                        dataSource.poolName = properties.name
                     }
                     if (dataSource.poolName.isNullOrBlank()) {
                         dataSource.poolName = "${key}Pool"
                     }
+
+                    Binder.get(environment).bind("spring.datasource.hikari", Bindable.ofInstance(dataSource))
+                    val hikariConfigKey = "summer.datasource.multi.datasources.$key.hikari"
+                    Binder.get(environment).bind(hikariConfigKey, Bindable.ofInstance(dataSource))
+
                     if (log.isInfoEnabled) {
                         log.info("init dataSource {} : {}", dataSource.poolName,
                                 dataSource.jdbcUrl)

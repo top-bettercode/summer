@@ -8,7 +8,7 @@
   "properties": [
     {
       "name": "summer.datasource.multi.datasources",
-      "type": "java.util.Map<java.lang.String,top.bettercode.summer.data.jpa.config.BaseDataSourceProperties>",
+      "type": "java.util.Map<java.lang.String,top.bettercode.summer.data.jpa.config.DataSourceExtProperties>",
       "sourceType": "top.bettercode.summer.data.jpa.config.DatasourcesBeanDefinitionRegistryPostProcessor"
     }
   ],
