@@ -105,9 +105,11 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                             beanFactory,
                             beanFactory.getBeanProvider(HibernatePropertiesCustomizer::class.java).orderedStream()
                                     .collect(Collectors.toList()))
+                    val jpaExtProperties = HashMap<String, String?>(jpaProperties.properties)
+                    jpaExtProperties.putAll(properties.jpaProperties)
                     val vendorProperties = LinkedHashMap(
                             hibernateProperties
-                                    .determineHibernateProperties(jpaProperties.properties,
+                                    .determineHibernateProperties(jpaExtProperties,
                                             HibernateSettings()
                                                     .hibernatePropertiesCustomizers(hibernatePropertiesCustomizers)
                                     ))
