@@ -2,9 +2,9 @@ package top.bettercode.summer.tools.qvod
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.tencentcloudapi.common.AbstractModel
 import com.tencentcloudapi.common.Credential
 import com.tencentcloudapi.common.exception.TencentCloudSDKException
+import com.tencentcloudapi.common.http.HttpConnection
 import com.tencentcloudapi.common.profile.ClientProfile
 import com.tencentcloudapi.common.profile.HttpProfile
 import com.tencentcloudapi.vod.v20180717.VodClient
@@ -15,8 +15,8 @@ import org.slf4j.MarkerFactory
 import org.springframework.util.Base64Utils
 import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
 import top.bettercode.summer.tools.lang.util.RandomUtil
-import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.qvod.QvodClient.Companion.LOG_MARKER
 import java.util.*
 import javax.crypto.Mac
@@ -47,7 +47,10 @@ open class QvodClient(
         val clientProfile = ClientProfile()
         clientProfile.httpProfile = httpProfile
         vodClient = VodClient(cred, properties.region, clientProfile)
-
+        val field = VodClient::class.java.superclass.getDeclaredField("httpConnection")
+        field.isAccessible = true
+        val httpConnection = field.get(vodClient) as HttpConnection
+        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "腾讯云", logMarker = LOG_MARKER, logClazz = QvodClient::class.java))
     }
 
     /**
@@ -184,21 +187,7 @@ open class QvodClient(
         req.filters = filters
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: DescribeMediaInfosResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.DescribeMediaInfos(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.DescribeMediaInfos(req)
     }
 
     /**
@@ -210,21 +199,7 @@ open class QvodClient(
         val req = DescribeStorageRegionsRequest()
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: DescribeStorageRegionsResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.DescribeStorageRegions(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.DescribeStorageRegions(req)
     }
 
     /**
@@ -237,21 +212,7 @@ open class QvodClient(
         req.fileId = fileId
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: DeleteMediaResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.DeleteMedia(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.DeleteMedia(req)
     }
 
 
@@ -269,21 +230,7 @@ open class QvodClient(
         req.sessionId = UUID.randomUUID().toString()
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: ProcessMediaByProcedureResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.ProcessMediaByProcedure(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.ProcessMediaByProcedure(req)
     }
 
     /**
@@ -308,21 +255,8 @@ open class QvodClient(
         req.subAppId = properties.appId
 
         req.sessionId = UUID.randomUUID().toString()
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
 
-        var resp: ProcessMediaResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.ProcessMedia(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.ProcessMedia(req)
     }
 
     /**
@@ -339,21 +273,8 @@ open class QvodClient(
         req.subAppId = properties.appId
 
         req.sessionId = UUID.randomUUID().toString()
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
 
-        var resp: ProcessMediaResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.ProcessMedia(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.ProcessMedia(req)
     }
 
     /**
@@ -367,21 +288,7 @@ open class QvodClient(
         req.definition = 10L
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: ReviewImageResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.ReviewImage(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.ReviewImage(req)
     }
 
     /**
@@ -394,14 +301,9 @@ open class QvodClient(
         val req = PullEventsRequest()
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: PullEventsResponse? = null
-        var throwable: Throwable? = null
+        var resp: PullEventsResponse?
         try {
             resp = vodClient.PullEvents(req)
-            durationMillis = System.currentTimeMillis() - start
             return resp
         } catch (e: TencentCloudSDKException) {
             if (e.errorCode.equals("ResourceNotFound")) {
@@ -410,13 +312,7 @@ open class QvodClient(
                 resp.eventSet = arrayOf()
                 return resp
             }
-            throwable = e
             throw e
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -429,21 +325,7 @@ open class QvodClient(
         req.taskId = taskId
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: DescribeTaskDetailResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.DescribeTaskDetail(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.DescribeTaskDetail(req)
     }
 
     /**
@@ -456,37 +338,8 @@ open class QvodClient(
         req.eventHandles = eventHandle
         req.subAppId = properties.appId
 
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: ConfirmEventsResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodClient.ConfirmEvents(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            log(durationMillis, start, req, resp, throwable)
-        }
+        return vodClient.ConfirmEvents(req)
     }
-
-    private fun log(durationMillis: Long?, start: Long, req: AbstractModel, resp: AbstractModel?, throwable: Throwable?) {
-        var duration = durationMillis
-        if (duration == null) {
-            duration = System.currentTimeMillis() - start
-        }
-        log.info(
-                MarkerFactory.getMarker(LOG_MARKER),
-                "DURATION MILLIS : {}\n{}\n\n{}",
-                duration,
-                StringUtil.json(req, true),
-                if (resp == null) StringUtil.valueOf(throwable) else StringUtil.json(resp, true)
-        )
-    }
-
 
     private fun byteMerger(byte1: ByteArray, byte2: ByteArray): ByteArray {
         val byte3 = ByteArray(byte1.size + byte2.size)

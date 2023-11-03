@@ -21,11 +21,13 @@ class ClientHttpRequestWrapper(
         private val collectionName: String,
         private val name: String,
         private val logMarker: String?,
+        private val logClazz: Class<*> = ClientHttpRequestWrapper::class.java,
         private val request: ClientHttpRequest,
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
         private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : ClientHttpRequest {
-    private val log = LoggerFactory.getLogger(ClientHttpRequestWrapper::class.java)
+    private val log = LoggerFactory.getLogger(logClazz)
+
     val record = ByteArrayOutputStream()
 
     override fun execute(): ClientHttpResponse {

@@ -16,7 +16,7 @@ import java.lang.reflect.Type
 import java.net.URI
 
 /**
- * zabbix请求模板
+ * 请求模板
  *
  * @author Peter Wu
  */
@@ -31,8 +31,13 @@ open class ApiTemplate @JvmOverloads constructor(
             private val log: Logger = LoggerFactory.getLogger(this.javaClass)
             override fun createRequest(url: URI, method: HttpMethod): ClientHttpRequest {
                 return if (log.isInfoEnabled) {
-                    ClientHttpRequestWrapper(collectionName!!, name!!, logMarker,
-                            super.createRequest(url, method), requestDecrypt, responseDecrypt)
+                    ClientHttpRequestWrapper(collectionName = collectionName!!,
+                            name = name!!,
+                            logMarker = logMarker,
+                            logClazz = javaClass,
+                            request = super.createRequest(url, method),
+                            requestDecrypt = requestDecrypt,
+                            responseDecrypt = responseDecrypt)
                 } else {
                     super.createRequest(url, method)
                 }

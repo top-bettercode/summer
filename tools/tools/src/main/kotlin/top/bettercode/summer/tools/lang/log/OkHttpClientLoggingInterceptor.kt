@@ -21,10 +21,11 @@ import java.time.LocalDateTime
 class OkHttpClientLoggingInterceptor(private val collectionName: String,
                                      private val name: String,
                                      private val logMarker: String? = null,
+                                     private val logClazz: Class<*> = OkHttpClientLoggingInterceptor::class.java,
                                      private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
                                      private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : Interceptor {
-    private val log: Logger = LoggerFactory.getLogger(OkHttpClientLoggingInterceptor::class.java)
+    private val log: Logger = LoggerFactory.getLogger(logClazz)
 
 
     override fun intercept(chain: Interceptor.Chain): Response {

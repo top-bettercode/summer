@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.qvod.test
+package top.bettercode.summer.tools.qvod
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

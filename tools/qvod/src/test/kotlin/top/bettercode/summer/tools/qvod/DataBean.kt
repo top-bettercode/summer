@@ -1,7 +1,6 @@
-package top.bettercode.summer.tools.qvod.test
+package top.bettercode.summer.tools.qvod
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import top.bettercode.summer.tools.qvod.QvodAntiLeechUrl
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class DataBean {
