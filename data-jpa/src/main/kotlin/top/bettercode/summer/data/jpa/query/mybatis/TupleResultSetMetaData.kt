@@ -15,21 +15,47 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
     private val jdbcTypes: MutableList<JdbcType> = ArrayList()
 
     init {
-        for (tuple in tuples) {
-            val elements = tuple.elements
-            for (i in elements.indices) {
-                val element = elements[i]
+        val size = tuples.size
+        if (size > 0) {
+            val firstTuple = tuples[0]
+            val firstElements = firstTuple.elements
+            val indexes = mutableListOf<Int>()
+            firstElements.indices.forEach { i ->
+                val element = firstElements[i]
                 val alias = element.alias
-                columnNames.add(i, alias)
+                columnNames.add(alias)
                 val javaType = element.javaType
                 if (javaType != Any::class.java) {
-                    classNames.add(i, javaType.name)
+                    classNames.add(javaType.name)
                     val type = JdbcTypeJavaClassMappings.INSTANCE.determineJdbcTypeCodeForJavaClass(javaType)
                     val jdbcType = JdbcType.forCode(type)
-                    jdbcTypes.add(i, jdbcType)
+                    jdbcTypes.add(jdbcType)
                 } else {
-                    classNames.add(i, javaType.name)
-                    jdbcTypes.add(i, if (tuple.get(i) == null) JdbcType.NULL else JdbcType.OTHER)
+                    indexes.add(i)
+                    classNames.add(javaType.name)
+                    jdbcTypes.add(if (firstTuple.get(alias) == null) JdbcType.NULL else JdbcType.OTHER)
+                }
+            }
+
+            if (indexes.isNotEmpty()) {
+                for (i in 1 until size) {
+                    val tuple = tuples[i]
+                    val elements = tuple.elements
+                    val iterator = indexes.iterator()
+                    iterator.forEach { index ->
+                        val element = elements[index]
+                        val javaType = element.javaType
+                        if (javaType != Any::class.java) {
+                            classNames[i] = javaType.name
+                            val type = JdbcTypeJavaClassMappings.INSTANCE.determineJdbcTypeCodeForJavaClass(javaType)
+                            val jdbcType = JdbcType.forCode(type)
+                            jdbcTypes[i] = jdbcType
+                            iterator.remove()
+                        }
+                    }
+                    if (indexes.isEmpty()) {
+                        break
+                    }
                 }
             }
         }
