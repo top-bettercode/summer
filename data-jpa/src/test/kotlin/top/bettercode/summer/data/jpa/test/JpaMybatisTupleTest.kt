@@ -23,7 +23,7 @@ import java.util.function.Consumer
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
-@TestPropertySource(properties = ["spring.data.jpa.mybatis.use-tuple-transformer=true"])
+@TestPropertySource(properties = ["summer.data.jpa.mybatis.use-tuple-transformer=true"])
 class JpaMybatisTupleTest {
     @Autowired
     var service: Service? = null
