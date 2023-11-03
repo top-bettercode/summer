@@ -3,7 +3,6 @@ package top.bettercode.summer.data.jpa.query.mybatis
 import org.apache.ibatis.mapping.MappedStatement
 import org.hibernate.transform.ResultTransformer
 import java.sql.ResultSet
-import java.sql.SQLException
 import javax.persistence.Tuple
 
 /**
@@ -15,9 +14,10 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
         return NativeTupleImpl(tuple, aliases)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun transformList(list: List<*>): List<Any?> {
-        @Suppress("UNCHECKED_CAST")
-        return transformListResultSet(TupleResultSet(list as List<Tuple>), Int.MAX_VALUE)
+        val resultSet = TupleResultSet(list as List<Tuple>)
+        return MybatisResultSetHandler(mappedStatement).handleResultSets(resultSet, Int.MAX_VALUE)
     }
 
     fun transformResultSet(resultSet: ResultSet?): Any? {
@@ -30,14 +30,10 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
 
     fun transformListResultSet(resultSet: ResultSet?, maxRows: Int): List<Any?> {
         var maxRows1 = maxRows
-        return try {
-            if (maxRows1 == 0) {
-                maxRows1 = Int.MAX_VALUE
-            }
-            MybatisResultSetHandler(mappedStatement).handleResultSets(resultSet, maxRows1)
-        } catch (e: SQLException) {
-            throw RuntimeException(e)
+        if (maxRows1 == 0) {
+            maxRows1 = Int.MAX_VALUE
         }
+        return MybatisResultSetHandler(mappedStatement).handleResultSets(resultSet, maxRows1)
     }
 
 }
