@@ -27,7 +27,7 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
                     val type = JdbcTypeJavaClassMappings.INSTANCE.determineJdbcTypeCodeForJavaClass(javaType)
                     val jdbcType = JdbcType.forCode(type)
                     jdbcTypes.add(i, jdbcType)
-                } else if (classNames.size <= i) {
+                } else {
                     classNames.add(i, javaType.name)
                     jdbcTypes.add(i, JdbcType.VARCHAR)
                 }
