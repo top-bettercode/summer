@@ -2,7 +2,6 @@ package top.bettercode.summer.data.jpa.config
 
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.data.jpa.query.mybatis.hibernate.MybatisQueryInterpreterStandardImpl
-import java.util.function.Consumer
 import javax.persistence.EntityManager
 
 /**
@@ -17,9 +16,9 @@ class JpaMybatisNativeQueryInterpreterConfiguration(
 ) {
     init {
         if (!mybatisProperties.useTupleTransformer) {
-            entityManagers.forEach(Consumer { entityManager: EntityManager ->
+            entityManagers.forEach { entityManager: EntityManager ->
                 MybatisQueryInterpreterStandardImpl.changeNativeQueryInterpreter(entityManager)
-            })
+            }
         }
     }
 }
