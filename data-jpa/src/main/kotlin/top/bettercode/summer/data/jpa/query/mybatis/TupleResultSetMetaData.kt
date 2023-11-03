@@ -38,18 +38,18 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
             }
 
             if (indexes.isNotEmpty()) {
-                for (i in 1 until size) {
-                    val tuple = tuples[i]
+                for (t in 1 until size) {
+                    val tuple = tuples[t]
                     val elements = tuple.elements
                     val iterator = indexes.iterator()
                     iterator.forEach { index ->
                         val element = elements[index]
                         val javaType = element.javaType
                         if (javaType != Any::class.java) {
-                            classNames[i] = javaType.name
+                            classNames[index] = javaType.name
                             val type = JdbcTypeJavaClassMappings.INSTANCE.determineJdbcTypeCodeForJavaClass(javaType)
                             val jdbcType = JdbcType.forCode(type)
-                            jdbcTypes[i] = jdbcType
+                            jdbcTypes[index] = jdbcType
                             iterator.remove()
                         }
                     }
