@@ -138,16 +138,14 @@
   </delete>
 
   <select id="selectMybatisAllVal" resultType="top.bettercode.summer.data.jpa.domain.User">
-    select first_name,
-           last_name,
+    select u.*,
            (@val := @val + 1) as version
     from t_user u,
          (select @val := 0) t
     where deleted = 0
   </select>
   <select id="selectMybatisAllVal2" resultType="top.bettercode.summer.data.jpa.domain.User">
-    select first_name,
-           last_name,
+    select u.*,
            (@val \:= @val + 1) as version
     from t_user u,
          (select @val \:= 0) t
@@ -169,7 +167,7 @@
   </select>
   <sql id="name">
     first_name
-        , last_name
+        , last_name,created_date,last_modified_date
   </sql>
   <select id="selectMybatisIfParam"
     resultType="top.bettercode.summer.data.jpa.domain.User">
