@@ -185,6 +185,10 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
                 classPathResource.inputStream)
     }
 
+    @JvmOverloads
+    protected fun jsonAlways(`object`: Any?, writeDatesAsTimestamps: Boolean = true, pretty: Boolean = true): String {
+        return json(`object` = `object`, serializationView = null, incl = JsonInclude.Include.ALWAYS, writeDatesAsTimestamps = writeDatesAsTimestamps, pretty = pretty)
+    }
 
     @JvmOverloads
     protected fun json(`object`: Any?, serializationView: Class<*>? = null, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL, writeDatesAsTimestamps: Boolean = true, pretty: Boolean = true): String {
