@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.qvod
+package top.bettercode.summer.tools.qvod.test
 
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestMapping
