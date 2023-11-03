@@ -11,6 +11,8 @@ import java.sql.Array
 import java.sql.Date
 import java.util.*
 import javax.persistence.Tuple
+import javax.sql.rowset.serial.SerialBlob
+import javax.sql.rowset.serial.SerialClob
 
 /**
  * @author Peter Wu
@@ -52,36 +54,36 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun getBoolean(i: Int): Boolean {
-        return getObject(i, Boolean::class.java)!!
+        return getObject(i, Boolean::class.java) ?: false
     }
 
     override fun getByte(i: Int): Byte {
-        return getObject(i, Byte::class.java)!!
+        return getObject(i, Byte::class.java) ?: 0
     }
 
     override fun getShort(i: Int): Short {
-        return getObject(i, Short::class.java)!!
+        return getObject(i, Short::class.java) ?: 0
     }
 
     override fun getInt(i: Int): Int {
-        return getObject(i, Int::class.java)!!
+        return getObject(i, Int::class.java) ?: 0
     }
 
     override fun getLong(i: Int): Long {
-        return getObject(i, Long::class.java)!!
+        return getObject(i, Long::class.java) ?: 0L
     }
 
     override fun getFloat(i: Int): Float {
-        return getObject(i, Float::class.java)!!
+        return getObject(i, Float::class.java) ?: 0F
     }
 
     override fun getDouble(i: Int): Double {
-        return getObject(i, Double::class.java)!!
+        return getObject(i, Double::class.java) ?: 0.0
     }
 
-    @Deprecated("")
-    override fun getBigDecimal(i: Int, i1: Int): BigDecimal {
-        throw SQLFeatureNotSupportedException()
+    @Deprecated("", ReplaceWith("getObject(i, String::class.java)?.let { BigDecimal(it) }", "java.math.BigDecimal"))
+    override fun getBigDecimal(i: Int, i1: Int): BigDecimal? {
+        return getObject(i, String::class.java)?.let { BigDecimal(it) }
     }
 
     override fun getBytes(i: Int): ByteArray? {
@@ -100,17 +102,17 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         return getObject(i, Timestamp::class.java)
     }
 
-    override fun getAsciiStream(i: Int): InputStream {
-        throw SQLFeatureNotSupportedException()
+    override fun getAsciiStream(i: Int): InputStream? {
+        return getObject(i, ByteArray::class.java)?.inputStream()
     }
 
-    @Deprecated("")
-    override fun getUnicodeStream(i: Int): InputStream {
-        throw SQLFeatureNotSupportedException()
+    @Deprecated("", ReplaceWith("getObject(i, ByteArray::class.java)?.inputStream()"))
+    override fun getUnicodeStream(i: Int): InputStream? {
+        return getObject(i, ByteArray::class.java)?.inputStream()
     }
 
-    override fun getBinaryStream(i: Int): InputStream {
-        throw SQLFeatureNotSupportedException()
+    override fun getBinaryStream(i: Int): InputStream? {
+        return getObject(i, ByteArray::class.java)?.inputStream()
     }
 
     override fun getString(s: String): String? {
@@ -118,36 +120,36 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun getBoolean(s: String): Boolean {
-        return getObject(s, Boolean::class.java)!!
+        return getObject(s, Boolean::class.java) ?: false
     }
 
     override fun getByte(s: String): Byte {
-        return getObject(s, Byte::class.java)!!
+        return getObject(s, Byte::class.java) ?: 0
     }
 
     override fun getShort(s: String): Short {
-        return getObject(s, Short::class.java)!!
+        return getObject(s, Short::class.java) ?: 0
     }
 
     override fun getInt(s: String): Int {
-        return getObject(s, Int::class.java)!!
+        return getObject(s, Int::class.java) ?: 0
     }
 
     override fun getLong(s: String): Long {
-        return getObject(s, Long::class.java)!!
+        return getObject(s, Long::class.java) ?: 0L
     }
 
     override fun getFloat(s: String): Float {
-        return getObject(s, Float::class.java)!!
+        return getObject(s, Float::class.java) ?: 0F
     }
 
     override fun getDouble(s: String): Double {
-        return getObject(s, Double::class.java)!!
+        return getObject(s, Double::class.java) ?: 0.0
     }
 
-    @Deprecated("")
-    override fun getBigDecimal(s: String, i: Int): BigDecimal {
-        throw SQLFeatureNotSupportedException()
+    @Deprecated("", ReplaceWith("getObject(s, String::class.java)?.let { BigDecimal(it).setScale(i) }", "java.math.BigDecimal"))
+    override fun getBigDecimal(s: String, i: Int): BigDecimal? {
+        return getObject(s, String::class.java)?.let { BigDecimal(it).setScale(i) }
     }
 
     override fun getBytes(s: String): ByteArray? {
@@ -166,25 +168,24 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         return getObject(s, Timestamp::class.java)
     }
 
-    override fun getAsciiStream(s: String): InputStream {
-        throw SQLFeatureNotSupportedException()
+    override fun getAsciiStream(s: String): InputStream? {
+        return getObject(s, ByteArray::class.java)?.inputStream()
     }
 
-    @Deprecated("")
-    override fun getUnicodeStream(s: String): InputStream {
-        throw SQLFeatureNotSupportedException()
+    @Deprecated("", ReplaceWith("getObject(s, ByteArray::class.java)?.inputStream()"))
+    override fun getUnicodeStream(s: String): InputStream? {
+        return getObject(s, ByteArray::class.java)?.inputStream()
     }
 
-    override fun getBinaryStream(s: String): InputStream {
-        throw SQLFeatureNotSupportedException()
+    override fun getBinaryStream(s: String): InputStream? {
+        return getObject(s, ByteArray::class.java)?.inputStream()
     }
 
-    override fun getWarnings(): SQLWarning {
-        throw SQLFeatureNotSupportedException()
+    override fun getWarnings(): SQLWarning? {
+        return null
     }
 
     override fun clearWarnings() {
-        throw SQLFeatureNotSupportedException()
     }
 
     override fun getCursorName(): String {
@@ -210,19 +211,19 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun getCharacterStream(i: Int): Reader? {
-        return getObject(i, Reader::class.java)
+        return getObject(i, ByteArray::class.java)?.inputStream()?.reader()
     }
 
     override fun getCharacterStream(s: String): Reader? {
-        return getObject(s, Reader::class.java)
+        return getObject(s, ByteArray::class.java)?.inputStream()?.reader()
     }
 
     override fun getBigDecimal(i: Int): BigDecimal? {
-        return getObject(i, BigDecimal::class.java)
+        return getObject(i, String::class.java)?.let { BigDecimal(it) }
     }
 
     override fun getBigDecimal(s: String): BigDecimal? {
-        return getObject(s, BigDecimal::class.java)
+        return getObject(s, String::class.java)?.let { BigDecimal(it) }
     }
 
     override fun isBeforeFirst(): Boolean {
@@ -320,11 +321,10 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun setFetchSize(i: Int) {
-        throw SQLFeatureNotSupportedException()
     }
 
     override fun getFetchSize(): Int {
-        throw SQLFeatureNotSupportedException()
+        return maxRow
     }
 
     override fun getType(): Int {
@@ -332,7 +332,7 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun getConcurrency(): Int {
-        throw SQLFeatureNotSupportedException()
+        return ResultSet.CONCUR_READ_ONLY
     }
 
     override fun rowUpdated(): Boolean {
@@ -531,76 +531,100 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         throw SQLFeatureNotSupportedException()
     }
 
-    override fun getObject(i: Int, map: Map<String?, Class<*>?>?): Any {
+    override fun getObject(i: Int, map: Map<String?, Class<*>?>?): Any? {
+        return getObject(i)
+    }
+
+    override fun getRef(i: Int): Ref? {
         throw SQLFeatureNotSupportedException()
     }
 
-    override fun getRef(i: Int): Ref {
+    override fun getBlob(i: Int): Blob? {
+        return getObject(i, ByteArray::class.java)?.let { return SerialBlob(it) }
+    }
+
+    override fun getClob(i: Int): Clob? {
+        return getObject(i, String::class.java)?.let { return SerialClob(it.toCharArray()) }
+    }
+
+    override fun getArray(i: Int): Array? {
         throw SQLFeatureNotSupportedException()
     }
 
-    override fun getBlob(i: Int): Blob {
+    override fun getObject(s: String, map: Map<String?, Class<*>?>?): Any? {
+        return getObject(s)
+    }
+
+    override fun getRef(s: String): Ref? {
         throw SQLFeatureNotSupportedException()
     }
 
-    override fun getClob(i: Int): Clob {
+    override fun getBlob(s: String): Blob? {
+        return getObject(s, ByteArray::class.java)?.let { return SerialBlob(it) }
+    }
+
+    override fun getClob(s: String): Clob? {
+        return getObject(s, String::class.java)?.let { return SerialClob(it.toCharArray()) }
+    }
+
+    override fun getArray(s: String): Array? {
         throw SQLFeatureNotSupportedException()
     }
 
-    override fun getArray(i: Int): Array {
-        throw SQLFeatureNotSupportedException()
-    }
-
-    override fun getObject(s: String, map: Map<String?, Class<*>?>?): Any {
-        throw SQLFeatureNotSupportedException()
-    }
-
-    override fun getRef(s: String): Ref {
-        throw SQLFeatureNotSupportedException()
-    }
-
-    override fun getBlob(s: String): Blob {
-        throw SQLFeatureNotSupportedException()
-    }
-
-    override fun getClob(s: String): Clob {
-        throw SQLFeatureNotSupportedException()
-    }
-
-    override fun getArray(s: String): Array {
-        throw SQLFeatureNotSupportedException()
+    private fun convert(original: Date, targetTimeZone: TimeZone): Date {
+        val utilDate = Date(original.time)
+        val calendar = Calendar.getInstance()
+        calendar.setTime(utilDate)
+        calendar.setTimeZone(targetTimeZone)
+        return Date(calendar.time.time)
     }
 
     override fun getDate(i: Int, calendar: Calendar): Date? {
-        return getObject(i, Date::class.java)
+        return getObject(i, Date::class.java)?.let { convert(it, calendar.timeZone) }
     }
 
     override fun getDate(s: String, calendar: Calendar): Date? {
-        return getObject(s, Date::class.java)
+        return getObject(s, Date::class.java)?.let { convert(it, calendar.timeZone) }
+    }
+
+    private fun convert(original: Time, targetTimeZone: TimeZone): Time {
+        val utilDate = Date(original.time)
+        val calendar = Calendar.getInstance()
+        calendar.setTime(utilDate)
+        calendar.setTimeZone(targetTimeZone)
+        return Time(calendar.time.time)
     }
 
     override fun getTime(i: Int, calendar: Calendar): Time? {
-        return getObject(i, Time::class.java)
+        return getObject(i, Time::class.java)?.let { convert(it, calendar.timeZone) }
     }
 
     override fun getTime(s: String, calendar: Calendar): Time? {
-        return getObject(s, Time::class.java)
+        return getObject(s, Time::class.java)?.let { convert(it, calendar.timeZone) }
+    }
+
+    private fun convert(original: Timestamp, targetTimeZone: TimeZone): Timestamp {
+        val utilDate = Date(original.time)
+        val calendar = Calendar.getInstance()
+        calendar.setTime(utilDate)
+        calendar.setTimeZone(targetTimeZone)
+        return Timestamp(calendar.time.time)
     }
 
     override fun getTimestamp(i: Int, calendar: Calendar): Timestamp? {
-        return getObject(i, Timestamp::class.java)
+        return getObject(i, Timestamp::class.java)?.let { convert(it, calendar.timeZone) }
     }
 
     override fun getTimestamp(s: String, calendar: Calendar): Timestamp? {
-        return getObject(s, Timestamp::class.java)
+        return getObject(s, Timestamp::class.java)?.let { convert(it, calendar.timeZone) }
     }
 
     override fun getURL(i: Int): URL? {
-        return getObject(i, URL::class.java)
+        return getObject(i, String::class.java)?.let { URL(it) }
     }
 
     override fun getURL(s: String): URL? {
-        return getObject(s, URL::class.java)
+        return getObject(s, String::class.java)?.let { URL(it) }
     }
 
     override fun updateRef(i: Int, ref: Ref) {
@@ -675,12 +699,12 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         throw SQLFeatureNotSupportedException()
     }
 
-    override fun getNClob(i: Int): NClob {
-        throw SQLFeatureNotSupportedException()
+    override fun getNClob(i: Int): NClob? {
+        return getObject(i, String::class.java)?.let { return object : SerialClob(it.toCharArray()), NClob {} }
     }
 
-    override fun getNClob(s: String): NClob {
-        throw SQLFeatureNotSupportedException()
+    override fun getNClob(s: String): NClob? {
+        return getObject(s, String::class.java)?.let { return object : SerialClob(it.toCharArray()), NClob {} }
     }
 
     override fun getSQLXML(i: Int): SQLXML {
@@ -699,20 +723,20 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         throw SQLFeatureNotSupportedException()
     }
 
-    override fun getNString(i: Int): String {
-        throw SQLFeatureNotSupportedException()
+    override fun getNString(i: Int): String? {
+        return getString(i)
     }
 
-    override fun getNString(s: String): String {
-        throw SQLFeatureNotSupportedException()
+    override fun getNString(s: String): String? {
+        return getString(s)
     }
 
-    override fun getNCharacterStream(i: Int): Reader {
-        throw SQLFeatureNotSupportedException()
+    override fun getNCharacterStream(i: Int): Reader? {
+        return getCharacterStream(i)
     }
 
-    override fun getNCharacterStream(s: String): Reader {
-        throw SQLFeatureNotSupportedException()
+    override fun getNCharacterStream(s: String): Reader? {
+        return getCharacterStream(s)
     }
 
     override fun updateNCharacterStream(i: Int, reader: Reader, l: Long) {
@@ -837,8 +861,8 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         return JpaUtil.convert(tuples[currentRow - 1][s], aClass)
     }
 
-    override fun <T> unwrap(aClass: Class<T>): T {
-        throw SQLFeatureNotSupportedException()
+    override fun <T> unwrap(iface: Class<T>): T {
+        return iface.cast(this)
     }
 
     override fun isWrapperFor(aClass: Class<*>?): Boolean {
