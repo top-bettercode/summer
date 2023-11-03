@@ -29,7 +29,7 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
                     jdbcTypes.add(i, jdbcType)
                 } else {
                     classNames.add(i, javaType.name)
-                    jdbcTypes.add(i, JdbcType.VARCHAR)
+                    jdbcTypes.add(i, if (tuple.get(i) == null) JdbcType.NULL else JdbcType.OTHER)
                 }
             }
         }
