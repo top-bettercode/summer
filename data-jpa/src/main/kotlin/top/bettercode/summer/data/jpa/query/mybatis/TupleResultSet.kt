@@ -42,7 +42,7 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun wasNull(): Boolean {
-        return if (currentCloumn > 0 && currentCloumn <= resultSetMetaData.columnCount) {
+        return if (currentCloumn >= 0 && currentCloumn <= resultSetMetaData.columnCount) {
             getObject(currentCloumn) == null
         } else {
             true
