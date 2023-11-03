@@ -81,9 +81,9 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         return getObject(i, Double::class.java) ?: 0.0
     }
 
-    @Deprecated("", ReplaceWith("getObject(i, String::class.java)?.let { BigDecimal(it) }", "java.math.BigDecimal"))
-    override fun getBigDecimal(i: Int, i1: Int): BigDecimal? {
-        return getObject(i, String::class.java)?.let { BigDecimal(it) }
+    @Deprecated("", ReplaceWith("getObject(i, BigDecimal::class.java)?.setScale(scale)", "java.math.BigDecimal"))
+    override fun getBigDecimal(i: Int, scale: Int): BigDecimal? {
+        return getObject(i, BigDecimal::class.java)?.setScale(scale)
     }
 
     override fun getBytes(i: Int): ByteArray? {
@@ -147,9 +147,9 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         return getObject(s, Double::class.java) ?: 0.0
     }
 
-    @Deprecated("", ReplaceWith("getObject(s, String::class.java)?.let { BigDecimal(it).setScale(i) }", "java.math.BigDecimal"))
-    override fun getBigDecimal(s: String, i: Int): BigDecimal? {
-        return getObject(s, String::class.java)?.let { BigDecimal(it).setScale(i) }
+    @Deprecated("", ReplaceWith("getObject(s, BigDecimal::class.java)?.setScale(scale)", "java.math.BigDecimal"))
+    override fun getBigDecimal(s: String, scale: Int): BigDecimal? {
+        return getObject(s, BigDecimal::class.java)?.setScale(scale)
     }
 
     override fun getBytes(s: String): ByteArray? {
@@ -219,11 +219,11 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     }
 
     override fun getBigDecimal(i: Int): BigDecimal? {
-        return getObject(i, String::class.java)?.let { BigDecimal(it) }
+        return getObject(i, BigDecimal::class.java)
     }
 
     override fun getBigDecimal(s: String): BigDecimal? {
-        return getObject(s, String::class.java)?.let { BigDecimal(it) }
+        return getObject(s, BigDecimal::class.java)
     }
 
     override fun isBeforeFirst(): Boolean {
