@@ -187,8 +187,9 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
 
 
     @JvmOverloads
-    protected fun json(`object`: Any?, serializationView: Class<*>? = null, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL, writeDatesAsTimestamps: Boolean = true): String {
+    protected fun json(`object`: Any?, serializationView: Class<*>? = null, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL, writeDatesAsTimestamps: Boolean = true, pretty: Boolean = true): String {
         val objectMapper = objectMapper.setSerializationInclusion(incl)
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, pretty)
         if (writeDatesAsTimestamps) {
             objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             objectMapper.registerModule(StringUtil.timeModule)
