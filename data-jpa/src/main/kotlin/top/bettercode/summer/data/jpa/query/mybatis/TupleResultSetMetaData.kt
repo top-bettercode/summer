@@ -1,7 +1,6 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
 import org.apache.ibatis.type.JdbcType
-import org.hibernate.type.descriptor.sql.JdbcTypeJavaClassMappings
 import java.sql.ResultSetMetaData
 import java.sql.SQLFeatureNotSupportedException
 import javax.persistence.Tuple
@@ -21,19 +20,13 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
             val firstElements = firstTuple.elements
             val indexes = mutableListOf<Int>()
             firstElements.indices.forEach { i ->
-                val element = firstElements[i]
-                val alias = element.alias
-                columnNames.add(alias)
-                val javaType = element.javaType
-                if (javaType != Any::class.java) {
-                    classNames.add(javaType.name)
-                    val type = JdbcTypeJavaClassMappings.INSTANCE.determineJdbcTypeCodeForJavaClass(javaType)
-                    val jdbcType = JdbcType.forCode(type)
-                    jdbcTypes.add(jdbcType)
-                } else {
+                val element = firstElements[i] as NativeTupleElementImpl
+                columnNames.add(element.alias)
+                classNames.add(element.javaType.name)
+                val jdbcType = element.getJdbcType()
+                jdbcTypes.add(jdbcType)
+                if (jdbcType == JdbcType.NULL) {
                     indexes.add(i)
-                    classNames.add(javaType.name)
-                    jdbcTypes.add(if (firstTuple.get(alias) == null) JdbcType.NULL else JdbcType.OTHER)
                 }
             }
 
@@ -43,12 +36,10 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
                     val elements = tuple.elements
                     val iterator = indexes.iterator()
                     iterator.forEach { index ->
-                        val element = elements[index]
-                        val javaType = element.javaType
-                        if (javaType != Any::class.java) {
-                            classNames[index] = javaType.name
-                            val type = JdbcTypeJavaClassMappings.INSTANCE.determineJdbcTypeCodeForJavaClass(javaType)
-                            val jdbcType = JdbcType.forCode(type)
+                        val element = elements[index] as NativeTupleElementImpl
+                        val jdbcType = element.getJdbcType()
+                        if (jdbcType != JdbcType.NULL) {
+                            classNames[index] = element.javaType.name
                             jdbcTypes[index] = jdbcType
                             iterator.remove()
                         }

@@ -59,17 +59,9 @@ class NativeTupleImpl(tuple: Array<Any?>?, aliases: Array<String>?) : Tuple {
     override fun getElements(): List<TupleElement<*>> {
         val elements: MutableList<TupleElement<*>> = ArrayList(aliasToValue.size)
         for ((key, value) in aliasToValue) {
-            elements.add(NativeTupleElementImpl(getValueClass(value), key))
+            elements.add(NativeTupleElementImpl(value?.javaClass ?: Any::class.java, key, value))
         }
         return elements
-    }
-
-    private fun getValueClass(value: Any?): Class<*> {
-        var valueClass: Class<*> = Any::class.java
-        if (value != null) {
-            valueClass = value.javaClass
-        }
-        return valueClass
     }
 
     override fun <X> get(tupleElement: TupleElement<X>): X? {
