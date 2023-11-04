@@ -134,26 +134,26 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
     }
 
     override fun isReadOnly(i: Int): Boolean {
-        throw SQLFeatureNotSupportedException()
+        return true
     }
 
     override fun isWritable(i: Int): Boolean {
-        throw SQLFeatureNotSupportedException()
+        return false
     }
 
     override fun isDefinitelyWritable(i: Int): Boolean {
-        throw SQLFeatureNotSupportedException()
+        return false
     }
 
     override fun getColumnClassName(i: Int): String {
         return classNames[i - 1]
     }
 
-    override fun <T> unwrap(aClass: Class<T>): T {
-        throw SQLFeatureNotSupportedException()
+    override fun <T> unwrap(iface: Class<T>): T {
+        return iface.cast(this)
     }
 
-    override fun isWrapperFor(aClass: Class<*>?): Boolean {
-        throw SQLFeatureNotSupportedException()
+    override fun isWrapperFor(aClass: Class<*>): Boolean {
+        return aClass.isInstance(this)
     }
 }
