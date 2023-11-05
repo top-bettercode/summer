@@ -65,6 +65,7 @@ class JpaMybatisTupleTest {
     @Test
     fun selectResultMap() {
         val users = repository.selectResultMap(User("Carter", null))
+        repository.selectResultMap(User("Carter", null))
         System.err.println(users)
         Assertions.assertEquals(1, users!!.size)
         val users1 = sqlSession

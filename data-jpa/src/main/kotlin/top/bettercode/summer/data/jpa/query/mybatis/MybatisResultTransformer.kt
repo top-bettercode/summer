@@ -10,13 +10,31 @@ import javax.persistence.Tuple
  */
 class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : ResultTransformer {
 
+    private var resultSetMetaData: TupleResultSetMetaData? = null
+
     override fun transformTuple(tuple: Array<Any?>, aliases: Array<String>): Any {
         return NativeTupleImpl(tuple, aliases)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun transformList(list: List<*>): List<Any?> {
-        val resultSet = TupleResultSet(list as List<Tuple>)
+        val tuples = list as List<Tuple>
+        val resultSetMetaData: TupleResultSetMetaData
+        if (this.resultSetMetaData == null) {
+            synchronized(this) {
+                if (this.resultSetMetaData == null) {
+                    resultSetMetaData = TupleResultSetMetaData(tuples)
+                    if (resultSetMetaData.complete) {
+                        this.resultSetMetaData = resultSetMetaData
+                    }
+                } else {
+                    resultSetMetaData = this.resultSetMetaData!!
+                }
+            }
+        } else {
+            resultSetMetaData = this.resultSetMetaData!!
+        }
+        val resultSet = TupleResultSet(tuples, resultSetMetaData)
         return MybatisResultSetHandler(mappedStatement).handleResultSets(resultSet, Int.MAX_VALUE)
     }
 

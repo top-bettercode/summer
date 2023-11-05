@@ -17,12 +17,12 @@ import javax.sql.rowset.serial.SerialClob
 /**
  * @author Peter Wu
  */
-class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
+class TupleResultSet(private val tuples: List<Tuple>,
+                     private val resultSetMetaData: TupleResultSetMetaData) : ResultSet {
     private var closed = false
     private var currentRow = 0
     private var currentCloumn = 0
     private val maxRow: Int = tuples.size
-    private val resultSetMetaData: TupleResultSetMetaData = TupleResultSetMetaData(tuples)
 
     override fun next(): Boolean {
         if (maxRow == 0) {

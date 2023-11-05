@@ -12,13 +12,14 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
     private val columnNames: MutableList<String> = ArrayList()
     private val classNames: MutableList<String> = ArrayList()
     private val jdbcTypes: MutableList<JdbcType> = ArrayList()
+    val complete: Boolean
 
     init {
         val size = tuples.size
         if (size > 0) {
             val firstTuple = tuples[0]
             val firstElements = firstTuple.elements
-            val indexes = mutableListOf<Int>()
+            val unSetIndexes = mutableListOf<Int>()
             firstElements.indices.forEach { i ->
                 val element = firstElements[i] as NativeTupleElementImpl
                 columnNames.add(element.alias)
@@ -26,15 +27,15 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
                 val jdbcType = element.getJdbcType()
                 jdbcTypes.add(jdbcType)
                 if (jdbcType == JdbcType.NULL) {
-                    indexes.add(i)
+                    unSetIndexes.add(i)
                 }
             }
 
-            if (indexes.isNotEmpty()) {
+            if (unSetIndexes.isNotEmpty()) {
                 for (t in 1 until size) {
                     val tuple = tuples[t]
                     val elements = tuple.elements
-                    val iterator = indexes.iterator()
+                    val iterator = unSetIndexes.iterator()
                     iterator.forEach { index ->
                         val element = elements[index] as NativeTupleElementImpl
                         val jdbcType = element.getJdbcType()
@@ -44,11 +45,14 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
                             iterator.remove()
                         }
                     }
-                    if (indexes.isEmpty()) {
+                    if (unSetIndexes.isEmpty()) {
                         break
                     }
                 }
             }
+            complete = unSetIndexes.isEmpty()
+        } else {
+            complete = false
         }
     }
 
