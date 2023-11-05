@@ -32,8 +32,8 @@ import java.sql.SQLException
  * @author Iwao AVE!
  * @author Kazuki Shimizu
  */
-open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedStatement: MappedStatement?, private val resultHandler: ResultHandler<Any?>? = null) {
-    private val configuration: Configuration = mappedStatement!!.configuration
+open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedStatement: MappedStatement, private val resultHandler: ResultHandler<Any?>? = null) {
+    private val configuration: Configuration = mappedStatement.configuration
     private val typeHandlerRegistry: TypeHandlerRegistry = configuration.typeHandlerRegistry
     private val objectFactory: ObjectFactory = configuration.objectFactory
     private val reflectorFactory: ReflectorFactory = configuration.reflectorFactory
@@ -67,7 +67,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     // HANDLE RESULT SETS
     //
     fun handleResultSets(resultSet: ResultSet?, maxRows: Int): List<Any?> {
-        ErrorContext.instance().activity("handling results").`object`(mappedStatement!!.id)
+        ErrorContext.instance().activity("handling results").`object`(mappedStatement.id)
         val multipleResults: MutableList<List<Any?>> = ArrayList()
         val rsw = getResultSet(resultSet)
         val rowBounds = RowBounds(0, maxRows)
@@ -152,7 +152,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
 
     protected fun checkResultHandler() {
         if (resultHandler != null && configuration.isSafeResultHandlerEnabled
-                && !mappedStatement!!.isResultOrdered) {
+                && !mappedStatement.isResultOrdered) {
             throw ExecutorException(
                     "Mapped Statements with nested result mappings cannot be safely used with a custom ResultHandler. "
                             + "Use safeResultHandlerEnabled=false setting to bypass this check "
@@ -693,7 +693,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
             val rowKey = createRowKey(discriminatedResultMap, rsw, null)
             val partialObject = nestedResultObjects[rowKey]
             // issue #577 && #542
-            if (mappedStatement!!.isResultOrdered) {
+            if (mappedStatement.isResultOrdered) {
                 if (partialObject == null && rowValue != null) {
                     nestedResultObjects.clear()
                     storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet)
@@ -706,7 +706,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
                 }
             }
         }
-        if (rowValue != null && mappedStatement!!.isResultOrdered && shouldProcessMoreRows(
+        if (rowValue != null && mappedStatement.isResultOrdered && shouldProcessMoreRows(
                         resultContext, rowBounds)) {
             storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet)
             previousRowValue = null

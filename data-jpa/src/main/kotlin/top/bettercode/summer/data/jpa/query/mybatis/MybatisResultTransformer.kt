@@ -8,7 +8,7 @@ import javax.persistence.Tuple
 /**
  * @author Peter Wu
  */
-class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : ResultTransformer {
+class MybatisResultTransformer(private val mappedStatement: MappedStatement) : ResultTransformer {
 
     private var resultSetMetaData: TupleResultSetMetaData? = null
 
