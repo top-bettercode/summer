@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page
 /**
  * @author Peter Wu
  */
-class CompatiblePagedResources<T>(
+class MybatisPagedResources<T>(
         /**
          * 当前页
          */
