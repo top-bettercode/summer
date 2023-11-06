@@ -43,9 +43,8 @@ dependencies {
         api("org.apache.poi:poi-ooxml:5.2.3")
         api("org.apache.poi:poi-scratchpad:5.2.3")
 
-        api("org.mybatis:mybatis:3.5.13")
+        api("org.mybatis:mybatis:3.5.14")
         api("org.mybatis:mybatis-spring:2.1.1")
-        api("org.mybatis.generator:mybatis-generator-core:1.4.2")
 
         api("com.querydsl:querydsl-apt:5.0.0:jpa")
 
