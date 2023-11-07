@@ -167,3 +167,12 @@ TIP: Accept的格式为:application/json.
 | 服务器通用错误码
 
 |===
+
+
+[plantuml, svg]
+----
+@startuml
+Alice -> Bob: 欢迎
+Bob --> Alice: 你好
+@enduml
+----
