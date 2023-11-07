@@ -1,87 +1,100 @@
 request:
   parametersExt:
-    - name: "keyword"
-      type: "string"
-      description: "关键字"
-      canCover: true
-      required: false
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
+   -
+    name: "keyword"
+    type: "string"
+    description: "关键字"
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "81ba2cbf2fe787737fb97dee7f497c5d"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "d187f527-47e7-4b51-a90b-595b21f5f38a"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "81ba2cbf2fe787737fb97dee7f497c5d"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "d187f527-47e7-4b51-a90b-595b21f5f38a"
+    canCover: true
+    required: false
   restUri: "/custInfos/custAccounts"
   method: "GET"
 response:
   contentExt:
-    - name: "total"
-      type: "Long"
-      description: "总记录数"
-      value: "2871"
-      canCover: true
-      required: false
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
-    - name: "pages"
-      type: "Long"
-      description: "总页数"
-      value: "144"
-      canCover: true
-      required: false
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "list"
-      type: "Array"
-      description: "内容"
-      value: "[{\"custId\":\"CUST01740\",\"custName\":\"西昌市马道大丰收农资经营部\",\"accountAvailable\"\
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "2871"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "144"
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"custId\":\"CUST01740\",\"custName\":\"西昌市马道大丰收农资经营部\",\"accountAvailable\"\
       :0.0,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01741\"\
       ,\"custName\":\"姚安县鑫农现代农业发展有限公司\",\"accountAvailable\":0.0,\"marginAvailable\"\
       :0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01742\",\"custName\":\"禄丰金农农\
@@ -115,46 +128,52 @@ response:
       :265.0,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01759\"\
       ,\"custName\":\"云南淏丰农业科技开发有限公司\",\"accountAvailable\":9394.78,\"marginAvailable\"\
       :0.0,\"rebateAvailable\":0.0}]"
-      canCover: true
-      children:
-        - name: "custId"
-          type: "String"
-          description: "客户ID"
-          value: "CUST01740"
-          canCover: true
-          required: false
-        - name: "custName"
-          type: "String"
-          description: "客户名称"
-          value: "西昌市马道大丰收农资经营部"
-          canCover: true
-          required: false
-        - name: "accountAvailable"
-          type: "BigDecimal"
-          description: "账户可用总余额"
-          value: "0.0"
-          canCover: true
-          required: false
-        - name: "marginAvailable"
-          type: "BigDecimal"
-          description: "保证金/定金"
-          value: "0.0"
-          canCover: true
-          required: false
-        - name: "rebateAvailable"
-          type: "BigDecimal"
-          description: "可用返利"
-          value: "0.0"
-          canCover: true
-          required: false
-      required: false
-  headersExt:
-    - name: "Content-Type"
+    canCover: true
+    children:
+     -
+      name: "custId"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "客户ID"
+      value: "CUST01740"
       canCover: true
       required: false
+     -
+      name: "custName"
+      type: "String"
+      description: "客户名称"
+      value: "西昌市马道大丰收农资经营部"
+      canCover: true
+      required: false
+     -
+      name: "accountAvailable"
+      type: "BigDecimal"
+      description: "账户可用总余额"
+      value: "0.0"
+      canCover: true
+      required: false
+     -
+      name: "marginAvailable"
+      type: "BigDecimal"
+      description: "保证金/定金"
+      value: "0.0"
+      canCover: true
+      required: false
+     -
+      name: "rebateAvailable"
+      type: "BigDecimal"
+      description: "可用返利"
+      value: "0.0"
+      canCover: true
+      required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"total\":2871,\"size\":20,\"pages\":144,\"page\":1,\"list\"\
     :[{\"custId\":\"CUST01740\",\"custName\":\"西昌市马道大丰收农资经营部\",\"accountAvailable\"\
@@ -192,15 +211,15 @@ response:
     \",\"accountAvailable\":9394.78,\"marginAvailable\":0.0,\"rebateAvailable\":0.0}]}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

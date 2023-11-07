@@ -1,293 +1,340 @@
 request:
   uriVariablesExt:
-    - name: "orderId"
-      type: "String"
-      description: "主键"
-      value: "ORD0000F6171106"
-      canCover: true
-      required: false
+   -
+    name: "orderId"
+    type: "String"
+    description: "主键"
+    value: "ORD0000F6171106"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "6c5467aaaf8b8c5876b8016771744b64"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "644e1719-6190-4b15-bf04-e01a841f82a4"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "644e1719-6190-4b15-bf04-e01a841f82a4"
+    canCover: true
+    required: false
   restUri: "/ordOrders/{orderId}"
   method: "GET"
 response:
   contentExt:
-    - name: "orderId"
+   -
+    name: "orderId"
+    type: "String"
+    description: "主键"
+    value: "ORD0000F6171106"
+    canCover: true
+    required: false
+   -
+    name: "sapCode"
+    type: "String"
+    description: "SAP编号"
+    value: "3307979"
+    canCover: true
+    required: false
+   -
+    name: "sendFactory"
+    type: "String"
+    description: "发货工厂"
+    value: "嘉施利(应城)化肥有限公司工厂"
+    canCover: true
+    required: false
+   -
+    name: "transport"
+    type: "String"
+    description: "运输方式"
+    value: "汽运"
+    canCover: true
+    required: false
+   -
+    name: "destination"
+    type: "String"
+    description: "到站"
+    canCover: true
+    required: false
+   -
+    name: "transportLine"
+    type: "String"
+    description: "专线"
+    canCover: true
+    required: false
+   -
+    name: "payType"
+    type: "String"
+    description: "订单支付方式"
+    value: "现金"
+    canCover: true
+    required: false
+   -
+    name: "rebate"
+    type: "BigDecimal"
+    description: "返利支付金额"
+    value: "0"
+    canCover: true
+    required: false
+   -
+    name: "payAmout"
+    type: "BigDecimal"
+    description: "支付金额"
+    value: "23809.7"
+    canCover: true
+    required: false
+   -
+    name: "actualAmout"
+    type: "BigDecimal"
+    description: "实际金额"
+    value: "24723.7"
+    canCover: true
+    required: false
+   -
+    name: "discountAmount"
+    type: "BigDecimal"
+    description: "扣减金额"
+    value: "914.0"
+    canCover: true
+    required: false
+   -
+    name: "qty"
+    type: "BigDecimal"
+    description: "总数"
+    value: "9.14"
+    canCover: true
+    required: false
+   -
+    name: "transportAmout"
+    type: "BigDecimal"
+    description: "运费总额"
+    value: "0.0"
+    canCover: true
+    required: false
+   -
+    name: "handlingCharges"
+    type: "BigDecimal"
+    description: "装卸费总额"
+    value: "45.7"
+    canCover: true
+    required: false
+   -
+    name: "policyAmount"
+    type: "BigDecimal"
+    description: "政策支付金额"
+    value: "0"
+    canCover: true
+    required: false
+   -
+    name: "cash"
+    type: "BigDecimal"
+    description: "资金支付金额"
+    value: "23809.7"
+    canCover: true
+    required: false
+   -
+    name: "status"
+    type: "String"
+    description: "订单状态"
+    value: "05"
+    canCover: true
+    required: false
+   -
+    name: "createTime"
+    type: "Long"
+    description: "createTime"
+    value: "1509936807000"
+    canCover: true
+    required: false
+   -
+    name: "payTime"
+    type: "Long"
+    description: "支付时间"
+    value: "1510126579000"
+    canCover: true
+    required: false
+   -
+    name: "finishTime"
+    type: "Long"
+    description: "完成时间"
+    canCover: true
+    required: false
+   -
+    name: "custName"
+    type: "String"
+    description: "客户名称"
+    value: "湖北公安伍道研"
+    canCover: true
+    required: false
+   -
+    name: "receiveName"
+    type: "String"
+    description: "收货人名称"
+    value: "伍道研"
+    canCover: true
+    required: false
+   -
+    name: "receiverPhone"
+    type: "String"
+    description: "收货人电话"
+    value: "15927869687"
+    canCover: true
+    required: false
+   -
+    name: "receiveAdd"
+    type: "String"
+    description: "收货地址"
+    value: "湖北省荆州市公安县埠河镇埠河镇大桥旁"
+    canCover: true
+    required: false
+   -
+    name: "smallpackageFee"
+    type: "BigDecimal"
+    description: "小包费"
+    value: "0.0"
+    canCover: true
+    required: false
+   -
+    name: "sendQty"
+    type: "BigDecimal"
+    description: "发货数量"
+    value: "9.14"
+    canCover: true
+    required: false
+   -
+    name: "priceBatch"
+    type: "String"
+    description: "支付使用的价格批次"
+    canCover: true
+    required: false
+   -
+    name: "postTime"
+    type: "Long"
+    description: "发货时间"
+    value: "1509966389000"
+    canCover: true
+    required: false
+   -
+    name: "transportPrice"
+    type: "BigDecimal"
+    description: "运费单价"
+    value: "0.0"
+    canCover: true
+    required: false
+   -
+    name: "handlingPrice"
+    type: "BigDecimal"
+    description: "装卸费单价"
+    value: "5.0"
+    canCover: true
+    required: false
+   -
+    name: "materials"
+    type: "List<OrdOrderMaterial>"
+    description: "商品信息"
+    value: "[{\"materialId\":\"000000000020100604\",\"qty\":9.14,\"price\":2700.0,\"\
+      transportPrice\":0.0,\"handlingPrice\":5.0,\"materialName\":\"45%迪米佳20-05-20高\
+      塔硫基白色50KG\",\"category\":\"高塔尿硫基\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/prod/20100604a.png?reqid=10000\"\
+      ,\"payPrice\":2605.0}]"
+    canCover: true
+    children:
+     -
+      name: "materialId"
       type: "String"
-      description: "主键"
-      value: "ORD0000F6171106"
+      description: "物料ID"
+      value: "000000000020100604"
       canCover: true
       required: false
-    - name: "sapCode"
-      type: "String"
-      description: "SAP编号"
-      value: "3307979"
-      canCover: true
-      required: false
-    - name: "sendFactory"
-      type: "String"
-      description: "发货工厂"
-      value: "嘉施利(应城)化肥有限公司工厂"
-      canCover: true
-      required: false
-    - name: "transport"
-      type: "String"
-      description: "运输方式"
-      value: "汽运"
-      canCover: true
-      required: false
-    - name: "destination"
-      type: "String"
-      description: "到站"
-      canCover: true
-      required: false
-    - name: "transportLine"
-      type: "String"
-      description: "专线"
-      canCover: true
-      required: false
-    - name: "payType"
-      type: "String"
-      description: "订单支付方式"
-      value: "现金"
-      canCover: true
-      required: false
-    - name: "rebate"
-      type: "BigDecimal"
-      description: "返利支付金额"
-      value: "0"
-      canCover: true
-      required: false
-    - name: "payAmout"
-      type: "BigDecimal"
-      description: "支付金额"
-      value: "23809.7"
-      canCover: true
-      required: false
-    - name: "actualAmout"
-      type: "BigDecimal"
-      description: "实际金额"
-      value: "24723.7"
-      canCover: true
-      required: false
-    - name: "discountAmount"
-      type: "BigDecimal"
-      description: "扣减金额"
-      value: "914.0"
-      canCover: true
-      required: false
-    - name: "qty"
+     -
+      name: "qty"
       type: "BigDecimal"
       description: "总数"
       value: "9.14"
       canCover: true
       required: false
-    - name: "transportAmout"
+     -
+      name: "price"
       type: "BigDecimal"
-      description: "运费总额"
-      value: "0.0"
+      description: "区域销售价"
+      value: "2700.0"
       canCover: true
       required: false
-    - name: "handlingCharges"
-      type: "BigDecimal"
-      description: "装卸费总额"
-      value: "45.7"
-      canCover: true
-      required: false
-    - name: "policyAmount"
-      type: "BigDecimal"
-      description: "政策支付金额"
-      value: "0"
-      canCover: true
-      required: false
-    - name: "cash"
-      type: "BigDecimal"
-      description: "资金支付金额"
-      value: "23809.7"
-      canCover: true
-      required: false
-    - name: "status"
-      type: "String"
-      description: "订单状态"
-      value: "05"
-      canCover: true
-      required: false
-    - name: "createTime"
-      type: "Long"
-      description: "createTime"
-      value: "1509936807000"
-      canCover: true
-      required: false
-    - name: "payTime"
-      type: "Long"
-      description: "支付时间"
-      value: "1510126579000"
-      canCover: true
-      required: false
-    - name: "finishTime"
-      type: "Long"
-      description: "完成时间"
-      canCover: true
-      required: false
-    - name: "custName"
-      type: "String"
-      description: "客户名称"
-      value: "湖北公安伍道研"
-      canCover: true
-      required: false
-    - name: "receiveName"
-      type: "String"
-      description: "收货人名称"
-      value: "伍道研"
-      canCover: true
-      required: false
-    - name: "receiverPhone"
-      type: "String"
-      description: "收货人电话"
-      value: "15927869687"
-      canCover: true
-      required: false
-    - name: "receiveAdd"
-      type: "String"
-      description: "收货地址"
-      value: "湖北省荆州市公安县埠河镇埠河镇大桥旁"
-      canCover: true
-      required: false
-    - name: "smallpackageFee"
-      type: "BigDecimal"
-      description: "小包费"
-      value: "0.0"
-      canCover: true
-      required: false
-    - name: "sendQty"
-      type: "BigDecimal"
-      description: "发货数量"
-      value: "9.14"
-      canCover: true
-      required: false
-    - name: "priceBatch"
-      type: "String"
-      description: "支付使用的价格批次"
-      canCover: true
-      required: false
-    - name: "postTime"
-      type: "Long"
-      description: "发货时间"
-      value: "1509966389000"
-      canCover: true
-      required: false
-    - name: "transportPrice"
+     -
+      name: "transportPrice"
       type: "BigDecimal"
       description: "运费单价"
       value: "0.0"
       canCover: true
       required: false
-    - name: "handlingPrice"
+     -
+      name: "handlingPrice"
       type: "BigDecimal"
       description: "装卸费单价"
       value: "5.0"
       canCover: true
       required: false
-    - name: "materials"
-      type: "List<OrdOrderMaterial>"
-      description: "商品信息"
-      value: "[{\"materialId\":\"000000000020100604\",\"qty\":9.14,\"price\":2700.0,\"\
-      transportPrice\":0.0,\"handlingPrice\":5.0,\"materialName\":\"45%迪米佳20-05-20高\
-      塔硫基白色50KG\",\"category\":\"高塔尿硫基\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/prod/20100604a.png?reqid=10000\"\
-      ,\"payPrice\":2605.0}]"
-      canCover: true
-      children:
-        - name: "materialId"
-          type: "String"
-          description: "物料ID"
-          value: "000000000020100604"
-          canCover: true
-          required: false
-        - name: "qty"
-          type: "BigDecimal"
-          description: "总数"
-          value: "9.14"
-          canCover: true
-          required: false
-        - name: "price"
-          type: "BigDecimal"
-          description: "区域销售价"
-          value: "2700.0"
-          canCover: true
-          required: false
-        - name: "transportPrice"
-          type: "BigDecimal"
-          description: "运费单价"
-          value: "0.0"
-          canCover: true
-          required: false
-        - name: "handlingPrice"
-          type: "BigDecimal"
-          description: "装卸费单价"
-          value: "5.0"
-          canCover: true
-          required: false
-        - name: "materialName"
-          type: "String"
-          description: "物料名称"
-          value: "45%迪米佳20-05-20高塔硫基白色50KG"
-          canCover: true
-          required: false
-        - name: "category"
-          type: "String"
-          description: "品类"
-          value: "高塔尿硫基"
-          canCover: true
-          required: false
-        - name: "picUrl"
-          type: "String"
-          description: "图片"
-          value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/prod/20100604a.png?reqid=10000"
-          canCover: true
-          required: false
-        - name: "payPrice"
-          type: "BigDecimal"
-          description: "结算单价"
-          value: "2605.0"
-          canCover: true
-          required: false
-      required: false
-  headersExt:
-    - name: "Content-Type"
+     -
+      name: "materialName"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "物料名称"
+      value: "45%迪米佳20-05-20高塔硫基白色50KG"
       canCover: true
       required: false
+     -
+      name: "category"
+      type: "String"
+      description: "品类"
+      value: "高塔尿硫基"
+      canCover: true
+      required: false
+     -
+      name: "picUrl"
+      type: "String"
+      description: "图片"
+      value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/prod/20100604a.png?reqid=10000"
+      canCover: true
+      required: false
+     -
+      name: "payPrice"
+      type: "BigDecimal"
+      description: "结算单价"
+      value: "2605.0"
+      canCover: true
+      required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"orderId\":\"ORD0000F6171106\",\"sapCode\":\"3307979\",\"sendFactory\"\
     :\"嘉施利(应城)化肥有限公司工厂\",\"transport\":\"汽运\",\"destination\":null,\"transportLine\"\
@@ -304,15 +351,15 @@ response:
     ,\"payPrice\":2605.0}]}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

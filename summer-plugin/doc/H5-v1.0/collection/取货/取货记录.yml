@@ -1,82 +1,94 @@
 request:
   parametersExt:
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "81ba2cbf2fe787737fb97dee7f497c5d"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "82949780-1c3d-48db-8af1-509b061087e4"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "81ba2cbf2fe787737fb97dee7f497c5d"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "82949780-1c3d-48db-8af1-509b061087e4"
+    canCover: true
+    required: false
   restUri: "/pickups"
   method: "GET"
 response:
   contentExt:
-    - name: "total"
-      type: "Long"
-      description: "总记录数"
-      value: "14"
-      canCover: true
-      required: false
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
-    - name: "pages"
-      type: "Long"
-      description: "总页数"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "list"
-      type: "Array"
-      description: "内容"
-      value: "[{\"pickupId\":\"999946542882643970\",\"custName\":\"百色市右江区禾苗农资销售部\",\"\
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "14"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"pickupId\":\"999946542882643970\",\"custName\":\"百色市右江区禾苗农资销售部\",\"\
       sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\"\
       :\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":-1,\"note\":\"sefsdfsfs1中\
       文 \",\"createdTime\":1527240808491,\"invoiceTime\":1527470656665,\"sysUserId\"\
@@ -137,101 +149,116 @@ response:
       ,\"salesman\":\"张三\",\"salesmanTel\":\"18651835626\",\"status\":0,\"note\":\"\
       1212\",\"createdTime\":1520478772843,\"invoiceTime\":1525686242857,\"sysUserId\"\
       :\"1\",\"username\":\"admin\",\"reason\":null}]"
-      canCover: true
-      children:
-        - name: "pickupId"
-          type: "String"
-          description: "主键"
-          value: "999946542882643970"
-          canCover: true
-          required: false
-        - name: "custName"
-          type: "String"
-          description: "客户名称"
-          value: "百色市右江区禾苗农资销售部"
-          canCover: true
-          required: false
-        - name: "sapNo"
-          type: "String"
-          description: "SAP编号"
-          value: "0001500100"
-          canCover: true
-          required: false
-        - name: "contacts"
-          type: "String"
-          description: "客户联系人"
-          value: "卢守艳"
-          canCover: true
-          required: false
-        - name: "custTel"
-          type: "String"
-          description: "客户手机号"
-          value: "13607766618"
-          canCover: true
-          required: false
-        - name: "salesman"
-          type: "String"
-          description: "所属业务员"
-          value: "周兵红"
-          canCover: true
-          required: false
-        - name: "salesmanTel"
-          type: "String"
-          description: "所属业务员手机号"
-          value: "15072645253"
-          canCover: true
-          required: false
-        - name: "status"
-          type: "Integer"
-          description: "状态"
-          defaultVal: "0"
-          value: "-1"
-          canCover: true
-          required: false
-        - name: "note"
-          type: "String"
-          description: "取货备注"
-          value: "sefsdfsfs1中文 "
-          canCover: true
-          required: false
-        - name: "createdTime"
-          type: "Long"
-          description: "申请时间"
-          value: "1527240808491"
-          canCover: true
-          required: false
-        - name: "invoiceTime"
-          type: "Long"
-          description: "开票时间"
-          value: "1527470656665"
-          canCover: true
-          required: false
-        - name: "sysUserId"
-          type: "String"
-          description: "系统内务人员ID"
-          value: "1"
-          canCover: true
-          required: false
-        - name: "username"
-          type: "String"
-          description: "系统内务人员名称"
-          value: "admin"
-          canCover: true
-          required: false
-        - name: "reason"
-          type: "String"
-          description: "驳回原因"
-          value: "fsdfsdfsdfsdf"
-          canCover: true
-          required: false
-      required: false
-  headersExt:
-    - name: "Content-Type"
+    canCover: true
+    children:
+     -
+      name: "pickupId"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "主键"
+      value: "999946542882643970"
       canCover: true
       required: false
+     -
+      name: "custName"
+      type: "String"
+      description: "客户名称"
+      value: "百色市右江区禾苗农资销售部"
+      canCover: true
+      required: false
+     -
+      name: "sapNo"
+      type: "String"
+      description: "SAP编号"
+      value: "0001500100"
+      canCover: true
+      required: false
+     -
+      name: "contacts"
+      type: "String"
+      description: "客户联系人"
+      value: "卢守艳"
+      canCover: true
+      required: false
+     -
+      name: "custTel"
+      type: "String"
+      description: "客户手机号"
+      value: "13607766618"
+      canCover: true
+      required: false
+     -
+      name: "salesman"
+      type: "String"
+      description: "所属业务员"
+      value: "周兵红"
+      canCover: true
+      required: false
+     -
+      name: "salesmanTel"
+      type: "String"
+      description: "所属业务员手机号"
+      value: "15072645253"
+      canCover: true
+      required: false
+     -
+      name: "status"
+      type: "Integer"
+      description: "状态"
+      defaultVal: "0"
+      value: "-1"
+      canCover: true
+      required: false
+     -
+      name: "note"
+      type: "String"
+      description: "取货备注"
+      value: "sefsdfsfs1中文 "
+      canCover: true
+      required: false
+     -
+      name: "createdTime"
+      type: "Long"
+      description: "申请时间"
+      value: "1527240808491"
+      canCover: true
+      required: false
+     -
+      name: "invoiceTime"
+      type: "Long"
+      description: "开票时间"
+      value: "1527470656665"
+      canCover: true
+      required: false
+     -
+      name: "sysUserId"
+      type: "String"
+      description: "系统内务人员ID"
+      value: "1"
+      canCover: true
+      required: false
+     -
+      name: "username"
+      type: "String"
+      description: "系统内务人员名称"
+      value: "admin"
+      canCover: true
+      required: false
+     -
+      name: "reason"
+      type: "String"
+      description: "驳回原因"
+      value: "fsdfsdfsdfsdf"
+      canCover: true
+      required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"total\":14,\"size\":20,\"pages\":1,\"page\":1,\"list\":[{\"\
     pickupId\":\"999946542882643970\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"\
@@ -295,15 +322,15 @@ response:
     sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null}]}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

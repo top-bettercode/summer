@@ -1,131 +1,151 @@
 request:
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "6c5467aaaf8b8c5876b8016771744b64"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "4883e7ab06741b03a99ec466472e3baf"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "4883e7ab06741b03a99ec466472e3baf"
+    canCover: true
+    required: false
   restUri: "/custInfos/info"
   method: "GET"
 response:
   contentExt:
-    - name: "custId"
-      type: "String"
-      description: "客户ID"
-      value: "CUST000051"
-      canCover: true
-      required: false
-    - name: "custName"
-      type: "String"
-      description: "客户名称"
-      value: "玛纳斯县农业技术推广中心植物医院北五岔一分院"
-      canCover: true
-      required: false
-    - name: "legalPersonName"
-      type: "String"
-      description: "法人名称"
-      value: "张颖贤"
-      canCover: true
-      required: false
-    - name: "legalPersonCertno"
-      type: "String"
-      description: "法人身份证号码"
-      value: "652324197611303812"
-      canCover: true
-      required: false
-    - name: "businessLicenceNo"
-      type: "String"
-      description: "营业执照号码"
-      value: "91652324MA775PXX1L"
-      canCover: true
-      required: false
-    - name: "phone"
-      type: "String"
-      description: "手机"
-      value: "18099358662"
-      canCover: true
-      required: false
-    - name: "fax"
-      type: "String"
-      description: "传真"
-      canCover: true
-      required: false
-    - name: "mobile"
-      type: "String"
-      description: "电话"
-      value: "18099358662"
-      canCover: true
-      required: false
-    - name: "detailedAddress"
-      type: "String"
-      description: "详细地址"
-      value: "新疆维吾尔自治区昌吉回族自治州玛纳斯县北五岔镇乡道3号"
-      canCover: true
-      required: false
-    - name: "sapNo"
-      type: "String"
-      description: "SAP Number"
-      value: "0001500103"
-      canCover: true
-      required: false
-    - name: "saleInfo"
-      type: "Map<String,String>"
-      description: "销售信息"
-      value: "{\"customerService\":\"复肥\",\"customerType\":\"经销商\",\"deliveryPlant\"\
+   -
+    name: "custId"
+    type: "String"
+    description: "客户ID"
+    value: "CUST000051"
+    canCover: true
+    required: false
+   -
+    name: "custName"
+    type: "String"
+    description: "客户名称"
+    value: "玛纳斯县农业技术推广中心植物医院北五岔一分院"
+    canCover: true
+    required: false
+   -
+    name: "legalPersonName"
+    type: "String"
+    description: "法人名称"
+    value: "张颖贤"
+    canCover: true
+    required: false
+   -
+    name: "legalPersonCertno"
+    type: "String"
+    description: "法人身份证号码"
+    value: "652324197611303812"
+    canCover: true
+    required: false
+   -
+    name: "businessLicenceNo"
+    type: "String"
+    description: "营业执照号码"
+    value: "91652324MA775PXX1L"
+    canCover: true
+    required: false
+   -
+    name: "phone"
+    type: "String"
+    description: "手机"
+    value: "18099358662"
+    canCover: true
+    required: false
+   -
+    name: "fax"
+    type: "String"
+    description: "传真"
+    canCover: true
+    required: false
+   -
+    name: "mobile"
+    type: "String"
+    description: "电话"
+    value: "18099358662"
+    canCover: true
+    required: false
+   -
+    name: "detailedAddress"
+    type: "String"
+    description: "详细地址"
+    value: "新疆维吾尔自治区昌吉回族自治州玛纳斯县北五岔镇乡道3号"
+    canCover: true
+    required: false
+   -
+    name: "sapNo"
+    type: "String"
+    description: "SAP Number"
+    value: "0001500103"
+    canCover: true
+    required: false
+   -
+    name: "saleInfo"
+    type: "Map<String,String>"
+    description: "销售信息"
+    value: "{\"customerService\":\"复肥\",\"customerType\":\"经销商\",\"deliveryPlant\"\
       :\"嘉施利(新疆)水溶肥有限公司工厂\"}"
-      canCover: true
-      children:
-        - name: "customerService"
-          type: "String"
-          description: "业务类型 50"
-          value: "复肥"
-          canCover: true
-          required: false
-        - name: "customerType"
-          type: "String"
-          description: "客户类型"
-          value: "经销商"
-          canCover: true
-          required: false
-        - name: "deliveryPlant"
-          type: "String"
-          description: "发货工厂"
-          value: "嘉施利(新疆)水溶肥有限公司工厂"
-          canCover: true
-          required: false
-      required: false
-  headersExt:
-    - name: "Content-Type"
+    canCover: true
+    children:
+     -
+      name: "customerService"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "业务类型 50"
+      value: "复肥"
       canCover: true
       required: false
+     -
+      name: "customerType"
+      type: "String"
+      description: "客户类型"
+      value: "经销商"
+      canCover: true
+      required: false
+     -
+      name: "deliveryPlant"
+      type: "String"
+      description: "发货工厂"
+      value: "嘉施利(新疆)水溶肥有限公司工厂"
+      canCover: true
+      required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"custId\":\"CUST000051\",\"custName\":\"玛纳斯县农业技术推广中心植物医院北五岔一\
     分院\",\"legalPersonName\":\"张颖贤\",\"legalPersonCertno\":\"652324197611303812\"\
@@ -135,15 +155,15 @@ response:
     :\"经销商\",\"deliveryPlant\":\"嘉施利(新疆)水溶肥有限公司工厂\"}}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

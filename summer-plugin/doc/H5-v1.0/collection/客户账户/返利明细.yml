@@ -1,142 +1,161 @@
 request:
   parametersExt:
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
-    - name: "fundType"
-      type: "String"
-      description: "资金来源"
-      canCover: true
-      required: false
-    - name: "custId"
-      type: "String"
-      description: "客户ID"
-      canCover: true
-      required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "fundType"
+    type: "String"
+    description: "资金来源"
+    canCover: true
+    required: false
+   -
+    name: "custId"
+    type: "String"
+    description: "客户ID"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "81ba2cbf2fe787737fb97dee7f497c5d"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "46373dec5f375a3542db64432bbe1a19"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "81ba2cbf2fe787737fb97dee7f497c5d"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "46373dec5f375a3542db64432bbe1a19"
+    canCover: true
+    required: false
   restUri: "/custAccountInfos/rebate/detail"
   method: "GET"
 response:
   contentExt:
-    - name: "total"
-      type: "Long"
-      description: "总记录数"
-      value: "0"
-      canCover: true
-      required: false
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
-    - name: "pages"
-      type: "Long"
-      description: "总页数"
-      value: "0"
-      canCover: true
-      required: false
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "list"
-      type: "Array"
-      description: "内容"
-      value: "[{\"fundType\":\"09\",\"inputDate\":\"2018-03-01 13:56:20\",\"addAmt\"\
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "0"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "0"
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"fundType\":\"09\",\"inputDate\":\"2018-03-01 13:56:20\",\"addAmt\"\
       :100.0,\"plusAmt\":0.0}]"
-      canCover: true
-      children:
-        - name: "fundType"
-          type: "String"
-          description: "资金来源"
-          value: "09"
-          canCover: true
-          required: false
-        - name: "inputDate"
-          type: "Long"
-          description: "导入日期"
-          value: "2018-03-01 13:56:20"
-          canCover: true
-          required: false
-        - name: "addAmt"
-          type: "BigDecimal"
-          description: "增加金额"
-          value: "100.0"
-          canCover: true
-          required: false
-        - name: "plusAmt"
-          type: "BigDecimal"
-          description: "减少金额"
-          value: "0.0"
-          canCover: true
-          required: false
-      required: false
-  headersExt:
-    - name: "Content-Type"
+    canCover: true
+    children:
+     -
+      name: "fundType"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "资金来源"
+      value: "09"
       canCover: true
       required: false
+     -
+      name: "inputDate"
+      type: "Long"
+      description: "导入日期"
+      value: "2018-03-01 13:56:20"
+      canCover: true
+      required: false
+     -
+      name: "addAmt"
+      type: "BigDecimal"
+      description: "增加金额"
+      value: "100.0"
+      canCover: true
+      required: false
+     -
+      name: "plusAmt"
+      type: "BigDecimal"
+      description: "减少金额"
+      value: "0.0"
+      canCover: true
+      required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"total\":0,\"size\":20,\"pages\":0,\"page\":1,\"list\":[{\"\
     fundType\":\"09\",\"inputDate\":\"2018-03-01 13:56:20\",\"addAmt\":100.0,\"plusAmt\"\
     :0.0}]}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

@@ -1,59 +1,65 @@
 description: "测试账号：13582238115"
 request:
   parametersExt:
-    - name: "type"
-      type: "String"
-      description: "消息类型"
-      value: "ORDER"
-      canCover: true
-      required: false
+   -
+    name: "type"
+    type: "String"
+    description: "消息类型"
+    value: "ORDER"
+    canCover: true
+    required: false
   headersExt:
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "d2deb045364733ab5be07448712c7f17"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;charset=UTF-8"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "14ff6775-09d4-44f5-89a9-469556c68a77"
-      canCover: true
-      required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "d2deb045364733ab5be07448712c7f17"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "14ff6775-09d4-44f5-89a9-469556c68a77"
+    canCover: true
+    required: false
   restUri: "/appMessages/readed"
   method: "POST"
 response:
   headersExt:
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
-      canCover: true
-      required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

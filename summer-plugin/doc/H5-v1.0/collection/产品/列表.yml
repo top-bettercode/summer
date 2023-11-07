@@ -1,93 +1,107 @@
 description: "员工端只展示图片及产品名称"
 request:
   parametersExt:
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
-    - name: "brand"
-      type: "String"
-      description: "品牌名称"
-      value: "5465"
-      canCover: true
-      required: false
-    - name: "strain"
-      type: "String"
-      description: "品系"
-      value: "5016"
-      canCover: true
-      required: false
-    - name: "keyword"
-      type: "string"
-      description: "关键字"
-      canCover: true
-      required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "brand"
+    type: "String"
+    description: "品牌名称"
+    value: "5465"
+    canCover: true
+    required: false
+   -
+    name: "strain"
+    type: "String"
+    description: "品系"
+    value: "5016"
+    canCover: true
+    required: false
+   -
+    name: "keyword"
+    type: "string"
+    description: "关键字"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "ceb52abefec57d3530a987cb8e5b69cd"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "b02cd37284c3546f6506b836374999db"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "ceb52abefec57d3530a987cb8e5b69cd"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "b02cd37284c3546f6506b836374999db"
+    canCover: true
+    required: false
   restUri: "/materialProducts"
   method: "GET"
 response:
   contentExt:
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "20"
-      canCover: true
-      required: false
-    - name: "total"
-      type: "Long"
-      description: "总记录数"
-      value: "20"
-      canCover: true
-      required: false
-    - name: "pages"
-      type: "Long"
-      description: "总页数"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "list"
-      type: "Array"
-      description: "内容"
-      value: "[{\"materialId\":\"000000000020101004\",\"name\":\"51%嘉施利根动力17-17-17全水\
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"materialId\":\"000000000020101004\",\"name\":\"51%嘉施利根动力17-17-17全水\
       溶硝硫基白色25KG\",\"category\":\"硝基水溶滴灌型\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨\
       享受坎级奖励\"],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
       },{\"materialId\":\"000000000020101012\",\"name\":\"40%撒威20-10-10中氯硝酸磷钾蓝色25KG\"\
@@ -148,59 +162,67 @@ response:
       ,\"category\":\"黄腐酸钾\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
       :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
       }]"
-      canCover: true
-      children:
-        - name: "materialId"
-          type: "String"
-          description: "物料ID"
-          value: "000000000020101004"
-          canCover: true
-          required: false
-        - name: "name"
-          type: "String"
-          description: "产品名称"
-          value: "51%嘉施利根动力17-17-17全水溶硝硫基白色25KG"
-          canCover: true
-          required: false
-        - name: "category"
-          type: "String"
-          description: "品类"
-          value: "硝基水溶滴灌型"
-          canCover: true
-          required: false
-        - name: "policies"
-          type: "Array<String>"
-          description: "优惠政策"
-          value: "[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"]"
-          canCover: true
-          required: false
-        - name: "price"
-          type: "BigDecimal"
-          description: "单价"
-          value: "1900.01"
-          canCover: true
-          required: false
-        - name: "picUrl"
-          type: "String"
-          description: "图片url"
-          value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000"
-          canCover: true
-          required: false
-      required: false
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
-      canCover: true
-      required: false
-  headersExt:
-    - name: "Content-Type"
+    canCover: true
+    children:
+     -
+      name: "materialId"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "物料ID"
+      value: "000000000020101004"
       canCover: true
       required: false
+     -
+      name: "name"
+      type: "String"
+      description: "产品名称"
+      value: "51%嘉施利根动力17-17-17全水溶硝硫基白色25KG"
+      canCover: true
+      required: false
+     -
+      name: "category"
+      type: "String"
+      description: "品类"
+      value: "硝基水溶滴灌型"
+      canCover: true
+      required: false
+     -
+      name: "policies"
+      type: "Array<String>"
+      description: "优惠政策"
+      value: "[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"]"
+      canCover: true
+      required: false
+     -
+      name: "price"
+      type: "BigDecimal"
+      description: "单价"
+      value: "1900.01"
+      canCover: true
+      required: false
+     -
+      name: "picUrl"
+      type: "String"
+      description: "图片url"
+      value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000"
+      canCover: true
+      required: false
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"size\":20,\"total\":20,\"pages\":1,\"list\":[{\"materialId\"\
     :\"000000000020101004\",\"name\":\"51%嘉施利根动力17-17-17全水溶硝硫基白色25KG\",\"category\"\
@@ -266,15 +288,15 @@ response:
     }],\"page\":1}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

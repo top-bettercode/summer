@@ -1,118 +1,133 @@
 request:
   parametersExt:
-    - name: "custId"
-      type: "String"
-      description: "客户ID"
-      canCover: true
-      required: false
+   -
+    name: "custId"
+    type: "String"
+    description: "客户ID"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "6c5467aaaf8b8c5876b8016771744b64"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "46373dec5f375a3542db64432bbe1a19"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "46373dec5f375a3542db64432bbe1a19"
+    canCover: true
+    required: false
   restUri: "/custAccountInfos/rebate"
   method: "GET"
 response:
   contentExt:
-    - name: "size"
-      type: "Integer"
-      description: "当前页的数量"
-      value: "2"
-      canCover: true
-      required: false
-    - name: "total"
-      type: "Long"
-      description: "总记录数"
-      value: "2"
-      canCover: true
-      required: false
-    - name: "pages"
-      type: "Long"
-      description: "总页数"
-      value: "1"
-      canCover: true
-      required: false
-    - name: "list"
-      type: "Array"
-      description: "内容"
-      value: "[{\"availableBalance\":0,\"lockAmount\":0,\"serviceType\":\"01\"},{\"\
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "2"
+    canCover: true
+    required: false
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "2"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"availableBalance\":0,\"lockAmount\":0,\"serviceType\":\"01\"},{\"\
       availableBalance\":0,\"lockAmount\":0,\"serviceType\":\"02\"}]"
-      canCover: true
-      children:
-        - name: "availableBalance"
-          type: "BigDecimal"
-          description: "可用金额"
-          value: "0"
-          canCover: true
-          required: false
-        - name: "lockAmount"
-          type: "BigDecimal"
-          description: "锁定金额"
-          value: "0"
-          canCover: true
-          required: false
-        - name: "serviceType"
-          type: "String"
-          description: "业务类型"
-          value: "01"
-          canCover: true
-          required: false
-      required: false
-    - name: "page"
-      type: "Integer"
-      description: "页码"
-      defaultVal: "1"
-      value: "1"
+    canCover: true
+    children:
+     -
+      name: "availableBalance"
+      type: "BigDecimal"
+      description: "可用金额"
+      value: "0"
       canCover: true
       required: false
-  headersExt:
-    - name: "Content-Type"
+     -
+      name: "lockAmount"
+      type: "BigDecimal"
+      description: "锁定金额"
+      value: "0"
+      canCover: true
+      required: false
+     -
+      name: "serviceType"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "业务类型"
+      value: "01"
       canCover: true
       required: false
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"size\":2,\"total\":2,\"pages\":1,\"list\":[{\"availableBalance\"\
     :0,\"lockAmount\":0,\"serviceType\":\"01\"},{\"availableBalance\":0,\"lockAmount\"\
     :0,\"serviceType\":\"02\"}],\"page\":1}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

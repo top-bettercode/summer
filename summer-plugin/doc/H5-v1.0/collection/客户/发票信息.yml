@@ -1,98 +1,113 @@
 request:
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "6c5467aaaf8b8c5876b8016771744b64"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "92ece879-5d72-429e-a366-7863e06067e2"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "92ece879-5d72-429e-a366-7863e06067e2"
+    canCover: true
+    required: false
   restUri: "/custInfos/invoice"
   method: "GET"
 response:
   contentExt:
-    - name: "invoiceId"
-      type: "String"
-      description: "开票信息ID"
-      value: "INVO00286"
-      canCover: true
-      required: false
-    - name: "isInvoice"
-      type: "String"
-      description: "是否开票"
-      value: "开普票"
-      canCover: true
-      required: false
-    - name: "invoiceCompany"
-      type: "String"
-      description: "开票抬头"
-      value: "百色市右江区禾苗农资销售部"
-      canCover: true
-      required: false
-    - name: "invoiceType"
-      type: "String"
-      description: "开票类型"
-      canCover: true
-      required: false
-    - name: "taxpayerIdentificationNum"
-      type: "String"
-      description: "纳税人身份识别码"
-      value: "92451002L47564754H"
-      canCover: true
-      required: false
-    - name: "invoiceCompanyAddress"
-      type: "String"
-      description: "公司地址"
-      value: "广西百色市右江区南大建材综合市场A1栋14-16号"
-      canCover: true
-      required: false
-    - name: "invoiceConpanyPhone"
-      type: "String"
-      description: "开票公司电话"
-      canCover: true
-      required: false
-    - name: "bank"
-      type: "String"
-      description: "开户行"
-      value: "广西百色右江农村合作银行营业部"
-      canCover: true
-      required: false
-    - name: "account"
-      type: "String"
-      description: "银行账号"
-      value: "600612010107880401"
-      canCover: true
-      required: false
+   -
+    name: "invoiceId"
+    type: "String"
+    description: "开票信息ID"
+    value: "INVO00286"
+    canCover: true
+    required: false
+   -
+    name: "isInvoice"
+    type: "String"
+    description: "是否开票"
+    value: "开普票"
+    canCover: true
+    required: false
+   -
+    name: "invoiceCompany"
+    type: "String"
+    description: "开票抬头"
+    value: "百色市右江区禾苗农资销售部"
+    canCover: true
+    required: false
+   -
+    name: "invoiceType"
+    type: "String"
+    description: "开票类型"
+    canCover: true
+    required: false
+   -
+    name: "taxpayerIdentificationNum"
+    type: "String"
+    description: "纳税人身份识别码"
+    value: "92451002L47564754H"
+    canCover: true
+    required: false
+   -
+    name: "invoiceCompanyAddress"
+    type: "String"
+    description: "公司地址"
+    value: "广西百色市右江区南大建材综合市场A1栋14-16号"
+    canCover: true
+    required: false
+   -
+    name: "invoiceConpanyPhone"
+    type: "String"
+    description: "开票公司电话"
+    canCover: true
+    required: false
+   -
+    name: "bank"
+    type: "String"
+    description: "开户行"
+    value: "广西百色右江农村合作银行营业部"
+    canCover: true
+    required: false
+   -
+    name: "account"
+    type: "String"
+    description: "银行账号"
+    value: "600612010107880401"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
-      canCover: true
-      required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"invoiceId\":\"INVO00286\",\"isInvoice\":\"开普票\",\"invoiceCompany\"\
     :\"百色市右江区禾苗农资销售部\",\"invoiceType\":null,\"taxpayerIdentificationNum\":\"92451002L47564754H\"\
@@ -100,15 +115,15 @@ response:
     :null,\"bank\":\"广西百色右江农村合作银行营业部\",\"account\":\"600612010107880401\"}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

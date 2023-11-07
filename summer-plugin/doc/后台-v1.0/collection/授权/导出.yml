@@ -1,76 +1,87 @@
 request:
   parametersExt:
-    - name: "platformName"
-      type: "String(200)"
-      description: "平台名称"
-      value: "名称"
-      canCover: true
-      required: false
-    - name: "platformNo"
-      type: "String(50)"
-      description: "平台编号"
-      value: "编号"
-      canCover: true
-      required: false
-    - name: "sipAddress"
-      type: "String(40)"
-      description: "信令地址"
-      value: "地址"
-      canCover: true
-      required: false
+   -
+    name: "platformName"
+    type: "String(200)"
+    description: "平台名称"
+    value: "名称"
+    canCover: true
+    required: false
+   -
+    name: "platformNo"
+    type: "String(50)"
+    description: "平台编号"
+    value: "编号"
+    canCover: true
+    required: false
+   -
+    name: "sipAddress"
+    type: "String(40)"
+    description: "信令地址"
+    value: "地址"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json"
-      canCover: true
-      required: false
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "Authorization"
-      type: "String"
-      description: "授权码"
-      value: "bearer xxxx-xxxx-xxxx-xxxx-xxxx"
-      canCover: true
-      required: true
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json"
+    canCover: true
+    required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "Authorization"
+    type: "String"
+    description: "授权码"
+    value: "bearer xxxx-xxxx-xxxx-xxxx-xxxx"
+    canCover: true
+    required: true
   restUri: "/user/devicePlatforms/export"
   method: "GET"
 response:
   headersExt:
-    - name: "Content-Disposition"
-      type: "String"
-      description: "Content-Disposition"
-      value: "attachment;filename==?UTF8?B?6K6+5aSH5bmz5Y+w?=.xlsx;filename*=UTF-8''%E8%AE%BE%E5%A4%87%E5%B9%B3%E5%8F%B0.xlsx"
-      canCover: true
-      required: false
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/vnd.ms-excel; charset=utf-8"
-      canCover: true
-      required: false
-    - name: "Pragma"
-      type: "String"
-      description: "Pragma"
-      value: "No-cache"
-      canCover: true
-      required: false
-    - name: "Cache-Control"
-      type: "String"
-      description: "Cache-Control"
-      value: "no-cache"
-      canCover: true
-      required: false
-    - name: "Expires"
-      type: "String"
-      description: "Expires"
-      value: "Thu, 01 Jan 1970 00:00:00 GMT"
-      canCover: true
-      required: false
+   -
+    name: "Content-Disposition"
+    type: "String"
+    description: "Content-Disposition"
+    value: "attachment;filename==?UTF8?B?6K6+5aSH5bmz5Y+w?=.xlsx;filename*=UTF-8''%E8%AE%BE%E5%A4%87%E5%B9%B3%E5%8F%B0.xlsx"
+    canCover: true
+    required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/vnd.ms-excel; charset=utf-8"
+    canCover: true
+    required: false
+   -
+    name: "Pragma"
+    type: "String"
+    description: "Pragma"
+    value: "No-cache"
+    canCover: true
+    required: false
+   -
+    name: "Cache-Control"
+    type: "String"
+    description: "Cache-Control"
+    value: "no-cache"
+    canCover: true
+    required: false
+   -
+    name: "Expires"
+    type: "String"
+    description: "Expires"
+    value: "Thu, 01 Jan 1970 00:00:00 GMT"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x18\0\0\0\
     xl/worksheets/sheet1.xml��[o�0\x18�����\x01�Ԩ\x02��i�]L��u�v��U��v�����\x10�\x15\

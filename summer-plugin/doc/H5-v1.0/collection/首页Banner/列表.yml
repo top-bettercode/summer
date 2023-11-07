@@ -1,82 +1,93 @@
 request:
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "6c5467aaaf8b8c5876b8016771744b64"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "4883e7ab06741b03a99ec466472e3baf"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "4883e7ab06741b03a99ec466472e3baf"
+    canCover: true
+    required: false
   restUri: "/banners"
   method: "GET"
 response:
   contentExt:
-    - name: "list"
-      type: "Array"
-      description: "内容"
-      value: "[{\"img\":\"http://10.13.3.206:8080/npk/banners/3317.png\",\"type\":\"\
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"img\":\"http://10.13.3.206:8080/npk/banners/3317.png\",\"type\":\"\
       brand\",\"levelName\":\"桂湖\",\"value\":\"3317\"},{\"img\":\"http://10.13.3.206:8080/npk/banners/3318.png\"\
       ,\"type\":\"brand\",\"levelName\":\"嘉施利\",\"value\":\"3318\"},{\"img\":\"http://10.13.3.206:8080/npk/banners/5016.png\"\
       ,\"type\":\"strain\",\"levelName\":\"水溶肥\",\"value\":\"5016\"},{\"img\":\"http://10.13.3.206:8080/npk/banners/5020.png\"\
       ,\"type\":\"strain\",\"levelName\":\"氮肥\",\"value\":\"5020\"},{\"img\":\"http://10.13.3.206:8080/npk/banners/5014.png\"\
       ,\"type\":\"strain\",\"levelName\":\"硝基肥\",\"value\":\"5014\"}]"
-      canCover: true
-      children:
-        - name: "img"
-          type: "String"
-          description: "图片链接地址"
-          value: "http://10.13.3.206:8080/npk/banners/3317.png"
-          canCover: true
-          required: false
-        - name: "type"
-          type: "String"
-          description: "banner类型"
-          value: "brand"
-          canCover: true
-          required: false
-        - name: "levelName"
-          type: "String"
-          description: "levelName"
-          value: "桂湖"
-          canCover: true
-          required: false
-        - name: "value"
-          type: "String"
-          description: "对应值"
-          value: "3317"
-          canCover: true
-          required: false
-      required: false
-  headersExt:
-    - name: "Content-Type"
+    canCover: true
+    children:
+     -
+      name: "img"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "图片链接地址"
+      value: "http://10.13.3.206:8080/npk/banners/3317.png"
       canCover: true
       required: false
+     -
+      name: "type"
+      type: "String"
+      description: "banner类型"
+      value: "brand"
+      canCover: true
+      required: false
+     -
+      name: "levelName"
+      type: "String"
+      description: "levelName"
+      value: "桂湖"
+      canCover: true
+      required: false
+     -
+      name: "value"
+      type: "String"
+      description: "对应值"
+      value: "3317"
+      canCover: true
+      required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"list\":[{\"img\":\"http://10.13.3.206:8080/npk/banners/3317.png\"\
     ,\"type\":\"brand\",\"levelName\":\"桂湖\",\"value\":\"3317\"},{\"img\":\"http://10.13.3.206:8080/npk/banners/3318.png\"\
@@ -86,15 +97,15 @@ response:
     ,\"type\":\"strain\",\"levelName\":\"硝基肥\",\"value\":\"5014\"}]}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

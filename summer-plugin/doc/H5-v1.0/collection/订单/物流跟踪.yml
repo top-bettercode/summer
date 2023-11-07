@@ -1,92 +1,105 @@
 request:
   uriVariablesExt:
-    - name: "orderId"
-      type: "String"
-      description: "主键"
-      value: "ORD000259171116"
-      canCover: true
-      required: false
+   -
+    name: "orderId"
+    type: "String"
+    description: "主键"
+    value: "ORD000259171116"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "6c5467aaaf8b8c5876b8016771744b64"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "22342b8f-b789-4981-94ee-dc781014d99d"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "22342b8f-b789-4981-94ee-dc781014d99d"
+    canCover: true
+    required: false
   restUri: "/ordOrders/{orderId}/deliveryInfo"
   method: "GET"
 response:
   contentExt:
-    - name: "qty"
-      type: "BigDecimal"
-      description: "总数"
-      value: "20.0"
-      canCover: true
-      required: false
-    - name: "sendQty"
-      type: "BigDecimal"
-      description: "发货数量"
-      value: "20.0"
-      canCover: true
-      required: false
-    - name: "deliveryInfos"
-      type: "List<DeliveryInfo>"
-      description: "物流信息"
-      value: "[{\"postTime\":1510910934000,\"qty\":10.0,\"deliveryStatus\":\"已发货\"},{\"\
+   -
+    name: "qty"
+    type: "BigDecimal"
+    description: "总数"
+    value: "20.0"
+    canCover: true
+    required: false
+   -
+    name: "sendQty"
+    type: "BigDecimal"
+    description: "发货数量"
+    value: "20.0"
+    canCover: true
+    required: false
+   -
+    name: "deliveryInfos"
+    type: "List<DeliveryInfo>"
+    description: "物流信息"
+    value: "[{\"postTime\":1510910934000,\"qty\":10.0,\"deliveryStatus\":\"已发货\"},{\"\
       postTime\":1510910934000,\"qty\":7.0,\"deliveryStatus\":\"已发货\"},{\"postTime\"\
       :1510910934000,\"qty\":3.0,\"deliveryStatus\":\"已发货\"}]"
+    canCover: true
+    children:
+     -
+      name: "postTime"
+      type: "Long"
+      description: "发货时间"
+      value: "1510910934000"
       canCover: true
-      children:
-        - name: "postTime"
-          type: "Long"
-          description: "发货时间"
-          value: "1510910934000"
-          canCover: true
-          required: false
-        - name: "qty"
-          type: "BigDecimal"
-          description: "总数"
-          value: "10.0"
-          canCover: true
-          required: false
-        - name: "deliveryStatus"
-          type: "String"
-          description: "物流状态信息"
-          value: "已发货"
-          canCover: true
-          required: false
       required: false
-  headersExt:
-    - name: "Content-Type"
+     -
+      name: "qty"
+      type: "BigDecimal"
+      description: "总数"
+      value: "10.0"
+      canCover: true
+      required: false
+     -
+      name: "deliveryStatus"
       type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
+      description: "物流状态信息"
+      value: "已发货"
       canCover: true
       required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"qty\":20.0,\"sendQty\":20.0,\"deliveryInfos\":[{\"postTime\"\
     :1510910934000,\"qty\":10.0,\"deliveryStatus\":\"已发货\"},{\"postTime\":1510910934000,\"\
@@ -94,15 +107,15 @@ response:
     deliveryStatus\":\"已发货\"}]}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

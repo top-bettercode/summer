@@ -1,115 +1,132 @@
 request:
   uriVariablesExt:
-    - name: "messageNo"
-      type: "String"
-      description: "消息编号"
-      value: "13"
-      canCover: true
-      required: false
+   -
+    name: "messageNo"
+    type: "String"
+    description: "消息编号"
+    value: "13"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Accept"
-      type: "String"
-      description: "客户端接收格式"
-      value: "application/json;version=2.0"
-      canCover: true
-      required: false
-    - name: "user-agent"
-      type: "String"
-      description: "用户代理"
-      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-      canCover: true
-      required: false
-    - name: "sign"
-      type: "String"
-      description: "接口签名 <<_qianmingsuanfa>>"
-      value: "6c5467aaaf8b8c5876b8016771744b64"
-      canCover: true
-      required: true
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/x-www-form-urlencoded"
-      canCover: true
-      required: false
-    - name: "accessToken"
-      type: "String"
-      description: "存取令牌"
-      value: "0d13ca1b-181d-4476-b910-b2babf0fcdec"
-      canCover: true
-      required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_qianmingsuanfa>>"
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "0d13ca1b-181d-4476-b910-b2babf0fcdec"
+    canCover: true
+    required: false
   restUri: "/appMessages/{messageNo}"
   method: "PUT"
 response:
   contentExt:
-    - name: "messageNo"
-      type: "String"
-      description: "消息编号"
-      value: "13"
+   -
+    name: "messageNo"
+    type: "String"
+    description: "消息编号"
+    value: "13"
+    canCover: true
+    required: false
+   -
+    name: "messageType"
+    type: "String"
+    description: "消息类型"
+    value: "ORDER_HAS_SEND"
+    canCover: true
+    required: false
+   -
+    name: "createTime"
+    type: "Long"
+    description: "createTime"
+    value: "1522200716000"
+    canCover: true
+    required: false
+   -
+    name: "message"
+    type: "string"
+    description: "消息"
+    value: "你的订单已发货0.710 吨，请做好收货准备"
+    canCover: true
+    required: false
+   -
+    name: "linkedId"
+    type: "String"
+    description: "相关ID"
+    value: "ORD000379171117"
+    canCover: true
+    required: false
+   -
+    name: "extra"
+    type: "String"
+    description: "扩展信息"
+    value: "{\"qty\":32,\"payAmount\":66080}"
+    canCover: true
+    children:
+     -
+      name: "qty"
+      type: "BigDecimal"
+      description: "总数"
+      value: "32"
       canCover: true
       required: false
-    - name: "messageType"
-      type: "String"
-      description: "消息类型"
-      value: "ORDER_HAS_SEND"
+     -
+      name: "payAmount"
+      type: "BigDecimal"
+      description: "结算总价"
+      value: "66080"
       canCover: true
       required: false
-    - name: "createTime"
-      type: "Long"
-      description: "createTime"
-      value: "1522200716000"
-      canCover: true
-      required: false
-    - name: "message"
-      type: "string"
-      description: "消息"
-      value: "你的订单已发货0.710 吨，请做好收货准备"
-      canCover: true
-      required: false
-    - name: "linkedId"
-      type: "String"
-      description: "相关ID"
-      value: "ORD000379171117"
-      canCover: true
-      required: false
-    - name: "extra"
-      type: "String"
-      description: "扩展信息"
-      value: "{\"qty\":32,\"payAmount\":66080}"
-      canCover: true
-      children:
-        - name: "qty"
-          type: "BigDecimal"
-          description: "总数"
-          value: "32"
-          canCover: true
-          required: false
-        - name: "payAmount"
-          type: "BigDecimal"
-          description: "结算总价"
-          value: "66080"
-          canCover: true
-          required: false
-      required: false
-    - name: "custNo"
-      type: "String"
-      description: "客户编码"
-      value: "CUST00918"
-      canCover: true
-      required: false
-    - name: "readed"
-      type: "String"
-      description: "是否已读"
-      defaultVal: "N'"
-      value: "Y"
-      canCover: true
-      required: false
+    required: false
+   -
+    name: "custNo"
+    type: "String"
+    description: "客户编码"
+    value: "CUST00918"
+    canCover: true
+    required: false
+   -
+    name: "readed"
+    type: "String"
+    description: "是否已读"
+    defaultVal: "N'"
+    value: "Y"
+    canCover: true
+    required: false
   headersExt:
-    - name: "Content-Type"
-      type: "String"
-      description: "内容类型"
-      value: "application/json;charset=UTF-8"
-      canCover: true
-      required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
   contentAsString: "{\"messageNo\":\"13\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\"\
     :1522200716000,\"message\":\"你的订单已发货0.710 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\"\
@@ -117,15 +134,15 @@ response:
     :\"Y\"}"
 protocol: "HTTP/1.1"
 testExec:
-  - "pm.test('验证响应状态码是200', function () {"
-  - "  pm.response.to.have.status(200);"
-  - "});"
-  - ""
-  - "pm.test('验证响应时间小于1000ms', function () {"
-  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
-  - "});"
-  - ""
-  - "pm.test('验证返回json格式', function () {"
-  - "  pm.response.to.be.json;"
-  - "});"
-  - ""
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""
