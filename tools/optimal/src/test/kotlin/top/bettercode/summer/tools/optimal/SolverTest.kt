@@ -322,6 +322,34 @@ class SolverTest {
     }
 
     @Test
+    fun ratioInRange() {
+        val ratioInRange = cbcSolver.ratioInRange()
+        val ratioInRange1 = scipSolver.ratioInRange()
+        val ratioInRange2 = coptSolver.ratioInRange()
+        Assertions.assertEquals(ratioInRange, ratioInRange1)
+        Assertions.assertEquals(ratioInRange, ratioInRange2)
+    }
+
+    private fun Solver.ratioInRange(): Double {
+        val part = numVar(0.0, 100.0)
+        val whole = numVar(10.0, 100.0)
+        part.ratioInRange(whole, 0.4, 0.6)
+        arrayOf(part, whole).minimize()
+        solve()
+        System.err.println(part.value)
+        System.err.println(whole.value)
+        System.err.println(part.value / whole.value)
+        Assertions.assertTrue(part.value / whole.value in 0.4..0.6)
+        arrayOf(part, whole).maximize()
+        solve()
+        System.err.println(part.value)
+        System.err.println(whole.value)
+        System.err.println(part.value / whole.value)
+        Assertions.assertTrue(part.value / whole.value in 0.4..0.6)
+        return part.value / whole.value
+    }
+
+    @Test
     fun geIf() {
         val ge = cbcSolver.geIf()
         val ge1 = scipSolver.geIf()

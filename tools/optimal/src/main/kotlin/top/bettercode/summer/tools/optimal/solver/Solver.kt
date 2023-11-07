@@ -78,13 +78,14 @@ abstract class Solver(
     abstract fun IVar.between(lb: IVar, ub: IVar)
 
     /**
-     * lb <= dividend/divisor <= ub
-     * divisor*lb <= dividend
-     * dividend   <= divisor*ub
+     * lb <= this/whole <= ub
+     * whole*lb <= this
+     * this   <= whole*ub
+     * whole*ub >= this
      */
-    fun between(dividend: IVar, divisor: IVar, lb: Double, ub: Double) {
-        divisor.coeff(lb).le(dividend)
-        divisor.coeff(ub).ge(dividend)
+    fun IVar.ratioInRange(whole: IVar, lb: Double, ub: Double) {
+        whole.coeff(lb).le(this)
+        whole.coeff(ub).ge(this)
     }
 
     abstract fun IVar.geIf(value: Double, bool: IVar)

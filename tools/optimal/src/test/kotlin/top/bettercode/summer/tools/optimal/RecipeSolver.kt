@@ -141,7 +141,7 @@ class RecipeSolver(val solver: Solver) {
             val waterSolublePhosphorusRate = componentTarget.waterSolublePhosphorusRate
             val minRate = waterSolublePhosphorusRate!!.min!!.toDouble()
             val maxRate = waterSolublePhosphorusRate.max!!.toDouble()
-            between(waterSolublePhosphorusVal, phosphorusVal, minRate, maxRate)
+            waterSolublePhosphorusVal.ratioInRange(phosphorusVal, minRate, maxRate)
 
             // 原料比率约束
             val materialRelations = reqData.materialRelations

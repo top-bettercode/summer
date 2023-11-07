@@ -17,6 +17,16 @@ interface IVar {
     val value: Double
 
     /**
+     * 下限
+     */
+    val lb: Double
+
+    /**
+     * 上限
+     */
+    val ub: Double
+
+    /**
      * 设置系数
      *  @param coeff 系数
      *  @return 带coeff系数的新变量

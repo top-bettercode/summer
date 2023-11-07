@@ -14,6 +14,12 @@ class MPObjectiveVar(private val _delegate: MPObjective,
     override val value: Double
         get() = _delegate.value().scale()
 
+    override val lb: Double
+        get() = _delegate.value().scale()
+
+    override val ub: Double
+        get() = _delegate.value().scale()
+
     override fun coeff(coeff: Double): IVar {
         return MPObjectiveVar(_delegate, coeff)
     }
