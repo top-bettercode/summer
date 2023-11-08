@@ -9,6 +9,7 @@ dependencies {
 
     compileOnly("com.google.ortools:ortools-java")
     testImplementation("com.google.ortools:ortools-java")
+
     testImplementation(project(":tools:excel"))
     testImplementation("org.dhatim:fastexcel-reader")
 
@@ -17,6 +18,7 @@ dependencies {
 
 tasks {
     test {
+        jvmArgs = listOf("-DUSE_GLPK=ON")
         environment("LD_LIBRARY_PATH", file("native").absolutePath)
     }
 
