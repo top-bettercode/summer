@@ -40,6 +40,11 @@ open class GenProperties : AutodocExtension() {
     var tableSuffixes = arrayOf<String>()
 
     /**
+     * 忽略请求头参数
+     */
+    var ignoredHeaders = arrayOf<String>()
+
+    /**
      * 实体前缀
      */
     var entityPrefix = ""

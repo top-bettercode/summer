@@ -121,6 +121,10 @@ class AutodocHandler(
                     request.headers.remove(it)
                 }
 
+                genProperties.ignoredHeaders.forEach {
+                    request.headers.remove(it)
+                }
+
                 request.headers.remove(HttpHeaders.HOST)
                 request.headers.remove(HttpHeaders.CONTENT_LENGTH)
                 request.headers.remove(HttpHeaders.CONNECTION)
