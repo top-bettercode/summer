@@ -175,7 +175,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         return BrandWCPayRequest(appId = unifiedOrderResponse.appid,
                 timeStamp = (System.currentTimeMillis() / 1000).toString(),
                 nonceStr = RandomUtil.nextString2(32),
-                `package` = "prepay_id=${unifiedOrderResponse.prepayId}}",
+                `package` = "prepay_id=${unifiedOrderResponse.prepayId}",
                 signType = "MD5",
                 paySign = sign(unifiedOrderResponse).sign)
     }
