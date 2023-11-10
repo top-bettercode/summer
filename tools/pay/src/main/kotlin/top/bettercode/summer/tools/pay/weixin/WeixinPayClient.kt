@@ -171,7 +171,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * jsapi 调起支付接口 支付信息
      * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6
      *
-     * app
+     * todo app
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2
      */
     fun getBrandWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): BrandWCPayRequest {
@@ -272,7 +272,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response?.returnMsg ?: "无结果响应"}", response)
             }
         } catch (e: Exception) {
-            log.error("退款结果通知失败", e)
+            log.error("支付结果通知失败", e)
         }
         return WeixinPayResponse.fail()
     }
