@@ -18,8 +18,8 @@ import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
-import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
+import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.lang.operation.Operation
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.File
@@ -116,6 +116,10 @@ class AutodocHandler(
                     requiredHeaders.add(signParamName)
                 else
                     request.headers.remove(signParamName)
+
+                Autodoc.ignoredHeaders.forEach {
+                    request.headers.remove(it)
+                }
 
                 request.headers.remove(HttpHeaders.HOST)
                 request.headers.remove(HttpHeaders.CONTENT_LENGTH)

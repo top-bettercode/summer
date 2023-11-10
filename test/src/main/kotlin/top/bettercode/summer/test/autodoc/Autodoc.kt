@@ -50,6 +50,12 @@ object Autodoc {
     var requiredHeaders: Set<String> = setOf()
 
     /**
+     * 忽略请求头参数
+     */
+    @JvmStatic
+    var ignoredHeaders: Set<String> = setOf()
+
+    /**
      * 请求头
      */
     @JvmStatic
@@ -128,6 +134,11 @@ object Autodoc {
     @JvmStatic
     fun requiredHeaders(vararg header: String) {
         requiredHeaders = header.toSet()
+    }
+
+    @JvmStatic
+    fun ignoredHeaders(vararg header: String) {
+        ignoredHeaders = header.toSet()
     }
 
     /**
