@@ -11,7 +11,6 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.lang.Nullable
 import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.pay.weixin.entity.*
@@ -171,17 +170,28 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * jsapi 调起支付接口 支付信息
      * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6
      *
-     * todo app
-     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2
      */
     fun getBrandWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): BrandWCPayRequest {
-        val brandWCPayRequest = BrandWCPayRequest(appId = unifiedOrderResponse.appid,
-                timeStamp = (System.currentTimeMillis() / 1000).toString(),
-                nonceStr = RandomUtil.nextString2(32),
+        val brandWCPayRequest = BrandWCPayRequest(
+                appId = unifiedOrderResponse.appid!!,
                 `package` = "prepay_id=${unifiedOrderResponse.prepayId}",
-                signType = "MD5")
+        )
         brandWCPayRequest.paySign = sign(brandWCPayRequest).sign
         return brandWCPayRequest
+    }
+
+    /**
+     * app 调起支付接口 支付信息
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2
+     */
+    fun getAppWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): AppWCPayRequest {
+        val appWCPayRequest = AppWCPayRequest(
+                appid = unifiedOrderResponse.appid!!,
+                partnerid = unifiedOrderResponse.mchId!!,
+                prepayid = unifiedOrderResponse.prepayId
+        )
+        appWCPayRequest.sign = sign(appWCPayRequest).sign
+        return appWCPayRequest
     }
 
     /**
@@ -272,7 +282,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response?.returnMsg ?: "无结果响应"}", response)
             }
         } catch (e: Exception) {
-            log.error("支付结果通知失败", e)
+            log.error("支付结果通知处理失败", e)
         }
         return WeixinPayResponse.fail()
     }
@@ -291,7 +301,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 throw WeixinPayException("退款结果通知失败:${response?.returnMsg ?: "无结果响应"}", response)
             }
         } catch (e: Exception) {
-            log.error("退款结果通知失败", e)
+            log.error("退款结果通知处理失败", e)
         }
         return WeixinPayResponse.fail()
     }

@@ -15,7 +15,7 @@ class CodeGen {
 
     @Test
     fun gen() {
-        val javaName = "CloseRequest.txt".substringBeforeLast(".")
+        val javaName = "AppWCPayRequest.txt".substringBeforeLast(".")
         gen(javaName)
     }
 
@@ -52,8 +52,9 @@ class CodeGen {
                 val isType = s3.substringBefore("(").equals("String", true) || s3.equals("int", true)
                 val typeStr = if (isType) s3 else s4
                 val exampleStr = if (isType) s4 else s3
+                val required = if (isType) s2 else s2
                 val type = typeStr.substringBeforeLast("(").trim().capitalized()
-                val comment = "${s0.trim()}；${if (s2 == "是") "必填" else "非必填"}；${split.subList(5, split.size).joinToString(" ") { s -> s.trim() }.trim().trim('，', '。')}；示例：${exampleStr.trim()}"
+                val comment = "${s0.trim()}；${if (required == "是") "必填" else "非必填"}；${split.subList(5, split.size).joinToString(" ") { s -> s.trim() }.trim().trim('，', '。')}；示例：${exampleStr.trim()}"
                 val code = if (!isOther) {
                     """        /**
          * $comment
