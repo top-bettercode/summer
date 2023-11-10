@@ -171,13 +171,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6
      *
      */
-    fun getBrandWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): BrandWCPayRequest {
-        val brandWCPayRequest = BrandWCPayRequest(
+    fun getJsapiWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): JsapiWCPayRequest {
+        val jsapiWCPayRequest = JsapiWCPayRequest(
                 appId = unifiedOrderResponse.appid!!,
                 `package` = "prepay_id=${unifiedOrderResponse.prepayId}",
         )
-        brandWCPayRequest.paySign = sign(brandWCPayRequest).sign
-        return brandWCPayRequest
+        jsapiWCPayRequest.paySign = sign(jsapiWCPayRequest).sign
+        return jsapiWCPayRequest
     }
 
     /**

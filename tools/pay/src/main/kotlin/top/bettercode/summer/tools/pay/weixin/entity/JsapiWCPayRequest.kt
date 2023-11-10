@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.lang.util.RandomUtil
 /**
  * @author Peter Wu
  */
-data class BrandWCPayRequest @JvmOverloads constructor(
+data class JsapiWCPayRequest @JvmOverloads constructor(
 
         /**
          * 公众号id；必填；appId为当前服务商号绑定的appid；示例：wx8888888888888888
