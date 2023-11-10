@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.OkHttpClient
 import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.http.MediaType
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
@@ -169,15 +168,20 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
     }
 
     /**
-     * 支付信息
+     * jsapi 调起支付接口 支付信息
+     * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6
+     *
+     * app
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2
      */
     fun getBrandWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): BrandWCPayRequest {
-        return BrandWCPayRequest(appId = unifiedOrderResponse.appid,
+        val brandWCPayRequest = BrandWCPayRequest(appId = unifiedOrderResponse.appid,
                 timeStamp = (System.currentTimeMillis() / 1000).toString(),
                 nonceStr = RandomUtil.nextString2(32),
                 `package` = "prepay_id=${unifiedOrderResponse.prepayId}",
-                signType = "MD5",
-                paySign = sign(unifiedOrderResponse).sign)
+                signType = "MD5")
+        brandWCPayRequest.paySign = sign(brandWCPayRequest).sign
+        return brandWCPayRequest
     }
 
     /**
