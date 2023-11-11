@@ -15,7 +15,6 @@ class ExcelErrorHandler(messageSource: MessageSource,
                         request: HttpServletRequest?) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(error: Throwable, respEntity: RespEntity<*>,
                                   errors: MutableMap<String?, String?>, separator: String) {
-        var message: String? = null
         if (error is ExcelImportException) {
             val cellErrors = error.errors
             for (cellError in cellErrors) {
@@ -39,12 +38,9 @@ class ExcelErrorHandler(messageSource: MessageSource,
                     errors[key] = title + ": " + value + getText(msg ?: "未知错误")
                 }
             }
-            message = errors.entries.joinToString {
+            respEntity.message = errors.entries.joinToString {
                 it.key + separator + it.value
             }
-        }
-        if (!message.isNullOrBlank()) {
-            respEntity.message = message
         }
     }
 }

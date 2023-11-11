@@ -3,7 +3,6 @@ package top.bettercode.summer.security.support
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.util.CollectionUtils
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
 import javax.servlet.http.HttpServletRequest
@@ -22,8 +21,8 @@ class ApiSecurityErrorHandler(
         if (error is IllegalUserException) {
             respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
             val userErrors = error.errors
-            if (!CollectionUtils.isEmpty(userErrors)) {
-                errors.putAll(userErrors!!)
+            if (!userErrors.isNullOrEmpty()) {
+                errors.putAll(userErrors)
             }
         } else if (error is BadCredentialsException) {
             respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())

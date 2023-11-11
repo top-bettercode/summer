@@ -37,7 +37,6 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
     protected fun constraintViolationException(error: ConstraintViolationException,
                                                respEntity: RespEntity<*>, errors: MutableMap<String?, String?>,
                                                separator: String) {
-        var message: String?
         respEntity.setHttpStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
         val constraintViolations = error.constraintViolations
         for (constraintViolation in constraintViolations) {
@@ -52,7 +51,7 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
             }
             errors[property] = msg
         }
-        message = errors.values.joinToString()
+        var message = errors.values.joinToString()
         if (message.isBlank()) {
             message = "data.valid.failed"
         }

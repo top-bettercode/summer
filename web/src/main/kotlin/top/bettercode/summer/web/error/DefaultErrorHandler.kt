@@ -24,23 +24,23 @@ class DefaultErrorHandler(messageSource: MessageSource,
                           request: HttpServletRequest?) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(error: Throwable, respEntity: RespEntity<*>,
                                   errors: MutableMap<String?, String?>, separator: String) {
-        var message: String? = null
         if (error is IllegalArgumentException) {
             val regex = "Parameter specified as non-null is null: .*parameter (.*)"
             if (error.message?.matches(regex.toRegex()) == true) {
                 val paramName = error.message!!.replace(regex.toRegex(), "$1")
-                message = getText(paramName) + "不能为空"
+                respEntity.message = getText(paramName) + "不能为空"
             }
         } else if (error is MethodArgumentNotValidException) {
             val bindingResult = error.bindingResult
             val fieldErrors = bindingResult.fieldErrors
-            message = handleFieldError(errors, fieldErrors, separator)
+            respEntity.message = handleFieldError(errors, fieldErrors, separator)
         } else if (error is BindException) { //参数错误
             val fieldErrors = error.fieldErrors
-            message = handleFieldError(errors, fieldErrors, separator)
+            respEntity.message = handleFieldError(errors, fieldErrors, separator)
         } else if (error is MethodArgumentTypeMismatchException) {
             val argumentName = error.name
             val targetType = error.requiredType?.name
+            var message: String?
             if (targetType != null) {
                 val code = "typeMismatch.$targetType"
                 message = getText("typeMismatch.$targetType")
@@ -50,26 +50,25 @@ class DefaultErrorHandler(messageSource: MessageSource,
             } else {
                 message = getText("typeMismatch")
             }
-            message = getText(argumentName) + separator + invalidValue(error.value) + message
+            respEntity.message = getText(argumentName) + separator + invalidValue(error.value) + message
             errors[argumentName] = message
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
             val code = "typeMismatch.$targetType"
-            message = getText(code)
+            var message = getText(code)
             if (message == code)
                 message = getText("typeMismatch.type", targetType)
-            message = invalidValue(error.value) + message
+            respEntity.message = invalidValue(error.value) + message
         } else if (error is ConstraintViolationException) { //数据验证
             constraintViolationException(error, respEntity, errors,
                     separator)
         } else if (error is HttpMediaTypeNotAcceptableException) {
-            message = "MediaType not Acceptable!Must ACCEPT:" + error
+            respEntity.message = "MediaType not Acceptable!Must ACCEPT:" + error
                     .supportedMediaTypes
         } else if (error is HttpMessageNotWritableException) {
-            message = error.message
-            if (message != null && message.contains("Session is closed")) {
+            if (error.message != null && error.message!!.contains("Session is closed")) {
                 respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value())
-                message = "request.timeout"
+                respEntity.message = "request.timeout"
             }
         } else if (error is UnsatisfiedServletRequestParameterException) {
             val paramConditionGroups = error.paramConditionGroups
@@ -82,20 +81,17 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 sb.append(conditions.joinToString())
                 sb.append('"')
             }
-            message = sb.toString()
+            respEntity.message = sb.toString()
         } else if (error is SystemException) {
             respEntity.httpStatusCode = error.httpStatusCode
             respEntity.status = error.code
+            respEntity.message = error.message
             respEntity.errors = error.data
-        }
-        if (!message.isNullOrBlank()) {
-            respEntity.message = message
         }
     }
 
     private fun handleFieldError(errors: MutableMap<String?, String?>,
                                  fieldErrors: List<FieldError>, separator: String): String {
-        var message: String?
         for (fieldError in fieldErrors) {
             var defaultMessage = fieldError.defaultMessage
             if (defaultMessage?.contains("required type") == true && fieldError.codes != null) {
@@ -131,7 +127,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
             errors[field] = msg
         }
-        message = errors.values.joinToString()
+        var message = errors.values.joinToString()
         if (message.isBlank()) {
             message = "data.valid.failed"
         }

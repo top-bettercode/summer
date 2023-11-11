@@ -20,7 +20,6 @@ class DataJpaErrorHandler(
             error: Throwable, respEntity: RespEntity<*>,
             errors: MutableMap<String?, String?>, separator: String
     ) {
-        var message: String? = null
         if (error is JpaSystemException) {
             var cause = error.cause
             if (cause != null) {
@@ -29,7 +28,7 @@ class DataJpaErrorHandler(
                 }
                 val causeMessage = cause!!.message
                 if (causeMessage != null) {
-                    message = causeMessage.trim { it <= ' ' }
+                    val message = causeMessage.trim { it <= ' ' }
                     //ORA-12899: 列 "YUNTUDEV"."PU_ASK_SEND_TMS"."FROM_ADDRESS" 的值太大 (实际值: 1421, 最大值: 600)
                     val regex = ".*ORA-12899: .*\\..*\\.\"(.*?)\" 的值太大 \\(实际值: \\d+, 最大值: (\\d+)\\)"
                     //ORA-12899: value too large for column "YUNTUDEV"."PU_DELIVERY_ORDER"."LICENSE" (actual: 47, maximum: 30)
@@ -37,24 +36,25 @@ class DataJpaErrorHandler(
                     if (message.matches(regex.toRegex())) {
                         val field = message.replace(regex.toRegex(), "$1")
                         val maxLeng = message.replace(regex.toRegex(), "$2")
-                        message = getText(field) + "长度不能大于" + maxLeng
                         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
+                        respEntity.message = getText(field) + "长度不能大于" + maxLeng
                     } else if (message.matches(regex1.toRegex())) {
                         val field = message.replace(regex1.toRegex(), "$1")
                         val maxLeng = message.replace(regex1.toRegex(), "$2")
-                        message = getText(field) + "长度不能大于" + maxLeng
                         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
+                        respEntity.message = getText(field) + "长度不能大于" + maxLeng
                     }
                 }
             }
         } else if (error is InvalidDataAccessApiUsageException) {
-            message = error.message
-            if (message != null && message.contains("detached entity passed to persist")) {
-                message = "更新的数据在数据库中不存在"
+            if (error.message != null && error.message!!.contains("detached entity passed to persist")) {
+                respEntity.message = "更新的数据在数据库中不存在"
+            }
+        } else if (error is org.hibernate.NonUniqueResultException) {
+            if (error.message != null && error.message!!.matches(".*query did not return a unique result:.*".toRegex())) {
+                respEntity.message = "data.not.unique.result"
             }
         }
-        if (!message.isNullOrBlank()) {
-            respEntity.message = message
-        }
+
     }
 }

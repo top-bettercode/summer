@@ -60,37 +60,49 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
             statusCode = respEntity.status
             httpStatusCode = respEntity.httpStatusCode
             message = respEntity.message
+
             if (includeStackTrace) {
-                addStackTrace(respEntity, error)
+                val stackTrace = StringWriter()
+                error.printStackTrace(PrintWriter(stackTrace))
+                stackTrace.flush()
+
+                respEntity.trace = stackTrace.toString()
             }
-            if (message.isNullOrBlank()) {
-                message = handleMessage(error.javaClass)
-                if (!error.message.isNullOrBlank() && (message.isNullOrBlank() || error.message?.contains("Exception") != true)) {
-                    message = error.message
-                }
-            }
+
+            val errorClass: Class<out Throwable> = error.javaClass
             if (httpStatusCode == null) {
-                val errorClass: Class<out Throwable> = error.javaClass
                 httpStatusCode = handleHttpStatusCode(errorClass)
+            }
+
+            if (message.isNullOrBlank()) {
+                message = handleMessage(errorClass)
+            }
+
+            if (httpStatusCode == null || message.isNullOrBlank()) {
                 val responseStatus = AnnotatedElementUtils
                         .findMergedAnnotation(errorClass, ResponseStatus::class.java)
                 if (responseStatus != null) {
                     if (httpStatusCode == null) {
                         httpStatusCode = responseStatus.code.value()
                     }
-                    val reason = responseStatus.reason
-                    if (message.isNullOrBlank() && reason.isNotBlank()) {
-                        message = reason
+                    if (message.isNullOrBlank()) {
+                        message = responseStatus.reason
                     }
                 }
+            }
+
+            if (message.isNullOrBlank()) {
+                message = error.message
             }
         } else {
             message = getMessage(webRequest)
         }
+
         if (httpStatusCode == null) {
             httpStatusCode = getStatus(webRequest).value()
         }
         statusCode = statusCode ?: httpStatusCode.toString()
+
         if (message.isNullOrBlank()) {
             message = if (httpStatusCode == 404) {
                 "resource.not.found"
@@ -98,17 +110,18 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
                 ""
             }
         }
+
         message = getText(webRequest, message).trim { it <= ' ' }
-        if (message.matches(".*query did not return a unique result:.*".toRegex())) {
-            message = getText(webRequest, "data.not.unique.result")
-        }
+
         setErrorInfo(webRequest, httpStatusCode, message, error)
+
         respEntity.httpStatusCode = httpStatusCode
         respEntity.status = statusCode
         respEntity.message = message
         if (errors.isNotEmpty()) {
             respEntity.errors = errors
         }
+
         return respEntityConverter?.convert(respEntity) ?: respEntity
     }
 
@@ -135,19 +148,6 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
         error?.let { request.setAttribute(DefaultErrorAttributes::class.java.name + ".ERROR", it, RequestAttributes.SCOPE_REQUEST) }
         request
                 .setAttribute(WebUtils.ERROR_MESSAGE_ATTRIBUTE, message, RequestAttributes.SCOPE_REQUEST)
-    }
-
-    /**
-     * 增加StackTrace
-     *
-     * @param respEntity respEntity
-     * @param error      error
-     */
-    private fun addStackTrace(respEntity: RespEntity<Any?>, error: Throwable) {
-        val stackTrace = StringWriter()
-        error.printStackTrace(PrintWriter(stackTrace))
-        stackTrace.flush()
-        respEntity.trace = stackTrace.toString()
     }
 
     private fun getStatus(requestAttributes: RequestAttributes): HttpStatus {
