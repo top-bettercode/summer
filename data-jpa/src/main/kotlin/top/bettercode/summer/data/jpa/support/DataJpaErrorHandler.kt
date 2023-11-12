@@ -46,6 +46,9 @@ class DataJpaErrorHandler(
                     }
                 }
             }
+            if(respEntity.message == null){
+                respEntity.message = "数据库操作失败"
+            }
         } else if (error is InvalidDataAccessApiUsageException) {
             if (error.message != null && error.message!!.contains("detached entity passed to persist")) {
                 respEntity.message = "更新的数据在数据库中不存在"
