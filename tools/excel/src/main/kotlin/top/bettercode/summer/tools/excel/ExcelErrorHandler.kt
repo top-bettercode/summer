@@ -32,10 +32,10 @@ class ExcelErrorHandler(messageSource: MessageSource,
                     if (exception is DateTimeParseException) {
                         val msgRegex = "Text '(.*?)' could not be parsed at index (\\d+)"
                         if (msg!!.matches(msgRegex.toRegex())) {
-                            msg = msg.replace(msgRegex.toRegex(), "$1") + "不是有效的日期格式"
+                            msg = msg.replace(msgRegex.toRegex(), "$1") + getText("notAValidDateFormat")
                         }
                     }
-                    errors[key] = title + ": " + value + getText(msg ?: "未知错误")
+                    errors[key] = title + ": " + value + getText(msg ?: "unknownError")
                 }
             }
             respEntity.message = errors.entries.joinToString {

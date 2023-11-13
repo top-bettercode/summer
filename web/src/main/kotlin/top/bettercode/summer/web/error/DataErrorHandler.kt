@@ -74,9 +74,7 @@ class DataErrorHandler(messageSource: MessageSource,
                 respEntity.message = message
             } else if (specificCauseMessage.matches(incorrectRegex.toRegex())) {
                 val columnName = getText(specificCauseMessage.replace(incorrectRegex.toRegex(), "$2"))
-                respEntity.message = columnName + "格式不正确"
-            } else {
-                respEntity.message = "数据完整性违规"
+                respEntity.message = columnName + getText("incorrectFormatting")
             }
         } else if (e is UncategorizedSQLException) {
             val detailMessage = e.sqlException.message
@@ -91,15 +89,13 @@ class DataErrorHandler(messageSource: MessageSource,
             } else if (detailMessage.matches(regex.toRegex())) {
                 val field = detailMessage.replace(regex.toRegex(), "$1")
                 val maxLeng = detailMessage.replace(regex.toRegex(), "$2")
-                respEntity.message = getText(field) + "长度不能大于" + maxLeng
+                respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                 respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
             } else if (detailMessage.matches(regex1.toRegex())) {
                 val field = detailMessage.replace(regex1.toRegex(), "$1")
                 val maxLeng = detailMessage.replace(regex1.toRegex(), "$2")
-                respEntity.message = getText(field) + "长度不能大于" + maxLeng
+                respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                 respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
-            } else {
-                respEntity.message = "数据库操作失败"
             }
         } else if (e is DataAccessResourceFailureException || e is SQLRecoverableException) {
             val cause = e.cause

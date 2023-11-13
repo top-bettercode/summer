@@ -37,21 +37,18 @@ class DataJpaErrorHandler(
                         val field = message.replace(regex.toRegex(), "$1")
                         val maxLeng = message.replace(regex.toRegex(), "$2")
                         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
-                        respEntity.message = getText(field) + "长度不能大于" + maxLeng
+                        respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                     } else if (message.matches(regex1.toRegex())) {
                         val field = message.replace(regex1.toRegex(), "$1")
                         val maxLeng = message.replace(regex1.toRegex(), "$2")
                         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
-                        respEntity.message = getText(field) + "长度不能大于" + maxLeng
+                        respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                     }
                 }
             }
-            if(respEntity.message == null){
-                respEntity.message = "数据库操作失败"
-            }
         } else if (error is InvalidDataAccessApiUsageException) {
             if (error.message != null && error.message!!.contains("detached entity passed to persist")) {
-                respEntity.message = "更新的数据在数据库中不存在"
+                respEntity.message = "theUpdatedDataDoesNotExistInTheDatabase"
             }
         } else if (error is org.hibernate.NonUniqueResultException) {
             if (error.message != null && error.message!!.matches(".*query did not return a unique result:.*".toRegex())) {

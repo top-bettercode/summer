@@ -28,7 +28,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             val regex = "Parameter specified as non-null is null: .*parameter (.*)"
             if (error.message?.matches(regex.toRegex()) == true) {
                 val paramName = error.message!!.replace(regex.toRegex(), "$1")
-                respEntity.message = getText(paramName) + "不能为空"
+                respEntity.message = getText(paramName) + getText("canTBeEmpty")
             }
         } else if (error is MethodArgumentNotValidException) {
             val bindingResult = error.bindingResult
@@ -72,7 +72,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
         } else if (error is UnsatisfiedServletRequestParameterException) {
             val paramConditionGroups = error.paramConditionGroups
-            val sb = StringBuilder("参数不匹配:")
+            val sb = StringBuilder("${getText("UnsatisfiedParam")}:")
             for ((i, conditions) in paramConditionGroups.withIndex()) {
                 if (i > 0) {
                     sb.append(" OR ")
