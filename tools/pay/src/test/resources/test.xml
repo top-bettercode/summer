@@ -1,0 +1,16 @@
+<root>
+  <cash_refund_fee><![CDATA[1]]></cash_refund_fee>
+  <out_refund_no><![CDATA[R202311131723950000001]]></out_refund_no>
+  <out_trade_no><![CDATA[WX2023111317239500007]]></out_trade_no>
+  <refund_account><![CDATA[REFUND_SOURCE_RECHARGE_FUNDS]]></refund_account>
+  <refund_fee><![CDATA[1]]></refund_fee>
+  <refund_id><![CDATA[50302307972023111314538342117]]></refund_id>
+  <refund_recv_accout><![CDATA[支付用户零钱]]></refund_recv_accout>
+  <refund_request_source><![CDATA[API]]></refund_request_source>
+  <refund_status><![CDATA[SUCCESS]]></refund_status>
+  <settlement_refund_fee><![CDATA[1]]></settlement_refund_fee>
+  <settlement_total_fee><![CDATA[1]]></settlement_total_fee>
+  <success_time><![CDATA[2023-11-13 14:38:57]]></success_time>
+  <total_fee><![CDATA[1]]></total_fee>
+  <transaction_id><![CDATA[4200001972202311137027330535]]></transaction_id>
+</root>

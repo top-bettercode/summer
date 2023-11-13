@@ -253,6 +253,28 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
 
     /**
      * 支付结果通知处理
+     * 示例：
+     * <pre>
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <xml>
+     * <appid><![CDATA[wx7edf5a744ece817f]]></appid>
+     * <bank_type><![CDATA[OTHERS]]></bank_type>
+     * <cash_fee><![CDATA[2]]></cash_fee>
+     * <fee_type><![CDATA[CNY]]></fee_type>
+     * <is_subscribe><![CDATA[N]]></is_subscribe>
+     * <mch_id><![CDATA[1608025116]]></mch_id>
+     * <nonce_str><![CDATA[8vvOOwkeV8hCRC5xLzG4Ok24QRv246t8]]></nonce_str>
+     * <openid><![CDATA[okQsW5ZlTXXYZ2HKrAnHfeXJLkeA]]></openid>
+     * <out_trade_no><![CDATA[WX2023111317239400003]]></out_trade_no>
+     * <result_code><![CDATA[SUCCESS]]></result_code>
+     * <return_code><![CDATA[SUCCESS]]></return_code>
+     * <sign><![CDATA[42145C8D61A1DB8DFEC66954B78719F1]]></sign>
+     * <time_end><![CDATA[20231113134646]]></time_end>
+     * <total_fee>2</total_fee>
+     * <trade_type><![CDATA[JSAPI]]></trade_type>
+     * <transaction_id><![CDATA[4200001998202311135246700447]]></transaction_id>
+     * </xml>
+     * </pre>
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_7&index=3
      */
     @JvmOverloads
@@ -289,6 +311,17 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
 
     /**
      * 退款结果通知数据处理
+     * 示例：
+     * <pre>
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <xml>
+     * <return_code>SUCCESS</return_code>
+     * <appid><![CDATA[wx7edf5a744ece817f]]></appid>
+     * <mch_id><![CDATA[1608025116]]></mch_id>
+     * <nonce_str><![CDATA[755c63dbd15c19787398e6a062bdef98]]></nonce_str>
+     * <req_info><![CDATA[WXj7zEJw4dH9qBCY0KUTQNTwdQVKWzrs60mbLKCs/QAUZBLs5Sv+EFgZr61iunt9Qv4I8sSfF9JjFhQZ2wp7uqE6w4GvyDTP95RpsOdjzcrFB9aFX+c1NEYrZgJQKi7N7YU1HLuj4cPPox50srU5eiZRH4BSEpN/R7CeItZUm4TRD+55XLunmVYmkWsFvR9HoUssC06W46Y93V8kn2o1rKs2jtuwc6PK9zTQpr+HdRSzU/FWIDAtVV6NqkUTWFUKHvG8WQgvfexZzh1ta+yT0W21RGfqGF00aRBiyvuihpfO/hXP79kuT0XVCgsYl7eUdDdIcVX7Xnyr9uVDUuyal+6PfVIUglsDuVHClS1/PtiGeBhid8FUtyvhzInMwqU9fcDybOObmRcizI2WWQpk7HkJleXy2JIA9RMaPSsVgjyWDIGOajqE0NmYMmAgqal7MHOatu0pTdayf2blErPzyeNNlp1W+4CPvTmakGB8MeQu5I3PtRV9/5dNwl6uQsEyVF6d3rFxgH+k41uPlzUITdZNoW72scaR/Rlh8EXUhd7PjJTdu0I6ZX5YcVH0cZMHY8BW/C5DXv1VwI37DjrdWFmbL7ncr1njZFEY6QpuzJ9GXjHiDmg+hcxh1NhUFYVka58qROcO1SSu49bHGN29auHvaLX8dHDBe+TOVr3c/ohqIPa2x+oQ4wPNN1MElkbD2qvPmw9SgeLIhegz7bVcy6B5A7/CGfTlc9HlMmr639b0qbPctiqiRSnPP105jix9+0dDIe/psJ8Lb92zIcYH1z1LMJCBOSjdGNS1bAkeKieQAJKnzlBUf6W6/xnqou+WoxoK6InDC3k97sIifigt8udvk+l9haEnTnCO9rgQawuaaK9AqtY9ESt4JkE4JRfiYt64lGJybnhL+B0l14J6+tpGEvicVaNtk4wMNHQQW4f79g+EcyV+3d7d17K6Rjyqu3MJYChJVZW7OYeoiWIm2qIzsEL7Iel/Ts1FEGs/jQWSSBMTylt6MKIOP6zZKB6glW/MFFbJw4Y8XnJMLWFNeEHWgPz99SZbftSmdk4FHxkdqvY2/W2r4vLskW0rNkenPdX7LuQAKfxoIQT6knEFnZAXjKMIpUMlOQ35vdderEWGk3p3yY2xczjHZf2j3nEc]]></req_info>
+     * </xml>
+     * </pre>
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_16&index=11
      */
     fun handleRefundNotify(request: HttpServletRequest, success: (RefundInfo, RefundNotifyResponse) -> WeixinPayResponse): Any {
@@ -311,10 +344,10 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         val encryptedBytes = Base64.getDecoder().decode(encryptedData)
 
         // Step 2: Generate MD5 hash of the merchant key
-        val keyBytes = DigestUtils.md5Digest(properties.apiKey!!.toByteArray(charset("UTF-8")))
+        val keyBytes = DigestUtils.md5DigestAsHex(properties.apiKey!!.toByteArray(charset("UTF-8")))
 
         // Step 3: Perform AES-256-ECB decryption
-        val keySpec = SecretKeySpec(keyBytes, "AES")
+        val keySpec = SecretKeySpec(keyBytes.toByteArray(), "AES")
         val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
         cipher.init(Cipher.DECRYPT_MODE, keySpec)
         val decryptedBytes = cipher.doFinal(encryptedBytes)
