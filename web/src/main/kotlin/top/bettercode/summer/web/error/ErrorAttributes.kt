@@ -61,6 +61,10 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
             httpStatusCode = respEntity.httpStatusCode
             message = respEntity.message
 
+            if (message.isNullOrBlank()) {
+                message = error.message
+            }
+
             if (includeStackTrace) {
                 val stackTrace = StringWriter()
                 error.printStackTrace(PrintWriter(stackTrace))
@@ -82,10 +86,6 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
                         message = responseStatus.reason
                     }
                 }
-            }
-
-            if (message.isNullOrBlank()) {
-                message = error.message
             }
 
             if (httpStatusCode == null) {
