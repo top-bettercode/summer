@@ -173,7 +173,7 @@ open class PayResponse(
      */
     @JsonIgnore
     fun getCouponFee(n: Int): Int? {
-        return other["coupon_fee_$n"] as Int?
+        return other["coupon_fee_$n"]?.toString()?.toInt()
     }
 
 

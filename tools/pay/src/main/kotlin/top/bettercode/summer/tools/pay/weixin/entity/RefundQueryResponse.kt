@@ -164,7 +164,7 @@ data class RefundQueryResponse(
      */
     @JsonIgnore
     fun getRefundFee(n: Int): Int? {
-        return other["refund_fee_$n"] as Int?
+        return other["refund_fee_$n"]?.toString()?.toInt()
     }
 
 
@@ -173,7 +173,7 @@ data class RefundQueryResponse(
      */
     @JsonIgnore
     fun getCouponRefundFee(n: Int): Int? {
-        return other["coupon_refund_fee_$n"] as Int?
+        return other["coupon_refund_fee_$n"]?.toString()?.toInt()
     }
 
 
@@ -183,7 +183,7 @@ data class RefundQueryResponse(
     @JsonIgnore
     @JvmOverloads
     fun getCouponRefundCount(n: Int = 0): Int? {
-        return other["coupon_refund_count_$n"] as Int?
+        return other["coupon_refund_count_$n"]?.toString()?.toInt()
     }
 
 
@@ -212,7 +212,7 @@ data class RefundQueryResponse(
      */
     @JsonIgnore
     fun getCouponRefundFee(n: Int, m: Int): Int? {
-        return other["coupon_refund_fee_${n}_$m"] as Int?
+        return other["coupon_refund_fee_${n}_$m"]?.toString()?.toInt()
     }
 
 

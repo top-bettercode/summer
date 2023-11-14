@@ -148,7 +148,7 @@ data class RefundResponse(
      */
     @JsonIgnore
     fun getCouponRefundFee(n: Int): Int? {
-        return other["coupon_refund_fee_$n"] as Int?
+        return other["coupon_refund_fee_$n"]?.toString()?.toInt()
     }
 
 
