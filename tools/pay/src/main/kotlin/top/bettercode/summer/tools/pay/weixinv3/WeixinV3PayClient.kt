@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletRequest
 /**
  * 微信支付v3接口
  *
- *  https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_2_1.shtml
+ *  https://pay.weixin.qq.com/wiki/doc/apiv3/apis/index.shtml
  *
  * @author Peter Wu
  */
@@ -164,11 +164,15 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
         } catch (e: ValidationException) {
             // 签名验证失败，返回 401 UNAUTHORIZED 状态码
             log.error("sign verification failed", e)
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(mapOf("code" to "FAIL", "message" to "签名验证失败"))
         } catch (e: Exception) {
             // 如果处理失败，应返回 4xx/5xx 的状态码，例如 500 INTERNAL_SERVER_ERROR
             log.error("handle notify failed", e)
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(mapOf("code" to "FAIL", "message" to e.message))
         }
     }
 
