@@ -166,13 +166,15 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
             log.error("sign verification failed", e)
             ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(mapOf("code" to "FAIL", "message" to "签名验证失败"))
+                    .body(mapOf("code" to "FAIL",
+                            "message" to "sign verification failed"))
         } catch (e: Exception) {
             // 如果处理失败，应返回 4xx/5xx 的状态码，例如 500 INTERNAL_SERVER_ERROR
             log.error("handle notify failed", e)
             ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(mapOf("code" to "FAIL", "message" to e.message))
+                    .body(mapOf("code" to "FAIL",
+                            "message" to e.message))
         }
     }
 
