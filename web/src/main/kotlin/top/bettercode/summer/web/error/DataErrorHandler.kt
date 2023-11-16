@@ -3,6 +3,7 @@ package top.bettercode.summer.web.error
 import org.springframework.context.MessageSource
 import org.springframework.dao.DataAccessResourceFailureException
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.transaction.TransactionSystemException
@@ -110,6 +111,10 @@ class DataErrorHandler(messageSource: MessageSource,
                 } else if (message.contains("Unable to acquire JDBC Connection") || message.contains("Connection is not available")) {
                     respEntity.message = "Unable to acquire JDBC Connection"
                 }
+            }
+        } else if (e is IncorrectResultSizeDataAccessException) {
+            if (error.message != null && error.message!!.matches(".*query did not return a unique result:.*".toRegex())) {
+                respEntity.message = "data.not.unique.result"
             }
         }
     }
