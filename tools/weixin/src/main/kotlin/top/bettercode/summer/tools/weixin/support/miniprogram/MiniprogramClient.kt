@@ -96,6 +96,8 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
      * 发送统一服务消息
      * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/uniform-message/sendUniformMessage.html
      */
+    @Suppress("DEPRECATION")
+    @Deprecated("自 2023 年 9 月 20 日起（以下简称 “生效期”），下发统一消息接口将被收回。", replaceWith = ReplaceWith("offiaccountClient.sendTemplateMsg(TemplateMsgRequest(), 1)", "top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient", "top.bettercode.summer.tools.weixin.support.offiaccount.entity.TemplateMsgRequest"))
     @JvmOverloads
     fun sendUniformMsg(request: UniformMsgRequest, retries: Int = 1): WeixinResponse {
         val result = postForObject<WeixinResponse>(
