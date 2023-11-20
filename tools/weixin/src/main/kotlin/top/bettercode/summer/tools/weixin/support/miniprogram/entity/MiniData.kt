@@ -6,8 +6,8 @@ package top.bettercode.summer.tools.weixin.support.miniprogram.entity
  */
 class MiniData : HashMap<String, Data>() {
 
-    fun of(key: String, value: String): MiniData {
-        put(key, Data(value))
+    fun of(key: String, value: String?): MiniData {
+        put(key, Data(value ?: ""))
         return this
     }
 
