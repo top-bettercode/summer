@@ -3,12 +3,14 @@ package top.bettercode.summer.config
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.core.Ordered
 import org.springframework.core.io.ResourceLoader
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.File
 import java.util.*
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+
 
 /**
  * @author Peter Wu
@@ -17,6 +19,7 @@ class NavFilter(
         private val webEndpointProperties: WebEndpointProperties,
         private val resourceLoader: ResourceLoader
 ) : OncePerRequestFilter(), Ordered {
+    var resolver = PathMatchingResourcePatternResolver()
 
     override fun doFilterInternal(
             request: HttpServletRequest,
@@ -42,26 +45,28 @@ class NavFilter(
             val name = STATIC_LOCATIONS + webEndpointProperties.basePath + "/doc/"
             val resource = resourceLoader.getResource(name)
             if (resource.exists()) {
-                val dic = resource.file
-                if (dic.exists()) {
-                    val file = File(dic, "v1.0.html")
-                    if (file.exists()) {
+                val url = resource.url.toString()
+                if (url.startsWith("jar:")) {
+                    val resources = resolver.getResources("$name**").map { it.url.path.substringAfter(resource.url.path) }.filter { it.matches("^v.*\\.html$".toRegex()) }
+                    val last = resources
+                            .sortedWith { o1, o2 -> o1.compareTo(o2) }.lastOrNull()
+                    if (last != null) {
                         response.sendRedirect(
-                                request.contextPath + webEndpointProperties.basePath + "/doc/v1.0.html"
+                                request.contextPath + webEndpointProperties.basePath + "/doc/" + last
                         )
                         return
-                    } else {
-                        val first = Arrays.stream(dic.listFiles())
-                                .filter { f: File -> f.isFile && f.name.endsWith(".html") }
-                                .min { o1, o2 -> o1.name.compareTo(o2.name) }
-                        if (first.isPresent) {
-                            response.sendRedirect(
-                                    request.contextPath + webEndpointProperties.basePath + "/doc/" + first
-                                            .get()
-                                            .name
-                            )
-                            return
-                        }
+                    }
+                } else if (resource.file.exists()) {
+                    val last = Arrays.stream(resource.file.listFiles())
+                            .filter { f: File -> f.isFile && f.name.matches("^v.*\\.html$".toRegex()) }
+                            .max { o1, o2 -> o1.name.compareTo(o2.name) }
+                    if (last.isPresent) {
+                        response.sendRedirect(
+                                request.contextPath + webEndpointProperties.basePath + "/doc/" + last
+                                        .get()
+                                        .name
+                        )
+                        return
                     }
                 }
             }
