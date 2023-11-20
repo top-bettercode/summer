@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class BasicAccessToken(
+data class BasicAccessToken @JvmOverloads constructor(
 
         @field:JsonProperty("access_token")
         val accessToken: String? = null,

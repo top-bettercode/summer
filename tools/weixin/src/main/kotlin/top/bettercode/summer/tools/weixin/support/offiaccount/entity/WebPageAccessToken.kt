@@ -5,20 +5,20 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class WebPageAccessToken(
+data class WebPageAccessToken @JvmOverloads constructor(
 
         @field:JsonProperty("access_token")
-        val accessToken: String? = null,
+        var accessToken: String? = null,
 
         @field:JsonProperty("expires_in")
-        val expiresIn: Int? = null,
+        var expiresIn: Int? = null,
 
         @field:JsonProperty("refresh_token")
-        val refreshToken: String? = null,
+        var refreshToken: String? = null,
 
         @field:JsonProperty("openid")
-        val openid: String? = null,
+        var openid: String? = null,
 
         @field:JsonProperty("scope")
-        val scope: String? = null
+        var scope: String? = null
 ) : WeixinResponse()

@@ -5,32 +5,32 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class SnsapiUserinfo(
+data class SnsapiUserinfo @JvmOverloads constructor(
 
         @field:JsonProperty("openid")
-        val openid: String? = null,
+        var openid: String? = null,
 
         @field:JsonProperty("nickname")
-        val nickname: String? = null,
+        var nickname: String? = null,
 
         @field:JsonProperty("sex")
-        val sex: Int? = null,
+        var sex: Int? = null,
 
         @field:JsonProperty("province")
-        val province: String? = null,
+        var province: String? = null,
 
         @field:JsonProperty("city")
-        val city: String? = null,
+        var city: String? = null,
 
         @field:JsonProperty("country")
-        val country: String? = null,
+        var country: String? = null,
 
         @field:JsonProperty("headimgurl")
-        val headimgurl: String? = null,
+        var headimgurl: String? = null,
 
         @field:JsonProperty("privilege")
-        val privilege: List<String?>? = null,
+        var privilege: List<String?>? = null,
 
         @field:JsonProperty("unionid")
-        val unionid: String? = null
-): WeixinResponse()
+        var unionid: String? = null
+) : WeixinResponse()

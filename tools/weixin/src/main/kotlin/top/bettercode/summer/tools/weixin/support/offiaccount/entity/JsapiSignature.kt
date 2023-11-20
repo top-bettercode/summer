@@ -2,17 +2,17 @@ package top.bettercode.summer.tools.weixin.support.offiaccount.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class JsapiSignature(
+data class JsapiSignature @JvmOverloads constructor(
 
         @field:JsonProperty("signature")
-        val signature: String? = null,
+        var signature: String? = null,
 
         @field:JsonProperty("appid")
-        val appid: String? = null,
+        var appid: String? = null,
 
         @field:JsonProperty("nonceStr")
-        val nonceStr: String? = null,
+        var nonceStr: String? = null,
 
         @field:JsonProperty("timestamp")
-        val timestamp: String? = null
+        var timestamp: String? = null
 )

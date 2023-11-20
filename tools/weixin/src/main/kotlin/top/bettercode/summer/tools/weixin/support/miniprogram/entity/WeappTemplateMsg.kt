@@ -11,29 +11,29 @@ data class WeappTemplateMsg(
          * 小程序模板ID
          */
         @field:JsonProperty("template_id")
-        val templateId: String,
+        var templateId: String,
 
         /**
          * 小程序模板数据
          */
         @field:JsonProperty("data")
-        val data: Map<String, Data>? = null,
+        var data: Map<String, Data>? = null,
 
         /**
          * 小程序页面路径
          */
         @field:JsonProperty("page")
-        val page: String? = null,
+        var page: String? = null,
 
         /**
          * 小程序模板消息formid
          */
         @field:JsonProperty("form_id")
-        val formId: String? = null,
+        var formId: String? = null,
 
         /**
          * 小程序模板放大关键词
          */
         @field:JsonProperty("emphasis_keyword")
-        val emphasisKeyword: String? = null
+        var emphasisKeyword: String? = null
 )

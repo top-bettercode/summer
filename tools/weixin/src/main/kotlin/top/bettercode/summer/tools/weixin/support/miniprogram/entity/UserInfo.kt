@@ -7,29 +7,29 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class UserInfo(
 
         @field:JsonProperty("nickName")
-        val nickName: String? = null,
+        var nickName: String? = null,
 
         @field:JsonProperty("gender")
-        val gender: Int? = null,
+        var gender: Int? = null,
 
         @field:JsonProperty("city")
-        val city: String? = null,
+        var city: String? = null,
 
         @field:JsonProperty("province")
-        val province: String? = null,
+        var province: String? = null,
 
         @field:JsonProperty("country")
-        val country: String? = null,
+        var country: String? = null,
 
         @field:JsonProperty("avatarUrl")
-        val avatarUrl: String? = null,
+        var avatarUrl: String? = null,
 
         @field:JsonProperty("language")
-        val language: String? = null,
+        var language: String? = null,
 
         @field:JsonProperty("watermark")
-        val watermark: Watermark? = null,
+        var watermark: Watermark? = null,
 
         @field:JsonProperty("is_demote")
-        val isDemote: Boolean? = null
+        var isDemote: Boolean? = null
 )

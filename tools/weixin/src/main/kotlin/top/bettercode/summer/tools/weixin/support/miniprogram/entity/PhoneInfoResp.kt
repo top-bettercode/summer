@@ -7,5 +7,5 @@ import top.bettercode.summer.tools.weixin.support.WeixinResponse
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PhoneInfoResp(
         @field:JsonProperty("phone_info")
-        val phoneInfo: PhoneInfo? = null
+        var phoneInfo: PhoneInfo? = null
 ) : WeixinResponse()

@@ -7,14 +7,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class PhoneInfo(
 
         @field:JsonProperty("phoneNumber")
-        val phoneNumber: String? = null,
+        var phoneNumber: String? = null,
 
         @field:JsonProperty("purePhoneNumber")
-        val purePhoneNumber: String? = null,
+        var purePhoneNumber: String? = null,
 
         @field:JsonProperty("countryCode")
-        val countryCode: String? = null,
+        var countryCode: String? = null,
 
         @field:JsonProperty("watermark")
-        val watermark: Watermark? = null
+        var watermark: Watermark? = null
 )

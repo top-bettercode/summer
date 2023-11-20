@@ -7,5 +7,5 @@ import top.bettercode.summer.tools.weixin.support.WeixinResponse
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class MsgResult(
         @field:JsonProperty("msgid")
-        val msgid: Long? = null
+        var msgid: Long? = null
 ) : WeixinResponse()

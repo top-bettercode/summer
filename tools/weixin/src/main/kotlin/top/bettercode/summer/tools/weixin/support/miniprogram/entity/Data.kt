@@ -4,5 +4,5 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Data(
         @field:JsonProperty("value")
-        val value: String
+        var value: String
 )

@@ -18,13 +18,13 @@ import javax.crypto.spec.SecretKeySpec
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class JsSession(
         @field:JsonProperty("openid")
-        val openid: String? = null,
+        var openid: String? = null,
 
         @field:JsonProperty("session_key")
-        val sessionKey: String? = null,
+        var sessionKey: String? = null,
 
         @field:JsonProperty("unionid")
-        val unionid: String? = null
+        var unionid: String? = null
 ) : WeixinResponse() {
     private val log: Logger = LoggerFactory.getLogger(JsSession::class.java)
 

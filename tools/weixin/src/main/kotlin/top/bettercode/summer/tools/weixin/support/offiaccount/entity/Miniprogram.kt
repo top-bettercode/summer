@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class Miniprogram @JvmOverloads constructor(
 
         @field:JsonProperty("appid")
-        val appid: String,
+        var appid: String,
 
         @field:JsonProperty("pagepath")
-        val pagepath: String? = null
+        var pagepath: String? = null
 )

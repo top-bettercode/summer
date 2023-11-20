@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class Watermark(
 
         @field:JsonProperty("timestamp")
-        val timestamp: Int? = null,
+        var timestamp: Int? = null,
 
         @field:JsonProperty("appid")
-        val appid: String? = null
+        var appid: String? = null
 )

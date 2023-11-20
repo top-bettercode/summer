@@ -12,25 +12,25 @@ data class MpTemplateMsg(
          * 公众号appid，要求与小程序有绑定且同主体
          */
         @field:JsonProperty("appid")
-        val appid: String,
+        var appid: String,
         /**
          * 公众号模板id
          */
         @field:JsonProperty("template_id")
-        val templateId: String,
+        var templateId: String,
         /**
          * 公众号模板消息的数据
          */
         @field:JsonProperty("data")
-        val data: Map<String, Data>,
+        var data: Map<String, Data>,
         /**
          * 公众号模板消息所要跳转的小程序，小程序的必须与公众号具有绑定关系
          */
         @field:JsonProperty("miniprogram")
-        val miniprogram: Miniprogram,
+        var miniprogram: Miniprogram,
         /**
          * 公众号模板消息所要跳转的url
          */
         @field:JsonProperty("url")
-        val url: String? = null
+        var url: String? = null
 )
