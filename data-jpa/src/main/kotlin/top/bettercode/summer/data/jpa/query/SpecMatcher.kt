@@ -150,7 +150,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
             p
         } else
             specPredicates.computeIfAbsent(propertyName
-            ) { s: String -> return@computeIfAbsent listOf(SpecPath<P, T, M>(typed, s)) }.first()
+            ) { s: String -> return@computeIfAbsent mutableListOf<SpecPredicate<T, M>>(SpecPath<P, T, M>(typed, s)) }.first()
         @Suppress("UNCHECKED_CAST")
         return predicate as SpecPath<P, T, M>
     }
