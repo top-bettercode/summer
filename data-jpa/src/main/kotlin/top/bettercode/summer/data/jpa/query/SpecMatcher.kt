@@ -7,6 +7,8 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
@@ -26,7 +28,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 
     private val log: Logger = LoggerFactory.getLogger(SpecMatcher::class.java)
 
-    private val specPredicates: MutableMap<String, SpecPredicate<T, M>> = LinkedHashMap()
+    private val specPredicates: MultiValueMap<String, SpecPredicate<T, M>> = LinkedMultiValueMap()
     private val orders: MutableList<Sort.Order> = ArrayList()
     private val typed: M
     private val probe: Any?
@@ -57,15 +59,17 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
                     PathNode("root", null, probe))
         }
         val predicates: MutableList<Predicate> = ArrayList()
-        for (it in specPredicates.values) {
-            val predicate = it.toPredicate(root, criteriaBuilder)
-            if (predicate != null) {
-                predicates.add(predicate)
-            } else if (it is SpecPath<*, *, *>) {
-                if (idAttribute != null && it.propertyName == idAttribute?.name) {
-                    this.idAttribute = null
-                } else if (versionAttribute != null && it.propertyName == versionAttribute?.name) {
-                    this.versionAttribute = null
+        for (values in specPredicates.values) {
+            values.forEach {
+                val predicate = it.toPredicate(root, criteriaBuilder)
+                if (predicate != null) {
+                    predicates.add(predicate)
+                } else if (it is SpecPath<*, *, *>) {
+                    if (idAttribute != null && it.propertyName == idAttribute?.name) {
+                        this.idAttribute = null
+                    } else if (versionAttribute != null && it.propertyName == versionAttribute?.name) {
+                        this.versionAttribute = null
+                    }
                 }
             }
         }
@@ -119,7 +123,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     override fun createCriteriaUpdate(domainClass: Class<T>, criteriaBuilder: CriteriaBuilder, extJpaSupport: ExtJpaSupport<T>): CriteriaUpdate<T> {
         val criteriaUpdate = criteriaBuilder.createCriteriaUpdate(domainClass)
         criteriaUpdate.from(domainClass)
-        specPredicates.values.filter { it is SpecPath<*, *, *> }.map { it as SpecPath<*, T, M> }.forEach {
+        specPredicates.values.map { it.first() }.filter { it is SpecPath<*, *, *> }.map { it as SpecPath<*, T, M> }.forEach {
             if (it.isSetCriteriaUpdate) {
                 criteriaUpdate[it.propertyName] = it.criteriaUpdate
             }
@@ -137,10 +141,16 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return criteriaUpdate
     }
 
-    fun <P> path(propertyName: String): SpecPath<P, T, M> {
+    @JvmOverloads
+    fun <P> path(propertyName: String, new: Boolean = false): SpecPath<P, T, M> {
         Assert.hasText(propertyName, "propertyName can not be blank.")
-        val predicate = specPredicates.computeIfAbsent(propertyName
-        ) { s: String -> return@computeIfAbsent SpecPath<P, T, M>(typed, s) }
+        val predicate = if (new) {
+            val p = SpecPath<P, T, M>(typed, propertyName)
+            specPredicates.add(propertyName, p)
+            p
+        } else
+            specPredicates.computeIfAbsent(propertyName
+            ) { s: String -> return@computeIfAbsent listOf(SpecPath<P, T, M>(typed, s)) }.first()
         @Suppress("UNCHECKED_CAST")
         return predicate as SpecPath<P, T, M>
     }

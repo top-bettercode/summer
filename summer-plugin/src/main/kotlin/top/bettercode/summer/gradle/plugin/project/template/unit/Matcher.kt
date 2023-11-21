@@ -103,6 +103,19 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             this.visibility = JavaVisibility.PUBLIC
             +"return super.path(\"${primaryKeyName}\");"
         }
+        method(primaryKeyMethodName, JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
+                primaryKeyType,
+                entityType, type
+        ), Parameter("append", JavaType.boolean)) {
+            javadoc {
+                +"/**"
+                +" * @param append 追加条件"
+                +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" */"
+            }
+            this.visibility = JavaVisibility.PUBLIC
+            +"return super.path(\"${primaryKeyName}\", append);"
+        }
         method(
                 primaryKeyMethodName,
                 type,
@@ -167,6 +180,19 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     this.visibility = JavaVisibility.PUBLIC
                     +"return super.path(\"${primaryKeyName}.${it.javaName}\");"
                 }
+                method(methodName, JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
+                        it.javaType,
+                        entityType, type
+                ), Parameter("append", JavaType.boolean)) {
+                    javadoc {
+                        +"/**"
+                        +" * @param append 追加条件"
+                        +" * @return ${it.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                        +" */"
+                    }
+                    this.visibility = JavaVisibility.PUBLIC
+                    +"return super.path(\"${primaryKeyName}.${it.javaName}\", append);"
+                }
                 method(
                         methodName,
                         type,
@@ -227,6 +253,16 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 this.visibility = JavaVisibility.PUBLIC
                 +"return super.path(\"${it.javaName}\");"
+            }
+            method(javaName, JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(it.javaType, entityType, type), Parameter("append", JavaType.boolean)) {
+                javadoc {
+                    +"/**"
+                    +" * @param append 追加条件"
+                    +" * @return ${it.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                    +" */"
+                }
+                this.visibility = JavaVisibility.PUBLIC
+                +"return super.path(\"${it.javaName}\", append);"
             }
             method(javaName, type, Parameter(it.javaName, it.javaType)) {
                 javadoc {
