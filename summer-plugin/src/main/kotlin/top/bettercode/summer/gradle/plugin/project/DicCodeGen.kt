@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.gradle.api.Project
+import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.dom.java.JavaType
@@ -184,7 +185,12 @@ class DicCodeGen(private val project: Project) {
 
                         //auth
                         if ("auth" == codeType || "securityScope" == codeType) {
-                            val directory = if ("auth" == codeType) project.rootProject.project("admin").projectDir else project.projectDir
+                            val directory = if ("auth" == codeType) try {
+                                project.rootProject.project(project.findProperty("app.authProject")?.toString()
+                                        ?: "admin").projectDir
+                            } catch (e: UnknownProjectException) {
+                                project.projectDir
+                            } else project.projectDir
                             val authName = if ("auth" == codeType)
                                 PinyinHelper.convertToPinyinString(
                                         name,
@@ -275,7 +281,8 @@ class DicCodeGen(private val project: Project) {
                         else
                             +"return this.code.equals(code);"
                     }
-                    method("enumOf", enumType, Parameter("code", fieldType.primitiveTypeWrapper ?: fieldType)) {
+                    method("enumOf", enumType, Parameter("code", fieldType.primitiveTypeWrapper
+                            ?: fieldType)) {
                         javadoc {
                             +"/**"
                             +" * 根据标识码查询对应枚举"
