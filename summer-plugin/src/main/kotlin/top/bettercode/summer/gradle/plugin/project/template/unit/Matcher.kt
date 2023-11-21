@@ -103,18 +103,6 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             this.visibility = JavaVisibility.PUBLIC
             +"return super.path(\"${primaryKeyName}\");"
         }
-        method("append${primaryKeyMethodName.capitalized()}", JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
-                primaryKeyType,
-                entityType, type
-        )) {
-            javadoc {
-                +"/**"
-                +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
-                +" */"
-            }
-            this.visibility = JavaVisibility.PUBLIC
-            +"return super.path(\"${primaryKeyName}\", true);"
-        }
         method(
                 primaryKeyMethodName,
                 type,
@@ -179,18 +167,6 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     this.visibility = JavaVisibility.PUBLIC
                     +"return super.path(\"${primaryKeyName}.${it.javaName}\");"
                 }
-                method("append${methodName.capitalized()}", JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
-                        it.javaType,
-                        entityType, type
-                )) {
-                    javadoc {
-                        +"/**"
-                        +" * @return ${it.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
-                        +" */"
-                    }
-                    this.visibility = JavaVisibility.PUBLIC
-                    +"return super.path(\"${primaryKeyName}.${it.javaName}\", true);"
-                }
                 method(
                         methodName,
                         type,
@@ -251,15 +227,6 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 this.visibility = JavaVisibility.PUBLIC
                 +"return super.path(\"${it.javaName}\");"
-            }
-            method("append${javaName.capitalized()}", JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(it.javaType, entityType, type)) {
-                javadoc {
-                    +"/**"
-                    +" * @return ${it.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
-                    +" */"
-                }
-                this.visibility = JavaVisibility.PUBLIC
-                +"return super.path(\"${it.javaName}\", true);"
             }
             method(javaName, type, Parameter(it.javaName, it.javaType)) {
                 javadoc {

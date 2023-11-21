@@ -29,6 +29,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     private val log: Logger = LoggerFactory.getLogger(SpecMatcher::class.java)
 
     private val specPredicates: MultiValueMap<String, SpecPredicate<T, M>> = LinkedMultiValueMap()
+    private var append = false
     private val orders: MutableList<Sort.Order> = ArrayList()
     private val typed: M
     private val probe: Any?
@@ -141,12 +142,17 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return criteriaUpdate
     }
 
-    @JvmOverloads
-    fun <P> path(propertyName: String, new: Boolean = false): SpecPath<P, T, M> {
+    fun append(): M {
+        append = true
+        return typed
+    }
+
+    fun <P> path(propertyName: String): SpecPath<P, T, M> {
         Assert.hasText(propertyName, "propertyName can not be blank.")
-        val predicate = if (new) {
+        val predicate = if (append) {
             val p = SpecPath<P, T, M>(typed, propertyName)
             specPredicates.add(propertyName, p)
+            append = false
             p
         } else
             specPredicates.computeIfAbsent(propertyName
