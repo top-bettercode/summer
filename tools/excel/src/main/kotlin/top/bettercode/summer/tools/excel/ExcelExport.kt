@@ -51,6 +51,7 @@ class ExcelExport {
      * 是否包含批注
      */
     private var includeComment = false
+    private var includeHeader = true
     private var finish = false
     private var includeDataValidation = false
 
@@ -179,6 +180,11 @@ class ExcelExport {
         return this
     }
 
+    fun noHeader(): ExcelExport {
+        includeHeader = false
+        return this
+    }
+
     @JvmOverloads
     fun createTitle(title: String, cells: Int, headerStyle: CellStyle = this.headerStyle): ExcelExport {
         sheet!!.value(row, column, title)
@@ -189,6 +195,8 @@ class ExcelExport {
     }
 
     fun <T> createHeader(excelFields: Array<ExcelField<T, out Any?>>) {
+        if (!includeHeader)
+            return
         // Create header
         run {
             for (excelField in excelFields) {
