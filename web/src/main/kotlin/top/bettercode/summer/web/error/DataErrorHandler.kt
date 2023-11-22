@@ -1,11 +1,10 @@
 package top.bettercode.summer.web.error
 
 import org.springframework.context.MessageSource
-import org.springframework.dao.DataAccessResourceFailureException
-import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.dao.IncorrectResultSizeDataAccessException
+import org.springframework.dao.*
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.UncategorizedSQLException
+import org.springframework.transaction.CannotCreateTransactionException
 import org.springframework.transaction.TransactionSystemException
 import top.bettercode.summer.web.RespEntity
 import java.sql.SQLRecoverableException
@@ -76,6 +75,8 @@ class DataErrorHandler(messageSource: MessageSource,
             } else if (specificCauseMessage.matches(incorrectRegex.toRegex())) {
                 val columnName = getText(specificCauseMessage.replace(incorrectRegex.toRegex(), "$2"))
                 respEntity.message = columnName + getText("incorrectFormatting")
+            } else {
+                respEntity.message = "Data Integrity Violation Exception"
             }
         } else if (e is UncategorizedSQLException) {
             val detailMessage = e.sqlException.message
@@ -97,6 +98,8 @@ class DataErrorHandler(messageSource: MessageSource,
                 val maxLeng = detailMessage.replace(regex1.toRegex(), "$2")
                 respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                 respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
+            } else {
+                respEntity.message = "UncategorizedSQL"
             }
         } else if (e is DataAccessResourceFailureException || e is SQLRecoverableException) {
             val cause = e.cause
@@ -112,6 +115,12 @@ class DataErrorHandler(messageSource: MessageSource,
                     respEntity.message = "Unable to acquire JDBC Connection"
                 }
             }
+        } else if (e is OptimisticLockingFailureException) {
+            respEntity.message = "data.optimistic.locking.failure"
+        } else if (e is CannotCreateTransactionException) {
+            respEntity.message = "datasource.request.timeout"
+        } else if (e is EmptyResultDataAccessException) {
+            respEntity.message = "resource.not.found"
         } else if (e is IncorrectResultSizeDataAccessException) {
             if (error.message != null && error.message!!.matches(".*query did not return a unique result:.*".toRegex())) {
                 respEntity.message = "data.not.unique.result"

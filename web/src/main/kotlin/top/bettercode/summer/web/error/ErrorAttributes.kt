@@ -74,6 +74,9 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
             }
 
             val errorClass: Class<out Throwable> = error.javaClass
+            if (httpStatusCode == null) {
+                httpStatusCode = handleHttpStatusCode(errorClass)
+            }
 
             if (httpStatusCode == null || message.isNullOrBlank()) {
                 val responseStatus = AnnotatedElementUtils
@@ -86,14 +89,6 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
                         message = responseStatus.reason
                     }
                 }
-            }
-
-            if (httpStatusCode == null) {
-                httpStatusCode = handleHttpStatusCode(errorClass)
-            }
-
-            if (message.isNullOrBlank()) {
-                message = handleMessage(errorClass)
             }
         } else {
             message = getMessage(webRequest)
@@ -134,11 +129,6 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
         } else {
             null
         }
-    }
-
-    private fun handleMessage(throwableClass: Class<out Throwable>): String? {
-        val key = throwableClass.name + ".message"
-        return exceptionHandle[key]
     }
 
     private fun setErrorInfo(request: WebRequest, httpStatusCode: Int,

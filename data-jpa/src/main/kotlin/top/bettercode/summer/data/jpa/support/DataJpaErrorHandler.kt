@@ -4,6 +4,7 @@ import org.hibernate.exception.GenericJDBCException
 import org.springframework.context.MessageSource
 import org.springframework.dao.InvalidDataAccessApiUsageException
 import org.springframework.http.HttpStatus
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.orm.jpa.JpaSystemException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
@@ -46,6 +47,9 @@ class DataJpaErrorHandler(
                     }
                 }
             }
+            if(respEntity.message.isNullOrBlank()){
+                respEntity.message = "JpaSystemException"
+            }
         } else if (error is InvalidDataAccessApiUsageException) {
             if (error.message != null && error.message!!.contains("detached entity passed to persist")) {
                 respEntity.message = "theUpdatedDataDoesNotExistInTheDatabase"
@@ -54,6 +58,8 @@ class DataJpaErrorHandler(
             if (error.message != null && error.message!!.matches(".*query did not return a unique result:.*".toRegex())) {
                 respEntity.message = "data.not.unique.result"
             }
+        } else if (error is ObjectOptimisticLockingFailureException) {
+            respEntity.message = "data.optimistic.locking.failure"
         }
 
     }

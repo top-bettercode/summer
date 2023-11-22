@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.error
 
+import org.springframework.beans.InvalidPropertyException
 import org.springframework.context.MessageSource
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.http.HttpStatus
@@ -7,9 +8,11 @@ import org.springframework.http.converter.HttpMessageNotWritableException
 import org.springframework.validation.BindException
 import org.springframework.validation.FieldError
 import org.springframework.web.HttpMediaTypeNotAcceptableException
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.multipart.MultipartException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.validator.NoPropertyPath
@@ -30,6 +33,8 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 val paramName = error.message!!.replace(regex.toRegex(), "$1")
                 respEntity.message = getText(paramName) + getText("canTBeEmpty")
             }
+        } else if (error is HttpRequestMethodNotSupportedException) {
+            respEntity.message = "method.not.allowed"
         } else if (error is MethodArgumentNotValidException) {
             val bindingResult = error.bindingResult
             val fieldErrors = bindingResult.fieldErrors
@@ -82,6 +87,12 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 sb.append('"')
             }
             respEntity.message = sb.toString()
+        } else if (error is NullPointerException) {
+            respEntity.message = "data.exception"
+        } else if (error is MultipartException) {
+            respEntity.message = "upload.fail"
+        } else if (error is InvalidPropertyException) {
+            respEntity.message = "paramMismatch"
         } else if (error is SystemException) {
             respEntity.httpStatusCode = error.httpStatusCode
             respEntity.status = error.code
