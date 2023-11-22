@@ -1,6 +1,8 @@
 package top.bettercode.summer.tools.excel
 
 import javassist.bytecode.SignatureAttribute
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
@@ -47,6 +49,16 @@ class ExcelField<T, P : Any?> {
      * 图片字段
      */
     var isImageColumn: Boolean = false
+
+    /**
+     * 富文本字段
+     */
+    var isPoiColumn: Boolean = false
+
+    /**
+     * 富文本字段设置方法
+     */
+    var poiSetter: ((XSSFWorkbook, Cell, T) -> Unit)? = null
 
     /**
      * 公式字段
@@ -458,6 +470,12 @@ class ExcelField<T, P : Any?> {
      */
     fun property(propertyConverter: (Any) -> P?): ExcelField<T, P> {
         this.propertyConverter = propertyConverter
+        return this
+    }
+
+    fun poiSetter(poiSetter: (XSSFWorkbook, Cell, T) -> Unit): ExcelField<T, P> {
+        this.poiSetter = poiSetter
+        this.isPoiColumn = true
         return this
     }
 

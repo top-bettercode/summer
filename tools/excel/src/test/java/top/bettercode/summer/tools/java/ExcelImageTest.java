@@ -127,7 +127,7 @@ public class ExcelImageTest {
 
     String filename = "build/testMergeExportWithImage.xlsx";
 
-    ExcelExport.withImage(Files.newOutputStream(Paths.get(filename)))
+    ExcelExport.withPoi(Files.newOutputStream(Paths.get(filename)))
         .sheet("表格")
         .setMergeData(list, excelMergeFields)
         .finish()

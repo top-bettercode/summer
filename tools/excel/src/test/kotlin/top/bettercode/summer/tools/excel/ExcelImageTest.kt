@@ -104,7 +104,7 @@ class ExcelImageTest {
         list.add(DataBean(25))
         val s = System.currentTimeMillis()
         val filename = "build/testMergeExportWithImage.xlsx"
-        ExcelExport.withImage(Files.newOutputStream(Paths.get(filename))).sheet("表格")
+        ExcelExport.withPoi(Files.newOutputStream(Paths.get(filename))).sheet("表格")
                 .setMergeData(list, excelMergeFields)
                 .finish()
                 .setImage()

@@ -575,7 +575,7 @@ object StringUtil {
     }
 
     @JvmStatic
-    fun trimMoneyTrailing(value: String): String {
+    fun trimFractionTrailing(value: String): String {
         return if (value.contains(".")) value.trimEnd('0').trimEnd('.') else value
     }
 
