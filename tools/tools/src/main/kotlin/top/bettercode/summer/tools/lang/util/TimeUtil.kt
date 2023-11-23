@@ -1,11 +1,18 @@
 package top.bettercode.summer.tools.lang.util
 
+import kotlinx.coroutines.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.net.URL
+import java.net.URLConnection
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 import java.time.temporal.TemporalAdjusters
 import java.util.*
+import kotlin.math.absoluteValue
+
 
 /**
  * @author Peter Wu
@@ -141,7 +148,7 @@ open class TimeUtil(
     }
 
     companion object {
-
+        private val log: Logger = LoggerFactory.getLogger(TimeUtil::class.java)
         val DEFAULT_ZONE_ID: ZoneId = ZoneId.systemDefault()
         private const val DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS"
         private val dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)
@@ -286,6 +293,83 @@ open class TimeUtil(
         @JvmStatic
         fun between(startDateInclusive: Date, endDateExclusive: Date): Period {
             return Period.between(toLocalDate(startDateInclusive), toLocalDate(endDateExclusive))
+        }
+
+        /**
+         * @param server NTP时间服务器地址
+         * @param connectTimeout 连接超时时间，单位：秒
+         * @param readTimeout 读取超时时间，单位：秒
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun getNtpTime(server: String = "http://cn.pool.ntp.org", connectTimeout: Int = 5, readTimeout: Int = 5): Long {
+            val connection: URLConnection = URL(server).openConnection()
+            connection.connectTimeout = connectTimeout * 1000
+            connection.readTimeout = readTimeout * 1000
+            return connection.getHeaderFieldDate("Date", 0)
+        }
+
+        private fun reGetNtpTime(server: String, times: Int = 0): Long {
+            val t = times + 1
+            val ntpTime = getNtpTime(server)
+            return if (ntpTime > 0 || t > 5)
+                ntpTime
+            else
+                reGetNtpTime(server, t)
+        }
+
+        private fun getNetworkTime(): Long {
+            return runBlocking {
+                val ntpServers = listOf(
+                        "http://cn.pool.ntp.org",
+                        "http://pool.ntp.org",
+                        "http://time.windows.com",
+                        "http://time.apple.com",
+                        "http://time.google.com",
+                )
+                // 使用单一的 Deferred 对象，用于保存第一个返回的结果
+                val firstResult = CompletableDeferred<Long>()
+                val jobs = mutableListOf<Job>()
+                val customScope = CoroutineScope(Dispatchers.Default)
+                for (server in ntpServers) {
+                    val job = customScope.launch {
+                        val result = withContext(Dispatchers.IO) {
+                            return@withContext reGetNtpTime(server)
+                        }
+                        // 如果第一个协程返回结果，则将结果保存到 Deferred 对象中
+                        if (firstResult.isActive) {
+                            firstResult.complete(result)
+                        }
+                    }
+                    jobs.add(job)
+                }
+                val result = firstResult.await()
+                jobs.forEach { it.cancel() } // 取消所有其他任务
+                result
+            }
+        }
+
+        /**
+         * 检查网络时间是否同步
+         * @param acceptedDiffSeconds 可接受的时间差，单位：秒
+         */
+        @JvmOverloads
+        @JvmStatic
+        fun checkTime(acceptedDiffSeconds: Int = 5): Boolean {
+            var now = Instant.now()
+            val time = getNetworkTime()
+            if (time <= 0) {
+                return false
+            }
+            now = now.plusMillis((System.currentTimeMillis() - now.toEpochMilli()) / 2)
+            val networkTime = Instant.ofEpochMilli(time)
+            log.info("网络时间:{},本地时间:{}", of(networkTime).format(), of(now).format())
+            val diffSeconds = Duration.between(now, networkTime).seconds.absoluteValue
+            val synchronous = diffSeconds < acceptedDiffSeconds
+            if (!synchronous) {
+                log.error("网络时间和本地时间不一致,网络时间:{},本地时间:{}", of(networkTime).format(), of(now).format())
+            }
+            return synchronous
         }
     }
 

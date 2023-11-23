@@ -5,6 +5,7 @@ plugins {
 dependencies {
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
     api("org.slf4j:slf4j-api")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     compileOnly("ch.qos.logback:logback-classic")
     compileOnly("org.springframework:spring-webmvc")
@@ -20,7 +21,7 @@ dependencies {
     testImplementation("org.jsoup:jsoup")
 
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    testImplementation("org.springframework.boot:spring-boot-starter-logging")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }

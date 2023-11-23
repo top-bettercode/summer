@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.lang.util
 
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -53,5 +54,12 @@ class TimeUtilTest {
     @Test
     fun getLastDayOfYear() {
         assertEquals("2018-12-31 00:00:00.000", localDate.lastDayOfYear.format())
+    }
+
+    @Test
+    fun checkTime() {
+        runBlocking {
+            TimeUtil.checkTime()
+        }
     }
 }
