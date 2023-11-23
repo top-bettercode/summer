@@ -110,6 +110,18 @@ interface IFormkeyService {
         return digestFormkey
     }
 
+    fun runIfAbsent(formkey: String, ttl: Duration, expMsg: String, runnable: Runnable) {
+        if (!exist(formkey, ttl)) {
+            try {
+                runnable.run()
+            } finally {
+                remove(formkey)
+            }
+        } else {
+            throw IllegalStateException(expMsg)
+        }
+    }
+
     fun exist(formkey: String, ttl: Duration?): Boolean
     fun remove(formkey: String)
 
