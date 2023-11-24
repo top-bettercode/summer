@@ -111,6 +111,11 @@ class ExcelExport {
         return this.headerStyle
     }
 
+    fun bHeaderStyle(): ExcelExport {
+        this.headerStyle.fillColor("d9d9d9").fontColor(Color.BLACK)
+        return this
+    }
+
     /**
      * @param sheetname sheetname
      * @return this
