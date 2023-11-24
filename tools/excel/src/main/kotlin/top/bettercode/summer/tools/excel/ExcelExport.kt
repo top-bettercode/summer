@@ -499,17 +499,25 @@ class ExcelExport {
     fun setImage() {
         Assert.notNull(byteArrayOutputStream, "不是支持图片插入的导出")
         Assert.notNull(outputStream, "输出流未设置")
-        PoiExcelWriterUtil.setImage(imageCells,
-                ByteArrayInputStream(byteArrayOutputStream!!.toByteArray()), outputStream!!)
-        imageCells.clear()
+        if (imageCells.isEmpty()) {
+            outputStream!!.write(byteArrayOutputStream!!.toByteArray())
+        } else {
+            PoiExcelWriterUtil.setImage(imageCells,
+                    ByteArrayInputStream(byteArrayOutputStream!!.toByteArray()), outputStream!!)
+            imageCells.clear()
+        }
     }
 
     fun setPoi() {
         Assert.notNull(byteArrayOutputStream, "不是支持富文本的导出")
         Assert.notNull(outputStream, "输出流未设置")
-        PoiExcelWriterUtil.setPoi(poiCells,
-                ByteArrayInputStream(byteArrayOutputStream!!.toByteArray()), outputStream!!)
-        poiCells.clear()
+        if (poiCells.isEmpty()) {
+            outputStream!!.write(byteArrayOutputStream!!.toByteArray())
+        } else {
+            PoiExcelWriterUtil.setPoi(poiCells,
+                    ByteArrayInputStream(byteArrayOutputStream!!.toByteArray()), outputStream!!)
+            poiCells.clear()
+        }
     }
 
 
