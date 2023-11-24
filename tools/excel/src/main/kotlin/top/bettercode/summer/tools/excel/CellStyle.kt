@@ -101,6 +101,8 @@ class CellStyle {
     var protectionOptions: MutableMap<ProtectionOption, Boolean>? = null
 
     companion object {
+
+        @JvmStatic
         fun StyleSetter.style(style: CellStyle): StyleSetter {
             style.valueFormatting?.let { format(it) }
             style.fillColor?.let { fillColor(it) }
