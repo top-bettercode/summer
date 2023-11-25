@@ -2,6 +2,8 @@ package top.bettercode.summer.data.jpa
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -23,8 +25,15 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
     @JvmField
     protected val log: Logger? = LoggerFactory.getLogger(javaClass)
 
+    @Autowired
+    private lateinit var springDataWebProperties: SpringDataWebProperties
+
     override fun getRepository(): M {
         return repository
+    }
+
+    override fun <E> findAllPageByPage(query: (Pageable) -> Page<E>): List<E> {
+        return findAllPageByPage(springDataWebProperties.pageable.maxPageSize, query)
     }
 
     override fun <E> findAllPageByPage(pageSize: Int, query: (Pageable) -> Page<E>): List<E> {

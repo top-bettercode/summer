@@ -30,6 +30,15 @@ class UserServiceTest {
     }
 
     @Test
+    fun findAllPageByPage1() {
+        val list = userService.findAllPageByPage() {
+            userService.findAll(it)
+        }
+        System.err.println(list.size)
+        Assertions.assertEquals(21, list.size)
+    }
+
+    @Test
     fun findAllPageByPage() {
         val list = userService.findAllPageByPage(10) {
             userService.findAll(it)
