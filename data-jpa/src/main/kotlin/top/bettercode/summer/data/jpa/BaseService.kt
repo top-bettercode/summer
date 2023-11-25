@@ -27,6 +27,19 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository
     }
 
+    override fun <E> findAllPageByPage(pageSize: Int, query: (Pageable) -> Page<E>): List<E> {
+        val results = mutableListOf<E>()
+        var pageable = Pageable.ofSize(pageSize)
+        var result = query(pageable)
+        results.addAll(result.content)
+        while (result.hasNext()) {
+            pageable = pageable.next()
+            result = query(pageable)
+            results.addAll(result.content)
+        }
+        return results
+    }
+
     protected fun notFound(): Supplier<out RuntimeException?> {
         return BaseController.notFound()
     }

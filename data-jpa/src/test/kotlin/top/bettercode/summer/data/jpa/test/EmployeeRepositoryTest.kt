@@ -71,7 +71,7 @@ class EmployeeRepositoryTest {
 
     @Test
     fun delete() {
-        val spec = DefaultSpecMatcher.matching<User?>().equal("firstName", "Dave")
+        val spec = DefaultSpecMatcher.matching<User>().equal("firstName", "Dave")
         userRepository.delete(spec)
         val all = userRepository.findAll(spec)
         Assertions.assertEquals(0, all.size)

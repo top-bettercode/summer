@@ -110,7 +110,7 @@ class QuerydslJpaExtPredicateExecutorTest {
 
     @Test
     fun findOneFromRecycleBin() {
-        val dave: Optional<User?> = repository.findOneFromRecycleBin(QUser.user.firstName!!.eq("Dave"))
+        val dave: Optional<User> = repository.findOneFromRecycleBin(QUser.user.firstName!!.eq("Dave"))
         dave.ifPresent { x: User? -> println(x) }
         Assertions.assertTrue(dave.isPresent)
     }

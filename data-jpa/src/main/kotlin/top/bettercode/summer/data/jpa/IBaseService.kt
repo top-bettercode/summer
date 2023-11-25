@@ -15,6 +15,8 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
 
     fun getRepository(): M
 
+    fun <E> findAllPageByPage(pageSize: Int, query: (Pageable) -> Page<E>): List<E>
+
     fun <S : T> save(s: S): S
 
     /**

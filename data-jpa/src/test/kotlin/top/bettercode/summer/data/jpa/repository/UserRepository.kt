@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import org.springframework.data.repository.query.Param
-import top.bettercode.summer.data.jpa.JpaExtRepository
+import top.bettercode.summer.data.jpa.BaseRepository
 import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.querydsl.RecycleQuerydslPredicateExecutor
 import top.bettercode.summer.data.jpa.resp.AUser
@@ -19,7 +19,7 @@ import top.bettercode.summer.data.jpa.support.Size
 import java.util.stream.Stream
 import javax.transaction.Transactional
 
-interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecutor<User?>, RecycleQuerydslPredicateExecutor<User?> {
+interface UserRepository : BaseRepository<User, Int>, QuerydslPredicateExecutor<User>, RecycleQuerydslPredicateExecutor<User> {
     fun findByLastName(lastName: String?): List<User?>?
     fun findByFirstName(lastName: String?, pageable: Pageable?): Page<User?>?
 
@@ -54,7 +54,7 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
     @SelectProvider(type = UserSqlProvider::class, method = "selectByMybatisSize")
     fun selectByMybatisProviderSize(size: Size?): List<User?>?
 
-        class UserSqlProvider {
+    class UserSqlProvider {
         @Suppress("UNUSED_PARAMETER")
         fun selectByMybatisSize(size: Size?): String {
             // language=SQL

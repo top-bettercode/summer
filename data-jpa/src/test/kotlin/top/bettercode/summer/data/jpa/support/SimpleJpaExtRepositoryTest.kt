@@ -98,7 +98,7 @@ class SimpleJpaExtRepositoryTest {
     fun saveSpec() {
         val update = User()
         update.lastName = "newName"
-        val spec = DefaultSpecMatcher.matching<User?>()
+        val spec = DefaultSpecMatcher.matching<User>()
                 .equal("firstName", "Carter")
         var all = repository.findAll(spec)
         System.err.println(json(all, true))
@@ -112,7 +112,7 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun saveSpec2() {
-        val spec = DefaultSpecMatcher.matching<User?>()
+        val spec = DefaultSpecMatcher.matching<User>()
                 .equal("firstName", "Carter")
 //                .equal("id", 4)
 //                .equal("version", 1)
@@ -185,7 +185,7 @@ class SimpleJpaExtRepositoryTest {
         var optionalUser = repository.findByIdFromRecycleBin(carterId)
         optionalUser.ifPresent { x: User? -> println(x) }
         Assertions.assertTrue(optionalUser.isPresent)
-        repository.deleteFromRecycleBin(DefaultSpecMatcher.matching<User?>().equal("id", carterId))
+        repository.deleteFromRecycleBin(DefaultSpecMatcher.matching<User>().equal("id", carterId))
         optionalUser = repository.findByIdFromRecycleBin(carterId)
         optionalUser.ifPresent { x: User? -> println(x) }
         Assertions.assertFalse(optionalUser.isPresent)
@@ -415,7 +415,7 @@ class SimpleJpaExtRepositoryTest {
     fun countRecycle2() {
         Assertions
                 .assertEquals(1, repository.countRecycleBin(
-                        DefaultSpecMatcher.matching<User?>().equal("firstName", "Dave")))
+                        DefaultSpecMatcher.matching<User>().equal("firstName", "Dave")))
     }
 
     @Test
@@ -433,7 +433,7 @@ class SimpleJpaExtRepositoryTest {
     fun findRecycleOne() {
         Assertions.assertTrue(
                 repository.findOneFromRecycleBin(
-                        DefaultSpecMatcher.matching<User?>().equal("firstName", "Dave")).isPresent)
+                        DefaultSpecMatcher.matching<User>().equal("firstName", "Dave")).isPresent)
     }
 
     @Test
