@@ -312,16 +312,27 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return try {
             mdc = mdcPutId(".delete")
             if (extJpaSupport.logicalDeletedSupported) {
-                logicalDelete(spec)
+                doLogicalDelete(spec)
             } else {
-                physicalDelete(spec)
+                doPhysicalDelete(spec)
             }
         } finally {
             cleanMdc(mdc)
         }
     }
 
-    private fun logicalDelete(spec: Specification<T>?): Long {
+    @Transactional
+    override fun physicalDelete(spec: Specification<T>): Long {
+        var mdc = false
+        return try {
+            mdc = mdcPutId(".physicalDelete")
+            doPhysicalDelete(spec)
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
+    private fun doLogicalDelete(spec: Specification<T>?): Long {
         var spec1: Specification<T>? = spec
         val builder = entityManager.criteriaBuilder
         val domainClass = domainClass
@@ -341,7 +352,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return affected.toLong()
     }
 
-    private fun physicalDelete(spec: Specification<T>?): Long {
+    private fun doPhysicalDelete(spec: Specification<T>?): Long {
         val builder = entityManager.criteriaBuilder
         val domainClass = domainClass
         val criteriaDelete = builder.createCriteriaDelete(domainClass)
@@ -375,7 +386,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         try {
             mdc = mdcPutId(".deleteAllByIdInBatch")
             if (extJpaSupport.logicalDeletedSupported) {
-                logicalDelete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
+                doLogicalDelete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
             } else {
                 super.deleteAllByIdInBatch(ids)
             }
@@ -397,7 +408,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 val ids: List<ID?> = entities.map { entityInformation.getId(it) }
                 val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(ids) }
 
-                val affected = logicalDelete(spec)
+                val affected = doLogicalDelete(spec)
                 if (sqlLog.isDebugEnabled) {
                     sqlLog.debug("{} row affected", affected)
                 }
@@ -415,7 +426,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         try {
             mdc = mdcPutId(".deleteAllInBatch")
             if (extJpaSupport.logicalDeletedSupported) {
-                val affected = logicalDelete(null)
+                val affected = doLogicalDelete(null)
                 if (sqlLog.isDebugEnabled) {
                     sqlLog.debug("{} row affected", affected)
                 }
@@ -961,7 +972,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             mdc = mdcPutId(".cleanRecycleBin")
             var reslut = 0L
             if (extJpaSupport.logicalDeletedSupported) {
-                reslut = physicalDelete(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification)
+                reslut = doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification)
             }
             if (sqlLog.isDebugEnabled) {
                 sqlLog.debug("{} rows affected", reslut)
@@ -982,7 +993,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                     builder.equal(
                             root[entityInformation.idAttribute], id)
                 }
-                physicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
+                doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
                 val entity = findByIdFromRecycleBin(id)
                 entity.ifPresent { t: T -> super.delete(t) }
             }
@@ -997,7 +1008,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             mdc = mdcPutId(".deleteAllByIdFromRecycleBin")
             if (extJpaSupport.logicalDeletedSupported) {
                 val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
-                physicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
+                doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
             } else {
                 if (sqlLog.isDebugEnabled) {
                     sqlLog.debug("{} rows affected", 0)
@@ -1014,7 +1025,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         try {
             mdc = mdcPutId(".deleteFromRecycleBin")
             if (extJpaSupport.logicalDeletedSupported) {
-                physicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
+                doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
             } else {
                 if (sqlLog.isDebugEnabled) {
                     sqlLog.debug("{} rows affected", 0)

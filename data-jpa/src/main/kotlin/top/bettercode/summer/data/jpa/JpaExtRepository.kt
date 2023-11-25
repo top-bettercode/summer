@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.query.QueryByExampleExecutor
-import org.springframework.transaction.annotation.Transactional
 import top.bettercode.summer.data.jpa.query.RecycleExecutor
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
@@ -24,23 +23,16 @@ import javax.persistence.EntityManager
 interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor<T>, JpaSpecificationExecutor<T>, RecycleExecutor<T, ID> {
     val entityManager: EntityManager
 
-
-    @Transactional
     fun lowLevelUpdate(spec: UpdateSpecification<T>): Long
 
-    @Transactional
     fun physicalUpdate(spec: UpdateSpecification<T>): Long
 
-    @Transactional
     fun update(spec: UpdateSpecification<T>): Long
 
-    @Transactional
     fun <S : T> lowLevelUpdate(s: S?, spec: UpdateSpecification<T>): Long
 
-    @Transactional
     fun <S : T> physicalUpdate(s: S?, spec: UpdateSpecification<T>): Long
 
-    @Transactional
     fun <S : T> update(s: S?, spec: UpdateSpecification<T>): Long
 
     /**
@@ -52,6 +44,8 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     </S> */
     fun <S : T> dynamicSave(s: S): S
     fun delete(spec: Specification<T>): Long
+    fun physicalDelete(spec: Specification<T>): Long
+
     fun exists(spec: Specification<T>): Boolean
     fun existsPhysical(spec: Specification<T>?): Boolean
     fun countPhysical(spec: Specification<T>?): Long
