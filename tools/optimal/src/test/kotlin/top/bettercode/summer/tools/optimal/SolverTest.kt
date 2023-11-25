@@ -2,10 +2,9 @@ package top.bettercode.summer.tools.optimal
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.optimal.solver.CBCSolver
-import top.bettercode.summer.tools.optimal.solver.COPTSolver
-import top.bettercode.summer.tools.optimal.solver.SCIPSolver
 import top.bettercode.summer.tools.optimal.solver.Solver
+import top.bettercode.summer.tools.optimal.solver.SolverFactory
+import top.bettercode.summer.tools.optimal.solver.SolverType
 
 /**
  *
@@ -13,9 +12,9 @@ import top.bettercode.summer.tools.optimal.solver.Solver
  */
 class SolverTest {
 
-    private val cbcSolver: Solver = CBCSolver()
-    private val scipSolver: Solver = SCIPSolver()
-    private val coptSolver: Solver = COPTSolver(logging = true)
+    private val cbcSolver: Solver = SolverFactory.createSolver(solverType = SolverType.CBC)
+    private val scipSolver: Solver = SolverFactory.createSolver(solverType = SolverType.SCIP)
+    private val coptSolver: Solver = SolverFactory.createSolver(solverType = SolverType.COPT, logging = true)
 
     @Test
     fun ge() {

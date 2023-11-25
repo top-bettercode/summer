@@ -3,9 +3,7 @@ package top.bettercode.summer.tools.optimal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.entity.ReqData
-import top.bettercode.summer.tools.optimal.solver.CBCSolver
-import top.bettercode.summer.tools.optimal.solver.COPTSolver
-import top.bettercode.summer.tools.optimal.solver.SCIPSolver
+import top.bettercode.summer.tools.optimal.solver.*
 
 
 /**
@@ -24,9 +22,9 @@ internal class RecipeSolverTest {
 
     fun solve(productName: String) {
         val reqData = ReqData(productName)
-        val coptSolver = COPTSolver()
-        val cbcSolver = CBCSolver()
-        val scipSolver = SCIPSolver()
+        val coptSolver = SolverFactory.createSolver(SolverType.COPT)
+        val cbcSolver = SolverFactory.createSolver(SolverType.CBC)
+        val scipSolver = SolverFactory.createSolver(SolverType.SCIP)
         val solve = RecipeSolver(coptSolver).solve(reqData)
         val solve1 = RecipeSolver(cbcSolver).solve(reqData)
         val solve2 = RecipeSolver(scipSolver).solve(reqData)
