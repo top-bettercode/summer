@@ -5,7 +5,6 @@ plugins {
 dependencies {
     implementation(project(":tools:tools"))
     implementation(fileTree("libs"))
-    implementation("org.springframework:spring-core")
 
     compileOnly("com.google.ortools:ortools-java")
     testImplementation("com.google.ortools:ortools-java")

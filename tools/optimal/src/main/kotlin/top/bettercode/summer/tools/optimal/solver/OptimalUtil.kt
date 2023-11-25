@@ -12,6 +12,7 @@ object OptimalUtil {
      *
      * Math.abs(Math.log10(epsilon)).toInt()
      */
+    @JvmStatic
     var defaultScale: Int = 10
 
     /**
