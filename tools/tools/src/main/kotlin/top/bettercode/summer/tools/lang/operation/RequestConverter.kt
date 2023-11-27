@@ -165,26 +165,32 @@ object RequestConverter {
         return cookies
     }
 
-    private fun extractParts(servletRequest: HttpServletRequest): List<OperationRequestPart> {
-        val request: ServletRequest = unwrap(servletRequest)
-
+    private fun extractParts(request: HttpServletRequest): List<OperationRequestPart> {
         val parts = ArrayList<OperationRequestPart>()
-        if (request is HttpServletRequest && request.contentType?.lowercase(Locale.getDefault())
+        if (request.contentType?.lowercase(Locale.getDefault())
                         ?.startsWith("multipart/") == true
         ) {
-            parts.addAll(extractServletRequestParts(servletRequest))
+            parts.addAll(extractServletRequestParts(request))
         }
-        if (request is MultipartHttpServletRequest) {
-            parts.addAll(extractMultipartRequestParts(request))
+        val multipartHttpServletRequest = unwrapMultipartHttpServletRequest(request)
+        if (multipartHttpServletRequest is MultipartHttpServletRequest) {
+            parts.addAll(extractMultipartRequestParts(multipartHttpServletRequest))
         }
         return parts
     }
 
-    private fun unwrap(servletRequest: ServletRequest): ServletRequest {
-        return if (servletRequest is HttpServletRequestWrapper) {
-            unwrap(servletRequest.request)
-        } else
-            servletRequest
+    private fun unwrapMultipartHttpServletRequest(servletRequest: ServletRequest): ServletRequest {
+        return when (servletRequest) {
+            is MultipartHttpServletRequest -> {
+                servletRequest
+            }
+            is HttpServletRequestWrapper -> {
+                unwrapMultipartHttpServletRequest(servletRequest.request)
+            }
+            else -> {
+                servletRequest
+            }
+        }
     }
 
     private fun extractServletRequestParts(
