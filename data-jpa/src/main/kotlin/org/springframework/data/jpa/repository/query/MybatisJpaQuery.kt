@@ -3,6 +3,8 @@ package org.springframework.data.jpa.repository.query
 import org.hibernate.query.NativeQuery
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import org.springframework.core.convert.ConversionService
+import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.data.domain.SliceImpl
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.*
@@ -75,6 +77,18 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         val sqlLogId = mybatisQueryMethod.mappedStatement.id
         return if (method.isPageQuery) {
             object : PagedExecution() {
+                private val CONVERSION_SERVICE: ConversionService
+
+                init {
+                    val conversionService = DefaultConversionService()
+
+                    conversionService.addConverter(JpaResultConverters.BlobToByteArrayConverter.INSTANCE)
+                    conversionService.removeConvertible(Collection::class.java, Object::class.java)
+                    potentiallyRemoveOptionalConverter(conversionService)
+
+                    CONVERSION_SERVICE = conversionService
+                }
+
                 override fun doExecute(
                         repositoryQuery: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
@@ -87,15 +101,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         if (accessor.pageable.isPaged) {
                             val countQuery = mybatisQuery.countQuery!!
                             val totals = countQuery.resultList
-                            total = if (totals.size == 1) {
-                                when (val value = totals[0]) {
-                                    null -> 0
-                                    is Long -> value
-                                    is Int -> value.toLong()
-                                    is String -> value.toLong()
-                                    else -> java.lang.Long.valueOf(value.toString())
-                                }
-                            } else totals.size.toLong()
+                            total = if (totals.size == 1) CONVERSION_SERVICE.convert(totals[0], Long::class.java)
+                                    ?: 0 else totals.size.toLong()
                             if (sqlLog.isDebugEnabled) {
                                 sqlLog.debug("total: {} rows", total)
                             }
