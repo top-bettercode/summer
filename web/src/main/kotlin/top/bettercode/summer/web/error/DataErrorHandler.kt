@@ -117,6 +117,8 @@ class DataErrorHandler(messageSource: MessageSource,
             }
         } else if (e is OptimisticLockingFailureException) {
             respEntity.message = "data.optimistic.locking.failure"
+        } else if (e is PessimisticLockingFailureException) {
+            respEntity.message = "data.optimistic.locking.failure"
         } else if (e is CannotCreateTransactionException) {
             respEntity.message = "datasource.request.timeout"
         } else if (e is EmptyResultDataAccessException) {
