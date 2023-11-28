@@ -12,7 +12,6 @@ import org.springframework.data.util.ParsingUtils
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
-import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import javax.persistence.EntityManager
@@ -88,7 +87,15 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         if (accessor.pageable.isPaged) {
                             val countQuery = mybatisQuery.countQuery!!
                             val totals = countQuery.resultList
-                            total = if (totals.size == 1) JpaUtil.convert(totals[0], Long::class.javaObjectType)!! else totals.size.toLong()
+                            total = if (totals.size == 1) {
+                                when (val value = totals[0]) {
+                                    null -> 0
+                                    is Long -> value
+                                    is Int -> value.toLong()
+                                    is String -> value.toLong()
+                                    else -> java.lang.Long.valueOf(value.toString())
+                                }
+                            } else totals.size.toLong()
                             if (sqlLog.isDebugEnabled) {
                                 sqlLog.debug("total: {} rows", total)
                             }

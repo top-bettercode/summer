@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.*
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.util.BooleanUtil
 import java.io.File
 import java.util.*
 
@@ -533,7 +534,7 @@ open class Generator {
     fun Column.initializationString(unit: CompilationUnit?, importType: Boolean = true): String? {
         return if (columnDef != null) {
             when (javaType) {
-                JavaType.booleanWrapper -> toBoolean(columnDef).toString()
+                JavaType.booleanWrapper -> BooleanUtil.toBoolean(columnDef)?.toString()
                 JavaType.longWrapper -> "${columnDef}L"
                 JavaType.doubleWrapper -> "${columnDef}D"
                 JavaType.floatWrapper -> "${columnDef}F"
@@ -611,99 +612,6 @@ open class Generator {
                             .capitalized()
             }
         }
-
-        fun toBoolean(obj: Any?): Boolean {
-            when (obj) {
-                is Boolean -> return obj
-                is String -> {
-                    if (obj.equals("true", true)) {
-                        return true
-                    }
-                    when (obj.length) {
-                        1 -> {
-                            val ch0 = obj[0]
-                            if (ch0 == 'y' || ch0 == 'Y' ||
-                                    ch0 == 't' || ch0 == 'T' || ch0 == '1'
-                            ) {
-                                return true
-                            }
-                            if (ch0 == 'n' || ch0 == 'N' ||
-                                    ch0 == 'f' || ch0 == 'F' || ch0 == '0'
-                            ) {
-                                return false
-                            }
-                        }
-
-                        2 -> {
-                            val ch0 = obj[0]
-                            val ch1 = obj[1]
-                            if ((ch0 == 'o' || ch0 == 'O') && (ch1 == 'n' || ch1 == 'N')) {
-                                return true
-                            }
-                            if ((ch0 == 'n' || ch0 == 'N') && (ch1 == 'o' || ch1 == 'O')) {
-                                return false
-                            }
-                        }
-
-                        3 -> {
-                            val ch0 = obj[0]
-                            val ch1 = obj[1]
-                            val ch2 = obj[2]
-                            if ((ch0 == 'y' || ch0 == 'Y') &&
-                                    (ch1 == 'e' || ch1 == 'E') &&
-                                    (ch2 == 's' || ch2 == 'S')
-                            ) {
-                                return true
-                            }
-                            if ((ch0 == 'o' || ch0 == 'O') &&
-                                    (ch1 == 'f' || ch1 == 'F') &&
-                                    (ch2 == 'f' || ch2 == 'F')
-                            ) {
-                                return false
-                            }
-                        }
-
-                        4 -> {
-                            val ch0 = obj[0]
-                            val ch1 = obj[1]
-                            val ch2 = obj[2]
-                            val ch3 = obj[3]
-                            if ((ch0 == 't' || ch0 == 'T') &&
-                                    (ch1 == 'r' || ch1 == 'R') &&
-                                    (ch2 == 'u' || ch2 == 'U') &&
-                                    (ch3 == 'e' || ch3 == 'E')
-                            ) {
-                                return true
-                            }
-                        }
-
-                        5 -> {
-                            val ch0 = obj[0]
-                            val ch1 = obj[1]
-                            val ch2 = obj[2]
-                            val ch3 = obj[3]
-                            val ch4 = obj[4]
-                            if ((ch0 == 'f' || ch0 == 'F') &&
-                                    (ch1 == 'a' || ch1 == 'A') &&
-                                    (ch2 == 'l' || ch2 == 'L') &&
-                                    (ch3 == 's' || ch3 == 'S') &&
-                                    (ch4 == 'e' || ch4 == 'E')
-                            ) {
-                                return false
-                            }
-                        }
-
-                        else -> {
-                        }
-                    }
-                }
-
-                is Number -> return obj.toInt() > 0
-            }
-
-            return false
-        }
-
     }
 
 }

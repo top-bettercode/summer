@@ -12,7 +12,6 @@ class TempTest {
     val sqlValRegex = Regex("\\s*\\\\?:=")
     val sqlValReplacement = " \\\\:="
 
-
     @Test
     fun test() {
         val bef = """select first_name,
