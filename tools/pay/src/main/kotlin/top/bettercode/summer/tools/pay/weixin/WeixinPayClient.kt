@@ -20,6 +20,7 @@ import java.io.InputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 import java.util.*
+import java.util.function.Consumer
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.net.ssl.KeyManagerFactory
@@ -278,7 +279,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_7&index=3
      */
     @JvmOverloads
-    fun handleNotify(request: HttpServletRequest, success: (PayResponse) -> WeixinPayResponse, fail: ((PayResponse) -> WeixinPayResponse)? = null): Any {
+    fun handleNotify(request: HttpServletRequest, success: (PayResponse) -> WeixinPayResponse, fail: ((PayResponse) -> WeixinPayResponse)? = null, error: Consumer<Exception> = Consumer<Exception> { log.error("支付结果通知处理失败", it) }): Any {
         try {
             val response = objectMapper.readValue(request.inputStream, PayResponse::class.java)
             if (response != null && response.isOk()) {
@@ -304,7 +305,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response?.returnMsg ?: "无结果响应"}", response)
             }
         } catch (e: Exception) {
-            log.error("支付结果通知处理失败", e)
+            error.accept(e)
         }
         return WeixinPayResponse.fail()
     }
@@ -324,7 +325,8 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * </pre>
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_16&index=11
      */
-    fun handleRefundNotify(request: HttpServletRequest, success: (RefundInfo, RefundNotifyResponse) -> WeixinPayResponse): Any {
+    @JvmOverloads
+    fun handleRefundNotify(request: HttpServletRequest, success: (RefundInfo, RefundNotifyResponse) -> WeixinPayResponse, error: Consumer<Exception> = Consumer<Exception> { log.error("退款结果通知处理失败", it) }): Any {
         try {
             val response = objectMapper.readValue(request.inputStream, RefundNotifyResponse::class.java)
             if (response != null && response.isOk()) {
@@ -334,7 +336,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 throw WeixinPayException("退款结果通知失败:${response?.returnMsg ?: "无结果响应"}", response)
             }
         } catch (e: Exception) {
-            log.error("退款结果通知处理失败", e)
+            error.accept(e)
         }
         return WeixinPayResponse.fail()
     }

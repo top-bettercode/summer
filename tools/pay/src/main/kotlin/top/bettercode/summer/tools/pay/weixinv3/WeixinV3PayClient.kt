@@ -143,7 +143,8 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
         RefundService.Builder().httpClient(httpClient).build()
     }
 
-    fun <T> handleNotify(request: HttpServletRequest, clazz: Class<T>, consumer: Consumer<T>): Any {
+    @JvmOverloads
+    fun <T> handleNotify(request: HttpServletRequest, clazz: Class<T>, consumer: Consumer<T>, error: Consumer<Exception> = Consumer<Exception> { log.error("handle notify failed", it) }): Any {
         val requestBody = request.reader.readText()
         val wechatpayNonce = request.getHeader("Wechatpay-Nonce")
         val wechatpayTimestamp = request.getHeader("Wechatpay-Timestamp")
@@ -170,7 +171,7 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
                             "message" to "sign verification failed"))
         } catch (e: Exception) {
             // 如果处理失败，应返回 4xx/5xx 的状态码，例如 500 INTERNAL_SERVER_ERROR
-            log.error("handle notify failed", e)
+            error.accept(e)
             ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(mapOf("code" to "FAIL",
