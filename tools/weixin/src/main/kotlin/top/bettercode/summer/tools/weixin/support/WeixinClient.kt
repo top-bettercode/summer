@@ -97,6 +97,7 @@ open class WeixinClient<T : IWeixinProperties>(
         }
     }
 
+    @Deprecated("多环境下会造成频繁失效，请使用getStableAccessToken()")
     @JvmOverloads
     @Synchronized
     fun getBaseAccessToken(retries: Int = 1): String {
