@@ -28,6 +28,18 @@ internal class OffiaccountClientTest : BaseTest() {
     }
 
     @Test
+    fun getApiQuota() {
+        val result = offiaccountClient.getApiQuota("/cgi-bin/stable_token")
+        System.err.println(StringUtil.json(result, true))
+    }
+
+    @Test
+    fun clearQuotaByAppSecret() {
+        val result = offiaccountClient.clearQuotaByAppSecret()
+        System.err.println(StringUtil.json(result, true))
+    }
+
+    @Test
     fun getJsapiTicket() {
         val result = offiaccountClient.getJsapiTicket()
         System.err.println(StringUtil.json(result, true))

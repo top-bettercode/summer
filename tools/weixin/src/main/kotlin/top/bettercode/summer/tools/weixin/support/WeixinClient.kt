@@ -10,6 +10,7 @@ import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
 import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
+import top.bettercode.summer.tools.weixin.support.offiaccount.entity.ApiQuota
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.StableTokenRequest
@@ -101,6 +102,13 @@ open class WeixinClient<T : IWeixinProperties>(
         return putIfAbsent(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getToken(retries)
         }
+    }
+
+    /**
+     *https://developers.weixin.qq.com/doc/offiaccount/openApi/get_api_quota.html
+     */
+    fun getApiQuota(cgiPath: String): ApiQuota {
+        return postForObject<ApiQuota>("https://api.weixin.qq.com/cgi-bin/openapi/quota/get?access_token=${getStableAccessToken()}", mapOf("cgi_path" to cgiPath))
     }
 
     /**
