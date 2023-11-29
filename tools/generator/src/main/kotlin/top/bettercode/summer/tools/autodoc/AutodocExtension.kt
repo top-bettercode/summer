@@ -118,7 +118,7 @@ open class AutodocExtension(
             }-$modulePyName.postman_collection.json"
     )
 
-    private fun listFileMap(): Map<String, Pair<File?, File?>> {
+    private val moduleMap: Map<String, DocModule> by lazy {
         val sourceFile = source
         val rootFiles = if (rootSource?.exists() == true) {
             rootSource!!.listFiles { file -> file.isDirectory }
@@ -142,15 +142,12 @@ open class AutodocExtension(
                 fileMap[it.name] = pair.first to it
             }
         }
-        return fileMap
+        fileMap.map { it.key to DocModule(it.value.first, it.value.second) }.filter { it.second.collections.isNotEmpty() }.toMap()
     }
 
     fun listModuleNames(action: (String, String) -> Unit) {
         val pynames = mutableMapOf<String, Int>()
-        listFileMap().values.toList().sortedBy {
-            (it.first?.name ?: it.second?.name!!).replace(".", "")
-        }.forEach { u ->
-            val name = u.first?.name ?: u.second?.name!!
+        moduleMap.keys.sortedWith { p0, p1 -> compareVersion(p0!!, p1!!) }.forEach { name ->
             action(name, pynames.pyname(name))
         }
     }
@@ -158,10 +155,8 @@ open class AutodocExtension(
 
     fun listModules(action: (DocModule, String) -> Unit) {
         val pynames = mutableMapOf<String, Int>()
-        listFileMap().values.forEach { u ->
-            val name = u.first?.name ?: u.second?.name!!
-            val pyname = pynames.pyname(name)
-            action(DocModule(u.first, u.second), pyname)
+        moduleMap.forEach { (k, v) ->
+            action(v, pynames.pyname(k))
         }
     }
 
@@ -181,6 +176,69 @@ open class AutodocExtension(
                 this[pyname] = 0
             return pyname
         }
+    }
+
+
+    internal val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
+    internal val versionTailRegex = "^([A-Za-z]+?)(\\d*)$".toRegex()
+
+    /**
+     * 比较版本信息
+
+     * @param version1 版本1
+     * *
+     * @param version2 版本2
+     * *
+     * @return int
+     */
+    fun compareVersion(version1: String, version2: String): Int {
+        if (version1 == version2) {
+            return 0
+        }
+        val separator = "[.-]"
+        val version1s = version1.split(separator.toRegex()).toMutableList()
+        val version2s = version2.split(separator.toRegex()).toMutableList()
+
+        if (version1s.size < version2s.size) {
+            version1s.addAll(List(version2s.size - version1s.size) { "" })
+        } else {
+            version2s.addAll(List(version1s.size - version2s.size) { "" })
+        }
+        val length = version1s.size
+
+        for (i in 0 until length) {
+            val toIntOrNull2 = version2s[i].toIntOrNull()
+            val toIntOrNull1 = version1s[i].toIntOrNull()
+            if (toIntOrNull1 == null && toIntOrNull2 != null)
+                return -1
+            else if (toIntOrNull1 != null && toIntOrNull2 == null)
+                return 1
+            var v2 = toIntOrNull2
+                    ?: versionTails.indexOf(
+                            version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                    )
+            var v1 = toIntOrNull1
+                    ?: versionTails.indexOf(
+                            version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                    )
+            if (v1 != -1 && v1 == v2 && toIntOrNull1 == null) {
+                v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
+                v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
+            }
+            if (v1 == -1 || v2 == -1) {
+                val result = version1s[i].compareTo(version2s[i])
+                if (result != 0) {
+                    return result
+                }
+            }
+            if (v2 > v1) {
+                return -1
+            } else if (v2 < v1) {
+                return 1
+            }
+            // 相等 比较下一组值
+        }
+        return 0
     }
 
 }
