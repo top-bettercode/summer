@@ -88,7 +88,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
     //--------------------------------------------
 
-    override fun detach(entity: T) {
+    override fun detach(entity: Any) {
         entityManager.detach(entity)
     }
 
