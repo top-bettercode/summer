@@ -85,15 +85,16 @@ open class WeixinClient<T : IWeixinProperties>(
         cache.invalidateAll()
     }
 
-    @Synchronized
     protected fun putIfAbsent(key: String, callable: Callable<CachedValue>): String {
-        val cachedValue = getCache(key)
-        return if (cachedValue == null || cachedValue.expired) {
-            val value = callable.call()
-            putCache(key, value)
-            value.value
-        } else {
-            cachedValue.value
+        synchronized(this) {
+            val cachedValue = getCache(key)
+            return if (cachedValue == null || cachedValue.expired) {
+                val value = callable.call()
+                putCache(key, value)
+                value.value
+            } else {
+                cachedValue.value
+            }
         }
     }
 
@@ -103,7 +104,6 @@ open class WeixinClient<T : IWeixinProperties>(
      */
     @Deprecated("多环境下会造成频繁失效，请使用getStableAccessToken()")
     @JvmOverloads
-    @Synchronized
     fun getBaseAccessToken(retries: Int = 1): String {
         return putIfAbsent(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getToken(retries)
@@ -145,7 +145,6 @@ open class WeixinClient<T : IWeixinProperties>(
     }
 
     @JvmOverloads
-    @Synchronized
     fun getStableAccessToken(retries: Int = 1): String {
         return putIfAbsent(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getStableToken(false, retries)

@@ -1,38 +1,33 @@
 package top.bettercode.summer.logging.logback
 
 import org.slf4j.Marker
-import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * @author Peter Wu
+ * A alarm implementation of the [Marker] interface.
+ *
  */
 class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
     private val name: String
-    private var refereceList: MutableList<Marker>? = null
+    private val referenceList: MutableList<Marker>
     override fun getName(): String {
         return name
     }
 
-    @Synchronized
     override fun add(reference: Marker) {
         // no point in adding the reference multiple times
         if (this.contains(reference)) {
             return
         } else if (reference.contains(this)) { // avoid recursion
-            // a potential reference should not its future "parent" as a reference
+            // a potential reference should not hold its future "parent" as a reference
             return
         } else {
-            // let's add the reference
-            if (refereceList == null) {
-                refereceList = Vector()
-            }
-            refereceList!!.add(reference)
+            referenceList.add(reference)
         }
     }
 
-    @Synchronized
     override fun hasReferences(): Boolean {
-        return refereceList != null && refereceList!!.size > 0
+        return referenceList.size > 0
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("hasReferences()"))
@@ -40,28 +35,12 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
         return hasReferences()
     }
 
-    @Synchronized
     override fun iterator(): Iterator<Marker> {
-        return if (refereceList != null) {
-            refereceList!!.iterator()
-        } else {
-            Collections.emptyIterator()
-        }
+        return referenceList.iterator()
     }
 
-    @Synchronized
     override fun remove(referenceToRemove: Marker): Boolean {
-        if (refereceList == null) {
-            return false
-        }
-        val size = refereceList!!.size
-        for (i in 0 until size) {
-            if (referenceToRemove == refereceList!![i]) {
-                refereceList!!.removeAt(i)
-                return true
-            }
-        }
-        return false
+        return referenceList.remove(referenceToRemove)
     }
 
     override fun contains(other: Marker): Boolean {
@@ -69,8 +48,8 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
             return true
         }
         if (hasReferences()) {
-            for (i in refereceList!!.indices) {
-                if (refereceList!![i].contains(other)) {
+            for (ref in referenceList) {
+                if (ref.contains(other)) {
                     return true
                 }
             }
@@ -86,8 +65,8 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
             return true
         }
         if (hasReferences()) {
-            for (i in refereceList!!.indices) {
-                if (refereceList!![i].contains(name)) {
+            for (ref in referenceList) {
+                if (ref.contains(name)) {
                     return true
                 }
             }
@@ -95,20 +74,21 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
         return false
     }
 
-    /*
-     * BEGIN Modification in logstash-logback-encoder to make this constructor public
-     */
     init {
-        /*
-       * END Modification in logstash-logback-encoder to make this constructor public
-       */
         this.name = name
+        referenceList = CopyOnWriteArrayList()
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null) return false
-        if (other !is Marker) return false
+        if (this === other) {
+            return true
+        }
+        if (other == null) {
+            return false
+        }
+        if (other !is Marker) {
+            return false
+        }
         return name == other.name
     }
 
@@ -122,7 +102,7 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
         }
         val it = this.iterator()
         var reference: Marker
-        val sb = StringBuffer(getName())
+        val sb = StringBuilder(getName())
         sb.append(' ').append(OPEN)
         while (it.hasNext()) {
             reference = it.next()
@@ -136,6 +116,7 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
     }
 
     companion object {
+        private const val serialVersionUID = -2849567615646933777L
         private const val OPEN = "[ "
         private const val CLOSE = " ]"
         private const val SEP = ", "
