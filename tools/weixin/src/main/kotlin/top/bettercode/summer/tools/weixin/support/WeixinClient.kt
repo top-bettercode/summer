@@ -144,8 +144,9 @@ open class WeixinClient<T : IWeixinProperties>(
                     accessToken.accessToken!!,
                     Duration.ofSeconds(accessToken.expiresIn!!.toLong())
             )
-        } else if (retries < properties.maxRetries && accessToken.errcode != 40164) {
+        } else if (retries < properties.maxRetries && accessToken.errcode != 40164 && accessToken.errcode != 45009) {
             //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。
+            //45009 reach max api daily quota limit rid: 6566e923-2f119a17-68648caf
             getStableToken(forceRefresh = forceRefresh, retries = retries + 1)
         } else {
             throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
