@@ -126,7 +126,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 ).get()
                 try {
                     var logsViewPath = environment.getProperty("summer.logging.files.view-path")
-                    val logsPath = environment.getProperty("summer.logging.files.path") ?:logsViewPath?: "logs"
+                    val logsPath = environment.getProperty("summer.logging.files.path")
+                            ?: logsViewPath ?: "logs"
                     logsViewPath = logsViewPath ?: logsPath
 
                     val managementPath =
@@ -678,7 +679,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
     companion object {
         const val FILE_LOG_PATTERN =
-                "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+                "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:%5p} \${PID: } --- [%t] %-40.40logger{40} %-25file:%-5line :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
         private val packageScanClassResolver = PackageScanClassResolver()
         fun defaultSpiltMarkers(defaultPackageName: String? = null): List<String> {
             var packageNames = arrayOf("top.bettercode.summer")

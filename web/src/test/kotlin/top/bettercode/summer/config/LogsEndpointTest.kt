@@ -7,7 +7,10 @@ import org.springframework.core.env.Environment
 import org.springframework.mock.env.MockEnvironment
 import org.springframework.mock.web.MockHttpServletResponse
 import top.bettercode.summer.logging.WebsocketProperties
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
 
 /**
  *
@@ -27,6 +30,6 @@ class LogsEndpointTest {
                 WebEndpointProperties()
         )
         logsEndpoint.path("log_total.log",false,null)
-        println(response.contentAsString)
+        println(String(GZIPInputStream(ByteArrayInputStream(response.contentAsByteArray)).readBytes()))
     }
 }
