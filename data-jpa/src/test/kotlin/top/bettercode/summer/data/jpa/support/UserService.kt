@@ -19,6 +19,7 @@ class UserService(repository: UserRepository) : BaseService<User, Int, UserRepos
     fun findSave() {
         val first = findFirst(null).orElse(null)
         first.firstName = "wu"
+        repository.clear()
     }
 
     @Transactional
@@ -26,20 +27,22 @@ class UserService(repository: UserRepository) : BaseService<User, Int, UserRepos
         findAll().forEach {
             it.firstName = "wu"
         }
+        repository.clear()
+    }
+
+    @Transactional
+    fun findByFirstNameSave(firstName: String) {
+        val user = repository.findByFirstName(firstName, Pageable.unpaged())
+        user?.forEach {
+            it?.firstName = "wu"
+        }
+        repository.clear()
     }
 
     @Transactional
     fun findMybatisSave(firstName: String) {
         val user = repository.selectOneByMybatis(firstName)
         user?.firstName = "wu"
-    }
-
-    @Transactional
-    fun findMybatisAllSave(firstName: String) {
-        val user = repository.findByFirstName(firstName, Pageable.unpaged())
-        user?.forEach {
-            it?.firstName = "wu"
-        }
     }
 
     @Transactional

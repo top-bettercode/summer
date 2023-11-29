@@ -48,14 +48,15 @@ class UserServiceTest {
     }
 
     @Test
+    fun findByFirstNameSave() {
+        userService.findByFirstNameSave("Dave2")
+    }
+
+    @Test
     fun findMybatisSave() {
         userService.findMybatisSave("Dave2")
     }
 
-    @Test
-    fun findMybatisAllSave() {
-        userService.findMybatisAllSave("Dave2")
-    }
 
     @Test
     fun findMybatisAllSizeSave() {
