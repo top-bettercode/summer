@@ -124,7 +124,7 @@ open class WeixinClient<T : IWeixinProperties>(
     @JvmOverloads
     fun getStableAccessToken(retries: Int = 1): String {
         return putIfAbsent(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
-            getStableToken(true, retries)
+            getStableToken(false, retries)
         }
     }
 
