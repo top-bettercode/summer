@@ -98,6 +98,7 @@ open class WeixinClient<T : IWeixinProperties>(
     }
 
     @JvmOverloads
+    @Synchronized
     fun getBaseAccessToken(retries: Int = 1): String {
         return putIfAbsent(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getToken(retries)
@@ -139,6 +140,7 @@ open class WeixinClient<T : IWeixinProperties>(
     }
 
     @JvmOverloads
+    @Synchronized
     fun getStableAccessToken(retries: Int = 1): String {
         return putIfAbsent(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getStableToken(false, retries)
