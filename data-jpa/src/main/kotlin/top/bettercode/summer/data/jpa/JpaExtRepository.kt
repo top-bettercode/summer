@@ -23,6 +23,10 @@ import javax.persistence.EntityManager
 interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor<T>, JpaSpecificationExecutor<T>, RecycleExecutor<T, ID> {
     val entityManager: EntityManager
 
+    fun detach(entity: T)
+
+    fun clear()
+
     fun lowLevelUpdate(spec: UpdateSpecification<T>): Long
 
     fun physicalUpdate(spec: UpdateSpecification<T>): Long

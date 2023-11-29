@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.test
 
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,28 +23,60 @@ class UserServiceTest {
 
     @BeforeEach
     fun setUp() {
-        for (i in 0..20) {
+        for (i in 0..1) {
             val dave = User("Dave2", "Matthews")
             userService.save(dave)
         }
+        System.err.println("--------------------------------------------------------")
+    }
 
+    @AfterEach
+    fun tearDown() {
+        System.err.println("--------------------------------------------------------")
+        userService.deleteAll()
+        userService.getRepository().cleanRecycleBin()
     }
 
     @Test
-    fun findAllPageByPage1() {
-        val list = userService.findAllPageByPage() {
+    fun findSave() {
+        userService.findSave()
+    }
+
+    @Test
+    fun findAllSave() {
+        userService.findAllSave()
+    }
+
+    @Test
+    fun findMybatisSave() {
+        userService.findMybatisSave("Dave2")
+    }
+
+    @Test
+    fun findMybatisAllSave() {
+        userService.findMybatisAllSave("Dave2")
+    }
+
+    @Test
+    fun findMybatisAllSizeSave() {
+        userService.findMybatisAllSizeSave()
+    }
+
+    @Test
+    fun findAllPageByPageDefault() {
+        val list = userService.findAllPageByPage {
             userService.findAll(it)
         }
         System.err.println(list.size)
-        Assertions.assertEquals(21, list.size)
+        Assertions.assertEquals(2, list.size)
     }
 
     @Test
     fun findAllPageByPage() {
-        val list = userService.findAllPageByPage(10) {
+        val list = userService.findAllPageByPage(1) {
             userService.findAll(it)
         }
         System.err.println(list.size)
-        Assertions.assertEquals(21, list.size)
+        Assertions.assertEquals(2, list.size)
     }
 }

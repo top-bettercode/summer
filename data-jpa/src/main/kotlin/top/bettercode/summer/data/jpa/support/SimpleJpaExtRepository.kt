@@ -87,6 +87,15 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     //--------------------------------------------
+
+    override fun detach(entity: T) {
+        entityManager.detach(entity)
+    }
+
+    override fun clear() {
+        entityManager.clear()
+    }
+
     @Transactional
     override fun deleteById(id: ID) {
         var mdc = false

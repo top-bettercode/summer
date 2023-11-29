@@ -69,6 +69,7 @@ interface UserRepository : BaseRepository<User, Int>, QuerydslPredicateExecutor<
     fun selectByMybatisEntity(@Param("user") @org.apache.ibatis.annotations.Param("user") user: User?, pageable: Pageable?): List<User?>?
     fun selectByMybatisSort(firstName: String?, sort: Sort?): List<User?>?
     fun selectByMybatisSort(firstName: String?, pageable: Pageable?): Page<User?>?
+    @QueryFirst
     fun selectOneByMybatis(firstName: String?): User?
 
     @Transactional
