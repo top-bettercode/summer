@@ -679,7 +679,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
     companion object {
         const val FILE_LOG_PATTERN =
-                "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:%5p} \${PID: } --- [%t] %-40.40logger{40} %30file:%-5line :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+                "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:%5p} \${PID: } --- [%-15.15t] %-40.40logger{40} %30file:%-5line :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
         private val packageScanClassResolver = PackageScanClassResolver()
         fun defaultSpiltMarkers(defaultPackageName: String? = null): List<String> {
             var packageNames = arrayOf("top.bettercode.summer")
