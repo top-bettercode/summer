@@ -9,8 +9,8 @@ import top.bettercode.summer.logging.logback.AlarmAppender
 open class SlackAppender(
         private val properties: top.bettercode.summer.logging.SlackProperties,
         private val warnSubject: String,
-        private val logsPath: String,
-        managementPath: String,
+        logsPath: String,
+        managementLogPath: String,
         logPattern: String
 ) : AlarmAppender(
         properties.cyclicBufferSize,
@@ -21,7 +21,7 @@ open class SlackAppender(
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val slackClient: SlackClient = SlackClient(properties.authToken, managementPath)
+    private val slackClient: SlackClient = SlackClient(properties.authToken, logsPath, managementLogPath)
 
     override fun start() {
         if (slackClient.channelExist(properties.channel)) {
@@ -49,8 +49,7 @@ open class SlackAppender(
                     timeStamp,
                     title,
                     initialComment,
-                    message,
-                    logsPath
+                    message
             )
         } catch (e: Exception) {
             log.error(

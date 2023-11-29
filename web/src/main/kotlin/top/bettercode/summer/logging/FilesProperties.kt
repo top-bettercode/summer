@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @Suppress("ConfigurationProperties")
 @ConfigurationProperties("summer.logging.files")
 open class FilesProperties {
+    var viewPath: String? = null
     var path: String? = null
     var maxFileSize = "10MB"
     var maxHistory = 0

@@ -22,7 +22,8 @@ import java.io.File
  */
 class SlackClient(
         private val authToken: String,
-        private val managementPath: String
+        private val logsPath: String,
+        private val managementLogPath: String
 ) {
 
     private val api = "https://slack.com/api/"
@@ -97,8 +98,7 @@ class SlackClient(
             timeStamp: Long,
             title: String,
             initialComment: String,
-            message: List<String>,
-            logsPath: String
+            message: List<String>
     ): Boolean {
         val params = LinkedMultiValueMap<String, Any>()
         params.add("token", authToken)
@@ -132,11 +132,11 @@ class SlackClient(
 
             val linkTitle = "${filename}.gz#$anchor"
 
-            val logUrl = apiHost + managementPath
+            val logUrl = apiHost + managementLogPath
             params["attachments"] = arrayOf(
                     mapOf(
                             "title" to linkTitle,
-                            "title_link" to "$logUrl/logs/${linkTitle}"
+                            "title_link" to "$logUrl/${linkTitle}"
                     )
             )
 

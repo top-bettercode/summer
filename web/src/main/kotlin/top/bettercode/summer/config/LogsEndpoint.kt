@@ -92,23 +92,22 @@ class LogsEndpoint(
 
         if ("real-time" != path) {
             val paths = path.split(",")
-            if (paths[0] == "daily") {
+            if (paths.contains("daily")) {
                 val today = TimeUtil.now().format("yyyy-MM-dd")
-                if (paths.size == 1) {
+                val dir = File(loggingFilesPath, requestPath.substringBeforeLast("/daily"))
+                val index = paths.indexOf("daily")
+                val dailyPath = paths.drop(index)
+                if (dailyPath.size == 1) {
                     val filenames =
-                            File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-") }
-                                    ?.map {
-                                        it.nameWithoutExtension.replace(
-                                                Regex("all-(\\d{4}-\\d{2}-\\d{2})-\\d+"),
-                                                "$1"
-                                        )
-                                    }?.toMutableSet() ?: mutableSetOf()
+                            dir.listFiles()?.filter { file -> file.name.startsWith("all-") }
+                                    ?.map { it.nameWithoutExtension.replace(Regex("all-(\\d{4}-\\d{2}-\\d{2})-\\d+"), "$1") }?.toMutableSet()
+                                    ?: mutableSetOf()
                     if (!filenames.contains(today)) {
                         filenames.add(today)
                     }
                     index(filenames.map { File(it) }.toTypedArray(), false, requestPath)
-                } else if (paths.size == 2) {
-                    var logPattern = paths[1]
+                } else if (dailyPath.size == 2) {
+                    var logPattern = dailyPath[1]
                     val html =
                             if (logPattern.endsWith(".html")) {
                                 logPattern = logPattern.substringBeforeLast(".html")
@@ -117,10 +116,10 @@ class LogsEndpoint(
 
                     val matchCurrent = today.startsWith(logPattern)
                     val files =
-                            File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-$logPattern") || matchCurrent && filename == "all.log" }
+                            dir.listFiles()?.filter { file -> file.name.startsWith("all-$logPattern") || matchCurrent && file.name == "all.log" }?.toList()
 
                     if (!files.isNullOrEmpty()) {
-                        files.sortWith(compareBy { it.lastModified() })
+                        files.sortedWith(compareBy { it.lastModified() })
 
                         if (html) {
                             val logMsgs = mutableListOf<LogMsg>()
@@ -174,7 +173,7 @@ class LogsEndpoint(
             } else {
                 var file = File(loggingFilesPath, requestPath)
                 if (!file.exists() && file.name.startsWith("all-")) {
-                    file = File(loggingFilesPath, "all.log")
+                    file = File(file.parentFile, "all.log")
                 }
                 if (file.isFile) {
                     if (!file.exists()) {
@@ -383,12 +382,14 @@ class LogsEndpoint(
                                 }       -"
                         )
                     }
+                }
+                val hasAll = files.any { it.name.startsWith("all-") || it.name == "all.log" }
+                if (hasAll)
                     writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$basePath/daily\">daily/</a>                                        ${
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
                                 TimeUtil.now().format(dateTimeFormatter)
                             }       -"
                     )
-                }
 
                 files.sortWith(comparator)
                 files.forEach {

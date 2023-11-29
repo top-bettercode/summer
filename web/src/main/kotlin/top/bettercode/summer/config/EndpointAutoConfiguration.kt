@@ -83,7 +83,7 @@ class EndpointAutoConfiguration {
     @ConditionalOnWebApplication
     @Bean
     fun logsEndpoint(
-            @Value("\${summer.logging.files.path}") loggingFilesPath: String,
+            @Value("\${summer.logging.files.view-path:#{'\${summer.logging.files.path}'}}") loggingFilesPath: String,
             environment: Environment,
             websocketProperties: WebsocketProperties,
             serverProperties: ServerProperties,
