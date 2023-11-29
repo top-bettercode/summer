@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit
 /**
  * 公众号接口
  *
+ *
  * @author Peter Wu
  */
 open class WeixinClient<T : IWeixinProperties>(
@@ -100,6 +101,14 @@ open class WeixinClient<T : IWeixinProperties>(
         return putIfAbsent(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getToken(retries)
         }
+    }
+
+    /**
+     * 使用AppSecret重置 API 调用次数
+     * https://developers.weixin.qq.com/doc/offiaccount/openApi/clearQuotaByAppSecret.html
+     */
+    fun clearQuotaByAppSecret(): WeixinResponse {
+        return postForObject<WeixinResponse>("https://api.weixin.qq.com/cgi-bin/clear_quota/v2?appid=${properties.appId}&appsecret=${properties.secret}")
     }
 
     private fun getToken(retries: Int = 1): CachedValue {
