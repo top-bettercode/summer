@@ -97,6 +97,10 @@ open class WeixinClient<T : IWeixinProperties>(
         }
     }
 
+    /**
+     * 获取接口调用凭据
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-access-token/getAccessToken.html
+     */
     @Deprecated("多环境下会造成频繁失效，请使用getStableAccessToken()")
     @JvmOverloads
     @Synchronized
@@ -164,9 +168,10 @@ open class WeixinClient<T : IWeixinProperties>(
                     accessToken.accessToken!!,
                     Duration.ofSeconds(accessToken.expiresIn!!.toLong())
             )
-        } else if (retries < properties.maxRetries && accessToken.errcode != 40164 && accessToken.errcode != 45009) {
+        } else if (retries < properties.maxRetries && accessToken.errcode != 40164 && accessToken.errcode != 45009 && accessToken.errcode != 45011) {
             //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。
-            //45009 reach max api daily quota limit rid: 6566e923-2f119a17-68648caf
+            //45009 reach max api daily quota limit 	调用超过天级别频率限制。可调用clear_quota接口恢复调用额度。
+            //45011 api minute-quota reach limit  mustslower  retry next minute 	API 调用太频繁，请稍候再试
             getStableToken(forceRefresh = forceRefresh, retries = retries + 1)
         } else {
             throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
