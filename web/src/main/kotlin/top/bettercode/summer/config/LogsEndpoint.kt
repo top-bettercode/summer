@@ -320,7 +320,8 @@ class LogsEndpoint(
         val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()
         gzipOutputStream.use { writer ->
             writer.appendLine(prettyMessageHTMLLayout.fileHeader)
-            writer.appendLine(prettyMessageHTMLLayout.getLogsHeader())
+            val header = prettyMessageHTMLLayout.getLogsHeader()
+            writer.appendLine(header)
 
             if (!logMsgs.isNullOrEmpty()) {
                 val size = logMsgs.size
@@ -343,8 +344,6 @@ class LogsEndpoint(
             )
             writer.appendLine(prettyMessageHTMLLayout.fileFooter)
         }
-        gzipOutputStream.flush()
-        response.flushBuffer()
     }
 
 
@@ -418,6 +417,40 @@ class LogsEndpoint(
         }
     }
 
+    private val comparator: Comparator<File> = LogFileNameComparator()
+
+
+    private val units: Array<String> = arrayOf("B", "K", "M", "G", "T", "P", "E")
+
+    /**
+     * 返回易读的值
+     *
+     * @param value 值，单位B
+     * @return 易读的值
+     */
+    private fun prettyValue(value: Long): String {
+        if (value == 0L) {
+            return "-"
+        } else {
+            var newValue = value.toDouble()
+            var index = 0
+            var lastValue = 0.0
+            while (newValue / 1024 >= 1 && index < units.size - 1) {
+                lastValue = newValue
+                newValue /= 1024
+                index++
+            }
+            var newScale = index - 2
+            newScale = max(newScale, 0)
+            val result =
+                    if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
+                            BigDecimal(1024), RoundingMode.UP
+                    )
+                            .setScale(newScale, RoundingMode.UP).toString()
+            return StringUtil.trimFractionTrailing(result) + units[index]
+        }
+    }
+
     private fun readLogMsgs(inputStream: InputStream, gzip: Boolean = false): List<LogMsg> {
         val lines = if (gzip) {
             GZIPInputStream(inputStream).bufferedReader().lines()
@@ -451,44 +484,4 @@ class LogsEndpoint(
         }
         return msgs
     }
-
-    private val comparator: Comparator<File> = LogFileNameComparator()
-
-
-    private val units: Array<String> = arrayOf("B", "K", "M", "G", "T", "P", "E")
-
-    /**
-     * 返回易读的值
-     *
-     * @param value 值，单位B
-     * @return 易读的值
-     */
-    private fun prettyValue(value: Long): String {
-        if (value == 0L) {
-            return "-"
-        } else {
-            var newValue = value.toDouble()
-            var index = 0
-            var lastValue = 0.0
-            while (newValue / 1024 >= 1 && index < units.size - 1) {
-                lastValue = newValue
-                newValue /= 1024
-                index++
-            }
-            var newScale = index - 2
-            newScale = max(newScale, 0)
-            val result =
-                    if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
-                            BigDecimal(1024), RoundingMode.UP
-                    )
-                            .setScale(newScale, RoundingMode.UP).toString()
-            return trimTrailing(result) + units[index]
-        }
-    }
-
-    private fun trimTrailing(value: String): String {
-        return if (value.contains(".")) value.trimEnd('0')
-                .trimEnd('.') else value
-    }
-
 }

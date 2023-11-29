@@ -17,9 +17,14 @@ import java.util.*
 class PrettyMessageHTMLLayout : HTMLLayout() {
 
     companion object {
-        fun anchor(msg: String): String =
-                msg.substringBefore(" ---").split(' ').filter { it.isNotBlank() }.joinToString("-")
+        fun anchor(msg: String): String {
+            val s = msg.trim().substringBefore(StringUtil.LINE_SEPARATOR)
+            val regex = Regex(".*(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3} +[A-Z]+) .*")
+            return if (s.matches(regex)) {
+                s.replace(regex, "$1").split(' ').filter { it.isNotBlank() }.joinToString("-")
                         .lowercase(Locale.getDefault())
+            } else ""
+        }
     }
 
     init {

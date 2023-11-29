@@ -10,11 +10,11 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 @Disabled
 class SlackClientTest {
 
-    private val slackClient = SlackClient("", "/actuator")
+    private val slackClient = SlackClient("", "./build","/actuator")
 
     @Test
     fun errorToken() {
-        println(StringUtil.json(SlackClient("xoxb-", "/actuator").channelsList(), true))
+        println(StringUtil.json(SlackClient("xoxb-", "./build","/actuator").channelsList(), true))
     }
 
     @Test
@@ -49,8 +49,7 @@ class SlackClientTest {
                                 System.currentTimeMillis(),
                                 "test",
                                 "test",
-                                listOf("123testtest"),
-                                "build"
+                                listOf("123testtest")
                         ), true
                 )
         )
