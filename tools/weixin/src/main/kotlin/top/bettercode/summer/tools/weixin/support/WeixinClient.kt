@@ -100,7 +100,7 @@ open class WeixinClient<T : IWeixinProperties>(
     protected fun putIfAbsent(key: String, callable: Callable<CachedValue>): String {
         synchronized(this) {
             val cachedValue = getCache(key)
-            return if (cachedValue == null || cachedValue.expired) {
+            return if (cachedValue == null || cachedValue.expired()) {
                 val value = callable.call()
                 putCache(key, value)
                 value.value

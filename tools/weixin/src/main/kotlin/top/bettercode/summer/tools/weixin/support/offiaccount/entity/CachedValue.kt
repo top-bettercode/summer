@@ -10,5 +10,7 @@ import java.time.LocalDateTime
  */
 data class CachedValue(val value: String, val expiresIn: Duration, val expiresTime: LocalDateTime = LocalDateTime.now().plus(expiresIn)) : Serializable {
 
-    val expired: Boolean by lazy { expiresTime <= LocalDateTime.now() }
+    fun expired(): Boolean {
+        return !expiresTime.isBefore(LocalDateTime.now())
+    }
 }
