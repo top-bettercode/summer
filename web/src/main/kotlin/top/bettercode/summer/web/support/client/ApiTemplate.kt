@@ -50,6 +50,9 @@ open class ApiTemplate @JvmOverloads constructor(
     constructor(collectionName: String?, name: String?, connectTimeout: Int, readTimeout: Int) : this(collectionName, name, null, connectTimeout, readTimeout)
 
     init {
+        System.setProperty("sun.net.client.defaultConnectTimeout", connectTimeout.toString())
+        System.setProperty("sun.net.client.defaultReadTimeout", readTimeout.toString())
+
         val clientHttpRequestFactory = SimpleClientHttpRequestFactory()
         //Connect timeout
         clientHttpRequestFactory.setConnectTimeout(connectTimeout)
