@@ -18,6 +18,7 @@ internal class CorpClientTest : BaseTest() {
     @Autowired
     lateinit var corpClient: CorpClient
 
+    @Suppress("DEPRECATION")
     @Test
     fun getBaseAccessToken() {
         val result = corpClient.getBaseAccessToken()

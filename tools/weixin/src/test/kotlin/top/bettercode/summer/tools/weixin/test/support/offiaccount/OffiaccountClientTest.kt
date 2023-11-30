@@ -21,6 +21,7 @@ internal class OffiaccountClientTest : BaseTest() {
     @Autowired
     lateinit var offiaccountClient: OffiaccountClient
 
+    @Suppress("DEPRECATION")
     @Test
     fun getBaseAccessToken() {
         val result = offiaccountClient.getBaseAccessToken()
