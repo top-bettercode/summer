@@ -48,8 +48,10 @@ open class CorpClient(properties: ICorpProperties) :
         )
         return if (result.isOk) {
             result
-        } else if (40001 == result.errcode) {
-            clearCache()
+        } else if (40001 == result.errcode || 42001 == result.errcode) {
+            //40001 access_token无效
+            //42001 access_token过期
+            clearStableTokenCache()
             getWebPageAccessToken(code, retries)
         } else if (retries < properties.maxRetries) {
             getWebPageAccessToken(code, retries + 1)

@@ -85,6 +85,18 @@ open class WeixinClient<T : IWeixinProperties>(
         cache.invalidateAll()
     }
 
+    protected open fun clearCache(key: String) {
+        cache.invalidate(key)
+    }
+
+    protected open fun clearBaseTokenCache() {
+        clearCache(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId)
+    }
+
+    protected open fun clearStableTokenCache() {
+        clearCache(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId)
+    }
+
     protected fun putIfAbsent(key: String, callable: Callable<CachedValue>): String {
         synchronized(this) {
             val cachedValue = getCache(key)

@@ -53,8 +53,10 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         )
         return if (result.isOk) {
             result
-        } else if (40001 == result.errcode) {
-            clearCache()
+        } else if (40001 == result.errcode || 42001 == result.errcode) {
+            //40001 access_token无效
+            //42001 access_token过期
+            clearStableTokenCache()
             getuserphonenumber(code, retries)
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
@@ -78,8 +80,10 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         )
         return if (result.isOk) {
             result
-        } else if (40001 == result.errcode) {
-            clearCache()
+        } else if (40001 == result.errcode || 42001 == result.errcode) {
+            //40001 access_token无效
+            //42001 access_token过期
+            clearStableTokenCache()
             sendSubscribeMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendSubscribeMsg(request, retries + 1)
@@ -107,8 +111,10 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         )
         return if (result.isOk) {
             result
-        } else if (40001 == result.errcode) {
-            clearCache()
+        } else if (40001 == result.errcode || 42001 == result.errcode) {
+            //40001 access_token无效
+            //42001 access_token过期
+            clearStableTokenCache()
             sendUniformMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendUniformMsg(request, retries + 1)
