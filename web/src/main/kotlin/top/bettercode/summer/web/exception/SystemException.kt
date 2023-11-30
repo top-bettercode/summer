@@ -88,19 +88,14 @@ open class SystemException : RuntimeException {
         this.data = data
     }
 
-    constructor(httpStatusCode: Int, code: String, message: String?) : super(message) {
-        this.httpStatusCode = httpStatusCode
-        this.code = code
-        data = null
-    }
-
     constructor(httpStatusCode: Int, code: String, message: String?, cause: Throwable?) : super(message, cause) {
         this.httpStatusCode = httpStatusCode
         this.code = code
         data = null
     }
 
-    constructor(httpStatusCode: Int, code: String, message: String?, data: Any?) : super(message) {
+    @JvmOverloads
+    constructor(httpStatusCode: Int, code: String, message: String?, data: Any? = null, cause: Throwable? = null) : super(message, cause) {
         this.httpStatusCode = httpStatusCode
         this.code = code
         this.data = data
