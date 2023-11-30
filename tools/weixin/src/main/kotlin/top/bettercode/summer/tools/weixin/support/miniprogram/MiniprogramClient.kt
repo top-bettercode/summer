@@ -4,6 +4,7 @@ import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.weixin.properties.IMiniprogramProperties
+import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
@@ -18,9 +19,11 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.entity.UniformMsgR
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-open class MiniprogramClient(properties: IMiniprogramProperties) :
+open class MiniprogramClient(properties: IMiniprogramProperties,
+                             cache: IWeixinCache) :
         WeixinClient<IMiniprogramProperties>(
                 properties,
+                cache,
                 "第三方平台",
                 "微信小程序",
                 LOG_MARKER

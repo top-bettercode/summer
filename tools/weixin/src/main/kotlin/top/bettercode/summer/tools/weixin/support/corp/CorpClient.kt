@@ -4,6 +4,7 @@ import org.slf4j.MarkerFactory
 import org.springframework.web.client.getForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.weixin.properties.ICorpProperties
+import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.corp.CorpClient.Companion.LOG_MARKER
@@ -16,9 +17,11 @@ import java.net.URLEncoder
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-open class CorpClient(properties: ICorpProperties) :
+open class CorpClient(properties: ICorpProperties,
+                      cache: IWeixinCache) :
         WeixinClient<ICorpProperties>(
                 properties,
+                cache,
                 "第三方平台",
                 "微信企业号",
                 LOG_MARKER

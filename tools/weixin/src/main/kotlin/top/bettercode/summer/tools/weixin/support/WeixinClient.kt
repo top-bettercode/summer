@@ -1,8 +1,6 @@
 package top.bettercode.summer.tools.weixin.support
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -17,7 +15,6 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.entity.StableToken
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.time.Duration
 import java.util.concurrent.Callable
-import java.util.concurrent.TimeUnit
 
 /**
  * 公众号接口
@@ -27,6 +24,7 @@ import java.util.concurrent.TimeUnit
  */
 open class WeixinClient<T : IWeixinProperties>(
         val properties: T,
+        val cache: IWeixinCache,
         collectionName: String,
         name: String,
         logMarker: String
@@ -67,42 +65,20 @@ open class WeixinClient<T : IWeixinProperties>(
         return objectMapper.writeValueAsString(obj)
     }
 
-    private val cache: Cache<String, CachedValue> by lazy {
-        Caffeine.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
-                .maximumSize(1000).build()
-    }
-
-
-    protected open fun putCache(key: String, value: CachedValue) {
-        cache.put(key, value)
-    }
-
-    protected open fun getCache(key: String): CachedValue? {
-        return cache.getIfPresent(key)
-    }
-
-    protected open fun clearCache() {
-        cache.invalidateAll()
-    }
-
-    protected open fun clearCache(key: String) {
-        cache.invalidate(key)
-    }
-
     protected open fun clearBaseTokenCache() {
-        clearCache(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId)
+        cache.evict(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId)
     }
 
     protected open fun clearStableTokenCache() {
-        clearCache(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId)
+        cache.evict(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId)
     }
 
     protected fun putIfAbsent(key: String, callable: Callable<CachedValue>): String {
         synchronized(this) {
-            val cachedValue = getCache(key)
+            val cachedValue = cache.get(key)
             return if (cachedValue == null || cachedValue.expired()) {
                 val value = callable.call()
-                putCache(key, value)
+                cache.put(key, value)
                 value.value
             } else {
                 cachedValue.value

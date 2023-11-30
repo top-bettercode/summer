@@ -6,6 +6,7 @@ import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
+import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
@@ -23,9 +24,13 @@ import java.util.*
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-open class OffiaccountClient(properties: IOffiaccountProperties) :
+open class OffiaccountClient(
+        properties: IOffiaccountProperties,
+        cache: IWeixinCache
+) :
         WeixinClient<IOffiaccountProperties>(
                 properties,
+                cache,
                 "第三方平台",
                 "微信公众号",
                 LOG_MARKER
