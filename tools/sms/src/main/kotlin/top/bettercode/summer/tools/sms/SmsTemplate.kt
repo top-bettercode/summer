@@ -10,10 +10,10 @@ import top.bettercode.summer.web.support.client.ApiTemplate
  */
 @LogMarker(SmsTemplate.LOG_MARKER_STR)
 abstract class SmsTemplate : ApiTemplate {
-    constructor(collectionName: String?, name: String?, logMarker: String?, connectTimeout: Int,
+    constructor(collectionName: String, name: String, logMarker: String, connectTimeout: Int,
                 readTimeout: Int) : super(collectionName, name, logMarker, connectTimeout, readTimeout, null, null)
 
-    constructor(collectionName: String?, name: String?, logMarker: String?, connectTimeout: Int,
+    constructor(collectionName: String, name: String, logMarker: String?, connectTimeout: Int,
                 readTimeout: Int, requestDecrypt: ((ByteArray) -> ByteArray)?,
                 responseDecrypt: ((ByteArray) -> ByteArray)?) : super(collectionName, name, logMarker, connectTimeout, readTimeout, requestDecrypt,
             responseDecrypt)

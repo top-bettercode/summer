@@ -79,7 +79,7 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
 
         val okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "微信支付V3", logMarker = LOG_MARKER, logClazz = WeixinV3PayClient::class.java))
-                .connectionPool(ConnectionPool(properties.maxIdleConnections, properties.keepAliveDuration, TimeUnit.SECONDS))
+                .connectionPool(ConnectionPool(properties.maxIdleConnections, properties.keepAliveDuration, TimeUnit.MINUTES))
                 .connectTimeout(properties.connectTimeout, TimeUnit.SECONDS)
                 .readTimeout(properties.readTimeout, TimeUnit.SECONDS)
                 .build()

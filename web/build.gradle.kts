@@ -13,6 +13,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-validation")
     api("org.springframework.boot:spring-boot-starter-logging")
     api("com.github.ben-manes.caffeine:caffeine")
+    api("com.squareup.okhttp3:okhttp")
 
     api("org.springframework.boot:spring-boot-starter-actuator")
 

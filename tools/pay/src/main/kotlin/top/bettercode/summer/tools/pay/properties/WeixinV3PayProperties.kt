@@ -35,11 +35,11 @@ data class WeixinV3PayProperties @JvmOverloads constructor(
          */
         var merchantSerialNumber: String? = null,
         /**
-         * 请求连接超时时间毫秒数
+         * 连接最大空闲连接数
          */
         var maxIdleConnections: Int = 5,
         /**
-         * 请求读取超时时间毫秒数
+         * 连接保持活动持续时间,单位分钟
          */
         var keepAliveDuration: Long = 7L,
         /**
