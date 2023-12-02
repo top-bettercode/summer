@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.tools.weixin.support.WeixinResponse
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.MpData
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.TemplateMsgRequest
@@ -15,7 +16,7 @@ import java.time.format.DateTimeFormatter
  *
  * @author Peter Wu
  */
-@Disabled
+//@Disabled
 internal class OffiaccountClientTest : BaseTest() {
 
     @Autowired
@@ -72,6 +73,13 @@ internal class OffiaccountClientTest : BaseTest() {
                         .of("keyword3", "25.5")
         )
         val result = offiaccountClient.sendTemplateMsg(request)
+        System.err.println(StringUtil.json(result, true))
+    }
+
+    //删除菜单
+    @Test
+    fun deleteMenu() {
+        val result = offiaccountClient.getForObject("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=${offiaccountClient.getStableAccessToken()}", WeixinResponse::class.java)
         System.err.println(StringUtil.json(result, true))
     }
 }
