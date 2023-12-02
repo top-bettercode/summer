@@ -501,6 +501,7 @@ class ExcelField<T, P : Any?> {
     constructor(title: String, propertyGetter: ExcelConverter<T, P?>, imageColumn: Boolean) {
         this.title = title
         this.propertyGetter = propertyGetter
+        this.isImageColumn = imageColumn
         try {
             val javaClass = propertyGetter::class.java
             val declaredFields = javaClass.declaredFields
@@ -541,7 +542,6 @@ class ExcelField<T, P : Any?> {
         } catch (e: Exception) {
             throw ExcelException(title + "属性解析错误", e)
         }
-        isImageColumn = imageColumn
         isIndexColumn = false
         isFormula = false
 
@@ -558,6 +558,22 @@ class ExcelField<T, P : Any?> {
         this.isFormula = formula
         this.isImageColumn = false
         this.cellStyle.format(ExcelCell.DEFAULT_FORMAT)
+    }
+
+    @JvmOverloads
+    constructor(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, imageColumn: Boolean = false, isIndexColumn: Boolean = false, isFormula: Boolean = false) {
+        this.title = title
+        this.propertyType = propertyType
+        this.propertyGetter = propertyGetter
+        this.isImageColumn = imageColumn
+        this.isIndexColumn = isIndexColumn
+        this.isFormula = isFormula
+
+        Assert.notNull(propertyType, "propertyType 不能为空")
+
+        isDateField = propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
+
+        this.cellStyle.defaultValueFormatting = defaultFormat
     }
 
     //--------------------------------------------
@@ -720,6 +736,12 @@ class ExcelField<T, P : Any?> {
         @JvmStatic
         fun <T, P> of(title: String, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
             return ExcelField(title, propertyGetter, imageColumn = false)
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, imageColumn: Boolean = false, isIndexColumn: Boolean = false, isFormula: Boolean = false): ExcelField<T, P> {
+            return ExcelField(title, propertyType, propertyGetter, imageColumn, isIndexColumn, isFormula)
         }
 
         @JvmStatic
