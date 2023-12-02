@@ -200,7 +200,7 @@ class ExcelExport {
         return this
     }
 
-    fun <T> createHeader(excelFields: Array<ExcelField<T, out Any?>>) {
+    fun <T> createHeader(excelFields: Iterable<ExcelField<T, out Any?>>) {
         if (!includeHeader)
             return
         // Create header
@@ -250,14 +250,10 @@ class ExcelExport {
         return this
     }
 
-    /**
-     * @param <T>         E
-     * @param list        list
-     * @param excelFields 表格字段
-     * @return list 数据列表
-    </T> */
-    fun <T : Any> setData(list: Iterable<T>, excelFields: Array<ExcelField<T, *>>): ExcelExport {
-        return setData(list, excelFields) { o: T -> o }
+    @JvmOverloads
+    fun <T : Any> setData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>,
+                          converter: (T) -> T = { o: T -> o }): ExcelExport {
+        return setData(list, excelFields.asIterable(), converter)
     }
 
     /**
@@ -267,8 +263,9 @@ class ExcelExport {
      * @param converter   转换器
      * @return list 数据列表
     </T> */
-    fun <T : Any> setData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>,
-                          converter: (T) -> T): ExcelExport {
+    @JvmOverloads
+    fun <T : Any> setData(list: Iterable<T>, excelFields: Iterable<ExcelField<T, out Any?>>,
+                          converter: (T) -> T = { o: T -> o }): ExcelExport {
         Assert.notNull(sheet, "表格未初始化")
         createHeader(excelFields)
         val iterator = list.iterator()
@@ -290,14 +287,9 @@ class ExcelExport {
         return this
     }
 
-    /**
-     * @param <T>         E
-     * @param list        list
-     * @param excelFields 表格字段
-     * @return list 数据列表
-    </T> */
-    fun <T : Any> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>): ExcelExport {
-        return setMergeData(list, excelFields) { o: T -> o }
+    @JvmOverloads
+    fun <T : Any> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>, converter: (T) -> T = { o: T -> o }): ExcelExport {
+        return setMergeData(list, excelFields.asIterable(), converter)
     }
 
     /**
@@ -309,8 +301,7 @@ class ExcelExport {
      * @param converter   转换器
      * @return list 数据列表
     </T> */
-    fun <T : Any> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>,
-                               converter: (T) -> T): ExcelExport {
+    fun <T : Any> setMergeData(list: Iterable<T>, excelFields: Iterable<ExcelField<T, out Any?>>, converter: (T) -> T): ExcelExport {
         Assert.notNull(sheet, "表格未初始化")
         createHeader(excelFields)
         val iterator = list.iterator()
@@ -318,10 +309,10 @@ class ExcelExport {
         val firstColumn = column
         var index = 0
         val firstField: ExcelField<T, *> = if (byteArrayOutputStream == null) {
-            Arrays.stream(excelFields).filter { o: ExcelField<T, *> -> !o.isImageColumn }.findFirst()
-                    .orElseThrow { ExcelException("无可导出项目") }
+            excelFields.find { o: ExcelField<T, *> -> !o.isImageColumn }
+                    ?: throw ExcelException("无可导出项目")
         } else {
-            excelFields[0]
+            excelFields.first()
         }
         val mergeFirstColumn = firstField.isMerge
         val lastMergeIds: MutableMap<Int, Any?> = HashMap()
@@ -481,6 +472,10 @@ class ExcelExport {
     }
 
     fun <T : Any> template(excelFields: Array<ExcelField<T, *>>): ExcelExport {
+        return template(excelFields.asIterable())
+    }
+
+    fun <T : Any> template(excelFields: Iterable<ExcelField<T, *>>): ExcelExport {
         includeComment = true
         setData(emptyList(), excelFields)
         return this

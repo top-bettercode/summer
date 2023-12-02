@@ -126,20 +126,12 @@ class ExcelImport private constructor(`is`: InputStream) {
         return this
     }
 
-    /**
-     * 获取导入数据列表
-     *
-     * @param <F>         F
-     * @param <E>         E
-     * @param excelFields excelFields
-     * @return List
-     * @throws IOException            IOException
-     * @throws IllegalAccessException IllegalAccessException
-     * @throws ExcelImportException   ExcelImportException
-     * @throws InstantiationException InstantiationException
-    </E></F> */
-    fun <F, E> getData(excelFields: Array<ExcelField<F, *>>): List<E> {
-        return getData(getEntityType(excelFields), excelFields)
+    @JvmOverloads
+    fun <F, E> getData(excelFields: Array<ExcelField<F, *>>, converter: (F) -> E = { o: F ->
+        @Suppress("UNCHECKED_CAST")
+        o as E
+    }): List<E> {
+        return getData(excelFields.asIterable(), converter)
     }
 
     /**
@@ -155,33 +147,17 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws ExcelImportException   ExcelImportException
      * @throws InstantiationException InstantiationException
     </E></F> */
-    fun <F, E> getData(excelFields: Array<ExcelField<F, *>>, converter: (F) -> E): List<E> {
+    @JvmOverloads
+    fun <F, E> getData(excelFields: Iterable<ExcelField<F, *>>, converter: (F) -> E = { o: F ->
+        @Suppress("UNCHECKED_CAST")
+        o as E
+    }): List<E> {
         return getData(getEntityType(excelFields), excelFields, converter)
     }
 
     /**
      * 获取导入数据列表
      *
-     * @param <F>         F
-     * @param <E>         E
-     * @param excelFields excelFields
-     * @param cls         实体类型
-     * @return List
-     * @throws IOException            IOException
-     * @throws IllegalAccessException IllegalAccessException
-     * @throws ExcelImportException   ExcelImportException
-     * @throws InstantiationException InstantiationException
-    </E></F> */
-    fun <F, E> getData(cls: Class<F>?, excelFields: Array<ExcelField<F, *>>): List<E> {
-        return getData(cls, excelFields) { o: F ->
-            @Suppress("UNCHECKED_CAST")
-            o as E
-        }
-    }
-
-    /**
-     * 获取导入数据列表
-     *
      * @param cls         实体类型
      * @param excelFields excelFields
      * @param converter   F 转换为E
@@ -193,8 +169,12 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws ExcelImportException   ExcelImportException
      * @throws InstantiationException InstantiationException
     </E></F> */
-    fun <F, E> getData(cls: Class<F>?, excelFields: Array<ExcelField<F, *>>,
-                       converter: (F) -> E): List<E> {
+    @JvmOverloads
+    fun <F, E> getData(cls: Class<F>?, excelFields: Iterable<ExcelField<F, *>>,
+                       converter: (F) -> E = { o: F ->
+                           @Suppress("UNCHECKED_CAST")
+                           o as E
+                       }): List<E> {
         if (sheet == null) {
             throw RuntimeException("文档中未找到相应工作表!")
         }
@@ -211,12 +191,12 @@ class ExcelImport private constructor(`is`: InputStream) {
         return dataList
     }
 
-    fun <F, E> readRow(cls: Class<F>?, excelFields: Array<ExcelField<F, *>>, row: Row,
-                       converter: (F) -> E): E? {
+    fun <F, E> readRow(cls: Class<F>?, excelFields: Iterable<ExcelField<F, *>>, row: Row, converter: (F) -> E): E? {
         var notAllBlank = false
         val o = cls!!.getDeclaredConstructor().newInstance()
         val rowErrors: MutableList<CellError> = ArrayList()
         this.row = row.rowNum
+        val validators = mutableListOf<ExcelField<F, *>>()
         for ((index, excelField) in excelFields.withIndex()) {
             if (excelField.isIndexColumn) {
                 continue
@@ -229,8 +209,13 @@ class ExcelImport private constructor(`is`: InputStream) {
             } catch (e: Exception) {
                 rowErrors.add(CellError(this.row, column, excelField.title, getValue(excelField.propertyType, cellValue), e))
             }
+            val validator = excelField.validator
+            if (validator != null) {
+                validators.add(excelField)
+            }
         }
-        excelFields.forEachIndexed { index, excelField ->
+        //validator
+        for ((index, excelField) in validators.withIndex()) {
             val validator = excelField.validator
             try {
                 validator?.accept(o)
@@ -354,7 +339,7 @@ class ExcelImport private constructor(`is`: InputStream) {
             return ExcelImport(`is`)
         }
 
-        private fun <F> getEntityType(excelFields: Array<ExcelField<F, *>>): Class<F>? {
+        private fun <F> getEntityType(excelFields: Iterable<ExcelField<F, *>>): Class<F>? {
             for (excelField in excelFields) {
                 if (!excelField.isIndexColumn) {
                     return excelField.entityType
