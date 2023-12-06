@@ -18,8 +18,6 @@ import top.bettercode.summer.tools.lang.property.Settings.exceptionHandle
 import top.bettercode.summer.web.IRespEntity
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.properties.SummerWebProperties
-import java.io.PrintWriter
-import java.io.StringWriter
 import java.util.*
 import javax.servlet.RequestDispatcher
 
@@ -66,11 +64,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
             }
 
             if (includeStackTrace) {
-                val stackTrace = StringWriter()
-                error.printStackTrace(PrintWriter(stackTrace))
-                stackTrace.flush()
-
-                respEntity.trace = stackTrace.toString()
+                respEntity.trace = error.stackTraceToString()
             }
 
             val errorClass: Class<out Throwable> = error.javaClass

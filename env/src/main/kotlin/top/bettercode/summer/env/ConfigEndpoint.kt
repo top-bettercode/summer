@@ -7,8 +7,6 @@ import org.springframework.core.env.MapPropertySource
 import org.springframework.core.io.UrlResource
 import org.springframework.lang.NonNull
 import java.io.IOException
-import java.io.PrintWriter
-import java.io.StringWriter
 
 /**
  * @author Peter Wu
@@ -33,12 +31,7 @@ class ConfigEndpoint(private val environment: EnvironmentManager) {
             }
             changed
         } catch (e: IOException) {
-            val stringWriter = StringWriter()
-            val printWriter = PrintWriter(stringWriter)
-            e.printStackTrace(printWriter)
-            printWriter.flush()
-            printWriter.close()
-            "配置文件加载错误：\n$stringWriter"
+            "配置文件加载错误：\n${e.stackTraceToString()}"
         }
     }
 }

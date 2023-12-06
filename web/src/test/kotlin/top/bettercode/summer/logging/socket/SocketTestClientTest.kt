@@ -11,7 +11,7 @@ import java.net.Socket
 import java.net.URL
 
 @Disabled
-class SocketTestClient {
+class SocketTestClientTest {
 
     @Test
     fun request() {

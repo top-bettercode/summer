@@ -269,7 +269,7 @@ data class DatabaseConfiguration(
                                     null
                                 }
                             } catch (e: Exception) {
-                                e.printStackTrace()
+                                log.error("表${it}查询失败", e)
                                 null
                             }
                         }

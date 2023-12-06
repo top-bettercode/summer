@@ -71,7 +71,7 @@ object AsciidocGenerator {
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
                 log.warn("生成：$outFile")
             } catch (e: Exception) {
-                e.printStackTrace()
+                log.error(e.message, e)
             }
         }
     }
@@ -117,7 +117,7 @@ object AsciidocGenerator {
                         }"
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
+                log.error(e.message, e)
             }
         }
     }

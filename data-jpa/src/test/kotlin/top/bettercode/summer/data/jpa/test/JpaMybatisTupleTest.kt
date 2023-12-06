@@ -276,7 +276,10 @@ class JpaMybatisTupleTest {
         }
         countDownLatch.await()
         System.err.println("/////////////////")
-        errors.forEach(Consumer { obj: Throwable -> obj.printStackTrace() })
+        errors.forEach(Consumer { obj: Throwable ->
+            System.err.println("------------------")
+            System.err.println(obj.stackTraceToString())
+        })
         Assertions.assertEquals(0, errors.size)
     }
 

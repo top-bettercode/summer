@@ -6,7 +6,10 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -141,20 +144,12 @@ object StringUtil {
         if (`object` is CharSequence) {
             return `object`.toString()
         } else if (`object` is Throwable) {
-            val stringWriter = StringWriter()
-            PrintWriter(stringWriter).use { printWriter ->
-                `object`.printStackTrace(printWriter)
-                printWriter.flush()
-            }
-            return stringWriter.toString()
+            return `object`.stackTraceToString()
         }
         return try {
             json(`object`)
         } catch (e: Exception) {
-            e.printStackTrace()
-            if (log.isLoggable(Level.ALL)) {
-                log.log(Level.ALL, "to json fail:", e)
-            }
+            log.log(Level.WARNING, "to json fail:", e)
             `object`.toString()
         }
     }
