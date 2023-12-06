@@ -2,6 +2,7 @@ package top.bettercode.summer.data.jpa.config
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(MybatisProperties::class)
+@EnableConfigurationProperties(MybatisProperties::class, SpringDataWebProperties::class)
 class DataJpaAutoConfiguration {
 
     @Bean

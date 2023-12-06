@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.Pageable
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnClass(PageableHandlerMethodArgumentResolver::class, WebMvcConfigurer::class)
 @ConditionalOnMissingBean(PageableHandlerMethodArgumentResolver::class)
-@EnableConfigurationProperties(SpringDataWebProperties::class)
 @AutoConfigureBefore(SpringDataWebAutoConfiguration::class)
 class DataWebAutoConfiguration(private val properties: SpringDataWebProperties) {
     @Bean

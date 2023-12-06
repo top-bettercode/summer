@@ -1,6 +1,7 @@
 package top.bettercode.summer.web.config
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest
 @ConditionalOnClass(HttpServletRequest::class)
 @EnableConfigurationProperties(SummerWebProperties::class)
 @Configuration(proxyBeanMethods = false)
+@ConditionalOnWebApplication
 class ControllerConfiguration {
 
 

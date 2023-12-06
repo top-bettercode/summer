@@ -2,12 +2,16 @@ package top.bettercode.summer.web.config
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.web.form.FormkeyService
+import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.JacksonExtProperties
+import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.time.Duration
 import java.time.LocalDateTime
@@ -54,6 +58,12 @@ class WebConfiguration {
         } catch (e: Exception) {
             log.error("check time error", e)
         }
+    }
+
+    @ConditionalOnMissingBean(IFormkeyService::class)
+    @Bean
+    fun formkeyService(summerWebProperties: SummerWebProperties): IFormkeyService {
+        return FormkeyService(summerWebProperties.formKeyTtl)
     }
 
     @Bean

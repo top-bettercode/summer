@@ -12,8 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import top.bettercode.summer.web.error.ErrorAttributes
 import top.bettercode.summer.web.error.IRespEntityConverter
 import top.bettercode.summer.web.filter.*
-import top.bettercode.summer.web.form.FormkeyService
-import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver
 import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
@@ -28,11 +26,6 @@ import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
 @ConditionalOnWebApplication
 class WebMvcConfiguration {
 
-    @ConditionalOnMissingBean(IFormkeyService::class)
-    @Bean
-    fun formkeyService(summerWebProperties: SummerWebProperties): IFormkeyService {
-        return FormkeyService(summerWebProperties.formKeyTtl)
-    }
 
     @ConditionalOnMissingBean(IApiVersionService::class)
     @Bean
