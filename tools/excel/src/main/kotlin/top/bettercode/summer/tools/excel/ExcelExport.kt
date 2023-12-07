@@ -588,27 +588,6 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun sheet(fileName: String, consumer: Consumer<ExcelExport>) {
-            val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
-            Assert.notNull(requestAttributes, "requestAttributes获取失败")
-            val request = requestAttributes.request
-            val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
-            val excelExport = of(response.outputStream)
-            excelExport.sheet("sheet1")
-            consumer.accept(excelExport)
-            excelExport.finish()
-        }
-
-        /**
-         * 输出数据流
-         *
-         * @param fileName 输出文件名
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
         fun exportWithPoi(fileName: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -620,6 +599,41 @@ class ExcelExport {
             consumer.accept(excelExport)
             excelExport.finish()
             excelExport.setPoi()
+        }
+
+        @JvmStatic
+        fun exportWithImage(fileName: String, consumer: Consumer<ExcelExport>) {
+            val requestAttributes = RequestContextHolder
+                    .getRequestAttributes() as ServletRequestAttributes
+            Assert.notNull(requestAttributes, "requestAttributes获取失败")
+            val request = requestAttributes.request
+            val response = requestAttributes.response!!
+            excelContentDisposition(request, response, fileName)
+            val excelExport = withPoi(response.outputStream)
+            consumer.accept(excelExport)
+            excelExport.finish()
+            excelExport.setImage()
+        }
+
+        /**
+         * 输出数据流
+         *
+         * @param fileName 输出文件名
+         * @param consumer 处理生成excel
+         * @throws IOException IOException
+         */
+        @JvmStatic
+        fun sheet(fileName: String, consumer: Consumer<ExcelExport>) {
+            val requestAttributes = RequestContextHolder
+                    .getRequestAttributes() as ServletRequestAttributes
+            Assert.notNull(requestAttributes, "requestAttributes获取失败")
+            val request = requestAttributes.request
+            val response = requestAttributes.response!!
+            excelContentDisposition(request, response, fileName)
+            val excelExport = of(response.outputStream)
+            excelExport.sheet("sheet1")
+            consumer.accept(excelExport)
+            excelExport.finish()
         }
 
         /**
@@ -642,6 +656,21 @@ class ExcelExport {
             consumer.accept(excelExport)
             excelExport.finish()
             excelExport.setPoi()
+        }
+
+        @JvmStatic
+        fun sheetWithImage(fileName: String, consumer: Consumer<ExcelExport>) {
+            val requestAttributes = RequestContextHolder
+                    .getRequestAttributes() as ServletRequestAttributes
+            Assert.notNull(requestAttributes, "requestAttributes获取失败")
+            val request = requestAttributes.request
+            val response = requestAttributes.response!!
+            excelContentDisposition(request, response, fileName)
+            val excelExport = withPoi(response.outputStream)
+            excelExport.sheet("sheet1")
+            consumer.accept(excelExport)
+            excelExport.finish()
+            excelExport.setImage()
         }
 
         /**
