@@ -39,15 +39,19 @@ object JpaUtil {
             false
         }
         try {
-            val s = System.currentTimeMillis()
-            val result = run()
-            val d = System.currentTimeMillis() - s
-            if (d >= 5000) {
-                log.warn("cost:{}ms", d)
+            return if (put) {
+                val s = System.currentTimeMillis()
+                val result = run()
+                val d = System.currentTimeMillis() - s
+                if (d >= 5000) {
+                    log.warn("cost:{}ms", d)
+                } else {
+                    log.debug("cost:{}ms", d)
+                }
+                result
             } else {
-                log.debug("cost:{}ms", d)
+                run()
             }
-            return result
         } finally {
             if (put) {
                 MDC.remove("id")
