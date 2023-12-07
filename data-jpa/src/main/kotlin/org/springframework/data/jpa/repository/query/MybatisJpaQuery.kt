@@ -2,7 +2,6 @@ package org.springframework.data.jpa.repository.query
 
 import org.hibernate.query.NativeQuery
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.data.domain.SliceImpl
@@ -14,6 +13,7 @@ import org.springframework.data.util.ParsingUtils
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
+import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import javax.persistence.EntityManager
@@ -93,8 +93,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         repositoryQuery: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", sqlLogId)
+                    return JpaUtil.mdcId(sqlLogId) {
                         val mybatisQuery = repositoryQuery.createQuery(accessor) as MybatisQuery
                         val total: Long
                         val resultList: List<*>?
@@ -122,8 +121,6 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                             total = resultList.size.toLong()
                         }
                         PageableExecutionUtils.getPage(resultList, accessor.pageable) { total }
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
@@ -133,15 +130,12 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         query: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", sqlLogId)
+                    return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor) as List<*>
                         if (sqlLog.isDebugEnabled) {
                             sqlLog.debug("{} rows retrieved", result.size)
                         }
                         result
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
@@ -151,15 +145,12 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         query: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", sqlLogId)
+                    return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor)
                         if (sqlLog.isDebugEnabled) {
                             sqlLog.debug("{} row affected", result)
                         }
                         result
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
@@ -169,11 +160,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         jpaQuery: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", sqlLogId)
+                    return JpaUtil.mdcId(sqlLogId) {
                         super.doExecute(jpaQuery, accessor)
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
@@ -183,11 +171,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         query: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", sqlLogId)
+                    return JpaUtil.mdcId(sqlLogId) {
                         super.doExecute(query, accessor)
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
@@ -197,8 +182,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         query: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", sqlLogId)
+                    return JpaUtil.mdcId(sqlLogId) {
                         val pageable = accessor.pageable
                         val nestedResultMapType = mybatisQueryMethod.nestedResultMapType
                         if (pageable.isPaged && nestedResultMapType != null) {
@@ -217,8 +201,6 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                             sqlLog.debug("{} rows retrieved", result.size)
                         }
                         result
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
@@ -226,15 +208,12 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             object : SingleEntityExecution() {
                 @Suppress("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE")
                 override fun doExecute(query: AbstractJpaQuery, accessor: JpaParametersParameterAccessor): Any? {
-                    return try {
-                        MDC.put("id", sqlLogId)
+                    return JpaUtil.mdcId(sqlLogId) {
                         val result: Any? = super.doExecute(query, accessor)
                         if (sqlLog.isDebugEnabled) {
                             sqlLog.debug("{} rows retrieved", if (result == null) 0 else 1)
                         }
                         result
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }

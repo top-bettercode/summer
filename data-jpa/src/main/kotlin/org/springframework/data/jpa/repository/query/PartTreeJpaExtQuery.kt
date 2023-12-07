@@ -1,6 +1,5 @@
 package org.springframework.data.jpa.repository.query
 
-import org.slf4j.MDC
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.DeleteExecution
@@ -14,6 +13,7 @@ import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.query.JpaQueryLogExecution
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
+import top.bettercode.summer.data.jpa.support.JpaUtil
 import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery
@@ -31,7 +31,7 @@ internal class PartTreeJpaExtQuery internal constructor(
     private var query: QueryPreparer
     private var countQuery: QueryPreparer
     private val extJpaSupport: ExtJpaSupport<out Any>
-    private val statementId: String?
+    private val statementId: String
 
     init {
         statementId = method.statementId
@@ -77,8 +77,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                         jpaQuery: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", statementId)
+                    return JpaUtil.mdcId(statementId) {
                         val query = jpaQuery.createQuery(accessor)
                         val resultList = query.resultList
                         val logicalDeletedAttribute = extJpaSupport.logicalDeletedAttribute
@@ -93,8 +92,6 @@ internal class PartTreeJpaExtQuery internal constructor(
                             }
                         }
                         if (jpaQuery.queryMethod.isCollectionQuery) resultList else resultList.size
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
@@ -104,11 +101,8 @@ internal class PartTreeJpaExtQuery internal constructor(
                         query: AbstractJpaQuery,
                         accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return try {
-                        MDC.put("id", statementId)
+                    return JpaUtil.mdcId(statementId) {
                         super.doExecute(query, accessor)
-                    } finally {
-                        MDC.remove("id")
                     }
                 }
             }
