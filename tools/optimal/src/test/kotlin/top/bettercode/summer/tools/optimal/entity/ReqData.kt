@@ -469,7 +469,7 @@ class ReqData(
                         .replace("氯化钾反应所需(.*)量".toRegex(), "$1")
                 val maxUse = rows[maxLimitCol]!!.getCell(index).value as BigDecimal
                 val minUse = rows[minLimitCol]!!.getCell(index).value as BigDecimal
-                val materialRatioMap = materialRelations!!.computeIfAbsent(liquidAmmonia) { _: String? -> HashMap() }
+                val materialRatioMap = materialRelations!!.computeIfAbsent(LIQUID_AMMONIA) { _: String? -> HashMap() }
                 val materialRatio = materialRatioMap.computeIfAbsent(materialNameFragment) { _: String? -> MaterialRatio() }
                 val limit = Limit(minUse, maxUse)
                 if (isexcess) {
@@ -492,7 +492,7 @@ class ReqData(
                 materialNameFragment = materialNameFragment.replace("反应所需硫酸系数", "").replace("反应需硫酸量系数", "")
                 val maxUse = rows[maxLimitCol]!!.getCell(index).value as BigDecimal
                 val minUse = rows[minLimitCol]!!.getCell(index).value as BigDecimal
-                val materialRatioMap = materialRelations!!.computeIfAbsent(vitriol) { _: String? -> HashMap() }
+                val materialRatioMap = materialRelations!!.computeIfAbsent(VITRIOL) { _: String? -> HashMap() }
                 val materialRatio = materialRatioMap.computeIfAbsent(materialNameFragment) { _: String? -> MaterialRatio() }
                 val limit = Limit(minUse, maxUse)
                 if (isexcess) {
@@ -743,16 +743,16 @@ class ReqData(
 
     companion object {
         /** 碳铵原料名称  */
-        const val cliquidAmmonia = "碳铵"
+        const val CLIQUID_AMMONIA = "碳铵"
 
         /** 液氨原料名称  */
-        const val liquidAmmonia = "液氨"
+        const val LIQUID_AMMONIA = "液氨"
 
         /** 硫酸原料名称  */
-        const val vitriol = "硫酸"
+        const val VITRIOL = "硫酸"
 
         /** 液氨 对应 碳铵 使用量比例  */
-        val la2CAUseRatio = 4.7647
+        const val LA_2_CAUSE_RATIO = 4.7647
         fun isNeedLiquidAmmon(materialNameFragment: String?, materialName: String?): Boolean {
             val needLiquidAmmon: Boolean = when (materialNameFragment) {
                 "硫酸" -> {

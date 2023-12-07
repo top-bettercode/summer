@@ -146,19 +146,19 @@ class RecipeSolver(val solver: Solver) {
             // 原料比率约束
             val materialRelations = reqData.materialRelations
             // 硫酸
-            val vitriolMaterial = materialsMap[ReqData.vitriol]
+            val vitriolMaterial = materialsMap[ReqData.VITRIOL]
             val normalVal = numVar(0.0, targetWeight)
             val excessVal = numVar(0.0, targetWeight)
             var vitriolVal: IVar? = null
             if (vitriolMaterial != null && reqData.isLimitVitriol) {
-                vitriolVal = materialVarsMap[ReqData.vitriol]!!
+                vitriolVal = materialVarsMap[ReqData.VITRIOL]!!
                 arrayOf(normalVal, excessVal).eq(vitriolVal)
 
                 val normalMinVars = mutableListOf<IVar>()
                 val normalMaxVars = mutableListOf<IVar>()
                 val excessMinVars = mutableListOf<IVar>()
                 val excessMaxVars = mutableListOf<IVar>()
-                val vitriolMaterialRatioMap = materialRelations!![ReqData.vitriol]
+                val vitriolMaterialRatioMap = materialRelations!![ReqData.VITRIOL]
                 for (materialNameFragment in vitriolMaterialRatioMap!!.keys) {
                     materialVarsMap.forEach { (materialName: String, mpVariable: IVar) ->
                         if (materialName.contains(materialNameFragment)) {
@@ -182,14 +182,14 @@ class RecipeSolver(val solver: Solver) {
             var maxLiquidAmmoniaVal: IVar? = null
             var liquidAmmoniaVal: IVar? = null
             if (reqData.isLimitLiquidAmmonia) {
-                val liquidAmmoniaMaterialRatioMap = materialRelations!![ReqData.liquidAmmonia]
-                liquidAmmoniaVal = materialVarsMap[ReqData.liquidAmmonia]!!
+                val liquidAmmoniaMaterialRatioMap = materialRelations!![ReqData.LIQUID_AMMONIA]
+                liquidAmmoniaVal = materialVarsMap[ReqData.LIQUID_AMMONIA]!!
                 val minLiquidVars = mutableListOf<IVar>()
                 val maxLiquidVars = mutableListOf<IVar>()
 
                 // 硫酸液氨用量
                 if (vitriolVal != null) {
-                    val materialRatio = liquidAmmoniaMaterialRatioMap!![ReqData.vitriol]
+                    val materialRatio = liquidAmmoniaMaterialRatioMap!![ReqData.VITRIOL]
                     if (reqData.isLimitVitriol) {
                         val normal = materialRatio!!.normal!!
                         minLiquidVars.add(normalVal.coeff(normal.min!!.toDouble()))
@@ -206,7 +206,7 @@ class RecipeSolver(val solver: Solver) {
                     }
                 }
                 for (materialNameFragment in liquidAmmoniaMaterialRatioMap!!.keys) {
-                    if (ReqData.vitriol != materialNameFragment) {
+                    if (ReqData.VITRIOL != materialNameFragment) {
                         materialVarsMap.forEach { (materialName: String, mpVariable: IVar) ->
                             val needLiquidAmmon: Boolean = ReqData.isNeedLiquidAmmon(materialNameFragment, materialName)
                             if (needLiquidAmmon) {
@@ -292,7 +292,7 @@ class RecipeSolver(val solver: Solver) {
                             weight += solutionValue
                             val material = Material()
                             BeanUtils.copyProperties(materialsMap[materialName]!!, material)
-                            if (materialName == ReqData.cliquidAmmonia) {
+                            if (materialName == ReqData.CLIQUID_AMMONIA) {
                                 recipe.isHascliquidAmmonia = true
                             }
                             material.solutionValue = solutionValue

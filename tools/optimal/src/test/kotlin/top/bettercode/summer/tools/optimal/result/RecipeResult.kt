@@ -69,7 +69,7 @@ class RecipeResult // --------------------------------------------
             outFile.getParentFile().mkdirs()
             val workbook = Workbook(Files.newOutputStream(outFile.toPath()), "", "1.0")
             var sheet = workbook.newWorksheet("最终候选原料")
-            val titles = ("原料名称 价格 " + Components.componentNameString).split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val titles = ("原料名称 价格 " + Components.COMPONENT_NAME_STRING).split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             var r = 0
             var c = 0
             for (i in titles.indices) {
@@ -177,11 +177,11 @@ class RecipeResult // --------------------------------------------
                 value(sheet, r, c++, "")
                 value(sheet, r, c++, "最小用量")
                 value(sheet, r, c++, "最大用量")
-                var liquidAmmonia: String = ReqData.liquidAmmonia
+                var liquidAmmonia: String = ReqData.LIQUID_AMMONIA
                 var la2CAUseRatio = 1.0
                 if (recipe.isHascliquidAmmonia) {
-                    la2CAUseRatio = ReqData.la2CAUseRatio
-                    liquidAmmonia = ReqData.cliquidAmmonia
+                    la2CAUseRatio = ReqData.LA_2_CAUSE_RATIO
+                    liquidAmmonia = ReqData.CLIQUID_AMMONIA
                 }
                 value(sheet, r, c++, "最小耗$liquidAmmonia/硫酸系数")
                 value(sheet, r, c++, "最小耗$liquidAmmonia/硫酸量")
@@ -234,15 +234,15 @@ class RecipeResult // --------------------------------------------
                 }
                 var m = 0
                 val materials = recipe.materials
-                val vitriolMaterialRatioMap = reqData.materialRelations!![ReqData.vitriol]
-                val liquidAmmoniaMaterialRatioMap = reqData.materialRelations!![ReqData.liquidAmmonia]
+                val vitriolMaterialRatioMap = reqData.materialRelations!![ReqData.VITRIOL]
+                val liquidAmmoniaMaterialRatioMap = reqData.materialRelations!![ReqData.LIQUID_AMMONIA]
                 val limitLiquidAmmonia = reqData.isLimitLiquidAmmonia
                 for (material in materials) {
                     val matrialName = material.name
                     val solutionValue = material.solutionValue
                     var cc = 0
                     var mergeRow = 0
-                    if (ReqData.vitriol == matrialName && limitLiquidAmmonia) {
+                    if (ReqData.VITRIOL == matrialName && limitLiquidAmmonia) {
                         mergeRow = 1
                     } else {
                         if (reqData.isLimitVitriol) for (materialNameFragment in vitriolMaterialRatioMap!!.keys) {
@@ -297,11 +297,11 @@ class RecipeResult // --------------------------------------------
                         } else {
                             cc += 3
                         }
-                    } else if (ReqData.vitriol == matrialName) {
+                    } else if (ReqData.VITRIOL == matrialName) {
                         if (reqData.isLimitLiquidAmmonia) {
                             val vitriolNormal = recipe.vitriolNormal
                             val vitriolExcess = recipe.vitriolExcess
-                            val materialRatio = liquidAmmoniaMaterialRatioMap!![ReqData.vitriol]
+                            val materialRatio = liquidAmmoniaMaterialRatioMap!![ReqData.VITRIOL]
                             val normal = materialRatio?.normal
                             val originExcess = materialRatio?.originExcess
                             // 耗液氨系数

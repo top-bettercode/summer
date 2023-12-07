@@ -116,6 +116,7 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
     }
 
     companion object {
+        @Suppress("ConstPropertyName")
         private const val serialVersionUID = -2849567615646933777L
         private const val OPEN = "[ "
         private const val CLOSE = " ]"

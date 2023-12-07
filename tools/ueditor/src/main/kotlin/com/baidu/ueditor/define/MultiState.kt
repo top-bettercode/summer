@@ -8,7 +8,6 @@ import com.baidu.ueditor.Encoder
  * @author hancong03@baidu.com
  */
 class MultiState : State {
-    @Suppress("MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING")
     override val isSuccess: Boolean
     private var info: String? = null
     private val intMap: MutableMap<String?, Long> = HashMap()
