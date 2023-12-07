@@ -80,7 +80,7 @@ class DocsEndpoint(
         }
         var reqResource: Resource? = if (resource.exists()) resource else null
         val apiAddress = LoggingUtil.apiAddress
-        if (reqResource != null && apiAddress != null) {
+        if (reqResource != null) {
             if (reqResource.url.path.endsWith(".html")) {
                 val text = reqResource.inputStream.reader().readText().replace("{apiAddress}", apiAddress)
                 reqResource = object : ByteArrayResource(text.toByteArray()) {

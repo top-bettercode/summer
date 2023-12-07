@@ -16,15 +16,15 @@ import java.io.StringWriter
  */
 object LoggingUtil {
 
-    val apiAddress: String? by lazy {
+    val apiAddress: String by lazy {
         apiAddress(RequestConverter.SCHEME_HTTP)
     }
 
-    val apiAddressWs: String? by lazy {
+    val apiAddressWs: String by lazy {
         apiAddress("ws")
     }
 
-    fun apiAddress(scheme: String = RequestConverter.SCHEME_HTTP): String? {
+    fun apiAddress(scheme: String = RequestConverter.SCHEME_HTTP): String {
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
         val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
@@ -40,7 +40,7 @@ object LoggingUtil {
         return uriWriter.toString()
     }
 
-    val actuatorAddress: String? by lazy {
+    val actuatorAddress: String by lazy {
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
         val properties = ApplicationContextHolder.getBean(ManagementServerProperties::class.java)
