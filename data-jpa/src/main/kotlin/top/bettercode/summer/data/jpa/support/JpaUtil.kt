@@ -43,9 +43,9 @@ object JpaUtil {
             val result = run()
             val d = System.currentTimeMillis() - s
             if (d >= 5000) {
-                log.warn("{} cost:{}ms", id, d)
+                log.warn("cost:{}ms", d)
             } else {
-                log.debug("{} cost:{}ms", id, d)
+                log.debug("cost:{}ms", d)
             }
             return result
         } finally {
