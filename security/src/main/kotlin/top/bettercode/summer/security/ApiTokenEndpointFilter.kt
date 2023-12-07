@@ -25,6 +25,8 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.RespEntity.Companion.ok
+import top.bettercode.summer.web.config.SummerWebUtil.okEnable
+import top.bettercode.summer.web.config.SummerWebUtil.wrapEnable
 import top.bettercode.summer.web.exception.UnauthorizedException
 import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties

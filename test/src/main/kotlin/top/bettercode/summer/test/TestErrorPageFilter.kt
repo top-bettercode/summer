@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.util.ClassUtils
 import org.springframework.web.filter.OncePerRequestFilter
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.web.config.SummerWebUtil.okEnable
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.IOException
 import java.io.PrintWriter

@@ -1,9 +1,7 @@
 package top.bettercode.summer.web.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.web.context.request.NativeWebRequest
 import java.time.Duration
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu
@@ -71,39 +69,4 @@ open class SummerWebProperties {
     var formKeyTtl: Duration = Duration.ofSeconds(5)
 
     //--------------------------------------------
-    fun wrapEnable(request: NativeWebRequest): Boolean {
-        val wrapResponse = request.getHeader(wrapName)
-        return if (!wrapResponse.isNullOrBlank()) {
-            "true" == wrapResponse
-        } else {
-            isWrapEnable
-        }
-    }
-
-    fun wrapEnable(request: HttpServletRequest): Boolean {
-        val wrapResponse = request.getHeader(wrapName)
-        return if (!wrapResponse.isNullOrBlank()) {
-            "true" == wrapResponse
-        } else {
-            isWrapEnable
-        }
-    }
-
-    fun okEnable(request: NativeWebRequest): Boolean {
-        val okResponse = request.getHeader(okName)
-        return if (!okResponse.isNullOrBlank()) {
-            "true" == okResponse
-        } else {
-            isOkEnable
-        }
-    }
-
-    fun okEnable(request: HttpServletRequest): Boolean {
-        val okResponse = request.getHeader(okName)
-        return if (!okResponse.isNullOrBlank()) {
-            "true" == okResponse
-        } else {
-            isOkEnable
-        }
-    }
 }

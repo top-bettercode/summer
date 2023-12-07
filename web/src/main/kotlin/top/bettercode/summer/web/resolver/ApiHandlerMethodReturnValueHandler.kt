@@ -13,6 +13,8 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
 import top.bettercode.summer.web.IRespEntity
 import top.bettercode.summer.web.RespEntity
+import top.bettercode.summer.web.config.SummerWebUtil.okEnable
+import top.bettercode.summer.web.config.SummerWebUtil.wrapEnable
 import top.bettercode.summer.web.error.ErrorAttributes
 import top.bettercode.summer.web.error.IRespEntityConverter
 import top.bettercode.summer.web.properties.SummerWebProperties
