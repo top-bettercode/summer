@@ -81,8 +81,9 @@ class DocsEndpoint(
         var reqResource: Resource? = if (resource.exists()) resource else null
         val apiAddress = LoggingUtil.apiAddress
         if (reqResource != null) {
-            if (reqResource.url.path.endsWith(".html")) {
-                val text = reqResource.inputStream.reader().readText().replace("{apiAddress}", apiAddress)
+            val urlPath = reqResource.url.path
+            if (urlPath.endsWith(".html") || urlPath.endsWith(".postman_collection.json")) {
+                val text = reqResource.inputStream.reader().readText().replace("\${apiAddress}", apiAddress)
                 reqResource = object : ByteArrayResource(text.toByteArray()) {
                     override fun getFilename(): String? {
                         return resource.filename

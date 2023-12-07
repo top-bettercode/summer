@@ -290,13 +290,13 @@ object AsciidocGenerator {
                             out.println(".1+.^|方法 6+.^|${method}")
 
                             out.println(
-                                    ".1+.^|地址 6+.^|link:{apiAddress}${
+                                    ".1+.^|地址 6+.^|link:\${apiAddress}${
                                         str(
                                                 HttpOperation.getRestRequestPath(
                                                         request
                                                 )
                                         )
-                                    }[{apiAddress}++$restUri++]"
+                                    }[\${apiAddress}++$restUri++]"
                             )
 
                             if (uriVariablesExt.isNotEmpty()) {
