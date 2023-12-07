@@ -77,7 +77,6 @@ class ExcelExport {
     }
 
     private val columnWidths = ColumnWidths()
-    private val imageCells: MutableMap<String, MutableList<ExcelCell<Any>>> = mutableMapOf()
     private val poiCells: MutableMap<String, MutableList<ExcelCell<Any>>> = mutableMapOf()
 
     /**
@@ -123,7 +122,6 @@ class ExcelExport {
     fun sheet(sheetname: String?): ExcelExport {
         sheet = workbook.newWorksheet(sheetname)
         setRowAndColumn(0, 0)
-        imageCells.clear()
         columnWidths.clear()
         return this
     }
@@ -206,7 +204,7 @@ class ExcelExport {
         // Create header
         run {
             for (excelField in excelFields) {
-                if (byteArrayOutputStream == null && excelField.isImageColumn) {
+                if (byteArrayOutputStream == null && excelField.isPoiColumn) {
                     continue
                 }
                 val t = excelField.title
@@ -275,7 +273,7 @@ class ExcelExport {
             val e = converter(iterator.next())
             val lastRow = !iterator.hasNext()
             for (excelField in excelFields) {
-                if (byteArrayOutputStream == null && excelField.isImageColumn) {
+                if (byteArrayOutputStream == null && excelField.isPoiColumn) {
                     continue
                 }
                 setCell(ExcelCell(row, column, firstRow, lastRow, excelField, e))
@@ -309,7 +307,7 @@ class ExcelExport {
         val firstColumn = column
         var index = 0
         val firstField: ExcelField<T, *> = if (byteArrayOutputStream == null) {
-            excelFields.find { o: ExcelField<T, *> -> !o.isImageColumn }
+            excelFields.find { o: ExcelField<T, *> -> !o.isPoiColumn }
                     ?: throw ExcelException("无可导出项目")
         } else {
             excelFields.first()
@@ -325,7 +323,7 @@ class ExcelExport {
             val indexCells: MutableList<ExcelRangeCell<T>>? = if (mergeFirstColumn) null else ArrayList()
             var merge: Boolean
             for (excelField in excelFields) {
-                if (byteArrayOutputStream == null && excelField.isImageColumn) {
+                if (byteArrayOutputStream == null && excelField.isPoiColumn) {
                     continue
                 }
                 merge = excelField.isMerge
@@ -387,10 +385,6 @@ class ExcelExport {
             sheet!!.rowHeight(row, excelField.height)
         }
         styleSetter.set()
-        if (excelField.isImageColumn) {
-            @Suppress("UNCHECKED_CAST")
-            imageCells.computeIfAbsent(sheet!!.name) { mutableListOf() }.add(excelCell as ExcelCell<Any>)
-        }
         if (excelField.isPoiColumn) {
             @Suppress("UNCHECKED_CAST")
             poiCells.computeIfAbsent(sheet!!.name) { mutableListOf() }.add(excelCell as ExcelCell<Any>)
@@ -399,8 +393,6 @@ class ExcelExport {
             val cellValue = excelCell.cellValue
             if (cellValue == null || excelField.isPoiColumn) {
                 sheet!!.value(row, column)
-            } else if (excelField.isImageColumn) {
-                sheet!!.value(excelCell.row, column)
             } else if (excelField.isFormula) {
                 sheet!!.formula(row, column, cellValue as String?)
             } else if (cellValue is String) {
@@ -496,25 +488,13 @@ class ExcelExport {
         return this
     }
 
-    fun setImage() {
-        Assert.notNull(byteArrayOutputStream, "不是支持图片插入的导出")
-        Assert.notNull(outputStream, "输出流未设置")
-        if (imageCells.isEmpty()) {
-            outputStream!!.write(byteArrayOutputStream!!.toByteArray())
-        } else {
-            PoiExcelWriterUtil.setImage(imageCells,
-                    ByteArrayInputStream(byteArrayOutputStream!!.toByteArray()), outputStream!!)
-            imageCells.clear()
-        }
-    }
-
     fun setPoi() {
-        Assert.notNull(byteArrayOutputStream, "不是支持富文本的导出")
+        Assert.notNull(byteArrayOutputStream, "不是支持poi特性导出")
         Assert.notNull(outputStream, "输出流未设置")
         if (poiCells.isEmpty()) {
             outputStream!!.write(byteArrayOutputStream!!.toByteArray())
         } else {
-            PoiExcelWriterUtil.setPoi(poiCells,
+            PoiExcelUtil.setPoi(poiCells,
                     ByteArrayInputStream(byteArrayOutputStream!!.toByteArray()), outputStream!!)
             poiCells.clear()
         }
@@ -601,20 +581,6 @@ class ExcelExport {
             excelExport.setPoi()
         }
 
-        @JvmStatic
-        fun exportWithImage(fileName: String, consumer: Consumer<ExcelExport>) {
-            val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
-            Assert.notNull(requestAttributes, "requestAttributes获取失败")
-            val request = requestAttributes.request
-            val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
-            val excelExport = withPoi(response.outputStream)
-            consumer.accept(excelExport)
-            excelExport.finish()
-            excelExport.setImage()
-        }
-
         /**
          * 输出数据流
          *
@@ -656,21 +622,6 @@ class ExcelExport {
             consumer.accept(excelExport)
             excelExport.finish()
             excelExport.setPoi()
-        }
-
-        @JvmStatic
-        fun sheetWithImage(fileName: String, consumer: Consumer<ExcelExport>) {
-            val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
-            Assert.notNull(requestAttributes, "requestAttributes获取失败")
-            val request = requestAttributes.request
-            val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
-            val excelExport = withPoi(response.outputStream)
-            excelExport.sheet("sheet1")
-            consumer.accept(excelExport)
-            excelExport.finish()
-            excelExport.setImage()
         }
 
         /**

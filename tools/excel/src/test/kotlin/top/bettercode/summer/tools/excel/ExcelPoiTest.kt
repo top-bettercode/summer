@@ -20,13 +20,13 @@ class ExcelPoiTest {
                 ExcelField.of("编码B") { obj: DataBean -> obj.integer }.mergeBy { obj: DataBean -> obj.integer },
                 ExcelField.of("名称") { _: DataBean -> arrayOf("abc", "1") },
                 ExcelField.of("描述") { obj: DataBean -> obj.name },
-                ExcelField.of("描述C") { obj: DataBean -> obj.date }.poiSetter { workbook, poiCell, _ ->
+                ExcelField.poi("描述C", { obj: DataBean -> obj.date }, { sheet, poiCell, _ ->
                     // 设置文本
                     val text = "Hello, World!"
                     // 创建字体
 
                     // 创建字体
-                    val boldFont: Font = workbook.createFont()
+                    val boldFont: Font = sheet.workbook.createFont()
                     boldFont.bold = true
                     boldFont.color = Font.COLOR_RED
                     boldFont.fontHeight = 120
@@ -45,7 +45,7 @@ class ExcelPoiTest {
 
                     poiCell.setCellValue(richText)
 
-                }.mergeBy { obj: DataBean -> obj.intCode },
+                }).mergeBy { obj: DataBean -> obj.intCode },
         )
         val list: MutableList<DataBean> = ArrayList()
         for (i in 0..21) {

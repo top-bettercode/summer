@@ -131,7 +131,7 @@ public class ExcelImageTest {
         .sheet("表格")
         .setMergeData(list, excelMergeFields)
         .finish()
-        .setImage();
+        .setPoi();
     long e = System.currentTimeMillis();
 
     System.err.println(e - s);
