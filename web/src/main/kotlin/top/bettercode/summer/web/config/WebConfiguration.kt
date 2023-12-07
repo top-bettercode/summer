@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
 /**
  * @author Peter Wu
  */
-@EnableConfigurationProperties(JacksonExtProperties::class)
+@EnableConfigurationProperties(JacksonExtProperties::class, SummerWebProperties::class)
 @Configuration(proxyBeanMethods = false)
 class WebConfiguration {
     private val log: Logger = LoggerFactory.getLogger(WebConfiguration::class.java)

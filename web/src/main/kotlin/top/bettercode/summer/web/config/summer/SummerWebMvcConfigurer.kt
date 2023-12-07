@@ -1,6 +1,5 @@
 package top.bettercode.summer.web.config.summer
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Configuration
@@ -15,11 +14,9 @@ import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.servlet.http.HttpServletRequest
 
-@ConditionalOnClass(HttpServletRequest::class)
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnWebApplication
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class SummerWebMvcConfigurer(private val formkeyService: IFormkeyService,
                              private val messageSource: MessageSource,
                              private val summerWebProperties: SummerWebProperties

@@ -13,9 +13,9 @@ import top.bettercode.summer.web.error.DataErrorHandler
 import javax.servlet.http.HttpServletRequest
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass(UncategorizedSQLException::class, HttpServletRequest::class)
+@ConditionalOnClass(UncategorizedSQLException::class)
 @AutoConfigureBefore(ErrorMvcAutoConfiguration::class)
-@ConditionalOnWebApplication
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class DataErrorHandlerConfiguration {
 
     @Bean

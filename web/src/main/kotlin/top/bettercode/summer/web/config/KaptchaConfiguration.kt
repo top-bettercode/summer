@@ -15,13 +15,12 @@ import top.bettercode.summer.web.kaptcha.DefaultCaptchaServiceImpl
 import top.bettercode.summer.web.kaptcha.ICaptchaService
 import top.bettercode.summer.web.kaptcha.KaptchaProperties
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass(DefaultKaptcha::class, HttpServletRequest::class)
-@ConditionalOnWebApplication
+@ConditionalOnClass(DefaultKaptcha::class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @EnableConfigurationProperties(KaptchaProperties::class)
 class KaptchaConfiguration {
     @Bean
