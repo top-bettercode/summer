@@ -1,7 +1,6 @@
 package top.bettercode.summer.web.config.summer
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations
@@ -21,9 +20,8 @@ import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
  *
  * @author Peter Wu
  */
-@ConditionalOnClass(javax.servlet.Filter::class)
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnWebApplication
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class WebMvcConfiguration {
 
 

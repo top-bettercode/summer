@@ -14,6 +14,7 @@ import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.web.bind.annotation.RequestHeader
+import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.StringUtil
@@ -256,15 +257,8 @@ class LogsEndpoint(
     console.log("您的浏览器不支持WebSocket");
   } else {
     console.info("连接...")
-    var loc = window.location, webhost;
-    if (loc.protocol === "https:") {
-      webhost = "wss:";
-    } else {
-      webhost = "ws:";
-    }
-    webhost += "//" + loc.host;
-
-    websocket = new WebSocket(webhost + "${"$contextPath/websocket/logging"}?token=${websocketProperties.token}");
+    
+    websocket = new WebSocket("${LoggingUtil.apiAddressWs}${"/websocket/logging"}?token=${websocketProperties.token}");
     
     //连接发生错误的回调方法
     websocket.onerror = function () {

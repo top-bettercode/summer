@@ -17,19 +17,27 @@ import java.io.StringWriter
 object LoggingUtil {
 
     val apiAddress: String? by lazy {
+        apiAddress(RequestConverter.SCHEME_HTTP)
+    }
+
+    val apiAddressWs: String? by lazy {
+        apiAddress("ws")
+    }
+
+    fun apiAddress(scheme: String = RequestConverter.SCHEME_HTTP): String? {
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
         val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
         Assert.notNull(serverProperties, "serverProperties must not be null")
         val serverPort = serverProperties!!.port ?: 8080
-        printer.printf("%s://%s", RequestConverter.SCHEME_HTTP, IPAddressUtil.inet4Address)
+        printer.printf("%s://%s", scheme, IPAddressUtil.inet4Address)
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
         val contextPath = serverProperties.servlet?.contextPath ?: "/"
         if ("/" != contextPath)
             printer.print(contextPath)
-        uriWriter.toString()
+        return uriWriter.toString()
     }
 
     val actuatorAddress: String? by lazy {
@@ -45,6 +53,10 @@ object LoggingUtil {
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
+        val contextPath = properties.basePath ?: ""
+        if (contextPath.isNotBlank() && "/" != contextPath)
+            printer.print(contextPath)
+
         uriWriter.toString()
     }
 

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import top.bettercode.summer.apisign.ApiSignProperties
-import top.bettercode.summer.config.GenEndpoint
+import top.bettercode.summer.config.PumlEndpoint
 import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
@@ -50,7 +50,7 @@ class AutodocConfiguration(
             signProperties: ApiSignProperties,
             summerWebProperties: SummerWebProperties
     ): AutodocHandler {
-        val datasources: MutableMap<String, DatabaseConfiguration> = GenEndpoint.databases(environment)
+        val datasources: MutableMap<String, DatabaseConfiguration> = PumlEndpoint.databases(environment)
 
         datasources.values.forEach { configuration ->
             if (configuration.entityPrefix.isBlank())

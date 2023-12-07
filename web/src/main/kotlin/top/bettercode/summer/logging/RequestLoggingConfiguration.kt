@@ -1,9 +1,9 @@
 package top.bettercode.summer.logging
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.ErrorPageFilter
 import org.springframework.context.annotation.Bean
@@ -28,7 +28,7 @@ import org.springframework.core.annotation.Order
         RequestLoggingProperties::class,
         WebsocketProperties::class
 )
-@ConditionalOnClass(javax.servlet.Filter::class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class RequestLoggingConfiguration {
 
     @Bean

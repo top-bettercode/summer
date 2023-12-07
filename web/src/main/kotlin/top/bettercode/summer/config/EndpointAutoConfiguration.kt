@@ -8,7 +8,10 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAu
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
-import org.springframework.boot.autoconfigure.condition.*
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -18,7 +21,6 @@ import org.springframework.core.io.ResourceLoader
 import org.springframework.core.type.AnnotatedTypeMetadata
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.util.IPAddressUtil
-import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.web.properties.CorsProperties
 import java.net.InetAddress
 import javax.servlet.http.HttpServletRequest
@@ -27,7 +29,8 @@ import javax.servlet.http.HttpServletResponse
 /**
  * @author Peter Wu
  */
-@ConditionalOnClass(WebEndpointProperties::class, javax.servlet.Filter::class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@ConditionalOnClass(WebEndpointProperties::class)
 @ConditionalOnBean(WebEndpointProperties::class)
 @AutoConfigureAfter(WebEndpointAutoConfiguration::class)
 @EnableConfigurationProperties(
@@ -49,27 +52,6 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
     @Bean
     fun settingsEndpoint(): SettingsEndpoint {
         return SettingsEndpoint()
-    }
-
-    @ConditionalOnProperty(
-            prefix = "summer.management.auth",
-            name = ["enabled"],
-            havingValue = "true"
-    )
-    @Bean
-    @ConditionalOnMissingBean(ManagementLoginPageGeneratingFilter::class)
-    fun managementLoginPageGeneratingFilter(
-            managementAuthProperties: ManagementAuthProperties,
-            webEndpointProperties: WebEndpointProperties
-    ): ManagementLoginPageGeneratingFilter {
-        if (managementAuthProperties.password.isNullOrBlank()) {
-            managementAuthProperties.password = RandomUtil.nextString2(6)
-            log.info(
-                    "默认日志访问用户名密码：{}:{}", managementAuthProperties.username,
-                    managementAuthProperties.password
-            )
-        }
-        return ManagementLoginPageGeneratingFilter(managementAuthProperties, webEndpointProperties)
     }
 
     @ConditionalOnWebApplication
@@ -125,8 +107,8 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
             environment: Environment,
             serverProperties: ServerProperties,
             webEndpointProperties: WebEndpointProperties
-    ): GenEndpoint {
-        return GenEndpoint(response, dataSourceProperties, environment, serverProperties, webEndpointProperties)
+    ): PumlEndpoint {
+        return PumlEndpoint(response, dataSourceProperties, environment, serverProperties, webEndpointProperties)
     }
 
 

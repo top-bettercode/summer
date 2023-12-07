@@ -25,14 +25,14 @@ import javax.servlet.http.HttpServletResponse
  * 生成数据表结构puml
  */
 @Endpoint(id = "puml")
-class GenEndpoint(
+class PumlEndpoint(
         private val response: HttpServletResponse,
         dataSourceProperties: DataSourceProperties? = null,
         environment: Environment,
         serverProperties: ServerProperties,
         webEndpointProperties: WebEndpointProperties
 ) {
-    private val log: Logger = LoggerFactory.getLogger(GenEndpoint::class.java)
+    private val log: Logger = LoggerFactory.getLogger(PumlEndpoint::class.java)
     private val contextPath: String = serverProperties.servlet.contextPath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/puml"
 
