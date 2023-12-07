@@ -30,7 +30,7 @@ object PoiExcelUtil {
         outputStream.close()
     }
 
-    fun <T> imageSetter(): ((XSSFSheet, Cell, ExcelCell<T>) -> Unit) = { sheet, _, cell ->
+    val imageSetter: ((XSSFSheet, Cell, ExcelCell<*>) -> Unit) = { sheet, _, cell ->
         val wb = sheet.workbook
         val helper: CreationHelper = wb.creationHelper
         val drawing: Drawing<XSSFShape> = sheet.createDrawingPatriarch()

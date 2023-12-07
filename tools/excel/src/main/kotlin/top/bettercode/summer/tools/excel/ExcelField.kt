@@ -746,7 +746,7 @@ class ExcelField<T, P : Any?> {
 
         @JvmStatic
         fun <T, P> image(title: String, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
-            return ExcelField(title, propertyGetter, isPoiColumn = true).poiSetter(PoiExcelUtil.imageSetter())
+            return ExcelField(title, propertyGetter, isPoiColumn = true).poiSetter(PoiExcelUtil.imageSetter)
         }
 
         //--------------------------------------------
