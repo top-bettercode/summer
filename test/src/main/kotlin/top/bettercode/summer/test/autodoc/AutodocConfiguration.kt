@@ -3,6 +3,7 @@ package top.bettercode.summer.test.autodoc
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -23,9 +24,9 @@ import javax.annotation.PostConstruct
 @ConditionalOnProperty(prefix = "summer.autodoc.gen", name = ["enable"], havingValue = "true")
 @EnableConfigurationProperties(
         GenProperties::class,
-        ApiSignProperties::class,
-        SummerWebProperties::class
+        ApiSignProperties::class
 )
+@ConditionalOnWebApplication
 @Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
 class AutodocConfiguration(
