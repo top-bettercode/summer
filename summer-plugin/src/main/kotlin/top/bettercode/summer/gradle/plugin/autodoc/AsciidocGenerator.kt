@@ -209,7 +209,7 @@ object AsciidocGenerator {
                         )
                     }
                     out.println(":toclevels: $toclevels")
-                    out.println(":apiHost: $apiHost")
+                    out.println(":apiAddress: $apiAddress")
                 }
                 if (!pdf) {
                     out.print(
@@ -290,13 +290,13 @@ object AsciidocGenerator {
                             out.println(".1+.^|方法 6+.^|${method}")
 
                             out.println(
-                                    ".1+.^|地址 6+.^|link:{apiHost}${
+                                    ".1+.^|地址 6+.^|link:{apiAddress}${
                                         str(
                                                 HttpOperation.getRestRequestPath(
                                                         request
                                                 )
                                         )
-                                    }[{apiHost}++$restUri++]"
+                                    }[{apiAddress}++$restUri++]"
                             )
 
                             if (uriVariablesExt.isNotEmpty()) {

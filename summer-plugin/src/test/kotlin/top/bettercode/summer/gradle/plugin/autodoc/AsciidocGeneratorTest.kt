@@ -75,7 +75,7 @@ class AsciidocGeneratorTest {
 
     @Test
     fun postman() {
-//        autodoc.apiHost = "http://10.13.3.202:8080/npk"
+//        autodoc.apiAddress = "http://10.13.3.202:8080/npk"
 //        autodoc.authUri = "/users/accessToken"
 //        autodoc.authVariables = arrayOf("accessToken")
         PostmanGenerator.postman(autodoc)

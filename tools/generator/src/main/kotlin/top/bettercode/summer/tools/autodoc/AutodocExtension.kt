@@ -12,7 +12,7 @@ import java.util.*
  * @author Peter Wu
  */
 open class AutodocExtension(
-        var apiHost: String = "{apiHost}",
+        var apiAddress: String = "{apiAddress}",
         var author: String = "autodoc",
         var version: String = "v1.0",
         var toclevels: Int = 2,

@@ -27,9 +27,9 @@ class AutodocPlugin : Plugin<Project> {
 
         project.extensions.configure(AutodocExtension::class.java) { autodocExtension ->
             autodocExtension.rootSource = project.rootProject.file("doc")
-            val apiHost = findProperty(project, "api-host")
-            if (!apiHost.isNullOrBlank())
-                autodocExtension.apiHost = apiHost
+            val apiAddress = findProperty(project, "api-address")
+            if (!apiAddress.isNullOrBlank())
+                autodocExtension.apiAddress = apiAddress
             val path = findProperty(project, "source") ?: "src/doc"
             autodocExtension.source = if (path.startsWith("/")) {
                 autodocExtension.source
@@ -69,7 +69,7 @@ class AutodocPlugin : Plugin<Project> {
 
         val docOutputDir = File(
                 (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
-                "/META-INF/resources/actuator/doc"
+                "/META-INF/actuator/doc"
         )
         if (autodoc.output == null)
             autodoc.output = docOutputDir

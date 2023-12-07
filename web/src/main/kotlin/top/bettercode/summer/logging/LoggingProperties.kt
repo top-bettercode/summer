@@ -33,6 +33,5 @@ open class LoggingProperties {
      * 是否启用日志浏览功能.
      */
     var isShowEnabled = true
-    var apiHost: String? = null
 
 }

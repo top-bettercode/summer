@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.*
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
@@ -16,7 +17,11 @@ import org.springframework.core.env.Environment
 import org.springframework.core.io.ResourceLoader
 import org.springframework.core.type.AnnotatedTypeMetadata
 import top.bettercode.summer.logging.WebsocketProperties
+import top.bettercode.summer.tools.lang.util.IPAddressUtil
 import top.bettercode.summer.tools.lang.util.RandomUtil
+import top.bettercode.summer.web.properties.CorsProperties
+import java.net.InetAddress
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 /**
@@ -29,25 +34,21 @@ import javax.servlet.http.HttpServletResponse
         ManagementAuthProperties::class
 )
 @Configuration(proxyBeanMethods = false)
-class EndpointAutoConfiguration {
+class EndpointAutoConfiguration(managementServerProperties: ManagementServerProperties) {
 
     private val log: Logger = LoggerFactory.getLogger(EndpointAutoConfiguration::class.java)
+
+
+    init {
+        val port = managementServerProperties.port
+        if (port != null && managementServerProperties.address == null) {
+            managementServerProperties.address = InetAddress.getByName(IPAddressUtil.inet4Address)
+        }
+    }
 
     @Bean
     fun settingsEndpoint(): SettingsEndpoint {
         return SettingsEndpoint()
-    }
-
-
-    @Bean
-    fun navFilter(
-            webEndpointProperties: WebEndpointProperties,
-            resourceLoader: ResourceLoader
-    ): NavFilter {
-        return NavFilter(
-                webEndpointProperties,
-                resourceLoader
-        )
     }
 
     @ConditionalOnProperty(
@@ -71,6 +72,16 @@ class EndpointAutoConfiguration {
         return ManagementLoginPageGeneratingFilter(managementAuthProperties, webEndpointProperties)
     }
 
+    @ConditionalOnWebApplication
+    @Bean
+    fun docsEndpoint(
+            @Autowired(required = false) request: HttpServletRequest,
+            @Autowired(required = false) response: HttpServletResponse,
+            resourceLoader: ResourceLoader,
+            corsProperties: CorsProperties
+    ): DocsEndpoint {
+        return DocsEndpoint(request, response, resourceLoader, corsProperties)
+    }
 
     @ConditionalOnProperty(
             prefix = "summer.logging",

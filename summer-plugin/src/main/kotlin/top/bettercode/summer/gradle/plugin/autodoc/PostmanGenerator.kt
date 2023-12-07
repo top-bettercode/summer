@@ -33,8 +33,8 @@ object PostmanGenerator {
             val variables = linkedSetOf<Variable>()
             variables.add(
                     Variable(
-                            key = "apiHost",
-                            value = autodoc.apiHost,
+                            key = "apiAddress",
+                            value = autodoc.apiAddress,
                             type = "string",
                             description = "接口地址"
                     )
@@ -188,9 +188,9 @@ object PostmanGenerator {
     private fun extractUrl(request: DocOperationRequest, operationPath: String): Url {
         val uri = request.restUri.replace("{", "{{").replace("}", "}}")
         return Url().apply {
-            host = listOf("{{apiHost}}")
+            host = listOf("{{apiAddress}}")
             path = uri.split("/").filter { it.isNotBlank() }
-            raw = "{{apiHost}}${HttpOperation.getRestRequestPath(request)}"
+            raw = "{{apiAddress}}${HttpOperation.getRestRequestPath(request)}"
 
             if (!HttpOperation.isPutOrPost(request))
                 query =

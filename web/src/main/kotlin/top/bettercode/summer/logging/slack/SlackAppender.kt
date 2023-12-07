@@ -39,7 +39,7 @@ open class SlackAppender(
             val title =
                     "$warnSubject${
                         try {
-                            "(${top.bettercode.summer.logging.LoggingUtil.apiHost})"
+                            "(${top.bettercode.summer.logging.LoggingUtil.apiAddress})"
                         } catch (e: Exception) {
                             ""
                         }

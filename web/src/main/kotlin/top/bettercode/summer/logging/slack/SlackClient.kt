@@ -104,12 +104,12 @@ class SlackClient(
         params.add("token", authToken)
         params.add("channel", channel)
 
-        val apiHost = try {
-            top.bettercode.summer.logging.LoggingUtil.apiHost
+        val actuatorAddress = try {
+            top.bettercode.summer.logging.LoggingUtil.actuatorAddress
         } catch (e: Exception) {
             null
         }
-        if (apiHost == null) {
+        if (actuatorAddress == null) {
             return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
             params["text"] = "$title:\n$initialComment"
@@ -132,7 +132,7 @@ class SlackClient(
 
             val linkTitle = "${filename}.gz#$anchor"
 
-            val logUrl = apiHost + managementLogPath
+            val logUrl = actuatorAddress + managementLogPath
             params["attachments"] = arrayOf(
                     mapOf(
                             "title" to linkTitle,

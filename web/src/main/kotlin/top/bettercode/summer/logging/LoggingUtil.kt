@@ -1,5 +1,6 @@
 package top.bettercode.summer.logging
 
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
@@ -15,12 +16,7 @@ import java.io.StringWriter
  */
 object LoggingUtil {
 
-    val apiHost: String? by lazy {
-        val apiHost = ApplicationContextHolder.getProperty("summer.logging.api-host")
-        if (!apiHost.isNullOrBlank()) {
-            return@lazy apiHost
-        }
-
+    val apiAddress: String? by lazy {
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
         val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
@@ -33,6 +29,22 @@ object LoggingUtil {
         val contextPath = serverProperties.servlet?.contextPath ?: "/"
         if ("/" != contextPath)
             printer.print(contextPath)
+        uriWriter.toString()
+    }
+
+    val actuatorAddress: String? by lazy {
+        val uriWriter = StringWriter()
+        val printer = PrintWriter(uriWriter)
+        val properties = ApplicationContextHolder.getBean(ManagementServerProperties::class.java)
+        Assert.notNull(properties, "ManagementServerProperties must not be null")
+        if (properties!!.address == null) {
+            return@lazy apiAddress
+        }
+        val serverPort = properties.port!!
+        printer.printf("%s://%s", RequestConverter.SCHEME_HTTP, properties.address)
+        if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
+            printer.printf(":%d", serverPort)
+        }
         uriWriter.toString()
     }
 

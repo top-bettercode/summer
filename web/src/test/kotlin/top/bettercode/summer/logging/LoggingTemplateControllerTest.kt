@@ -29,8 +29,8 @@ class LoggingTemplateControllerTest {
     private val requestBody = "///////////////////////request_body///////////////////////"
 
     @Test
-    fun apiHost() {
-        System.err.println(LoggingUtil.apiHost)
+    fun apiAddress() {
+        System.err.println(LoggingUtil.apiAddress)
     }
 
     @Test
