@@ -110,7 +110,7 @@ dependencies {
         api(project(":tools:configuration-processor"))
         api(project(":tools:pay"))
         api(project(":tools:optimal"))
-        api(project(":tools:ctpapi"))
+//        api(project(":tools:ctpapi"))
     }
 }
 
