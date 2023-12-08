@@ -30,11 +30,9 @@ object SapNativeLibLoader {
         }
         for (libraryName in libraryNames) {
             val targetPath = File(targetFolder, libraryName).absoluteFile
-            if (!targetPath.exists()) {
-                log.info("copy $libraryName to $targetPath")
-                Files.copy(SapNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                        targetPath.toPath())
-            }
+            log.info("copy $libraryName to $targetPath")
+            Files.copy(SapNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+                    targetPath.toPath())
         }
 
         val libraryPath = targetFolder.absolutePath

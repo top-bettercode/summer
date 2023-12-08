@@ -30,11 +30,9 @@ object CtpApiativeLibLoader {
 
         for (libraryName in libraryNames) {
             val targetPath = File(targetFolder, libraryName).absoluteFile
-            if (!targetPath.exists()) {
-                log.info("copy $libraryName to $targetPath")
-                Files.copy(CtpApiativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                        targetPath.toPath())
-            }
+            log.info("copy $libraryName to $targetPath")
+            Files.copy(CtpApiativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+                    targetPath.toPath())
         }
         when {
             Os.isFamily(Os.FAMILY_WINDOWS) -> System.load("${targetFolder.absolutePath}/thostapi_wrap.dll")
