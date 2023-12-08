@@ -7,14 +7,14 @@ import java.io.File
 import java.nio.file.Files
 
 /**
- * native library extractor and loader.
+ * native library loader.
  */
 object SapNativeLibLoader {
     private val log = LoggerFactory.getLogger(SapNativeLibLoader::class.java)
     private const val LIB_NAME = "Jco"
 
     /**
-     * Extract and load native library in the provided folder.
+     * Load native library in the user.dir folder.
      */
     @Synchronized
     fun loadNativeLib() {
