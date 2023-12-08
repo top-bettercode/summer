@@ -31,10 +31,13 @@ object COPTNativeLibLoader {
         }
 
         for (libraryName in libraryNames) {
-            val targetPath = File(targetFolder, libraryName.substringAfter("/")).absoluteFile
-            log.info("copy $libraryName to $targetPath")
+            val targetFile = File(targetFolder, libraryName.substringAfter("/")).absoluteFile
+            if(targetFile.exists()){
+                targetFile.delete()
+            }
+            log.info("copy $libraryName to $targetFile")
             Files.copy(COPTNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                    targetPath.toPath())
+                    targetFile.toPath())
         }
         when {
             Os.isFamily(Os.FAMILY_MAC) -> System.load("${targetFolder.absolutePath}/libcoptjniwrap.dylib")

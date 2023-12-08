@@ -29,10 +29,13 @@ object SapNativeLibLoader {
             else -> arrayOf("libsapjco3.so")
         }
         for (libraryName in libraryNames) {
-            val targetPath = File(targetFolder, libraryName).absoluteFile
-            log.info("copy $libraryName to $targetPath")
+            val targetFile = File(targetFolder, libraryName).absoluteFile
+            if(targetFile.exists()){
+                targetFile.delete()
+            }
+            log.info("copy $libraryName to $targetFile")
             Files.copy(SapNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                    targetPath.toPath())
+                    targetFile.toPath())
         }
 
         val libraryPath = targetFolder.absolutePath
