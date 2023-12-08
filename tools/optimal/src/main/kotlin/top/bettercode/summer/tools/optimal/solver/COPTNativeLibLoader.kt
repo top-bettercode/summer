@@ -31,7 +31,7 @@ object COPTNativeLibLoader {
         }
 
         for (libraryName in libraryNames) {
-            val targetPath = File(targetFolder, libraryName).absoluteFile
+            val targetPath = File(targetFolder, libraryName.substringAfter("/")).absoluteFile
             if (!targetPath.exists()) {
                 log.info("copy $libraryName to $targetPath")
                 Files.copy(COPTNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
