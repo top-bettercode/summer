@@ -22,7 +22,7 @@ class COPTSolver @JvmOverloads constructor(
     val model: copt.Model
 
     init {
-        val env = copt.Envr()
+        val env = copt.COPTEnvr()
         model = env.createModel(name)
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)

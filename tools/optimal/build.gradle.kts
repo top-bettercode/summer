@@ -16,14 +16,9 @@ dependencies {
 }
 
 tasks {
-    test {
-        jvmArgs = listOf("-DUSE_GLPK=ON")
-        environment("LD_LIBRARY_PATH", file("native").absolutePath)
-    }
 
     "jar"(Jar::class) {
         from(fileTree(mapOf("dir" to "libs")).files.map { zipTree(it) })
     }
-
 }
 

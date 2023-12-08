@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.optimal.solver
 
+import org.slf4j.Logger
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import kotlin.math.abs
 import kotlin.math.log10
@@ -16,6 +17,8 @@ abstract class Solver(
          */
         protected val epsilon: Double = 1e-6
 ) {
+
+    protected val log: Logger= org.slf4j.LoggerFactory.getLogger(this.javaClass)
 
     /**
      * 小数点后的位数

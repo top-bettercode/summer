@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.sap.config
 
 import com.sap.conn.jco.rt.JCoRuntimeFactory
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.lang.util.Os
 import java.io.File
 import java.nio.file.Files
@@ -24,28 +23,30 @@ object SapNativeLibLoader {
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }
-        val libraryName: String
-        val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
-        libraryName = when {
-            Os.isFamily(Os.FAMILY_MAC) -> "libsapjco3.jnilib"
-            isWindows -> "sapjco3.dll"
-            else -> "libsapjco3.so"
+        val libraryNames = when {
+            Os.isFamily(Os.FAMILY_MAC) -> arrayOf("libsapjco3.jnilib")
+            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("sapjco3.dll")
+            else -> arrayOf("libsapjco3.so")
         }
-        val targetPath = File(targetFolder, libraryName).absoluteFile
-        if (!targetPath.exists()) {
-            Files.copy(ClassPathResource("/native/$libraryName").inputStream,
-                    targetPath.toPath())
+        for (libraryName in libraryNames) {
+            val targetPath = File(targetFolder, libraryName).absoluteFile
+            if (!targetPath.exists()) {
+                log.info("copy $libraryName to $targetPath")
+                Files.copy(SapNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+                        targetPath.toPath())
+            }
         }
+
         val libraryPath = targetFolder.absolutePath
         val nativeSystemProperty = "java.library.path"
         var systemNativePath = System.getProperty(nativeSystemProperty)
-        val pathSeparator: String = if (isWindows) {
+        val pathSeparator: String = if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             ";"
         } else {
             ":"
         }
         if (!systemNativePath.contains(pathSeparator + libraryPath)
-                && !systemNativePath.startsWith(libraryPath + pathSeparator)) {
+                && !systemNativePath.contains(libraryPath + pathSeparator)) {
             systemNativePath += pathSeparator + libraryPath
             System.setProperty(nativeSystemProperty, systemNativePath)
         }

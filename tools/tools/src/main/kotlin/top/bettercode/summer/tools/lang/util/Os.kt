@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.lang.util
 
+import java.io.File
+
 /**
  * **NOTE:** This class was copied from plexus-utils, to allow this library
  * to stand completely self-contained.
@@ -106,7 +108,7 @@ class Os {
         private val validFamilies = setValidFamilies()
 
         // get the current info
-        private val PATH_SEP = System.getProperty("path.separator")
+        private val PATH_SEP = File.pathSeparator
         val OS_NAME = System.getProperty("os.name").lowercase()
         val OS_ARCH = System.getProperty("os.arch").lowercase()
         val OS_VERSION = System.getProperty("os.version").lowercase()
