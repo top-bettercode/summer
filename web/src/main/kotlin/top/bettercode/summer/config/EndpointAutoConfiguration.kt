@@ -46,6 +46,7 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
         val port = managementServerProperties.port
         if (port != null && managementServerProperties.address == null) {
             managementServerProperties.address = InetAddress.getByName(IPAddressUtil.inet4Address)
+            log.info("management server address:{}", managementServerProperties.address)
         }
     }
 
