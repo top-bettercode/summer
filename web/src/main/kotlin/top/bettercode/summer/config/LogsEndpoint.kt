@@ -7,7 +7,6 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointPr
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.annotation.Selector
-import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.lang.Nullable
