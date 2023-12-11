@@ -79,7 +79,6 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
             @Value("\${summer.logging.files.view-path:#{'\${summer.logging.files.path}'}}") loggingFilesPath: String,
             environment: Environment,
             websocketProperties: WebsocketProperties,
-            serverProperties: ServerProperties,
             @Autowired(required = false) response: HttpServletResponse,
             webEndpointProperties: WebEndpointProperties
     ): LogsEndpoint {
@@ -87,7 +86,6 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
                 loggingFilesPath,
                 environment,
                 websocketProperties,
-                serverProperties,
                 response,
                 webEndpointProperties
         )

@@ -38,12 +38,11 @@ class LogsEndpoint(
         private val loggingFilesPath: String,
         environment: Environment,
         private val websocketProperties: WebsocketProperties,
-        serverProperties: ServerProperties,
         private val response: HttpServletResponse,
         webEndpointProperties: WebEndpointProperties
 ) {
 
-    private val contextPath: String = serverProperties.servlet.contextPath ?: "/"
+    private val contextPath: String = webEndpointProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
