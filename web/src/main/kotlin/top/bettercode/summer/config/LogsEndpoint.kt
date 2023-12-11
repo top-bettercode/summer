@@ -4,6 +4,7 @@ import ch.qos.logback.classic.LoggerContext
 import org.slf4j.ILoggerFactory
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.annotation.Selector
@@ -38,10 +39,11 @@ class LogsEndpoint(
         environment: Environment,
         private val websocketProperties: WebsocketProperties,
         private val response: HttpServletResponse,
-        webEndpointProperties: WebEndpointProperties
+        webEndpointProperties: WebEndpointProperties,
+        managementServerProperties: ManagementServerProperties
 ) {
 
-    private val contextPath: String = webEndpointProperties.basePath ?: "/"
+    private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(

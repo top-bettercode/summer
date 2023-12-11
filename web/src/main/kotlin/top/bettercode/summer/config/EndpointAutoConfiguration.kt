@@ -80,14 +80,16 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
             environment: Environment,
             websocketProperties: WebsocketProperties,
             @Autowired(required = false) response: HttpServletResponse,
-            webEndpointProperties: WebEndpointProperties
+            webEndpointProperties: WebEndpointProperties,
+            managementServerProperties:ManagementServerProperties
     ): LogsEndpoint {
         return LogsEndpoint(
                 loggingFilesPath,
                 environment,
                 websocketProperties,
                 response,
-                webEndpointProperties
+                webEndpointProperties,
+                managementServerProperties
         )
     }
 
