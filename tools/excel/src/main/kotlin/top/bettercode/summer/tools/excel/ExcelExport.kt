@@ -544,15 +544,16 @@ class ExcelExport {
          * @param consumer 处理生成excel
          * @throws IOException IOException
          */
+        @JvmOverloads
         @JvmStatic
-        fun export(fileName: String, consumer: Consumer<ExcelExport>) {
+        fun export(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
             excelContentDisposition(request, response, fileName)
-            val excelExport = of(response.outputStream)
+            val excelExport = createExcelExport(response.outputStream)
             consumer.accept(excelExport)
             excelExport.finish()
         }
@@ -564,15 +565,16 @@ class ExcelExport {
          * @param consumer 处理生成excel
          * @throws IOException IOException
          */
+        @JvmOverloads
         @JvmStatic
-        fun sheet(fileName: String, consumer: Consumer<ExcelExport>) {
+        fun sheet(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
             excelContentDisposition(request, response, fileName)
-            val excelExport = of(response.outputStream)
+            val excelExport = createExcelExport(response.outputStream)
             excelExport.sheet("sheet1")
             consumer.accept(excelExport)
             excelExport.finish()
