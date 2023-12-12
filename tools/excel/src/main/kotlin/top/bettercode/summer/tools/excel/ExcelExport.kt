@@ -564,7 +564,7 @@ class ExcelExport {
                     }
                     val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
                     Files.newOutputStream(tmpFile.toPath()).use { outputStream ->
-                        val excelExport = of(outputStream)
+                        val excelExport = createExcelExport(outputStream)
                         consumer.accept(excelExport)
                         excelExport.finish()
                     }
