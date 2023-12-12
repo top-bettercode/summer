@@ -6,6 +6,7 @@ import org.springframework.util.StreamUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import top.bettercode.summer.tools.excel.CellStyle.Companion.style
+import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import java.io.*
 import java.net.URLEncoder
 import java.nio.file.Files
@@ -568,6 +569,7 @@ class ExcelExport {
                         consumer.accept(excelExport)
                         excelExport.finish()
                     }
+                    log.info("输出到缓存文件：{}", file.absolutePath)
                     tmpFile.renameTo(file)
                 }
                 StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
