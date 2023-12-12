@@ -223,8 +223,6 @@ class RequestLoggingFilter(
         val isMultipart = request.contentType?.lowercase(Locale.getDefault())
                 ?.startsWith("multipart/") == true
         val isFile = !response.getHeader(HttpHeaders.CONTENT_DISPOSITION).isNullOrBlank()
-        val includeRequestBody = if (isMultipart) false else properties.isIncludeRequestBody
-        val includeResponseBody = if (isFile) false else properties.isIncludeResponseBody
         return if (handler != null) {
             var collectionName = AnnotatedElementUtils.getMergedAnnotation(
                     handler.beanType,
@@ -253,8 +251,8 @@ class RequestLoggingFilter(
                 timeoutAlarmSeconds = properties.timeoutAlarmSeconds
             }
             RequestLoggingConfig(
-                    includeRequestBody = includeRequestBody && requestLoggingAnno?.includeRequestBody != false || properties.isForceRecord,
-                    includeResponseBody = includeResponseBody && requestLoggingAnno?.includeResponseBody != false || properties.isForceRecord,
+                    includeRequestBody = !isMultipart && (properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false || properties.isForceRecord),
+                    includeResponseBody = !isFile && (properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false || properties.isForceRecord),
                     includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false || properties.isForceRecord,
                     encryptHeaders = encryptHeaders,
                     encryptParameters = encryptParameters,
@@ -267,9 +265,9 @@ class RequestLoggingFilter(
             )
         } else
             RequestLoggingConfig(
-                    includeRequestBody = includeRequestBody,
-                    includeResponseBody = includeResponseBody,
-                    includeTrace = properties.isIncludeTrace,
+                    includeRequestBody = properties.isIncludeRequestBody || properties.isForceRecord,
+                    includeResponseBody = properties.isIncludeResponseBody || properties.isForceRecord,
+                    includeTrace = properties.isIncludeTrace || properties.isForceRecord,
                     encryptHeaders = properties.encryptHeaders,
                     encryptParameters = properties.encryptParameters,
                     format = properties.isFormat,
