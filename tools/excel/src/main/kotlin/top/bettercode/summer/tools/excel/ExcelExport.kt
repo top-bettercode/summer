@@ -571,6 +571,8 @@ class ExcelExport {
                     }
                     log.info("输出到缓存文件：{}", file.absolutePath)
                     tmpFile.renameTo(file)
+                } else {
+                    log.info("从缓存文件读取：{}", file.absolutePath)
                 }
                 StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
             } else {
