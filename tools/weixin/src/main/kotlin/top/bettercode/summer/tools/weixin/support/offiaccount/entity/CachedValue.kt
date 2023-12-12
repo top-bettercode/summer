@@ -13,4 +13,8 @@ data class CachedValue(val value: String, val expiresIn: Duration, val expiresTi
     fun expired(): Boolean {
         return !LocalDateTime.now().isBefore(expiresTime)
     }
+
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
