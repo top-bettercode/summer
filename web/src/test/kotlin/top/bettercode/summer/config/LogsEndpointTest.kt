@@ -3,6 +3,7 @@ package top.bettercode.summer.config
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.mock.env.MockEnvironment
 import org.springframework.mock.web.MockHttpServletResponse
@@ -24,10 +25,9 @@ class LogsEndpointTest {
                 "/local/downloads",
                 MockEnvironment(),
                 WebsocketProperties(),
-                ServerProperties(),
                 response,
-                WebEndpointProperties()
-        )
+                WebEndpointProperties(),
+                ManagementServerProperties() )
         logsEndpoint.path("log_total.log", false, null)
         println(String(GZIPInputStream(ByteArrayInputStream(response.contentAsByteArray)).readBytes()))
     }

@@ -485,21 +485,18 @@ class ExcelExport {
                 throw RuntimeException(e)
             }
         }
+        if (byteArrayOutputStream != null) {
+            Assert.notNull(outputStream, "输出流未设置")
+            if (poiCells.isEmpty()) {
+                outputStream!!.write(byteArrayOutputStream.toByteArray())
+            } else {
+                PoiExcelUtil.setPoi(poiCells,
+                        ByteArrayInputStream(byteArrayOutputStream.toByteArray()), outputStream!!)
+                poiCells.clear()
+            }
+        }
         return this
     }
-
-    fun setPoi() {
-        Assert.notNull(byteArrayOutputStream, "不是支持poi特性导出")
-        Assert.notNull(outputStream, "输出流未设置")
-        if (poiCells.isEmpty()) {
-            outputStream!!.write(byteArrayOutputStream!!.toByteArray())
-        } else {
-            PoiExcelUtil.setPoi(poiCells,
-                    ByteArrayInputStream(byteArrayOutputStream!!.toByteArray()), outputStream!!)
-            poiCells.clear()
-        }
-    }
-
 
     companion object {
         /**
@@ -568,27 +565,6 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun exportWithPoi(fileName: String, consumer: Consumer<ExcelExport>) {
-            val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
-            Assert.notNull(requestAttributes, "requestAttributes获取失败")
-            val request = requestAttributes.request
-            val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
-            val excelExport = withPoi(response.outputStream)
-            consumer.accept(excelExport)
-            excelExport.finish()
-            excelExport.setPoi()
-        }
-
-        /**
-         * 输出数据流
-         *
-         * @param fileName 输出文件名
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
         fun sheet(fileName: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -603,45 +579,6 @@ class ExcelExport {
         }
 
         /**
-         * 输出数据流
-         *
-         * @param fileName 输出文件名
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
-        fun sheetWithPoi(fileName: String, consumer: Consumer<ExcelExport>) {
-            val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
-            Assert.notNull(requestAttributes, "requestAttributes获取失败")
-            val request = requestAttributes.request
-            val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
-            val excelExport = withPoi(response.outputStream)
-            excelExport.sheet("sheet1")
-            consumer.accept(excelExport)
-            excelExport.finish()
-            excelExport.setPoi()
-        }
-
-        /**
-         * 文件缓存输出
-         *
-         * @param fileName 输出文件名
-         * @param fileKey  文件唯一key
-         * @param consumer 处理生成excel
-         * @throws IOException IOException
-         */
-        @JvmStatic
-        fun cache(fileName: String, fileKey: String, consumer: Consumer<ExcelExport>) {
-            cacheOutput(fileName, fileKey) { outputStream ->
-                val excelExport = of(outputStream)
-                consumer.accept(excelExport)
-                excelExport.finish()
-            }
-        }
-
-        /**
          * 文件缓存输出
          *
          * @param fileName 输出文件名
@@ -650,7 +587,7 @@ class ExcelExport {
          * @throws IOException IOException
          */
         @JvmStatic
-        fun cacheOutput(fileName: String, fileKey: String, consumer: Consumer<OutputStream>) {
+        fun cache(fileName: String, fileKey: String, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
@@ -666,7 +603,11 @@ class ExcelExport {
                     dir.mkdirs()
                 }
                 val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
-                Files.newOutputStream(tmpFile.toPath()).use { outputStream -> consumer.accept(outputStream) }
+                Files.newOutputStream(tmpFile.toPath()).use { outputStream ->
+                    val excelExport = of(outputStream)
+                    consumer.accept(excelExport)
+                    excelExport.finish()
+                }
                 tmpFile.renameTo(file)
             }
             StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)

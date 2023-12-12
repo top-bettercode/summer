@@ -64,7 +64,6 @@ class ExcelPoiTest {
         ExcelExport.withPoi(Files.newOutputStream(Paths.get(filename))).sheet("表格")
                 .setMergeData(list, excelMergeFields)
                 .finish()
-                .setPoi()
         val e = System.currentTimeMillis()
         System.err.println(e - s)
         ExcelTestUtil.openExcel(filename)

@@ -130,8 +130,7 @@ public class ExcelImageTest {
     ExcelExport.withPoi(Files.newOutputStream(Paths.get(filename)))
         .sheet("表格")
         .setMergeData(list, excelMergeFields)
-        .finish()
-        .setPoi();
+        .finish();
     long e = System.currentTimeMillis();
 
     System.err.println(e - s);
