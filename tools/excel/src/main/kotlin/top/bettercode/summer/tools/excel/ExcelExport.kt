@@ -546,16 +546,36 @@ class ExcelExport {
          */
         @JvmOverloads
         @JvmStatic
-        fun export(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, consumer: Consumer<ExcelExport>) {
+        fun export(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
             excelContentDisposition(request, response, fileName)
-            val excelExport = createExcelExport(response.outputStream)
-            consumer.accept(excelExport)
-            excelExport.finish()
+            if (cacheKey != null) {
+                val tmpPath = System.getProperty("java.io.tmpdir")
+                val file = File(tmpPath,
+                        """summer${File.separator}excel-export${File.separator}$fileName${File.separator}$cacheKey.xlsx""")
+                if (!file.exists()) {
+                    val dir = file.parentFile
+                    if (!dir.exists()) {
+                        dir.mkdirs()
+                    }
+                    val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
+                    Files.newOutputStream(tmpFile.toPath()).use { outputStream ->
+                        val excelExport = of(outputStream)
+                        consumer.accept(excelExport)
+                        excelExport.finish()
+                    }
+                    tmpFile.renameTo(file)
+                }
+                StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
+            } else {
+                val excelExport = createExcelExport(response.outputStream)
+                consumer.accept(excelExport)
+                excelExport.finish()
+            }
         }
 
         /**
@@ -567,52 +587,11 @@ class ExcelExport {
          */
         @JvmOverloads
         @JvmStatic
-        fun sheet(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, consumer: Consumer<ExcelExport>) {
-            val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
-            Assert.notNull(requestAttributes, "requestAttributes获取失败")
-            val request = requestAttributes.request
-            val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
-            val excelExport = createExcelExport(response.outputStream)
-            excelExport.sheet("sheet1")
-            consumer.accept(excelExport)
-            excelExport.finish()
-        }
-
-        /**
-         * 文件缓存输出
-         *
-         * @param fileName 输出文件名
-         * @param fileKey  文件唯一key
-         * @param consumer 处理生成excel至 outputStream
-         * @throws IOException IOException
-         */
-        @JvmStatic
-        fun cache(fileName: String, fileKey: String, consumer: Consumer<ExcelExport>) {
-            val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
-            Assert.notNull(requestAttributes, "requestAttributes获取失败")
-            val request = requestAttributes.request
-            val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
-            val tmpPath = System.getProperty("java.io.tmpdir")
-            val file = File(tmpPath,
-                    """summer${File.separator}excel-export${File.separator}$fileName${File.separator}$fileKey.xlsx""")
-            if (!file.exists()) {
-                val dir = file.parentFile
-                if (!dir.exists()) {
-                    dir.mkdirs()
-                }
-                val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
-                Files.newOutputStream(tmpFile.toPath()).use { outputStream ->
-                    val excelExport = of(outputStream)
-                    consumer.accept(excelExport)
-                    excelExport.finish()
-                }
-                tmpFile.renameTo(file)
+        fun sheet(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
+            export(fileName, createExcelExport, cacheKey) {
+                it.sheet("sheet1")
+                consumer.accept(it)
             }
-            StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
         }
 
         private fun excelContentDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String) {
