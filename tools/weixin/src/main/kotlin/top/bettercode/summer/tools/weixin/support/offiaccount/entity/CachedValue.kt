@@ -15,6 +15,7 @@ data class CachedValue(val value: String, val expiresIn: Duration, val expiresTi
     }
 
     companion object {
+        @Suppress("ConstPropertyName")
         private const val serialVersionUID = 1L
     }
 }

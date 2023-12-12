@@ -2,6 +2,8 @@ package top.bettercode.summer.tools.weixin.support
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import java.util.concurrent.TimeUnit
 
@@ -11,6 +13,7 @@ import java.util.concurrent.TimeUnit
  */
 class DefaultWeixinCache(cacheSeconds: Long) : IWeixinCache {
 
+    private val log: Logger = LoggerFactory.getLogger(DefaultWeixinCache::class.java)
     private val cache: Cache<String, CachedValue> = Caffeine.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
             .maximumSize(1000).build()
 
@@ -19,7 +22,12 @@ class DefaultWeixinCache(cacheSeconds: Long) : IWeixinCache {
     }
 
     override fun get(key: String): CachedValue? {
-        return cache.getIfPresent(key)
+        try {
+            return cache.getIfPresent(key)
+        } catch (e: Exception) {
+            log.error(e.message, e)
+            return null
+        }
     }
 
     override fun evict(key: String) {

@@ -13,6 +13,7 @@ class RedisWeixinCache(cacheSeconds: Long,
                        cacheName: String,
                        redisConnectionFactory: RedisConnectionFactory) : IWeixinCache {
 
+    private val log = org.slf4j.LoggerFactory.getLogger(this.javaClass)
     private val cache: RedisCache = RedisCache(redisConnectionFactory, cacheName,
             Duration.ofSeconds(cacheSeconds))
 
@@ -21,7 +22,12 @@ class RedisWeixinCache(cacheSeconds: Long,
     }
 
     override fun get(key: String): CachedValue? {
-        return cache[key, CachedValue::class.java]
+        try {
+            return cache[key, CachedValue::class.java]
+        } catch (e: Exception) {
+            log.error(e.message, e)
+            return null
+        }
     }
 
     override fun evict(key: String) {
