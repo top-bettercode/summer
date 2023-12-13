@@ -3,24 +3,19 @@ package top.bettercode.summer.security.config
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.util.AntPathMatcher
+import top.bettercode.summer.security.client.ClientDetails
 
 /**
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.security")
-open class ApiSecurityProperties {
-    var refreshTokenValiditySeconds = 60 * 60 * 24 * 30 // default 30 days.
-    var accessTokenValiditySeconds = 60 * 60 * 12 // default 12 hours.
-
-    /**
-     * 默认不过期
-     */
-    var userDetailsValiditySeconds = -1
+open class ApiSecurityProperties : ClientDetails() {
 
     /**
      * security.url-filter.ignored.
      */
     var urlFilterIgnored: Array<String> = arrayOf()
+
     var sessionCreationPolicy = SessionCreationPolicy.STATELESS
 
     /**
@@ -29,27 +24,11 @@ open class ApiSecurityProperties {
     var isFrameOptionsDisable = true
     var isSupportClientCache = true
     //--------------------------------------------
-    /**
-     * 登录时是否踢出前一个登录用户,全局配置
-     */
-    var isLoginKickedOut = false
-
-    /**
-     * 登录时是否踢出前一个登录用户，针对特殊scope
-     */
-    var loginKickedOutScopes = arrayOf<String>()
 
     /**
      * 是否兼容旧toekn名称
      */
     var isCompatibleAccessToken = false
-    var clientId: String? = null
-    var clientSecret: String? = null
-
-    /**
-     * 支持的权限范围
-     */
-    var supportScopes: Array<String> = arrayOf("app")
 
     var secureRandomSeed: String? = null
 
@@ -67,7 +46,4 @@ open class ApiSecurityProperties {
         return false
     }
 
-    fun needKickedOut(scope: String): Boolean {
-        return isLoginKickedOut || loginKickedOutScopes.contains(scope)
-    }
 }

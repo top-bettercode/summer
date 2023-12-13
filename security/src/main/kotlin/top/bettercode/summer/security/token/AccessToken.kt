@@ -3,11 +3,12 @@ package top.bettercode.summer.security.token
 import com.fasterxml.jackson.annotation.*
 import org.springframework.security.core.userdetails.UserDetails
 import top.bettercode.summer.security.userdetails.AdditionalUserDetails
-import java.io.Serializable
+import top.bettercode.summer.web.serializer.annotation.JsonSetToString
 import java.time.Instant
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-open class ApiAccessToken : Serializable {
+open class AccessToken : IAccessToken {
+
     @JsonProperty("token_type")
     var tokenType: String? = null
 
@@ -18,24 +19,26 @@ open class ApiAccessToken : Serializable {
     @JsonProperty("refresh_token")
     var refreshToken: String? = null
 
+    @JsonSetToString(extended = false)
     @JsonProperty("scope")
-    var scope: String? = null
+    var scope: Set<String>? = null
+
     private var additionalInformation: MutableMap<String, Any?> = mutableMapOf()
 
     @get:JsonIgnore
-    var apiAuthenticationToken: ApiToken? = null
+    var apiAuthenticationToken: StoreToken? = null
         private set
 
     constructor()
-    constructor(apiToken: ApiToken) {
-        this.apiAuthenticationToken = apiToken
-        val accessToken = apiToken.accessToken
-        val userDetails = apiToken.userDetails
+    constructor(storeToken: StoreToken) {
+        this.apiAuthenticationToken = storeToken
+        val accessToken = storeToken.accessToken
+        val userDetails = storeToken.userDetails
         tokenType = "bearer"
         this.accessToken = accessToken.tokenValue
         expiresAt = accessToken.expiresAt
-        refreshToken = apiToken.refreshToken.tokenValue
-        scope = apiToken.scope
+        refreshToken = storeToken.refreshToken.tokenValue
+        scope = storeToken.scope
         additionalInformation = if (userDetails is AdditionalUserDetails) userDetails.additionalInformation else mutableMapOf()
     }
 

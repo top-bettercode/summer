@@ -6,6 +6,6 @@ package top.bettercode.summer.test
  */
 interface TestAuthenticationService {
 
-    fun loadAuthentication(scope: String, username: String)
+    fun loadAuthentication(clientd: String, scope: Set<String>, username: String)
 
 }

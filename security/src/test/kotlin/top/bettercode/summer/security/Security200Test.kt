@@ -18,7 +18,7 @@ import org.springframework.util.DigestUtils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import top.bettercode.summer.security.config.ApiSecurityProperties
-import top.bettercode.summer.security.token.ApiAccessToken
+import top.bettercode.summer.security.token.AccessToken
 import top.bettercode.summer.test.autodoc.Autodoc.collectionName
 import top.bettercode.summer.test.autodoc.Autodoc.description
 import top.bettercode.summer.test.autodoc.Autodoc.disable
@@ -55,7 +55,7 @@ class Security200Test {
                 apiSecurityProperties!!.clientSecret)
     }
 
-    private fun getApiAccessToken(tag: String?): ApiAccessToken {
+    private fun getApiAccessToken(tag: String?): AccessToken {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "password")
         params.add("scope", "app")
@@ -69,7 +69,7 @@ class Security200Test {
                 .postForEntity("/oauth/token", HttpEntity(params, headers), String::class.java)
         val body = entity.body
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
-        return objectMapper.readValue(body, ApiAccessToken::class.java)
+        return objectMapper.readValue(body, AccessToken::class.java)
     }
 
     @Test

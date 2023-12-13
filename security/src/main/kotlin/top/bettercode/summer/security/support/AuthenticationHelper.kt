@@ -1,10 +1,14 @@
 package top.bettercode.summer.security.support
 
+import org.springframework.http.HttpHeaders
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
+import java.nio.charset.StandardCharsets
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu
@@ -73,10 +77,37 @@ object AuthenticationHelper {
      * @param authority 权限
      * @return 授权信息是否包含指定权限
      */
-        @JvmStatic
+    @JvmStatic
     fun hasAuthority(authority: String): Boolean {
         val authentication = authentication
                 ?: return false
         return hasAuthority(authentication, authority)
     }
+
+    fun getClientInfo(request: HttpServletRequest): Pair<String?, String?>? {
+        var header = request.getHeader(HttpHeaders.AUTHORIZATION)
+        if (header != null) {
+            header = header.trim()
+            if (header.startsWith("Basic", true) && !header.equals("Basic", ignoreCase = true)) {
+                val basicCredentials = String(
+                        decode(header.substring(6).toByteArray(StandardCharsets.UTF_8)), StandardCharsets.UTF_8)
+                val clientInfo = basicCredentials.split(":")
+                return Pair(clientInfo[0], clientInfo[1])
+            }
+        } else {
+            val clientId = request.getParameter("client_id")
+            val clientSecret = request.getParameter("client_secret")
+            return Pair(clientId, clientSecret)
+        }
+        return null
+    }
+
+    private fun decode(base64Token: ByteArray): ByteArray {
+        return try {
+            Base64.getDecoder().decode(base64Token)
+        } catch (var3: IllegalArgumentException) {
+            throw BadCredentialsException("Failed to decode basic authentication token")
+        }
+    }
+
 }

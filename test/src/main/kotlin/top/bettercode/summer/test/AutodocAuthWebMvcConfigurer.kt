@@ -59,9 +59,7 @@ class AutodocAuthWebMvcConfigurer(
             }
             if (needAuth) {
                 if (isClientAuth && !Autodoc.requireAuthorization) {
-                    request.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils.encodeToString(
-                            (securityProperties.clientId + ":"
-                                    + securityProperties.clientSecret).toByteArray()))
+                    request.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils.encodeToString( (securityProperties.clientId + ":" + securityProperties.clientSecret).toByteArray()))
                 } else {
                     if (securityProperties.isCompatibleAccessToken) {
                         val authorization = request.getHeader(

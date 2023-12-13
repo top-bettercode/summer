@@ -61,7 +61,6 @@ class SecurityConfiguration(
             http: HttpSecurity,
             access: AuthorizationManager<RequestAuthorizationContext>,
     ): SecurityFilterChain {
-        val securityProperties = apiTokenService.securityProperties
         if (securityProperties.isSupportClientCache) {
             http.headers().cacheControl().disable()
         }
@@ -73,7 +72,7 @@ class SecurityConfiguration(
         }
         http.csrf().disable()
         val apiTokenEndpointFilter = ApiTokenEndpointFilter(apiTokenService,
-                passwordEncoder, summerWebProperties, revokeTokenService, objectMapper, formkeyService)
+                passwordEncoder, summerWebProperties, securityProperties, revokeTokenService, objectMapper, formkeyService)
         http.addFilterBefore(apiTokenEndpointFilter, LogoutFilter::class.java)
         http
                 .sessionManagement().sessionCreationPolicy(securityProperties.sessionCreationPolicy)

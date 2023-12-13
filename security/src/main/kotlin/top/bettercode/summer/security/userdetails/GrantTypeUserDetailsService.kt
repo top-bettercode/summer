@@ -8,5 +8,5 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 interface GrantTypeUserDetailsService : UserDetailsService {
-    fun loadUserByGrantTypeAndRequest(grantType: String?, request: HttpServletRequest?): UserDetails
+    fun loadUserByGrantTypeAndRequest(grantType: String, request: HttpServletRequest): UserDetails
 }

@@ -8,14 +8,15 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.support.SqlLobValue
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.Assert
-import top.bettercode.summer.security.token.ApiToken
+import top.bettercode.summer.security.token.StoreToken
+import top.bettercode.summer.security.token.TokenId
 import java.sql.ResultSet
 import java.sql.Types
 import javax.sql.DataSource
 
 
-open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSource?, tableName: String = "api_token") : ApiTokenRepository {
-    private val log = LoggerFactory.getLogger(JdbcApiTokenRepository::class.java)
+open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSource?, tableName: String = "api_token") : StoreTokenRepository {
+    private val log = LoggerFactory.getLogger(JdbcStoreTokenRepository::class.java)
     private val defaultInsertStatement: String
     private val defaultSelectStatement: String
     private val defaultSelectByAccessStatement: String
@@ -39,15 +40,14 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
     }
 
     @Transactional
-    override fun save(apiToken: ApiToken) {
+    override fun save(storeToken: StoreToken) {
         try {
-            val scope = apiToken.scope
-            val username = apiToken.username
-            val id = "$scope:$username"
-            remove(scope, username)
-            val accessToken = apiToken.accessToken.tokenValue
-            val refreshToken = apiToken.refreshToken.tokenValue
-            val auth = jdkSerializationSerializer.serialize(apiToken)
+            val tokenId = storeToken.toId()
+            remove(tokenId)
+            val id = tokenId.toString()
+            val accessToken = storeToken.accessToken.tokenValue
+            val refreshToken = storeToken.refreshToken.tokenValue
+            val auth = jdkSerializationSerializer.serialize(storeToken)
             val update = jdbcTemplate.update(defaultInsertStatement, arrayOf(id, accessToken, refreshToken, SqlLobValue(auth)), intArrayOf(Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB))
             if (log.isDebugEnabled) {
                 log.debug("JdbcApiAuthorizationService.save\n{}\n{},{},{}\naffected:{}",
@@ -55,20 +55,18 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
                         accessToken, refreshToken, update)
             }
         } catch (e: DuplicateKeyException) {
-            save(apiToken)
+            save(storeToken)
         }
     }
 
     @Transactional
-    override fun remove(apiToken: ApiToken) {
-        val scope = apiToken.scope
-        val username = apiToken.username
-        remove(scope, username)
+    override fun remove(storeToken: StoreToken) {
+        remove(storeToken.toId())
     }
 
     @Transactional
-    override fun remove(scope: String, username: String) {
-        val id = "$scope:$username"
+    override fun remove(tokenId: TokenId) {
+        val id = tokenId.toString()
         val update = jdbcTemplate.update(defaultDeleteStatement, id)
         if (log.isDebugEnabled) {
             log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", defaultDeleteStatement,
@@ -77,10 +75,10 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
     }
 
     @Transactional
-    override fun remove(scope: String, usernames: List<String>) {
-        Assert.notEmpty(usernames, "usernames must not be empty")
-        val ids = usernames.map { "$scope:$it" }.toTypedArray()
-        val sql = defaultBatchDeleteStatement + "(${usernames.joinToString(",") { "?" }})"
+    override fun remove(tokenIds: List<TokenId>) {
+        Assert.notEmpty(tokenIds, "ids must not be empty")
+        val ids = tokenIds.map { it.toString() }.toTypedArray()
+        val sql = defaultBatchDeleteStatement + "(${ids.joinToString(",") { "?" }})"
         @Suppress("SqlSourceToSinkFlow") val update = jdbcTemplate.update(sql, *ids)
         if (log.isDebugEnabled) {
             log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", sql,
@@ -88,17 +86,16 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
         }
     }
 
-    override fun findByScopeAndUsername(scope: String, username: String): ApiToken? {
-        val id = "$scope:$username"
-        return getApiToken(id, defaultSelectStatement)
+    override fun findById(tokenId: TokenId): StoreToken? {
+        return getStoreToken(tokenId.toString(), defaultSelectStatement)
     }
 
-    override fun findByAccessToken(accessToken: String): ApiToken? {
-        return getApiToken(accessToken, defaultSelectByAccessStatement)
+    override fun findByAccessToken(accessToken: String): StoreToken? {
+        return getStoreToken(accessToken, defaultSelectByAccessStatement)
     }
 
-    override fun findByRefreshToken(refreshToken: String): ApiToken? {
-        return getApiToken(refreshToken, defaultSelectByRefreshStatement)
+    override fun findByRefreshToken(refreshToken: String): StoreToken? {
+        return getStoreToken(refreshToken, defaultSelectByRefreshStatement)
     }
 
     /**
@@ -106,16 +103,16 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
      * @param selectStatement 查询语句
      * @return 结果
      */
-    private fun getApiToken(param: String?, selectStatement: String): ApiToken? {
+    private fun getStoreToken(param: String?, selectStatement: String): StoreToken? {
         return try {
-            val apiToken = jdbcTemplate.queryForObject<ApiToken>(selectStatement,
+            val storeToken = jdbcTemplate.queryForObject<StoreToken>(selectStatement,
                     RowMapper { rs: ResultSet, _: Int ->
                         val bytes = rs.getBytes(1)
                         if (JdkSerializationSerializer.isEmpty(bytes)) {
                             return@RowMapper null
                         }
                         try {
-                            return@RowMapper jdkSerializationSerializer.deserialize(bytes) as ApiToken
+                            return@RowMapper jdkSerializationSerializer.deserialize(bytes) as StoreToken
                         } catch (e: Exception) {
                             log.warn("apiToken反序列化失败", e)
                             try {
@@ -133,9 +130,9 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
                     }, param)
             if (log.isDebugEnabled) {
                 log.debug("JdbcApiAuthorizationService.getApiAuthenticationToken\n{}\n{}\nresult:{}",
-                        selectStatement, param, apiToken?.userDetails)
+                        selectStatement, param, storeToken?.userDetails)
             }
-            apiToken
+            storeToken
         } catch (e: EmptyResultDataAccessException) {
             null
         }

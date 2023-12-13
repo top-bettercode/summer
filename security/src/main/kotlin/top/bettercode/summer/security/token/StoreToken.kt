@@ -6,19 +6,20 @@ import java.io.Serializable
 /**
  * @author Peter Wu
  */
-class ApiToken : Serializable {
+class StoreToken : Serializable {
     //--------------------------------------------
-    lateinit var scope: String
+    lateinit var clientId: String
+    lateinit var scope: Set<String>
     lateinit var accessToken: Token
     lateinit var refreshToken: Token
     lateinit var userDetailsInstantAt: InstantAt
     lateinit var userDetails: UserDetails
 
     constructor()
-    constructor(
-            scope: String, accessToken: Token,
-            refreshToken: Token, userDetailsInstantAt: InstantAt, userDetails: UserDetails
+    constructor(clientId: String, scope: Set<String>, accessToken: Token,
+                refreshToken: Token, userDetailsInstantAt: InstantAt, userDetails: UserDetails
     ) {
+        this.clientId = clientId
         this.scope = scope
         this.accessToken = accessToken
         this.refreshToken = refreshToken
@@ -29,8 +30,8 @@ class ApiToken : Serializable {
     val username: String
         get() = userDetails.username
 
-    fun toApiToken(): ApiAccessToken {
-        return ApiAccessToken(this)
+    fun toId(): TokenId {
+        return TokenId(this.clientId, this.scope, this.username)
     }
 
     companion object {

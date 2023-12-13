@@ -19,10 +19,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import top.bettercode.summer.security.ApiTokenService
 import top.bettercode.summer.security.IResourceService
-import top.bettercode.summer.security.repository.ApiTokenRepository
-import top.bettercode.summer.security.repository.InMemoryApiTokenRepository
+import top.bettercode.summer.security.client.ClientDetailsService
+import top.bettercode.summer.security.repository.InMemoryStoreTokenRepository
+import top.bettercode.summer.security.repository.StoreTokenRepository
 import top.bettercode.summer.security.support.ApiSecurityErrorHandler
-import top.bettercode.summer.security.token.ApiToken
+import top.bettercode.summer.security.token.AccessTokenConverter
+import top.bettercode.summer.security.token.DefaulAccessTokenConverter
+import top.bettercode.summer.security.token.StoreToken
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
@@ -40,6 +43,18 @@ class ApiSecurityConfiguration(
         return object : IResourceService {}
     }
 
+    @ConditionalOnMissingBean(AccessTokenConverter::class)
+    @Bean
+    fun accessTokenConverter(): AccessTokenConverter {
+        return DefaulAccessTokenConverter()
+    }
+
+    @ConditionalOnMissingBean(ClientDetailsService::class)
+    @Bean
+    fun clientDetailsService(): ClientDetailsService {
+        return ClientDetailsService(listOf(securityProperties))
+    }
+
     @ConditionalOnMissingBean(PasswordEncoder::class)
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -52,35 +67,37 @@ class ApiSecurityConfiguration(
 
     @Bean
     fun apiTokenService(
-            apiAuthorizationService: ApiTokenRepository,
+            storeTokenRepository: StoreTokenRepository,
+            clientDetailsService: ClientDetailsService,
+            accessTokenConverter: AccessTokenConverter,
             userDetailsService: UserDetailsService
     ): ApiTokenService {
-        return ApiTokenService(securityProperties, apiAuthorizationService, userDetailsService)
+        return ApiTokenService(storeTokenRepository, clientDetailsService, accessTokenConverter, userDetailsService)
     }
 
     @Bean
-    fun securityOAuth2ErrorHandler(
+    fun apiSecurityErrorHandler(
             messageSource: MessageSource,
             @Autowired(required = false) request: HttpServletRequest?
     ): ApiSecurityErrorHandler {
         return ApiSecurityErrorHandler(messageSource, request)
     }
 
-    @ConditionalOnMissingBean(ApiTokenRepository::class)
+    @ConditionalOnMissingBean(StoreTokenRepository::class)
     @Bean
-    fun apiAuthorizationService(): ApiTokenRepository {
+    fun storeTokenRepository(clientDetailsService: ClientDetailsService): StoreTokenRepository {
         val cache = Caffeine.newBuilder()
-                .expireAfterWrite(max(securityProperties.accessTokenValiditySeconds,
-                        securityProperties.refreshTokenValiditySeconds).toLong(), TimeUnit.SECONDS)
-                .maximumSize(10000).build<String, ApiToken>()
+                .expireAfterWrite(max(clientDetailsService.maxAccessTokenValiditySeconds,
+                        clientDetailsService.maxRefreshTokenValiditySeconds).toLong(), TimeUnit.SECONDS)
+                .maximumSize(10000).build<String, StoreToken>()
         val accessTokenBuild = Caffeine.newBuilder()
-                .expireAfterWrite(securityProperties.accessTokenValiditySeconds.toLong(), TimeUnit.SECONDS)
+                .expireAfterWrite(clientDetailsService.maxAccessTokenValiditySeconds.toLong(), TimeUnit.SECONDS)
                 .maximumSize(10000).build<String, String>()
         val refreshTokenBuild = Caffeine.newBuilder()
                 .expireAfterWrite(
-                        securityProperties.refreshTokenValiditySeconds.toLong(), TimeUnit.SECONDS)
+                        clientDetailsService.maxRefreshTokenValiditySeconds.toLong(), TimeUnit.SECONDS)
                 .maximumSize(10000).build<String, String>()
-        return InMemoryApiTokenRepository(cache.asMap(), accessTokenBuild.asMap(),
+        return InMemoryStoreTokenRepository(cache.asMap(), accessTokenBuild.asMap(),
                 refreshTokenBuild.asMap())
     }
 

@@ -4,12 +4,10 @@ import org.apache.tomcat.util.codec.binary.Base64
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.keygen.KeyGenerators
-import top.bettercode.summer.security.config.ApiSecurityProperties
-import top.bettercode.summer.security.repository.ApiTokenRepository
-import top.bettercode.summer.security.token.ApiAccessToken
-import top.bettercode.summer.security.token.ApiToken
-import top.bettercode.summer.security.token.InstantAt
-import top.bettercode.summer.security.token.Token
+import top.bettercode.summer.security.client.ClientDetails
+import top.bettercode.summer.security.client.ClientDetailsService
+import top.bettercode.summer.security.repository.StoreTokenRepository
+import top.bettercode.summer.security.token.*
 import top.bettercode.summer.security.userdetails.*
 import java.time.Instant
 import javax.servlet.http.HttpServletRequest
@@ -18,105 +16,99 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 class ApiTokenService(
-        val securityProperties: ApiSecurityProperties,
-        val apiTokenRepository: ApiTokenRepository,
+        val storeTokenRepository: StoreTokenRepository,
+        val clientDetailsService: ClientDetailsService,
+        val accessTokenConverter: AccessTokenConverter,
         private val userDetailsService: UserDetailsService
 ) : NeedKickedOutValidator, UserDetailsValidator, LoginListener {
-    fun createAccessToken(): Token {
+
+    fun createAccessToken(clientDetails: ClientDetails): Token {
         val tokenValue = Base64.encodeBase64URLSafeString(DEFAULT_TOKEN_GENERATOR.generateKey())
-        if (apiTokenRepository.findByAccessToken(tokenValue) != null) {
-            return createAccessToken()
+        if (storeTokenRepository.findByAccessToken(tokenValue) != null) {
+            return createAccessToken(clientDetails)
         }
         val now = Instant.now()
-        val accessTokenValiditySeconds = securityProperties.accessTokenValiditySeconds
+        val accessTokenValiditySeconds = clientDetails.accessTokenValiditySeconds
         return Token(tokenValue, now,
                 if (accessTokenValiditySeconds > 0) now.plusSeconds(
                         accessTokenValiditySeconds.toLong()) else null)
     }
 
-    fun createRefreshToken(): Token {
+    private fun createRefreshToken(clientDetails: ClientDetails): Token {
         val tokenValue = Base64.encodeBase64URLSafeString(DEFAULT_TOKEN_GENERATOR.generateKey())
-        if (apiTokenRepository.findByRefreshToken(tokenValue) != null) {
-            return createRefreshToken()
+        if (storeTokenRepository.findByRefreshToken(tokenValue) != null) {
+            return createRefreshToken(clientDetails)
         }
         val now = Instant.now()
-        val refreshTokenValiditySeconds = securityProperties.refreshTokenValiditySeconds
+        val refreshTokenValiditySeconds = clientDetails.refreshTokenValiditySeconds
         return Token(tokenValue, now,
                 if (refreshTokenValiditySeconds > 0) now.plusSeconds(
                         refreshTokenValiditySeconds.toLong()) else null)
     }
 
-    fun createUserDetailsInstantAt(): InstantAt {
+    fun createUserDetailsInstantAt(clientDetails: ClientDetails): InstantAt {
         val now = Instant.now()
-        val userDetailsValiditySeconds = securityProperties.userDetailsValiditySeconds
+        val userDetailsValiditySeconds = clientDetails.userDetailsValiditySeconds
         return InstantAt(now,
                 if (userDetailsValiditySeconds > 0) now.plusSeconds(
                         userDetailsValiditySeconds.toLong()) else null)
     }
 
-    fun getApiAccessToken(scope: String, username: String): ApiAccessToken {
-        val userDetails = getUserDetails(scope, username)
-        return getApiAccessToken(scope, userDetails, validate(scope, userDetails))
+    fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, username: String): IAccessToken {
+        val userDetails = getUserDetails(clientId, scope, username)
+        return getAccessToken(clientId, scope, userDetails, validate(clientId, scope, userDetails))
     }
 
-    fun getApiAccessToken(scope: String, username: String, loginKickedOut: Boolean): ApiAccessToken {
-        val userDetails = getUserDetails(scope, username)
-        return getApiAccessToken(scope, userDetails, loginKickedOut)
+    fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, username: String, loginKickedOut: Boolean): IAccessToken {
+        val userDetails = getUserDetails(clientId, scope, username)
+        return getAccessToken(clientId, scope, userDetails, loginKickedOut)
     }
 
-    fun refreshUserDetails(scope: String, oldUsername: String, newUsername: String) {
-        val oldUserDetails = getUserDetails(scope, oldUsername)
-        val apiToken = getApiToken(scope, oldUserDetails, false)
-        apiToken.userDetailsInstantAt = createUserDetailsInstantAt()
-        apiToken.userDetails = getUserDetails(scope, newUsername)
-        apiTokenRepository.save(apiToken)
+    @JvmOverloads
+    fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): IAccessToken {
+        val storeToken = getStoreToken(clientId, scope, userDetails, loginKickedOut)
+        storeTokenRepository.save(storeToken)
+        return accessTokenConverter.convert(storeToken)
     }
 
-    fun refreshUserDetails(scope: String, username: String) {
-        val userDetails = getUserDetails(scope, username)
-        getApiAccessToken(scope, userDetails)
+    fun refreshUserDetails(clientId: String = getClientId(), scope: Set<String>, oldUsername: String, newUsername: String) {
+        val oldUserDetails = getUserDetails(clientId, scope, oldUsername)
+        val apiToken = getStoreToken(clientId, scope, oldUserDetails, false)
+        apiToken.userDetailsInstantAt = createUserDetailsInstantAt(getClientDetails(clientId))
+        apiToken.userDetails = getUserDetails(clientId, scope, newUsername)
+        storeTokenRepository.save(apiToken)
     }
 
-    fun getApiAccessToken(scope: String, userDetails: UserDetails): ApiAccessToken {
-        return getApiAccessToken(scope, userDetails, validate(scope, userDetails))
+    fun refreshUserDetails(clientId: String = getClientId(), scope: Set<String>, username: String) {
+        val userDetails = getUserDetails(clientId, scope, username)
+        getAccessToken(clientId, scope, userDetails)
     }
 
-    fun getApiAccessToken(
-            scope: String, userDetails: UserDetails,
-            loginKickedOut: Boolean
-    ): ApiAccessToken {
-        val authenticationToken = getApiToken(scope, userDetails, loginKickedOut)
-        apiTokenRepository.save(authenticationToken)
-        return authenticationToken.toApiToken()
-    }
-
-    fun getApiToken(scope: String, userDetails: UserDetails): ApiToken {
-        return getApiToken(scope, userDetails, validate(scope, userDetails))
-    }
-
-    fun getApiToken(scope: String, userDetails: UserDetails, loginKickedOut: Boolean): ApiToken {
-        var apiToken: ApiToken?
+    @JvmOverloads
+    fun getStoreToken(clientId: String = getClientId(), scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): StoreToken {
+        val clientDetails = getClientDetails(clientId)
+        var storeToken: StoreToken?
         if (loginKickedOut) {
-            apiToken = ApiToken(scope, createAccessToken(),
-                    createRefreshToken(), createUserDetailsInstantAt(), userDetails)
+            storeToken = StoreToken(clientId, scope, createAccessToken(clientDetails),
+                    createRefreshToken(clientDetails), createUserDetailsInstantAt(clientDetails), userDetails)
         } else {
-            apiToken = apiTokenRepository.findByScopeAndUsername(scope, userDetails.username)
-            if (apiToken == null || apiToken.refreshToken.isExpired) {
-                apiToken = ApiToken(scope, createAccessToken(),
-                        createRefreshToken(), createUserDetailsInstantAt(), userDetails)
-            } else if (apiToken.accessToken.isExpired) {
-                apiToken.accessToken = createAccessToken()
-                apiToken.userDetailsInstantAt = createUserDetailsInstantAt()
-                apiToken.userDetails = userDetails
+            storeToken = storeTokenRepository.findById(TokenId(clientId, scope, userDetails.username))
+            if (storeToken == null || storeToken.refreshToken.isExpired) {
+                storeToken = StoreToken(clientId, scope, createAccessToken(clientDetails),
+                        createRefreshToken(clientDetails), createUserDetailsInstantAt(clientDetails), userDetails)
+            } else if (storeToken.accessToken.isExpired) {
+                storeToken.accessToken = createAccessToken(clientDetails)
+                storeToken.userDetailsInstantAt = createUserDetailsInstantAt(clientDetails)
+                storeToken.userDetails = userDetails
             } else {
-                apiToken.userDetailsInstantAt = createUserDetailsInstantAt()
-                apiToken.userDetails = userDetails
+                storeToken.userDetailsInstantAt = createUserDetailsInstantAt(clientDetails)
+                storeToken.userDetails = userDetails
             }
         }
-        return apiToken
+        return storeToken
     }
 
-    fun getUserDetails(grantType: String, request: HttpServletRequest?): UserDetails {
+    fun getUserDetails(grantType: String, request: HttpServletRequest): UserDetails {
         if (userDetailsService is GrantTypeUserDetailsService) {
             return userDetailsService.loadUserByGrantTypeAndRequest(
                     grantType, request)
@@ -124,33 +116,32 @@ class ApiTokenService(
         throw IllegalArgumentException("不支持的grantType类型")
     }
 
-    fun getUserDetails(scope: String, username: String): UserDetails {
-        val userDetails: UserDetails = if (userDetailsService is ScopeUserDetailsService) {
-            userDetailsService.loadUserByScopeAndUsername(
-                    scope, username)
+    fun getUserDetails(clientId: String = getClientId(), scope: Set<String>, username: String): UserDetails {
+        val userDetails: UserDetails = if (userDetailsService is ClientScopeUserDetailsService) {
+            userDetailsService.loadUserByScopeAndUsername(clientId, scope, username)
         } else {
             userDetailsService.loadUserByUsername(username)
         }
         return userDetails
     }
 
-    fun removeApiToken(scope: String, username: String) {
-        apiTokenRepository.remove(scope, username)
+    fun removeApiToken(clientId: String = getClientId(), scope: Set<String>, username: String) {
+        storeTokenRepository.remove(TokenId(clientId, scope, username))
     }
 
-    fun removeApiToken(scope: String, usernames: List<String>) {
-        apiTokenRepository.remove(scope, usernames)
+    fun removeApiToken(clientId: String = getClientId(), scope: Set<String>, usernames: List<String>) {
+        storeTokenRepository.remove(usernames.map { TokenId(clientId, scope, it) })
     }
 
-    override fun beforeLogin(request: HttpServletRequest?, grantType: String?, scope: String?) {
+    override fun beforeLogin(request: HttpServletRequest, grantType: String, clientId: String, scope: Set<String>) {
         if (userDetailsService is LoginListener) {
-            (userDetailsService as LoginListener).beforeLogin(request, grantType, scope)
+            (userDetailsService as LoginListener).beforeLogin(request, grantType, clientId, scope)
         }
     }
 
-    override fun afterLogin(apiToken: ApiToken?, request: HttpServletRequest?) {
+    override fun afterLogin(storeToken: StoreToken, request: HttpServletRequest) {
         if (userDetailsService is LoginListener) {
-            (userDetailsService as LoginListener).afterLogin(apiToken, request)
+            (userDetailsService as LoginListener).afterLogin(storeToken, request)
         }
     }
 
@@ -160,14 +151,23 @@ class ApiTokenService(
         }
     }
 
-    override fun validate(scope: String, userDetails: UserDetails): Boolean {
+    override fun validate(clientId: String, scope: Set<String>, userDetails: UserDetails): Boolean {
         return if (userDetailsService is NeedKickedOutValidator) {
-            (userDetailsService as NeedKickedOutValidator).validate(scope,
+            (userDetailsService as NeedKickedOutValidator).validate(clientId, scope,
                     userDetails)
         } else {
-            securityProperties.needKickedOut(scope)
+            val clientDetails = getClientDetails(clientId)
+            clientDetails.needKickedOut(scope)
         }
     }
+
+    private fun getClientId(): String {
+        return clientDetailsService.getClientId()
+    }
+
+    private fun getClientDetails(clientId: String) =
+            clientDetailsService.getClientDetails(clientId)
+                    ?: throw RuntimeException("未找到客户端")
 
     companion object {
         private val DEFAULT_TOKEN_GENERATOR = KeyGenerators.secureRandom(20)
