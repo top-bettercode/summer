@@ -61,7 +61,7 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
             @Autowired(required = false) request: HttpServletRequest,
             @Autowired(required = false) response: HttpServletResponse,
             resourceLoader: ResourceLoader,
-            corsProperties: CorsProperties
+            @Autowired(required = false) corsProperties: CorsProperties?
     ): DocsEndpoint {
         return DocsEndpoint(request, response, resourceLoader, corsProperties)
     }

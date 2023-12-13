@@ -34,14 +34,14 @@ class DocsEndpoint(
         private val request: HttpServletRequest,
         private val response: HttpServletResponse,
         private val resourceLoader: ResourceLoader,
-        private val corsProperties: CorsProperties
+        private val corsProperties: CorsProperties?
 ) {
     private val log: Logger = LoggerFactory.getLogger(DocsEndpoint::class.java)
 
     private val mediaTypes: Map<String, MediaType> = HashMap(4)
     private val resourceHttpMessageConverter = ResourceHttpMessageConverter()
     private val resourceRegionHttpMessageConverter = ResourceRegionHttpMessageConverter()
-    private var allowHeader: String? = corsProperties.allowedHeaders?.joinToString(",")
+    private var allowHeader: String? = corsProperties?.allowedHeaders?.joinToString(",")
 
     private val resolver = PathMatchingResourcePatternResolver()
     private val docFileClassPath = "classpath:/META-INF/actuator/doc"
