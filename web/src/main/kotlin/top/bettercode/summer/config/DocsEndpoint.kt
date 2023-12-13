@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils
 import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.resource.HttpResource
 import top.bettercode.summer.logging.LoggingUtil
-import top.bettercode.summer.web.properties.CorsProperties
 import java.io.File
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -33,15 +32,13 @@ import javax.servlet.http.HttpServletResponse
 class DocsEndpoint(
         private val request: HttpServletRequest,
         private val response: HttpServletResponse,
-        private val resourceLoader: ResourceLoader,
-        private val corsProperties: CorsProperties?
+        private val resourceLoader: ResourceLoader
 ) {
     private val log: Logger = LoggerFactory.getLogger(DocsEndpoint::class.java)
 
     private val mediaTypes: Map<String, MediaType> = HashMap(4)
     private val resourceHttpMessageConverter = ResourceHttpMessageConverter()
     private val resourceRegionHttpMessageConverter = ResourceRegionHttpMessageConverter()
-    private var allowHeader: String? = corsProperties?.allowedHeaders?.joinToString(",")
 
     private val resolver = PathMatchingResourcePatternResolver()
     private val docFileClassPath = "classpath:/META-INF/actuator/doc"
@@ -102,7 +99,7 @@ class DocsEndpoint(
             return
         }
         if (HttpMethod.OPTIONS.matches(request.method)) {
-            response.setHeader("Allow", allowHeader)
+            response.setHeader("Allow", "*")
             return
         }
 

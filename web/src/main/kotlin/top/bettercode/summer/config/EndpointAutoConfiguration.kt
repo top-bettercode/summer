@@ -21,7 +21,6 @@ import org.springframework.core.io.ResourceLoader
 import org.springframework.core.type.AnnotatedTypeMetadata
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.util.IPAddressUtil
-import top.bettercode.summer.web.properties.CorsProperties
 import java.net.InetAddress
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -60,10 +59,9 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
     fun docsEndpoint(
             @Autowired(required = false) request: HttpServletRequest,
             @Autowired(required = false) response: HttpServletResponse,
-            resourceLoader: ResourceLoader,
-            @Autowired(required = false) corsProperties: CorsProperties?
+            resourceLoader: ResourceLoader
     ): DocsEndpoint {
-        return DocsEndpoint(request, response, resourceLoader, corsProperties)
+        return DocsEndpoint(request, response, resourceLoader)
     }
 
     @ConditionalOnProperty(
@@ -81,7 +79,7 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
             websocketProperties: WebsocketProperties,
             @Autowired(required = false) response: HttpServletResponse,
             webEndpointProperties: WebEndpointProperties,
-            managementServerProperties:ManagementServerProperties
+            managementServerProperties: ManagementServerProperties
     ): LogsEndpoint {
         return LogsEndpoint(
                 loggingFilesPath,
