@@ -6,5 +6,4 @@ import java.io.Serializable
  *
  * @author Peter Wu
  */
-interface IAccessToken : Serializable {
-}
+interface IAccessToken : Serializable

@@ -26,12 +26,12 @@ open class AccessToken : IAccessToken {
     private var additionalInformation: MutableMap<String, Any?> = mutableMapOf()
 
     @get:JsonIgnore
-    var apiAuthenticationToken: StoreToken? = null
+    var storeToken: StoreToken? = null
         private set
 
     constructor()
     constructor(storeToken: StoreToken) {
-        this.apiAuthenticationToken = storeToken
+        this.storeToken = storeToken
         val accessToken = storeToken.accessToken
         val userDetails = storeToken.userDetails
         tokenType = "bearer"
@@ -44,7 +44,7 @@ open class AccessToken : IAccessToken {
 
     @get:JsonIgnore
     val userDetails: UserDetails?
-        get() = apiAuthenticationToken?.userDetails
+        get() = storeToken?.userDetails
 
     @get:JsonProperty("expires_in")
     var expiresIn: Int

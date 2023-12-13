@@ -24,6 +24,10 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
         this.scope = setOf("app")
     }
 
+    protected fun setScope(scope: String) {
+        this.scope = setOf(scope)
+    }
+
     public override fun defaultBeforeEach() {
         beforeEach()
         userDetailsService.loadAuthentication(clientId, scope, username)

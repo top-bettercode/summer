@@ -54,20 +54,24 @@ class ApiTokenService(
                         userDetailsValiditySeconds.toLong()) else null)
     }
 
+    @JvmOverloads
     fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, username: String): IAccessToken {
         val userDetails = getUserDetails(clientId, scope, username)
         return getAccessToken(clientId, scope, userDetails, validate(clientId, scope, userDetails))
     }
 
+    @JvmOverloads
     fun getAccessToken(clientId: String = getClientId(), scope: String, username: String): IAccessToken {
         return getAccessToken(clientId, setOf(scope), username)
     }
 
+    @JvmOverloads
     fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, username: String, loginKickedOut: Boolean): IAccessToken {
         val userDetails = getUserDetails(clientId, scope, username)
         return getAccessToken(clientId, scope, userDetails, loginKickedOut)
     }
 
+    @JvmOverloads
     fun getAccessToken(clientId: String = getClientId(), scope: String, username: String, loginKickedOut: Boolean): IAccessToken {
         return getAccessToken(clientId, setOf(scope), username, loginKickedOut)
     }
@@ -84,6 +88,7 @@ class ApiTokenService(
         return getAccessToken(clientId, setOf(scope), userDetails, loginKickedOut)
     }
 
+    @JvmOverloads
     fun refreshUserDetails(clientId: String = getClientId(), scope: Set<String>, oldUsername: String, newUsername: String) {
         val oldUserDetails = getUserDetails(clientId, scope, oldUsername)
         val apiToken = getStoreToken(clientId, scope, oldUserDetails, false)
@@ -92,14 +97,12 @@ class ApiTokenService(
         storeTokenRepository.save(apiToken)
     }
 
-    fun refreshUserDetails(clientId: String = getClientId(), scope: String, oldUsername: String, newUsername: String) {
-        refreshUserDetails(clientId, setOf(scope), oldUsername, newUsername)
-    }
-
+    @JvmOverloads
     fun refreshUserDetails(clientId: String = getClientId(), scope: String, username: String) {
         refreshUserDetails(clientId, setOf(scope), username)
     }
 
+    @JvmOverloads
     fun refreshUserDetails(clientId: String = getClientId(), scope: Set<String>, username: String) {
         val userDetails = getUserDetails(clientId, scope, username)
         getAccessToken(clientId, scope, userDetails)
@@ -142,10 +145,12 @@ class ApiTokenService(
         throw IllegalArgumentException("不支持的grantType类型")
     }
 
+    @JvmOverloads
     fun getUserDetails(clientId: String = getClientId(), scope: String, username: String): UserDetails {
         return getUserDetails(clientId, setOf(scope), username)
     }
 
+    @JvmOverloads
     fun getUserDetails(clientId: String = getClientId(), scope: Set<String>, username: String): UserDetails {
         val userDetails: UserDetails = if (userDetailsService is ClientScopeUserDetailsService) {
             userDetailsService.loadUserByScopeAndUsername(clientId, scope, username)
@@ -155,19 +160,23 @@ class ApiTokenService(
         return userDetails
     }
 
-    fun removeApiToken(clientId: String = getClientId(), scope: String, username: String) {
-        removeApiToken(clientId, setOf(scope), username)
+    @JvmOverloads
+    fun removeToken(clientId: String = getClientId(), scope: String, username: String) {
+        removeToken(clientId, setOf(scope), username)
     }
 
-    fun removeApiToken(clientId: String = getClientId(), scope: Set<String>, username: String) {
+    @JvmOverloads
+    fun removeToken(clientId: String = getClientId(), scope: Set<String>, username: String) {
         storeTokenRepository.remove(TokenId(clientId, scope, username))
     }
 
-    fun removeApiToken(clientId: String = getClientId(), scope: String, usernames: List<String>) {
-        removeApiToken(clientId, setOf(scope), usernames)
+    @JvmOverloads
+    fun removeToken(clientId: String = getClientId(), scope: String, usernames: List<String>) {
+        removeToken(clientId, setOf(scope), usernames)
     }
 
-    fun removeApiToken(clientId: String = getClientId(), scope: Set<String>, usernames: List<String>) {
+    @JvmOverloads
+    fun removeToken(clientId: String = getClientId(), scope: Set<String>, usernames: List<String>) {
         storeTokenRepository.remove(usernames.map { TokenId(clientId, scope, it) })
     }
 
