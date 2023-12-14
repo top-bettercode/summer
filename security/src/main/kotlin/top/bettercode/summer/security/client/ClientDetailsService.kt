@@ -33,4 +33,10 @@ class ClientDetailsService(clientDetails: Collection<ClientDetails>) {
         Assert.isTrue(clientDetailsMap.size == 1, "只能有一个客户端")
         return clientDetailsMap.keys.first()
     }
+
+    fun singleClient(): ClientDetails {
+        Assert.isTrue(clientDetailsMap.size == 1, "只能有一个客户端")
+        return clientDetailsMap.values.first()
+    }
+
 }

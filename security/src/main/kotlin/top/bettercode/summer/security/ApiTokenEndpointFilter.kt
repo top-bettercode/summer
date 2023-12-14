@@ -161,8 +161,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                     logger.warn("错误或过期的token:$accessToken")
                 } else {
                     val clientId = storeToken.clientId
-                    val clientDetails = apiTokenService.clientDetailsService.getClientDetails(clientId)
-                            ?: throw BadCredentialsException("客户端信息不存在")
+                    val clientDetails = apiTokenService.getClientDetails(clientId)
                     val scope = storeToken.scope
                     val supportScope = clientDetails.supportScope(scope)
                     if (!storeToken.accessToken.isExpired && supportScope) {

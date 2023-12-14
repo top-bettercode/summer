@@ -1,6 +1,7 @@
 package top.bettercode.summer.security
 
 import org.apache.tomcat.util.codec.binary.Base64
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.keygen.KeyGenerators
@@ -106,12 +107,17 @@ class ApiTokenService(
         return getStoreToken(clientId, setOf(scope), userDetails, loginKickedOut)
     }
 
+   private val isScopeClientId = securityProperties.isScopeClientId && clientDetailsService.isSingleClient
+
+
+
+
     @JvmOverloads
     fun getStoreToken(clientId: String = getClientId(), scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): StoreToken {
         val clientDetails = getClientDetails(clientId)
         //兼容以scope 为 clientId
         val storeClientId =
-                if (securityProperties.isScopeClientId && clientDetailsService.isSingleClient && scope.isNotEmpty()) {
+                if (isScopeClientId && scope.isNotEmpty()) {
                     scope.joinToString(",")
                 } else {
                     clientId
@@ -201,9 +207,10 @@ class ApiTokenService(
         return clientDetailsService.getClientId()
     }
 
-    private fun getClientDetails(clientId: String) =
-            clientDetailsService.getClientDetails(clientId)
-                    ?: throw RuntimeException("未找到客户端")
+     fun getClientDetails(clientId: String):ClientDetails{
+      return  if(isScopeClientId) clientDetailsService.singleClient() else clientDetailsService.getClientDetails(clientId)
+                ?: throw BadCredentialsException("客户端信息不存在")
+    }
 
     companion object {
         private val DEFAULT_TOKEN_GENERATOR = KeyGenerators.secureRandom(20)
