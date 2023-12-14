@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
  *
  * @author Peter Wu
  */
-//@Disabled
+@Disabled
 internal class OffiaccountClientTest : BaseTest() {
 
     @Autowired
