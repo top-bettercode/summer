@@ -6,9 +6,9 @@ package top.bettercode.summer.security.client
  */
 open class ClientDetails {
 
-    lateinit var clientId: String
+    var clientId: String = ""
 
-    lateinit var clientSecret: String
+    var clientSecret: String = ""
 
     var scope = setOf("app")
 

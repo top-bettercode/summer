@@ -9,6 +9,9 @@ summer:
   #    postman-tests: false
   sign:
     client-secret: 123
+  security:
+    client-id: 123
+    client-secret: 456
 
 spring:
   datasource:
