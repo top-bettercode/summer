@@ -171,7 +171,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                             val authenticationResult: Authentication = UserDetailsAuthenticationToken(userDetails)
                             val context = SecurityContextHolder.createEmptyContext()
                             context.authentication = authenticationResult
-                            request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, storeToken.toId().toString())
+                            request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, storeToken.id.toString())
                             SecurityContextHolder.setContext(context)
                             if (revokeTokenEndpointMatcher.matches(request)) { //撤消token
                                 revokeToken(userDetails, storeTokenRepository, storeToken, response, request)

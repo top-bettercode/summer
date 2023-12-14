@@ -12,7 +12,7 @@ class InMemoryStoreTokenRepository(
         private val refreshTokenMap: MutableMap<String?, String>
 ) : StoreTokenRepository {
     override fun save(storeToken: StoreToken) {
-        val tokenId = storeToken.toId()
+        val tokenId = storeToken.id
         val id = tokenId.toString()
         remove(tokenId)
         accessTokenMap[storeToken.accessToken.tokenValue] = id
@@ -21,7 +21,7 @@ class InMemoryStoreTokenRepository(
     }
 
     override fun remove(storeToken: StoreToken) {
-        val tokenId = storeToken.toId()
+        val tokenId = storeToken.id
         val id = tokenId.toString()
         accessTokenMap.remove(storeToken.accessToken.tokenValue)
         refreshTokenMap.remove(storeToken.refreshToken.tokenValue)

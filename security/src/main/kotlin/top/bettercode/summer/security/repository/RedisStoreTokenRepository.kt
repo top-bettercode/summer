@@ -52,7 +52,7 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
 
     override fun save(storeToken: StoreToken) {
         try {
-            val id = storeToken.toId().toString()
+            val id = storeToken.id.toString()
             val auth = jdkSerializationSerializer.serialize(storeToken)
             val accessKey = serializeKey(ACCESS_TOKEN + storeToken.accessToken.tokenValue)
             val refreshKey = serializeKey(

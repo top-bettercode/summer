@@ -107,31 +107,28 @@ class ApiTokenService(
         return getStoreToken(clientId, setOf(scope), userDetails, loginKickedOut)
     }
 
-   private val isScopeClientId = securityProperties.isScopeClientId && clientDetailsService.isSingleClient
-
-
-
 
     @JvmOverloads
     fun getStoreToken(clientId: String = getClientId(), scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): StoreToken {
         val clientDetails = getClientDetails(clientId)
-        //兼容以scope 为 clientId
-        val storeClientId =
+        val isScopeClientId = securityProperties.isScopeClientId && clientDetailsService.isSingleClient
+        //兼容
+        val tokenId =
                 if (isScopeClientId && scope.isNotEmpty()) {
-                    scope.joinToString(",")
+                    TokenId(clientId = scope.joinToString(","), username = userDetails.username)
                 } else {
-                    clientId
+                    TokenId(clientId = clientId, username = userDetails.username)
                 }
 
         var storeToken: StoreToken?
         if (loginKickedOut) {
-            storeToken = StoreToken(storeClientId, scope, createAccessToken(clientDetails),
-                    createRefreshToken(clientDetails), userDetails)
+            storeToken = StoreToken(id = tokenId, clientId = clientId, scope = scope, accessToken = createAccessToken(clientDetails),
+                    refreshToken = createRefreshToken(clientDetails), userDetails = userDetails)
         } else {
-            storeToken = storeTokenRepository.findById(TokenId(storeClientId, userDetails.username))
+            storeToken = storeTokenRepository.findById(tokenId)
             if (storeToken == null || storeToken.refreshToken.isExpired) {
-                storeToken = StoreToken(storeClientId, scope, createAccessToken(clientDetails),
-                        createRefreshToken(clientDetails), userDetails)
+                storeToken = StoreToken(tokenId, clientId = clientId, scope = scope, accessToken = createAccessToken(clientDetails),
+                        refreshToken = createRefreshToken(clientDetails), userDetails = userDetails)
             } else if (storeToken.accessToken.isExpired) {
                 storeToken.accessToken = createAccessToken(clientDetails)
                 storeToken.userDetails = userDetails
@@ -167,12 +164,12 @@ class ApiTokenService(
 
     @JvmOverloads
     fun removeToken(clientId: String = getClientId(), username: String) {
-        storeTokenRepository.remove(TokenId(clientId, username))
+        storeTokenRepository.remove(TokenId(clientId = clientId, username = username))
     }
 
     @JvmOverloads
     fun removeToken(clientId: String = getClientId(), usernames: List<String>) {
-        storeTokenRepository.remove(usernames.map { TokenId(clientId, it) })
+        storeTokenRepository.remove(usernames.map { TokenId(clientId = clientId, username = it) })
     }
 
     override fun beforeLogin(request: HttpServletRequest, grantType: String, clientId: String, scope: Set<String>) {
@@ -207,8 +204,8 @@ class ApiTokenService(
         return clientDetailsService.getClientId()
     }
 
-     fun getClientDetails(clientId: String):ClientDetails{
-      return  if(isScopeClientId) clientDetailsService.singleClient() else clientDetailsService.getClientDetails(clientId)
+    fun getClientDetails(clientId: String): ClientDetails {
+        return clientDetailsService.getClientDetails(clientId)
                 ?: throw BadCredentialsException("客户端信息不存在")
     }
 

@@ -42,7 +42,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
     @Transactional
     override fun save(storeToken: StoreToken) {
         try {
-            val tokenId = storeToken.toId()
+            val tokenId = storeToken.id
             remove(tokenId)
             val id = tokenId.toString()
             val accessToken = storeToken.accessToken.tokenValue
@@ -61,7 +61,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
 
     @Transactional
     override fun remove(storeToken: StoreToken) {
-        remove(storeToken.toId())
+        remove(storeToken.id)
     }
 
     @Transactional
