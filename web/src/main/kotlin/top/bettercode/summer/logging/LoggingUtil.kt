@@ -45,11 +45,12 @@ object LoggingUtil {
         val printer = PrintWriter(uriWriter)
         val properties = ApplicationContextHolder.getBean(ManagementServerProperties::class.java)
         Assert.notNull(properties, "ManagementServerProperties must not be null")
-        if (properties!!.address == null) {
+        if (properties!!.port == null) {
             return@lazy apiAddress
         }
         val serverPort = properties.port!!
-        printer.printf("%s://%s", RequestConverter.SCHEME_HTTP, properties.address)
+        printer.printf("%s://%s", RequestConverter.SCHEME_HTTP, properties.address
+                ?: IPAddressUtil.inet4Address)
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
