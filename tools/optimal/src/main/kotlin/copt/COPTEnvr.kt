@@ -15,7 +15,7 @@ class COPTEnvr {
         CoptException.checkError(_self.GetLastError(), _self.GetErrorMessage())
     }
 
-    constructor(var1: EnvrConfig) {
+    constructor(var1: COPTEnvrConfig) {
         this._self = CoptJniWrapper.CreateEnvrWithConfig(var1.get(), null as ILogCallback?)
         CoptException.checkError(_self.GetLastError(), _self.GetErrorMessage())
     }

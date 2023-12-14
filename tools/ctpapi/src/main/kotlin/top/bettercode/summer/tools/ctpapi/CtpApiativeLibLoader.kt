@@ -30,7 +30,7 @@ object CtpApiativeLibLoader {
 
         for (libraryName in libraryNames) {
             val targetFile = File(targetFolder, libraryName).absoluteFile
-            if(targetFile.exists()){
+            if (targetFile.exists()) {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
@@ -38,8 +38,17 @@ object CtpApiativeLibLoader {
                     targetFile.toPath())
         }
         when {
-            Os.isFamily(Os.FAMILY_WINDOWS) -> System.load("${targetFolder.absolutePath}/thostapi_wrap.dll")
-            else -> System.load("${targetFolder.absolutePath}/libthostapi_wrap.so")
+            Os.isFamily(Os.FAMILY_WINDOWS) -> {
+                System.load("${targetFolder.absolutePath}/thostmduserapi_se.dll")
+                System.load("${targetFolder.absolutePath}/thosttraderapi_se.dll")
+                System.load("${targetFolder.absolutePath}/thostapi_wrap.dll")
+            }
+
+            else -> {
+                System.load("${targetFolder.absolutePath}/libthostmduserapi_se.so")
+                System.load("${targetFolder.absolutePath}/libthosttraderapi_se.so")
+                System.load("${targetFolder.absolutePath}/libthostapi_wrap.so")
+            }
         }
         log.info("$LIB_NAME library is already loaded.")
     }

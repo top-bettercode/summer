@@ -40,9 +40,18 @@ object COPTNativeLibLoader {
                     targetFile.toPath())
         }
         when {
-            Os.isFamily(Os.FAMILY_MAC) -> System.load("${targetFolder.absolutePath}/libcoptjniwrap.dylib")
-            Os.isFamily(Os.FAMILY_WINDOWS) -> System.load("${targetFolder.absolutePath}/coptjniwrap.dll")
-            else -> System.load("${targetFolder.absolutePath}/libcoptjniwrap.so")
+            Os.isFamily(Os.FAMILY_MAC) ->{
+                System.load("${targetFolder.absolutePath}/libcopt_cpp.dylib")
+                System.load("${targetFolder.absolutePath}/libcoptjniwrap.dylib")
+            }
+            Os.isFamily(Os.FAMILY_WINDOWS) ->{
+                System.load("${targetFolder.absolutePath}/copt_cpp.dll")
+                System.load("${targetFolder.absolutePath}/coptjniwrap.dll")
+            }
+            else ->{
+                System.load("${targetFolder.absolutePath}/libcopt_cpp.so")
+                System.load("${targetFolder.absolutePath}/libcoptjniwrap.so")
+            }
         }
         log.info("$LIB_NAME library is already loaded.")
     }

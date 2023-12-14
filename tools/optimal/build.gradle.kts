@@ -17,6 +17,10 @@ dependencies {
 
 tasks {
 
+//    test {
+//        environment("LD_LIBRARY_PATH", file("build/native").absolutePath)
+//    }
+
     "jar"(Jar::class) {
         from(fileTree(mapOf("dir" to "libs")).files.map { zipTree(it) })
     }
