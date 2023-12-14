@@ -72,7 +72,7 @@ class ApiSecurityConfiguration(
             accessTokenConverter: AccessTokenConverter,
             userDetailsService: UserDetailsService
     ): ApiTokenService {
-        return ApiTokenService(storeTokenRepository, clientDetailsService, accessTokenConverter, userDetailsService)
+        return ApiTokenService(securityProperties, storeTokenRepository, clientDetailsService, accessTokenConverter, userDetailsService)
     }
 
     @Bean

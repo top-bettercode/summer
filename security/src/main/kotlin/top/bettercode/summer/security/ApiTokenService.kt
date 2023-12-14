@@ -111,7 +111,7 @@ class ApiTokenService(
         val clientDetails = getClientDetails(clientId)
         //兼容以scope 为 clientId
         val storeClientId =
-                if (securityProperties.isScopeClientId && clientDetailsService.isSingleClient) {
+                if (securityProperties.isScopeClientId && clientDetailsService.isSingleClient && scope.isNotEmpty()) {
                     scope.joinToString(",")
                 } else {
                     clientId
@@ -151,8 +151,8 @@ class ApiTokenService(
 
     @JvmOverloads
     fun getUserDetails(clientId: String = getClientId(), scope: Set<String>, username: String): UserDetails {
-        val userDetails: UserDetails = if (userDetailsService is ClientScopeUserDetailsService) {
-            userDetailsService.loadUserByScopeAndUsername(clientId, scope, username)
+        val userDetails: UserDetails = if (userDetailsService is ClientUserDetailsService) {
+            userDetailsService.loadUserByClientAndUsername(clientId, scope, username)
         } else {
             userDetailsService.loadUserByUsername(username)
         }

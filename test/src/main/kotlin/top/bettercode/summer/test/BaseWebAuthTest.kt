@@ -13,7 +13,7 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
 
     lateinit var clientId: String
     lateinit var username: String
-    lateinit var scope: Set<String>
+    lateinit var scope: String
 
     @Autowired
     lateinit var userDetailsService: TestAuthenticationService
@@ -21,16 +21,12 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
     init {
         this.clientId = ApplicationContextHolder.getProperty("summer.security.client-id", "") ?: ""
         this.username = "root"
-        this.scope = setOf("app")
-    }
-
-    protected fun setScope(scope: String) {
-        this.scope = setOf(scope)
+        this.scope = "app"
     }
 
     public override fun defaultBeforeEach() {
         beforeEach()
-        userDetailsService.loadAuthentication(clientId, scope, username)
+        userDetailsService.loadAuthentication(clientId, setOf(scope), username)
     }
 
 }

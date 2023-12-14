@@ -44,10 +44,14 @@ class DataJpaErrorHandler(
                         val maxLeng = message.replace(regex1.toRegex(), "$2")
                         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
                         respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
+                    } else if (message.contains("ORA-01461:")) {
+                        respEntity.message = getText("data.too.long", "数据")
+                    } else {
+                        respEntity.message = message
                     }
                 }
             }
-            if(respEntity.message.isNullOrBlank()){
+            if (respEntity.message.isNullOrBlank()) {
                 respEntity.message = "JpaSystemException"
             }
         } else if (error is InvalidDataAccessApiUsageException) {

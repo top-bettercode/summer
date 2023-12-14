@@ -94,8 +94,8 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                     }
                 } else {
                     val scope = request.getParameterValues(SecurityParameterNames.SCOPE)
-                            ?.toSet() ?: throw IllegalArgumentException("scope 不能为空")
-                    Assert.isTrue(scope.isNotEmpty(), "scope 不能为空")
+                            ?.toSet() ?: emptySet()
+//                    Assert.isTrue(scope.isNotEmpty(), "scope 不能为空")
                     Assert.isTrue(clientDetails.supportScope(scope), "不支持的scope:$scope")
 
                     if (SecurityParameterNames.PWDNAME == grantType) {

@@ -72,7 +72,7 @@ class SecurityConfiguration(
         }
         http.csrf().disable()
         val apiTokenEndpointFilter = ApiTokenEndpointFilter(apiTokenService,
-                passwordEncoder, summerWebProperties, securityProperties, revokeTokenService, objectMapper, formkeyService)
+                passwordEncoder, summerWebProperties, revokeTokenService, objectMapper, formkeyService)
         http.addFilterBefore(apiTokenEndpointFilter, LogoutFilter::class.java)
         http
                 .sessionManagement().sessionCreationPolicy(securityProperties.sessionCreationPolicy)

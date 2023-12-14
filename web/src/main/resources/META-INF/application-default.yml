@@ -122,6 +122,7 @@ logging:
     io.micrometer: warn
     io.lettuce: warn
     io.netty: warn
+    io.github.resilience4j: info
     springfox: warn
     okhttp3.internal: info
     net.sf: warn

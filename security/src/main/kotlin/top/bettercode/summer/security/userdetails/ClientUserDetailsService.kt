@@ -11,10 +11,10 @@ import top.bettercode.summer.security.support.SecurityParameterNames
 /**
  * @author Peter Wu
  */
-interface ClientScopeUserDetailsService : UserDetailsService {
+interface ClientUserDetailsService : UserDetailsService {
 
 
-    fun loadUserByScopeAndUsername(clientd: String, scope: Set<String>, username: String): UserDetails
+    fun loadUserByClientAndUsername(clientId: String, scope: Set<String>, username: String): UserDetails
 
     override fun loadUserByUsername(username: String): UserDetails {
         val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
@@ -23,6 +23,6 @@ interface ClientScopeUserDetailsService : UserDetailsService {
         Assert.isTrue(scope.isNotEmpty(), "scope 不能为空")
         val clientId = AuthenticationHelper.getClientInfo(request)?.first
                 ?: throw IllegalArgumentException("客户端未授权")
-        return loadUserByScopeAndUsername(clientId, scope, username)
+        return loadUserByClientAndUsername(clientId, scope, username)
     }
 }

@@ -138,6 +138,7 @@ object SubProjectTasks {
                     task.dependsOn("resolveMainClass")
                 }
                 named("bootJar", BootJar::class.java) {
+                    it.dependsOn("asciidoc", "htmldoc", "postman")
                     it.launchScript()
                     it.archiveFileName.set("${project.name}-latest.jar")
                 }
