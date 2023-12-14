@@ -12,18 +12,16 @@ class StoreToken : Serializable {
     lateinit var scope: Set<String>
     lateinit var accessToken: Token
     lateinit var refreshToken: Token
-    lateinit var userDetailsInstantAt: InstantAt
     lateinit var userDetails: UserDetails
 
     constructor()
     constructor(clientId: String, scope: Set<String>, accessToken: Token,
-                refreshToken: Token, userDetailsInstantAt: InstantAt, userDetails: UserDetails
+                refreshToken: Token, userDetails: UserDetails
     ) {
         this.clientId = clientId
         this.scope = scope
         this.accessToken = accessToken
         this.refreshToken = refreshToken
-        this.userDetailsInstantAt = userDetailsInstantAt
         this.userDetails = userDetails
     }
 
@@ -31,7 +29,7 @@ class StoreToken : Serializable {
         get() = userDetails.username
 
     fun toId(): TokenId {
-        return TokenId(this.clientId, this.scope, this.username)
+        return TokenId(this.clientId, this.username)
     }
 
     companion object {

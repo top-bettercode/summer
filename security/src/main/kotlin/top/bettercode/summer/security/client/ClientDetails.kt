@@ -28,11 +28,6 @@ open class ClientDetails {
      */
     var loginKickedOutScopes = arrayOf<String>()
 
-    /**
-     * 用户信息过期时间，默认不过期
-     */
-    var userDetailsValiditySeconds = -1
-
     fun needKickedOut(scope: Set<String>): Boolean {
         return isLoginKickedOut || loginKickedOutScopes.any { scope.contains(it) }
     }

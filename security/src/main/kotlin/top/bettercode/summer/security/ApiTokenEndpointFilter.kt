@@ -16,7 +16,6 @@ import org.springframework.util.Assert
 import org.springframework.web.filter.OncePerRequestFilter
 import top.bettercode.summer.security.authorization.UserDetailsAuthenticationToken
 import top.bettercode.summer.security.authorize.ClientAuthorize
-import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.security.repository.StoreTokenRepository
 import top.bettercode.summer.security.support.AuthenticationHelper
 import top.bettercode.summer.security.support.SecurityParameterNames
@@ -41,7 +40,6 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         private val apiTokenService: ApiTokenService,
         private val passwordEncoder: PasswordEncoder,
         private val summerWebProperties: SummerWebProperties,
-        private val securityProperties: ApiSecurityProperties,
         private val revokeTokenService: IRevokeTokenService?,
         private val objectMapper: ObjectMapper,
         private val formkeyService: IFormkeyService,
@@ -56,7 +54,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         Assert.hasText(tokenEndpointUri, "tokenEndpointUri cannot be empty")
         tokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name)
         revokeTokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri, HttpMethod.DELETE.name)
-        bearerTokenResolver.setCompatibleAccessToken(securityProperties.isCompatibleAccessToken)
+        bearerTokenResolver.setCompatibleAccessToken(apiTokenService.securityProperties.isCompatibleAccessToken)
     }
 
     override fun doFilterInternal(
@@ -109,6 +107,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                         val userDetails = apiTokenService.getUserDetails(clientId, scope, username)
                         Assert.isTrue(passwordEncoder.matches(password, userDetails.password),
                                 "用户名或密码错误")
+
                         storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
                         apiTokenService.afterLogin(storeToken, request)
                     } else if (SecurityParameterNames.REFRESH_TOKEN == grantType) {
@@ -125,7 +124,6 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                         try {
                             val userDetails = apiTokenService.getUserDetails(clientId, scope, storeToken.username)
                             storeToken.accessToken = apiTokenService.createAccessToken(clientDetails)
-                            storeToken.userDetailsInstantAt = apiTokenService.createUserDetailsInstantAt(clientDetails)
                             storeToken.userDetails = userDetails
                         } catch (e: Exception) {
                             throw UnauthorizedException("请重新登录", e)
@@ -169,14 +167,8 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                     val supportScope = clientDetails.supportScope(scope)
                     if (!storeToken.accessToken.isExpired && supportScope) {
                         try {
-                            var userDetails = storeToken.userDetails
+                            val userDetails = storeToken.userDetails
                             apiTokenService.validate(userDetails)
-                            if (storeToken.userDetailsInstantAt.isExpired) { //刷新userDetails
-                                userDetails = apiTokenService.getUserDetails(clientId, scope, storeToken.username)
-                                storeToken.userDetailsInstantAt = apiTokenService.createUserDetailsInstantAt(clientDetails)
-                                storeToken.userDetails = userDetails
-                                storeTokenRepository.save(storeToken)
-                            }
                             val authenticationResult: Authentication = UserDetailsAuthenticationToken(userDetails)
                             val context = SecurityContextHolder.createEmptyContext()
                             context.authentication = authenticationResult

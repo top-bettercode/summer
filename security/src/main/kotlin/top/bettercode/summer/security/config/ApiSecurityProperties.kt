@@ -12,7 +12,7 @@ import top.bettercode.summer.security.client.ClientDetails
 open class ApiSecurityProperties : ClientDetails() {
 
     /**
-     * security.url-filter.ignored.
+     * security.url-filter-ignored.
      */
     var urlFilterIgnored: Array<String> = arrayOf()
 
@@ -31,6 +31,11 @@ open class ApiSecurityProperties : ClientDetails() {
     var isCompatibleAccessToken = false
 
     var secureRandomSeed: String? = null
+
+    /**
+     * 以scope 为 clientId
+     */
+    var  isScopeClientId = false
 
     //--------------------------------------------
     fun ignored(path: String): Boolean {

@@ -12,9 +12,9 @@ import top.bettercode.summer.security.userdetails.ClientScopeUserDetailsService
  */
 class DefaultTestAuthenticationService(private val userDetailsService: UserDetailsService) : TestAuthenticationService {
 
-    override fun loadAuthentication(clientd: String,scope: Set<String>, username: String) {
+    override fun loadAuthentication(clientd: String, scope: Set<String>, username: String) {
         val userDetails: UserDetails = if (userDetailsService is ClientScopeUserDetailsService) {
-            userDetailsService.loadUserByScopeAndUsername(clientd,scope, username)
+            userDetailsService.loadUserByScopeAndUsername(clientd, scope, username)
         } else {
             userDetailsService.loadUserByUsername(username)
         }

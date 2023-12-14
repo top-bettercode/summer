@@ -12,6 +12,8 @@ class ClientDetailsService(clientDetails: Collection<ClientDetails>) {
     val maxAccessTokenValiditySeconds: Int = clientDetails.maxOf { it.accessTokenValiditySeconds }
     val maxRefreshTokenValiditySeconds: Int = clientDetails.maxOf { it.refreshTokenValiditySeconds }
 
+    val isSingleClient: Boolean = clientDetails.size == 1
+
     private val clientDetailsMap: Map<String, ClientDetails> =
             clientDetails.associateBy { it.clientId }
 

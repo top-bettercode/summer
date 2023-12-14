@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.keygen.KeyGenerators
 import top.bettercode.summer.security.client.ClientDetails
 import top.bettercode.summer.security.client.ClientDetailsService
+import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.security.repository.StoreTokenRepository
 import top.bettercode.summer.security.token.*
 import top.bettercode.summer.security.userdetails.*
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 class ApiTokenService(
+        val securityProperties: ApiSecurityProperties,
         val storeTokenRepository: StoreTokenRepository,
         val clientDetailsService: ClientDetailsService,
         val accessTokenConverter: AccessTokenConverter,
@@ -44,14 +46,6 @@ class ApiTokenService(
         return Token(tokenValue, now,
                 if (refreshTokenValiditySeconds > 0) now.plusSeconds(
                         refreshTokenValiditySeconds.toLong()) else null)
-    }
-
-    fun createUserDetailsInstantAt(clientDetails: ClientDetails): InstantAt {
-        val now = Instant.now()
-        val userDetailsValiditySeconds = clientDetails.userDetailsValiditySeconds
-        return InstantAt(now,
-                if (userDetailsValiditySeconds > 0) now.plusSeconds(
-                        userDetailsValiditySeconds.toLong()) else null)
     }
 
     @JvmOverloads
@@ -92,7 +86,6 @@ class ApiTokenService(
     fun refreshUserDetails(clientId: String = getClientId(), scope: Set<String>, oldUsername: String, newUsername: String) {
         val oldUserDetails = getUserDetails(clientId, scope, oldUsername)
         val apiToken = getStoreToken(clientId, scope, oldUserDetails, false)
-        apiToken.userDetailsInstantAt = createUserDetailsInstantAt(getClientDetails(clientId))
         apiToken.userDetails = getUserDetails(clientId, scope, newUsername)
         storeTokenRepository.save(apiToken)
     }
@@ -116,21 +109,27 @@ class ApiTokenService(
     @JvmOverloads
     fun getStoreToken(clientId: String = getClientId(), scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): StoreToken {
         val clientDetails = getClientDetails(clientId)
+        //兼容以scope 为 clientId
+        val storeClientId =
+                if (securityProperties.isScopeClientId && clientDetailsService.isSingleClient) {
+                    scope.joinToString(",")
+                } else {
+                    clientId
+                }
+
         var storeToken: StoreToken?
         if (loginKickedOut) {
-            storeToken = StoreToken(clientId, scope, createAccessToken(clientDetails),
-                    createRefreshToken(clientDetails), createUserDetailsInstantAt(clientDetails), userDetails)
+            storeToken = StoreToken(storeClientId, scope, createAccessToken(clientDetails),
+                    createRefreshToken(clientDetails), userDetails)
         } else {
-            storeToken = storeTokenRepository.findById(TokenId(clientId, scope, userDetails.username))
+            storeToken = storeTokenRepository.findById(TokenId(storeClientId, userDetails.username))
             if (storeToken == null || storeToken.refreshToken.isExpired) {
-                storeToken = StoreToken(clientId, scope, createAccessToken(clientDetails),
-                        createRefreshToken(clientDetails), createUserDetailsInstantAt(clientDetails), userDetails)
+                storeToken = StoreToken(storeClientId, scope, createAccessToken(clientDetails),
+                        createRefreshToken(clientDetails), userDetails)
             } else if (storeToken.accessToken.isExpired) {
                 storeToken.accessToken = createAccessToken(clientDetails)
-                storeToken.userDetailsInstantAt = createUserDetailsInstantAt(clientDetails)
                 storeToken.userDetails = userDetails
             } else {
-                storeToken.userDetailsInstantAt = createUserDetailsInstantAt(clientDetails)
                 storeToken.userDetails = userDetails
             }
         }
@@ -161,23 +160,13 @@ class ApiTokenService(
     }
 
     @JvmOverloads
-    fun removeToken(clientId: String = getClientId(), scope: String, username: String) {
-        removeToken(clientId, setOf(scope), username)
+    fun removeToken(clientId: String = getClientId(), username: String) {
+        storeTokenRepository.remove(TokenId(clientId, username))
     }
 
     @JvmOverloads
-    fun removeToken(clientId: String = getClientId(), scope: Set<String>, username: String) {
-        storeTokenRepository.remove(TokenId(clientId, scope, username))
-    }
-
-    @JvmOverloads
-    fun removeToken(clientId: String = getClientId(), scope: String, usernames: List<String>) {
-        removeToken(clientId, setOf(scope), usernames)
-    }
-
-    @JvmOverloads
-    fun removeToken(clientId: String = getClientId(), scope: Set<String>, usernames: List<String>) {
-        storeTokenRepository.remove(usernames.map { TokenId(clientId, scope, it) })
+    fun removeToken(clientId: String = getClientId(), usernames: List<String>) {
+        storeTokenRepository.remove(usernames.map { TokenId(clientId, it) })
     }
 
     override fun beforeLogin(request: HttpServletRequest, grantType: String, clientId: String, scope: Set<String>) {

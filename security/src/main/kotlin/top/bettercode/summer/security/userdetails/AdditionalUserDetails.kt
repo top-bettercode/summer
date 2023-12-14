@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.User
 
 open class AdditionalUserDetails : User {
+
     val additionalInformation: MutableMap<String, Any?> = HashMap()
 
     constructor(
