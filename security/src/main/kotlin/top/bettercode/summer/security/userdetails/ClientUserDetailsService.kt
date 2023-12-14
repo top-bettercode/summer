@@ -21,7 +21,7 @@ interface ClientUserDetailsService : UserDetailsService {
         val request = requestAttributes.request
         val scope = request.getParameterValues(SecurityParameterNames.SCOPE)?.toSet() ?: emptySet()
         Assert.isTrue(scope.isNotEmpty(), "scope 不能为空")
-        val clientId = AuthenticationHelper.getClientInfo(request)?.first
+        val clientId = AuthenticationHelper.getClientInfo(request).first
                 ?: throw IllegalArgumentException("客户端未授权")
         return loadUserByClientAndUsername(clientId, scope, username)
     }

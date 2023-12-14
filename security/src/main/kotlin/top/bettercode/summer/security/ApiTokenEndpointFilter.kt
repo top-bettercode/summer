@@ -224,7 +224,6 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
 
     private fun authenticateBasic(request: HttpServletRequest): String {
         val (clientId, clientSecret) = AuthenticationHelper.getClientInfo(request)
-                ?: throw BadCredentialsException("Unauthorized")
         apiTokenService.clientDetailsService.authenticate(clientId
                 ?: throw BadCredentialsException("Unauthorized"), clientSecret
                 ?: throw BadCredentialsException("Unauthorized"))

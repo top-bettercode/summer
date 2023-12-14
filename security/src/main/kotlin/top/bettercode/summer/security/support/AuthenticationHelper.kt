@@ -84,7 +84,7 @@ object AuthenticationHelper {
         return hasAuthority(authentication, authority)
     }
 
-    fun getClientInfo(request: HttpServletRequest): Pair<String?, String?>? {
+    fun getClientInfo(request: HttpServletRequest): Pair<String?, String?> {
         var header = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (header != null) {
             header = header.trim()
@@ -94,12 +94,10 @@ object AuthenticationHelper {
                 val clientInfo = basicCredentials.split(":")
                 return Pair(clientInfo[0], clientInfo[1])
             }
-        } else {
-            val clientId = request.getParameter("client_id")
-            val clientSecret = request.getParameter("client_secret")
-            return Pair(clientId, clientSecret)
         }
-        return null
+        val clientId = request.getParameter("client_id")
+        val clientSecret = request.getParameter("client_secret")
+        return Pair(clientId, clientSecret)
     }
 
     private fun decode(base64Token: ByteArray): ByteArray {
