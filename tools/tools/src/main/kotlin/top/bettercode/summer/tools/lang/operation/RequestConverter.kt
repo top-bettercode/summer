@@ -184,9 +184,11 @@ object RequestConverter {
             is MultipartHttpServletRequest -> {
                 servletRequest
             }
+
             is HttpServletRequestWrapper -> {
                 unwrapMultipartHttpServletRequest(servletRequest.request)
             }
+
             else -> {
                 servletRequest
             }
@@ -290,7 +292,7 @@ object RequestConverter {
             request: HttpServletRequest,
             serverPort: Int = request.serverPort
     ): Boolean {
-        return (((SCHEME_HTTP == request.scheme && serverPort != STANDARD_PORT_HTTP)) || ((SCHEME_HTTPS == request.scheme && serverPort != STANDARD_PORT_HTTPS)))
+        return (SCHEME_HTTP == request.scheme && serverPort != STANDARD_PORT_HTTP) || (SCHEME_HTTPS == request.scheme && serverPort != STANDARD_PORT_HTTPS)
     }
 
     private fun getRequestUri(request: HttpServletRequest): String {

@@ -128,7 +128,11 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
         }
         val url = request.url
         if (headers.host == null) {
-            headers["Host"] = "${url.host}:${url.port}"
+            val port = url.port
+            headers["Host"] = if (RequestConverter.SCHEME_HTTP == url.scheme && port == RequestConverter.STANDARD_PORT_HTTP)
+                url.host
+            else
+                "${url.host}:$port"
         }
         val parameters = Parameters()
         for (parameterName in url.queryParameterNames) {
