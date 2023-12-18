@@ -40,9 +40,10 @@ class RequestMappingAuthorizationManager(
     // ===================================================================================================
     init {
         handlerMapping.handlerMethods.forEach { (mappingInfo: RequestMappingInfo, handlerMethod: HandlerMethod?) ->
-            for (pathPattern in mappingInfo.pathPatternsCondition!!
-                    .patterns) {
-                val pattern = pathPattern.patternString
+            val patterns = mappingInfo.pathPatternsCondition?.patternValues
+                    ?: mappingInfo.patternsCondition?.patterns
+                    ?: throw RuntimeException("patterns is null")
+            for (pattern in patterns) {
                 val methods = mappingInfo.methodsCondition.methods
                 val authorities: MutableSet<String> = HashSet()
                 if (securityProperties.ignored(pattern)) {
