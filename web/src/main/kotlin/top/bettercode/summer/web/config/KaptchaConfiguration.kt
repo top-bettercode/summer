@@ -3,6 +3,7 @@ package top.bettercode.summer.web.config
 import com.google.code.kaptcha.Producer
 import com.google.code.kaptcha.impl.DefaultKaptcha
 import com.google.code.kaptcha.util.Config
+import jakarta.servlet.http.HttpSession
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -15,7 +16,6 @@ import top.bettercode.summer.web.kaptcha.DefaultCaptchaServiceImpl
 import top.bettercode.summer.web.kaptcha.ICaptchaService
 import top.bettercode.summer.web.kaptcha.KaptchaProperties
 import java.util.*
-import javax.servlet.http.HttpSession
 
 
 @Configuration(proxyBeanMethods = false)

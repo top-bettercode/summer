@@ -14,6 +14,7 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.aes.WXBizMsgCrypt
 import top.bettercode.summer.tools.weixin.support.offiaccount.custmsg.CustMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.util.*
 
@@ -47,10 +48,10 @@ open class OffiaccountClient(
         val url =
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect"
         val authenticationUrl = String.format(
-            url,
-            properties.appId,
-            URLEncoder.encode(properties.oauthUrl, "UTF-8"),
-            "snsapi_userinfo"
+                url,
+                properties.appId,
+                URLEncoder.encode(properties.oauthUrl, StandardCharsets.UTF_8),
+                "snsapi_userinfo"
         )
         log.info(MarkerFactory.getMarker(marker), "authenticationUrl:{}", authenticationUrl)
     }

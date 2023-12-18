@@ -1,11 +1,11 @@
 package top.bettercode.summer.security.token
 
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.RequestMethod
 import top.bettercode.summer.security.support.SecurityParameterNames
 import java.util.regex.Pattern
-import javax.servlet.http.HttpServletRequest
 
 class MultipleBearerTokenResolver {
     private val log = LoggerFactory.getLogger(MultipleBearerTokenResolver::class.java)

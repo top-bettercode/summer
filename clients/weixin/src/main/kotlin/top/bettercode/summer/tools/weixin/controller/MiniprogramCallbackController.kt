@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.weixin.controller
 
+import jakarta.validation.constraints.NotBlank
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.util.Assert
 import org.springframework.validation.annotation.Validated
@@ -12,7 +13,6 @@ import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.WeixinToken
 import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient
 import top.bettercode.summer.web.BaseController
-import javax.validation.constraints.NotBlank
 
 @ConditionalOnWebApplication
 @RestController

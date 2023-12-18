@@ -1,5 +1,7 @@
 package top.bettercode.summer.config
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,8 +24,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.util.IPAddressUtil
 import java.net.InetAddress
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * @author Peter Wu

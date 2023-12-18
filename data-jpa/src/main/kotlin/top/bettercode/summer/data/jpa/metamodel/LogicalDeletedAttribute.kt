@@ -1,12 +1,12 @@
 package top.bettercode.summer.data.jpa.metamodel
 
+import jakarta.persistence.criteria.*
+import jakarta.persistence.metamodel.SingularAttribute
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import top.bettercode.summer.data.jpa.LogicalDelete
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.support.JpaUtil
-import javax.persistence.criteria.*
-import javax.persistence.metamodel.SingularAttribute
 
 /**
  *

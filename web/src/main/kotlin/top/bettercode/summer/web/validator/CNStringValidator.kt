@@ -1,8 +1,8 @@
 package top.bettercode.summer.web.validator
 
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 import top.bettercode.summer.tools.lang.util.CharUtil.isCNChar
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
 /**
  * `ChinaCell` 验证器

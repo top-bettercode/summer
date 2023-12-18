@@ -55,8 +55,8 @@ class DistPlugin : Plugin<Project> {
             dist.jvmArgs = (project.findDistProperty("jvm-args")
                 ?: "").split(" +".toRegex()).filter { it.isNotBlank() }
             dist.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
-                ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
-                ","
+                    ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories,META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports").split(
+                    ","
             )
 
         }
@@ -107,7 +107,7 @@ class DistPlugin : Plugin<Project> {
                             task.outputs.upToDateWhen { false }
                             val resources = mutableMapOf<String, String>()
                             task.exclude { file ->
-                                @Suppress("UnstableApiUsage") val destinationDir =
+                                val destinationDir =
                                     (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
                                 if (file.file.absolutePath.startsWith(destinationDir.absolutePath)) {
                                     val fileParentPath = destinationDir.absolutePath + "/"

@@ -1,10 +1,10 @@
 package top.bettercode.summer.test.web.apisign
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import top.bettercode.summer.apisign.ApiSignIgnore
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu

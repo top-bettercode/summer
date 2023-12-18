@@ -1,5 +1,7 @@
 package top.bettercode.summer.data.jpa.support
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
@@ -10,12 +12,9 @@ import org.springframework.core.io.ResourceLoader
 import org.springframework.lang.Nullable
 import org.springframework.web.servlet.HandlerMapping
 import top.bettercode.summer.config.DocsEndpoint.Companion.handleRequest
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 
 /**
- * @author Peter Wu
  */
 @Endpoint(id = "data")
 open class DataEndpoint(

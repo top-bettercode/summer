@@ -1,6 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-top.bettercode.summer.data.jpa.config.JpaMybatisNativeQueryInterpreterConfiguration,\
-top.bettercode.summer.data.jpa.config.DataJpaAutoConfiguration,\
-top.bettercode.summer.data.jpa.config.JpaExtRepositoriesAutoConfiguration,\
-top.bettercode.summer.data.jpa.config.DataWebAutoConfiguration

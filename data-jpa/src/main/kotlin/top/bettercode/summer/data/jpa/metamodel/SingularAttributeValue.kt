@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.metamodel
 
-import javax.persistence.metamodel.SingularAttribute
+import jakarta.persistence.metamodel.SingularAttribute
+
 
 /**
  *

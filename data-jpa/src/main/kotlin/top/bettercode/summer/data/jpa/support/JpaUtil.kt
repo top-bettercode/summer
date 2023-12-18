@@ -18,9 +18,9 @@ object JpaUtil {
     fun <T> convert(source: Any?, targetType: Class<T>?): T? {
         return if (source != null && !targetType!!.isInstance(source)) {
             try {
-                TYPE_CONFIGURATION.javaTypeDescriptorRegistry
-                    .getDescriptor(ClassUtils.resolvePrimitiveIfNecessary(targetType))
-                    .wrap(source, null) as T?
+                TYPE_CONFIGURATION.javaTypeRegistry
+                        .getDescriptor<T>(ClassUtils.resolvePrimitiveIfNecessary(targetType))
+                        .wrap(source, null)
             } catch (e: Exception) {
                 ApplicationContextHolder.conversionService.convert(source, targetType)
             }

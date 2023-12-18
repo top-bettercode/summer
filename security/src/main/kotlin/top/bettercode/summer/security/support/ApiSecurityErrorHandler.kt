@@ -1,11 +1,11 @@
 package top.bettercode.summer.security.support
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu

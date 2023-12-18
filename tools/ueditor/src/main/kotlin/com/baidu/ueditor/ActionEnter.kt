@@ -6,8 +6,8 @@ import com.baidu.ueditor.define.BaseState
 import com.baidu.ueditor.define.State
 import com.baidu.ueditor.hunter.FileManager
 import com.baidu.ueditor.upload.IUploader
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.util.Assert
-import javax.servlet.http.HttpServletRequest
 
 class ActionEnter {
     private val configManager: ConfigManager? = ConfigManager.instance

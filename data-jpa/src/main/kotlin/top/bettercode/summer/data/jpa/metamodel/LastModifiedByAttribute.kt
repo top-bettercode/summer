@@ -1,9 +1,9 @@
 package top.bettercode.summer.data.jpa.metamodel
 
+import jakarta.persistence.criteria.CriteriaUpdate
+import jakarta.persistence.metamodel.SingularAttribute
 import org.springframework.data.domain.AuditorAware
 import top.bettercode.summer.web.support.ApplicationContextHolder
-import javax.persistence.criteria.CriteriaUpdate
-import javax.persistence.metamodel.SingularAttribute
 
 /**
  *

@@ -1,12 +1,12 @@
 package top.bettercode.summer.test
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequestWrapper
 import org.springframework.http.HttpMethod
 import org.springframework.mock.web.MockHttpServletRequest
 import top.bettercode.summer.tools.lang.operation.Parameters
 import top.bettercode.summer.tools.lang.operation.QueryStringParser
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletRequestWrapper
 
 class AutoDocHttpServletRequest(request: HttpServletRequest) :
     HttpServletRequestWrapper(request) {
@@ -20,7 +20,7 @@ class AutoDocHttpServletRequest(request: HttpServletRequest) :
 
     fun fixQuery(): Boolean {
         return when (method) {
-            HttpMethod.GET.name, HttpMethod.DELETE.name -> true
+            HttpMethod.GET.name(), HttpMethod.DELETE.name() -> true
             else -> request.contentLength > 0
         }
     }

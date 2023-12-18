@@ -1,13 +1,13 @@
 package top.bettercode.summer.web.kaptcha
 
 import com.google.code.kaptcha.Producer
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import top.bettercode.summer.logging.annotation.NoRequestLogging
 import javax.imageio.ImageIO
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Controller
 class CaptchaController(private val producer: Producer,

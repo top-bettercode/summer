@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.lang.client
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.util.StreamUtils
 import java.io.ByteArrayInputStream
@@ -41,12 +41,13 @@ class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : Clie
     }
 
 
-    override fun getStatusCode(): HttpStatus {
+    override fun getStatusCode(): HttpStatusCode {
         return response.statusCode
     }
 
+    @Deprecated("since = \"6.0\"")
     override fun getRawStatusCode(): Int {
-        return response.rawStatusCode
+        return response.statusCode.value()
     }
 
     override fun getStatusText(): String {

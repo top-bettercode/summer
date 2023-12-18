@@ -1,12 +1,12 @@
 package top.bettercode.summer.apisign
 
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.util.DigestUtils
 import org.springframework.util.MultiValueMap
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import javax.servlet.http.HttpServletRequest
 
 /**
  * 签名算法

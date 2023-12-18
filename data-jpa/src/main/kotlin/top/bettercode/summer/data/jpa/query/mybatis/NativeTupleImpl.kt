@@ -1,9 +1,9 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
+import jakarta.persistence.Tuple
+import jakarta.persistence.TupleElement
 import org.hibernate.HibernateException
 import java.util.*
-import javax.persistence.Tuple
-import javax.persistence.TupleElement
 
 class NativeTupleImpl(tuple: Array<Any?>?, aliases: Array<String>?) : Tuple {
     private val tuple: Array<Any?>

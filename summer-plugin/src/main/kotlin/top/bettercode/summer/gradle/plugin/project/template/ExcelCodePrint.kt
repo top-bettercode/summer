@@ -70,7 +70,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 import("top.bettercode.util.excel.ExcelExport")
                 +"ExcelWriter.sheet(\"$remarks\", writer -> writer.setData(${
                     if (isFullComposite) {
-                        "results.stream().map($className::get$primaryKeyClassName).collect(Collectors.toList())"
+                        "results.stream().map($className::get$primaryKeyClassName).toList()"
                     } else "results"
                 }, rowSetter));"
             }

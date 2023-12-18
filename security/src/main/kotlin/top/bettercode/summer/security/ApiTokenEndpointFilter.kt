@@ -1,6 +1,9 @@
 package top.bettercode.summer.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -33,9 +36,6 @@ import top.bettercode.summer.web.exception.UnauthorizedException
 import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder.getHandler
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class ApiTokenEndpointFilter @JvmOverloads constructor(
     private val apiTokenService: ApiTokenService,
@@ -71,11 +71,11 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
 
     init {
         Assert.hasText(tokenEndpointUri, "tokenEndpointUri cannot be empty")
-        tokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name)
+        tokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name())
         revokeTokenEndpointMatcher = OrRequestMatcher(
             listOf(
-                AntPathRequestMatcher(tokenEndpointUri, HttpMethod.DELETE.name),
-                AntPathRequestMatcher(revokeTokenEndpointUri, HttpMethod.GET.name)
+                AntPathRequestMatcher(tokenEndpointUri, HttpMethod.DELETE.name()),
+                AntPathRequestMatcher(revokeTokenEndpointUri, HttpMethod.GET.name())
             )
         )
         bearerTokenResolver.setCompatibleAccessToken(apiTokenService.securityProperties.isCompatibleAccessToken)

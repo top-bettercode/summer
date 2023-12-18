@@ -132,7 +132,7 @@ class ClientHttpRequestLoggingInterceptor(
         return OperationRequest(
             uri = uri,
             restUri = restUri,
-            method = request.method!!.name,
+            method = request.method.name(),
             headers = headers,
             cookies = cookies,
             remoteUser = "NonSpecificUser",

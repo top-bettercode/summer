@@ -9,5 +9,5 @@ dependencies {
     api("org.json:json")
     api("org.springframework:spring-core")
 
-    compileOnly("javax.servlet:javax.servlet-api")
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
 }

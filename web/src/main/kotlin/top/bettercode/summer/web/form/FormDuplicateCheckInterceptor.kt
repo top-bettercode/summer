@@ -1,11 +1,11 @@
 package top.bettercode.summer.web.form
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.method.HandlerMethod
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.web.servlet.NotErrorHandlerInterceptor
 import java.time.Duration
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * 表单重复检

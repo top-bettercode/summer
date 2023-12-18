@@ -1,11 +1,11 @@
 package top.bettercode.summer.data.jpa.metamodel
 
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaUpdate
+import jakarta.persistence.criteria.Root
+import jakarta.persistence.metamodel.SingularAttribute
 import java.time.temporal.TemporalAccessor
 import java.util.*
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaUpdate
-import javax.persistence.criteria.Root
-import javax.persistence.metamodel.SingularAttribute
 
 /**
  *

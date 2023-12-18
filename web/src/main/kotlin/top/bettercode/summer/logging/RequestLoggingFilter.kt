@@ -1,6 +1,10 @@
 package top.bettercode.summer.logging
 
 import ch.qos.logback.classic.Level
+import jakarta.servlet.FilterChain
+import jakarta.servlet.RequestDispatcher
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
 import org.slf4j.LoggerFactory
@@ -12,6 +16,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.context.request.RequestAttributes
@@ -35,10 +40,6 @@ import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.time.LocalDateTime
 import java.util.*
-import javax.servlet.FilterChain
-import javax.servlet.RequestDispatcher
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * 请求日志过滤器
@@ -330,7 +331,7 @@ class RequestLoggingFilter(
         httpStatusCode: Int,
         uri: String
     ): Boolean {
-        if (HttpMethod.OPTIONS.name == request.method) {
+        if (HttpMethod.OPTIONS.name() == request.method) {
             return false
         }
         return if (handler != null) {
@@ -350,7 +351,7 @@ class RequestLoggingFilter(
                     || properties.isForceRecord
                     || (error != null && !isClientAbortException(error))
                     || (try {
-                HttpStatus.valueOf(httpStatusCode)
+                HttpStatusCode.valueOf(httpStatusCode)
             } catch (e: Exception) {
                 HttpStatus.OK
             }.isError && (error == null || !isClientAbortException(error)))

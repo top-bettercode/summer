@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.github.benmanes.caffeine.cache.Caffeine
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -29,7 +30,6 @@ import top.bettercode.summer.security.token.DefaulAccessTokenConverter
 import top.bettercode.summer.security.token.StoreToken
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
-import javax.servlet.http.HttpServletRequest
 import kotlin.math.max
 
 @Configuration(proxyBeanMethods = false)

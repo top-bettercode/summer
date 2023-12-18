@@ -1,5 +1,6 @@
 package top.bettercode.summer.config
 
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
@@ -24,7 +25,6 @@ import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
-import javax.servlet.http.HttpServletResponse
 import kotlin.math.max
 
 /**

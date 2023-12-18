@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.domain;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import top.bettercode.summer.data.jpa.query.PathMatcher;
 import top.bettercode.summer.data.jpa.query.SpecMatcher;
@@ -11,6 +12,7 @@ import top.bettercode.summer.data.jpa.query.SpecPath;
  */
 public class UserMatcher extends SpecMatcher<User, UserMatcher> {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   private UserMatcher(SpecMatcherMode mode, User probe) {

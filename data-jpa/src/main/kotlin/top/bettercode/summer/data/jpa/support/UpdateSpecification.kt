@@ -2,8 +2,8 @@ package top.bettercode.summer.data.jpa.support
 
 import org.springframework.data.jpa.domain.Specification
 import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaUpdate
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaUpdate
 
 /**
  *

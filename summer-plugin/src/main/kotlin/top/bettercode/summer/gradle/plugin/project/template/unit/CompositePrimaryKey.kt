@@ -14,9 +14,9 @@ import top.bettercode.summer.tools.lang.util.JavaType
 val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         import("java.util.Objects")
-        import("javax.persistence.Embeddable")
+        import("jakarta.persistence.Embeddable")
         visibility = JavaVisibility.PUBLIC
-        annotation("@javax.persistence.Embeddable")
+        annotation("@jakarta.persistence.Embeddable")
         javadoc {
             +"/** $remarks 主键 对应表名：$tableName */"
         }
@@ -71,7 +71,8 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.columnDef != null)
                     annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")
                 if (it.numericBooleanType) {
-                    annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
+                    import("org.hibernate.type.descriptor.jdbc.TinyIntJdbcType")
+                    annotation("@org.hibernate.annotations.JdbcType(TinyIntJdbcType.class)")
                 }
             }
 
@@ -121,10 +122,9 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"if (this == o) {"
             +"return true;"
             +"}"
-            +"if (!(o instanceof ${primaryKeyClassName})) {"
+            +"if (!(o instanceof $primaryKeyClassName that)) {"
             +"return false;"
             +"}"
-            +"$primaryKeyClassName that = (${primaryKeyClassName}) o;"
             val size = primaryKeys.size
             primaryKeys.forEachIndexed { index, column ->
                 when (index) {

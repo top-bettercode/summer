@@ -1,7 +1,7 @@
 package top.bettercode.summer.security
 
+import jakarta.validation.constraints.NotBlank
 import java.io.Serializable
-import javax.validation.constraints.NotBlank
 
 /**
  * 资源，包含权限信息

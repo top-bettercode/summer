@@ -1,5 +1,6 @@
 package top.bettercode.summer.security.authorization
 
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.security.authorization.AuthorizationDecision
 import org.springframework.security.authorization.AuthorizationManager
@@ -19,7 +20,6 @@ import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotations
 import java.util.*
 import java.util.function.Supplier
-import javax.servlet.http.HttpServletRequest
 
 /**
  * 自定义权限过滤

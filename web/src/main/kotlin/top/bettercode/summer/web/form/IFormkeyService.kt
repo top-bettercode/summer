@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.form
 
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
@@ -11,7 +12,6 @@ import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.util.Sha512DigestUtils.shaHex
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
 import java.time.Duration
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu

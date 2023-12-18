@@ -1,11 +1,11 @@
 package top.bettercode.summer.tools.lang.util
 
+import jakarta.servlet.http.HttpServletRequest
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.LineNumberReader
 import java.net.Inet4Address
 import java.net.NetworkInterface
-import javax.servlet.http.HttpServletRequest
 
 /**
  * IP工具

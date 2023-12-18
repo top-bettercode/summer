@@ -1,20 +1,18 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
+import jakarta.persistence.Tuple
 import org.apache.ibatis.mapping.MappedStatement
-import org.hibernate.transform.ResultTransformer
+import org.hibernate.query.ResultListTransformer
+import org.hibernate.query.TupleTransformer
 import java.sql.ResultSet
-import javax.persistence.Tuple
 
 /**
  * @author Peter Wu
  */
-class MybatisResultTransformer(
-    private val mappedStatement: MappedStatement,
-    private val isStreamQuery: Boolean
-) : ResultTransformer {
+class MybatisResultTransformer(private val mappedStatement: MappedStatement) :
+    TupleTransformer<Any?>, ResultListTransformer<Any?> {
 
     private var resultSetMetaData: TupleResultSetMetaData? = null
-    var autoCloseResultSet = true
 
     override fun transformTuple(tuple: Array<Any?>, aliases: Array<String>): Any {
         return NativeTupleImpl(tuple, aliases)
@@ -39,14 +37,10 @@ class MybatisResultTransformer(
             resultSetMetaData = this.resultSetMetaData!!
         }
         val resultSet = TupleResultSet(tuples, resultSetMetaData)
-        return MybatisResultSetHandler(mappedStatement, autoCloseResultSet).handleResultSets(
+        return MybatisResultSetHandler(mappedStatement, true).handleResultSets(
             resultSet,
             Int.MAX_VALUE
         )
-    }
-
-    fun transformResultSet(resultSet: ResultSet?): Any? {
-        return this.transformListResultSet(resultSet, 1)[0]
     }
 
     fun transformListResultSet(resultSet: ResultSet): List<Any?> {
@@ -58,10 +52,7 @@ class MybatisResultTransformer(
         if (maxRows1 == 0) {
             maxRows1 = Int.MAX_VALUE
         }
-        return MybatisResultSetHandler(mappedStatement, autoCloseResultSet).handleResultSets(
-            resultSet,
-            maxRows1
-        )
+        return MybatisResultSetHandler(mappedStatement, true).handleResultSets(resultSet, maxRows1)
     }
 
 }

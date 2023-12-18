@@ -287,17 +287,17 @@ open class AliSmsTemplate(
         }
         val sortedQueryString = sortQueryStringTmp.substring(1) // 去除第一个多余的&符号
         val stringToSign =
-            HttpMethod.POST.name + "&" + specialUrlEncode("/") + "&" + specialUrlEncode(
-                sortedQueryString
-            )
+                HttpMethod.POST.name() + "&" + specialUrlEncode("/") + "&" + specialUrlEncode(
+                        sortedQueryString
+                )
         val sign = sign(properties.accessKeySecret + "&", stringToSign)
         params.add("Signature", sign)
     }
 
     private fun specialUrlEncode(value: String): String {
         return try {
-            URLEncoder.encode(value, "UTF-8").replace("+", "%20").replace("*", "%2A")
-                .replace("%7E", "~")
+            URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20").replace("*", "%2A")
+                    .replace("%7E", "~")
         } catch (e: UnsupportedEncodingException) {
             throw clientException(e)
         }

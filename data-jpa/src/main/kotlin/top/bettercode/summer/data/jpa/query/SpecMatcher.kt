@@ -1,5 +1,9 @@
 package top.bettercode.summer.data.jpa.query
 
+import jakarta.persistence.criteria.*
+import jakarta.persistence.metamodel.Attribute
+import jakarta.persistence.metamodel.Attribute.PersistentAttributeType
+import jakarta.persistence.metamodel.ManagedType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.dao.InvalidDataAccessApiUsageException
@@ -13,10 +17,6 @@ import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
-import javax.persistence.criteria.*
-import javax.persistence.metamodel.Attribute
-import javax.persistence.metamodel.Attribute.PersistentAttributeType
-import javax.persistence.metamodel.ManagedType
 
 /**
  * @author Peter Wu

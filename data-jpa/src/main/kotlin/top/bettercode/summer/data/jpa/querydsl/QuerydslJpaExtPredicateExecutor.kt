@@ -4,6 +4,7 @@ import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.SimplePath
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.AuditorAware
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -13,11 +14,12 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.QuerydslJpaPredicateExecutor
 import org.springframework.data.querydsl.EntityPathResolver
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.metamodel.LogicalDeletedAttribute
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 import java.util.*
-import javax.persistence.EntityManager
+import java.util.function.Function
 
 /**
  * @author Peter Wu
@@ -70,6 +72,15 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
     private val deleted by lazy {
         path!!.eq(logicalDeletedAttribute!!.trueValue)
     }
+
+
+    override fun <S : T, R : Any?> findBy(
+        predicate: Predicate,
+        queryFunction: Function<FetchableFluentQuery<S>, R>
+    ): R {
+        return super.findBy(andNotDeleted(predicate), queryFunction)
+    }
+
 
     override fun findOne(predicate: Predicate): Optional<T> {
         return super.findOne(andNotDeleted(predicate))

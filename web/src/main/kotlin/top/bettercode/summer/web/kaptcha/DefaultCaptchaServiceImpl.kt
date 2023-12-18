@@ -1,13 +1,13 @@
 package top.bettercode.summer.web.kaptcha
 
 import com.google.code.kaptcha.Constants
+import jakarta.servlet.http.HttpSession
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.now
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import java.time.temporal.ChronoUnit
 import java.util.*
-import javax.servlet.http.HttpSession
 
 /**
  * @author Peter Wu

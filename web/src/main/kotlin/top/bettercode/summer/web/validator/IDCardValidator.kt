@@ -1,7 +1,7 @@
 package top.bettercode.summer.web.validator
 
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 
 class IDCardValidator : ConstraintValidator<IDCard?, String?> {
     override fun initialize(annotation: IDCard?) {}

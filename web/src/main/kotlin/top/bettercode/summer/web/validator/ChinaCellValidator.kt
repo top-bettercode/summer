@@ -1,5 +1,7 @@
 package top.bettercode.summer.web.validator
 
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 import top.bettercode.summer.tools.lang.util.CellUtil
 import top.bettercode.summer.tools.lang.util.CellUtil.isChinaCell
 import top.bettercode.summer.tools.lang.util.CellUtil.isChinaMobile
@@ -7,8 +9,6 @@ import top.bettercode.summer.tools.lang.util.CellUtil.isChinaTelecom
 import top.bettercode.summer.tools.lang.util.CellUtil.isChinaUnicom
 import top.bettercode.summer.tools.lang.util.CellUtil.isChinaVNO
 import top.bettercode.summer.tools.lang.util.CellUtil.isSimpleCell
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
 /**
  * `ChinaCell` 验证器

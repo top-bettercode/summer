@@ -1,5 +1,8 @@
 package top.bettercode.summer.test
 
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.Ordered
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -7,9 +10,6 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.filter.OncePerRequestFilter
 import top.bettercode.summer.tools.lang.util.StringUtil
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * @author Peter Wu
@@ -30,7 +30,7 @@ class AutoDocFilter(
         if (!handlers.isNullOrEmpty()) {
             val servletRequest = AutoDocHttpServletRequest(request)
             handlers.filter { it.support(servletRequest) }.forEach { it.handle(servletRequest) }
-            if (servletRequest.contentType.isNullOrBlank() && (HttpMethod.PUT.name == request.method || HttpMethod.POST.name == request.method)) {
+            if (servletRequest.contentType.isNullOrBlank() && (HttpMethod.PUT.name() == request.method || HttpMethod.POST.name() == request.method)) {
                 if (request is MockHttpServletRequest && request.contentLengthLong > 0L && isJson(
                         request.contentAsByteArray!!
                     )

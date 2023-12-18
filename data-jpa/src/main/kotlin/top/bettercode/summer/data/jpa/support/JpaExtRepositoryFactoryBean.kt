@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.support
 
+import jakarta.persistence.EntityManager
 import org.apache.ibatis.session.Configuration
 import org.springframework.data.domain.AuditorAware
 import org.springframework.data.jpa.repository.support.JpaExtRepositoryFactory
@@ -9,7 +10,6 @@ import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import java.io.Serializable
-import javax.persistence.EntityManager
 
 /**
  * [JpaRepositoryFactoryBean] to return a custom repository base class.

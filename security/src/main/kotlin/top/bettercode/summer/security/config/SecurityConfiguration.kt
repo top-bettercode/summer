@@ -1,6 +1,8 @@
 package top.bettercode.summer.security.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -28,8 +30,6 @@ import top.bettercode.summer.security.token.IRevokeTokenService
 import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.CorsProperties
 import top.bettercode.summer.web.properties.SummerWebProperties
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity

@@ -1,5 +1,6 @@
 package org.springframework.data.jpa.repository.support
 
+import jakarta.persistence.EntityManager
 import org.apache.ibatis.session.Configuration
 import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.ProxyFactory
@@ -34,7 +35,6 @@ import top.bettercode.summer.data.jpa.support.SimpleJpaExtRepository
 import java.io.Serializable
 import java.util.*
 import java.util.stream.Stream
-import javax.persistence.EntityManager
 
 
 /**
@@ -50,6 +50,7 @@ class JpaExtRepositoryFactory(
     private val auditorAware: AuditorAware<*>
     private val configuration: Configuration
     private val entityManager: EntityManager
+    private var queryRewriterProvider: QueryRewriterProvider? = null
     private val extractor: QueryExtractor
     private val crudMethodMetadataPostProcessor: CrudMethodMetadataPostProcessor
     private var entityPathResolver: EntityPathResolver
@@ -63,6 +64,8 @@ class JpaExtRepositoryFactory(
         crudMethodMetadataPostProcessor = CrudMethodMetadataPostProcessor()
         entityPathResolver = SimpleEntityPathResolver.INSTANCE
         queryMethodFactory = DefaultJpaQueryMethodFactory(extractor)
+        queryRewriterProvider = QueryRewriterProvider.simple()
+
         addRepositoryProxyPostProcessor(crudMethodMetadataPostProcessor)
         addRepositoryProxyPostProcessor { factory: ProxyFactory, repositoryInformation: RepositoryInformation ->
             if (isTransactionNeeded(repositoryInformation.repositoryInterface)) {
@@ -160,12 +163,9 @@ class JpaExtRepositoryFactory(
         evaluationContextProvider: QueryMethodEvaluationContextProvider
     ): Optional<QueryLookupStrategy> {
         return Optional.of(
-            JpaExtQueryLookupStrategy.create(
-                entityManager, configuration, key, extractor, evaluationContextProvider,
-                escapeCharacter,
-                jpaExtProperties, auditorAware
-            )
-        )
+                JpaExtQueryLookupStrategy.create(entityManager, queryMethodFactory, key,
+                        evaluationContextProvider, queryRewriterProvider!!, escapeCharacter, configuration,
+                        extractor, jpaExtProperties, auditorAware))
     }
 
     override fun <T, ID> getEntityInformation(domainClass: Class<T>): JpaEntityInformation<T, ID> {

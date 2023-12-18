@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.config.summer
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
@@ -10,7 +11,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.UncategorizedSQLException
 import top.bettercode.summer.web.error.DataErrorHandler
-import javax.servlet.http.HttpServletRequest
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(UncategorizedSQLException::class)

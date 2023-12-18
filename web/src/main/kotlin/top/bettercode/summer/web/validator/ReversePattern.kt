@@ -1,8 +1,8 @@
 package top.bettercode.summer.web.validator
 
+import jakarta.validation.Constraint
+import jakarta.validation.Payload
 import java.util.regex.Pattern
-import javax.validation.Constraint
-import javax.validation.Payload
 import kotlin.reflect.KClass
 
 /**
@@ -28,7 +28,7 @@ annotation class ReversePattern(
         /**
          * @return the error message template
          */
-        val message: String = "{javax.validation.constraints.Pattern.message}",
+        val message: String = "{jakarta.validation.constraints.Pattern.message}",
         /**
          * @return the groups the constraint belongs to
          */

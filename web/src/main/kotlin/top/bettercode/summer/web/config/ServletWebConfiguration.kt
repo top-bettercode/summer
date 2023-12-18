@@ -11,7 +11,7 @@ import top.bettercode.summer.web.properties.SummerWebProperties
 /**
  * @author Peter Wu
  */
-@ConditionalOnClass(javax.servlet.http.HttpServletRequest::class)
+@ConditionalOnClass(jakarta.servlet.http.HttpServletRequest::class)
 @Configuration(proxyBeanMethods = false)
 class ServletWebConfiguration {
 

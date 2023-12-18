@@ -1,11 +1,11 @@
 package top.bettercode.summer.tools.lang.operation
 
+import jakarta.servlet.ServletResponse
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletResponseWrapper
 import org.springframework.http.HttpHeaders
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
-import javax.servlet.ServletResponse
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpServletResponseWrapper
 
 /**
  * A `ResponseConverter` is used to convert an implementation-specific response into

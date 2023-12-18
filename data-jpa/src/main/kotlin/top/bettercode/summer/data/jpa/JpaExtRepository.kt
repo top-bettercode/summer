@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa
 
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -10,7 +11,6 @@ import org.springframework.data.repository.NoRepositoryBean
 import top.bettercode.summer.data.jpa.query.RecycleExecutor
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
-import javax.persistence.EntityManager
 
 /**
  * @param <T>  T
@@ -51,10 +51,8 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, JpaSpecificationExecut
      * @return 结果
     </S> */
     fun <S : T> saveDynamic(s: S): S
-    fun delete(spec: Specification<T>): Long
     fun deletePhysical(spec: Specification<T>): Long
 
-    fun exists(spec: Specification<T>): Boolean
     fun existsPhysical(spec: Specification<T>?): Boolean
     fun countPhysical(spec: Specification<T>?): Long
     fun findFirst(sort: Sort): Optional<T>

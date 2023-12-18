@@ -3,6 +3,9 @@ package top.bettercode.summer.test.autodoc
 import com.github.javaparser.StaticJavaParser
 import com.github.javaparser.ast.body.FieldDeclaration
 import com.github.javaparser.ast.body.MethodDeclaration
+import jakarta.persistence.EntityManagerFactory
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -22,9 +25,6 @@ import java.beans.Introspector
 import java.io.File
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
-import javax.persistence.EntityManagerFactory
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Aspect
 class AutodocAspect(

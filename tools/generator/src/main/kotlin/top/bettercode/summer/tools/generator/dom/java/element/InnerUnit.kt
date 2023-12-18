@@ -62,6 +62,7 @@ abstract class InnerUnit(
 
     fun serialVersionUID() {
         field("serialVersionUID", JavaType.long) {
+            annotation("@java.io.Serial")
             isStatic = true
             isFinal = true
             initializationString = "1L"

@@ -1,10 +1,10 @@
 package top.bettercode.summer.tools.qvod
 
+import jakarta.validation.constraints.NotBlank
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import top.bettercode.summer.web.BaseController
-import javax.validation.constraints.NotBlank
 
 @Validated
 @RestController

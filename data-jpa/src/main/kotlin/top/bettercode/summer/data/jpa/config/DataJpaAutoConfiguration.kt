@@ -1,5 +1,8 @@
 package top.bettercode.summer.data.jpa.config
 
+import jakarta.persistence.EntityManager
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -16,9 +19,6 @@ import top.bettercode.summer.data.jpa.support.DataJpaErrorHandler
 import top.bettercode.summer.data.jpa.support.DataQuery
 import top.bettercode.summer.data.jpa.support.SqlLogAspect
 import java.util.*
-import javax.persistence.EntityManager
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * DataJpaConfiguration 配置

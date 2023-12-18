@@ -1,0 +1,4 @@
+top.bettercode.summer.data.jpa.config.DataJpaAutoConfiguration
+top.bettercode.summer.data.jpa.config.JdbcSelectExecutorConfiguration
+top.bettercode.summer.data.jpa.config.JpaExtRepositoriesAutoConfiguration
+top.bettercode.summer.data.jpa.config.DataWebAutoConfiguration

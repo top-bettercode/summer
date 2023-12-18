@@ -1,5 +1,7 @@
 package top.bettercode.summer.test.autodoc
 
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.groups.Default
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -11,8 +13,6 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import top.bettercode.summer.security.authorize.Anonymous
-import javax.servlet.http.HttpServletResponse
-import javax.validation.groups.Default
 
 
 interface Create : Default

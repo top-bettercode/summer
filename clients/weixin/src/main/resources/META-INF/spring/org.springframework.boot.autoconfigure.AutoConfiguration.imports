@@ -1,0 +1,7 @@
+top.bettercode.summer.tools.weixin.config.PropertiesConfiguration
+top.bettercode.summer.tools.weixin.config.WeixinConfiguration
+top.bettercode.summer.tools.weixin.config.WeixinRedisConfiguration
+top.bettercode.summer.tools.weixin.config.WeixinAppConfiguration
+top.bettercode.summer.tools.weixin.config.WeixinAppRedisConfiguration
+top.bettercode.summer.tools.weixin.config.WeixinCorpConfiguration
+top.bettercode.summer.tools.weixin.config.WeixinCorpRedisConfiguration

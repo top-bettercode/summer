@@ -1,11 +1,12 @@
 package top.bettercode.summer.data.jpa.domain
 
+import jakarta.persistence.*
 import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.DynamicUpdate
-import org.hibernate.annotations.Type
+import org.hibernate.annotations.JdbcType
+import org.hibernate.type.descriptor.jdbc.TinyIntJdbcType
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.*
-import javax.persistence.*
 
 @Suppress("LeakingThis")
 @Entity
@@ -18,7 +19,7 @@ open class PhysicalUser {
     open var firstName: String? = null
     open var lastName: String? = null
 
-    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @JdbcType(TinyIntJdbcType::class)
     @ColumnDefault("0")
     open var deleted: Boolean? = null
 

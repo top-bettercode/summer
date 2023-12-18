@@ -1,8 +1,10 @@
 package top.bettercode.summer.env
 
+import org.springframework.boot.actuate.endpoint.Show
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation
 import org.springframework.boot.actuate.endpoint.web.annotation.EndpointWebExtension
+import org.springframework.boot.actuate.env.EnvironmentEndpoint
 import org.springframework.boot.actuate.env.EnvironmentEndpointWebExtension
 import java.util.*
 
@@ -12,9 +14,9 @@ import java.util.*
  */
 @EndpointWebExtension(endpoint = WritableEnvironmentEndpoint::class)
 class WritableEnvironmentEndpointWebExtension(
-        endpoint: WritableEnvironmentEndpoint,
-        private var environment: EnvironmentManager
-) : EnvironmentEndpointWebExtension(endpoint) {
+        delegate: EnvironmentEndpoint,
+        showValues: Show, roles: Set<String>,
+        private var environment: EnvironmentManager) : EnvironmentEndpointWebExtension(delegate, showValues, roles) {
     @WriteOperation
     fun write(name: String, value: String?): Any {
         environment.setProperty(name, value)

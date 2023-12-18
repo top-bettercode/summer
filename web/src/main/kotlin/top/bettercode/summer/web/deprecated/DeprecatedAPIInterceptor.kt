@@ -1,12 +1,12 @@
 package top.bettercode.summer.web.deprecated
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.MessageSource
 import org.springframework.web.method.HandlerMethod
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.web.servlet.NotErrorHandlerInterceptor
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * 已弃用的接口检查

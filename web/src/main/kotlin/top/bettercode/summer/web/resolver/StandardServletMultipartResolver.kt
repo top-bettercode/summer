@@ -1,12 +1,12 @@
 package top.bettercode.summer.web.resolver
 
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.multipart.MultipartResolver
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 /**
  * 支持PUT上传

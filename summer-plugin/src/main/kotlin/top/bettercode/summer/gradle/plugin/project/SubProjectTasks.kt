@@ -148,41 +148,43 @@ object SubProjectTasks {
             }
 
             if (project.isBoot) {
-                create("resolveMainClass") {
-                    it.dependsOn("bootJarMainClassName")
-                    it.doLast(object : Action<Task> {
-                        override fun execute(it: Task) {
-                            project.tasks.findByName("startScripts").apply {
-                                this as CreateStartScripts
-                                if (!this.mainClass.isPresent) {
-                                    val bootJar = project.tasks.getByName("bootJar")
-                                    bootJar as BootJar
-                                    this.mainClass.set(bootJar.mainClass)
+                if (!project.nativeSupport) {
+                    create("resolveMainClass") {
+                        it.dependsOn("resolveMainClassName")
+                        it.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                project.tasks.findByName("startScripts").apply {
+                                    this as CreateStartScripts
+                                    if (!mainClass.isPresent) {
+                                        val bootJar = project.tasks.getByName("bootJar")
+                                        bootJar as BootJar
+                                        mainClass.set(bootJar.mainClass)
+                                    }
                                 }
                             }
-                        }
-                    })
+                        })
+                    }
+                    named("startScripts") { task ->
+                        task.dependsOn("resolveMainClass")
+                    }
+                    named("distZip", Zip::class.java) {
+                        it.archiveFileName.set("${project.name}.zip")
+                    }
                 }
-                named("startScripts") { task ->
-                    task.dependsOn("resolveMainClass")
-                }
+
                 named("bootJar", BootJar::class.java) {
                     it.dependsOn("asciidoc", "htmldoc", "postman")
                     it.launchScript()
                     it.archiveFileName.set("${project.name}-latest.jar")
-                }
-                named("distZip", Zip::class.java) {
-                    it.archiveFileName.set("${project.name}.zip")
                 }
             } else {
                 named("jar", Jar::class.java) {
                     it.enabled = true
                     it.archiveClassifier.convention("")
                 }
-                named("bootRunMainClassName") { it.enabled = false }
                 named("bootRun") { it.enabled = false }
-                named("bootJarMainClassName") { it.enabled = false }
                 named("bootJar") { it.enabled = false }
+                named("resolveMainClassName") { it.enabled = false }
                 named("bootBuildImage") { it.enabled = false }
             }
 
@@ -191,7 +193,11 @@ object SubProjectTasks {
                 named("htmldoc") { it.enabled = false }
                 named("postman") { it.enabled = false }
             } else {
-                named("bootJarMainClassName") { it.dependsOn("asciidoc", "htmldoc", "postman") }
+                if (project.nativeSupport) {
+                    named("nativeCompile") { it.dependsOn("asciidoc", "htmldoc", "postman") }
+                } else {
+                    named("resolveMainClass") { it.dependsOn("asciidoc", "htmldoc", "postman") }
+                }
             }
         }
     }

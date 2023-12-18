@@ -1,12 +1,13 @@
 package top.bettercode.summer.data.jpa.domain
 
+import jakarta.persistence.EmbeddedId
+import jakarta.persistence.Entity
 import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.DynamicUpdate
-import org.hibernate.annotations.Type
+import org.hibernate.annotations.JdbcType
+import org.hibernate.type.descriptor.jdbc.TinyIntJdbcType
 import top.bettercode.summer.data.jpa.LogicalDelete
 import top.bettercode.summer.tools.lang.util.StringUtil.json
-import javax.persistence.EmbeddedId
-import javax.persistence.Entity
 
 @Suppress("LeakingThis")
 @DynamicUpdate
@@ -18,7 +19,7 @@ open class Employee {
     open var lastName: String? = null
 
     @LogicalDelete
-    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @JdbcType(TinyIntJdbcType::class)
     @ColumnDefault("0")
     open var deleted: Boolean? = null
 

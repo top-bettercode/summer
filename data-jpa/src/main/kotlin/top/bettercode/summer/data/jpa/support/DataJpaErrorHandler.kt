@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.support
 
+import jakarta.servlet.http.HttpServletRequest
 import org.hibernate.exception.GenericJDBCException
 import org.springframework.context.MessageSource
 import org.springframework.dao.InvalidDataAccessApiUsageException
@@ -8,7 +9,6 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.orm.jpa.JpaSystemException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu

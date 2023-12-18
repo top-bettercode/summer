@@ -1,5 +1,10 @@
 package top.bettercode.summer.config
 
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.util.AntPathMatcher
 import org.springframework.util.Assert
@@ -9,11 +14,6 @@ import top.bettercode.summer.config.ManagementAuthProperties.Companion.DEFAULT_L
 import java.nio.charset.StandardCharsets
 import java.util.function.Function
 import java.util.regex.Pattern
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class ManagementLoginPageGeneratingFilter(
     private val managementAuthProperties: ManagementAuthProperties,

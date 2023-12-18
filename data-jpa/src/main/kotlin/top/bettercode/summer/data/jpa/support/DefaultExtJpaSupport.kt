@@ -1,5 +1,8 @@
 package top.bettercode.summer.data.jpa.support
 
+import jakarta.persistence.EntityManager
+import jakarta.persistence.Version
+import jakarta.persistence.metamodel.SingularAttribute
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.domain.AuditorAware
@@ -10,9 +13,6 @@ import top.bettercode.summer.data.jpa.metamodel.LastModifiedDateAttribute
 import top.bettercode.summer.data.jpa.metamodel.LogicalDeletedAttribute
 import top.bettercode.summer.data.jpa.metamodel.VersionAttribute
 import java.lang.reflect.AnnotatedElement
-import javax.persistence.EntityManager
-import javax.persistence.Version
-import javax.persistence.metamodel.SingularAttribute
 
 /**
  * @author Peter Wu

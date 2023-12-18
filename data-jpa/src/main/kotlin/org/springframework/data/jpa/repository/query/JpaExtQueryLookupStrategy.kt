@@ -1,19 +1,22 @@
 package org.springframework.data.jpa.repository.query
 
+import jakarta.persistence.EntityManager
 import org.apache.ibatis.session.Configuration
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.AuditorAware
 import org.springframework.data.jpa.provider.QueryExtractor
+import org.springframework.data.jpa.repository.QueryRewriter
+import org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy.NoQuery
 import org.springframework.data.projection.ProjectionFactory
 import org.springframework.data.repository.core.NamedQueries
 import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.query.QueryLookupStrategy
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider
 import org.springframework.data.repository.query.RepositoryQuery
+import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import java.lang.reflect.Method
-import javax.persistence.EntityManager
 
 /**
  * Query lookup strategy to execute finders.
@@ -24,117 +27,112 @@ import javax.persistence.EntityManager
  */
 object JpaExtQueryLookupStrategy {
     private val LOG = LoggerFactory.getLogger(JpaQueryLookupStrategy::class.java)
-
-    /**
-     * Creates a [QueryLookupStrategy] for the given [EntityManager] and [org.springframework.data.repository.query.QueryLookupStrategy.Key].
-     *
-     * @param em                        must not be null.
-     * @param key                       may be null.
-     * @param extractor                 must not be null.
-     * @param evaluationContextProvider must not be null.
-     * @param escape                    escape
-     * @param jpaExtProperties          jpaExtProperties
-     * @param configuration             configuration
-     * @return QueryLookupStrategy
-     */
+    private val NO_QUERY: RepositoryQuery = NoQuery()
     fun create(
-        em: EntityManager, configuration: Configuration,
-        key: QueryLookupStrategy.Key?,
-        extractor: QueryExtractor,
+        em: EntityManager,
+        @Suppress("UNUSED_PARAMETER") queryMethodFactory: JpaQueryMethodFactory,
+        @Nullable key: QueryLookupStrategy.Key?,
         evaluationContextProvider: QueryMethodEvaluationContextProvider,
-        escape: EscapeCharacter,
+        queryRewriterProvider: QueryRewriterProvider, escape: EscapeCharacter,
+        configuration: Configuration,
+        extractor: QueryExtractor,
         jpaExtProperties: JpaExtProperties,
         auditorAware: AuditorAware<*>
     ): QueryLookupStrategy {
-        Assert.notNull(em, "EntityManager must not be null!")
+        Assert.notNull(em, "EntityManager must not be null")
+        Assert.notNull(evaluationContextProvider, "EvaluationContextProvider must not be null")
         Assert.notNull(extractor, "QueryExtractor must not be null!")
-        Assert.notNull(evaluationContextProvider, "EvaluationContextProvider must not be null!")
         return when (key ?: QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND) {
             QueryLookupStrategy.Key.CREATE -> CreateQueryLookupStrategy(
-                em, extractor, escape, jpaExtProperties,
-                configuration, auditorAware
+                em,
+                queryRewriterProvider,
+                extractor,
+                configuration,
+                escape,
+                jpaExtProperties,
+                auditorAware
             )
 
             QueryLookupStrategy.Key.USE_DECLARED_QUERY -> DeclaredQueryLookupStrategy(
-                em, extractor, evaluationContextProvider,
-                configuration
+                em, queryRewriterProvider, extractor, configuration,
+                evaluationContextProvider
             )
 
             QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND -> CreateIfNotFoundQueryLookupStrategy(
-                em, extractor,
+                em, queryRewriterProvider, extractor,
+                configuration,
                 CreateQueryLookupStrategy(
-                    em,
-                    extractor,
-                    escape,
-                    jpaExtProperties,
-                    configuration,
-                    auditorAware
+                    em, queryRewriterProvider, extractor, configuration,
+                    escape, jpaExtProperties, auditorAware
                 ),
                 DeclaredQueryLookupStrategy(
-                    em, extractor, evaluationContextProvider,
-                    configuration
+                    em, queryRewriterProvider, extractor, configuration,
+                    evaluationContextProvider
                 )
             )
 
             else -> throw IllegalArgumentException(
                 String.format(
-                    "Unsupported query lookup strategy %s!",
+                    "Unsupported query lookup strategy %s",
                     key
                 )
             )
         }
     }
 
-    /**
-     * Base class for [QueryLookupStrategy] implementations that need access to an
-     * [EntityManager].
-     *
-     * @author Oliver Gierke
-     * @author Thomas Darimont
-     */
     private abstract class AbstractQueryLookupStrategy(
-        private val em: EntityManager, private val provider: QueryExtractor,
-        val configuration: Configuration
+        em: EntityManager,
+        queryRewriterProvider: QueryRewriterProvider, provider: QueryExtractor,
+        configuration: Configuration
     ) : QueryLookupStrategy {
+        private val em: EntityManager
+        private val queryRewriterProvider: QueryRewriterProvider
+        private val provider: QueryExtractor
+        val configuration: Configuration
 
-        /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.query.QueryLookupStrategy#resolveQuery(java.lang.reflect.Method, org.springframework.data.repository.core.RepositoryMetadata, org.springframework.data.projection.ProjectionFactory, org.springframework.data.repository.core.NamedQueries)
-     */
+        init {
+            Assert.notNull(em, "EntityManager must not be null")
+            this.em = em
+            this.queryRewriterProvider = queryRewriterProvider
+            this.provider = provider
+            this.configuration = configuration
+        }
+
         override fun resolveQuery(
             method: Method, metadata: RepositoryMetadata,
             factory: ProjectionFactory,
             namedQueries: NamedQueries
         ): RepositoryQuery {
+            val queryMethod = JpaExtQueryMethod(
+                method, metadata, factory, provider,
+                configuration
+            )
             return resolveQuery(
-                JpaExtQueryMethod(method, metadata, factory, provider, configuration), em,
+                queryMethod, queryRewriterProvider.getQueryRewriter(queryMethod), em,
                 namedQueries
             )
         }
 
         abstract fun resolveQuery(
-            method: JpaExtQueryMethod, em: EntityManager,
-            namedQueries: NamedQueries
+            method: JpaExtQueryMethod,
+            queryRewriter: QueryRewriter,
+            em: EntityManager, namedQueries: NamedQueries
         ): RepositoryQuery
     }
 
-    /**
-     * [QueryLookupStrategy] to create a query from the method name.
-     *
-     * @author Oliver Gierke
-     * @author Thomas Darimont
-     */
     private class CreateQueryLookupStrategy(
         em: EntityManager,
-        extractor: QueryExtractor,
+        queryRewriterProvider: QueryRewriterProvider,
+        provider: QueryExtractor,
+        configuration: Configuration,
         private val escape: EscapeCharacter,
         private val jpaExtProperties: JpaExtProperties,
-        configuration: Configuration,
         private val auditorAware: AuditorAware<*>
-    ) : AbstractQueryLookupStrategy(em, extractor, configuration) {
+    ) : AbstractQueryLookupStrategy(em, queryRewriterProvider, provider, configuration) {
         override fun resolveQuery(
-            method: JpaExtQueryMethod, em: EntityManager,
-            namedQueries: NamedQueries
+            method: JpaExtQueryMethod,
+            queryRewriter: QueryRewriter,
+            em: EntityManager, namedQueries: NamedQueries
         ): RepositoryQuery {
             return PartTreeJpaExtQuery(method, em, escape, jpaExtProperties, auditorAware)
         }
@@ -149,12 +147,14 @@ object JpaExtQueryLookupStrategy {
      */
     private class DeclaredQueryLookupStrategy(
         em: EntityManager,
-        extractor: QueryExtractor,
-        private val evaluationContextProvider: QueryMethodEvaluationContextProvider,
-        configuration: Configuration
-    ) : AbstractQueryLookupStrategy(em, extractor, configuration) {
+        queryRewriterProvider: QueryRewriterProvider,
+        provider: QueryExtractor,
+        configuration: Configuration,
+        private val evaluationContextProvider: QueryMethodEvaluationContextProvider
+    ) : AbstractQueryLookupStrategy(em, queryRewriterProvider, provider, configuration) {
         override fun resolveQuery(
-            method: JpaExtQueryMethod, em: EntityManager,
+            method: JpaExtQueryMethod, queryRewriter: QueryRewriter,
+            em: EntityManager,
             namedQueries: NamedQueries
         ): RepositoryQuery {
             if (method.isProcedureQuery) {
@@ -170,32 +170,30 @@ object JpaExtQueryLookupStrategy {
                     )
                 }
                 return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(
-                    method, em,
+                    method,
+                    em,
                     method.requiredAnnotatedQuery,
                     getCountQuery(method, namedQueries, em),
+                    queryRewriter,
                     evaluationContextProvider
                 )
             }
             val name = method.namedQueryName
             if (namedQueries.hasQuery(name)) {
                 return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(
-                    method, em,
-                    namedQueries.getQuery(name), getCountQuery(method, namedQueries, em),
+                    method,
+                    em,
+                    namedQueries.getQuery(name),
+                    getCountQuery(method, namedQueries, em),
+                    queryRewriter,
                     evaluationContextProvider
                 )
             }
             val query = NamedQuery.lookupFrom(method, em)
-            if (null != query) {
-                return query
-            }
-            throw IllegalStateException(
-                String.format(
-                    "Did neither find a NamedQuery nor an annotated query for method %s!",
-                    method
-                )
-            )
+            return query ?: NO_QUERY
         }
 
+        @Nullable
         private fun getCountQuery(
             method: JpaQueryMethod, namedQueries: NamedQueries,
             em: EntityManager
@@ -227,22 +225,28 @@ object JpaExtQueryLookupStrategy {
      */
     private class CreateIfNotFoundQueryLookupStrategy(
         em: EntityManager,
-        extractor: QueryExtractor,
+        queryRewriterProvider: QueryRewriterProvider,
+        provider: QueryExtractor,
+        configuration: Configuration,
         private val createStrategy: CreateQueryLookupStrategy,
         private val lookupStrategy: DeclaredQueryLookupStrategy
-    ) : AbstractQueryLookupStrategy(em, extractor, lookupStrategy.configuration) {
+    ) : AbstractQueryLookupStrategy(em, queryRewriterProvider, provider, configuration) {
         override fun resolveQuery(
-            method: JpaExtQueryMethod, em: EntityManager,
+            method: JpaExtQueryMethod, queryRewriter: QueryRewriter,
+            em: EntityManager,
             namedQueries: NamedQueries
         ): RepositoryQuery {
-            return try {
-                lookupStrategy.resolveQuery(method, em, namedQueries)
-            } catch (e: IllegalStateException) {
-                if (method.mybatisQueryMethod != null) {
-                    MybatisJpaQuery(method, em)
-                } else {
-                    createStrategy.resolveQuery(method, em, namedQueries)
-                }
+            val lookupQuery = lookupStrategy.resolveQuery(
+                method, queryRewriter, em,
+                namedQueries
+            )
+            if (lookupQuery !== NO_QUERY) {
+                return lookupQuery
+            }
+            return if (method.mybatisQueryMethod != null) {
+                MybatisJpaQuery(method, em)
+            } else {
+                createStrategy.resolveQuery(method, queryRewriter, em, namedQueries)
             }
         }
     }

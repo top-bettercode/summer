@@ -1,5 +1,7 @@
 package top.bettercode.summer.web.error
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.ConstraintViolationException
 import org.springframework.context.MessageSource
 import org.springframework.core.NestedExceptionUtils
 import org.springframework.dao.*
@@ -10,8 +12,6 @@ import org.springframework.transaction.TransactionSystemException
 import top.bettercode.summer.web.RespEntity
 import java.sql.SQLIntegrityConstraintViolationException
 import java.sql.SQLRecoverableException
-import javax.servlet.http.HttpServletRequest
-import javax.validation.ConstraintViolationException
 
 /**
  * @author Peter Wu

@@ -1,6 +1,6 @@
 package top.bettercode.summer.web.support
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * 客户端设备工具

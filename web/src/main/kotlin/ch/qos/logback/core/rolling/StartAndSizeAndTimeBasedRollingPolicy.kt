@@ -29,7 +29,7 @@ class StartAndSizeAndTimeBasedRollingPolicy<E> : TimeBasedRollingPolicy<E>() {
             val parentsRawFileProperty = parentsRawFileProperty
             //启动时开启新日志
             if (File(parentsRawFileProperty).length() > 0) {
-                sizeAndTimeBasedFNATP.nextCheck = 0L
+                sizeAndTimeBasedFNATP.atomicNextCheck.set(0L)
                 isTriggeringEvent(null, null)
                 try {
                     rollover()

@@ -1,8 +1,12 @@
 package org.springframework.data.jpa.repository.query
 
+import jakarta.persistence.EntityManager
+import jakarta.persistence.NoResultException
+import jakarta.persistence.Query
 import org.hibernate.query.NativeQuery
 import org.slf4j.LoggerFactory
 import org.springframework.core.convert.ConversionService
+import org.springframework.core.convert.support.ConfigurableConversionService
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.data.domain.SliceImpl
 import org.springframework.data.domain.Sort
@@ -16,10 +20,8 @@ import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
 import top.bettercode.summer.data.jpa.support.PageSize
 import top.bettercode.summer.data.jpa.support.Size
+import java.util.*
 import java.util.regex.Pattern
-import javax.persistence.EntityManager
-import javax.persistence.NoResultException
-import javax.persistence.Query
 
 class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJpaQuery(method, em) {
     private val sqlLog = LoggerFactory.getLogger(MybatisJpaQuery::class.java)
@@ -65,7 +67,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         } else if (mybatisQueryMethod.isModifyingQuery || method.isModifyingQuery) {
             ModifyingExecution(method, entityManager)
         } else if (method.isProcedureQuery) {
-            ProcedureExecution()
+            ProcedureExecution(method.isCollectionQuery)
         } else if (method.isStreamQuery) {
             StreamExecution()
         } else if (method.isSliceQuery) {
@@ -123,9 +125,10 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             if (sort.isUnsorted && size != null) size.sort else sort
         )
         val query = entityManager.createNativeQuery(sortedQueryString)
-        @Suppress("DEPRECATION")
-        query.unwrap(NativeQuery::class.java)
-            .setResultTransformer(mybatisQueryMethod.resultTransformer)
+        @Suppress("UNCHECKED_CAST") val unwrap:NativeQuery<Any> = query.unwrap(NativeQuery::class.java) as NativeQuery<Any>
+        val resultTransformer = mybatisQueryMethod.resultTransformer
+        unwrap.setTupleTransformer(resultTransformer)
+        unwrap.setResultListTransformer(resultTransformer)
         val metadata = metadataCache.getMetadata(sortedQueryString, query)
         // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
         // parameters in the query do not change.
@@ -178,12 +181,15 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         val CONVERSION_SERVICE: ConversionService
 
         init {
-            val conversionService = DefaultConversionService()
+            val conversionService: ConfigurableConversionService =
+                DefaultConversionService()
 
             conversionService.addConverter(JpaResultConverters.BlobToByteArrayConverter.INSTANCE)
-            conversionService.removeConvertible(Collection::class.java, Object::class.java)
-            potentiallyRemoveOptionalConverter(conversionService)
-
+            conversionService.removeConvertible(
+                MutableCollection::class.java,
+                Any::class.java
+            )
+            conversionService.removeConvertible(Any::class.java, Optional::class.java)
             CONVERSION_SERVICE = conversionService
         }
 

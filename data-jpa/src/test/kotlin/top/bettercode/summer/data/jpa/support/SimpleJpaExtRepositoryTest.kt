@@ -1,5 +1,9 @@
 package top.bettercode.summer.data.jpa.support
 
+import jakarta.persistence.Tuple
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Root
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -21,11 +25,7 @@ import top.bettercode.summer.data.jpa.support.PageSize.Companion.size
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.*
 import java.util.function.Consumer
-import javax.persistence.Tuple
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Root
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 /**
  * @author Peter Wu
@@ -288,6 +288,7 @@ class SimpleJpaExtRepositoryTest {
         Assertions.assertFalse(optionalUser.isPresent)
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun testbyId() {
         val optionalUser = repository.getById(carterId)

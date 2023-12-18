@@ -1,7 +1,7 @@
 package top.bettercode.summer.security.userdetails
 
+import jakarta.servlet.http.HttpServletRequest
 import top.bettercode.summer.security.token.StoreToken
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu

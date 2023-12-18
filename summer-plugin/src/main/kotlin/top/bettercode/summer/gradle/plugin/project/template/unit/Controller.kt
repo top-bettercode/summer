@@ -137,9 +137,9 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     type =
                         if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
                     if (JavaType.stringInstance == type) {
-                        annotation("@javax.validation.constraints.NotBlank")
+                        annotation("@jakarta.validation.constraints.NotBlank")
                     } else {
-                        annotation("@javax.validation.constraints.NotNull")
+                        annotation("@jakarta.validation.constraints.NotNull")
                     }
                 }
 
@@ -151,7 +151,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             import("org.springframework.http.MediaType")
 
             //saveBody
-            import("javax.validation.groups.Default")
+            import("jakarta.validation.groups.Default")
             method("saveBody", JavaType.objectInstance) {
                 annotation("@top.bettercode.summer.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
@@ -167,7 +167,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //saveForm
-            import("javax.validation.groups.Default")
+            import("jakarta.validation.groups.Default")
             method("saveForm", JavaType.objectInstance) {
                 annotation("@top.bettercode.summer.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
@@ -235,9 +235,9 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     type =
                         if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
                     if (JavaType.stringInstance == type) {
-                        annotation("@javax.validation.constraints.NotBlank")
+                        annotation("@jakarta.validation.constraints.NotBlank")
                     } else {
-                        annotation("@javax.validation.constraints.NotNull")
+                        annotation("@jakarta.validation.constraints.NotNull")
                     }
                 }
                 +"${projectEntityName}Service.deleteById(${if (isCompositePrimaryKey) "${primaryKeyType.shortName}.of($primaryKeyName)" else primaryKeyName});"

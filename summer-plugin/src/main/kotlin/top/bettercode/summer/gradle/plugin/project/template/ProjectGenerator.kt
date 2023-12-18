@@ -22,7 +22,7 @@ abstract class ProjectGenerator : Generator() {
         }
 
         var columnAnnotation =
-                "@javax.persistence.Column(name = \"$columnName\"$columnDefinition"
+                "@jakarta.persistence.Column(name = \"$columnName\"$columnDefinition"
         if (column.columnSize > 0 && column.columnSize != 255) {
             if (column.javaType == JavaType.stringInstance)
                 columnAnnotation += ", length = ${column.columnSize}"

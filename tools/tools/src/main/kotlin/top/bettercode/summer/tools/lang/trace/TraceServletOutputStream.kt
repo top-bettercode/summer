@@ -1,8 +1,8 @@
 package top.bettercode.summer.tools.lang.trace
 
+import jakarta.servlet.ServletOutputStream
+import jakarta.servlet.WriteListener
 import java.io.ByteArrayOutputStream
-import javax.servlet.ServletOutputStream
-import javax.servlet.WriteListener
 
 class TraceServletOutputStream(
         private val delegate: ServletOutputStream,

@@ -1,8 +1,8 @@
 package top.bettercode.summer.web.config
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
 import top.bettercode.summer.web.properties.SummerWebProperties
-import javax.servlet.http.HttpServletRequest
 
 /**
  *

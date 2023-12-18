@@ -16,6 +16,8 @@ import top.bettercode.summer.gradle.plugin.profile.ProfilePlugin
  *
  * @author Peter Wu
  */
+val Project.nativeSupport get() = (project.findProperty("support.native") ?: "false") == "true"
+
 class ProjectDistPlugin : Plugin<Project> {
 
     companion object {
@@ -44,7 +46,7 @@ class ProjectDistPlugin : Plugin<Project> {
                 }
 
                 //java
-                subProject.extensions.configure(org.gradle.api.plugins.JavaPluginExtension::class.java) { java ->
+                subProject.extensions.configure(JavaPluginExtension::class.java) { java ->
                     val version = subProject.findProperty("java.version") ?: "8"
                     val javaVersion = JavaVersion.toVersion(version)
                     java.sourceCompatibility = javaVersion
@@ -60,8 +62,12 @@ class ProjectDistPlugin : Plugin<Project> {
                         apply("org.jetbrains.kotlin.jvm")
                     }
                     if (isBoot(subProject)) {
-                        apply("application")
-                        apply(DistPlugin::class.java)
+                        if (project.nativeSupport)
+                            apply("org.graalvm.buildtools.native")
+                        else {
+                            apply("application")
+                            apply(DistPlugin::class.java)
+                        }
                     }
                 }
 

@@ -1,5 +1,6 @@
 package org.springframework.data.jpa.repository.query
 
+import jakarta.persistence.Query
 import org.apache.ibatis.binding.MapperMethod.ParamMap
 import org.apache.ibatis.executor.ErrorContext
 import org.apache.ibatis.mapping.MappedStatement
@@ -15,7 +16,6 @@ import org.springframework.data.jpa.repository.query.QueryParameterSetter.ErrorH
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.support.Size
 import java.util.*
-import javax.persistence.Query
 
 /**
  * @author Peter Wu

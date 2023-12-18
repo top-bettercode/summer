@@ -1,6 +1,8 @@
 package top.bettercode.summer.web.config.summer
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
@@ -18,8 +20,6 @@ import org.springframework.web.servlet.View
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.*
 import top.bettercode.summer.web.properties.SummerWebProperties
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureBefore(ErrorMvcAutoConfiguration::class)

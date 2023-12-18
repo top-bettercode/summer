@@ -1,5 +1,6 @@
 package top.bettercode.summer.test.autodoc
 
+import jakarta.annotation.PreDestroy
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
@@ -24,9 +25,9 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.File
 import java.net.URI
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import javax.annotation.PreDestroy
 
 /**
  * @author Peter Wu
@@ -322,10 +323,10 @@ class AutodocHandler(
                 }
             }
             exec.addAll(
-                StreamUtils.copyToString(
-                    AutodocHandler::class.java.getResourceAsStream("/sign.js"),
-                    charset("UTF-8")
-                ).lines()
+                    StreamUtils.copyToString(
+                            AutodocHandler::class.java.getResourceAsStream("/sign.js"),
+                            StandardCharsets.UTF_8
+                    ).lines()
             )
             exec.add("signClient({")
             exec.add("    clientSecret: '${signProperties.clientSecret}'")

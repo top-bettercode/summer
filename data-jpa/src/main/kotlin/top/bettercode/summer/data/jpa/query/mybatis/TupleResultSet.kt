@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
+import jakarta.persistence.Tuple
 import org.hibernate.HibernateException
 import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.io.InputStream
@@ -11,7 +12,6 @@ import java.sql.*
 import java.sql.Array
 import java.sql.Date
 import java.util.*
-import javax.persistence.Tuple
 import javax.sql.rowset.serial.SerialBlob
 import javax.sql.rowset.serial.SerialClob
 

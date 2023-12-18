@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.config
 
+import jakarta.servlet.MultipartConfigElement
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import top.bettercode.summer.web.properties.SummerMultipartProperties
 import top.bettercode.summer.web.resolver.multipart.MuipartFileToAttachmentConverter
 import java.io.File
-import javax.servlet.MultipartConfigElement
 
 /**
  * 文件上传 配置

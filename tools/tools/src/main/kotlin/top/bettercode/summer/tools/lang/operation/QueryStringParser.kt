@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.lang.operation
 import java.io.UnsupportedEncodingException
 import java.net.URI
 import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 /**
@@ -58,7 +59,7 @@ object QueryStringParser {
 
     private fun decode(encoded: String): String {
         try {
-            return URLDecoder.decode(encoded, "UTF-8")
+            return URLDecoder.decode(encoded, StandardCharsets.UTF_8)
         } catch (ex: UnsupportedEncodingException) {
             throw IllegalStateException(
                 "Unable to URL encode $encoded using UTF-8", ex

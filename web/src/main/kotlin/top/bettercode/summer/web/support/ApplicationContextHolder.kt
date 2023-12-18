@@ -1,5 +1,7 @@
 package top.bettercode.summer.web.support
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.ApplicationContext
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.support.DefaultConversionService
@@ -7,8 +9,6 @@ import org.springframework.core.env.Environment
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * @author Peter Wu

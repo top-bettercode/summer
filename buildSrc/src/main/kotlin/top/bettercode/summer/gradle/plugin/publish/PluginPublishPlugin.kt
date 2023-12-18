@@ -1,6 +1,5 @@
 package top.bettercode.summer.gradle.plugin.publish
 
-import com.gradle.publish.PluginBundleExtension
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -86,15 +85,6 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
 
         project.tasks.withType(GenerateModuleMetadata::class.java) {
             it.enabled = false
-        }
-
-        project.extensions.configure(PluginBundleExtension::class.java) {
-            if (!projectUrl.isNullOrBlank())
-                it.website = projectUrl
-            if (!projectVcsUrl.isNullOrBlank())
-                it.vcsUrl = projectVcsUrl
-            it.description = project.name
-            it.tags = setOf(project.name)
         }
 
         project.afterEvaluate {

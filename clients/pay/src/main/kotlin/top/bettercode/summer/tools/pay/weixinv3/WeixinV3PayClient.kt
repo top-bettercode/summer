@@ -14,6 +14,7 @@ import com.wechat.pay.java.service.payments.jsapi.JsapiService
 import com.wechat.pay.java.service.payments.nativepay.NativePayService
 import com.wechat.pay.java.service.refund.RefundService
 import com.wechat.pay.java.service.transferbatch.TransferBatchService
+import jakarta.servlet.http.HttpServletRequest
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
@@ -34,7 +35,6 @@ import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.IllegalBlockSizeException
 import javax.crypto.NoSuchPaddingException
-import javax.servlet.http.HttpServletRequest
 
 
 /**

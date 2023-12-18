@@ -8,12 +8,15 @@ import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
+
+import java.io.Serial;
 
 /** QUser is a Querydsl query type for User */
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QUser extends EntityPathBase<User> {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   public static final QUser user = new QUser("user");

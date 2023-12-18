@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
-import javax.persistence.Query
+import jakarta.persistence.Query
+
 
 /**
  * @author Peter Wu

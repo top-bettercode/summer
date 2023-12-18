@@ -1,5 +1,8 @@
 package top.bettercode.summer.web.error
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.ConstraintViolation
+import jakarta.validation.ConstraintViolationException
 import org.hibernate.validator.internal.engine.path.PathImpl
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
@@ -7,9 +10,6 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.validator.NoPropertyPath
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.validation.ConstraintViolation
-import javax.validation.ConstraintViolationException
 
 /**
  * @author Peter Wu

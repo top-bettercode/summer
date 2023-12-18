@@ -1,5 +1,6 @@
 package org.springframework.data.repository.core.support
 
+import jakarta.persistence.EntityManager
 import org.aopalliance.intercept.MethodInterceptor
 import org.aopalliance.intercept.MethodInvocation
 import org.slf4j.LoggerFactory
@@ -26,7 +27,6 @@ import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
-import javax.persistence.EntityManager
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 

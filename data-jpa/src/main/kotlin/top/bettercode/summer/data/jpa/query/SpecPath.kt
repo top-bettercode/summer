@@ -1,11 +1,11 @@
 package top.bettercode.summer.data.jpa.query
 
+import jakarta.persistence.criteria.*
+import jakarta.persistence.criteria.CriteriaBuilder.Trimspec
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.util.Assert
 import java.util.*
-import javax.persistence.criteria.*
-import javax.persistence.criteria.CriteriaBuilder.Trimspec
 
 /**
  * @author Peter Wu

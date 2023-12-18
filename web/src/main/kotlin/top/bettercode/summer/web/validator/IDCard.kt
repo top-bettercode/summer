@@ -1,7 +1,7 @@
 package top.bettercode.summer.web.validator
 
-import javax.validation.Constraint
-import javax.validation.Payload
+import jakarta.validation.Constraint
+import jakarta.validation.Payload
 import kotlin.reflect.KClass
 
 /**

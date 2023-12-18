@@ -1,11 +1,11 @@
 package top.bettercode.summer.web.validator
 
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 import org.hibernate.validator.internal.util.logging.LoggerFactory
 import java.lang.invoke.MethodHandles
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
 /**
  * `ReversePattern` 的验证器

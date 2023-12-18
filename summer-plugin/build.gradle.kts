@@ -9,6 +9,7 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-allopen")
 
     api("org.springframework.boot:spring-boot-gradle-plugin")
+    api("org.graalvm.buildtools:native-gradle-plugin")
 
     api("org.asciidoctor:asciidoctorj")
     api("org.asciidoctor:asciidoctorj-diagram")

@@ -2,6 +2,7 @@ package top.bettercode.summer.config
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
@@ -20,7 +21,6 @@ import java.io.File
 import java.net.URLEncoder
 import java.time.LocalDate
 import java.util.zip.GZIPOutputStream
-import javax.servlet.http.HttpServletResponse
 
 /**
  * 生成数据表结构puml

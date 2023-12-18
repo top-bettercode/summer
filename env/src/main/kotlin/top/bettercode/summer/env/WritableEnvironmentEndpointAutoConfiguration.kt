@@ -1,9 +1,11 @@
 package top.bettercode.summer.env
 
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.autoconfigure.env.EnvironmentEndpointAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.env.EnvironmentEndpointProperties
+import org.springframework.boot.actuate.endpoint.SanitizingFunction
 import org.springframework.boot.actuate.env.EnvironmentEndpoint
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
@@ -25,7 +27,7 @@ import org.springframework.core.env.Environment
 @AutoConfigureBefore(EnvironmentEndpointAutoConfiguration::class)
 @AutoConfigureAfter(WebMvcAutoConfiguration::class)
 @EnableConfigurationProperties(EnvironmentEndpointProperties::class)
-class WritableEnvironmentEndpointAutoConfiguration(private val properties: EnvironmentEndpointProperties) {
+class WritableEnvironmentEndpointAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
     fun configurationPropertiesRebinder(
@@ -43,21 +45,23 @@ class WritableEnvironmentEndpointAutoConfiguration(private val properties: Envir
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnAvailableEndpoint
-    fun writableEnvironmentEndpoint(environment: Environment): WritableEnvironmentEndpoint {
-        val endpoint = WritableEnvironmentEndpoint(environment)
-        val keysToSanitize = properties.keysToSanitize
-        if (keysToSanitize != null) {
-            endpoint.setKeysToSanitize(*keysToSanitize)
-        }
-        return endpoint
+    fun writableEnvironmentEndpoint(environment: Environment,
+                                    properties: EnvironmentEndpointProperties,
+                                    sanitizingFunctions: ObjectProvider<SanitizingFunction>): WritableEnvironmentEndpoint {
+        return WritableEnvironmentEndpoint(environment,
+                sanitizingFunctions.orderedStream().toList(),
+                properties.showValues)
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
     fun writableEnvironmentEndpointWebExtension(
-            endpoint: WritableEnvironmentEndpoint, environment: EnvironmentManager
-    ): WritableEnvironmentEndpointWebExtension {
-        return WritableEnvironmentEndpointWebExtension(endpoint, environment)
+            environmentManager: EnvironmentManager,
+            environmentEndpoint: EnvironmentEndpoint,
+            properties: EnvironmentEndpointProperties): WritableEnvironmentEndpointWebExtension {
+        return WritableEnvironmentEndpointWebExtension(environmentEndpoint,
+                properties.showValues,
+                properties.roles, environmentManager)
     }
 
     @Bean

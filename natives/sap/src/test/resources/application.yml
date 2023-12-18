@@ -1,0 +1,10 @@
+summer:
+  sap:
+    ashost: 10.0.0.50
+    client: 102
+    peak-limit: 10
+    pool-capacity: 5
+    lang: ZH
+    passwd: zhenghua
+    sysnr: 0
+    user: WANGZH

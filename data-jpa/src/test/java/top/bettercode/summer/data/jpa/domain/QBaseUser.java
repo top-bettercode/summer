@@ -8,12 +8,15 @@ import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
+
+import java.io.Serial;
 
 /** QBaseUser is a Querydsl query type for BaseUser */
 @Generated("com.querydsl.codegen.SupertypeSerializer")
 public class QBaseUser extends EntityPathBase<BaseUser> {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   public static final QBaseUser baseUser = new QBaseUser("baseUser");

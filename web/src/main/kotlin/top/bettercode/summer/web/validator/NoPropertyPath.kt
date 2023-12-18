@@ -1,6 +1,6 @@
 package top.bettercode.summer.web.validator
 
-import javax.validation.Payload
+import jakarta.validation.Payload
 
 /**
  * 提示信息不包含属性名称

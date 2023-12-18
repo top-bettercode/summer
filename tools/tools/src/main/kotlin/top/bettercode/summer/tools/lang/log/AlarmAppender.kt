@@ -90,11 +90,13 @@ abstract class AlarmAppender<T : AlarmProperties>(
                         return false
                     }
                 }
-                return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
-                    ALARM_LOG_MARKER
-                ) == true || event.formattedMessage.matches(Regex(properties.startedMsg))) && (event.marker == null || !event.marker.contains(
-                    NO_ALARM_LOG_MARKER
-                ))
+                return (event.level.levelInt >= Level.ERROR_INT
+                        || event.markerList?.map { it.name }?.contains(ALARM_LOG_MARKER) == true
+                        || event.formattedMessage.matches(
+                    Regex(properties.startedMsg)
+                )) && (event.markerList.isNullOrEmpty()
+                        || event.markerList?.map { it.name }?.contains(NO_ALARM_LOG_MARKER) != true
+                        )
             }
         }
         alarmEvaluator.context = context
@@ -122,7 +124,8 @@ abstract class AlarmAppender<T : AlarmProperties>(
         val cb = cbTracker!!.getOrCreate(key, now)
         event.callerData
         event.prepareForDeferredProcessing()
-        if (event.marker?.contains(ALARM_LOG_MARKER) == true)
+        if (event.markerList?.map { it.name }
+                ?.contains(ALARM_LOG_MARKER) == true)
             cb.clear()
         cb.add(event)
 
@@ -159,13 +162,11 @@ abstract class AlarmAppender<T : AlarmProperties>(
         }
     }
 
-    private fun findAlarmMarker(marker: Marker?): AlarmMarker? {
-        if (marker != null) {
-            return if (marker is AlarmMarker) {
-                marker
-            } else
-                marker.iterator().asSequence().findLast { it is AlarmMarker }
-                    ?.let { it as AlarmMarker }
+    private fun findAlarmMarker(marker: List<Marker>?): AlarmMarker? {
+        if (marker?.isNotEmpty() == true) {
+            return marker.map { it.iterator().asSequence().findLast { m -> m is AlarmMarker } }
+                .last()
+                ?.let { it as AlarmMarker }
         }
         return null
     }
@@ -175,7 +176,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
         val len = cbClone.length()
         var initialComment = ""
 
-        val alarmMarker: AlarmMarker? = findAlarmMarker(event.marker)
+        val alarmMarker: AlarmMarker? = findAlarmMarker(event.markerList)
         for (i in 0 until len) {
             val e = cbClone.get()
             message.add(String(encoder.encode(e)))
@@ -213,9 +214,10 @@ abstract class AlarmAppender<T : AlarmProperties>(
     }
 
     private fun eventMarksEndOfLife(eventObject: ILoggingEvent): Boolean {
-        val marker = eventObject.marker ?: return false
-
-        return marker.contains(ClassicConstants.FINALIZE_SESSION_MARKER)
+        if (eventObject.markerList?.isEmpty() == true) {
+            return false
+        }
+        return eventObject.markerList?.contains(ClassicConstants.FINALIZE_SESSION_MARKER) == true
     }
 
     private fun send(

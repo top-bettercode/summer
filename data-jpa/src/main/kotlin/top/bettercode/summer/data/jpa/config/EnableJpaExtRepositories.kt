@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.config
 
+import jakarta.persistence.EntityManagerFactory
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.data.repository.config.BootstrapMode
@@ -8,7 +9,6 @@ import org.springframework.data.repository.query.QueryLookupStrategy
 import org.springframework.transaction.PlatformTransactionManager
 import top.bettercode.summer.data.jpa.support.JpaExtRepositoryFactoryBean
 import java.lang.annotation.Inherited
-import javax.persistence.EntityManagerFactory
 import kotlin.reflect.KClass
 
 /**

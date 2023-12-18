@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.config
 
 import com.zaxxer.hikari.HikariDataSource
+import jakarta.persistence.EntityManagerFactory
 import org.apache.ibatis.session.Configuration
 import org.hibernate.boot.model.naming.ImplicitNamingStrategy
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy
@@ -28,11 +29,11 @@ import org.springframework.orm.hibernate5.SpringBeanContainer
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionManager
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ObjectUtils
 import java.util.stream.Collectors
-import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
 import kotlin.String
 
@@ -142,7 +143,7 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                             entityManagerFactory)
                     val transactionManagerCustomizers = beanFactory.getBeanProvider(
                             TransactionManagerCustomizers::class.java)
-                    transactionManagerCustomizers.ifAvailable { customizers: TransactionManagerCustomizers -> customizers.customize(jpaTransactionManager) }
+                    transactionManagerCustomizers.ifAvailable { customizers: TransactionManagerCustomizers -> customizers.customize(jpaTransactionManager as TransactionManager) }
                     jpaTransactionManager
                 }
                 if (primary) {

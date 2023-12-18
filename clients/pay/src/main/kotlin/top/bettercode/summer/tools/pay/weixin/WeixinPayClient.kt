@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.http.client.SimpleClientHttpRequestFactory
@@ -22,7 +23,6 @@ import java.util.function.Consumer
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.net.ssl.*
-import javax.servlet.http.HttpServletRequest
 
 
 /**

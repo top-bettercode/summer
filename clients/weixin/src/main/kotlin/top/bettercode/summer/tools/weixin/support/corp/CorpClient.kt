@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
 import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 /**
  * 公众号接口
@@ -33,10 +34,10 @@ open class CorpClient(
         val url =
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect"
         val authenticationUrl = String.format(
-            url,
-            properties.appId,
-            URLEncoder.encode(properties.oauthUrl, "UTF-8"),
-            "snsapi_base"
+                url,
+                properties.appId,
+                URLEncoder.encode(properties.oauthUrl, StandardCharsets.UTF_8),
+                "snsapi_base"
         )
         log.info(MarkerFactory.getMarker(marker), "authenticationUrl:{}", authenticationUrl)
     }

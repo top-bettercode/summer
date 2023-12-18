@@ -1,5 +1,8 @@
 package top.bettercode.summer.web.error
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.ConstraintViolation
+import jakarta.validation.ConstraintViolationException
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import org.springframework.beans.InvalidPropertyException
 import org.springframework.context.MessageSource
@@ -19,9 +22,6 @@ import org.springframework.web.multipart.MultipartException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.validator.NoPropertyPath
-import javax.servlet.http.HttpServletRequest
-import javax.validation.ConstraintViolation
-import javax.validation.ConstraintViolationException
 
 /**
  * @author Peter Wu

@@ -50,6 +50,7 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.io.File
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -407,7 +408,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     ) {
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
-        encoder.charset = Charset.forName("utf-8")
+        encoder.charset = StandardCharsets.UTF_8
         encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
         appender.encoder = encoder
         start(context, encoder)
@@ -424,9 +425,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     return FilterReply.NEUTRAL
                 }
 
-                val eventMarker = event.marker
-                if (eventMarker != null) {
-                    if (eventMarker.contains(RequestLoggingFilter.NOT_IN_ALL)) {
+                for (marker in event.markerList) {
+                    if (marker.contains(RequestLoggingFilter.NOT_IN_ALL)) {
                         return onMismatch
                     }
                 }
@@ -461,7 +461,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
-        encoder.charset = Charset.forName("utf-8")
+        encoder.charset = StandardCharsets.UTF_8
         encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
         appender.encoder = encoder
         start(context, encoder)
@@ -484,8 +484,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     }
                 }
 
-                val eventMarker = event.marker
-                if (eventMarker != null) {
+                val eventMarker = event.markerList?.map { it.name }
+                if (eventMarker?.isNotEmpty() == true) {
                     for (marker in markers) {
                         if (eventMarker.contains(marker)) {
                             return onMismatch
@@ -527,7 +527,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
-        encoder.charset = Charset.forName("utf-8")
+        encoder.charset = StandardCharsets.UTF_8
         encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
         appender.encoder = encoder
         start(context, encoder)
@@ -562,7 +562,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
-        encoder.charset = Charset.forName("utf-8")
+        encoder.charset = StandardCharsets.UTF_8
         encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
         appender.encoder = encoder
         start(context, encoder)
@@ -577,10 +577,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 if (!isStarted) {
                     return FilterReply.NEUTRAL
                 }
-                val eventMarker = event.marker ?: return onMismatch
-
-                return if (eventMarker.contains(marker)) {
-                    FilterReply.NEUTRAL
+                if (event.markerList?.isEmpty() == true) return onMismatch
+                return if (event.markerList?.map { it.name }?.contains(marker) == true) {
+                    onMatch
                 } else {
                     onMismatch
                 }
@@ -609,7 +608,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     ) {
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
-        encoder.charset = Charset.forName("utf-8")
+        encoder.charset = StandardCharsets.UTF_8
         encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
         appender.encoder = encoder
         appender.addFilter(sqlFilter)

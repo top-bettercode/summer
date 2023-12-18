@@ -1,15 +1,16 @@
 package top.bettercode.summer.data.jpa.domain
 
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
 import org.hibernate.annotations.ColumnDefault
+import org.hibernate.annotations.JdbcType
+import org.hibernate.type.descriptor.jdbc.TinyIntJdbcType
 import org.hibernate.annotations.DynamicUpdate
-import org.hibernate.annotations.Type
 import top.bettercode.summer.data.jpa.LogicalDelete
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.*
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.MappedSuperclass
 
 @DynamicUpdate
 @Suppress("LeakingThis")
@@ -22,7 +23,7 @@ open class BaseUser {
     open var lastName: String? = null
 
     @LogicalDelete
-    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @JdbcType(TinyIntJdbcType::class)
     @ColumnDefault("0")
     open var deleted: Boolean? = null
 

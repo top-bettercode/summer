@@ -1,7 +1,7 @@
 package top.bettercode.summer.test.autodoc
 
+import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.Length
-import javax.validation.constraints.NotNull
 
 /**
  * 客户端TOKEN 对应表名：OAUTH_CLIENT_TOKEN

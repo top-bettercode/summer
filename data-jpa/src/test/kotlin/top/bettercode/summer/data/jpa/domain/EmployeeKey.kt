@@ -1,9 +1,9 @@
 package top.bettercode.summer.data.jpa.domain
 
+import jakarta.persistence.Embeddable
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.io.Serializable
 import java.util.*
-import javax.persistence.Embeddable
 
 /**
  * 客商档案 主键 对应表名：BD_CVDOC

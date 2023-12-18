@@ -1,5 +1,7 @@
 package top.bettercode.summer.data.jpa.support
 
+import jakarta.persistence.EntityManager
+import jakarta.persistence.Tuple
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.lang.Nullable
@@ -15,8 +17,6 @@ import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.web.support.ApplicationContextHolder
-import javax.persistence.EntityManager
-import javax.persistence.Tuple
 
 
 /**

@@ -281,7 +281,7 @@ constructor(
         return if (allowNullValues && ObjectUtils.nullSafeEquals(value, binaryNullValue)) {
             NullValue.INSTANCE
         } else try {
-            valueSerializationPair.read(ByteBuffer.wrap(value))
+            valueSerializationPair.read(ByteBuffer.wrap(value))!!
         } catch (e: Exception) {
             log.warn("Could not deserialize cache value", e)
             return null

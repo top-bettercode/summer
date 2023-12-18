@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.weixin.controller
 
+import jakarta.validation.constraints.NotBlank
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -14,7 +15,6 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.aes.DecryptMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.EncryptMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.WXBizMsgCrypt
 import top.bettercode.summer.web.BaseController
-import javax.validation.constraints.NotBlank
 
 @ConditionalOnWebApplication
 @Controller

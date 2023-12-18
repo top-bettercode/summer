@@ -69,7 +69,7 @@ class MybatisQueryMethod(
             null
         } else null
 
-        this.resultTransformer = MybatisResultTransformer(mappedStatement, isStreamQuery)
+        this.resultTransformer = MybatisResultTransformer(mappedStatement)
 
         nestedResultMapType = if (isSliceQuery) {
             MybatisResultSetHandler.findNestedResultMapType(mappedStatement)

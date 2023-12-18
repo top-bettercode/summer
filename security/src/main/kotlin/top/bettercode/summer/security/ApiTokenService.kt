@@ -1,5 +1,6 @@
 package top.bettercode.summer.security
 
+import jakarta.servlet.http.HttpServletRequest
 import org.apache.tomcat.util.codec.binary.Base64
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UserDetails
@@ -12,7 +13,6 @@ import top.bettercode.summer.security.repository.StoreTokenRepository
 import top.bettercode.summer.security.token.*
 import top.bettercode.summer.security.userdetails.*
 import java.time.Instant
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu

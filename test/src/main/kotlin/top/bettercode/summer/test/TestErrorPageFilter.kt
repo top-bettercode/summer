@@ -1,5 +1,9 @@
 package top.bettercode.summer.test
 
+import jakarta.servlet.*
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletResponseWrapper
 import org.apache.commons.logging.LogFactory
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
 import org.springframework.boot.web.server.ErrorPage
@@ -14,10 +18,6 @@ import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.IOException
 import java.io.PrintWriter
 import java.util.*
-import javax.servlet.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpServletResponseWrapper
 
 /**
  * A Servlet [Filter] that provides an [ErrorPageRegistry] for non-embedded applications
@@ -278,15 +278,15 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         private val logger = LogFactory.getLog(TestErrorPageFilter::class.java)
 
         // From RequestDispatcher but not referenced to remain compatible with Servlet 2.5
-        private const val ERROR_EXCEPTION = "javax.servlet.error.exception"
-        private const val ERROR_EXCEPTION_TYPE = "javax.servlet.error.exception_type"
-        private const val ERROR_MESSAGE = "javax.servlet.error.message"
+        private const val ERROR_EXCEPTION = "jakarta.servlet.error.exception"
+        private const val ERROR_EXCEPTION_TYPE = "jakarta.servlet.error.exception_type"
+        private const val ERROR_MESSAGE = "jakarta.servlet.error.message"
 
         /**
          * The name of the servlet attribute containing request URI.
          */
-        const val ERROR_REQUEST_URI = "javax.servlet.error.request_uri"
-        private const val ERROR_STATUS_CODE = "javax.servlet.error.status_code"
+        const val ERROR_REQUEST_URI = "jakarta.servlet.error.request_uri"
+        private const val ERROR_STATUS_CODE = "jakarta.servlet.error.status_code"
         private var CLIENT_ABORT_EXCEPTIONS: Set<Class<*>>
 
         init {

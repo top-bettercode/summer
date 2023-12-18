@@ -1,7 +1,10 @@
 package top.bettercode.summer.data.jpa.test
 
 import org.apache.ibatis.session.SqlSession
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,6 +24,7 @@ import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.concurrent.CountDownLatch
 import java.util.function.Consumer
 
+@Suppress("SpringBootApplicationProperties")
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 @TestPropertySource(properties = ["summer.data.jpa.mybatis.use-tuple-transformer=true"])
@@ -77,7 +81,7 @@ class JpaMybatisTupleTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     fun selectResultMap2() {
         val users = repository.selectResultMap2(User("Carter", null))
         System.err.println(json(users, true))

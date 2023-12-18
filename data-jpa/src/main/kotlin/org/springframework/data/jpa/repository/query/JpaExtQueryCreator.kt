@@ -1,13 +1,13 @@
 package org.springframework.data.jpa.repository.query
 
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.query.ReturnedType
 import org.springframework.data.repository.query.parser.PartTree
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
 
 /**
  * @author Peter Wu

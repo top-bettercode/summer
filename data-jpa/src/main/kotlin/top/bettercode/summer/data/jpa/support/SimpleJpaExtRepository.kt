@@ -1,5 +1,11 @@
 package top.bettercode.summer.data.jpa.support
 
+import jakarta.persistence.EntityManager
+import jakarta.persistence.EntityNotFoundException
+import jakarta.persistence.TypedQuery
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Root
 import org.springframework.beans.BeanUtils
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.domain.Specification
@@ -21,12 +27,6 @@ import top.bettercode.summer.data.jpa.support.PageSize.Companion.size
 import top.bettercode.summer.tools.lang.util.BeanUtil.nullFrom
 import java.util.*
 import java.util.function.Function
-import javax.persistence.EntityManager
-import javax.persistence.EntityNotFoundException
-import javax.persistence.TypedQuery
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Root
 
 /**
  * @author Peter Wu
@@ -463,12 +463,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
         return super.findById(id)
     }
 
-    @Deprecated("", ReplaceWith("getById(id)"))
-    override fun getOne(id: ID): T {
-        return getById(id)
-    }
-
-    override fun getById(id: ID): T {
+    override fun getReferenceById(id: ID): T {
         return if (extJpaSupport.logicalDeletedSupported) {
             var spec =
                 Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
@@ -480,7 +475,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
             super.findOne(spec)
                 .orElseThrow { EntityNotFoundException("Unable to find $domainClass with id $id") }
         } else {
-            super.getById(id)
+            super.getReferenceById(id)
         }
     }
 
@@ -577,6 +572,16 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
         spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
             ?: spec1
         return super.findOne(spec1)
+    }
+
+    override fun <S : T, R : Any> findBy(
+        spec: Specification<T>,
+        queryFunction: Function<FetchableFluentQuery<S>, R>
+    ): R {
+        var spec1: Specification<T>? = spec
+        spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
+            ?: spec1
+        return super.findBy(spec, queryFunction)
     }
 
     override fun findAll(spec: Specification<T>?): List<T> {

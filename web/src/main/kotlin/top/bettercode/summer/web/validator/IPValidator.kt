@@ -1,10 +1,10 @@
 package top.bettercode.summer.web.validator
 
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.UnknownHostException
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
 /**
  * `IP` 验证器

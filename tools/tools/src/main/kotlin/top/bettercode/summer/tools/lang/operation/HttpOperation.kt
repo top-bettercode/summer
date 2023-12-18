@@ -197,7 +197,7 @@ object HttpOperation {
 
 
     fun isPutOrPost(request: OperationRequest): Boolean {
-        return HttpMethod.PUT.name == request.method || HttpMethod.POST.name == request.method
+        return HttpMethod.PUT.name() == request.method || HttpMethod.POST.name() == request.method
     }
 
     private fun writeParts(request: OperationRequest, writer: PrintWriter) {

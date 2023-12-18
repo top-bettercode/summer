@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.servlet
 
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.http.HttpMethod
@@ -11,7 +12,6 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.operation.RequestConverter
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu
@@ -57,7 +57,7 @@ object HandlerMethodContextHolder {
                 }
             }
         } catch (e: Exception) {
-            if (HttpMethod.OPTIONS.name != request.method) {
+            if (HttpMethod.OPTIONS.name() != request.method) {
                 val requestString = HttpOperation.toString(
                     request = RequestConverter.convert(request)
                 )

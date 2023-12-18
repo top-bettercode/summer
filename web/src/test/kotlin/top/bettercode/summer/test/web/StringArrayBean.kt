@@ -1,6 +1,7 @@
 package top.bettercode.summer.test.web
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import jakarta.validation.constraints.NotNull
 import top.bettercode.summer.web.resolver.Unit
 import top.bettercode.summer.web.serializer.annotation.JsonArray
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
@@ -8,7 +9,6 @@ import top.bettercode.summer.web.serializer.annotation.JsonDefault
 import top.bettercode.summer.web.serializer.annotation.JsonUrl
 import java.math.BigDecimal
 import java.util.*
-import javax.validation.constraints.NotNull
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class StringArrayBean {

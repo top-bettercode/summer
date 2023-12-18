@@ -1,5 +1,7 @@
 package top.bettercode.summer.data.jpa.test
 
+import jakarta.activation.DataSource
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -13,8 +15,6 @@ import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.repository.StaticUserRepository
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import java.lang.Thread.sleep
-import javax.sql.DataSource
-import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest

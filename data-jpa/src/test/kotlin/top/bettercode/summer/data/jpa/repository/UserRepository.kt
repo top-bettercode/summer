@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.repository
 
+import jakarta.transaction.Transactional
 import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.annotations.SelectProvider
 import org.springframework.data.domain.Page
@@ -18,7 +19,6 @@ import top.bettercode.summer.data.jpa.resp.CUsers
 import top.bettercode.summer.data.jpa.support.QueryFirst
 import top.bettercode.summer.data.jpa.support.Size
 import java.util.stream.Stream
-import javax.transaction.Transactional
 
 
 interface UserRepository : BaseRepository<User, Int>, QuerydslPredicateExecutor<User>, RecycleQuerydslPredicateExecutor<User> {

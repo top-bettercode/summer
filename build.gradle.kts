@@ -6,11 +6,11 @@ plugins {
     idea
 }
 
-val javaVersion = JavaVersion.VERSION_1_8
+val javaVersion = JavaVersion.VERSION_17
 
 allprojects {
     group = "top.bettercode.summer"
-    version = "0.2.26-SNAPSHOT"
+    version = "0.2.30-SNAPSHOT"
 
     val isBomProject = arrayOf(
             "summer-bom",

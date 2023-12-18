@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.resolver
 
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.MethodParameter
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.http.HttpEntity
@@ -18,7 +19,6 @@ import top.bettercode.summer.web.config.SummerWebUtil.wrapEnable
 import top.bettercode.summer.web.error.ErrorAttributes
 import top.bettercode.summer.web.error.IRespEntityConverter
 import top.bettercode.summer.web.properties.SummerWebProperties
-import javax.servlet.http.HttpServletResponse
 
 /**
  * @author Peter Wu

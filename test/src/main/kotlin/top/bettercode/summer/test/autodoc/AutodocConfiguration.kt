@@ -1,5 +1,6 @@
 package top.bettercode.summer.test.autodoc
 
+import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -17,7 +18,6 @@ import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.web.properties.SummerWebProperties
-import javax.annotation.PostConstruct
 
 /**
  * @author Peter Wu

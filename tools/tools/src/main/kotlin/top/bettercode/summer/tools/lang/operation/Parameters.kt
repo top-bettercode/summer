@@ -1,9 +1,10 @@
 package top.bettercode.summer.tools.lang.operation
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.util.LinkedMultiValueMap
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import javax.servlet.http.HttpServletRequest
+import java.nio.charset.StandardCharsets
 
 /**
  * The parameters received in a request.
@@ -104,7 +105,7 @@ class Parameters : LinkedMultiValueMap<String, String>() {
             return ""
         }
         try {
-            return URLEncoder.encode(s, "UTF-8")
+            return URLEncoder.encode(s, StandardCharsets.UTF_8)
         } catch (ex: UnsupportedEncodingException) {
             throw IllegalStateException(
                 "Unable to URL encode $s using UTF-8",

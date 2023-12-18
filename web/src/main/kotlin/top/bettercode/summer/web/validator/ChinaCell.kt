@@ -1,9 +1,9 @@
 package top.bettercode.summer.web.validator
 
+import jakarta.validation.Constraint
+import jakarta.validation.Payload
+import jakarta.validation.ReportAsSingleViolation
 import top.bettercode.summer.tools.lang.util.CellUtil
-import javax.validation.Constraint
-import javax.validation.Payload
-import javax.validation.ReportAsSingleViolation
 import kotlin.reflect.KClass
 
 /**

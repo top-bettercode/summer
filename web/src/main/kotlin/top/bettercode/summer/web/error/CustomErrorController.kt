@@ -1,5 +1,7 @@
 package top.bettercode.summer.web.error
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -23,8 +25,6 @@ import org.springframework.web.cors.DefaultCorsProcessor
 import org.springframework.web.servlet.ModelAndView
 import java.io.IOException
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * 自定义错误处理

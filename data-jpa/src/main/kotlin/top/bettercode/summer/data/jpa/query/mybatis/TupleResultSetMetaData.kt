@@ -1,9 +1,9 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
+import jakarta.persistence.Tuple
 import org.apache.ibatis.type.JdbcType
 import java.sql.ResultSetMetaData
 import java.sql.SQLFeatureNotSupportedException
-import javax.persistence.Tuple
 
 /**
  * @author Peter Wu

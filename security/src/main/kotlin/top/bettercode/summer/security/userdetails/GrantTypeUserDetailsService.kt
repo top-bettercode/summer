@@ -1,8 +1,8 @@
 package top.bettercode.summer.security.userdetails
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Peter Wu

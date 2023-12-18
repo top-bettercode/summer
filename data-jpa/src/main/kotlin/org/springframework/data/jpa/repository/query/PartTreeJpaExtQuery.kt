@@ -1,5 +1,9 @@
 package org.springframework.data.jpa.repository.query
 
+import jakarta.persistence.EntityManager
+import jakarta.persistence.Query
+import jakarta.persistence.TypedQuery
+import jakarta.persistence.criteria.CriteriaQuery
 import org.springframework.data.domain.AuditorAware
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter
@@ -13,10 +17,6 @@ import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
 import top.bettercode.summer.data.jpa.support.PageSize
-import javax.persistence.EntityManager
-import javax.persistence.Query
-import javax.persistence.TypedQuery
-import javax.persistence.criteria.CriteriaQuery
 
 /**
  * @author Peter Wu

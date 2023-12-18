@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.error
 
+import jakarta.servlet.RequestDispatcher
 import org.springframework.boot.autoconfigure.web.ErrorProperties
 import org.springframework.boot.autoconfigure.web.ErrorProperties.IncludeAttribute
 import org.springframework.boot.web.error.ErrorAttributeOptions
@@ -19,7 +20,6 @@ import top.bettercode.summer.web.IRespEntity
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.util.*
-import javax.servlet.RequestDispatcher
 
 /**
  * ErrorAttributes 错误属性

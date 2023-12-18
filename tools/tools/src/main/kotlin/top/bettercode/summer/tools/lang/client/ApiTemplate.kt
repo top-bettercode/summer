@@ -64,12 +64,13 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
 
     override fun <T : Any?> doExecute(
         url: URI,
+        uriTemplate: String?,
         method: HttpMethod?,
         requestCallback: RequestCallback?,
         responseExtractor: ResponseExtractor<T>?
     ): T? {
         try {
-            return super.doExecute(url, method, requestCallback, responseExtractor)
+        return super.doExecute(url, uriTemplate, method, requestCallback, responseExtractor)
         } catch (e: Exception) {
             if (e is ClientException || e is RestClientResponseException)
                 throw e

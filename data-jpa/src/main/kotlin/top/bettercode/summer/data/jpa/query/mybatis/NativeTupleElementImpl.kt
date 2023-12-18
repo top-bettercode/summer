@@ -1,8 +1,8 @@
 package top.bettercode.summer.data.jpa.query.mybatis
 
+import jakarta.persistence.TupleElement
 import org.apache.ibatis.type.JdbcType
-import org.hibernate.type.descriptor.sql.JdbcTypeJavaClassMappings
-import javax.persistence.TupleElement
+import org.hibernate.type.descriptor.jdbc.JdbcTypeJavaClassMappings
 
 class NativeTupleElementImpl<X>(private val javaType: Class<out X>, private val alias: String, private val value: X?) : TupleElement<X> {
     override fun getJavaType(): Class<out X> {
