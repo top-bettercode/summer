@@ -1,7 +1,25 @@
-# Created by .ignore support plugin (hsz.mobi)
-### wu template
+
+/.gradletasknamecache
+
+.~*
+
+/logs
+/*/logs
+
+bin
+.vscode
 .gradle
-build
+.svn
+.fleet
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+target
 
 ### IntelliJ IDEA ###
 .idea
@@ -10,21 +28,10 @@ build
 *.ipr
 out
 classes
-.gradletasknamecache
 
-
-publish-plugin.sh
-
-/web/src/test/resources/application-test.yml
-
-/clients/weixin/src/test/resources/application.yml
-/clients/sms/src/test/resources/application.yml
-/clients/mobile-query/src/test/resources/application.yml
-/clients/weather/src/test/resources/application.yml
-/clients/jpush/src/test/resources/application.yml
-/clients/qvod/src/test/resources/application.yml
-/clients/qvod/src/test/resources/test.mp4
-/clients/qvod/src/test/resources/test.html
-/clients/qvod/src/test/resources/upload.html
-/clients/rapidauth/src/test/resources/application.yml
-/clients/amap/src/test/resources/application.yml
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+nbdist/
+.nb-gradle/
