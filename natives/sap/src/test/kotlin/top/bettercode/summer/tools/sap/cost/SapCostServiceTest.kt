@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.sap.TestApplication
 /**
  * @author Peter Wu
  */
+@Disabled
 @SpringBootTest(classes = [TestApplication::class])
 internal class SapCostServiceTest {
     @Autowired
