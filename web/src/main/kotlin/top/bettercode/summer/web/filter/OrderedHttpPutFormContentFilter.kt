@@ -81,11 +81,7 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
 
     private class HttpPutFormContentRequestWrapper(request: HttpServletRequest?,
                                                    parameters: MultiValueMap<String, String?>?) : HttpServletRequestWrapper(request) {
-        private val formParameters: MultiValueMap<String, String?>
-
-        init {
-            formParameters = parameters ?: LinkedMultiValueMap()
-        }
+        private val formParameters: MultiValueMap<String, String?> = parameters ?: LinkedMultiValueMap()
 
         override fun getParameter(name: String): String? {
             val queryStringValue = super.getParameter(name)

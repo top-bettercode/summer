@@ -23,7 +23,7 @@ import javax.persistence.metamodel.ManagedType
  * @author Peter Wu
  */
 open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
-        val matchMode: SpecMatcherMode, probe: Any?
+        val matchMode: SpecMatcherMode, private val probe: Any?
 ) : UpdateSpecification<T>, SpecPredicate<T, M> {
 
     private val log: Logger = LoggerFactory.getLogger(SpecMatcher::class.java)
@@ -32,13 +32,11 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     private var append = false
     private val orders: MutableList<Sort.Order> = ArrayList()
     private val typed: M
-    private val probe: Any?
     override var idAttribute: SingularAttributeValue<T, *>? = null
     override var versionAttribute: SingularAttributeValue<T, *>? = null
 
     //--------------------------------------------
     init {
-        this.probe = probe
         @Suppress("UNCHECKED_CAST", "LeakingThis")
         typed = this as M
     }
@@ -302,15 +300,10 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     }
 
     companion object {
-        private val ASSOCIATION_TYPES: Set<PersistentAttributeType>
-
-        //--------------------------------------------
-        init {
-            ASSOCIATION_TYPES = EnumSet.of(PersistentAttributeType.MANY_TO_MANY,  //
-                    PersistentAttributeType.MANY_TO_ONE,  //
-                    PersistentAttributeType.ONE_TO_MANY,  //
-                    PersistentAttributeType.ONE_TO_ONE)
-        }
+        private val ASSOCIATION_TYPES: Set<PersistentAttributeType> = EnumSet.of(PersistentAttributeType.MANY_TO_MANY,  //
+                PersistentAttributeType.MANY_TO_ONE,  //
+                PersistentAttributeType.ONE_TO_MANY,  //
+                PersistentAttributeType.ONE_TO_ONE)
 
         private fun isAssociation(attribute: Attribute<*, *>): Boolean {
             return ASSOCIATION_TYPES.contains(attribute.persistentAttributeType)

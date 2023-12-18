@@ -14,13 +14,8 @@ open class PackageScanClassResolver @JvmOverloads constructor(classLoader: Class
     private var scanFilters: MutableSet<PackageScanFilter>? = null
     private val allClassesByPackage: MutableMap<String, MutableSet<Class<*>>> = HashMap()
     private val loadedPackages: MutableSet<String> = HashSet()
-    private val resourcePatternResolver: ResourcePatternResolver
-    private val metadataReaderFactory: MetadataReaderFactory
-
-    init {
-        resourcePatternResolver = PathMatchingResourcePatternResolver(classLoader)
-        metadataReaderFactory = CachingMetadataReaderFactory(resourcePatternResolver)
-    }
+    private val resourcePatternResolver: ResourcePatternResolver = PathMatchingResourcePatternResolver(classLoader)
+    private val metadataReaderFactory: MetadataReaderFactory = CachingMetadataReaderFactory(resourcePatternResolver)
 
     fun addFilter(filter: PackageScanFilter) {
         if (scanFilters == null) {

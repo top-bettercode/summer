@@ -20,14 +20,10 @@ import java.io.Serializable
  */
 @JacksonStdImpl
 class CodeSerializer(codeServiceRef: String?, private val codeType: String, private val useExtensionField: Boolean) : StdScalarSerializer<Serializable>(Serializable::class.java, false), ContextualSerializer {
-    private val codeService: ICodeService
+    private val codeService: ICodeService = CodeServiceHolder[codeServiceRef!!]
 
     @JvmOverloads
     constructor(codeType: String = "", useExtensionField: Boolean = true) : this("", codeType, useExtensionField)
-
-    init {
-        codeService = CodeServiceHolder[codeServiceRef!!]
-    }
 
     override fun serialize(value: Serializable, gen: JsonGenerator, provider: SerializerProvider) {
         val outputContext = gen.outputContext

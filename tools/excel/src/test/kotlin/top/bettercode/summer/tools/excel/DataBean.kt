@@ -9,9 +9,9 @@ class DataBean {
     var integer: Int
     var longl: Long
     var doublel: Double
-        private set
+
     var floatl: Float
-        private set
+
     var name: String
     var num: BigDecimal
     var date: Date
@@ -38,13 +38,4 @@ class DataBean {
         date = Date()
     }
 
-    fun setDoublel(doublel: Double): DataBean {
-        this.doublel = doublel
-        return this
-    }
-
-    fun setFloatl(floatl: Float): DataBean {
-        this.floatl = floatl
-        return this
-    }
 }

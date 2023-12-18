@@ -31,10 +31,9 @@ internal class PartTreeJpaExtQuery internal constructor(
     private var query: QueryPreparer
     private var countQuery: QueryPreparer
     private val extJpaSupport: ExtJpaSupport<out Any>
-    private val statementId: String
+    private val statementId: String = method.statementId
 
     init {
-        statementId = method.statementId
         val domainClass: Class<out Any> = method.entityInformation.javaType
         extJpaSupport = DefaultExtJpaSupport(jpaExtProperties, em, null, domainClass)
         parameters = method.parameters

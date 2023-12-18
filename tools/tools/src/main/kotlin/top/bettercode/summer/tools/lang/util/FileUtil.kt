@@ -161,7 +161,7 @@ object FileUtil {
             return
         }
         if (ending == null) {
-            ending = System.getProperty("line.separator")
+            ending = System.lineSeparator()
         }
         val cs = toCharset(encoding)
         for (line in lines) {

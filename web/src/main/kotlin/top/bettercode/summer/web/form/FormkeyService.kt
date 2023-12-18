@@ -12,11 +12,7 @@ import java.util.function.Consumer
  * @author Peter Wu
  */
 class FormkeyService(private val ttl: Duration) : IFormkeyService {
-    private val caches: ConcurrentMap<Duration, ConcurrentMap<String, Boolean>>
-
-    init {
-        caches = ConcurrentHashMap()
-    }
+    private val caches: ConcurrentMap<Duration, ConcurrentMap<String, Boolean>> = ConcurrentHashMap()
 
     private fun getCache(ttl: Duration): ConcurrentMap<String, Boolean> {
         return caches.computeIfAbsent(ttl) { k: Duration ->

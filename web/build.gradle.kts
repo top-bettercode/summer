@@ -34,8 +34,8 @@ dependencies {
 
     testImplementation("com.github.axet:kaptcha")
     testImplementation(project(":test"))
-    testImplementation(project(":tools:sap"))
-    testImplementation(project(":tools:weixin"))
+//    testImplementation(project(":natives:sap"))
+//    testImplementation(project(":tools:weixin"))
 }
 
 tasks {

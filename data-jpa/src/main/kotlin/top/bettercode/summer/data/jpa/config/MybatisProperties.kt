@@ -41,7 +41,7 @@ open class MybatisProperties {
      */
     var typeHandlersPackage: String? = null
     var typeHandlerClasses: Array<Class<TypeHandler<*>>> = arrayOf()
-        private set
+
 
     /**
      * Externalized properties for MyBatis configuration.
@@ -59,12 +59,6 @@ open class MybatisProperties {
      */
     @NestedConfigurationProperty
     var configuration: Configuration? = null
-    fun setTypeHandlerClasses(
-            typeHandlerClasses: Array<Class<TypeHandler<*>>>
-    ): MybatisProperties {
-        this.typeHandlerClasses = typeHandlerClasses
-        return this
-    }
 
     companion object {
         const val MYBATIS_PREFIX = "summer.data.jpa.mybatis"

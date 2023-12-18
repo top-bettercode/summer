@@ -38,7 +38,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
      */
     var primitiveTypeWrapper: JavaType? = null
 
-    val typeArguments: MutableList<JavaType>
+    val typeArguments: MutableList<JavaType> = ArrayList()
 
     // the following three values are used for dealing with wildcard types
     private var wildcardType: Boolean = false
@@ -48,7 +48,6 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
     private var extendsBoundedWildcard: Boolean = false
 
     init {
-        typeArguments = ArrayList()
         parse(fullTypeSpecification)
     }
 

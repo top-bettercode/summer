@@ -9,14 +9,13 @@ import top.bettercode.summer.tools.lang.util.FileUtil.listFiles
 import java.io.File
 import java.io.FileFilter
 
-class FileManager(conf: Map<String, Any?>?) {
+class FileManager(conf: Map<String, Any?>) {
     private val dir: String
-    private val rootPath: String?
+    private val rootPath: String = conf["rootPath"] as String
     private val allowFiles: Array<String>
     private val count: Int
 
     init {
-        rootPath = conf!!["rootPath"] as String?
         dir = rootPath + conf["dir"]
         allowFiles = getAllowFiles(conf["allowFiles"])
         count = (conf["count"] as Int?)!!
@@ -62,7 +61,7 @@ class FileManager(conf: Map<String, Any?>?) {
 
     private fun getPath(file: File): String {
         val path = file.absolutePath
-        return path.replace(rootPath!!, "/")
+        return path.replace(rootPath, "/")
     }
 
     private fun getAllowFiles(fileExt: Any?): Array<String> {

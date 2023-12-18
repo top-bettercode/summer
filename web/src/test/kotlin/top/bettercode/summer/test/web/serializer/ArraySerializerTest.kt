@@ -21,7 +21,7 @@ internal class ArraySerializerTest {
     @Test
     fun serialize() {
         val bean = StringArrayBean()
-        bean.setAry("a,b,c,")
+        bean.ary = "a,b,c,"
         val actual = objectMapper.writeValueAsString(bean)
         System.err.println(actual)
         Assertions.assertEquals("{\"ary\":\"a,b,c,\",\"aryArray\":[\"a\",\"b\",\"c\"]}", actual)
@@ -30,7 +30,7 @@ internal class ArraySerializerTest {
     @Test
     fun serialize1() {
         val bean = StringArrayBean()
-        bean.setAry("a,b,c")
+        bean.ary = "a,b,c"
         val actual = objectMapper.writeValueAsString(bean)
         System.err.println(actual)
         Assertions.assertEquals("{\"ary\":\"a,b,c\",\"aryArray\":[\"a\",\"b\",\"c\"]}", actual)

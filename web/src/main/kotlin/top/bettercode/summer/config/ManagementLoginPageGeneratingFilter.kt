@@ -6,10 +6,6 @@ import org.springframework.util.Assert
 import org.springframework.web.filter.GenericFilterBean
 import org.springframework.web.util.HtmlUtils
 import java.nio.charset.StandardCharsets
-import java.util.regex.Pattern
-import javax.servlet.FilterChain
-import java.io.IOException
-import java.nio.charset.StandardCharsets
 import java.util.function.Function
 import java.util.regex.Pattern
 import javax.servlet.FilterChain
@@ -63,8 +59,8 @@ class ManagementLoginPageGeneratingFilter(
         this.usernameParameter = usernameParameter
     }
 
-    fun setPasswordParameter(passwordParameter: String) {
-        this.pwdParameter = passwordParameter
+    fun setPwdParameter(pwdParameter: String) {
+        this.pwdParameter = pwdParameter
     }
 
     fun match(uri: String): Boolean {

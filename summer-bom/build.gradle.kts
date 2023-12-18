@@ -95,22 +95,25 @@ dependencies {
         api(project(":publish-plugin"))
 
         api(project(":tools:generator"))
-        api(project(":tools:amap"))
         api(project(":tools:tools"))
         api(project(":tools:excel"))
         api(project(":tools:ueditor"))
-        api(project(":tools:weixin"))
-        api(project(":tools:sms"))
-        api(project(":tools:mobile-query"))
-        api(project(":tools:rapidauth"))
-        api(project(":tools:weather"))
-        api(project(":tools:jpush"))
-        api(project(":tools:qvod"))
-        api(project(":tools:sap"))
         api(project(":tools:configuration-processor"))
-        api(project(":tools:pay"))
-        api(project(":tools:optimal"))
-//        api(project(":tools:ctpapi"))
+
+        api(project(":clients:weixin"))
+        api(project(":clients:sms"))
+        api(project(":clients:mobile-query"))
+        api(project(":clients:rapidauth"))
+        api(project(":clients:weather"))
+        api(project(":clients:jpush"))
+        api(project(":clients:qvod"))
+        api(project(":clients:amap"))
+        api(project(":clients:pay"))
+
+        api(project(":natives:sap"))
+        api(project(":natives:optimal"))
+        //api(project(":natives:ctpapi"))
+
     }
 }
 

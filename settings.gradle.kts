@@ -8,6 +8,9 @@ pluginManagement {
     }
 }
 
+include(":summer-bom")
+include(":summer-cloud-bom")
+
 include(":env")
 include(":web")
 include(":data-jpa")
@@ -22,20 +25,20 @@ include(":tools:generator")
 include(":tools:tools")
 include(":tools:excel")
 include(":tools:ueditor")
-include(":tools:weixin")
-include(":tools:sms")
-include(":tools:mobile-query")
-include(":tools:rapidauth")
-include(":tools:weather")
-include(":tools:jpush")
-include(":tools:qvod")
-include(":tools:amap")
-include(":tools:sap")
 include(":tools:configuration-processor")
-include(":tools:pay")
-include(":tools:optimal")
-//include(":tools:ctpapi")
+
+include(":clients:weixin")
+include(":clients:sms")
+include(":clients:mobile-query")
+include(":clients:rapidauth")
+include(":clients:weather")
+include(":clients:jpush")
+include(":clients:qvod")
+include(":clients:amap")
+include(":clients:pay")
+
+include(":natives:sap")
+include(":natives:optimal")
+//include(":natives:ctpapi")
 
 
-include(":summer-bom")
-include(":summer-cloud-bom")

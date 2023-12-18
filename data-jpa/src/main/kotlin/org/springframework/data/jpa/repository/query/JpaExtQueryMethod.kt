@@ -15,11 +15,10 @@ class JpaExtQueryMethod(
         factory: ProjectionFactory,
         extractor: QueryExtractor, configuration: Configuration
 ) : JpaQueryMethod(method, metadata, factory, extractor) {
-    val statementId: String
+    val statementId: String = method.declaringClass.name + "." + method.name
     val mybatisQueryMethod: MybatisQueryMethod?
 
     init {
-        statementId = method.declaringClass.name + "." + method.name
         val statement = try {
             configuration.getMappedStatement(statementId)
         } catch (e: Exception) {

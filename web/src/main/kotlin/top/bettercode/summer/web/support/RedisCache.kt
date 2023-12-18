@@ -42,11 +42,10 @@ constructor(
         private val valueSerializationPair: SerializationPair<Any> = SerializationPair.fromSerializer(JdkSerializationRedisSerializer(RedisCache::class.java.classLoader))
 ) {
     private val binaryNullValue: ByteArray = RedisSerializer.java().serialize(NullValue.INSTANCE)!!
-    private val cacheWriter: RedisCacheWriter
+    private val cacheWriter: RedisCacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
     private val conversionService: ConversionService
 
     init {
-        cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
         conversionService = DefaultFormattingConversionService()
         RedisCacheConfiguration.registerDefaultConverters(conversionService)
     }

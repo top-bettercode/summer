@@ -141,7 +141,7 @@ open class Operation(
         const val UNRECORDED_MARK = "[UNRECORDED]"
 
         @JvmField
-        val LINE_SEPARATOR: String = System.getProperty("line.separator")
+        val LINE_SEPARATOR: String = System.lineSeparator()
 
     }
 }

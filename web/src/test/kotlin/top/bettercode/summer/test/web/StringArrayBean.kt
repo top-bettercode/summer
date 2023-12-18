@@ -40,14 +40,9 @@ class StringArrayBean {
 
     @JsonArray
     var ary: String? = null
-        private set
+
     var paths1: List<String>? = null
     var pathArray1: Array<String>? = null
-
-    fun setAry(ary: String?): StringArrayBean {
-        this.ary = ary
-        return this
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

@@ -26,7 +26,13 @@ class ExcelImport private constructor(`is`: InputStream) {
     /**
      * 工作表对象
      */
-    private var workbook: ReadableWorkbook
+    private var workbook: ReadableWorkbook = try {
+        ReadableWorkbook(`is`)
+    } catch (e: IOException) {
+        throw ExcelException("Excel读取失败，仅支持.xlsx格式Excel文件", e)
+    } catch (e: ExcelReaderException) {
+        throw ExcelException("Excel读取失败，仅支持.xlsx格式Excel文件", e)
+    }
 
     /**
      * 验证 groups
@@ -57,13 +63,6 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @param `is` is
      */
     init {
-        workbook = try {
-            ReadableWorkbook(`is`)
-        } catch (e: IOException) {
-            throw ExcelException("Excel读取失败，仅支持.xlsx格式Excel文件", e)
-        } catch (e: ExcelReaderException) {
-            throw ExcelException("Excel读取失败，仅支持.xlsx格式Excel文件", e)
-        }
         try {
             sheet = workbook.firstSheet
         } catch (e: Exception) {

@@ -48,10 +48,5 @@ open class GenProperties : AutodocExtension() {
      * 实体前缀
      */
     var entityPrefix = ""
-        private set
 
-    fun setEntityPrefix(entityPrefix: String): GenProperties {
-        this.entityPrefix = entityPrefix
-        return this
-    }
 }

@@ -11,11 +11,7 @@ import java.time.Duration
 class RedisFormkeyService(connectionFactory: RedisConnectionFactory,
                           private val redisCacheName: String,
                           private val ttl: Duration) : IFormkeyService {
-    private val redisCacheWriter: RedisCacheWriter
-
-    init {
-        redisCacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
-    }
+    private val redisCacheWriter: RedisCacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
 
     override fun exist(formkey: String, ttl: Duration?): Boolean {
         return (redisCacheWriter.putIfAbsent(redisCacheName, formkey.toByteArray(StandardCharsets.UTF_8), byteArrayOf(1), (ttl

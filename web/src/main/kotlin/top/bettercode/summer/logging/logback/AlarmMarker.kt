@@ -7,9 +7,8 @@ import java.util.concurrent.CopyOnWriteArrayList
  * A alarm implementation of the [Marker] interface.
  *
  */
-class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
-    private val name: String
-    private val referenceList: MutableList<Marker>
+class AlarmMarker(private val name: String, val timeoutMsg: String? = null) : Marker {
+    private val referenceList: MutableList<Marker> = CopyOnWriteArrayList()
     override fun getName(): String {
         return name
     }
@@ -72,11 +71,6 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
             }
         }
         return false
-    }
-
-    init {
-        this.name = name
-        referenceList = CopyOnWriteArrayList()
     }
 
     override fun equals(other: Any?): Boolean {

@@ -16,11 +16,7 @@ open class SlackProperties {
     var channel: String = ""
     var timeoutChannel = "timeout"
     var cacheSeconds = 5 * 60L
-        private set
+
     var timeoutCacheSeconds = 2 * 60 * 60L
     var cyclicBufferSize = 20
-    fun setCacheSeconds(cacheSeconds: Long): SlackProperties {
-        this.cacheSeconds = cacheSeconds
-        return this
-    }
 }
