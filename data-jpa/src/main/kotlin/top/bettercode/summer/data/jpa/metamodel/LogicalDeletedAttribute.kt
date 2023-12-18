@@ -50,11 +50,11 @@ class LogicalDeletedAttribute<X, T>(singularAttribute: SingularAttribute<X, T>, 
     }
 
     fun andNotDeleted(spec: Specification<X>?): Specification<X> {
-        return if (spec == null) notDeletedSpecification else spec.and(notDeletedSpecification)
+        return if (spec == null) notDeletedSpecification else spec.and(notDeletedSpecification)!!
     }
 
     fun andDeleted(spec: Specification<X>?): Specification<X> {
-        return if (spec == null) deletedSpecification else spec.and(deletedSpecification)
+        return if (spec == null) deletedSpecification else spec.and(deletedSpecification)!!
     }
 
     fun andNotDeleted(predicate: Predicate?, builder: CriteriaBuilder, root: Root<*>): Predicate {

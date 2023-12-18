@@ -40,7 +40,7 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
         query: (Pageable) -> Page<E>
     ): List<E> {
         val results = mutableListOf<E>()
-        val pageable = Pageable.ofSize(pageSize)
+        val pageable = PageRequest.of(0, pageSize)
         val result = query(pageable)
         results.addAll(result)
 
@@ -119,8 +119,8 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
         repository.deleteAllById(ids)
     }
 
-    override fun deleteAllInBatch(entities: Iterable<T>) {
-        repository.deleteAllInBatch(entities)
+    override fun deleteInBatch(entities: Iterable<T>) {
+        repository.deleteInBatch(entities)
     }
 
     override fun deleteAllInBatch() {

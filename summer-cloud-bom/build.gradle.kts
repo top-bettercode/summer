@@ -12,15 +12,15 @@ javaPlatform {
 dependencies {
 //https://sca.aliyun.com/docs/2021/overview/version-explain/
 //https://github.com/alibaba/spring-cloud-alibaba/releases
-    //https://repo1.maven.org/maven2/com/alibaba/cloud/spring-cloud-alibaba-dependencies/2021.0.6.0/spring-cloud-alibaba-dependencies-2021.0.6.0.pom
-    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.6.0"))
-    //https://repo1.maven.org/maven2/org/springframework/cloud/spring-cloud-dependencies/2021.0.5/spring-cloud-dependencies-2021.0.5.pom
-    api(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.5"))
+    //https://repo1.maven.org/maven2/com/alibaba/cloud/spring-cloud-alibaba-dependencies/2.2.5.RELEASE/spring-cloud-alibaba-dependencies-2.2.5.RELEASE.pom
+    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2.2.5.RELEASE"))
+    //https://repo1.maven.org/maven2/org/springframework/cloud/spring-cloud-dependencies/Hoxton.SR8/spring-cloud-dependencies-Hoxton.SR8.pom
+    api(platform("org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR8"))
     api(platform(project(":summer-bom")))
 
     constraints {
         api("com.alibaba:druid-spring-boot-starter:1.2.16")
-        api("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0")
+        api("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4")
     }
 }
 

@@ -53,6 +53,7 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, JpaSpecificationExecut
     fun <S : T> saveDynamic(s: S): S
     fun delete(spec: Specification<T>): Long
     fun deletePhysical(spec: Specification<T>): Long
+    fun deleteAllById(ids: Iterable<ID>)
 
     fun exists(spec: Specification<T>): Boolean
     fun existsPhysical(spec: Specification<T>?): Boolean

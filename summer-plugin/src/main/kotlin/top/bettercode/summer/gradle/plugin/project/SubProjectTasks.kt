@@ -149,7 +149,7 @@ object SubProjectTasks {
 
             if (project.isBoot) {
                 create("resolveMainClass") {
-                    it.dependsOn("bootJarMainClassName")
+                    it.dependsOn("classes")
                     it.doLast(object : Action<Task> {
                         override fun execute(it: Task) {
                             project.tasks.findByName("startScripts").apply {
@@ -157,7 +157,7 @@ object SubProjectTasks {
                                 if (!this.mainClass.isPresent) {
                                     val bootJar = project.tasks.getByName("bootJar")
                                     bootJar as BootJar
-                                    this.mainClass.set(bootJar.mainClass)
+                                    mainClass.set(bootJar.mainClassName)
                                 }
                             }
                         }
@@ -179,9 +179,7 @@ object SubProjectTasks {
                     it.enabled = true
                     it.archiveClassifier.convention("")
                 }
-                named("bootRunMainClassName") { it.enabled = false }
                 named("bootRun") { it.enabled = false }
-                named("bootJarMainClassName") { it.enabled = false }
                 named("bootJar") { it.enabled = false }
                 named("bootBuildImage") { it.enabled = false }
             }
@@ -190,8 +188,6 @@ object SubProjectTasks {
                 named("asciidoc") { it.enabled = false }
                 named("htmldoc") { it.enabled = false }
                 named("postman") { it.enabled = false }
-            } else {
-                named("bootJarMainClassName") { it.dependsOn("asciidoc", "htmldoc", "postman") }
             }
         }
     }

@@ -8,7 +8,7 @@ import org.springframework.data.domain.SliceImpl
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.*
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryMetadataCache
-import org.springframework.data.support.PageableExecutionUtils
+import org.springframework.data.repository.support.PageableExecutionUtils
 import org.springframework.data.util.ParsingUtils
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser

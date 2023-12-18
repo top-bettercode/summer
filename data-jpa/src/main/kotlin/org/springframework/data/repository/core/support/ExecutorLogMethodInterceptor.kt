@@ -158,7 +158,7 @@ class ExecutorLogMethodInterceptor(
 
                         (result == null && !isVoidType(invocation.method.returnType))
                                 || result != null && ClassUtils.isPrimitiveOrWrapper(result::class.java) -> {
-                            sqlLog.result(result.toString())
+                            sqlLog.result("${result?.toString()}")
                         }
 
                         else -> {

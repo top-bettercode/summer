@@ -10,15 +10,18 @@ javaPlatform {
 }
 
 dependencies {
+//https://docs.gradle.org/6.6.1/userguide/compatibility.html
 //https://docs.gradle.org/7.5.1/userguide/compatibility.html
-//https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies/2.6.13/spring-boot-dependencies-2.6.13.pom
+//https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies/2.3.2.RELEASE/spring-boot-dependencies-2.3.2.RELEASE.pom
+    api(platform("org.springframework.boot:spring-boot-dependencies:2.3.2.RELEASE"))
+    api(platform("org.jetbrains.kotlin:kotlin-bom:1.6.21"))
+    api(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.5.2"))
 
-    api(platform("org.springframework.boot:spring-boot-dependencies:2.6.13"))
     constraints {
         api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KotlinVersion.CURRENT}")
         api("org.jetbrains.kotlin:kotlin-allopen:${KotlinVersion.CURRENT}")
 
-        api("org.springframework.boot:spring-boot-gradle-plugin:2.6.13")
+        api("org.springframework.boot:spring-boot-gradle-plugin:2.3.2.RELEASE")
 
         api("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
         api("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")

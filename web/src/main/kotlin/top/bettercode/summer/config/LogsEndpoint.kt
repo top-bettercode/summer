@@ -40,7 +40,7 @@ class LogsEndpoint(
     managementServerProperties: ManagementServerProperties
 ) {
 
-    private val contextPath: String = managementServerProperties.basePath ?: "/"
+    private val contextPath: String = managementServerProperties.servlet.contextPath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
     private val appName: String = LoggingUtil.warnTitle(env)
 

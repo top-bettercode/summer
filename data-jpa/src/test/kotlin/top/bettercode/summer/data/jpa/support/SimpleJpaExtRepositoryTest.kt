@@ -215,11 +215,11 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun deleteInBatch() {
-        repository.deleteAllInBatch(batch)
+        repository.deleteInBatch(batch)
         var recycleAll = repository.findAllFromRecycleBin()
         System.err.println(recycleAll)
         Assertions.assertEquals(2, recycleAll.size)
-        repository.deleteAllInBatch(emptyList())
+        repository.deleteInBatch(emptyList())
         recycleAll = repository.findAllFromRecycleBin()
         System.err.println(recycleAll)
         Assertions.assertEquals(2, recycleAll.size)
@@ -290,13 +290,13 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun testbyId() {
-        val optionalUser = repository.getById(carterId)
+        val optionalUser = repository.getOne(carterId)
         Assertions.assertNotNull(optionalUser)
 
         Assertions.assertThrows(
             JpaObjectRetrievalFailureException::class.java
         ) {
-            repository.getById(daveId)
+            repository.getOne(daveId)
         }
 
     }

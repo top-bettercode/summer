@@ -30,6 +30,9 @@ object ProjectDependencies {
             if (project.isCloud) {
                 add("implementation", platform("top.bettercode.summer:summer-cloud-bom:$summerVersion"))
                 add("annotationProcessor", platform("top.bettercode.summer:summer-cloud-bom:$summerVersion"))
+//                add("implementation", enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.3.2.RELEASE"))
+                add("implementation", enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.6.21"))
+                add("implementation", enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.5.2"))
             } else {
                 add("implementation", platform("top.bettercode.summer:summer-bom:$summerVersion"))
                 add("annotationProcessor", platform("top.bettercode.summer:summer-bom:$summerVersion"))

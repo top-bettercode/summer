@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryM
 import org.springframework.data.repository.query.ReturnedType
 import org.springframework.data.repository.query.parser.Part
 import org.springframework.data.repository.query.parser.PartTree
-import org.springframework.data.support.PageableExecutionUtils
+import org.springframework.data.repository.support.PageableExecutionUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport

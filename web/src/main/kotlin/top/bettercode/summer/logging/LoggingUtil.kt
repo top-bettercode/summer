@@ -69,7 +69,7 @@ object LoggingUtil {
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
-        val contextPath = managementServerProperties.basePath ?: ""
+        val contextPath = managementServerProperties.servlet.contextPath ?: ""
         if (contextPath.isNotBlank() && "/" != contextPath)
             printer.print(contextPath)
 

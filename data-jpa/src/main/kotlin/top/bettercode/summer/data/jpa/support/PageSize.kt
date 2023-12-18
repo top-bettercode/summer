@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.support
 
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
 /**
@@ -14,7 +15,7 @@ class PageSize(
 
         @JvmStatic
         fun of(size: Int): Pageable {
-            return PageSize(Pageable.ofSize(size))
+            return PageSize(PageRequest.of(0, size))
         }
 
         @JvmStatic

@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.query.EscapeCharacter
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
-import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery
-import org.springframework.data.support.PageableExecutionUtils
+import org.springframework.data.repository.support.PageableExecutionUtils
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.transaction.annotation.Transactional
@@ -20,7 +19,6 @@ import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.support.PageSize.Companion.size
 import top.bettercode.summer.tools.lang.util.BeanUtil.nullFrom
 import java.util.*
-import java.util.function.Function
 import javax.persistence.EntityManager
 import javax.persistence.EntityNotFoundException
 import javax.persistence.TypedQuery
@@ -357,20 +355,8 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
         }
     }
 
-    override fun deleteAllByIdInBatch(ids: Iterable<ID>) {
-        if (extJpaSupport.logicalDeletedSupported) {
-            doLogicalDelete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
-                root[entityInformation.idAttribute].`in`(
-                    toCollection(ids)
-                )
-            }
-        } else {
-            super.deleteAllByIdInBatch(ids)
-        }
-    }
-
     @Transactional
-    override fun deleteAllInBatch(entities: Iterable<T>) {
+    override fun deleteInBatch(entities: Iterable<T>) {
         if (extJpaSupport.logicalDeletedSupported) {
             Assert.notNull(entities, "The given Iterable of entities not be null!")
             if (entities.iterator().hasNext()) {
@@ -383,7 +369,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
                 doLogicalDelete(spec)
             }
         } else {
-            super.deleteAllInBatch(entities)
+            super.deleteInBatch(entities)
         }
     }
 
@@ -465,10 +451,6 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
 
     @Deprecated("", ReplaceWith("getById(id)"))
     override fun getOne(id: ID): T {
-        return getById(id)
-    }
-
-    override fun getById(id: ID): T {
         return if (extJpaSupport.logicalDeletedSupported) {
             var spec =
                 Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
@@ -480,7 +462,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
             super.findOne(spec)
                 .orElseThrow { EntityNotFoundException("Unable to find $domainClass with id $id") }
         } else {
-            super.getById(id)
+            super.getOne(id)
         }
     }
 
@@ -611,14 +593,6 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     override fun <S : T> findOne(example: Example<S>): Optional<S> {
         extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
         return super.findOne(example)
-    }
-
-    override fun <S : T, R : Any> findBy(
-        example: Example<S>,
-        queryFunction: Function<FetchableFluentQuery<S>, R>
-    ): R {
-        extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
-        return super.findBy(example, queryFunction)
     }
 
     override fun <S : T> count(example: Example<S>): Long {
