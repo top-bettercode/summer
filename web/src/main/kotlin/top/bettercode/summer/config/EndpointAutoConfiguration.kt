@@ -36,14 +36,14 @@ import javax.servlet.http.HttpServletResponse
         ManagementAuthProperties::class
 )
 @Configuration(proxyBeanMethods = false)
-class EndpointAutoConfiguration(managementServerProperties: ManagementServerProperties) {
+class EndpointAutoConfiguration(managementServerProperties: ManagementServerProperties, serverProperties: ServerProperties) {
 
     private val log: Logger = LoggerFactory.getLogger(EndpointAutoConfiguration::class.java)
 
 
     init {
         val port = managementServerProperties.port
-        if (port != null && managementServerProperties.address == null) {
+        if (port != null && port != serverProperties.port && managementServerProperties.address == null) {
             managementServerProperties.address = InetAddress.getByName(IPAddressUtil.inet4Address)
             log.info("management server address:{}:{}", managementServerProperties.address, port)
         }
