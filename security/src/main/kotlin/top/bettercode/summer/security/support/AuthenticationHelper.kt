@@ -84,6 +84,7 @@ object AuthenticationHelper {
         return hasAuthority(authentication, authority)
     }
 
+    @JvmStatic
     fun getClientInfo(request: HttpServletRequest): Pair<String?, String?> {
         var header = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (header != null) {
@@ -98,6 +99,12 @@ object AuthenticationHelper {
         val clientId = request.getParameter("client_id")
         val clientSecret = request.getParameter("client_secret")
         return Pair(clientId, clientSecret)
+    }
+
+    @JvmStatic
+    fun getClientId(request: HttpServletRequest): String {
+        return getClientInfo(request).first
+                ?: throw IllegalArgumentException("客户端未授权")
     }
 
     private fun decode(base64Token: ByteArray): ByteArray {
