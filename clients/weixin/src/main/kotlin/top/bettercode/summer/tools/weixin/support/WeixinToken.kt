@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.weixin.support
 
 import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
+import top.bettercode.summer.web.serializer.annotation.JsonSetToString
 
 /**
  *
@@ -13,7 +14,7 @@ class WeixinToken() : HashMap<String, Any?>() {
         this["expires_in"] = 0
         this["refresh_token"] = ""
         this[IWeixinProperties.OPEN_ID_NAME] = ""
-        this["scope"] = ""
+        this["scope"] = emptySet<String>()
         this["unionid"] = ""
         this["hasBound"] = false
         this["isOk"] = true
@@ -41,11 +42,15 @@ class WeixinToken() : HashMap<String, Any?>() {
         set(value) {
             put(IWeixinProperties.OPEN_ID_NAME, value)
         }
-    var scope: String?
-        get() = get("scope") as String?
+
+    @Suppress("UNCHECKED_CAST")
+    @JsonSetToString(extended = false)
+    var scope: Set<String>?
+        get() = get("scope") as Set<String>?
         set(value) {
             put("scope", value)
         }
+
     var unionId: String
         get() = get("unionid") as String
         set(value) {

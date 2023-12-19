@@ -3,14 +3,14 @@ package top.bettercode.summer.web.serializer.annotation
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import top.bettercode.summer.web.serializer.StringToSetDeserializer
 import top.bettercode.summer.web.serializer.SetToStringSerializer
+import top.bettercode.summer.web.serializer.StringToSetDeserializer
 import java.lang.annotation.Inherited
 
 /**
  * @author Peter Wu
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 @JacksonAnnotationsInside
 @Inherited
