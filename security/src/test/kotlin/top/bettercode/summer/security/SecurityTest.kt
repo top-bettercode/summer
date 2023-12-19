@@ -56,7 +56,7 @@ class SecurityTest {
                 apiSecurityProperties!!.clientSecret)
     }
 
-    private fun getApiAccessToken(tag: String?): AccessToken {
+    private fun getAccessToken(tag: String?): AccessToken {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "password")
         params.add("scope", "app")
@@ -81,7 +81,7 @@ class SecurityTest {
         description = ""
         name = "获取accessToken"
         requiredParameters("grant_type", "scope", "username", "password")
-        val accessToken = getApiAccessToken(null)
+        val accessToken = getAccessToken(null)
         Assertions.assertNotNull(accessToken)
 //        Thread.sleep(1000)
     }
@@ -95,7 +95,7 @@ class SecurityTest {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "refresh_token")
         params.add("scope", "app")
-        params.add("refresh_token", getApiAccessToken("refresh_token").refreshToken)
+        params.add("refresh_token", getAccessToken("refresh_token").refreshToken)
         enable()
         name = "刷新accessToken"
         requiredParameters("grant_type", "scope", "refresh_token")
@@ -108,7 +108,7 @@ class SecurityTest {
     @Test
     fun revokeToken() {
         disable()
-        val accessToken = getApiAccessToken("revokeToken").accessToken
+        val accessToken = getAccessToken("revokeToken").accessToken
         enable()
         name = "撤销accessToken"
         val httpHeaders = HttpHeaders()
@@ -124,7 +124,7 @@ class SecurityTest {
         disable()
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "revoke_token")
-        params.add("revoke_token", getApiAccessToken("revokeToken2").accessToken)
+        params.add("revoke_token", getAccessToken("revokeToken2").accessToken)
         enable()
         name = "撤销accessToken"
         requiredParameters("grant_type",  "revokeToken")
@@ -137,7 +137,7 @@ class SecurityTest {
     @Test
     fun auth() {
         val httpHeaders = HttpHeaders()
-        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("auth").accessToken
+        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("auth").accessToken
         val entity = restTemplate
                 .exchange("/testDefaultAuth", HttpMethod.POST, HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
@@ -147,7 +147,7 @@ class SecurityTest {
     fun authInParam() {
         val httpHeaders = HttpHeaders()
         val entity = restTemplate
-                .exchange("/testDefaultAuth?access_token=" + getApiAccessToken("authInParam").accessToken,
+                .exchange("/testDefaultAuth?access_token=" + getAccessToken("authInParam").accessToken,
                         HttpMethod.GET,
                         HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
@@ -156,7 +156,7 @@ class SecurityTest {
     @Test
     fun authority() {
         val httpHeaders = HttpHeaders()
-        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("authority").accessToken
+        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("authority").accessToken
         val entity = restTemplate
                 .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
@@ -166,7 +166,7 @@ class SecurityTest {
     fun noauthority() {
         username = "peter"
         val httpHeaders = HttpHeaders()
-        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("noauthority").accessToken
+        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("noauthority").accessToken
         val entity = restTemplate
                 .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.FORBIDDEN, entity.statusCode)
@@ -189,7 +189,7 @@ class SecurityTest {
     @Test
     fun testNoAuthWithToken() {
         val httpHeaders = HttpHeaders()
-        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("testNoAuthWithToken").accessToken
+        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("testNoAuthWithToken").accessToken
         val entity = restTemplate
                 .exchange("/testNoAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)

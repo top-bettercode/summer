@@ -55,7 +55,7 @@ class Security200Test {
                 apiSecurityProperties!!.clientSecret)
     }
 
-    private fun getApiAccessToken(tag: String?): AccessToken {
+    private fun getAccessToken(tag: String?): AccessToken {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "password")
         params.add("scope", "app")
@@ -77,7 +77,7 @@ class Security200Test {
         description = ""
         name = "获取accessToken"
         requiredParameters("grant_type", "scope", "username", "password")
-        val accessToken = getApiAccessToken(null)
+        val accessToken = getAccessToken(null)
         Assertions.assertNotNull(accessToken)
 //        Thread.sleep(1000)
     }
@@ -91,7 +91,7 @@ class Security200Test {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "refresh_token")
         params.add("scope", "app")
-        params.add("refresh_token", getApiAccessToken("refresh_token").refreshToken)
+        params.add("refresh_token", getAccessToken("refresh_token").refreshToken)
         enable()
         name = "刷新accessToken"
         requiredParameters("grant_type", "scope", "refresh_token")
@@ -104,7 +104,7 @@ class Security200Test {
     @Test
     fun revokeToken() {
         disable()
-        val accessToken = getApiAccessToken("revokeToken").accessToken
+        val accessToken = getAccessToken("revokeToken").accessToken
         enable()
         name = "撤销accessToken"
         val httpHeaders = HttpHeaders()
@@ -119,7 +119,7 @@ class Security200Test {
         disable()
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "revoke_token")
-        params.add("revoke_token", getApiAccessToken("revokeToken2").accessToken)
+        params.add("revoke_token", getAccessToken("revokeToken2").accessToken)
         enable()
         name = "撤销accessToken"
         requiredParameters("grant_type",  "revokeToken")
@@ -132,7 +132,7 @@ class Security200Test {
     @Test
     fun auth() {
         val httpHeaders = HttpHeaders()
-        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("auth").accessToken
+        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("auth").accessToken
         val entity = restTemplate
                 .exchange("/testDefaultAuth", HttpMethod.POST,
                         HttpEntity(Collections.singletonMap("aa", "xxx"), httpHeaders), String::class.java)

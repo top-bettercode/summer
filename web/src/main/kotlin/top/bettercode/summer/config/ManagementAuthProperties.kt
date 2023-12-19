@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 @ConfigurationProperties("summer.management.auth")
 open class ManagementAuthProperties {
 
-    var enabled = true
+    var enabled = false
 
     //--------------------------------------------
     var pattern = arrayOf<String>()
