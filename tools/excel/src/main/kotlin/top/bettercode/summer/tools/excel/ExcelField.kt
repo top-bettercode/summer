@@ -373,6 +373,12 @@ class ExcelField<T, P : Any?> {
     }
 
     //--------------------------------------------
+
+    @JvmOverloads
+    fun scale(scale: Int = 2): ExcelField<T, P> {
+        return unit(1, scale)
+    }
+
     @JvmOverloads
     fun yuan(scale: Int = 2): ExcelField<T, P> {
         return unit(100, scale)
