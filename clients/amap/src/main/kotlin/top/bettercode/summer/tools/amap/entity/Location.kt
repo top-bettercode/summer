@@ -12,10 +12,7 @@ class Location(lng: String = "", lat: String = "") {
 
     @NotBlank
     var lng: String = lng
-        get() = BigDecimal(field).setScale(
-                6,
-                RoundingMode.HALF_UP
-        ).toPlainString()
+        get() = BigDecimal(field).setScale(6, RoundingMode.HALF_UP).toPlainString()
 
     @NotBlank
     var lat: String = lat

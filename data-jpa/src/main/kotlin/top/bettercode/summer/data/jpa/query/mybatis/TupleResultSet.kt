@@ -5,6 +5,7 @@ import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.io.InputStream
 import java.io.Reader
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.net.URL
 import java.sql.*
 import java.sql.Array
@@ -81,9 +82,9 @@ class TupleResultSet(private val tuples: List<Tuple>,
         return getObject(i, Double::class.java) ?: 0.0
     }
 
-    @Deprecated("", ReplaceWith("getObject(i, BigDecimal::class.java)?.setScale(scale)", "java.math.BigDecimal"))
+    @Deprecated("", ReplaceWith("getObject(i, BigDecimal::class.java)?.setScale(scale, RoundingMode.HALF_UP)", "java.math.BigDecimal"))
     override fun getBigDecimal(i: Int, scale: Int): BigDecimal? {
-        return getObject(i, BigDecimal::class.java)?.setScale(scale)
+        return getObject(i, BigDecimal::class.java)?.setScale(scale, RoundingMode.HALF_UP)
     }
 
     override fun getBytes(i: Int): ByteArray? {
@@ -147,9 +148,9 @@ class TupleResultSet(private val tuples: List<Tuple>,
         return getObject(s, Double::class.java) ?: 0.0
     }
 
-    @Deprecated("", ReplaceWith("getObject(s, BigDecimal::class.java)?.setScale(scale)", "java.math.BigDecimal"))
+    @Deprecated("", ReplaceWith("getObject(s, BigDecimal::class.java)?.setScale(scale, RoundingMode.HALF_UP)", "java.math.BigDecimal"))
     override fun getBigDecimal(s: String, scale: Int): BigDecimal? {
-        return getObject(s, BigDecimal::class.java)?.setScale(scale)
+        return getObject(s, BigDecimal::class.java)?.setScale(scale, RoundingMode.HALF_UP)
     }
 
     override fun getBytes(s: String): ByteArray? {

@@ -17,6 +17,7 @@ import java.io.Serializable
 import java.lang.invoke.SerializedLambda
 import java.lang.reflect.Method
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -379,8 +380,8 @@ class ExcelField<T, P : Any?> {
     fun percent(scale: Int = 2): ExcelField<T, P> {
         return cell { property: P ->
             property as Number
-            val result = (if (property is BigDecimal) property else BigDecimal(property.toString())).setScale(scale)
-            format("0.00%")
+            val result = (if (property is BigDecimal) property else BigDecimal(property.toString())).setScale(scale, RoundingMode.HALF_UP)
+            format("0.${"0".repeat(scale)}%")
             result.toDouble()
         }.property {
             val value = it.toString().trim('%')
