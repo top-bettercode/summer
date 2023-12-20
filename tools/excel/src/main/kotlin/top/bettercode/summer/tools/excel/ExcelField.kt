@@ -12,6 +12,7 @@ import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
 import top.bettercode.summer.tools.lang.util.StringUtil.trimFractionTrailing
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.resolver.UnitConverter
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import top.bettercode.summer.web.support.code.CodeServiceHolder
 import java.io.Serializable
 import java.lang.invoke.SerializedLambda
@@ -374,6 +375,27 @@ class ExcelField<T, P : Any?> {
     }
 
     //--------------------------------------------
+
+    @JvmOverloads
+    fun percent(scale: Int = 2, trimFractionTrailing: Boolean = true): ExcelField<T, P> {
+        return cell { property: P ->
+            property as Number
+            var result = (if (property is BigDecimal) property else BigDecimal(property.toString())).multiply(BigDecimal(100)).setScale(scale).toPlainString()
+            if (trimFractionTrailing) {
+                result = result.trimFractionTrailing()
+            }
+            "$result%"
+        }.property {
+            val value = it.toString().trim('%')
+            if (propertyType == BigDecimal::class.java) {
+                @Suppress("UNCHECKED_CAST")
+                BigDecimal(value).divide(BigDecimal(100)) as P
+            } else {
+                ApplicationContextHolder.conversionService.convert(BigDecimal(value).divide(BigDecimal(100)), propertyType!!)!!
+            }
+
+        }
+    }
 
     @JvmOverloads
     fun scale(scale: Int = 2, trimFractionTrailing: Boolean = true): ExcelField<T, P> {
