@@ -9,6 +9,7 @@ import org.springframework.util.ReflectionUtils
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
+import top.bettercode.summer.tools.lang.util.StringUtil.trimFractionTrailing
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.resolver.UnitConverter
 import top.bettercode.summer.web.support.code.CodeServiceHolder
@@ -375,19 +376,23 @@ class ExcelField<T, P : Any?> {
     //--------------------------------------------
 
     @JvmOverloads
-    fun scale(scale: Int = 2): ExcelField<T, P> {
-        return unit(1, scale)
+    fun scale(scale: Int = 2, trimFractionTrailing: Boolean = true): ExcelField<T, P> {
+        return unit(1, scale, trimFractionTrailing)
     }
 
     @JvmOverloads
-    fun yuan(scale: Int = 2): ExcelField<T, P> {
-        return unit(100, scale)
+    fun yuan(scale: Int = 2, trimFractionTrailing: Boolean = false): ExcelField<T, P> {
+        return unit(100, scale, trimFractionTrailing)
     }
 
     @JvmOverloads
-    fun unit(value: Int, scale: Int = log10(value.toDouble()).toInt()): ExcelField<T, P> {
+    fun unit(value: Int, scale: Int = log10(value.toDouble()).toInt(), trimFractionTrailing: Boolean = true): ExcelField<T, P> {
         return cell { property: P ->
-            UnitConverter.larger(number = property as Number, value = value, scale = scale).toPlainString()
+            var result = UnitConverter.larger(number = property as Number, value = value, scale = scale).toPlainString()
+            if (trimFractionTrailing) {
+                result = result.trimFractionTrailing()
+            }
+            result
         }
                 .property { cell: Any ->
                     UnitConverter.smaller(number = BigDecimal(cell.toString()), propertyType!!, value = value, scale = scale)

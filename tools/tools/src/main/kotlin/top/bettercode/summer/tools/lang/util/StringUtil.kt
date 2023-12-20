@@ -570,8 +570,8 @@ object StringUtil {
     }
 
     @JvmStatic
-    fun trimFractionTrailing(value: String): String {
-        return if (value.contains(".")) value.trimEnd('0').trimEnd('.') else value
+    fun String.trimFractionTrailing(): String {
+        return if (this.contains(".")) this.trimEnd('0').trimEnd('.') else this
     }
 
     internal val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")

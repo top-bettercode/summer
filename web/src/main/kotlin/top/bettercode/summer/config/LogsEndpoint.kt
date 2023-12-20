@@ -18,6 +18,7 @@ import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.tools.lang.util.StringUtil.trimFractionTrailing
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.io.InputStream
@@ -441,7 +442,7 @@ class LogsEndpoint(
                             BigDecimal(1024), RoundingMode.UP
                     )
                             .setScale(newScale, RoundingMode.UP).toString()
-            return StringUtil.trimFractionTrailing(result) + units[index]
+            return result.trimFractionTrailing() + units[index]
         }
     }
 
