@@ -9,7 +9,6 @@ import org.springframework.util.ReflectionUtils
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
-import top.bettercode.summer.tools.lang.util.StringUtil.trimFractionTrailing
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.resolver.UnitConverter
 import top.bettercode.summer.web.support.ApplicationContextHolder
@@ -165,7 +164,7 @@ class ExcelField<T, P : Any?> {
             @Suppress("UNCHECKED_CAST")
             when (propertyType) {
                 String::class.java -> {
-                    cellValue.toString()
+                    cellValue
                 }
 
                 Boolean::class.javaObjectType, Boolean::class.java, Boolean::class.java -> {
@@ -310,7 +309,7 @@ class ExcelField<T, P : Any?> {
                 }
 
                 propertyType == BigDecimal::class.java -> {
-                    property
+                    (property as BigDecimal).toDouble()
                 }
 
                 propertyType!!.isArray -> {
@@ -377,14 +376,12 @@ class ExcelField<T, P : Any?> {
     //--------------------------------------------
 
     @JvmOverloads
-    fun percent(scale: Int = 2, trimFractionTrailing: Boolean = true): ExcelField<T, P> {
+    fun percent(scale: Int = 2): ExcelField<T, P> {
         return cell { property: P ->
             property as Number
-            var result = (if (property is BigDecimal) property else BigDecimal(property.toString())).multiply(BigDecimal(100)).setScale(scale).toPlainString()
-            if (trimFractionTrailing) {
-                result = result.trimFractionTrailing()
-            }
-            "$result%"
+            val result = (if (property is BigDecimal) property else BigDecimal(property.toString())).setScale(scale)
+            format("0.00%")
+            result.toDouble()
         }.property {
             val value = it.toString().trim('%')
             if (propertyType == BigDecimal::class.java) {
@@ -398,23 +395,20 @@ class ExcelField<T, P : Any?> {
     }
 
     @JvmOverloads
-    fun scale(scale: Int = 2, trimFractionTrailing: Boolean = true): ExcelField<T, P> {
-        return unit(1, scale, trimFractionTrailing)
+    fun scale(scale: Int = 2): ExcelField<T, P> {
+        return unit(1, scale)
     }
 
     @JvmOverloads
-    fun yuan(scale: Int = 2, trimFractionTrailing: Boolean = false): ExcelField<T, P> {
-        return unit(100, scale, trimFractionTrailing)
+    fun yuan(scale: Int = 2): ExcelField<T, P> {
+        return unit(100, scale)
     }
 
     @JvmOverloads
-    fun unit(value: Int, scale: Int = log10(value.toDouble()).toInt(), trimFractionTrailing: Boolean = true): ExcelField<T, P> {
+    fun unit(value: Int, scale: Int = log10(value.toDouble()).toInt()): ExcelField<T, P> {
         return cell { property: P ->
-            var result = UnitConverter.larger(number = property as Number, value = value, scale = scale).toPlainString()
-            if (trimFractionTrailing) {
-                result = result.trimFractionTrailing()
-            }
-            result
+            val result = UnitConverter.larger(number = property as Number, value = value, scale = scale)
+            result.toDouble()
         }
                 .property { cell: Any ->
                     UnitConverter.smaller(number = BigDecimal(cell.toString()), propertyType!!, value = value, scale = scale)
@@ -451,13 +445,12 @@ class ExcelField<T, P : Any?> {
         return cell { property: P ->
             val codeService = CodeServiceHolder[codeServiceRef]
             if (property is String) {
-                val code = property.toString()
                 val separator = ","
-                if (code.contains(separator)) {
-                    val split = code.split(separator).filter { it.isNotBlank() }.map { it.trim() }
+                if (property.contains(separator)) {
+                    val split = property.split(separator).filter { it.isNotBlank() }.map { it.trim() }
                     return@cell split.joinToString(separator) { s: String -> codeService.getDicCodes(codeType)!!.getName(s) }
                 } else {
-                    return@cell codeService.getDicCodes(codeType)!!.getName(code)
+                    return@cell codeService.getDicCodes(codeType)!!.getName(property)
                 }
             } else {
                 return@cell codeService.getDicCodes(codeType)!!.getName((property as Serializable))
