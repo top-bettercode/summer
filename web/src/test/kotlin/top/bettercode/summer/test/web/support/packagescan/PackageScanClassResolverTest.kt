@@ -24,7 +24,11 @@ class PackageScanClassResolverTest {
                 Response::class.java.classLoader)
                 .getResources("classpath*:$target.class")
         for (resource in resources) {
-            System.err.println(resource.uri)
+            try {
+                System.err.println(resource.uri)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

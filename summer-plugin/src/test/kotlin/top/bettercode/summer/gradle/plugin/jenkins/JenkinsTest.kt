@@ -6,6 +6,7 @@ import org.jdom2.input.SAXBuilder
 import org.jdom2.output.Format
 import org.jdom2.output.XMLOutputter
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.PrintWriter
@@ -23,7 +24,7 @@ import javax.crypto.spec.SecretKeySpec
 
 class JenkinsTest {
 
-    //    @Disabled
+    @Disabled
     @Test
     fun decrypt() {
         val jenkinsDir = ""
