@@ -26,8 +26,7 @@ class PackageScanClassResolverTest {
         for (resource in resources) {
             try {
                 System.err.println(resource.uri)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (_: Exception) {
             }
         }
     }
