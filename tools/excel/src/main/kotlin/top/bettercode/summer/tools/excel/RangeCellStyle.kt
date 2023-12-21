@@ -11,7 +11,8 @@ class RangeCellStyle @JvmOverloads constructor(
         private val bottom: Int = top,
         private val right: Int = left) : CellStyle() {
 
-    fun set() {
+    override fun set() {
         this.excel.setCellStyle(this.top, left, bottom, right, this)
     }
+
 }

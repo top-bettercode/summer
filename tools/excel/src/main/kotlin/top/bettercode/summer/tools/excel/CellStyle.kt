@@ -494,4 +494,6 @@ open class CellStyle : Cloneable {
     public override fun clone(): CellStyle {
         return super.clone() as CellStyle
     }
+
+    open fun set() {}
 }
