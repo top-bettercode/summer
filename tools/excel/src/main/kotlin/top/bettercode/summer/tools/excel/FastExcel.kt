@@ -30,28 +30,11 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         this.sheet = workbook.newWorksheet(sheetname)
     }
 
-    override fun createTitle(row: Int, column: Int, title: String, cells: Int, headerStyle: CellStyle) {
-        sheet.value(row, column, title)
-        val styleSetter = sheet.range(row, column, row, column + cells - 1).style()
-        styleSetter.style(headerStyle)
-        styleSetter.set()
-    }
 
     override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         sheet.range(top, left, bottom, right).style()
                 .style(cellStyle)
                 .set()
-    }
-
-    override fun <T : Any> setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle, excelField: ExcelField<T, out Any?>, isFillColor: Boolean, fillColor: String) {
-        val style = sheet.range(top, left, bottom, right)
-                .style()
-                .style(cellStyle)
-                .style(excelField.cellStyle)
-        if (isFillColor) {
-            style.fillColor(fillColor)
-        }
-        style.set()
     }
 
     override fun width(column: Int, width: Double) {

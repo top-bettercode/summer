@@ -84,6 +84,20 @@ class ExcelExport(val excel: IExcel) {
             this.headerStyle
     }
 
+    @JvmOverloads
+    fun headerStyle(top: Int, left: Int, bottom: Int = top, right: Int = left): RangeCellStyle {
+        val rangeCellStyle = RangeCellStyle(this.excel, top, left, bottom, right)
+        rangeCellStyle.style(headerStyle)
+        return rangeCellStyle
+    }
+
+    @JvmOverloads
+    fun cellStyle(top: Int, left: Int, bottom: Int = top, right: Int = left): RangeCellStyle {
+        val rangeCellStyle = RangeCellStyle(this.excel, top, left, bottom, right)
+        rangeCellStyle.style(cellStyle)
+        return rangeCellStyle
+    }
+
     fun bHeaderStyle(): ExcelExport {
         this.headerStyle.fillColor("d9d9d9").fontColor(Color.BLACK)
         return this
@@ -165,7 +179,8 @@ class ExcelExport(val excel: IExcel) {
 
     @JvmOverloads
     fun createTitle(title: String, cells: Int, headerStyle: CellStyle = this.headerStyle): ExcelExport {
-        this.excel.createTitle(row, column, title, cells, headerStyle)
+        this.excel.value(row, column, title)
+        excel.setCellStyle(row, column, row, column + cells - 1, headerStyle)
         return this
     }
 
@@ -189,9 +204,11 @@ class ExcelExport(val excel: IExcel) {
                 }
                 excel.setCellStyle(row, column, row, column, headerStyle)
 
-                if (template)
-                    excel.setCellStyle(row + 1, column, row + 100, column, this.cellStyle, excelField)
-
+                if (template) {
+                    val style = this.cellStyle.clone()
+                    style.style(excelField.cellStyle)
+                    excel.setCellStyle(row + 1, column, row + 100, column, style)
+                }
                 if (includeComment) {
                     val commentStr = excelField.comment
                     if (commentStr.isNotBlank()) {
@@ -340,7 +357,12 @@ class ExcelExport(val excel: IExcel) {
         val column = excelCell.column
         val row = excelCell.row
         val excelField = excelCell.excelField
-        this.excel.setCellStyle(row, column, row, column, this.cellStyle, excelField, excelCell.isFillColor, fillColor)
+        val style = this.cellStyle.clone()
+        style.style(excelField.cellStyle)
+        if (excelCell.isFillColor) {
+            style.fillColor(fillColor)
+        }
+        this.excel.setCellStyle(row, column, row, column, style)
 
         if (excelField.height != -1.0) {
             this.excel.rowHeight(row, excelField.height)
@@ -399,7 +421,10 @@ class ExcelExport(val excel: IExcel) {
             } else {
                 this.excel.width(column, width)
             }
-//            this.excel.setCellStyle(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column, this.cellStyle, excelField)
+            //设置样式
+//            val style = this.cellStyle.clone()
+//            style.style(excelField.cellStyle)
+//            excel.setCellStyle(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column, style)
         }
     }
 

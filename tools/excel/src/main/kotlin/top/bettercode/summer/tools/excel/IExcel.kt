@@ -11,9 +11,10 @@ import java.util.*
  */
 interface IExcel {
     fun newSheet(sheetname: String)
-    fun createTitle(row: Int, column: Int, title: String, cells: Int, headerStyle: CellStyle)
+    fun setCellStyle(top: Int, left: Int, cellStyle: CellStyle) {
+        setCellStyle(top, left, top, left, cellStyle)
+    }
     fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle)
-    fun <T : Any> setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle, excelField: ExcelField<T, *>, isFillColor: Boolean = false, fillColor: String = "")
     fun width(column: Int, width: Double)
     fun rowHeight(row: Int, height: Double)
     fun formula(row: Int, column: Int, expression: String?)

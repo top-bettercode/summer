@@ -11,7 +11,7 @@ import java.math.BigDecimal
 import java.util.*
 
 
-class CellStyle : Cloneable {
+open class CellStyle : Cloneable {
 
     var defaultValueFormatting: String? = null
 
@@ -221,6 +221,29 @@ class CellStyle : Cloneable {
             val xssfColor = XSSFColor(byteArrayOf(red.toByte(), green.toByte(), blue.toByte()))
             return xssfColor
         }
+    }
+
+    fun style(style: CellStyle): CellStyle {
+        style.valueFormatting?.let { this.valueFormatting = it }
+        style.fillColor?.let { this.fillColor = it }
+        style.fontColor?.let { this.fontColor = it }
+        style.fontName?.let { this.fontName = it }
+        style.fontSize?.let { this.fontSize = it }
+        style.bold?.let { this.bold = it }
+        style.italic?.let { this.italic = it }
+        style.underlined?.let { this.underlined = it }
+        style.horizontalAlignment?.let { this.horizontalAlignment = it }
+        style.verticalAlignment?.let { this.verticalAlignment = it }
+        style.wrapText?.let { this.wrapText = it }
+        style.rotation?.let { this.rotation = it }
+        style.borderStyle?.let { this.borderStyle = it }
+        style.borderStyleStr?.let { this.borderStyleStr = it }
+        style.borderStyles?.let { this.borderStyles = it }
+        style.borderStyleStrs?.let { this.borderStyleStrs = it }
+        style.borderColor?.let { this.borderColor = it }
+        style.borderColors?.let { this.borderColors = it }
+        style.protectionOptions?.let { this.protectionOptions = it }
+        return this
     }
 
     /**

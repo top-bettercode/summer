@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.excel
 import org.apache.poi.ss.usermodel.Comment
 import org.apache.poi.ss.usermodel.CreationHelper
 import org.apache.poi.ss.usermodel.Drawing
-import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.xssf.usermodel.*
@@ -36,15 +35,6 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
         sheet = workbook.createSheet(sheetname)
     }
 
-    override fun createTitle(row: Int, column: Int, title: String, cells: Int, headerStyle: CellStyle) {
-        sheet.row(row).cell(column).setCellValue(title)
-        val cellStyle = PoiCellStyle(workbook.createCellStyle())
-        cellStyle.style(workbook, headerStyle)
-        for (i in column until column + cells) {
-            sheet.row(row).cell(i).cellStyle = cellStyle.style
-        }
-    }
-
     override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         val poiCellStyle = PoiCellStyle(workbook.createCellStyle())
         poiCellStyle.style(workbook, cellStyle)
@@ -54,21 +44,6 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
             }
         }
 
-    }
-
-    override fun <T : Any> setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle, excelField: ExcelField<T, *>, isFillColor: Boolean, fillColor: String) {
-        val poiCellStyle = PoiCellStyle(workbook.createCellStyle())
-        poiCellStyle.style(workbook, cellStyle)
-        poiCellStyle.style(workbook, excelField.cellStyle)
-        if (isFillColor) {
-            poiCellStyle.setFillForegroundColor(CellStyle.xssfColor(fillColor))
-            poiCellStyle.fillPattern = FillPatternType.SOLID_FOREGROUND
-        }
-        for (i in top..bottom) {
-            for (j in left..right) {
-                sheet.row(i).cell(j).cellStyle = poiCellStyle.style
-            }
-        }
     }
 
     override fun width(column: Int, width: Double) {
