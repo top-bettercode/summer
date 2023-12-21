@@ -37,9 +37,9 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         styleSetter.set()
     }
 
-    override fun setHeaderStyle(top: Int, left: Int, bottom: Int, right: Int, headerStyle: CellStyle) {
+    override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         sheet.range(top, left, bottom, right).style()
-                .style(headerStyle)
+                .style(cellStyle)
                 .set()
     }
 
@@ -62,15 +62,15 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         this.sheet.rowHeight(row, height)
     }
 
-    override fun formula(row: Int, column: Int, expression: String) {
+    override fun formula(row: Int, column: Int, expression: String?) {
         sheet.formula(row, column, expression)
     }
 
-    override fun comment(row: Int, column: Int, commen: String) {
+    override fun comment(row: Int, column: Int, commen: String?) {
         sheet.comment(row, column, commen)
     }
 
-    override fun value(row: Int, column: Int, value: String) {
+    override fun value(row: Int, column: Int, value: String?) {
         this.sheet.value(row, column, value)
     }
 
@@ -78,31 +78,31 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         this.sheet.value(row, column)
     }
 
-    override fun value(row: Int, column: Int, value: Number) {
+    override fun value(row: Int, column: Int, value: Number?) {
         this.sheet.value(row, column, value)
     }
 
-    override fun value(row: Int, column: Int, value: Boolean) {
+    override fun value(row: Int, column: Int, value: Boolean?) {
         this.sheet.value(row, column, value)
     }
 
-    override fun value(row: Int, column: Int, value: Date) {
+    override fun value(row: Int, column: Int, value: Date?) {
         this.sheet.value(row, column, value)
     }
 
-    override fun value(row: Int, column: Int, value: LocalDateTime) {
+    override fun value(row: Int, column: Int, value: LocalDateTime?) {
         this.sheet.value(row, column, value)
     }
 
-    override fun value(row: Int, column: Int, value: LocalDate) {
+    override fun value(row: Int, column: Int, value: LocalDate?) {
         this.sheet.value(row, column, value)
     }
 
-    override fun value(row: Int, column: Int, value: ZonedDateTime) {
+    override fun value(row: Int, column: Int, value: ZonedDateTime?) {
         this.sheet.value(row, column, value)
     }
 
-    override fun dataValidation(row: Int, column: Int, dataValidation:  Array<out String>) {
+    override fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>) {
         val listDataValidation = AbsoluteListDataValidation(
                 sheet.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation)
         listDataValidation.add(sheet)

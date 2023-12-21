@@ -11,7 +11,7 @@ import java.math.BigDecimal
 import java.util.*
 
 
-class CellStyle {
+class CellStyle : Cloneable {
 
     var defaultValueFormatting: String? = null
 
@@ -466,5 +466,9 @@ class CellStyle {
         }
         protectionOptions!![option] = value
         return this
+    }
+
+    public override fun clone(): CellStyle {
+        return super.clone() as CellStyle
     }
 }

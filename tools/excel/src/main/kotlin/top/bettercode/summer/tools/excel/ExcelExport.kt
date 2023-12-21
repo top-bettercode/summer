@@ -68,12 +68,20 @@ class ExcelExport(val excel: IExcel) {
 
     private val columnWidths = ColumnWidths()
 
-    fun cellStyle(): CellStyle {
-        return this.cellStyle
+    @JvmOverloads
+    fun cellStyle(copy: Boolean = false): CellStyle {
+        return if (copy) {
+            cellStyle.clone()
+        } else
+            this.cellStyle
     }
 
-    fun headerStyle(): CellStyle {
-        return this.headerStyle
+    @JvmOverloads
+    fun headerStyle(copy: Boolean = false): CellStyle {
+        return if (copy)
+            headerStyle.clone()
+        else
+            this.headerStyle
     }
 
     fun bHeaderStyle(): ExcelExport {
@@ -179,7 +187,7 @@ class ExcelExport(val excel: IExcel) {
                 } else {
                     excel.width(column, width)
                 }
-                excel.setHeaderStyle(row, column, row, column, headerStyle)
+                excel.setCellStyle(row, column, row, column, headerStyle)
 
                 if (template)
                     excel.setCellStyle(row + 1, column, row + 100, column, this.cellStyle, excelField)
