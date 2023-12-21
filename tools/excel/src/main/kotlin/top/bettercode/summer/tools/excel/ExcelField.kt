@@ -51,7 +51,7 @@ class ExcelField<T, P : Any?> {
     var isPoiColumn: Boolean = false
 
     /**
-     * 富文本字段设置方法
+     * poi字段设置方法
      */
     var poiSetter: ((XSSFSheet, Cell, ExcelCell<T>) -> Unit)? = null
 
