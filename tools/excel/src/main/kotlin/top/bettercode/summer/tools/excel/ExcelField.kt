@@ -11,13 +11,11 @@ import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.resolver.UnitConverter
-import top.bettercode.summer.web.support.ApplicationContextHolder
 import top.bettercode.summer.web.support.code.CodeServiceHolder
 import java.io.Serializable
 import java.lang.invoke.SerializedLambda
 import java.lang.reflect.Method
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -375,26 +373,6 @@ class ExcelField<T, P : Any?> {
     }
 
     //--------------------------------------------
-
-    @JvmOverloads
-    fun percent(scale: Int = 2): ExcelField<T, P> {
-        return cell { property: P ->
-            property as Number
-            val result = (if (property is BigDecimal) property else BigDecimal(property.toString())).setScale(scale, RoundingMode.HALF_UP)
-            format("0.${"0".repeat(scale)}%")
-            result.toDouble()
-        }.property {
-            val value = it.toString().trim('%')
-            if (propertyType == BigDecimal::class.java) {
-                @Suppress("UNCHECKED_CAST")
-                BigDecimal(value).divide(BigDecimal(100)) as P
-            } else {
-                ApplicationContextHolder.conversionService.convert(BigDecimal(value).divide(BigDecimal(100)), propertyType!!)!!
-            }
-
-        }
-    }
-
     @JvmOverloads
     fun scale(scale: Int = 2): ExcelField<T, P> {
         return unit(1, scale)
