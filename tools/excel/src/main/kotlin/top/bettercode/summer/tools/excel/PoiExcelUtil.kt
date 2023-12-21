@@ -1,13 +1,10 @@
 package top.bettercode.summer.tools.excel
 
-import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CreationHelper
 import org.apache.poi.ss.usermodel.Drawing
 import org.apache.poi.xssf.usermodel.XSSFShape
-import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.InputStream
-import java.io.OutputStream
 
 
 /**
@@ -15,24 +12,10 @@ import java.io.OutputStream
  */
 object PoiExcelUtil {
 
-    fun setPoi(poiCells: Map<String, List<ExcelCell<Any>>>,
-               inputStream: InputStream, outputStream: OutputStream) {
-        val wb = XSSFWorkbook(inputStream)
-        poiCells.forEach { (sheetName, cells) ->
-            val sheet = wb.getSheet(sheetName)
-            for (cell in cells) {
-                val poiCell: Cell = sheet.getRow(cell.row).getCell(cell.column)
-                (cell.excelField.poiSetter!!)(sheet, poiCell, cell)
-            }
-        }
-        wb.write(outputStream)
-        wb.close()
-        outputStream.close()
-    }
-
-    val imageSetter: ((XSSFSheet, Cell, ExcelCell<*>) -> Unit) = { sheet, _, cell ->
-        val wb = sheet.workbook
-        val helper: CreationHelper = wb.creationHelper
+    val imageSetter: ((PoiExcel, ExcelCell<*>) -> Unit) = { excel, cell ->
+        val workbook = excel.workbook
+        val sheet = excel.sheet
+        val helper: CreationHelper = workbook.creationHelper
         val drawing: Drawing<XSSFShape> = sheet.createDrawingPatriarch()
         if (cell is ExcelRangeCell<*> && cell.excelField.isMerge) {
             var lastRangeTop = cell.lastRangeTop
@@ -41,21 +24,21 @@ object PoiExcelUtil {
                 lastRangeTop += rowHeight / 2
             }
             if (cell.newRange) {
-                drawImage(cell.preCellValue, wb, drawing, helper, cell.column,
+                drawImage(cell.preCellValue, workbook, drawing, helper, cell.column,
                         lastRangeTop,
                         lastRangeTop + 1)
                 if (cell.isLastRow) {
-                    drawImage(cell.cellValue, wb, drawing, helper, cell.column,
+                    drawImage(cell.cellValue, workbook, drawing, helper, cell.column,
                             cell.row,
                             cell.row + 1)
                 }
             } else if (cell.isLastRow) {
-                drawImage(cell.cellValue, wb, drawing, helper, cell.column,
+                drawImage(cell.cellValue, workbook, drawing, helper, cell.column,
                         lastRangeTop,
                         lastRangeTop + 1)
             }
         } else {
-            drawImage(cell.cellValue, wb, drawing, helper, cell.column,
+            drawImage(cell.cellValue, workbook, drawing, helper, cell.column,
                     cell.row,
                     cell.row + 1)
         }

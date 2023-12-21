@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import java.io.FileOutputStream
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
 
 /**
  * @author Peter Wu
@@ -104,7 +102,7 @@ class ExcelImageTest {
         list.add(DataBean(25))
         val s = System.currentTimeMillis()
         val filename = "build/testMergeExportWithImage.xlsx"
-        ExcelExport.withPoi(Files.newOutputStream(Paths.get(filename))).sheet("表格")
+        ExcelExport.of(filename, true).sheet("表格")
                 .setMergeData(list, excelMergeFields)
                 .finish()
         val e = System.currentTimeMillis()

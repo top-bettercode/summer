@@ -3,8 +3,6 @@ package top.bettercode.summer.tools.java;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.compress.utils.IOUtils;
@@ -84,7 +82,7 @@ public class ExcelImageTest {
   }
 
   @Test
-  public void testMergeExportWithImage() throws IOException {
+  public void testMergeExportWithImage() {
 
     ExcelConverter<top.bettercode.summer.tools.java.DataBean, InputStream> excelConverter =
         from -> {
@@ -101,7 +99,7 @@ public class ExcelImageTest {
                 .mergeBy(top.bettercode.summer.tools.java.DataBean::getIntCode),
             ExcelField.of("编码B", top.bettercode.summer.tools.java.DataBean::getInteger)
                 .mergeBy(top.bettercode.summer.tools.java.DataBean::getInteger),
-            ExcelField.of("名称", from -> new String[] {"abc", "1"}),
+            ExcelField.of("名称", from -> new String[]{"abc", "1"}),
             ExcelField.of("描述", top.bettercode.summer.tools.java.DataBean::getName),
             ExcelField.of("描述C", top.bettercode.summer.tools.java.DataBean::getDate),
             ExcelField.image("图片1", excelConverter)
@@ -127,7 +125,7 @@ public class ExcelImageTest {
 
     String filename = "build/testMergeExportWithImage.xlsx";
 
-    ExcelExport.withPoi(Files.newOutputStream(Paths.get(filename)))
+    ExcelExport.of(filename, true)
         .sheet("表格")
         .setMergeData(list, excelMergeFields)
         .finish();

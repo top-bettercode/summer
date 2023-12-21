@@ -11,7 +11,7 @@ internal class AbsoluteListDataValidation
  *
  * @param range The Range this validation is applied to
  * @param list  The list this validation
- */(private val range: Range, private val list: String?) : DataValidation {
+ */(private val range: Range, private val list: Array<out String>) : DataValidation {
     private var allowBlank = true
     private var showDropdown = true
     private var errorStyle = DataValidationErrorStyle.INFORMATION
@@ -110,7 +110,7 @@ internal class AbsoluteListDataValidation
                 .append("\" error=\"")
                 .append(error)
                 .append("\"><formula1>\"")
-                .append(list)
+                .append(list.joinToString(","))
                 .append("\"</formula1></dataValidation>")
     }
 

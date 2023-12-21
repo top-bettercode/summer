@@ -1,13 +1,15 @@
 package top.bettercode.summer.tools.excel
 
-import org.dhatim.fastexcel.*
+import org.dhatim.fastexcel.BorderStyle
+import org.dhatim.fastexcel.Color
 import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import top.bettercode.summer.tools.excel.CellStyle.Companion.style
 import top.bettercode.summer.web.form.IFormkeyService.Companion.log
-import java.io.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 import java.net.URLEncoder
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -21,22 +23,9 @@ import javax.servlet.http.HttpServletResponse
 import kotlin.collections.set
 
 /**
- * 导出Excel文件（导出“XLSX”格式，支持大数据量导出 ）
+ * 导出Excel文件（导出“XLSX”格式）
  */
-class ExcelExport {
-    private val byteArrayOutputStream: ByteArrayOutputStream?
-    private val outputStream: OutputStream?
-
-    /**
-     * 工作薄对象
-     */
-    val workbook: Workbook
-
-    /**
-     * 工作表对象
-     */
-    var sheet: Worksheet? = null
-        private set
+class ExcelExport(val excel: IExcel) {
 
     /**
      * 当前行号
@@ -78,30 +67,6 @@ class ExcelExport {
     }
 
     private val columnWidths = ColumnWidths()
-    private val poiCells: MutableMap<String, MutableList<ExcelCell<Any>>> = mutableMapOf()
-
-    /**
-     * 构造函数
-     *
-     * @param outputStream          Output stream eventually holding the serialized workbook.
-     * @param byteArrayOutputStream byteArrayOutputStream
-     */
-    private constructor(outputStream: OutputStream, byteArrayOutputStream: ByteArrayOutputStream) {
-        this.byteArrayOutputStream = byteArrayOutputStream
-        this.outputStream = outputStream
-        workbook = Workbook(byteArrayOutputStream, "", "1.0")
-    }
-
-    /**
-     * 构造函数
-     *
-     * @param outputStream Output stream eventually holding the serialized workbook.
-     */
-    private constructor(outputStream: OutputStream) {
-        byteArrayOutputStream = null
-        this.outputStream = null
-        workbook = Workbook(outputStream, "", "1.0")
-    }
 
     fun cellStyle(): CellStyle {
         return this.cellStyle
@@ -120,8 +85,8 @@ class ExcelExport {
      * @param sheetname sheetname
      * @return this
      */
-    fun sheet(sheetname: String?): ExcelExport {
-        sheet = workbook.newWorksheet(sheetname)
+    fun sheet(sheetname: String): ExcelExport {
+        excel.newSheet(sheetname)
         setRowAndColumn(0, 0)
         columnWidths.clear()
         return this
@@ -192,42 +157,41 @@ class ExcelExport {
 
     @JvmOverloads
     fun createTitle(title: String, cells: Int, headerStyle: CellStyle = this.headerStyle): ExcelExport {
-        sheet!!.value(row, column, title)
-        val styleSetter = sheet!!.range(row, column, row, column + cells - 1).style()
-        styleSetter.style(headerStyle)
-        styleSetter.set()
+        this.excel.createTitle(row, column, title, cells, headerStyle)
         return this
     }
 
-    fun <T> createHeader(excelFields: Iterable<ExcelField<T, out Any?>>) {
+    fun <T : Any> createHeader(excelFields: Iterable<ExcelField<T, out Any?>>, template: Boolean = false) {
         if (!includeHeader)
             return
         // Create header
         run {
             for (excelField in excelFields) {
-                if (byteArrayOutputStream == null && excelField.isPoiColumn) {
+                if (this.excel !is PoiExcel && excelField.cellSetter != null) {
                     continue
                 }
                 val t = excelField.title
-                sheet!!.value(row, column, t)
+                excel.value(row, column, t)
                 val width = excelField.width
                 if (width == -1.0) {
                     columnWidths.put(column, t)
-                    sheet!!.width(column, columnWidths.width(column))
+                    excel.width(column, columnWidths.width(column))
                 } else {
-                    sheet!!.width(column, width)
+                    excel.width(column, width)
                 }
-                setHeaderStyle()
-                val styleSetter = style(sheet!!.range(row + 1, column, row + 1000, column))
-                styleSetter.style(excelField.cellStyle)
+                excel.setHeaderStyle(row, column, row, column, headerStyle)
+
+                if (template)
+                    excel.setCellStyle(row + 1, column, row + 100, column, this.cellStyle, excelField)
+
                 if (includeComment) {
                     val commentStr = excelField.comment
                     if (commentStr.isNotBlank()) {
-                        sheet!!.comment(row, column, commentStr)
+                        excel.comment(row, column, commentStr)
                     }
                 }
-                if (includeDataValidation && excelField.dataValidation.isNotEmpty()) {
-                    dataValidation(column, excelField.dataValidation.joinToString(","))
+                if (includeDataValidation && excelField.dataValidation.iterator().hasNext()) {
+                    this.excel.dataValidation(row, column, excelField.dataValidation)
                 }
                 column++
             }
@@ -237,15 +201,8 @@ class ExcelExport {
     }
 
 
-    fun dataValidation(column: Int, dataValidation: Iterable<String>): ExcelExport {
-        return dataValidation(column, dataValidation.joinToString(","))
-    }
-
-    fun dataValidation(column: Int, dataValidation: String?): ExcelExport {
-        Assert.notNull(sheet, "请先初始化sheet")
-        val listDataValidation = AbsoluteListDataValidation(
-                sheet!!.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation)
-        listDataValidation.add(sheet!!)
+    fun dataValidation(column: Int, vararg dataValidation: String): ExcelExport {
+        this.excel.dataValidation(row, column, dataValidation)
         return this
     }
 
@@ -265,16 +222,15 @@ class ExcelExport {
     @JvmOverloads
     fun <T : Any> setData(list: Iterable<T>, excelFields: Iterable<ExcelField<T, out Any?>>,
                           converter: (T) -> T = { o: T -> o }): ExcelExport {
-        Assert.notNull(sheet, "表格未初始化")
-        createHeader(excelFields)
         val iterator = list.iterator()
+        createHeader(excelFields, !iterator.hasNext())
         val firstRow = row
         val firstColumn = column
         while (iterator.hasNext()) {
             val e = converter(iterator.next())
             val lastRow = !iterator.hasNext()
             for (excelField in excelFields) {
-                if (byteArrayOutputStream == null && excelField.isPoiColumn) {
+                if (this.excel !is PoiExcel && excelField.cellSetter != null) {
                     continue
                 }
                 setCell(ExcelCell(row, column, firstRow, lastRow, excelField, e))
@@ -301,14 +257,13 @@ class ExcelExport {
      * @return list 数据列表
     </T> */
     fun <T : Any> setMergeData(list: Iterable<T>, excelFields: Iterable<ExcelField<T, out Any?>>, converter: (T) -> T): ExcelExport {
-        Assert.notNull(sheet, "表格未初始化")
         createHeader(excelFields)
         val iterator = list.iterator()
         val firstRow = row
         val firstColumn = column
         var index = 0
-        val firstField: ExcelField<T, *> = if (byteArrayOutputStream == null) {
-            excelFields.find { o: ExcelField<T, *> -> !o.isPoiColumn }
+        val firstField: ExcelField<T, *> = if (this.excel !is PoiExcel) {
+            excelFields.find { o: ExcelField<T, *> -> o.cellSetter == null }
                     ?: throw ExcelException("无可导出项目")
         } else {
             excelFields.first()
@@ -324,7 +279,7 @@ class ExcelExport {
             val indexCells: MutableList<ExcelRangeCell<T>>? = if (mergeFirstColumn) null else ArrayList()
             var merge: Boolean
             for (excelField in excelFields) {
-                if (byteArrayOutputStream == null && excelField.isPoiColumn) {
+                if (this.excel !is PoiExcel && excelField.cellSetter != null) {
                     continue
                 }
                 merge = excelField.isMerge
@@ -376,55 +331,50 @@ class ExcelExport {
     private fun <T : Any> setCell(excelCell: ExcelCell<T>) {
         val column = excelCell.column
         val row = excelCell.row
-        val styleSetter = style(row, column)
         val excelField = excelCell.excelField
-        styleSetter.style(excelField.cellStyle)
-        if (excelCell.isFillColor) {
-            styleSetter.fillColor(fillColor)
-        }
+        this.excel.setCellStyle(row, column, row, column, this.cellStyle, excelField, excelCell.isFillColor, fillColor)
+
         if (excelField.height != -1.0) {
-            sheet!!.rowHeight(row, excelField.height)
-        }
-        styleSetter.set()
-        if (excelField.isPoiColumn) {
-            @Suppress("UNCHECKED_CAST")
-            poiCells.computeIfAbsent(sheet!!.name) { mutableListOf() }.add(excelCell as ExcelCell<Any>)
+            this.excel.rowHeight(row, excelField.height)
         }
         if (excelCell.needSetValue()) {
             val cellValue = excelCell.cellValue
-            if (cellValue == null || excelField.isPoiColumn) {
-                sheet!!.value(row, column)
+            if (cellValue == null) {
+                this.excel.value(row, column)
+            } else if (excelField.cellSetter != null) {
+                if (this.excel is PoiExcel)
+                    (excelField.cellSetter!!)(this.excel, excelCell)
             } else if (excelField.isFormula) {
-                sheet!!.formula(row, column, cellValue as String?)
+                this.excel.formula(row, column, cellValue as String)
             } else if (cellValue is String) {
-                sheet!!.value(row, column, cellValue)
+                this.excel.value(row, column, cellValue)
             } else if (cellValue is Number) {
-                sheet!!.value(row, column, cellValue)
+                this.excel.value(row, column, cellValue)
             } else if (cellValue is Boolean) {
-                sheet!!.value(row, column, cellValue)
+                this.excel.value(row, column, cellValue)
             } else if (cellValue is Date) {
-                sheet!!.value(row, column, cellValue)
+                this.excel.value(row, column, cellValue)
             } else if (cellValue is LocalDateTime) {
-                sheet!!.value(row, column, cellValue)
+                this.excel.value(row, column, cellValue)
             } else if (cellValue is LocalDate) {
-                sheet!!.value(row, column, cellValue)
+                this.excel.value(row, column, cellValue)
             } else if (cellValue is ZonedDateTime) {
-                sheet!!.value(row, column, cellValue)
+                this.excel.value(row, column, cellValue)
             } else {
                 throw IllegalArgumentException("No supported cell type for " + cellValue.javaClass)
             }
         } else {
-            sheet!!.value(excelCell.row, column)
+            this.excel.value(excelCell.row, column)
         }
         val width = excelField.width
         if (width == -1.0) {
             val cellValue = excelCell.cellValue
             columnWidths.put(column, if (excelField.isDateField) excelField.cellStyle.valueFormatting else cellValue)
             if (excelCell.isLastRow) {
-                sheet!!.width(column, columnWidths.width(column))
+                this.excel.width(column, columnWidths.width(column))
             }
         } else {
-            sheet!!.width(column, width)
+            this.excel.width(column, width)
         }
     }
 
@@ -432,37 +382,19 @@ class ExcelExport {
         val column = excelCell.column
         setCell(excelCell)
         if (excelCell.needRange) {
-            sheet!!.range(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column)
-                    .merge()
+            this.excel.merge(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column)
+
             val excelField = excelCell.excelField
             val width = excelField.width
             if (width == -1.0) {
-                sheet!!.width(column, columnWidths.width(column))
+                this.excel.width(column, columnWidths.width(column))
             } else {
-                sheet!!.width(column, width)
+                this.excel.width(column, width)
             }
-            val styleSetter = style(sheet!!.range(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column))
-            styleSetter.style(excelField.cellStyle)
-
-            styleSetter.set()
+//            this.excel.setCellStyle(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column, this.cellStyle, excelField)
         }
     }
 
-    private fun setHeaderStyle() {
-        val styleSetter = sheet!!.range(row, column, row, column).style()
-        styleSetter.style(headerStyle)
-        styleSetter.set()
-    }
-
-    fun style(row: Int, column: Int): StyleSetter {
-        return style(sheet!!.range(row, column, row, column))
-    }
-
-    fun style(range: Range): StyleSetter {
-        val styleSetter = range.style()
-        styleSetter.style(cellStyle)
-        return styleSetter
-    }
 
     fun <T : Any> template(excelFields: Array<ExcelField<T, *>>): ExcelExport {
         return template(excelFields.asIterable())
@@ -480,20 +412,10 @@ class ExcelExport {
     fun finish(): ExcelExport {
         if (!finish) {
             finish = try {
-                workbook.finish()
+                this.excel.finish()
                 true
             } catch (e: IOException) {
                 throw RuntimeException(e)
-            }
-        }
-        if (byteArrayOutputStream != null) {
-            Assert.notNull(outputStream, "输出流未设置")
-            if (poiCells.isEmpty()) {
-                outputStream!!.write(byteArrayOutputStream.toByteArray())
-            } else {
-                PoiExcelUtil.setPoi(poiCells,
-                        ByteArrayInputStream(byteArrayOutputStream.toByteArray()), outputStream!!)
-                poiCells.clear()
             }
         }
         return this
@@ -505,37 +427,11 @@ class ExcelExport {
          * @return ExcelExport
          * @throws FileNotFoundException FileNotFoundException
          */
+        @JvmOverloads
         @JvmStatic
-        fun of(filename: String): ExcelExport {
-            return ExcelExport(Files.newOutputStream(Paths.get(filename)))
-        }
-
-        /**
-         * @param file filename eventually holding the serialized workbook .
-         * @return ExcelExport
-         * @throws FileNotFoundException FileNotFoundException
-         */
-        @JvmStatic
-        fun of(file: File): ExcelExport {
-            val parentFile = file.parentFile
-            if (!parentFile.exists()) {
-                parentFile.mkdirs()
-            }
-            return ExcelExport(Files.newOutputStream(file.toPath()))
-        }
-
-        /**
-         * @param outputStream Output stream eventually holding the serialized workbook.
-         * @return ExcelExport
-         */
-        @JvmStatic
-        fun of(outputStream: OutputStream): ExcelExport {
-            return ExcelExport(outputStream)
-        }
-
-        @JvmStatic
-        fun withPoi(outputStream: OutputStream): ExcelExport {
-            return ExcelExport(outputStream, ByteArrayOutputStream())
+        fun of(filename: String, poi: Boolean = false): ExcelExport {
+            val outputStream = Files.newOutputStream(Paths.get(filename))
+            return ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
         }
 
         /**
@@ -547,7 +443,7 @@ class ExcelExport {
          */
         @JvmOverloads
         @JvmStatic
-        fun export(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
+        fun export(fileName: String, poi: Boolean = false, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
@@ -565,7 +461,7 @@ class ExcelExport {
                     }
                     val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
                     Files.newOutputStream(tmpFile.toPath()).use { outputStream ->
-                        val excelExport = createExcelExport(outputStream)
+                        val excelExport = ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
                         consumer.accept(excelExport)
                         excelExport.finish()
                     }
@@ -576,7 +472,8 @@ class ExcelExport {
                 }
                 StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
             } else {
-                val excelExport = createExcelExport(response.outputStream)
+                val outputStream = response.outputStream
+                val excelExport = ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
                 consumer.accept(excelExport)
                 excelExport.finish()
             }
@@ -591,8 +488,8 @@ class ExcelExport {
          */
         @JvmOverloads
         @JvmStatic
-        fun sheet(fileName: String, createExcelExport: (OutputStream) -> ExcelExport = { outputStream -> of(outputStream) }, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
-            export(fileName, createExcelExport, cacheKey) {
+        fun sheet(fileName: String, poi: Boolean = false, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
+            export(fileName = fileName, poi = poi, cacheKey = cacheKey) {
                 it.sheet("sheet1")
                 consumer.accept(it)
             }

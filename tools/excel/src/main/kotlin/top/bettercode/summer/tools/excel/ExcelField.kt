@@ -1,8 +1,6 @@
 package top.bettercode.summer.tools.excel
 
 import javassist.bytecode.SignatureAttribute
-import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
@@ -46,14 +44,9 @@ class ExcelField<T, P : Any?> {
     val isIndexColumn: Boolean
 
     /**
-     * 富文本字段
-     */
-    var isPoiColumn: Boolean = false
-
-    /**
      * poi字段设置方法
      */
-    var poiSetter: ((XSSFSheet, Cell, ExcelCell<T>) -> Unit)? = null
+    var cellSetter: ((PoiExcel, ExcelCell<T>) -> Unit)? = null
 
     /**
      * 公式字段
@@ -327,7 +320,7 @@ class ExcelField<T, P : Any?> {
                     (property as Collection<*>).joinToString(",")
                 }
 
-                isPoiColumn -> {
+                cellSetter != null -> {
                     property
                 }
 
@@ -473,9 +466,8 @@ class ExcelField<T, P : Any?> {
         return this
     }
 
-    fun poiSetter(poiSetter: (XSSFSheet, Cell, ExcelCell<T>) -> Unit): ExcelField<T, P> {
-        this.poiSetter = poiSetter
-        this.isPoiColumn = true
+    fun cellSetter(cellSetter: (PoiExcel, ExcelCell<T>) -> Unit): ExcelField<T, P> {
+        this.cellSetter = cellSetter
         return this
     }
 
@@ -498,10 +490,9 @@ class ExcelField<T, P : Any?> {
     }
 
     @Suppress("UNCHECKED_CAST")
-    constructor(title: String, propertyGetter: ExcelConverter<T, P?>, isPoiColumn: Boolean) {
+    constructor(title: String, propertyGetter: ExcelConverter<T, P?>) {
         this.title = title
         this.propertyGetter = propertyGetter
-        this.isPoiColumn = isPoiColumn
         try {
             val javaClass = propertyGetter::class.java
             val declaredFields = javaClass.declaredFields
@@ -556,16 +547,14 @@ class ExcelField<T, P : Any?> {
         this.title = title
         this.isIndexColumn = indexColumn
         this.isFormula = formula
-        this.isPoiColumn = false
         this.cellStyle.format(ExcelCell.DEFAULT_FORMAT)
     }
 
     @JvmOverloads
-    constructor(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, imageColumn: Boolean = false, isIndexColumn: Boolean = false, isFormula: Boolean = false) {
+    constructor(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, isIndexColumn: Boolean = false, isFormula: Boolean = false) {
         this.title = title
         this.propertyType = propertyType
         this.propertyGetter = propertyGetter
-        this.isPoiColumn = imageColumn
         this.isIndexColumn = isIndexColumn
         this.isFormula = isFormula
 
@@ -735,23 +724,23 @@ class ExcelField<T, P : Any?> {
         </T></P> */
         @JvmStatic
         fun <T, P> of(title: String, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
-            return ExcelField(title, propertyGetter, isPoiColumn = false)
+            return ExcelField(title, propertyGetter)
         }
 
         @JvmStatic
         @JvmOverloads
-        fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, imageColumn: Boolean = false, isIndexColumn: Boolean = false, isFormula: Boolean = false): ExcelField<T, P> {
-            return ExcelField(title, propertyType, propertyGetter, imageColumn, isIndexColumn, isFormula)
+        fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, isIndexColumn: Boolean = false, isFormula: Boolean = false): ExcelField<T, P> {
+            return ExcelField(title, propertyType, propertyGetter, isIndexColumn, isFormula)
         }
 
         @JvmStatic
-        fun <T, P> poi(title: String, propertyGetter: ExcelConverter<T, P?>, poiSetter: (XSSFSheet, Cell, ExcelCell<T>) -> Unit): ExcelField<T, P> {
-            return ExcelField(title, propertyGetter, isPoiColumn = true).poiSetter(poiSetter)
+        fun <T, P> poi(title: String, propertyGetter: ExcelConverter<T, P?>, cellSetter: (PoiExcel, ExcelCell<T>) -> Unit): ExcelField<T, P> {
+            return ExcelField(title, propertyGetter).cellSetter(cellSetter)
         }
 
         @JvmStatic
         fun <T, P> image(title: String, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
-            return ExcelField(title, propertyGetter, isPoiColumn = true).poiSetter(PoiExcelUtil.imageSetter)
+            return ExcelField(title, propertyGetter).cellSetter(PoiExcelUtil.imageSetter)
         }
 
         //--------------------------------------------

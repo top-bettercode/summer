@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.excel
 /**
  * Define horizontal alignment.
  * [here](https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx).
+ *
  * <pre>
  * Member name 	Description
  * General 	General Horizontal Alignment. When the item is serialized out as xml, its value is "general".
@@ -13,9 +14,28 @@ package top.bettercode.summer.tools.excel
  * Justify 	Justify. When the item is serialized out as xml, its value is "justify".
  * CenterContinuous 	Center Continuous Horizontal Alignment. When the item is serialized out as xml, its value is "centerContinuous".
  * Distributed 	Distributed Horizontal Alignment. When the item is serialized out as xml, its value is "distributed".
+ *
+ * https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/cc802119(v=office.14)
+ *
+ *
+ * Top 	Align Top. When the item is serialized out as xml, its value is "top".
+ * 	Center 	Centered Vertical Alignment. When the item is serialized out as xml, its value is "center".
+ * 	Bottom 	Aligned To Bottom. When the item is serialized out as xml, its value is "bottom".
+ * 	Justify 	Justified Vertically. When the item is serialized out as xml, its value is "justify".
+ * 	Distributed 	Distributed Vertical Alignment. When the item is serialized out as xml, its value is "distributed".
 </pre> *
  */
 enum class Alignment(val value: String) {
+
+    /**
+     * 上
+     */
+    TOP("top"),
+    /**
+     * 下
+     */
+    BOTTOM("bottom"),
+
     /**
      * 默认
      */

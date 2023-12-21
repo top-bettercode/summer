@@ -1,11 +1,15 @@
 package top.bettercode.summer.tools.excel
 
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.usermodel.XSSFColor
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.BorderSide
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.ProtectionOption
 import org.dhatim.fastexcel.StyleSetter
 import java.math.BigDecimal
 import java.util.*
+
 
 class CellStyle {
 
@@ -21,21 +25,6 @@ class CellStyle {
      * RGB fill color.
      */
     var fillColor: String? = null
-
-    /**
-     * RGB color for shading of alternate rows.
-     */
-    var alternateShadingFillColor: String? = null
-
-    /**
-     * RGB color for shading Nth rows.
-     */
-    var shadingFillColor: String? = null
-
-    /**
-     * Shading row frequency.
-     */
-    var eachNRows: Int? = null
 
     /**
      * Bold flag.
@@ -106,8 +95,6 @@ class CellStyle {
         fun StyleSetter.style(style: CellStyle): StyleSetter {
             style.valueFormatting?.let { format(it) }
             style.fillColor?.let { fillColor(it) }
-            style.alternateShadingFillColor?.let { shadeAlternateRows(it) }
-            style.shadingFillColor?.let { shadeRows(it, style.eachNRows ?: 0) }
             style.fontColor?.let { fontColor(it) }
             style.fontName?.let { fontName(it) }
             style.fontSize?.let { fontSize(it) }
@@ -126,6 +113,113 @@ class CellStyle {
             style.borderColors?.forEach { (side, borderColor) -> borderColor(side, borderColor) }
             style.protectionOptions?.forEach { (option, value) -> protectionOption(option, value) }
             return this
+        }
+
+        @JvmStatic
+        fun PoiCellStyle.style(workbook: XSSFWorkbook, style: CellStyle): PoiCellStyle {
+            style.valueFormatting?.let {
+                val dataFormat: DataFormat = workbook.createDataFormat()
+                val currencyFormat = dataFormat.getFormat(it)
+                this.dataFormat = currencyFormat
+            }
+            style.fillColor?.let {
+                // 设置背景颜色
+                this.setFillForegroundColor(xssfColor(it))
+                this.fillPattern = FillPatternType.SOLID_FOREGROUND
+            }
+
+            // 设置字体样式
+            val font = this.poiFont ?: workbook.createFont()
+            this.poiFont = font
+            style.fontColor?.let {
+                font.setColor(xssfColor(it))
+            }
+            style.fontName?.let { font.fontName = it }
+            style.fontSize?.let { font.fontHeightInPoints = it.toShort() }
+            style.bold?.let { font.bold = it }
+            style.italic?.let { font.italic = it }
+            style.underlined?.let {
+                if (it)
+                    font.setUnderline(FontUnderline.SINGLE)
+            }
+            this.setFont(font)
+
+            style.horizontalAlignment?.let {
+                alignment = HorizontalAlignment.valueOf(it.uppercase())
+            }
+            style.verticalAlignment?.let { verticalAlignment = VerticalAlignment.valueOf(it.uppercase()) }
+            style.wrapText?.let { this.wrapText = it }
+            style.rotation?.let { this.rotation = it.toShort() }
+
+            style.borderStyle?.let {
+                val borderStyle = org.apache.poi.ss.usermodel.BorderStyle.valueOf(it.name)
+                this.borderBottom = borderStyle
+                this.borderLeft = borderStyle
+                this.borderRight = borderStyle
+                this.borderTop = borderStyle
+            }
+            style.borderStyleStr?.let {
+                val borderStyle = org.apache.poi.ss.usermodel.BorderStyle.valueOf(it)
+                this.borderBottom = borderStyle
+                this.borderLeft = borderStyle
+                this.borderRight = borderStyle
+                this.borderTop = borderStyle
+            }
+            style.borderStyles?.forEach { (side, borderStyle) ->
+                val poiBorderStyle = org.apache.poi.ss.usermodel.BorderStyle.valueOf(borderStyle.name)
+                when (side) {
+                    BorderSide.TOP -> this.borderTop = poiBorderStyle
+                    BorderSide.LEFT -> this.borderLeft = poiBorderStyle
+                    BorderSide.BOTTOM -> this.borderBottom = poiBorderStyle
+                    BorderSide.RIGHT -> this.borderRight = poiBorderStyle
+                    else -> {}
+                }
+            }
+            style.borderStyleStrs?.forEach { (side, borderStyle) ->
+                val poiBorderStyle = org.apache.poi.ss.usermodel.BorderStyle.valueOf(borderStyle)
+                when (side) {
+                    BorderSide.TOP -> this.borderTop = poiBorderStyle
+                    BorderSide.LEFT -> this.borderLeft = poiBorderStyle
+                    BorderSide.BOTTOM -> this.borderBottom = poiBorderStyle
+                    BorderSide.RIGHT -> this.borderRight = poiBorderStyle
+                    else -> {}
+                }
+            }
+            style.borderColor?.let {
+                val xssfColor = xssfColor(it)
+                this.bottomBorderColor = xssfColor.index
+                this.leftBorderColor = xssfColor.index
+                this.rightBorderColor = xssfColor.index
+                this.topBorderColor = xssfColor.index
+            }
+            style.borderColors?.forEach { (side, borderColor) ->
+                val xssfColor = xssfColor(borderColor)
+                when (side) {
+                    BorderSide.TOP -> topBorderColor = xssfColor.index
+                    BorderSide.LEFT -> leftBorderColor = xssfColor.index
+                    BorderSide.BOTTOM -> bottomBorderColor = xssfColor.index
+                    BorderSide.RIGHT -> rightBorderColor = xssfColor.index
+                    else -> {}
+                }
+            }
+            style.protectionOptions?.forEach { (option, value) ->
+                when (option) {
+                    ProtectionOption.HIDDEN -> this.hidden = value
+                    ProtectionOption.LOCKED -> this.locked = value
+                }
+            }
+
+            return this
+        }
+
+        fun xssfColor(hexColor: String): XSSFColor {
+            // 将字符串表示的十六进制颜色转换为RGB值
+            val red: Int = hexColor.substring(0, 2).toInt(16)
+            val green: Int = hexColor.substring(2, 4).toInt(16)
+            val blue: Int = hexColor.substring(4, 6).toInt(16)
+
+            val xssfColor = XSSFColor(byteArrayOf(red.toByte(), green.toByte(), blue.toByte()))
+            return xssfColor
         }
     }
 
@@ -150,30 +244,6 @@ class CellStyle {
      */
     fun fillColor(rgb: String?): CellStyle {
         fillColor = rgb
-        return this
-    }
-
-    /**
-     * Shade alternate rows.
-     *
-     * @param rgb RGB shading color.
-     * @return This style setter.
-     */
-    fun shadeAlternateRows(rgb: String?): CellStyle {
-        alternateShadingFillColor = rgb
-        return this
-    }
-
-    /**
-     * Shade Nth rows.
-     *
-     * @param rgb       RGB shading color.
-     * @param eachNRows shading frequency.
-     * @return This style setter.
-     */
-    fun shadeRows(rgb: String?, eachNRows: Int): CellStyle {
-        shadingFillColor = rgb
-        this.eachNRows = eachNRows
         return this
     }
 

@@ -2,7 +2,13 @@ package top.bettercode.summer.tools.java;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.*;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.core.io.ClassPathResource;
 import top.bettercode.summer.tools.excel.ExcelExport;
 import top.bettercode.summer.tools.excel.ExcelField;
@@ -18,8 +24,11 @@ import top.bettercode.summer.tools.lang.util.StringUtil;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ExcelTest {
 
+  protected String nameSuff = "1";
+
   @BeforeEach
-  public void setUp() {}
+  public void setUp() {
+  }
 
   @Test
   void testPrimitive() {
@@ -31,10 +40,10 @@ public class ExcelTest {
   private final ExcelField<DataBean, ?>[] excelFields =
       ArrayUtil.of(
           ExcelField.index("序号"),
-          ExcelField.of("编码1", DataBean::getIntCode),
-          ExcelField.of("编码2", DataBean::getInteger),
+          ExcelField.of("编码1", DataBean::getIntCode).height(20),
+          ExcelField.of("编码2", DataBean::getInteger).comment("批注"),
           ExcelField.of("编码3", DataBean::getLongl),
-          ExcelField.of("编码4", DataBean::getDoublel),
+          ExcelField.of("编码4", DataBean::getDoublel).comment("批注2"),
           ExcelField.of("编码5", DataBean::getFloatl),
           ExcelField.of("编码6", DataBean::getName),
           ExcelField.of("编码7", DataBean::getDate),
@@ -50,10 +59,11 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    ExcelExport.of("build/testExport.xlsx").sheet("表格").setData(list, excelFields).finish();
+    String filename = "build/testExport" + nameSuff + ".xlsx";
+    getExcelExport(filename).sheet("表格").setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
-    ExcelTestUtil.openExcel("build/testExport.xlsx");
+    ExcelTestUtil.openExcel(filename);
   }
 
   private final ExcelField<top.bettercode.summer.tools.java.DataBean, ?>[] excelMergeFields =
@@ -64,7 +74,7 @@ public class ExcelTest {
               .mergeBy(top.bettercode.summer.tools.java.DataBean::getIntCode),
           ExcelField.of("编码B", top.bettercode.summer.tools.java.DataBean::getInteger)
               .mergeBy(top.bettercode.summer.tools.java.DataBean::getInteger),
-          ExcelField.of("名称", from -> new String[] {"abc", "1"}),
+          ExcelField.of("名称", from -> new String[]{"abc", "1"}),
           ExcelField.of("描述", top.bettercode.summer.tools.java.DataBean::getName),
           ExcelField.of("描述C", top.bettercode.summer.tools.java.DataBean::getDate));
 
@@ -77,13 +87,14 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    ExcelExport.of("build/testMergeExport.xlsx")
+    String filename = "build/testMergeExport" + nameSuff + ".xlsx";
+    getExcelExport(filename)
         .sheet("表格")
         .setMergeData(list, excelMergeFields)
         .finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
-    ExcelTestUtil.openExcel("build/testMergeExport.xlsx");
+    ExcelTestUtil.openExcel(filename);
   }
 
   @Order(1)
@@ -100,11 +111,17 @@ public class ExcelTest {
   @Order(0)
   @Test
   public void testTemplate() {
-    ExcelExport.of("build/template.xlsx")
+    String filename = "build/template" + nameSuff + ".xlsx";
+    getExcelExport(filename)
         .sheet("表格1")
-        .dataValidation(1, "1,2,3")
+        .dataValidation(1, "1", "2", "3")
         .template(excelFields)
         .finish();
-    ExcelTestUtil.openExcel("build/template.xlsx");
+    ExcelTestUtil.openExcel(filename);
+  }
+
+  @NotNull
+  protected ExcelExport getExcelExport(String filename) {
+    return ExcelExport.of(filename);
   }
 }

@@ -638,26 +638,10 @@ object StringUtil {
     }
 
     @JvmStatic
-    fun underscoreName(name: String): String {
-        if (name.matches(Regex(".*[a-z].*"))) {
-            val result = StringBuilder()
-            if (name.isNotEmpty()) {
-                // 将第一个字符处理成大写
-                result.append(name.substring(0, 1).uppercase(Locale.getDefault()))
-                // 循环处理其余字符
-                for (i in 1 until name.length) {
-                    val s = name.substring(i, i + 1)
-                    // 在大写字母前添加下划线
-                    if (s == s.uppercase(Locale.getDefault()) && !Character.isDigit(s[0]) && s[0] != '_') {
-                        result.append("_")
-                    }
-                    // 其他字符直接转成大写
-                    result.append(s.uppercase(Locale.getDefault()))
-                }
-            }
-            return result.toString()
-        } else
-            return name
+    fun String.underscoreName(): String {
+        val regex = Regex("[A-Z]")
+        val result = regex.replace(this) { "_${it.value}" }
+        return result.removePrefix("_").uppercase()
     }
 
 }

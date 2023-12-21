@@ -4,8 +4,6 @@ import org.apache.poi.ss.usermodel.Font
 import org.apache.poi.ss.usermodel.RichTextString
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.junit.jupiter.api.Test
-import java.nio.file.Files
-import java.nio.file.Paths
 
 /**
  * @author Peter Wu
@@ -20,11 +18,12 @@ class ExcelPoiTest {
                 ExcelField.of("编码B") { obj: DataBean -> obj.integer }.mergeBy { obj: DataBean -> obj.integer },
                 ExcelField.of("名称") { _: DataBean -> arrayOf("abc", "1") },
                 ExcelField.of("描述") { obj: DataBean -> obj.name },
-                ExcelField.poi("描述C", { obj: DataBean -> obj.date }, { sheet, poiCell, _ ->
+                ExcelField.poi("描述C", { obj: DataBean -> obj.date }, { excel, cell ->
                     // 设置文本
                     val text = "Hello, World!"
                     // 创建字体
-
+                    val sheet = excel.sheet
+                    val xssfCell = excel.sheet.getRow(cell.row).getCell(cell.column)
                     // 创建字体
                     val boldFont: Font = sheet.workbook.createFont()
                     boldFont.bold = true
@@ -43,7 +42,7 @@ class ExcelPoiTest {
                     val richText: RichTextString = XSSFRichTextString(text)
                     richText.applyFont(0, 5, boldFont) // 应用样式到部分文本
 
-                    poiCell.setCellValue(richText)
+                    xssfCell.setCellValue(richText)
 
                 }).mergeBy { obj: DataBean -> obj.intCode },
         )
@@ -60,8 +59,8 @@ class ExcelPoiTest {
         list.add(DataBean(25))
         list.add(DataBean(25))
         val s = System.currentTimeMillis()
-        val filename = "build/testMergeExportWithImage.xlsx"
-        ExcelExport.withPoi(Files.newOutputStream(Paths.get(filename))).sheet("表格")
+        val filename = "build/testMergeExportWithPoi.xlsx"
+        ExcelExport.of(filename, true).sheet("表格")
                 .setMergeData(list, excelMergeFields)
                 .finish()
         val e = System.currentTimeMillis()
