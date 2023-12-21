@@ -638,7 +638,7 @@ object StringUtil {
     }
 
     @JvmStatic
-    fun String.underscoreName(): String {
+    fun String.toUnderscore(): String {
         val regex = Regex("[A-Z]")
         val result = regex.replace(this) { "_${it.value}" }
         return result.removePrefix("_").uppercase()

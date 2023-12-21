@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.lang.util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.lang.util.StringUtil.objectMapper
-import top.bettercode.summer.tools.lang.util.StringUtil.underscoreName
+import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 
 /**
  * @author Peter Wu
@@ -44,6 +44,6 @@ class StringUtilTest {
 
     @Test
     fun underscoreName2() {
-        System.err.println("javaName".underscoreName())
+        System.err.println("javaName".toUnderscore())
     }
 }

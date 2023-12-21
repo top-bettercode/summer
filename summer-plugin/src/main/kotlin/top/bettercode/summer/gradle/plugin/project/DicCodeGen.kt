@@ -15,7 +15,7 @@ import top.bettercode.summer.tools.generator.dsl.DicCodes
 import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
-import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.io.Serializable
 import java.util.*
 
@@ -142,7 +142,7 @@ class DicCodeGen(private val project: Project) {
                     v.codes.forEach { (code, name) ->
                         docText.appendLine("|$code|$name")
 
-                        val codeFieldName = StringUtil.underscoreName(
+                        val codeFieldName = (
                                 if (code is Int || code.toString()
                                                 .startsWith("0") && code.toString().length > 1
                                 ) {
@@ -152,7 +152,7 @@ class DicCodeGen(private val project: Project) {
                                 } else {
                                     (code as String).replace("-", "_").replace(".", "_")
                                 }
-                        ).replace(Regex("_+"), "_")
+                                ).toUnderscore().replace(Regex("_+"), "_")
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
                             val initializationString =
