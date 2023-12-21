@@ -68,20 +68,12 @@ class ExcelExport(val excel: IExcel) {
 
     private val columnWidths = ColumnWidths()
 
-    @JvmOverloads
-    fun cellStyle(copy: Boolean = false): CellStyle {
-        return if (copy) {
-            cellStyle.clone()
-        } else
-            this.cellStyle
+    fun cellStyle(): CellStyle {
+        return this.cellStyle
     }
 
-    @JvmOverloads
-    fun headerStyle(copy: Boolean = false): CellStyle {
-        return if (copy)
-            headerStyle.clone()
-        else
-            this.headerStyle
+    fun headerStyle(): CellStyle {
+        return this.headerStyle
     }
 
     @JvmOverloads
@@ -421,10 +413,6 @@ class ExcelExport(val excel: IExcel) {
             } else {
                 this.excel.width(column, width)
             }
-            //设置样式
-//            val style = this.cellStyle.clone()
-//            style.style(excelField.cellStyle)
-//            excel.setCellStyle(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column, style)
         }
     }
 
