@@ -156,7 +156,7 @@ class ExcelField<T, P : Any?> {
             @Suppress("UNCHECKED_CAST")
             when (propertyType) {
                 String::class.java -> {
-                    cellValue
+                    cellValue.toString()
                 }
 
                 Boolean::class.javaObjectType, Boolean::class.java, Boolean::class.java -> {
