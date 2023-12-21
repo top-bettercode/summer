@@ -177,6 +177,14 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
                     wb.addPicture(cellValue as InputStream?, XSSFWorkbook.PICTURE_TYPE_PNG)
                 }
 
+                is ByteArrayPicture -> {
+                    wb.addPicture(cellValue.data, cellValue.pictureType)
+                }
+
+                is InputStreamPicture -> {
+                    wb.addPicture(cellValue.data, cellValue.pictureType)
+                }
+
                 else -> {
                     throw ExcelException(
                             "图像单元格数据:" + cellValue + "不是有效输入格式（byte[] or InputStream）")
