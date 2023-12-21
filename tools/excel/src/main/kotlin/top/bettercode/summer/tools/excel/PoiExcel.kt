@@ -32,7 +32,7 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
     private fun XSSFSheet.row(row: Int): XSSFRow = this.getRow(row) ?: this.createRow(row)
 
     override fun newSheet(sheetname: String) {
-        sheet = workbook.createSheet(sheetname)
+        this.sheet = workbook.createSheet(sheetname)
     }
 
     override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {

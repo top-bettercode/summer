@@ -18,7 +18,7 @@ class FastExcel(outputStream: OutputStream) : IExcel {
     /**
      * 工作薄对象
      */
-    val workbook: Workbook = Workbook(outputStream, "", "1.0")
+    val workbook: Workbook = Workbook(outputStream, "", null)
 
     /**
      * 工作表对象
