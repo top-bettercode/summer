@@ -34,7 +34,7 @@ import javax.crypto.spec.SecretKeySpec
 /**
  * 阿里短信平台 接口请求
  */
-class AliSmsTemplate(
+open class AliSmsTemplate(
         private val aliSmsProperties: AliSmsProperties
 ) : SmsTemplate(
         "第三方平台", "阿里短信平台", LOG_MARKER_STR, aliSmsProperties.connectTimeout,
@@ -74,7 +74,7 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(
+    open fun sendSms(
             templateCode: String, phoneNumber: String, signName: String,
             templateParam: Map<String, String>,
             mock: Boolean = aliSmsProperties.isMock
@@ -90,7 +90,7 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(
+    open fun sendSms(
             templateCode: String,
             aliSmsReq: AliSmsReq,
             mock: Boolean = aliSmsProperties.isMock
@@ -115,7 +115,7 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(
+    open fun sendSms(
             templateCode: String,
             aliSmsReqs: List<AliSmsReq>,
             mock: Boolean = aliSmsProperties.isMock
@@ -160,7 +160,7 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun querySendReport(
+    open fun querySendReport(
             phoneNumber: String, bizId: String = "", sendDate: String = LocalDate.now().format(
                     DateTimeFormatter.ofPattern("yyyyMMdd")
             ),
@@ -194,7 +194,7 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun querySmsSignList(pageIndex: Int = 1, pageSize: Int = 10): AliSmsSignResponse {
+    open fun querySmsSignList(pageIndex: Int = 1, pageSize: Int = 10): AliSmsSignResponse {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
         val action = "QuerySmsSignList"
@@ -221,7 +221,7 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun querySmsTemplateList(pageIndex: Int = 1, pageSize: Int = 10): AliSmsTemplateResponse {
+    open fun querySmsTemplateList(pageIndex: Int = 1, pageSize: Int = 10): AliSmsTemplateResponse {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
         val action = "QuerySmsTemplateList"

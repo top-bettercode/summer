@@ -100,7 +100,6 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
      */
     val transferBatchService: TransferBatchService by lazy {
         TransferBatchService.Builder().httpClient(httpClient).encryptor(config.createEncryptor()).decryptor(config.createDecryptor()).build()
-
     }
 
     /**

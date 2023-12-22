@@ -51,13 +51,13 @@ open class WeatherClient(
 
 
     @JvmOverloads
-    fun isNight(
+    open fun isNight(
             time: LocalTime = LocalTime.now(TimeUtil.DEFAULT_ZONE_ID)
     ): Boolean {
         return properties.nightStartTime.hour <= time.hour && time.hour <= properties.nightEndTime.hour
     }
 
-    fun type(): Map<String, WeatherType> {
+    open fun type(): Map<String, WeatherType> {
         val defaultInstance = TypeFactory.defaultInstance()
         val javaType = defaultInstance.constructParametricType(
                 WeatherResponse::class.java,
@@ -93,7 +93,7 @@ open class WeatherClient(
         }
     }
 
-    fun query(ip: String): WeatherResult {
+    open fun query(ip: String): WeatherResult {
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 WeatherResponse::class.java, WeatherResult::class.java
         )
@@ -124,7 +124,7 @@ open class WeatherClient(
         }
     }
 
-    fun query(longitude: Double, latitude: Double): WeatherResult {
+    open fun query(longitude: Double, latitude: Double): WeatherResult {
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 WeatherResponse::class.java, WeatherResult::class.java
         )

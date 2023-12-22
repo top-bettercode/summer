@@ -23,7 +23,7 @@ import java.util.*
 /**
  * 亿美软通短信平台 接口请求
  */
-class B2mSmsTemplate(
+open class B2mSmsTemplate(
         private val b2mProperties: B2mSmsProperties
 ) : SmsTemplate(
         "第三方平台",
@@ -67,7 +67,7 @@ class B2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(
+    open fun sendSms(
             cell: String,
             content: String,
             mock: Boolean = b2mProperties.isMock
@@ -85,7 +85,7 @@ class B2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(
+    open fun sendSms(
             content: Map<String, String>,
             mock: Boolean = b2mProperties.isMock
     ): B2mResponse<B2mRespData> {
@@ -161,7 +161,7 @@ class B2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun querySendReport(number: Int = 500): List<B2mSendReport> {
+    open fun querySendReport(number: Int = 500): List<B2mSendReport> {
         val headers = HttpHeaders()
         headers.add("appId", b2mProperties.appId)
         headers.add("gzip", "on")

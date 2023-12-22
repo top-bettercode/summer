@@ -29,7 +29,7 @@ open class RapidauthClient(
         LOG_MARKER,
         properties.connectTimeout,
         properties.readTimeout
-), IRapidauthClient {
+) {
 
     companion object {
         const val LOG_MARKER = "rapidauth"
@@ -53,8 +53,11 @@ open class RapidauthClient(
         super.setMessageConverters(messageConverters)
     }
 
-
-    override fun query(carrier: String, token: String): RapidauthResponse {
+    /**
+     * @param carrier 运营商，移动：mobile， 联通：unicom，电信：telecom
+     * @param token token 有效期为2分钟
+     */
+    open fun query(carrier: String, token: String): RapidauthResponse {
         val appkey = properties.appkey
         val random = RandomUtil.nextIntString(10) //随机数字串，生成10位
         val time = (System.currentTimeMillis() / 1000).toString()

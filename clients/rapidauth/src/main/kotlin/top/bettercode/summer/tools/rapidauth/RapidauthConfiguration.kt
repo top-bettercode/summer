@@ -14,7 +14,7 @@ class RapidauthConfiguration {
 
 
     @Bean
-    fun rapidauthClient(rapidauthProperties: RapidauthProperties): IRapidauthClient {
+    fun rapidauthClient(rapidauthProperties: RapidauthProperties): RapidauthClient {
         return RapidauthClient(rapidauthProperties)
     }
 

@@ -140,7 +140,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1
      */
-    fun unifiedorder(request: UnifiedOrderRequest): UnifiedOrderResponse {
+    open fun unifiedorder(request: UnifiedOrderRequest): UnifiedOrderResponse {
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
@@ -172,7 +172,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6
      *
      */
-    fun getJsapiWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): JsapiWCPayRequest {
+    open fun getJsapiWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): JsapiWCPayRequest {
         val jsapiWCPayRequest = JsapiWCPayRequest(
                 appId = unifiedOrderResponse.appid!!,
                 `package` = "prepay_id=${unifiedOrderResponse.prepayId}",
@@ -185,7 +185,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * app 调起支付接口 支付信息
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2
      */
-    fun getAppWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): AppWCPayRequest {
+    open fun getAppWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): AppWCPayRequest {
         val appWCPayRequest = AppWCPayRequest(
                 appid = unifiedOrderResponse.appid!!,
                 partnerid = unifiedOrderResponse.mchId!!,
@@ -199,7 +199,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 查询订单
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_2&index=4
      */
-    fun orderquery(request: OrderQueryRequest): OrderQueryResponse {
+    open fun orderquery(request: OrderQueryRequest): OrderQueryResponse {
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
@@ -228,7 +228,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 查询退款
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_5&index=7
      */
-    fun refundquery(request: RefundQueryRequest): RefundQueryResponse {
+    open fun refundquery(request: RefundQueryRequest): RefundQueryResponse {
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
@@ -361,7 +361,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      *
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_4&index=6
      */
-    fun refund(request: RefundRequest): RefundResponse {
+    open fun refund(request: RefundRequest): RefundResponse {
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
@@ -393,7 +393,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 关闭订单
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_3&index=5
      */
-    fun closeOrder(request: CloseOrderRequest): CloseOrderResponse {
+    open fun closeOrder(request: CloseOrderRequest): CloseOrderResponse {
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid
@@ -422,7 +422,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 付款
      * https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=14_2
      */
-    fun transfers(request: TransfersRequest): TransfersResponse {
+    open fun transfers(request: TransfersRequest): TransfersResponse {
         request.mchid = properties.mchId
         if (request.mchAppid == null)
             request.mchAppid = properties.appid
@@ -447,7 +447,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 查询付款
      * https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=14_3
      */
-    fun getTransferInfo(request: TransferInfoRequest): TransferInfoResponse {
+    open fun getTransferInfo(request: TransferInfoRequest): TransferInfoResponse {
         request.mchId = properties.mchId
         if (request.appid == null)
             request.appid = properties.appid

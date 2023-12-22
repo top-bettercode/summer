@@ -34,7 +34,7 @@ open class QvodUploadClient(
      * 简单上传
      */
     @JvmOverloads
-    fun upload(file: File, procedure: String? = null): VodUploadResponse {
+    open fun upload(file: File, procedure: String? = null): VodUploadResponse {
         val req = VodUploadRequest()
         req.mediaFilePath = file.absolutePath
         if (procedure != null) {

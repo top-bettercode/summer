@@ -153,7 +153,7 @@ open class QvodClient(
     adaptiveDynamicStreamingInfo（转自适应码流信息）。
     miniProgramReviewInfo（小程序审核信息）。
      */
-    fun describeMediaInfo(
+    open fun describeMediaInfo(
             fileId: String,
             filter: String
     ): DescribeMediaInfosResponse {
@@ -178,7 +178,7 @@ open class QvodClient(
     adaptiveDynamicStreamingInfo（转自适应码流信息）。
     miniProgramReviewInfo（小程序审核信息）。
      */
-    fun describeMediaInfos(
+    open fun describeMediaInfos(
             fileIds: Array<String>,
             filters: Array<String>
     ): DescribeMediaInfosResponse {
@@ -195,7 +195,7 @@ open class QvodClient(
      *
      * 该接口用于： 1. 查询点播可开通的所有存储园区列表。 2. 查询已经开通的园区列表。 3. 查询默认使用的存储园区。
      */
-    fun storageRegions(): DescribeStorageRegionsResponse {
+    open fun storageRegions(): DescribeStorageRegionsResponse {
         val req = DescribeStorageRegionsRequest()
         req.subAppId = properties.appId
 
@@ -207,7 +207,7 @@ open class QvodClient(
      *
      * 删除媒体
      */
-    fun deleteMedia(fileId: String): DeleteMediaResponse {
+    open fun deleteMedia(fileId: String): DeleteMediaResponse {
         val req = DeleteMediaRequest()
         req.fileId = fileId
         req.subAppId = properties.appId
@@ -220,7 +220,7 @@ open class QvodClient(
      * 使用任务流模板进行视频处理
      * https://cloud.tencent.com/document/product/266/34782
      */
-    fun processMediaByProcedure(
+    open fun processMediaByProcedure(
             fileId: String,
             procedureName: String
     ): ProcessMediaByProcedureResponse {
@@ -238,7 +238,7 @@ open class QvodClient(
      *
      * https://cloud.tencent.com/document/product/266/33427
      */
-    fun processMediaTranscode(fileId: String, vararg templateId: Long): ProcessMediaResponse {
+    open fun processMediaTranscode(fileId: String, vararg templateId: Long): ProcessMediaResponse {
         val req = ProcessMediaRequest()
         req.fileId = fileId
 
@@ -264,7 +264,7 @@ open class QvodClient(
      *
      * https://cloud.tencent.com/document/product/266/33427
      */
-    fun processMediaAiReview(fileId: String): ProcessMediaResponse {
+    open fun processMediaAiReview(fileId: String): ProcessMediaResponse {
         val req = ProcessMediaRequest()
         req.fileId = fileId
         val aiContentReviewTaskInput = AiContentReviewTaskInput()
@@ -282,7 +282,7 @@ open class QvodClient(
      *
      * 图片审核
      */
-    fun reviewImage(fileId: String): ReviewImageResponse {
+    open fun reviewImage(fileId: String): ReviewImageResponse {
         val req = ReviewImageRequest()
         req.fileId = fileId
         req.definition = 10L
@@ -297,7 +297,7 @@ open class QvodClient(
      *
      * 拉取事件通知
      */
-    fun pullEvents(): PullEventsResponse {
+    open fun pullEvents(): PullEventsResponse {
         val req = PullEventsRequest()
         req.subAppId = properties.appId
 
@@ -320,7 +320,7 @@ open class QvodClient(
      * https://cloud.tencent.com/document/product/266/33431
      * 查询任务详情
      */
-    fun taskDetail(taskId: String): DescribeTaskDetailResponse {
+    open fun taskDetail(taskId: String): DescribeTaskDetailResponse {
         val req = DescribeTaskDetailRequest()
         req.taskId = taskId
         req.subAppId = properties.appId
@@ -333,7 +333,7 @@ open class QvodClient(
      * https://cloud.tencent.com/document/product/266/33434
      * 确认事件通知
      */
-    fun confirmEvents(vararg eventHandle: String): ConfirmEventsResponse {
+    open fun confirmEvents(vararg eventHandle: String): ConfirmEventsResponse {
         val req = ConfirmEventsRequest()
         req.eventHandles = eventHandle
         req.subAppId = properties.appId

@@ -53,7 +53,7 @@ open class JpushClient(
     }
 
 
-    fun send(request: JpushRequest): JpushResponse {
+    open fun send(request: JpushRequest): JpushResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
         val requestCallback = httpEntityCallback(
@@ -99,7 +99,7 @@ open class JpushClient(
     /**
      * @param count 可选参数。数值类型，不传则默认为 1。范围为 [1, 1000]
      */
-    fun cid(count: Int): JpushCidResponse {
+    open fun cid(count: Int): JpushCidResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
         val requestCallback = httpEntityCallback(

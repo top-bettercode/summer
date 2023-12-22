@@ -25,7 +25,7 @@ import java.util.*
 /**
  * 亿美软通短信平台 接口请求
  */
-class SimpleB2mSmsTemplate(
+open class SimpleB2mSmsTemplate(
         private val b2mProperties: B2mSmsProperties
 ) : SmsTemplate(
         "第三方平台",
@@ -69,7 +69,7 @@ class SimpleB2mSmsTemplate(
      * @param content 内容
      * @return 结果
      */
-    fun simpleSendSms(
+    open fun simpleSendSms(
             cell: String,
             content: String,
             mock: Boolean = b2mProperties.isMock
@@ -90,7 +90,7 @@ class SimpleB2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun simpleSendSms(
+    open fun simpleSendSms(
             content: Map<String, String>,
             mock: Boolean = b2mProperties.isMock
     ): B2mResponse<B2mRespData> {
@@ -157,7 +157,7 @@ class SimpleB2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun simpleQuerySendReport(number: Int = 500): B2mResponse<B2mSendReport> {
+    open fun simpleQuerySendReport(number: Int = 500): B2mResponse<B2mSendReport> {
         //    格式：yyyyMMddHHmmss 14位
         val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
         val timestamp = LocalDateTime.now().format(timeFormatter)
@@ -216,7 +216,7 @@ class SimpleB2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun retrieveReport(
+    open fun retrieveReport(
             startTime: LocalDateTime,
             endTime: LocalDateTime = startTime.plusMinutes(10),
             smsId: String = ""

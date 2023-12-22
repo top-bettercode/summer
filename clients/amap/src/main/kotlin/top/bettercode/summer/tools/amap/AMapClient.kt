@@ -21,7 +21,7 @@ import top.bettercode.summer.web.support.client.ApiTemplate
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
+open class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
         "第三方平台", "高德地图", "amap", amapProperties.connectTimeout,
         amapProperties.readTimeout
 ) {
@@ -51,7 +51,7 @@ class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
         }
     }
 
-    fun regeo(location: Location): AMapRegeo {
+    open fun regeo(location: Location): AMapRegeo {
         val requestCallback = httpEntityCallback(
                 HttpEntity(null, null),
                 AMapRegeo::class.java
@@ -77,7 +77,7 @@ class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
         }
     }
 
-    fun geo(address: String): AMapGeo {
+    open fun geo(address: String): AMapGeo {
         val requestCallback = httpEntityCallback(
                 HttpEntity(null, null),
                 AMapGeo::class.java

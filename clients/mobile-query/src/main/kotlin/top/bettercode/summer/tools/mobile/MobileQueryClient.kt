@@ -31,7 +31,7 @@ open class MobileQueryClient(
         LOG_MARKER,
         properties.connectTimeout,
         properties.readTimeout
-), IMobileQueryClient {
+) {
 
     companion object {
         const val LOG_MARKER = "mobile-query"
@@ -56,7 +56,7 @@ open class MobileQueryClient(
     }
 
 
-    override fun query(token: String): QueryResponse {
+    open fun query(token: String): QueryResponse {
         val source = "market"
         val secretId = properties.appId
         val secretKey = properties.appKey
