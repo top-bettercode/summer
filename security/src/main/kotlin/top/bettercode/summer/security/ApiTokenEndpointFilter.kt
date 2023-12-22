@@ -128,6 +128,9 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                         } catch (e: Exception) {
                             throw UnauthorizedException("请重新登录", e)
                         }
+                    } else if (apiTokenService.securityProperties.authorizedGrantTypes.contains(grantType)) {
+                        val userDetails = apiTokenService.getUserDetails(grantType, request)
+                        storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
                     } else {
                         throw IllegalArgumentException("grantType 不支持:$grantType")
                     }

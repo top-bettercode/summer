@@ -35,7 +35,9 @@ open class ApiSecurityProperties : ClientDetails() {
     /**
      * 以scope 为 clientId
      */
-    var  isScopeClientId = false
+    var isScopeClientId = false
+
+    var authorizedGrantTypes: Array<String> = arrayOf("password", "refresh_token")
 
     //--------------------------------------------
     fun ignored(path: String): Boolean {
