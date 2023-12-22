@@ -33,7 +33,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
         const val LOG_MARKER = "wxmini"
     }
 
-    fun jscode2session(code: String): JsSession {
+    open fun jscode2session(code: String): JsSession {
         val session = getForObject<JsSession>(
                 "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
                 properties.appId,
@@ -48,7 +48,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
     }
 
     @JvmOverloads
-    fun getuserphonenumber(code: String, retries: Int = 1): PhoneInfoResp {
+    open fun getuserphonenumber(code: String, retries: Int = 1): PhoneInfoResp {
         val result = postForObject<PhoneInfoResp>(
                 "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
                 mapOf("code" to code),
@@ -72,7 +72,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
      * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
      */
     @JvmOverloads
-    fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int = 1): WeixinResponse {
+    open fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int = 1): WeixinResponse {
         if (request.miniprogramState == null) {
             request.miniprogramState = properties.miniprogramState
         }
@@ -106,7 +106,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
     @Suppress("DEPRECATION")
     @Deprecated("自 2023 年 9 月 20 日起（以下简称 “生效期”），下发统一消息接口将被收回。", replaceWith = ReplaceWith("offiaccountClient.sendTemplateMsg(TemplateMsgRequest(), 1)", "top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient", "top.bettercode.summer.tools.weixin.support.offiaccount.entity.TemplateMsgRequest"))
     @JvmOverloads
-    fun sendUniformMsg(request: UniformMsgRequest, retries: Int = 1): WeixinResponse {
+    open fun sendUniformMsg(request: UniformMsgRequest, retries: Int = 1): WeixinResponse {
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={0}",
                 request,

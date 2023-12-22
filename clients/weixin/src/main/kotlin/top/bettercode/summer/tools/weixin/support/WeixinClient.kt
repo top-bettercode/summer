@@ -92,7 +92,7 @@ open class WeixinClient<T : IWeixinProperties>(
      */
     @Deprecated("多环境下会造成频繁失效，请使用getStableAccessToken()")
     @JvmOverloads
-    fun getBaseAccessToken(retries: Int = 1): String {
+    open fun getBaseAccessToken(retries: Int = 1): String {
         return putIfAbsent(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getToken(retries)
         }
@@ -101,7 +101,7 @@ open class WeixinClient<T : IWeixinProperties>(
     /**
      *https://developers.weixin.qq.com/doc/offiaccount/openApi/get_api_quota.html
      */
-    fun getApiQuota(cgiPath: String): ApiQuota {
+    open fun getApiQuota(cgiPath: String): ApiQuota {
         return postForObject<ApiQuota>("https://api.weixin.qq.com/cgi-bin/openapi/quota/get?access_token=${getStableAccessToken()}", mapOf("cgi_path" to cgiPath))
     }
 
@@ -109,7 +109,7 @@ open class WeixinClient<T : IWeixinProperties>(
      * 使用AppSecret重置 API 调用次数
      * https://developers.weixin.qq.com/doc/offiaccount/openApi/clearQuotaByAppSecret.html
      */
-    fun clearQuotaByAppSecret(): WeixinResponse {
+    open fun clearQuotaByAppSecret(): WeixinResponse {
         return postForObject<WeixinResponse>("https://api.weixin.qq.com/cgi-bin/clear_quota/v2?appid=${properties.appId}&appsecret=${properties.secret}")
     }
 
@@ -133,7 +133,7 @@ open class WeixinClient<T : IWeixinProperties>(
     }
 
     @JvmOverloads
-    fun getStableAccessToken(retries: Int = 1): String {
+    open fun getStableAccessToken(retries: Int = 1): String {
         return putIfAbsent(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
             getStableToken(false, retries)
         }

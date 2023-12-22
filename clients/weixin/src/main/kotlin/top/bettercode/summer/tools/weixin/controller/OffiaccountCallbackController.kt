@@ -52,7 +52,7 @@ class OffiaccountCallbackController(
                             WeixinToken(e.message)
                         }
                     else WeixinToken(accessToken?.errmsg)
-                    token.openId = accessToken?.openid ?: ""
+                    token.openId = accessToken?.openid
                     token
                 } catch (e: Exception) {
                     log.warn("token获取失败", e)

@@ -19,9 +19,9 @@ open class AccessToken : IAccessToken {
     @JsonProperty("refresh_token")
     var refreshToken: String? = null
 
-    @JsonSetToString(extended = false)
+    @field:JsonSetToString(extended = false)
     @JsonProperty("scope")
-    var scope: Set<String>? = null
+    var scope: Set<String> = emptySet()
 
     private var additionalInformation: MutableMap<String, Any?> = mutableMapOf()
 

@@ -60,7 +60,7 @@ open class OffiaccountClient(
     }
 
     @JvmOverloads
-    fun getJsapiTicket(retries: Int = 1): String {
+    open fun getJsapiTicket(retries: Int = 1): String {
         return putIfAbsent(JSAPI_TICKET_KEY + ":" + properties.appId) {
             getTicket(retries)
         }
@@ -88,7 +88,7 @@ open class OffiaccountClient(
         }
     }
 
-    fun getWebPageAccessToken(code: String): WebPageAccessToken {
+    open fun getWebPageAccessToken(code: String): WebPageAccessToken {
         return getForObject(
                 "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
                 properties.appId,
@@ -97,14 +97,14 @@ open class OffiaccountClient(
         )
     }
 
-    fun getSnsapiUserinfo(accessToken: String, openid: String): SnsapiUserinfo {
+    open fun getSnsapiUserinfo(accessToken: String, openid: String): SnsapiUserinfo {
         return getSnsapiUserinfo(accessToken, openid, "zh_CN")
     }
 
     /**
      * https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
      */
-    fun getSnsapiUserinfo(
+    open fun getSnsapiUserinfo(
             accessToken: String,
             openid: String,
             lang: String,
@@ -129,11 +129,11 @@ open class OffiaccountClient(
     /**
      * https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html#UinonId
      */
-    fun getUserInfo(openid: String): UserInfo {
+    open fun getUserInfo(openid: String): UserInfo {
         return getUserInfo(openid, "zh_CN")
     }
 
-    fun getUserInfo(openid: String, lang: String, retries: Int = 1): UserInfo {
+    open fun getUserInfo(openid: String, lang: String, retries: Int = 1): UserInfo {
         val result = getForObject<UserInfo>("https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}", getStableAccessToken(), openid, lang)
         return if (result.isOk) {
             result
@@ -153,7 +153,7 @@ open class OffiaccountClient(
      * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html
      */
     @JvmOverloads
-    fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int = 1): MsgResult {
+    open fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int = 1): MsgResult {
         val result = postForObject<MsgResult>(
                 "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
                 request,
@@ -180,7 +180,7 @@ open class OffiaccountClient(
 
     //--------------------------------------------
 
-    fun jsSignUrl(url: String): JsapiSignature {
+    open fun jsSignUrl(url: String): JsapiSignature {
         val nonceStr = UUID.randomUUID().toString()
         val timestamp = (System.currentTimeMillis() / 1000).toString()
         val jsapiTicket = getJsapiTicket()
@@ -200,7 +200,7 @@ open class OffiaccountClient(
      * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#%E5%AE%A2%E6%9C%8D%E6%8E%A5%E5%8F%A3-%E5%8F%91%E6%B6%88%E6%81%AF
      */
     @JvmOverloads
-    fun sendCustomMessage(request: CustMsg, retries: Int = 1): WeixinResponse {
+    open fun sendCustomMessage(request: CustMsg, retries: Int = 1): WeixinResponse {
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}",
                 request,

@@ -44,7 +44,7 @@ open class CorpClient(properties: ICorpProperties,
     }
 
     @JvmOverloads
-    fun getWebPageAccessToken(code: String, retries: Int = 1): CorpWebPageAccessToken {
+    open fun getWebPageAccessToken(code: String, retries: Int = 1): CorpWebPageAccessToken {
         val result = getForObject<CorpWebPageAccessToken>(
                 "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=CODE",
                 getStableAccessToken()

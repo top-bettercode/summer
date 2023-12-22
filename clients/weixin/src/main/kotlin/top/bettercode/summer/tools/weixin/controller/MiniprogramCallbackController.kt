@@ -44,16 +44,13 @@ class MiniprogramCallbackController(
                     log.warn(e.message, e)
                     WeixinToken(e.message)
                 } else WeixinToken()
-            result.openId = jsSession.openid ?: ""
-            result.unionId = jsSession.unionid ?: ""
-            result.hasBound = result.accessToken.isBlank().not()
+            result.openId = jsSession.openid
+            result.unionId = jsSession.unionid
+            result.hasBound = result.accessToken.isNullOrBlank().not()
             ok(result)
         } catch (e: Exception) {
             log.error("授权失败", e)
             val result = WeixinToken(e.message)
-            result.accessToken = ""
-            result.openId = ""
-            result.hasBound = false
             ok(result)
         }
     }
@@ -71,7 +68,7 @@ class MiniprogramCallbackController(
         Assert.notNull(phoneInfo, "获取手机号失败")
         log.info("phoneInfo:{}", phoneInfo)
         val result = wechatService.phoneOauth(phoneInfo!!)
-        result.hasBound = result.accessToken.isBlank().not()
+        result.hasBound = result.accessToken.isNullOrBlank().not()
         return ok(result)
     }
 
