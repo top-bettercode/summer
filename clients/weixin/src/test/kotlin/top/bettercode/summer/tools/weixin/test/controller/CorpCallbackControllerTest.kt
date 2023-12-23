@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import top.bettercode.summer.test.BaseWebNoAuthTest
 import top.bettercode.summer.tools.weixin.support.corp.CorpClient
 import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
-import top.bettercode.summer.tools.weixin.support.offiaccount.entity.WebPageAccessToken
 import top.bettercode.summer.tools.weixin.test.TestApplication
 
 /**

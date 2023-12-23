@@ -12,7 +12,7 @@ import top.bettercode.summer.test.BaseTest
 class MobileQueryClientTest : BaseTest() {
 
     @Autowired
-    lateinit var mobileQueryClient: IMobileQueryClient
+    lateinit var mobileQueryClient: MobileQueryClient
 
     @Disabled
     @Test

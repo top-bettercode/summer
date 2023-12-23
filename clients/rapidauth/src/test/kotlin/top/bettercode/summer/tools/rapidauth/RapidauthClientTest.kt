@@ -12,7 +12,7 @@ import top.bettercode.summer.test.BaseTest
 class RapidauthClientTest : BaseTest() {
 
     @Autowired
-    lateinit var rapidauthClient: IRapidauthClient
+    lateinit var rapidauthClient: RapidauthClient
 
     @Disabled
     @Test
