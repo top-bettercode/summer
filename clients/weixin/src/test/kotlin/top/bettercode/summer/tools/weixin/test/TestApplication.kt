@@ -5,7 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.WeixinToken
+import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
+import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.PhoneInfo
+import top.bettercode.summer.tools.weixin.support.offiaccount.entity.SnsapiUserinfo
+import top.bettercode.summer.tools.weixin.support.offiaccount.entity.WebPageAccessToken
 
 /**
  * @author Peter Wu
@@ -17,6 +21,18 @@ class TestApplication {
     fun wechatService(): IWeixinService {
         return object : IWeixinService {
             override fun phoneOauth(phoneInfo: PhoneInfo): WeixinToken {
+                return WeixinToken()
+            }
+
+            override fun miniOauth(jsSession: JsSession): WeixinToken {
+                return WeixinToken()
+            }
+
+            override fun oauth(webPageAccessToken: WebPageAccessToken, snsapiUserinfo: SnsapiUserinfo?): WeixinToken {
+                return WeixinToken()
+            }
+
+            override fun corpOauth(corpWebPageAccessToken: CorpWebPageAccessToken): WeixinToken {
                 return WeixinToken()
             }
         }

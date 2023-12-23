@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.weixin.controller
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.stereotype.Controller
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import top.bettercode.summer.logging.annotation.RequestLogging
@@ -14,6 +15,7 @@ import top.bettercode.summer.web.BaseController
 @ConditionalOnWebApplication
 @Controller
 @Anonymous
+@Validated
 @RequestMapping(value = ["/wechat"], name = "微信")
 class CorpCallbackController(
         private val wechatService: IWeixinService,

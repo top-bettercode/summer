@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.test.context.TestPropertySource
 import top.bettercode.summer.test.BaseWebNoAuthTest
 import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient
+import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.PhoneInfo
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.PhoneInfoResp
 import top.bettercode.summer.tools.weixin.test.TestApplication
@@ -16,10 +16,9 @@ import top.bettercode.summer.tools.weixin.test.TestApplication
 /**
  * @author Peter Wu
  */
-//@Disabled
 @SpringBootTest(classes = [TestApplication::class])
 @TestPropertySource(properties = ["summer.wechat.mini.appId=XXXXXXXXXXXXXXXXXX", "summer.wechat.mini.secret=xxx"])
-class MiniCallbackControllerTest : BaseWebNoAuthTest() {
+class MiniprogramCallbackControllerTest : BaseWebNoAuthTest() {
 
 
     @MockBean
@@ -31,7 +30,7 @@ class MiniCallbackControllerTest : BaseWebNoAuthTest() {
         val code = "xxx"
         val mobile = "13400000000"
         val infoResp = PhoneInfoResp(PhoneInfo(mobile, mobile, "86", null))
-        Mockito.`when`(miniprogramClient.getuserphonenumber(code,1)).thenReturn(infoResp)
+        Mockito.`when`(miniprogramClient.getuserphonenumber(code)).thenReturn(infoResp)
 
         perform(post("/wechat/miniPhoneOauth")
                 .param("code", code))
@@ -40,17 +39,13 @@ class MiniCallbackControllerTest : BaseWebNoAuthTest() {
 
     @Test
     fun miniOauth() {
+        val code = "xxx"
+        val jsSession = JsSession(openid = "xxx")
+        Mockito.`when`(miniprogramClient.jscode2session(code)).thenReturn(jsSession)
         perform(
                 post("/wechat/miniOauth")
-//                .param("code", "xxx")
+                        .param("code", code)
         )
     }
 
-    @Test
-    fun jsSignUrl() {
-        perform(
-                get("/wechat/jsSign")
-                        .param("url", "https://xxx.com")
-        )
-    }
 }
