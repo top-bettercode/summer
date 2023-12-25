@@ -49,7 +49,7 @@ open class MybatisProperties {
     var configurationProperties: Properties? = null
 
     /**
-     * 结果集转换是否使用 TupleTransformer
+     * 结果集转换是否使用 TupleTransformer,true时存在类型转换不兼容问题，如日期时间格式化
      */
     var useTupleTransformer = false
 
