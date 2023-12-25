@@ -77,13 +77,11 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 var message = getText(code)
                 if (message == code)
                     message = getText("typeMismatch.type", targetType)
-                val path = cause.pathReference.replace(Regex(".*\\[(.*)].*"), "$1").trim('"')
-                respEntity.message = if (path.contains(".")) {
-                    getText(path.substring(path.lastIndexOf('.') + 1))
-                } else {
-                    getText(path)
-                } + separator + invalidValue(cause.value) + message
-
+                val path = cause.path
+                val desc = path.joinToString("") { if (it.fieldName == null) "[${it.index}]" else ".${it.fieldName}" }.trimStart('.')
+                errors[desc] = getText(path.last().fieldName
+                        ?: desc) + separator + invalidValue(cause.value) + message
+                respEntity.message = errors.values.first()
             } else {
                 respEntity.message = "paramMismatch"
             }
@@ -150,11 +148,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 }
             }
             if (msg == null) {
-                msg = if (field.contains(".")) {
-                    getText(field.substring(field.lastIndexOf('.') + 1))
-                } else {
-                    getText(field)
-                } + separator + rejectedValuedesc + defaultMessage
+                msg = getText(field.substringAfter(".")) + separator + rejectedValuedesc + defaultMessage
             }
             errors[field] = msg
         }
