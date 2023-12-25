@@ -1,9 +1,11 @@
 package top.bettercode.summer.web.error
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import org.springframework.beans.InvalidPropertyException
 import org.springframework.context.MessageSource
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.http.HttpStatus
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.http.converter.HttpMessageNotWritableException
 import org.springframework.validation.BindException
 import org.springframework.validation.FieldError
@@ -67,6 +69,24 @@ class DefaultErrorHandler(messageSource: MessageSource,
         } else if (error is ConstraintViolationException) { //数据验证
             constraintViolationException(error, respEntity, errors,
                     separator)
+        } else if (error is HttpMessageNotReadableException) {
+            val cause = error.cause
+            if (cause is InvalidFormatException) {
+                val targetType = cause.targetType.name
+                val code = "typeMismatch.$targetType"
+                var message = getText(code)
+                if (message == code)
+                    message = getText("typeMismatch.type", targetType)
+                val path = cause.pathReference.replace(Regex(".*\\[(.*)].*"), "$1").trim('"')
+                respEntity.message = if (path.contains(".")) {
+                    getText(path.substring(path.lastIndexOf('.') + 1))
+                } else {
+                    getText(path)
+                } + separator + invalidValue(cause.value) + message
+
+            } else {
+                respEntity.message = "paramMismatch"
+            }
         } else if (error is HttpMediaTypeNotAcceptableException) {
             respEntity.message = "MediaType not Acceptable!Must ACCEPT:" + error
                     .supportedMediaTypes
@@ -131,10 +151,10 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
             if (msg == null) {
                 msg = if (field.contains(".")) {
-                    (getText(field.substring(field.lastIndexOf('.') + 1)) + separator + rejectedValuedesc + defaultMessage)
+                    getText(field.substring(field.lastIndexOf('.') + 1))
                 } else {
-                    getText(field) + separator + rejectedValuedesc + defaultMessage
-                }
+                    getText(field)
+                } + separator + rejectedValuedesc + defaultMessage
             }
             errors[field] = msg
         }
