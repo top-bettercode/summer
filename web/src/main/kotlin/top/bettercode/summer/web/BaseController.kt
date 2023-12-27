@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.lang.util.ParameterUtil.hasParameter
 import top.bettercode.summer.tools.lang.util.ParameterUtil.hasParameterKey
 import top.bettercode.summer.web.error.ErrorAttributes
 import top.bettercode.summer.web.exception.ResourceNotFoundException
+import top.bettercode.summer.web.exception.UnauthorizedException
 import top.bettercode.summer.web.support.DeviceUtil
 import java.util.*
 import java.util.function.Supplier
@@ -120,13 +121,15 @@ open class BaseController : Response() {
     }
 
     companion object {
+        @JvmOverloads
         @JvmStatic
-        fun notFound(): Supplier<out RuntimeException> {
-            return Supplier<RuntimeException> { ResourceNotFoundException() }
+        fun unauth(msg: String? = null): Supplier<out RuntimeException> {
+            return Supplier<RuntimeException> { UnauthorizedException(msg) }
         }
 
+        @JvmOverloads
         @JvmStatic
-        fun notFound(msg: String?): Supplier<out RuntimeException> {
+        fun notFound(msg: String? = null): Supplier<out RuntimeException> {
             return Supplier<RuntimeException> { ResourceNotFoundException(msg) }
         }
     }

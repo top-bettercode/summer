@@ -19,11 +19,13 @@ abstract class BaseTest : BaseLogTest() {
         return ApplicationContextHolder.getProperty("spring.datasource.url").isNullOrBlank()
     }
 
-    protected fun notFound(): Supplier<out RuntimeException?> {
-        return BaseController.notFound()
+    @JvmOverloads
+    protected fun unauth(msg: String? = null): Supplier<out RuntimeException?> {
+        return BaseController.unauth(msg)
     }
 
-    protected fun notFound(msg: String?): Supplier<out RuntimeException?> {
+    @JvmOverloads
+    protected fun notFound(msg: String? = null): Supplier<out RuntimeException?> {
         return BaseController.notFound(msg)
     }
 
