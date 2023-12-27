@@ -14,51 +14,40 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 object AuthenticationHelper {
-    private val authentication: Authentication?
+    private val authentication: Optional<Authentication>
         /**
          * @return 授权信息
          */
-        get() = SecurityContextHolder.getContext().authentication
+        get() = Optional.ofNullable(SecurityContextHolder.getContext().authentication)
 
     @JvmStatic
-    val principal: UserDetails?
+    val principal: Optional<UserDetails>
         /**
          * @return 授权信息
          */
         get() {
-            val authentication = authentication
-            if (authentication != null) {
-                val principal = authentication.principal
+            return authentication.map {
+                val principal = it.principal
                 if (principal is UserDetails) {
-                    return principal
+                    principal
+                } else {
+                    null
                 }
             }
-            return null
         }
 
     @JvmStatic
     val username: Optional<String>
         get() {
-            val authentication = authentication
-            if (authentication != null) {
-                val principal = authentication.principal
-                return if (principal is UserDetails) {
-                    Optional.of(principal.username)
+            return authentication.map {
+                val principal = it.principal
+                if (principal is UserDetails) {
+                    principal.username
                 } else {
-                    if (principal == null) Optional.empty() else Optional.of(principal.toString())
+                    principal?.toString()
                 }
             }
-            return Optional.empty()
         }
-
-    /**
-     * @param authentication 授权信息
-     * @param authority      权限
-     * @return 授权信息是否包含指定权限
-     */
-    private fun hasAuthority(authentication: Authentication, authority: String): Boolean {
-        return hasAuthority(authentication.authorities, authority)
-    }
 
     @JvmStatic
     fun hasAuthority(
@@ -79,9 +68,9 @@ object AuthenticationHelper {
      */
     @JvmStatic
     fun hasAuthority(authority: String): Boolean {
-        val authentication = authentication
-                ?: return false
-        return hasAuthority(authentication, authority)
+        return authentication.map {
+            hasAuthority(it.authorities, authority)
+        }.orElse(false)
     }
 
     @JvmStatic
