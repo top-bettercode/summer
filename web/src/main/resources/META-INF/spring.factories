@@ -9,6 +9,7 @@ top.bettercode.summer.web.config.SerializerConfiguration,\
 top.bettercode.summer.web.config.KaptchaConfiguration,\
 top.bettercode.summer.web.config.XmlSerializerConfiguration,\
 top.bettercode.summer.web.config.MessageSourceConfiguration,\
+top.bettercode.summer.web.config.ServletWebConfiguration,\
 top.bettercode.summer.web.config.WebConfiguration,\
 top.bettercode.summer.web.config.CorsConfiguration,\
 top.bettercode.summer.web.config.MultipartFileConfiguration,\
