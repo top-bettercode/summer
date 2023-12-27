@@ -57,6 +57,9 @@ open class WeatherClient(
         return properties.nightStartTime.hour <= time.hour && time.hour <= properties.nightEndTime.hour
     }
 
+    /**
+     * <a href="https://www.nowapi.com/api/weather.wtype">天气类型</a>
+     */
     open fun type(): Map<String, WeatherType> {
         val defaultInstance = TypeFactory.defaultInstance()
         val javaType = defaultInstance.constructParametricType(
@@ -93,6 +96,9 @@ open class WeatherClient(
         }
     }
 
+    /**
+     * <a href="https://www.nowapi.com/api/weather.realtime">天气接口文档</a>
+     */
     open fun query(ip: String): WeatherResult {
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 WeatherResponse::class.java, WeatherResult::class.java
@@ -124,6 +130,9 @@ open class WeatherClient(
         }
     }
 
+    /**
+     * <a href="https://www.nowapi.com/api/weather.realtime">天气接口文档</a>
+     */
     open fun query(longitude: Double, latitude: Double): WeatherResult {
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 WeatherResponse::class.java, WeatherResult::class.java
