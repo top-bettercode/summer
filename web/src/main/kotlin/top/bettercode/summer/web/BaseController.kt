@@ -124,13 +124,15 @@ open class BaseController : Response() {
         @JvmOverloads
         @JvmStatic
         fun unauth(msg: String? = null): Supplier<out RuntimeException> {
-            return Supplier<RuntimeException> { UnauthorizedException(msg) }
+            return Supplier<RuntimeException> { UnauthorizedException(msg ?: "Unauthorized") }
         }
 
         @JvmOverloads
         @JvmStatic
         fun notFound(msg: String? = null): Supplier<out RuntimeException> {
-            return Supplier<RuntimeException> { ResourceNotFoundException(msg) }
+            return Supplier<RuntimeException> {
+                ResourceNotFoundException(msg ?: "resource.not.found")
+            }
         }
     }
 }
