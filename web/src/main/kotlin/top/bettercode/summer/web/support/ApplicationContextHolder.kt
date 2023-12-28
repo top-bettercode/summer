@@ -52,6 +52,18 @@ object ApplicationContextHolder {
     }
 
     @JvmStatic
+    val activeProfiles: Array<String>
+        get() = applicationContext?.environment?.activeProfiles ?: emptyArray()
+
+    @JvmStatic
+    val isTest: Boolean
+        get() = activeProfiles.any { it.contains("test") }
+
+    @JvmStatic
+    val isDev: Boolean
+        get() = activeProfiles.any { it.contains("dev") }
+
+    @JvmStatic
     val conversionService: ConversionService
         get() = applicationContext?.getBean(ConversionService::class.java)
                 ?: DefaultConversionService()

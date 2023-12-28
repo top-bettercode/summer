@@ -8,6 +8,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties("summer.data.jpa")
 open class JpaExtProperties {
     /**
+     * 超时警报时间秒数
+     */
+    var timeoutAlarmSeconds = 2
+
+    /**
      * 逻辑删除
      */
     var logicalDelete = LogicalDelete()

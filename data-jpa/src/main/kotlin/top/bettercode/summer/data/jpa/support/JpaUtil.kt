@@ -3,7 +3,9 @@ package top.bettercode.summer.data.jpa.support
 import org.hibernate.type.spi.TypeConfiguration
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import org.slf4j.MarkerFactory
 import org.springframework.util.ClassUtils
+import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
@@ -43,8 +45,14 @@ object JpaUtil {
                 val s = System.currentTimeMillis()
                 val result = run()
                 val d = System.currentTimeMillis() - s
-                if (d > 2000) {
-                    log.warn("cost:{}ms", d)
+                val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty("summer.data.jpa.timeout-alarm-seconds", Int::class.java)
+                        ?: 2) * 1000
+                if (d > timeoutAlarmSeconds) {
+                    if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
+                        log.warn(MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER), "cost:{}ms", d)
+                    } else {
+                        log.warn("cost:{}ms", d)
+                    }
                 } else {
                     log.debug("cost:{}ms", d)
                 }
