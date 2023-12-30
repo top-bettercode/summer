@@ -39,7 +39,7 @@ class RespEntity<T> : IRespEntity, Serializable {
         this.message = message
     }
 
-    constructor(data: T) {
+    constructor(data: T?) {
         status = HttpStatus.OK.value().toString()
         message = ""
         this.data = data
@@ -88,15 +88,11 @@ class RespEntity<T> : IRespEntity, Serializable {
         const val KEY_DATA = "data"
         const val KEY_TRACE = "trace"
         const val KEY_ERRORS = "errors"
-        fun assertOk(respEntity: RespEntity<*>) {
-            if (!respEntity.isOk) {
-                throw SystemException(respEntity.status!!, respEntity.message)
-            }
-        }
 
-        fun assertOk(respEntity: RespEntity<*>, message: String?) {
+        @JvmOverloads
+        fun assertOk(respEntity: RespEntity<*>, message: String? = null) {
             if (!respEntity.isOk) {
-                throw SystemException(respEntity.status!!, message)
+                throw SystemException(respEntity.status!!, message ?: respEntity.message)
             }
         }
 
@@ -105,35 +101,23 @@ class RespEntity<T> : IRespEntity, Serializable {
             return RespEntity(status, message)
         }
 
+        @JvmOverloads
         @JvmStatic
         @JsonIgnore
-        fun <T> ok(): RespEntity<T?> {
-            return RespEntity(null)
-        }
-
-        @JvmStatic
-        @JsonIgnore
-        fun <T> ok(data: T): RespEntity<T> {
+        fun <T> ok(data: T? = null): RespEntity<T> {
             return RespEntity(data)
         }
 
+        @JvmOverloads
+        @JvmStatic
         @JsonIgnore
-        fun <T> fail(): RespEntity<T> {
-            return fail("")
-        }
-
-        @JsonIgnore
-        fun <T> fail(message: String?): RespEntity<T> {
-            return fail(message, null)
-        }
-
-        @JsonIgnore
-        fun <T> fail(message: String?, errors: Any?): RespEntity<T> {
+        fun <T> fail(message: String? = "", errors: Any? = null): RespEntity<T> {
             return fail(HttpStatus.INTERNAL_SERVER_ERROR.value().toString(), message, errors)
         }
 
+        @JvmStatic
         @JsonIgnore
-        fun <T> fail(status: String, message: String?, errors: Any?): RespEntity<T> {
+        fun <T> fail(status: String, message: String? = "", errors: Any? = null): RespEntity<T> {
             val respEntity = RespEntity<T>(status, message)
             respEntity.errors = errors
             return respEntity

@@ -112,11 +112,8 @@ open class BaseController : Response() {
         requireNotNull(param) { getText("param.notnull", paramName) ?: "" }
     }
 
-    protected fun assertOk(respEntity: RespEntity<*>) {
-        RespEntity.assertOk(respEntity)
-    }
-
-    protected fun assertOk(respEntity: RespEntity<*>, message: String?) {
+    @JvmOverloads
+    protected fun assertOk(respEntity: RespEntity<*>, message: String?=null) {
         RespEntity.assertOk(respEntity, message)
     }
 
