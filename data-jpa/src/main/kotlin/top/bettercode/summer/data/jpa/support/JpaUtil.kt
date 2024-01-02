@@ -6,6 +6,7 @@ import org.slf4j.MDC
 import org.slf4j.MarkerFactory
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.logging.RequestLoggingFilter
+import top.bettercode.summer.logging.logback.AlarmMarker
 import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
@@ -44,17 +45,21 @@ object JpaUtil {
             return if (put) {
                 val s = System.currentTimeMillis()
                 val result = run()
-                val d = System.currentTimeMillis() - s
+                val duration = System.currentTimeMillis() - s
                 val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty("summer.data.jpa.timeout-alarm-seconds", Int::class.java)
                         ?: 2) * 1000
-                if (d > timeoutAlarmSeconds) {
+                if (duration > timeoutAlarmSeconds) {
                     if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
-                        log.warn(MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER), "cost:{}ms", d)
+                        val marker = MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER)
+                        val initialComment = "$id：执行速度慢"
+                        val timeoutMsg = "(${duration / 1000}秒)"
+                        marker.add(AlarmMarker(initialComment, timeoutMsg))
+                        log.warn(marker, "cost:{}ms", duration)
                     } else {
-                        log.warn("cost:{}ms", d)
+                        log.warn("cost:{}ms", duration)
                     }
                 } else {
-                    log.debug("cost:{}ms", d)
+                    log.debug("cost:{}ms", duration)
                 }
                 result
             } else {

@@ -159,18 +159,21 @@ class RequestLoggingFilter(
                 val uriName =
                         "${operation.collectionName}${if (operation.collectionName.isNotBlank() && operation.name.isNotBlank()) "/" else ""}${operation.name}"
                 val restUri = requestToUse.servletPath
-                if (requestTimeout) {
+
+                val hasError = (error != null
+                        && httpStatusCode >= 400
+                        && !properties.ignoredErrorStatusCode.contains(httpStatusCode)
+                        && (isDebugEnabled || httpStatusCode >= 500))
+
+                if (!hasError && requestTimeout) {
                     val initialComment = "$uriName($restUri)：请求响应速度慢"
                     val timeoutMsg = "(${operation.duration / 1000}秒)"
                     marker.add(MarkerFactory.getMarker(ALARM_LOG_MARKER))
                     marker.add(AlarmMarker(initialComment, timeoutMsg))
                     msg = "$initialComment${timeoutMsg}\n$msg"
                 }
-                if (LoggingUtil.existProperty(
-                                environment,
-                                "summer.logging.logstash.destinations[0]"
-                        )
-                ) {
+
+                if (LoggingUtil.existProperty(environment, "summer.logging.logstash.destinations[0]")) {
                     marker.add(
                             Markers.appendRaw(
                                     OPERATION_MARKER,
@@ -182,14 +185,10 @@ class RequestLoggingFilter(
                 if ((error == null || error is ClientAbortException) && !requestTimeout) {
                     log.info(marker, msg)
                 } else {
-                    if (error != null
-                            && httpStatusCode >= 400
-                            && !properties.ignoredErrorStatusCode.contains(httpStatusCode)
-                            && (isDebugEnabled || httpStatusCode >= 500)
-                    ) {
+                    if (hasError) {
                         val initialComment =
                                 "$uriName($restUri)：$httpStatusCode|${
-                                    getMessage(requestAttributes) ?: "${error.javaClass.name}:${
+                                    getMessage(requestAttributes) ?: "${error!!.javaClass.name}:${
                                         error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                                     }"
                                 }"
