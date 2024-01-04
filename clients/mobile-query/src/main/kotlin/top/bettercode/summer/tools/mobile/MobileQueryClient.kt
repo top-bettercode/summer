@@ -52,7 +52,7 @@ open class MobileQueryClient(
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
     }
 
 
@@ -72,7 +72,7 @@ open class MobileQueryClient(
         bodyParams["appKey"] = secretKey
         bodyParams["token"] = token
 
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<QueryResponse>(
                 HttpEntity(bodyParams, headers),
                 QueryResponse::class.java
         )
@@ -80,7 +80,7 @@ open class MobileQueryClient(
             execute(
                     properties.url, HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(QueryResponse::class.java)
+                    this.restTemplate.responseEntityExtractor(QueryResponse::class.java)
             )
         } catch (e: Exception) {
             throw QueryException(e)

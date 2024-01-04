@@ -58,7 +58,7 @@ open class WeixinClient<T : IWeixinProperties>(
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
     }
 
     fun writeToXml(obj: Any): String {

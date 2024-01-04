@@ -61,7 +61,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
 
         //添加证书
         val certLocation = properties.certLocation

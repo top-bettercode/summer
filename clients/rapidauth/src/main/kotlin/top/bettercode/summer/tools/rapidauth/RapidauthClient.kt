@@ -50,7 +50,7 @@ open class RapidauthClient(
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
     }
 
     /**
@@ -67,7 +67,7 @@ open class RapidauthClient(
         val request = RapidauthRequest(sig, time, carrier, token)
 
 
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<RapidauthResponse>(
                 HttpEntity(request),
                 RapidauthResponse::class.java
         )
@@ -75,7 +75,7 @@ open class RapidauthClient(
             execute(
                     properties.url, HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(RapidauthResponse::class.java),
+                    this.restTemplate.responseEntityExtractor(RapidauthResponse::class.java),
                     properties.sdkappid,
                     random
             )

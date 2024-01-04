@@ -53,7 +53,7 @@ open class SimpleB2mSmsTemplate(
         messageConverters.add(StringHttpMessageConverter())
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
-        setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
     }
 
     /**
@@ -118,11 +118,11 @@ open class SimpleB2mSmsTemplate(
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 B2mResponse::class.java, B2mRespData::class.java
         )
-        val requestCallback = httpEntityCallback<B2mResponse<B2mRespData>>(
+        val requestCallback = this.restTemplate.httpEntityCallback<B2mResponse<B2mRespData>>(
                 HttpEntity(params, null),
                 javaType
         )
-        val responseEntityExtractor = responseEntityExtractor<B2mResponse<B2mRespData>>(javaType)
+        val responseEntityExtractor = this.restTemplate.responseEntityExtractor<B2mResponse<B2mRespData>>(javaType)
         val entity: ResponseEntity<B2mResponse<B2mRespData>> = try {
             execute(
                     b2mProperties.url + "/simpleinter/sendPersonalitySMS", HttpMethod.POST,
@@ -174,11 +174,11 @@ open class SimpleB2mSmsTemplate(
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 B2mResponse::class.java, B2mSendReport::class.java
         )
-        val requestCallback = httpEntityCallback<B2mResponse<B2mSendReport>>(
+        val requestCallback = this.restTemplate.httpEntityCallback<B2mResponse<B2mSendReport>>(
                 HttpEntity(params, null),
                 javaType
         )
-        val responseEntityExtractor = responseEntityExtractor<B2mResponse<B2mSendReport>>(javaType)
+        val responseEntityExtractor = this.restTemplate.responseEntityExtractor<B2mResponse<B2mSendReport>>(javaType)
         val entity: ResponseEntity<B2mResponse<B2mSendReport>> = try {
             execute(
                     b2mProperties.url + "/simpleinter/getReport", HttpMethod.POST,
@@ -236,7 +236,7 @@ open class SimpleB2mSmsTemplate(
         params["startTime"] = startTime.format(timeFormatter)
         params["endTime"] = endTime.format(timeFormatter)
         params["smsId"] = smsId
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<String>(
                 HttpEntity(params, null),
                 String::class.java
         )
@@ -244,7 +244,7 @@ open class SimpleB2mSmsTemplate(
             execute(
                     b2mProperties.url + "/report/retrieveReport", HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(String::class.java)
+                    this.restTemplate.responseEntityExtractor(String::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)

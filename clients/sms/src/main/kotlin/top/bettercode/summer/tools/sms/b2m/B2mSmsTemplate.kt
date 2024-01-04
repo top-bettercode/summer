@@ -53,7 +53,7 @@ open class B2mSmsTemplate(
         messageConverters.add(StringHttpMessageConverter())
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
-        setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
     }
 
     /**
@@ -114,7 +114,7 @@ open class B2mSmsTemplate(
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<ByteArray>(
                 HttpEntity(data, headers),
                 ByteArray::class.java
         )
@@ -122,7 +122,7 @@ open class B2mSmsTemplate(
             execute(
                     b2mProperties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(ByteArray::class.java)
+                    this.restTemplate.responseEntityExtractor(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
@@ -173,7 +173,7 @@ open class B2mSmsTemplate(
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<ByteArray>(
                 HttpEntity(data, headers),
                 ByteArray::class.java
         )
@@ -181,7 +181,7 @@ open class B2mSmsTemplate(
             execute(
                     b2mProperties.url + "/inter/getReport", HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(ByteArray::class.java)
+                    this.restTemplate.responseEntityExtractor(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)

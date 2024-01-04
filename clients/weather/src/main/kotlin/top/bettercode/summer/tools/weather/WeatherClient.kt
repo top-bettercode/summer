@@ -46,7 +46,7 @@ open class WeatherClient(
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
     }
 
 
@@ -75,7 +75,7 @@ open class WeatherClient(
                     properties.url + "/?app=weather.wtype&appkey={0}&sign={1}&format=json",
                     HttpMethod.GET,
                     null,
-                    responseEntityExtractor(javaType),
+                    this.restTemplate.responseEntityExtractor(javaType),
                     properties.appKey,
                     properties.sign
             )
@@ -108,7 +108,7 @@ open class WeatherClient(
                     properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&cityIp={2}",
                     HttpMethod.GET,
                     null,
-                    responseEntityExtractor(javaType),
+                    this.restTemplate.responseEntityExtractor(javaType),
                     properties.appKey,
                     properties.sign,
                     ip
@@ -142,7 +142,7 @@ open class WeatherClient(
                     properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&wgs84ll={2},{3}",
                     HttpMethod.GET,
                     null,
-                    responseEntityExtractor(javaType),
+                    this.restTemplate.responseEntityExtractor(javaType),
                     properties.appKey,
                     properties.sign,
                     longitude,

@@ -4,15 +4,10 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
-import org.springframework.http.client.ClientHttpRequestFactory
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.lang.Nullable
-import org.springframework.web.client.*
-import org.springframework.web.util.UriTemplateHandler
+import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
-import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 /**
@@ -48,35 +43,6 @@ open class ApiTemplate @JvmOverloads constructor(
 
     init {
         this.restTemplate.requestFactory = OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())
-    }
-
-    protected var errorHandler: ResponseErrorHandler
-        get() = this.restTemplate.errorHandler
-        set(errorHandler) {
-            this.restTemplate.errorHandler = errorHandler
-        }
-
-    protected val uriTemplateHandler: UriTemplateHandler
-        get() = this.restTemplate.uriTemplateHandler
-
-    protected fun setMessageConverters(messageConverters: List<HttpMessageConverter<*>>) {
-        this.restTemplate.messageConverters = messageConverters
-    }
-
-    protected fun setRequestFactory(requestFactory: ClientHttpRequestFactory) {
-        this.restTemplate.requestFactory = requestFactory
-    }
-
-    protected fun <T> httpEntityCallback(@Nullable requestBody: Any?, responseType: Class<T>): RequestCallback {
-        return this.restTemplate.httpEntityCallback<T>(requestBody, responseType)
-    }
-
-    protected fun <T> httpEntityCallback(@Nullable requestBody: Any?, responseType: Type): RequestCallback {
-        return this.restTemplate.httpEntityCallback<T>(requestBody, responseType)
-    }
-
-    protected fun <T> responseEntityExtractor(responseType: Type): ResponseExtractor<ResponseEntity<T>> {
-        return this.restTemplate.responseEntityExtractor(responseType)
     }
 
 }

@@ -48,15 +48,14 @@ open class JpushClient(
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
-
+        this.restTemplate.messageConverters = messageConverters
     }
 
 
     open fun send(request: JpushRequest): JpushResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<JpushResponse>(
                 HttpEntity(request, headers),
                 JpushResponse::class.java
         )
@@ -73,7 +72,7 @@ open class JpushClient(
             execute(
                     properties.url + "/push", HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(JpushResponse::class.java)
+                    this.restTemplate.responseEntityExtractor(JpushResponse::class.java)
             )
         } catch (e: Exception) {
             if (e is HttpClientErrorException) {
@@ -102,7 +101,7 @@ open class JpushClient(
     open fun cid(count: Int): JpushCidResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<JpushCidResponse>(
                 HttpEntity(null, headers),
                 JpushCidResponse::class.java
         )
@@ -110,7 +109,7 @@ open class JpushClient(
             execute(
                     properties.url + "/push/cid?count={0}", HttpMethod.GET,
                     requestCallback,
-                    responseEntityExtractor(JpushCidResponse::class.java),
+                    this.restTemplate.responseEntityExtractor(JpushCidResponse::class.java),
                     count
             )
         } catch (e: Exception) {

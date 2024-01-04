@@ -57,9 +57,9 @@ open class AliSmsTemplate(
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
-        setMessageConverters(messageConverters)
+        this.restTemplate.messageConverters = messageConverters
 
-        errorHandler = object : DefaultResponseErrorHandler() {
+        this.restTemplate.errorHandler = object : DefaultResponseErrorHandler() {
             override fun handleError(response: ClientHttpResponse) {}
         }
     }
@@ -239,7 +239,7 @@ open class AliSmsTemplate(
     ): T {
         //签名
         sign(params)
-        val requestCallback = httpEntityCallback(
+        val requestCallback = this.restTemplate.httpEntityCallback<T>(
                 HttpEntity(params, null),
                 responseType
         )
@@ -248,7 +248,7 @@ open class AliSmsTemplate(
                     aliSmsProperties.url,
                     HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(
+                    this.restTemplate.responseEntityExtractor(
                             responseType
                     )
             )
