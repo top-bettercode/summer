@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.sms
 import org.slf4j.Marker
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 
 /**
  * @author Peter Wu

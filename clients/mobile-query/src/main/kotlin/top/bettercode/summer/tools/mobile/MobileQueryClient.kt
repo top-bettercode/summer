@@ -9,7 +9,7 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.mobile.MobileQueryClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.mobile.entity.QueryResponse
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.security.Key
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

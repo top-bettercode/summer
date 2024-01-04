@@ -13,7 +13,7 @@ import top.bettercode.summer.tools.jpush.entity.Options
 import top.bettercode.summer.tools.jpush.entity.resp.JpushCidResponse
 import top.bettercode.summer.tools.jpush.entity.resp.JpushErrorResponse
 import top.bettercode.summer.tools.jpush.entity.resp.JpushResponse
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 
 /**
  * 推送接口

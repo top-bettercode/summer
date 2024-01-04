@@ -13,7 +13,7 @@ import top.bettercode.summer.tools.weather.WeatherClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weather.entity.WeatherResponse
 import top.bettercode.summer.tools.weather.entity.WeatherResult
 import top.bettercode.summer.tools.weather.entity.WeatherType
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.time.LocalTime
 
 /**

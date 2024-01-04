@@ -14,7 +14,7 @@ import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.pay.weixin.entity.*
 import top.bettercode.summer.web.form.IFormkeyService
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.io.InputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate

@@ -13,7 +13,7 @@ import top.bettercode.summer.tools.lang.util.Sha256DigestUtils
 import top.bettercode.summer.tools.rapidauth.RapidauthClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthRequest
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthResponse
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 
 /**
  * 手机号查询接口

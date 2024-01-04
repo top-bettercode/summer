@@ -1,4 +1,4 @@
-package top.bettercode.summer.web.support.client
+package top.bettercode.summer.tools.lang.client
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

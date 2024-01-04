@@ -14,7 +14,7 @@ import top.bettercode.summer.tools.amap.AMapClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.amap.entity.AMapGeo
 import top.bettercode.summer.tools.amap.entity.AMapRegeo
 import top.bettercode.summer.tools.amap.entity.Location
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 
 /**
  *

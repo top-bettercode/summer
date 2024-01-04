@@ -12,7 +12,7 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.entity.ApiQuota
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.StableTokenRequest
-import top.bettercode.summer.web.support.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.time.Duration
 import java.util.concurrent.Callable
 
