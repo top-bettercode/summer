@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.support.client
 
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,25 +31,23 @@ open class ApiTemplate @JvmOverloads constructor(
         protected val restTemplate: RestTemplate = RestTemplate()
 ) : RestOperations by restTemplate {
     protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val loggingInterceptor: Interceptor = OkHttpClientLoggingInterceptor(
+            collectionName = collectionName,
+            name = name,
+            logMarker = logMarker,
+            logClazz = this::class.java,
+            requestDecrypt = requestDecrypt,
+            responseDecrypt = responseDecrypt)
+    protected val okHttpClientBuilder = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(connectTimeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(readTimeout.toLong(), TimeUnit.SECONDS)
 
     constructor(connectTimeout: Int, readTimeout: Int) : this("", "", connectTimeout, readTimeout)
     constructor(collectionName: String, name: String, connectTimeout: Int, readTimeout: Int) : this(collectionName, name, null, connectTimeout, readTimeout)
 
     init {
-        val okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(OkHttpClientLoggingInterceptor(
-                        collectionName = collectionName,
-                        name = name,
-                        logMarker = logMarker,
-                        logClazz = this::class.java,
-                        requestDecrypt = requestDecrypt,
-                        responseDecrypt = responseDecrypt))
-                .connectTimeout(connectTimeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(readTimeout.toLong(), TimeUnit.SECONDS)
-                .build()
-
-        val clientHttpRequestFactory = OkHttp3ClientHttpRequestFactory(okHttpClient)
-        this.restTemplate.requestFactory = clientHttpRequestFactory
+        this.restTemplate.requestFactory = OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())
     }
 
     protected var errorHandler: ResponseErrorHandler

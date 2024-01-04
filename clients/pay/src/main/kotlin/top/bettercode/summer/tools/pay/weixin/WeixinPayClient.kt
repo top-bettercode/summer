@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
-import okhttp3.OkHttpClient
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory
@@ -84,7 +83,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
             sslContext.init(keyManagerFactory.keyManagers, null, null)
             sslContext.socketFactory
 
-            val okHttpClient = OkHttpClient.Builder()
+            okHttpClientBuilder
                     .sslSocketFactory(sslContext.socketFactory, object : X509TrustManager {
                         override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
                         }
@@ -96,11 +95,8 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                             return emptyArray()
                         }
                     })
-                    .connectTimeout(properties.connectTimeout.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-                    .readTimeout(properties.readTimeout.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-                    .build()
-            val okHttp3ClientHttpRequestFactory = OkHttp3ClientHttpRequestFactory(okHttpClient)
-            super.setRequestFactory(okHttp3ClientHttpRequestFactory)
+
+            this.restTemplate.requestFactory = OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())
         }
     }
 

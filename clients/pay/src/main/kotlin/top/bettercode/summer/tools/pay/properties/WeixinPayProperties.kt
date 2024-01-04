@@ -40,13 +40,13 @@ data class WeixinPayProperties @JvmOverloads constructor(
         var certKeyPassword: String? = null,
 
         /**
-         * 请求连接超时时间毫秒数
+         * 请求连接超时时间秒数
          */
-        var connectTimeout: Int = 10000,
+        var connectTimeout: Int = 10,
 
         /**
-         * 请求读取超时时间毫秒数
+         * 请求读取超时时间秒数
          */
-        var readTimeout: Int = 10000
+        var readTimeout: Int = 10
 
 )
