@@ -23,6 +23,7 @@ open class ApiTemplate @JvmOverloads constructor(
         readTimeout: Int,
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
         private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,
+        @JvmField
         protected val restTemplate: RestTemplate = RestTemplate()
 ) : RestOperations by restTemplate {
     protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -33,6 +34,7 @@ open class ApiTemplate @JvmOverloads constructor(
             logClazz = this::class.java,
             requestDecrypt = requestDecrypt,
             responseDecrypt = responseDecrypt)
+    @JvmField
     protected val okHttpClientBuilder = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .connectTimeout(connectTimeout.toLong(), TimeUnit.SECONDS)
