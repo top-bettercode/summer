@@ -36,9 +36,15 @@ class LogFileNameComparatorTest {
     fun compare() {
         System.err.println("1".toInt().compareTo(2))
         val compare = LogFileNameComparator().compare(
-                File("/alarm/2022-03-02-10:20:54.673-error-24760.log#last"),
-                File("/alarm/2022-03-02-10:21:54.673-error-24760.log#last")
+                File("/alarm/weixin_pay-2023-11-16-1.gz"),
+                File("/alarm/weixin_pay-2023-12-07-0.gz")
         )
         System.err.println(compare)
+        val listOf = listOf(File("/alarm/weixin_pay-2023-11-16-1.gz"),
+                File("/alarm/weixin_pay-2023-12-07-0.gz"))
+                .sortedWith(LogFileNameComparator())
+        listOf.forEach {
+            System.err.println(it.name)
+        }
     }
 }
