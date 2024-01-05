@@ -13,6 +13,8 @@ interface IRespEntity {
     val httpStatusCode: Int?
         get() = HttpStatus.OK.value()
 
+    val message: String?
+
     @JsonIgnore
     fun toMap(): Map<String?, Any?>
 }

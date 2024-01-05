@@ -19,7 +19,7 @@ class RespEntity<T> : IRespEntity, Serializable {
 
     @JsonProperty(KEY_MESSAGE)
     @JsonView(Any::class)
-    var message: String? = null
+    override var message: String? = null
 
     @JsonProperty(KEY_TRACE)
     @JsonView(Any::class)
@@ -73,6 +73,12 @@ class RespEntity<T> : IRespEntity, Serializable {
                 HttpStatus.OK.value()
             }
 
+        override val message: String?
+            get() = try {
+                this[KEY_MESSAGE] as String?
+            } catch (e: Exception) {
+                null
+            }
 
         override fun toMap(): Map<String?, Any?> {
             return this
