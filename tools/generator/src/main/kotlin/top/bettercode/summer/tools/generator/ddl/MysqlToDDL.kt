@@ -14,7 +14,7 @@ object MysqlToDDL : ToDDL() {
         out.appendLine()
         val notOnlyCollate = !database.extension.setting("onlyCollate", "false").toBoolean()
         val notOnlyComment = !database.extension.setting("onlyComment", "false").toBoolean()
-        val noComment = !database.extension.setting("noComment", "false").toBoolean()
+        val noComment = database.extension.setting("noComment", "false").toBoolean()
         if (!database.offline && notOnlyComment) {
             //schema default collate change
             database.use {
