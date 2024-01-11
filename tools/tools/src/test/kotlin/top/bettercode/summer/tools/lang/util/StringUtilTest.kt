@@ -43,7 +43,9 @@ class StringUtilTest {
     }
 
     @Test
-    fun underscoreName2() {
+    fun toUnderscore() {
         System.err.println("javaName".toUnderscore())
+        System.err.println("JAVA_NAME".toUnderscore())
     }
+
 }

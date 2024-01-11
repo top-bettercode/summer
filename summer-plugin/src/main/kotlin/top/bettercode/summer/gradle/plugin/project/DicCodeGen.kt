@@ -150,9 +150,9 @@ class DicCodeGen(private val project: Project) {
                                 } else if (code.toString().isBlank()) {
                                     "BLANK"
                                 } else {
-                                    (code as String).replace("-", "_").replace(".", "_")
+                                    (code as String).replace("-", "_").replace(".", "_").toUnderscore()
                                 }
-                                ).toUnderscore().replace(Regex("_+"), "_")
+                                ).replace(Regex("_+"), "_")
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
                             val initializationString =

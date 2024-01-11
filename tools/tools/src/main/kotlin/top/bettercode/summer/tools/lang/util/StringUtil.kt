@@ -639,9 +639,11 @@ object StringUtil {
 
     @JvmStatic
     fun String.toUnderscore(): String {
-        val regex = Regex("[A-Z]")
-        val result = regex.replace(this) { "_${it.value}" }
-        return result.removePrefix("_").uppercase()
+        if (this.matches(Regex(".*[a-z]+.*"))) {
+            val regex = Regex("[A-Z]")
+            val result = regex.replace(this) { "_${it.value}" }
+            return result.removePrefix("_").uppercase()
+        } else return this
     }
 
 }
