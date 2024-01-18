@@ -19,7 +19,6 @@ import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotations
 import java.util.*
 import java.util.function.Supplier
-import java.util.stream.Collectors
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -80,8 +79,8 @@ class RequestMappingAuthorizationManager(
             log.trace("Authorizing {}", request)
         }
         val userAuthorities = authentication.get().authorities
-        var matchers = configAuthorities.entries.stream()
-                .filter { (key): Map.Entry<AntPathRequestMatcher, Set<String?>> -> key.matcher(request).isMatch }.collect(Collectors.toList())
+        var matchers = configAuthorities.entries
+                .filter { (key): Map.Entry<AntPathRequestMatcher, Set<String?>> -> key.matcher(request).isMatch }
         if (matchers.isEmpty()) {
             if (log.isTraceEnabled) {
                 log.trace("allow request since did not find matching RequestMatcher")
@@ -90,9 +89,10 @@ class RequestMappingAuthorizationManager(
         }
         val comparator = AntPathMatcher().getPatternComparator(
                 getRequestPath(request))
-        matchers = matchers.stream()
-                .sorted { (key): Map.Entry<AntPathRequestMatcher, Set<String?>>, (key1): Map.Entry<AntPathRequestMatcher, Set<String?>> -> comparator.compare(key.pattern, key1.pattern) }
-                .collect(Collectors.toList())
+        matchers = matchers
+                .sortedWith { (key): Map.Entry<AntPathRequestMatcher, Set<String?>>, (key1): Map.Entry<AntPathRequestMatcher, Set<String?>> ->
+                    comparator.compare(key.pattern, key1.pattern)
+                }
         val (key, value) = matchers[0]
         if (matchers.size > 1) {
             val (key1) = matchers[1]

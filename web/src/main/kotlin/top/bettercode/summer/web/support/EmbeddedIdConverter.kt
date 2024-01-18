@@ -3,11 +3,9 @@ package top.bettercode.summer.web.support
 import org.springframework.beans.BeanUtils
 import org.springframework.util.ReflectionUtils
 import java.beans.PropertyDescriptor
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 
 /**
  * @author Peter Wu
@@ -22,21 +20,18 @@ object EmbeddedIdConverter {
     }
 
     @JvmStatic
-    fun <T : Any> toString(embeddedId: T, delimiter: String?): String {
+    fun <T : Any> toString(embeddedId: T, delimiter: String): String {
         val clazz: Class<*> = embeddedId.javaClass
-        return getPropertyDescriptors(clazz).stream()
-                .map { o: PropertyDescriptor ->
-                    val value = ReflectionUtils.invokeMethod(o.readMethod, embeddedId)
-                    ApplicationContextHolder.conversionService.convert(value, String::class.java)!!
-                }
-                .collect(Collectors.joining(delimiter))
+        return getPropertyDescriptors(clazz).joinToString(delimiter) { o: PropertyDescriptor ->
+            val value = ReflectionUtils.invokeMethod(o.readMethod, embeddedId)
+            ApplicationContextHolder.conversionService.convert(value, String::class.java)!!
+        }
     }
 
     private fun getPropertyDescriptors(clazz: Class<*>): List<PropertyDescriptor> {
         return cache.computeIfAbsent(clazz) { c: Class<*> ->
-            Arrays.stream(BeanUtils.getPropertyDescriptors(c))
-                    .filter { o: PropertyDescriptor -> "class" != o.name && o.readMethod != null && o.writeMethod != null }.sorted(
-                            Comparator.comparing { obj: PropertyDescriptor -> obj.name }).collect(Collectors.toList())
+            BeanUtils.getPropertyDescriptors(c)
+                    .filter { o: PropertyDescriptor -> "class" != o.name && o.readMethod != null && o.writeMethod != null }.sortedBy { it.name }
         }
     }
 

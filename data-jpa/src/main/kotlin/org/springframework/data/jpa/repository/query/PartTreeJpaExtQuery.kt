@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryM
 import org.springframework.data.repository.query.ReturnedType
 import org.springframework.data.repository.query.parser.Part
 import org.springframework.data.repository.query.parser.PartTree
-import org.springframework.data.repository.query.parser.PartTree.OrPart
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.query.JpaQueryLogExecution
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
@@ -264,7 +263,7 @@ internal class PartTreeJpaExtQuery internal constructor(
     companion object {
         private fun validate(tree: PartTree, parameters: JpaParameters, methodName: String) {
             var argCount = 0
-            val parts = Iterable { tree.stream().flatMap { obj: OrPart -> obj.stream() }.iterator() }
+            val parts = tree.flatMap { it.stream() }
             for (part in parts) {
                 val numberOfArguments = part.numberOfArguments
                 for (i in 0 until numberOfArguments) {

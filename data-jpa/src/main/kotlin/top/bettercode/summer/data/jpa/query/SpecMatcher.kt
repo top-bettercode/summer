@@ -13,7 +13,6 @@ import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
-import java.util.stream.Collectors
 import javax.persistence.criteria.*
 import javax.persistence.metamodel.Attribute
 import javax.persistence.metamodel.Attribute.PersistentAttributeType
@@ -43,10 +42,10 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 
     override fun toPredicate(root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder): Predicate? {
         if (orders.isNotEmpty()) {
-            val orders = orders.stream().map { o: Sort.Order ->
+            val orders = orders.map { o: Sort.Order ->
                 val path: Path<*> = SpecPath.toPath(root, o.property)
                 if (o.direction.isDescending) cb.desc(path) else cb.asc(path)
-            }.collect(Collectors.toList())
+            }
             query.orderBy(orders)
         }
         return this.toPredicate(root, cb)
@@ -188,9 +187,9 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 
     //--------------------------------------------
     fun sortBy(direction: Sort.Direction, vararg propertyName: String): M {
-        orders.addAll(Arrays.stream(propertyName) //
+        orders.addAll(propertyName //
                 .map { it: String -> Sort.Order(direction, it) } //
-                .collect(Collectors.toList()))
+        )
         return typed
     }
 

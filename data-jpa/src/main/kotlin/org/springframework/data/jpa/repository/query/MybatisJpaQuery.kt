@@ -15,7 +15,6 @@ import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
 import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 import javax.persistence.EntityManager
 import javax.persistence.Query
 
@@ -225,9 +224,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         fun convertOrderBy(sort: Sort?): String? {
             return if (sort == null || !sort.isSorted) {
                 null
-            } else sort.stream().map { o: Sort.Order -> ParsingUtils.reconcatenateCamelCase(o.property, "_") + " " + o.direction }
-                    .collect(
-                            Collectors.joining(","))
+            } else sort.map { o: Sort.Order -> ParsingUtils.reconcatenateCamelCase(o.property, "_") + " " + o.direction }.joinToString(",")
         }
 
         private val ORDER_BY = Pattern.compile("[\\s\\S]*order\\s+by\\s+[\\s\\S]*",

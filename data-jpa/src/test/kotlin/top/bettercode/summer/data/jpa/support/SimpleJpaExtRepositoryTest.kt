@@ -468,7 +468,7 @@ class SimpleJpaExtRepositoryTest {
 //    nativeQuery.addScalar("last_name", StringType.INSTANCE);
 //    nativeQuery.addScalar("date", TimestampType.INSTANCE);
 //    nativeQuery.addScalar("date1", TimestampType.INSTANCE);
-//    nativeQuery.stream().forEach(o -> {
+//    nativeQuery.forEach(o -> {
 //      System.err.println(StringUtil.json(o, true));
 //    });
         val resultList = query.resultList

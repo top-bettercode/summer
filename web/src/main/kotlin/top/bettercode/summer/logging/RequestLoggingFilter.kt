@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.context.request.RequestAttributes
-import org.springframework.web.context.request.ServletRequestAttributes
+import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerMapping
@@ -28,7 +28,9 @@ import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.web.error.ErrorAttributes
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.FilterChain
@@ -115,8 +117,13 @@ class RequestLoggingFilter(
     ) {
         if (!isAsyncStarted(requestToUse)) {
             val handler = HandlerMethodContextHolder.getHandler(requestToUse)
-            val requestAttributes = ServletRequestAttributes(requestToUse)
+            val requestAttributes = ServletWebRequest(requestToUse)
             val error = getError(requestAttributes)
+            if (error != null) {
+                if (requestToUse.getAttribute(ErrorAttributes.ERROR_ATTRIBUTES_HANDLED) == null) {
+                    ApplicationContextHolder.getBean(ErrorAttributes::class.java)!!.getErrorAttributes(error, requestAttributes)
+                }
+            }
             val httpStatusCode = getStatus(requestAttributes)
             if (needRecord(requestToUse, handler, error, httpStatusCode, uri)) {
                 val config: RequestLoggingConfig = requestLoggingConfig(requestToUse, responseToUse, handler)
@@ -161,9 +168,10 @@ class RequestLoggingFilter(
                 val restUri = requestToUse.servletPath
 
                 val hasError = (error != null
-                        && httpStatusCode >= 400
+                        && (httpStatusCode >= 400
                         && !properties.ignoredErrorStatusCode.contains(httpStatusCode)
                         && (isDebugEnabled || httpStatusCode >= 500))
+                        )
 
                 if (!hasError && requestTimeout) {
                     val initialComment = "$uriName($restUri)：请求响应速度慢"

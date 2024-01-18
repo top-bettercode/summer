@@ -64,8 +64,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 import("top.bettercode.util.excel.ExcelExport")
                 +"ExcelExport.sheet(\"$remarks\", excelExport -> excelExport.setData(${
                     if (isFullComposite) {
-                        import("com.google.common.collect.Streams")
-                        "Streams.stream(results).map($className::get$primaryKeyClassName).collect(Collectors.toList())"
+                        "results.stream().map($className::get$primaryKeyClassName).collect(Collectors.toList())"
                     } else "results"
                 }, excelFields));"
             }

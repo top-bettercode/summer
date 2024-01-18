@@ -14,7 +14,6 @@ import org.springframework.data.jpa.repository.query.QueryParameterSetter.ErrorH
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.support.Size
 import java.util.*
-import java.util.stream.Collectors
 import javax.persistence.Query
 
 /**
@@ -28,10 +27,7 @@ internal class MybatisParameterBinder(
     private val typeHandlerRegistry: TypeHandlerRegistry = mappedStatement.configuration.typeHandlerRegistry
     private val configuration: Configuration = mappedStatement.configuration
 
-    override fun <T : Query?> bind(
-            jpaQuery: T, metadata: QueryParameterSetter.QueryMetadata,
-            accessor: JpaParametersParameterAccessor
-    ): T {
+    override fun <T : Query> bind(jpaQuery: T, metadata: QueryParameterSetter.QueryMetadata, accessor: JpaParametersParameterAccessor): T {
         return jpaQuery
     }
 
@@ -111,8 +107,8 @@ internal class MybatisParameterBinder(
         val values = accessor.values
         var bindableSize = 0
         val paramMap: MutableMap<String?, Any?> = ParamMap()
-        val names = this.parameters.stream().map { p: JpaParameter -> p.name.orElse(null) }
-                .filter { obj: String? -> Objects.nonNull(obj) }.collect(Collectors.toSet())
+        val names = this.parameters.map { p: JpaParameter -> p.name.orElse(null) }
+                .filter { obj: String? -> Objects.nonNull(obj) }.toSet()
         var params: Any? = null
         for (parameter in this.parameters.bindableParameters) {
             val parameterType = parameter.type

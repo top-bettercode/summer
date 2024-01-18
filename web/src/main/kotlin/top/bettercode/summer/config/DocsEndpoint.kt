@@ -21,7 +21,6 @@ import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.resource.HttpResource
 import top.bettercode.summer.logging.LoggingUtil
 import java.io.File
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -65,11 +64,9 @@ class DocsEndpoint(
                         return
                     }
                 } else if (resource.file.exists()) {
-                    val last = Arrays.stream(resource.file.listFiles())
-                            .filter { f: File -> f.isFile && f.name.matches("^v.*\\.html$".toRegex()) }.map { it.name }
-                            .max { o1, o2 -> o1.compareTo(o2) }
-                    if (last.isPresent) {
-                        response.sendRedirect("$servletPath/${last.get()}")
+                    val last = resource.file.listFiles()?.filter { f: File -> f.isFile && f.name.matches("^v.*\\.html$".toRegex()) }?.map { it.name }?.maxOfOrNull { it }
+                    if (last != null) {
+                        response.sendRedirect("$servletPath/${last}")
                         return
                     }
                 }
@@ -128,7 +125,7 @@ class DocsEndpoint(
     private fun getMediaType(request: HttpServletRequest, resource: Resource): MediaType? {
         var result: MediaType? = null
         val mimeType = request.servletContext.getMimeType(resource.filename)
-        if (StringUtils.hasText(mimeType)) {
+        if (!mimeType.isNullOrBlank()) {
             result = MediaType.parseMediaType(mimeType)
         }
         if (result == null || MediaType.APPLICATION_OCTET_STREAM == result) {

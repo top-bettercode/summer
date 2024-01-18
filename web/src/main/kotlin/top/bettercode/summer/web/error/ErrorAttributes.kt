@@ -31,6 +31,8 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
                            private val errorHandlers: List<IErrorHandler>?,
                            private val respEntityConverter: IRespEntityConverter?,
                            private val messageSource: MessageSource, private val summerWebProperties: SummerWebProperties) : DefaultErrorAttributes() {
+
+
     override fun getErrorAttributes(webRequest: WebRequest,
                                     options: ErrorAttributeOptions): Map<String?, Any?> {
         val error = getError(webRequest)
@@ -133,6 +135,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
         error?.let { request.setAttribute(DefaultErrorAttributes::class.java.name + ".ERROR", it, RequestAttributes.SCOPE_REQUEST) }
         request
                 .setAttribute(WebUtils.ERROR_MESSAGE_ATTRIBUTE, message, RequestAttributes.SCOPE_REQUEST)
+        request.setAttribute(ERROR_ATTRIBUTES_HANDLED, true, RequestAttributes.SCOPE_REQUEST)
     }
 
     private fun getStatus(requestAttributes: RequestAttributes): HttpStatus {
@@ -189,5 +192,6 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
 
     companion object {
         val IS_PLAIN_TEXT_ERROR = ErrorAttributes::class.java.name + ".plainText"
+        val ERROR_ATTRIBUTES_HANDLED = ErrorAttributes::class.java.name + ".handled"
     }
 }

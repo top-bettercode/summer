@@ -105,9 +105,8 @@ object JpaMybatisConfigurationUtil {
                 }
         val typeAliasesPackage = properties.typeAliasesPackage
         if (!typeAliasesPackage.isNullOrBlank()) {
-            scanClasses(typeAliasesPackage, properties.typeAliasesSuperType).stream()
-                    .filter { clazz: Class<*> -> !clazz.isAnonymousClass }.filter { clazz: Class<*> -> !clazz.isInterface }
-                    .filter { clazz: Class<*> -> !clazz.isMemberClass }
+            scanClasses(typeAliasesPackage, properties.typeAliasesSuperType)
+                    .filter { clazz: Class<*> -> !clazz.isAnonymousClass && !clazz.isInterface && !clazz.isMemberClass }
                     .forEach { type: Class<*> -> mybatisConfiguration.typeAliasRegistry.registerAlias(type) }
         }
         val typeAliases = properties.typeAliases
@@ -121,10 +120,8 @@ object JpaMybatisConfigurationUtil {
         }
         val typeHandlersPackage = properties.typeHandlersPackage
         if (!typeHandlersPackage.isNullOrBlank()) {
-            scanClasses(typeHandlersPackage, TypeHandler::class.java).stream()
-                    .filter { clazz: Class<*> -> !clazz.isAnonymousClass }
-                    .filter { clazz: Class<*> -> !clazz.isInterface }
-                    .filter { clazz: Class<*> -> !Modifier.isAbstract(clazz.modifiers) }
+            scanClasses(typeHandlersPackage, TypeHandler::class.java)
+                    .filter { clazz: Class<*> -> !clazz.isAnonymousClass && !clazz.isInterface && !Modifier.isAbstract(clazz.modifiers) }
                     .forEach { typeHandlerClass: Class<*> -> mybatisConfiguration.typeHandlerRegistry.register(typeHandlerClass) }
         }
         val typeHandlerClasses = properties.typeHandlerClasses
