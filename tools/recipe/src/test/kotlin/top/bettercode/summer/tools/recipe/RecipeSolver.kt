@@ -185,8 +185,7 @@ class RecipeSolver(val solver: Solver) {
 //                whenVar.eq(16.0)
                 when (whenCon.operator) {
                     Operator.EQUAL -> {
-                        //todo
-//                        whenVar.neIfNot(whenCon.value, boolVar)
+                        throw UnsupportedOperationException("不支持等于条件约束")
                     }
 
                     Operator.GREATER -> {
