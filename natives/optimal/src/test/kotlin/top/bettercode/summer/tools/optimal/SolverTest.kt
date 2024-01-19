@@ -20,7 +20,8 @@ class SolverTest {
 
     @Test
     fun cp() {
-//        val pow = 10.0.pow(0)
+        val pow = 10.0.pow(6)
+        System.err.println(100*pow)
 //        System.err.println(pow)
         cpSolver.ge()
     }

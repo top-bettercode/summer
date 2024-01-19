@@ -33,7 +33,7 @@ open class CPExtSolver @JvmOverloads constructor(
     private var numConstraints: Int = 0
 
     private fun times(value: Double): Long {
-        val long = (value * 10.0.pow(times)).toLong()
+        val long = (value * 10.0.pow(times) * 10.0.pow(times)).toLong()
         return if (long < Integer.MIN_VALUE) {
             Integer.MIN_VALUE.toLong()
         } else if (long > Integer.MAX_VALUE) {
@@ -43,10 +43,8 @@ open class CPExtSolver @JvmOverloads constructor(
         }
     }
 
-    private fun times(value: IVar): LinearExpr {
-//        val coeff = times(1.0)
-        val coeff = 1L
-        return LinearExpr.weightedSum(arrayOf(value.getDelegate<IntVar>()), arrayOf(coeff).toLongArray())
+    private fun times(value: IVar): IntVar {
+        return value.getDelegate()
     }
 
     override fun setTimeLimit(seconds: Int) {

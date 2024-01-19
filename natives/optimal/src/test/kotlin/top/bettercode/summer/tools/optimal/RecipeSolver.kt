@@ -98,12 +98,12 @@ class RecipeSolver(val solver: Solver) {
                 }
 
                 //一组变量至多有一个变量可取非零值
-                val noMixedVars = noMixedMaterialNames
-                        .map { names: List<String> ->
-                            val vars = names.map { key: String -> materialVarsMap[key]!! }.toTypedArray()
-                            vars.sum()
-                        }.toTypedArray()
-                noMixedVars.atMostOne()
+//                val noMixedVars = noMixedMaterialNames
+//                        .map { names: List<String> ->
+//                            val vars = names.map { key: String -> materialVarsMap[key]!! }.toTypedArray()
+//                            vars.sum()
+//                        }.toTypedArray()
+//                noMixedVars.atMostOne()
             }
 
             // 原料用量
