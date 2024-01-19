@@ -49,7 +49,7 @@ class COPTSolver @JvmOverloads constructor(
     override fun getResultStatus(): String {
         val status = getStatus()
         try {
-            val fields = copt.Status::class.java.getFields()
+            val fields = copt.Status::class.java.fields
             for (field in fields) {
                 if (field[null] == status) {
                     return field.name
