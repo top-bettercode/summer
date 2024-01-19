@@ -41,7 +41,7 @@ abstract class Solver(
     abstract fun numVar(lb: Double, ub: Double): IVar
     abstract fun Array<out IVar>.ge(lb: Double)
 
-    fun Array<out IVar>.gt(lb: Double) {
+    open fun Array<out IVar>.gt(lb: Double) {
         ge(lb + epsilon)
     }
 
@@ -49,7 +49,7 @@ abstract class Solver(
     abstract fun Array<out IVar>.gt(lb: IVar)
     abstract fun Array<out IVar>.le(ub: Double)
 
-    fun Array<out IVar>.lt(ub: Double) {
+    open fun Array<out IVar>.lt(ub: Double) {
         le(ub - epsilon)
     }
 
@@ -61,7 +61,7 @@ abstract class Solver(
     abstract fun Array<out IVar>.between(lb: IVar, ub: IVar)
     abstract fun IVar.ge(lb: Double)
 
-    fun IVar.gt(lb: Double) {
+    open fun IVar.gt(lb: Double) {
         ge(lb + epsilon)
     }
 
@@ -69,7 +69,7 @@ abstract class Solver(
     abstract fun IVar.gt(lb: IVar)
     abstract fun IVar.le(ub: Double)
 
-    fun IVar.lt(ub: Double) {
+    open fun IVar.lt(ub: Double) {
         le(ub - epsilon)
     }
 
@@ -93,25 +93,25 @@ abstract class Solver(
 
     abstract fun IVar.geIf(value: Double, bool: IVar)
 
-    fun IVar.gtIf(value: Double, bool: IVar) {
+    open fun IVar.gtIf(value: Double, bool: IVar) {
         geIf(value + epsilon, bool)
     }
 
     abstract fun IVar.geIfNot(value: Double, bool: IVar)
 
-    fun IVar.gtIfNot(value: Double, bool: IVar) {
+    open fun IVar.gtIfNot(value: Double, bool: IVar) {
         geIfNot(value + epsilon, bool)
     }
 
     abstract fun IVar.leIf(value: Double, bool: IVar)
 
-    fun IVar.ltIf(value: Double, bool: IVar) {
+    open fun IVar.ltIf(value: Double, bool: IVar) {
         leIf(value - epsilon, bool)
     }
 
     abstract fun IVar.leIfNot(value: Double, bool: IVar)
 
-    fun IVar.ltIfNot(value: Double, bool: IVar) {
+    open fun IVar.ltIfNot(value: Double, bool: IVar) {
         leIfNot(value - epsilon, bool)
     }
 

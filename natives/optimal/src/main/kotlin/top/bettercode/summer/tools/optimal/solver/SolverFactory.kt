@@ -23,6 +23,7 @@ object SolverFactory {
             SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)
             SolverType.SCIP -> SCIPSolver(dlb = dlb, dub = dub, epsilon = epsilon)
             SolverType.CBC -> CBCSolver(dlb = dlb, dub = dub, epsilon = epsilon)
+            SolverType.CP -> CPExtSolver(times = 0, epsilon = epsilon)
         }
     }
 
