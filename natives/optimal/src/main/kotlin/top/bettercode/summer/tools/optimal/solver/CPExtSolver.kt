@@ -453,4 +453,38 @@ open class CPExtSolver @JvmOverloads constructor(
         return sum
     }
 
+    override fun Array<out IVar>.atMost(n: Int) {
+        val count = size
+        if (n >= count) {
+            return
+        }
+        val boolVarArray = boolVarArray(count)
+        val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
+        model.addEquality(sumExpr, n.toLong())
+        for (i in indices) {
+            this[i].eqIfNot(0.0, boolVarArray[i])
+        }
+    }
+
+    override fun Array<out IVar>.atLeast(n: Int, gt: Boolean) {
+        val count = size
+        if (n >= count) {
+            for (i in indices) {
+                if (gt)
+                    this[i].gt(0.0)
+                else
+                    this[i].lt(0.0)
+            }
+            return
+        }
+        val boolVarArray = boolVarArray(count)
+        val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
+        model.addEquality(sumExpr, n.toLong())
+        for (i in indices) {
+            if (gt)
+                this[i].gtIf(0.0, boolVarArray[i])
+            else
+                this[i].ltIf(0.0, boolVarArray[i])
+        }
+    }
 }

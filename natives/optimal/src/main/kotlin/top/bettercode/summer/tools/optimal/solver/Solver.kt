@@ -133,7 +133,7 @@ abstract class Solver(
     /**
      * 最多n个非零变量,至少size-n个零
      */
-    fun Array<out IVar>.atMost(n: Int) {
+    open fun Array<out IVar>.atMost(n: Int) {
         val count = size
         if (n >= count) {
             return
@@ -157,7 +157,7 @@ abstract class Solver(
      * 最少n个非零变量,最多size-n个零
      */
     @JvmOverloads
-    fun Array<out IVar>.atLeast(n: Int, gt: Boolean = true) {
+    open fun Array<out IVar>.atLeast(n: Int, gt: Boolean = true) {
         val count = size
         if (n >= count) {
             for (i in indices) {

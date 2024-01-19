@@ -264,7 +264,7 @@ class RecipeResult(private val solverName: String) {
                     } else if (VITRIOL == id) {
                         if (isLimitLiquidAmmonia) {
                             val vsolutionValue = material.solutionValue
-                            val vitriolNormal = vsolutionValue.normal!!
+                            val vitriolNormal = vsolutionValue.normal ?: vsolutionValue.value
                             val vitriolExcess = vsolutionValue.overdose
                             val relationPair = liquidAmmoniaMaterialRatio!![MaterialIDs.of(id)]
                             val normal = relationPair?.normal
@@ -344,6 +344,8 @@ class RecipeResult(private val solverName: String) {
                             } else {
                                 cc++
                             }
+                        } else {
+                            cc += 4
                         }
                     } else {
                         val liqRelationPair = if (isLimitLiquidAmmonia) liquidAmmoniaMaterialRatio!!.filter { it.key.contains(id) }.values.firstOrNull()
