@@ -22,22 +22,22 @@ internal class RecipeSolverTest {
 
     @Test
     fun solve() {
-//        solve("13-05-07高氯枸磷")
+        solve("13-05-07高氯枸磷")
 //        solve("24-06-10高氯枸磷")
 //        solve("15-15-15喷浆氯基")
 //        solve("15-15-15喷浆硫基")
-        solve("15-15-15常规氯基")
+//        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
         val requirement = PrepareData.readRequirement(productName)
-        requirement.maxResult = 20
+        val maxResult = 20
         val coptSolver = SolverFactory.createSolver(SolverType.COPT)
         val cbcSolver = SolverFactory.createSolver(SolverType.CBC)
         val scipSolver = SolverFactory.createSolver(SolverType.SCIP)
-        val solve = RecipeSolver(coptSolver).solve(requirement)
-        val solve1 = RecipeSolver(cbcSolver).solve(requirement)
-        val solve2 = RecipeSolver(scipSolver).solve(requirement)
+        val solve = MultiRecipeSolver.solve(solver = coptSolver, requirement = requirement, maxResult = maxResult)
+        val solve1 = MultiRecipeSolver.solve(solver = cbcSolver, requirement = requirement, maxResult = maxResult)
+        val solve2 = MultiRecipeSolver.solve(solver = scipSolver, requirement = requirement, maxResult = maxResult)
         solve.toExcel()
 //        solve1.toExcel()
 //        solve2.toExcel()

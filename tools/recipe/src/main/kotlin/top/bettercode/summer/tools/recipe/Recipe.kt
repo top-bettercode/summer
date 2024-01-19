@@ -15,7 +15,7 @@ data class Recipe(
         val requirement: RecipeRequirement,
         val cost: Double,
         /** 选用的原料  */
-        val materials: MutableList<RecipeMaterialValue> = ArrayList()
+        val materials:List<RecipeMaterialValue>
 ) {
     /** 需要烘干的水分含量  */
     val dryWater: Double
@@ -26,10 +26,6 @@ data class Recipe(
     val trueCost: Double
         get() = materials.sumOf { it.solutionValue.value * it.price / 1000 }.scale()
 
-    // --------------------------------------------
-    fun addMaterial(material: RecipeMaterialValue) {
-        materials.add(material)
-    }
 
     //检查结果
     fun check(): Boolean {

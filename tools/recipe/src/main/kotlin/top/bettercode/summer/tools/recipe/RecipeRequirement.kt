@@ -59,8 +59,6 @@ class RecipeRequirement(
     /** 超时时间  */
     var timeout = 30
 
-    /** 最大结果数  */
-    var maxResult = 1
     //--------------------------------------------
 
     init {
