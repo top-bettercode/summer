@@ -10,8 +10,8 @@ val ctpVersion = "v6.6.1_P1_CP_20210406"
 version = "$ctpVersion-SNAPSHOT"
 
 dependencies {
-    implementation(project(":tools:tools"))
-    implementation(fileTree("libs/$ctpVersion"))
+    api(project(":tools:tools"))
+    api(fileTree("libs/$ctpVersion"))
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }

@@ -13,10 +13,10 @@ internal class RecipeSolverTest {
 
     @Test
     fun solve() {
-        solve("13-05-07高氯枸磷")
-        solve("24-06-10高氯枸磷")
-        solve("15-15-15喷浆氯基")
-        solve("15-15-15喷浆硫基")
+//        solve("13-05-07高氯枸磷")
+//        solve("24-06-10高氯枸磷")
+//        solve("15-15-15喷浆氯基")
+//        solve("15-15-15喷浆硫基")
         solve("15-15-15常规氯基")
     }
 
@@ -28,7 +28,7 @@ internal class RecipeSolverTest {
         val solve = RecipeSolver(coptSolver).solve(reqData)
         val solve1 = RecipeSolver(cbcSolver).solve(reqData)
         val solve2 = RecipeSolver(scipSolver).solve(reqData)
-//        solve.toExcel()
+        solve.toExcel()
 //        solve1.toExcel()
 //        solve2.toExcel()
         System.err.println("copt:" + solve.time)

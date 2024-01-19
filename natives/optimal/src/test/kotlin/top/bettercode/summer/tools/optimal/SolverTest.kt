@@ -359,21 +359,26 @@ class SolverTest {
 
     private fun Solver.geIf(): Double {
         val numVar1 = numVar(0.0, 100.0)
+        val numVar2 = numVar(0.0, 100.0)
         val boolVar = boolVar()
         numVar1.geIf(10.0, boolVar)
-        arrayOf(numVar1).minimize()
+        numVar1.ltIfNot(10.0, boolVar)
+        numVar2.geIf(10.0, boolVar)
+        arrayOf(numVar1, numVar2).minimize()
         solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         System.err.println(boolVar.value)
         System.err.println(numVar1.value)
-        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-        arrayOf(numVar1).minimize()
-        boolVar.eq(1.0)
+        System.err.println(numVar2.value)
+        numVar1.eq(10.1)
+        arrayOf(numVar1, numVar2).minimize()
         solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         System.err.println(boolVar.value)
         System.err.println(numVar1.value)
-        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-        Assertions.assertTrue(numVar1.value >= 10.0)
-        return numVar1.value
+        System.err.println(numVar2.value)
+        Assertions.assertTrue(numVar2.value >= 10.0)
+        return numVar2.value
     }
 
     @Test

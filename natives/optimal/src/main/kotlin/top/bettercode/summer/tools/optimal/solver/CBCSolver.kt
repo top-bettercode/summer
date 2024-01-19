@@ -15,7 +15,7 @@ class CBCSolver @JvmOverloads constructor(
         /**
          * 变量默认上界
          */
-        dub: Double = 1000.0,
+        dub: Double = OptimalUtil.DEFAULT_DUB,
         epsilon: Double = 1e-6,
         name: String = "CBCSolver"
 ) : MPExtSolver(type = MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING, dlb = dlb, dub = dub, epsilon = epsilon, name = name)

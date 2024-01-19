@@ -8,6 +8,11 @@ import kotlin.math.pow
  */
 object OptimalUtil {
     /**
+     * 默认上限
+     */
+    const val DEFAULT_DUB: Double = 1000.0
+
+    /**
      * 求解结果小数位
      *
      * Math.abs(Math.log10(epsilon)).toInt()

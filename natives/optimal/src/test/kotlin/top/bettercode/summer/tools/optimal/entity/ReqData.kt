@@ -4,7 +4,6 @@ import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.core.io.ClassPathResource
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
 import top.bettercode.summer.tools.lang.util.FileUtil
@@ -180,19 +179,17 @@ class ReqData(
         // 必要的
         if (limitUseMaterialNames!!.isNotEmpty()) {
             materials.putAll(
-                    materialCollection.stream()
+                    materialCollection
                             .filter { m: Material -> limitUseMaterialNames!!.contains(m.name) }
-                            .collect(Collectors.toMap({ obj: Material -> obj.name!! }, { m: Material -> m })))
+                            .groupBy { it.name!! }.mapValues { it.value[0] })
         } else {
             // 按Fragment分组
             val others: MutableSet<Material> = HashSet(materialCollection)
             val fragments = materialNameFragments()
             for (fragment in fragments) {
-                val collect = materialCollection.stream()
+                val collect = materialCollection
                         .filter { m: Material -> m.name!!.contains(fragment) }
-                        .collect(Collectors.toList())
-                collect.stream()
-                        .collect(Collectors.groupingBy { m: Material -> m.components!!.key })
+                collect.groupBy { m: Material -> m.components!!.key }
                         .values
                         .forEach(
                                 Consumer { list: List<Material> ->
@@ -208,8 +205,7 @@ class ReqData(
             }
 
             // 筛选价格低的其他原料
-            others.stream()
-                    .collect(Collectors.groupingBy { m: Material -> m.components!!.key })
+            others.groupBy { it.components!!.key }
                     .values
                     .forEach(
                             Consumer { list: List<Material> ->
@@ -278,11 +274,11 @@ class ReqData(
         val specialPriceCol = conditionStartCol
         conditionStartCol++
         val specialPrice: MutableMap<String, Long> = HashMap()
-        rows.values.stream()
+        rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
                     val materialName = row.getCellAsString(specialPriceNameCol).orElse(null)
-                    if (StringUtils.hasText(materialName)) {
+                    if (!materialName.isNullOrBlank()) {
                         row.getCellAsNumber(specialPriceCol)
                                 .ifPresent { price: BigDecimal -> specialPrice[materialName] = price.toLong() }
                     }
@@ -291,12 +287,12 @@ class ReqData(
         val notMixMaterialCol = conditionStartCol
         conditionStartCol++
         notMixMaterials = mutableListOf()
-        rows.values.stream()
+        rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
                     row.getCellAsString(notMixMaterialCol)
                             .ifPresent { str: String ->
-                                if (StringUtils.hasText(str)) {
+                                if (str.isNotBlank()) {
                                     val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                                     notMixMaterials!!.add(split)
                                 }
@@ -307,7 +303,7 @@ class ReqData(
         val notUseMaterialCol = conditionStartCol
         conditionStartCol++
         notUseMaterialNames = mutableListOf()
-        rows.values.stream()
+        rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
                     row.getCellAsString(notUseMaterialCol)
@@ -322,18 +318,17 @@ class ReqData(
         val materialReqCol = conditionStartCol
         conditionStartCol++
         materialReq = mutableMapOf()
-        rows.values.stream()
+        rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
                     row.getCellAsString(materialReqCol)
                             .ifPresent { str: String ->
-                                if (StringUtils.hasText(str)) {
+                                if (str.isNotBlank()) {
                                     val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                                     val key = split[0]
                                     val limit = materialReq!!.computeIfAbsent(key) { _: String? -> Limit() }
-                                    limit.materials = (
-                                            Arrays.stream(Arrays.copyOfRange(split, 1, split.size))
-                                                    .collect(Collectors.toList()))
+                                    limit.materials = Arrays.copyOfRange(split, 1, split.size).toList()
+
                                 }
                             }
                 }
@@ -342,7 +337,7 @@ class ReqData(
         val limitUseMaterialCol = conditionStartCol
         conditionStartCol++
         limitUseMaterialNames = mutableListOf()
-        rows.values.stream()
+        rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
                     row.getCellAsString(limitUseMaterialCol)
@@ -359,12 +354,12 @@ class ReqData(
         val conditionCol = conditionStartCol
         //    conditionStartCol++;
         conditions = mutableMapOf()
-        rows.values.stream()
+        rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
                     row.getCellAsString(conditionCol)
                             .ifPresent { str: String ->
-                                if (StringUtils.hasText(str)) {
+                                if (str.isNotBlank()) {
                                     val split = str.split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                                     if (split.size == 2) {
                                         val condition1 = Condition(split[0])
@@ -412,15 +407,14 @@ class ReqData(
         max = targetMaxLimitRow.getCell(index++).value as BigDecimal
         componentTarget.zinc = (Limit(min, max))
         // 成份原料限制
-        rows.values.stream()
+        rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
                     row.getCellAsString(6)
                             .ifPresent { str: String ->
-                                if (StringUtils.hasText(str)) {
+                                if (str.isNotBlank()) {
                                     val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                                    val limitMaterials = Arrays.stream(Arrays.copyOfRange(split, 1, split.size))
-                                            .collect(Collectors.toList())
+                                    val limitMaterials = Arrays.copyOfRange(split, 1, split.size).toList()
                                     val name = split[0]
                                     val limit = componentTarget.getLimit(name)
                                     limit!!.materials = limitMaterials
@@ -433,7 +427,7 @@ class ReqData(
         // 原料使用限制
         for (i in 0..2) {
             var materialNameFragment = rows[limitRowStart]!!.getCellAsString(index).orElse(null)
-            if (StringUtils.hasText(materialNameFragment)) {
+            if (!materialNameFragment.isNullOrBlank()) {
                 materialNameFragment = materialNameFragment
                         .replace("用量（公斤/吨）", "")
                         .replace("用量（公斤/吨产肥 ）", "")
@@ -456,7 +450,7 @@ class ReqData(
         // 液氨
         for (i in 0..4) {
             var materialNameFragment = rows[limitRowStart]!!.getCellAsString(index).orElse(null)
-            if (StringUtils.hasText(materialNameFragment)) {
+            if (!materialNameFragment.isNullOrBlank()) {
                 isLimitLiquidAmmonia = true
                 val isexcess = materialNameFragment.contains("过量")
                 if (isexcess) {
@@ -483,7 +477,7 @@ class ReqData(
         // 硫酸
         for (i in 0..1) {
             var materialNameFragment = rows[limitRowStart]!!.getCellAsString(index).orElse(null)
-            if (StringUtils.hasText(materialNameFragment)) {
+            if (!materialNameFragment.isNullOrBlank()) {
                 isLimitVitriol = true
                 val isexcess = materialNameFragment.contains("过量")
                 if (isexcess) {
@@ -583,9 +577,8 @@ class ReqData(
                 .getData<ComponentsForm, ComponentsForm>(excelFields)
 
         // 转换为Map
-        componentsForms = componentsForms.stream()
-                .filter { c: ComponentsForm -> StringUtils.hasText(c.name) }
-                .collect(Collectors.toList())
+        componentsForms = componentsForms
+                .filter { c: ComponentsForm -> !c.name.isNullOrBlank() }
         val materials: MutableMap<String?, Material> = HashMap()
         for (component in componentsForms) {
             val material = Material()
@@ -683,7 +676,7 @@ class ReqData(
 
         // 转换为Map  获取原料价格 key: 原料名称 value: 原料价格
         val materialPriceMap: MutableMap<String, MaterialPrice> = materialPriceForms.stream()
-                .filter { p: MaterialPriceForm -> StringUtils.hasText(p.name) }
+                .filter { p: MaterialPriceForm -> !p.name.isNullOrBlank() }
                 .collect(
                         Collectors.toMap(MaterialPriceForm::name
                         ) { p: MaterialPriceForm ->
@@ -724,7 +717,7 @@ class ReqData(
     fun readLines(fileName: String): List<String> {
         val stream = ReqData::class.java.getResourceAsStream(fileName)
                 ?: return emptyList()
-        return FileUtil.readLines(stream, StandardCharsets.UTF_8).stream().filter { str: String? -> StringUtils.hasText(str) }.map { obj: String -> obj.trim { it <= ' ' } }.collect(Collectors.toList())
+        return FileUtil.readLines(stream, StandardCharsets.UTF_8).filter { str: String? -> !str.isNullOrBlank() }.map { obj: String -> obj.trim { it <= ' ' } }
     }
 
     // 检查价格

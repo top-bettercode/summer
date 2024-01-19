@@ -79,7 +79,7 @@ class COPTSolver @JvmOverloads constructor(
     private fun expr(`var`: IVar) =
             if (`var` is COPTExprVar) `var`.getDelegate() else copt.Expr(`var`.getDelegate(), `var`.coeff)
 
-    override fun boolVarArray(count: Int): Array<IVar> {
+    override fun boolVarArray(count: Int): Array<out IVar> {
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
@@ -88,7 +88,7 @@ class COPTSolver @JvmOverloads constructor(
         return array.requireNoNulls()
     }
 
-    override fun intVarArray(count: Int, lb: Double, ub: Double): Array<IVar> {
+    override fun intVarArray(count: Int, lb: Double, ub: Double): Array<out IVar> {
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
@@ -97,7 +97,7 @@ class COPTSolver @JvmOverloads constructor(
         return array.requireNoNulls()
     }
 
-    override fun numVarArray(count: Int, lb: Double, ub: Double): Array<IVar> {
+    override fun numVarArray(count: Int, lb: Double, ub: Double): Array<out IVar> {
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
@@ -121,7 +121,7 @@ class COPTSolver @JvmOverloads constructor(
         return COPTVar(model.addVar(lb, ub, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1)))
     }
 
-    override fun Array<IVar>.ge(lb: Double) {
+    override fun Array<out IVar>.ge(lb: Double) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -130,7 +130,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
     }
 
-    override fun Array<IVar>.ge(lb: IVar) {
+    override fun Array<out IVar>.ge(lb: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -139,7 +139,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
     }
 
-    override fun Array<IVar>.gt(lb: IVar) {
+    override fun Array<out IVar>.gt(lb: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -149,7 +149,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
     }
 
-    override fun Array<IVar>.le(ub: Double) {
+    override fun Array<out IVar>.le(ub: Double) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -158,7 +158,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
     }
 
-    override fun Array<IVar>.le(ub: IVar) {
+    override fun Array<out IVar>.le(ub: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -167,7 +167,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
     }
 
-    override fun Array<IVar>.lt(ub: IVar) {
+    override fun Array<out IVar>.lt(ub: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -177,7 +177,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
     }
 
-    override fun Array<IVar>.eq(value: Double) {
+    override fun Array<out IVar>.eq(value: Double) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -186,7 +186,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (size + 1))
     }
 
-    override fun Array<IVar>.eq(value: IVar) {
+    override fun Array<out IVar>.eq(value: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -198,7 +198,7 @@ class COPTSolver @JvmOverloads constructor(
     /**
      * 两数之间
      */
-    override fun Array<IVar>.between(lb: Double, ub: Double) {
+    override fun Array<out IVar>.between(lb: Double, ub: Double) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -211,7 +211,7 @@ class COPTSolver @JvmOverloads constructor(
     /**
      * 两数之间
      */
-    override fun Array<IVar>.between(lb: IVar, ub: IVar) {
+    override fun Array<out IVar>.between(lb: IVar, ub: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -401,7 +401,7 @@ class COPTSolver @JvmOverloads constructor(
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr, copt.Consts.LESS_EQUAL, ub)
     }
 
-    override fun Array<IVar>.sum(): IVar {
+    override fun Array<out IVar>.sum(): IVar {
         val expr = copt.Expr()
         for (i in this.indices) {
             val v = this[i]
@@ -414,7 +414,7 @@ class COPTSolver @JvmOverloads constructor(
         return COPTVar(sum)
     }
 
-    override fun Array<IVar>.minimize(): IVar {
+    override fun Array<out IVar>.minimize(): IVar {
         val expr = copt.Expr()
         for (i in this.indices) {
             val v = this[i]
@@ -424,7 +424,7 @@ class COPTSolver @JvmOverloads constructor(
         return COPTExprVar(expr)
     }
 
-    override fun Array<IVar>.maximize(): IVar {
+    override fun Array<out IVar>.maximize(): IVar {
         val expr = copt.Expr()
         for (i in this.indices) {
             val v = this[i]
@@ -434,7 +434,7 @@ class COPTSolver @JvmOverloads constructor(
         return COPTExprVar(expr)
     }
 
-    override fun Array<IVar>.atMostOne() {
+    override fun Array<out IVar>.atMostOne() {
         val varArry: Array<copt.Var> = this.map { it.getDelegate<copt.Var>() }.toTypedArray()
         val weights = this.map { it.coeff }.toTypedArray().toDoubleArray()
         model.addSos(varArry, weights, copt.Consts.SOS_TYPE1)

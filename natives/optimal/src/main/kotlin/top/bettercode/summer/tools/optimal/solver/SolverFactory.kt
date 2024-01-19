@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver
 
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.DEFAULT_DUB
+
 object SolverFactory {
 
     @JvmStatic
@@ -15,7 +17,7 @@ object SolverFactory {
                      /**
                       * 变量默认上界
                       */
-                     dub: Double = 1000.0
+                     dub: Double = DEFAULT_DUB
     ): Solver {
         return when (solverType) {
             SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)

@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver
 
 import com.google.ortools.linearsolver.MPSolver
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.DEFAULT_DUB
 
 /**
  *
@@ -15,7 +16,7 @@ class SCIPSolver @JvmOverloads constructor(
         /**
          * 变量默认上界
          */
-        dub: Double = 1000.0,
+        dub: Double = DEFAULT_DUB,
         epsilon: Double = 1e-6,
         name: String = "SCIPSolver"
 ) : MPExtSolver(type = MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING, dlb = dlb, dub = dub, epsilon = epsilon, name = name)

@@ -3,8 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":tools:tools"))
-    api(fileTree("libs"))
+    api(project(":natives:optimal"))
 
     compileOnly("com.google.ortools:ortools-java")
     testImplementation("com.google.ortools:ortools-java")
@@ -13,12 +12,5 @@ dependencies {
     testImplementation("org.dhatim:fastexcel-reader")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-}
-
-tasks {
-
-    "jar"(Jar::class) {
-        from(fileTree(mapOf("dir" to "libs")).files.map { zipTree(it) })
-    }
 }
 

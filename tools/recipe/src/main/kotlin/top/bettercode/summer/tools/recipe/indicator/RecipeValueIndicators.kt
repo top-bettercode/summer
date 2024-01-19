@@ -1,0 +1,18 @@
+package top.bettercode.summer.tools.recipe.indicator
+
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+
+/**
+ *
+ * @author Peter Wu
+ */
+class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>>) : RecipeIndicators<Double>(indicators) {
+
+    val key: String
+        get() = values.filter { it.type != RecipeIndicatorType.WATER }.joinToString(",") { it.value.scale(4).toString() }
+
+    fun valueOf(index: Int): Double {
+        return get(index)?.value ?: 0.0
+    }
+
+}

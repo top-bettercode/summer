@@ -26,6 +26,7 @@ include(":tools:tools")
 include(":tools:excel")
 include(":tools:ueditor")
 include(":tools:configuration-processor")
+include(":tools:recipe")
 
 include(":clients:weixin")
 include(":clients:sms")

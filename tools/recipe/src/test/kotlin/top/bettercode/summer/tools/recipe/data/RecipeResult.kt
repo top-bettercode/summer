@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.optimal.result
+package top.bettercode.summer.tools.recipe.data
 
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.Color
@@ -7,8 +7,11 @@ import org.dhatim.fastexcel.Worksheet
 import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.excel.Alignment
 import top.bettercode.summer.tools.excel.ColumnWidths
-import top.bettercode.summer.tools.optimal.entity.*
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.recipe.Recipe
+import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
+import top.bettercode.summer.tools.recipe.material.MaterialCondition
+import top.bettercode.summer.tools.recipe.material.MaterialIDs
 import java.io.File
 import java.nio.file.Files
 
@@ -17,12 +20,7 @@ import java.nio.file.Files
  *
  * @author Peter Wu
  */
-class RecipeResult // --------------------------------------------
-(
-        private val solverName: String,
-        /** 配方要求  */
-        private val reqData: ReqData) {
-    // --------------------------------------------
+class RecipeResult(private val solverName: String) {
 
     /** 配方  */
     var recipes: MutableList<Recipe> = ArrayList()
@@ -53,44 +51,47 @@ class RecipeResult // --------------------------------------------
     // --------------------------------------------
     // 输出 Excel
     fun toExcel() {
+        // --------------------------------------------
         // 结果输出
-        val size = recipes.size
-        if (size > 0) {
+        if (recipeCount > 0) {
+            val requirement = recipes[0].requirement
+            val fileName: String = (requirement.productName
+                    + if (requirement.maxUseMaterials <= 0) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxUseMaterials}")
+
             val outFile = File(
                     "build/"
                             + solverName
-                            + "-${reqData.fileName}"
+                            + "-${fileName}"
                             + "-推"
-                            + size
+                            + recipeCount
                             + "个-"
                             + System.currentTimeMillis()
                             + ".xlsx")
             outFile.getParentFile().mkdirs()
             val workbook = Workbook(Files.newOutputStream(outFile.toPath()), "", "1.0")
             var sheet = workbook.newWorksheet("最终候选原料")
-            val titles = ("原料名称 价格 " + Components.COMPONENT_NAME_STRING).split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val titles = ("原料名称 价格 " + PrepareData.INDICATOR_NAME_STRING).split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             var r = 0
-            var c = 0
+            var c: Int
             for (i in titles.indices) {
-                value(sheet, r, c + i, titles[i])
+                value(sheet, r, i, titles[i])
             }
-            val reqMaterials: Collection<Material> = reqData.materials.values
+            val reqMaterials: Collection<IRecipeMaterial> = requirement.materials.values
             for (matrial in reqMaterials) {
                 val matrialName = matrial.name
                 var cc = 0
                 // 原料名称
                 value(sheet, ++r, cc++, matrialName)
-                // 成本
-                // 单价
+                // 成本 单价
                 value(sheet, r, cc++, matrial.price)
-                val components = matrial.components
+                val indicators = matrial.indicators
                 // 原料成份
-                for (index in components!!.keys) {
+                for (index in indicators) {
                     value(
                             sheet,
                             r,
-                            cc + index, (components[index]
-                    !!.value!! * 100.0).scale(2)
+                            cc + index.index, (index.value
+                            * 100.0).scale(2)
                             .toString() + "%")
                 }
             }
@@ -107,63 +108,52 @@ class RecipeResult // --------------------------------------------
                 sheet.width(2, ColumnWidths.getWidth("最小用量") + 2)
                 r = 0
                 value(sheet, r, 0, "配方成本：")
-                value(sheet, r, 1, recipe.cost?.scale(2))
+                value(sheet, r, 1, recipe.cost.scale(2))
                 r++
                 value(sheet, r, 0, "产品量：")
-                val targetWeight = reqData.targetWeight
+                val targetWeight = requirement.targetWeight
                 value(sheet, r, 1, targetWeight)
                 val dryWater = recipe.dryWater
-                if (reqData.isAllowDrying) {
-                    value(sheet, r, 2, "至少需要哄干的水分：")
-                    sheet.range(r, 2, r, 3).merge()
-                    value(sheet, r, 4, dryWater!!.scale(2))
-                }
+                value(sheet, r, 2, "至少需要哄干的水分：")
+                sheet.range(r, 2, r, 3).merge()
+                value(sheet, r, 4, dryWater.scale(2))
                 r++
-                val notMixMaterials = reqData.notMixMaterials
-                if (notMixMaterials!!.isNotEmpty()) {
-                    // 不能混用原料限制
-                    value(sheet, r, 0, "不能混用限制条件：")
-                    val str = notMixMaterials.joinToString("，") { arr: Array<String>? -> StringUtils.arrayToDelimitedString(arr, "和") }
+                val notMixMaterials = requirement.notMixMaterials
+                if (notMixMaterials.isNotEmpty()) {
+                    // 不能混用原料约束
+                    value(sheet, r, 0, "不能混用约束：")
+                    val str = notMixMaterials.joinToString("，") { arr: Array<MaterialIDs> -> arr.joinToString("和", "(", ")") { it.toString() } }
                     value(sheet, r, 1, str)
                     sheet.style(r, 1).horizontalAlignment(Alignment.LEFT.value).set()
                     sheet.range(r, 1, r, 14).merge()
                 }
                 r++
                 value(sheet, r, 0, "不使用的原料：")
-                val notUseMaterialNames = reqData.notUseMaterialNames
+                val notUseMaterialNames = requirement.noUseMaterials
                 value(sheet, r, 1, StringUtils.collectionToDelimitedString(notUseMaterialNames, "，"))
                 sheet.style(r, 1).horizontalAlignment(Alignment.LEFT.value).set()
                 sheet.range(r, 1, r, 14).merge()
                 r++
-                value(sheet, r, 0, "限制条件：")
+                value(sheet, r, 0, "约束：")
                 val limitMaterialStrings: MutableList<String?> = ArrayList()
-                val componentTarget = reqData.componentTarget
-                val componentNames: List<String> = Components.componentNames
-                for (integer in componentTarget.keys) {
-                    val limit = componentTarget[integer]
-                    if (limit?.materials != null) {
-                        val componentName = componentNames[integer]
-                        limitMaterialStrings.add(
-                                componentName
-                                        + "只能用："
-                                        + StringUtils.collectionToDelimitedString(limit.materials, "，"))
-                    }
+                val rangeIndicators = requirement.rangeIndicators
+                val materialIDIndicators = requirement.materialIDIndicators
+                val componentNames: List<String> = PrepareData.indicatorNames
+                for (index in materialIDIndicators.values) {
+                    val limit = index.value
+                    limitMaterialStrings.add(index.name + "只能用：" + limit)
                 }
-                reqData
-                        .materialReq
-                        ?.forEach { (name: String?, limit: Limit?) ->
-                            if (limit.materials != null) {
-                                limitMaterialStrings.add(
-                                        name
-                                                + "只能用："
-                                                + StringUtils.collectionToDelimitedString(limit.materials, "，"))
-                            }
+                val materialRangeConstraints = requirement.materialRangeConstraints
+                val materialIDConstraints = requirement.materialIDConstraints
+                materialIDConstraints
+                        .forEach { (name: MaterialIDs, limit: MaterialIDs) ->
+                            limitMaterialStrings.add(name.toString() + "只能用：" + limit)
                         }
-                reqData
-                        .conditions
-                        ?.forEach { (condition1: Condition?, condition2: Condition?) ->
+                requirement
+                        .materialConditions
+                        .forEach { (condition1: MaterialCondition, condition2: MaterialCondition) ->
                             limitMaterialStrings.add(
-                                    "当" + condition1.desc + "时，" + condition2.desc)
+                                    "当" + condition1.toString() + "时，" + condition2.toString())
                         }
                 value(sheet, r, 1, StringUtils.collectionToDelimitedString(limitMaterialStrings, "；"))
                 sheet.style(r, 1).horizontalAlignment(Alignment.LEFT.value).set()
@@ -174,11 +164,12 @@ class RecipeResult // --------------------------------------------
                 value(sheet, r, c++, "")
                 value(sheet, r, c++, "最小用量")
                 value(sheet, r, c++, "最大用量")
-                var liquidAmmonia: String = ReqData.LIQUID_AMMONIA
+                var liquidAmmonia: String = LIQUID_AMMONIA
                 var la2CAUseRatio = 1.0
-                if (recipe.isHascliquidAmmonia) {
-                    la2CAUseRatio = ReqData.LA_2_CAUSE_RATIO
-                    liquidAmmonia = ReqData.CLIQUID_AMMONIA
+                val materials = recipe.materials
+                if (!materials.any { it.name == liquidAmmonia }) {
+                    la2CAUseRatio = LA_2_CAUSE_RATIO
+                    liquidAmmonia = CLIQUID_AMMONIA
                 }
                 value(sheet, r, c++, "最小耗$liquidAmmonia/硫酸系数")
                 value(sheet, r, c++, "最小耗$liquidAmmonia/硫酸量")
@@ -197,31 +188,32 @@ class RecipeResult // --------------------------------------------
                 value(sheet, r, 0, "成份量(百分比)")
                 val row = r - 3
                 // 配方目标成份量
-                val componentRecipe = recipe.componentRecipe
-                for (index in componentTarget.keys) {
+                for (index in rangeIndicators) {
                     r = row
-                    val c1 = c + index
-                    val limit = componentTarget[index]
-                    var weight = componentRecipe!![index]?.max
-                    val water: Boolean = Components.isWater(index)
-                    if (water) {
-                        weight = weight!! - dryWater!!
+                    val c1 = c + index.index
+                    var weight = materials.sumOf { m -> m.indicatorWeight(index.index) }
+                    if (index.isWater) {
+                        weight -= dryWater
+                    } else if (index.isRateToOther) {
+                        weight = materials.sumOf { m -> m.indicatorWeight(index.itIndex!!) }
                     }
-                    value(sheet, r++, c1, weight!!.scale(2))
+                    value(sheet, r++, c1, weight.scale(2))
+
+                    val limit = index.value
                     value(
                             sheet,
                             r++,
-                            c1, (limit?.max!! * 100.0).scale(2)
+                            c1, (limit.max * 100.0).scale(2)
                             .toString() + "%")
                     value(
                             sheet,
                             r++,
-                            c1, (limit.min!! * (100.0)).scale(2)
+                            c1, (limit.min * (100.0)).scale(2)
                             .toString() + "%")
                     var v = (weight / targetWeight).scale(4)
-                    if (Components.isWaterSolublePhosphorusRate(index))
-                        v = (weight / componentRecipe.phosphorus!!.max!!).scale(4)
-                    val valid = v >= limit.min!! && v <= limit.max!!
+                    if (index.isRateToOther)
+                        v = (weight / materials.sumOf { m -> m.indicatorWeight(index.otherIndex!!) }).scale(4)
+                    val valid = v >= limit.min && v <= limit.max
                     value(
                             sheet,
                             r++,
@@ -230,55 +222,60 @@ class RecipeResult // --------------------------------------------
                             valid)
                 }
                 var m = 0
-                val materials = recipe.materials
-                val vitriolMaterialRatioMap = reqData.materialRelations!![ReqData.VITRIOL]
-                val liquidAmmoniaMaterialRatioMap = reqData.materialRelations!![ReqData.LIQUID_AMMONIA]
-                val limitLiquidAmmonia = reqData.isLimitLiquidAmmonia
+                val vitriolMaterialRatio = requirement.sulfuricAcidRelation
+                val liquidAmmoniaMaterialRatio = requirement.liquidAmmoniaRelation
+                val isLimitVitriol = vitriolMaterialRatio != null
+                val isLimitLiquidAmmonia = liquidAmmoniaMaterialRatio != null
                 for (material in materials) {
-                    val matrialName = material.name
-                    val solutionValue = material.solutionValue
+                    val id = material.id
+                    val solutionValue = material.solutionValue.value
                     var cc = 0
                     var mergeRow = 0
-                    if (ReqData.VITRIOL == matrialName && limitLiquidAmmonia) {
+                    if (VITRIOL == id && isLimitLiquidAmmonia) {
                         mergeRow = 1
                     } else {
-                        if (reqData.isLimitVitriol) for (materialNameFragment in vitriolMaterialRatioMap!!.keys) {
-                            if (matrialName!!.contains(materialNameFragment)) {
-                                mergeRow = 1
-                                break
+                        if (isLimitVitriol) {
+                            for (mid in vitriolMaterialRatio!!.keys) {
+                                if (mid.contains(id)) {
+                                    mergeRow = 1
+                                    break
+                                }
                             }
                         }
                     }
 
                     // 原料名称
-                    value(sheet, r + m, cc++, matrialName, mergeRow)
-                    val materialReq = reqData.materialReq
-                    val reqName = materialReq!!.keys.find { s: String -> matrialName!!.contains(s) && materialReq[s]?.min != null }
-                    if (reqName != null) {
-                        val limit = materialReq[reqName]!!
-                        // 最小用量
-                        value(sheet, r + m, cc++, limit.min, mergeRow)
-                        // 最大用量
-                        value(sheet, r + m, cc++, limit.max, mergeRow)
+                    value(sheet, r + m, cc++, id, mergeRow)
+                    if (materialRangeConstraints.isNotEmpty()) {
+                        val firstOrNull = materialRangeConstraints.filter { it.key.contains(id) }.values.firstOrNull()
+                        if (firstOrNull != null) {
+                            // 最小用量
+                            value(sheet, r + m, cc++, firstOrNull.min, mergeRow)
+                            // 最大用量
+                            value(sheet, r + m, cc++, firstOrNull.max, mergeRow)
+                        } else {
+                            cc += 2
+                        }
                     } else {
                         cc += 2
                     }
-                    if (liquidAmmonia == matrialName) {
+                    if (liquidAmmonia == id) {
                         cc += 4
-                    } else if (ReqData.VITRIOL == matrialName) {
-                        if (reqData.isLimitLiquidAmmonia) {
-                            val vitriolNormal = recipe.vitriolNormal
-                            val vitriolExcess = recipe.vitriolExcess
-                            val materialRatio = liquidAmmoniaMaterialRatioMap!![ReqData.VITRIOL]
-                            val normal = materialRatio?.normal
-                            val originExcess = materialRatio?.originExcess
+                    } else if (VITRIOL == id) {
+                        if (isLimitLiquidAmmonia) {
+                            val vsolutionValue = material.solutionValue
+                            val vitriolNormal = vsolutionValue.normal!!
+                            val vitriolExcess = vsolutionValue.overdose
+                            val relationPair = liquidAmmoniaMaterialRatio!![MaterialIDs.of(id)]
+                            val normal = relationPair?.normal
+                            val originExcess = relationPair?.overdose
                             // 耗液氨系数
                             sheet.comment(r + m, cc, "所需硫酸最小耗" + liquidAmmonia + "系数")
                             value(
                                     sheet,
                                     r + m,
                                     cc,
-                                    (normal?.min!! * (la2CAUseRatio)).scale(9))
+                                    (normal?.min!!).scale(9))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "系数")
                                 value(
@@ -286,8 +283,7 @@ class RecipeResult // --------------------------------------------
                                         r + m + 1,
                                         cc++,
                                         (originExcess
-                                                .min
-                                        !! * (la2CAUseRatio))
+                                                .min)
                                                 .scale(9))
                             } else {
                                 cc++
@@ -298,19 +294,15 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc,
-                                    (vitriolNormal
-                                    !! * (normal.min)
-                                    !! * (la2CAUseRatio))
+                                    (vitriolNormal * (normal.min))
                                             .scale(2))
-                            if (originExcess != null) {
+                            if (originExcess != null && vitriolExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "数量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        (vitriolExcess
-                                        !! * (originExcess.min)
-                                        !! * (la2CAUseRatio))
+                                        (vitriolExcess * (originExcess.min))
                                                 .scale(2))
                             } else {
                                 cc++
@@ -320,16 +312,14 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc,
-                                    (normal.max!! * (la2CAUseRatio)).scale(9))
-                            if (vitriolExcess != null) {
+                                    (normal.max).scale(9))
+                            if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "系数")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        (originExcess
-                                                ?.max
-                                        !! * (la2CAUseRatio))
+                                        (originExcess.max)
                                                 .scale(9))
                             } else {
                                 cc++
@@ -339,78 +329,71 @@ class RecipeResult // --------------------------------------------
                                     sheet,
                                     r + m,
                                     cc,
-                                    (vitriolNormal * (normal.max)
-                                    !! * (la2CAUseRatio))
+                                    (vitriolNormal * (normal.max))
                                             .scale(2))
-                            if (vitriolExcess != null) {
+                            if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "数量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        (vitriolExcess
-                                                * (originExcess!!.max!!)
-                                                * (la2CAUseRatio))
+                                        (vitriolExcess!!
+                                                * (originExcess.max)
+                                                )
                                                 .scale(2))
                             } else {
                                 cc++
                             }
                         }
                     } else {
-                        val limname = if (reqData.isLimitLiquidAmmonia) liquidAmmoniaMaterialRatioMap!!.keys.firstOrNull { materialNameFragment: String? -> ReqData.isNeedLiquidAmmon(materialNameFragment, matrialName) }
+                        val liqRelationPair = if (isLimitLiquidAmmonia) liquidAmmoniaMaterialRatio!!.filter { it.key.contains(id) }.values.firstOrNull()
                         else null
-                        if (limname != null) {
-                            val materialRatio = liquidAmmoniaMaterialRatioMap!![limname]
-                            val limit = materialRatio?.normal
+                        if (liqRelationPair != null) {
+                            val limit = liqRelationPair.normal
                             // 耗液氨系数
-                            sheet.comment(r + m, cc, limname + "最小耗" + liquidAmmonia + "系数")
+                            sheet.comment(r + m, cc, id + "最小耗" + liquidAmmonia + "系数")
                             value(
                                     sheet,
                                     r + m,
                                     cc++,
-                                    (limit?.min!! * (la2CAUseRatio)).scale(9),
+                                    (limit.min * (la2CAUseRatio)).scale(9),
                                     mergeRow)
                             // 耗液氨数量
-                            sheet.comment(r + m, cc, limname + "最小耗" + liquidAmmonia + "数量")
+                            sheet.comment(r + m, cc, id + "最小耗" + liquidAmmonia + "数量")
                             value(
                                     sheet,
                                     r + m,
                                     cc++,
-                                    (solutionValue
-                                    !! * (limit.min)
-                                    !! * (la2CAUseRatio))
+                                    (solutionValue * (limit.min) * (la2CAUseRatio))
                                             .scale(2),
                                     mergeRow)
 
                             // 耗液氨系数
-                            sheet.comment(r + m, cc, limname + "最大耗" + liquidAmmonia + "系数")
+                            sheet.comment(r + m, cc, id + "最大耗" + liquidAmmonia + "系数")
                             value(
                                     sheet,
                                     r + m,
                                     cc++,
-                                    (limit.max!! * (la2CAUseRatio)).scale(9),
+                                    (limit.max * (la2CAUseRatio)).scale(9),
                                     mergeRow)
                             // 耗液氨数量
-                            sheet.comment(r + m, cc, limname + "最大耗" + liquidAmmonia + "数量")
+                            sheet.comment(r + m, cc, id + "最大耗" + liquidAmmonia + "数量")
                             value(
                                     sheet,
                                     r + m,
                                     cc++,
-                                    (solutionValue * (limit.max)
-                                    !! * (la2CAUseRatio))
+                                    (solutionValue * (limit.max) * (la2CAUseRatio))
                                             .scale(2),
                                     mergeRow)
                         } else {
-                            val liquiName = if (reqData.isLimitVitriol) vitriolMaterialRatioMap!!.keys
-                                    .firstOrNull { s: String? -> matrialName!!.contains(s!!) }
+                            val relationPair = if (isLimitVitriol) vitriolMaterialRatio!!.filter { it.key.contains(id) }.values.firstOrNull()
                             else null
-                            if (liquiName != null) {
-                                val materialRatio = vitriolMaterialRatioMap!![liquiName]
-                                val normal = materialRatio?.normal
-                                val excess = materialRatio?.excess
+                            if (relationPair != null) {
+                                val normal = relationPair.normal
+                                val excess = relationPair.overdose
                                 // 硫酸系数
                                 sheet.comment(r + m, cc, "所需最小硫酸系数")
-                                value(sheet, r + m, cc, normal?.min)
+                                value(sheet, r + m, cc, normal.min)
                                 sheet.comment(r + m + 1, cc, "所需最小过量硫酸系数")
                                 value(sheet, r + m + 1, cc++, excess?.min)
                                 // 硫酸量
@@ -419,13 +402,13 @@ class RecipeResult // --------------------------------------------
                                         sheet,
                                         r + m,
                                         cc,
-                                        (solutionValue!! * (normal!!.min!!)).scale(2))
+                                        (solutionValue * (normal.min)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最小过量硫酸量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        (solutionValue * (excess!!.min)!!).scale(2))
+                                        (solutionValue * (excess!!.min)).scale(2))
                                 // 硫酸系数
                                 sheet.comment(r + m, cc, "所需最大硫酸系数")
                                 value(sheet, r + m, cc, normal.max)
@@ -437,13 +420,13 @@ class RecipeResult // --------------------------------------------
                                         sheet,
                                         r + m,
                                         cc,
-                                        (solutionValue * (normal.max)!!).scale(2))
+                                        (solutionValue * (normal.max)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最大过量硫酸量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        (solutionValue * (excess.max)!!).scale(2))
+                                        (solutionValue * (excess.max)).scale(2))
                             } else {
                                 cc += 4
                             }
@@ -451,10 +434,10 @@ class RecipeResult // --------------------------------------------
                     }
 
                     // 投料量
-                    value(sheet, r + m, cc++, solutionValue!!.scale(2), mergeRow)
+                    value(sheet, r + m, cc++, solutionValue.scale(2), mergeRow)
 
                     // 成本
-                    val price = material.price!!
+                    val price = material.price
                     value(
                             sheet,
                             r + m,
@@ -465,13 +448,12 @@ class RecipeResult // --------------------------------------------
                     value(sheet, r + m, cc, price, mergeRow)
 
                     // 原料成份
-                    val components = material.components
-                    for (index in components!!.keys) {
+                    val components = material.indicators
+                    for (index in components) {
                         value(
                                 sheet,
                                 r + m,
-                                c + index, (components[index]
-                        !!.value!! * 100.0).scale(2)
+                                c + index.index, (index.value * 100.0).scale(2)
                                 .toString() + "%",
                                 mergeRow)
                     }
@@ -481,7 +463,7 @@ class RecipeResult // --------------------------------------------
                     }
                 }
                 sheet
-                        .range(0, 0, r + m - 1, c + Components.componentNames.size - 1)
+                        .range(0, 0, r + m - 1, c + PrepareData.indicatorNames.size - 1)
                         .style()
                         .borderColor(Color.GRAY7)
                         .borderStyle(BorderStyle.THIN)
@@ -489,8 +471,8 @@ class RecipeResult // --------------------------------------------
             }
             firstSheet!!.keepInActiveTab()
             value(firstSheet, 0, 6, "推优：")
-            value(firstSheet, 0, 7, size.toLong())
-            if (solveCount > size) {
+            value(firstSheet, 0, 7, recipeCount.toLong())
+            if (solveCount > recipeCount) {
                 value(firstSheet, 0, 3, "计算次数：")
                 value(firstSheet, 0, 4, solveCount.toLong())
             }
@@ -500,11 +482,40 @@ class RecipeResult // --------------------------------------------
             Runtime.getRuntime().exec(arrayOf("xdg-open", outFile.absolutePath))
         }
         System.err.println("==================================================")
-        System.err.println("solve times: " + solveCount + " 耗时：" + time + "ms" + " 结果：" + size + "个")
+        System.err.println("solve times: " + solveCount + " 耗时：" + time + "ms" + " 结果：" + recipeCount + "个")
         System.err.println("==================================================")
     }
 
     companion object {
+        /** 碳铵原料名称  */
+        const val CLIQUID_AMMONIA = "碳铵"
+
+        /** 液氨原料名称  */
+        const val LIQUID_AMMONIA = "液氨"
+
+        /** 硫酸原料名称  */
+        const val VITRIOL = "硫酸"
+
+        /** 液氨 对应 碳铵 使用量比例  */
+        const val LA_2_CAUSE_RATIO = 4.7647
+
+        fun isNeedLiquidAmmon(materialNameFragment: String?, materialName: String?): Boolean {
+            val needLiquidAmmon: Boolean = when (materialNameFragment) {
+                "硫酸" -> {
+                    materialName == materialNameFragment
+                }
+
+                "磷酸" -> {
+                    materialName == materialNameFragment
+                }
+
+                else -> {
+                    materialName!!.contains(materialNameFragment!!)
+                }
+            }
+            return needLiquidAmmon
+        }
+
         // --------------------------------------------
         fun value(sheet: Worksheet?, r: Int, c: Int, value: String?) {
             sheet!!.value(r, c, value)

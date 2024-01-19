@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver.`var`
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 /**
  *
  * @author Peter Wu
@@ -36,6 +38,7 @@ interface IVar {
     /**
      * 获取委托变量
      */
+    @JsonIgnore
     fun <T> getDelegate(): T
 
 }
