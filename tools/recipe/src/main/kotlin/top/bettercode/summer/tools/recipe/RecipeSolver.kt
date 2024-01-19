@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.recipe.criteria.Operator
@@ -26,7 +27,7 @@ object RecipeSolver {
                 return null
             }
             if (isOptimal()) {
-                return Recipe(requirement, objective.value,
+                return Recipe(requirement, objective.value.scale(4),
                         recipeMaterials.mapNotNull { (_, u) ->
                             val value = u.solutionVar.value
                             if (value != 0.0) {
@@ -81,14 +82,14 @@ object RecipeSolver {
 
         val rangeIndicators = requirement.rangeIndicators
         // 水分
-        val waterTarget = rangeIndicators.water!!.value
+        val waterTarget = rangeIndicators.water?.value
         // 定义产品干净重
-        val minDryWeight = targetWeight * (1 - waterTarget.max)
-        val maxDryWeight = targetWeight * (1 - waterTarget.min)
+        val minDryWeight = targetWeight * (1 - (waterTarget?.max ?: 0.0))
+        val maxDryWeight = targetWeight * (1 - (waterTarget?.min ?: 0.0))
         recipeMaterials.map {
             val material = it.value
             val indicators = material.indicators
-            it.value.solutionVar.coeff(1 - (indicators.water!!.value))
+            it.value.solutionVar.coeff(1 - (indicators.water?.value ?: 0.0))
         }.toTypedArray()
                 .between(minDryWeight, maxDryWeight)
 

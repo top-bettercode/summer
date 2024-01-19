@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.recipe.RecipeSolver.prepare
 import top.bettercode.summer.tools.recipe.data.RecipeResult
@@ -35,7 +36,7 @@ object MultiRecipeSolver {
                     // 约束
                     val first = recipeResult.recipes.isEmpty()
                     val useMaterials: MutableMap<String, RecipeMaterialValue> = HashMap()
-                    val recipe = Recipe(requirement, objective.value,
+                    val recipe = Recipe(requirement, objective.value.scale(4),
                             recipeMaterials.mapNotNull { (t, u) ->
                                 val value = u.solutionVar.value
                                 if (value != 0.0) {

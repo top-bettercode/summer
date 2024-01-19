@@ -8,7 +8,7 @@ data class RecipeCondition(
         /**
          * 符号
          */
-        val operator: Operator,
+        val operator: Operator = Operator.EQUAL,
 
         /**
          * 值

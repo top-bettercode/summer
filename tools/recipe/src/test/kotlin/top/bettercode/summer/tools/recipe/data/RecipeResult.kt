@@ -210,7 +210,7 @@ class RecipeResult(private val solverName: String) {
                 val isLimitLiquidAmmonia = liquidAmmoniaMaterialRatio != null
                 for (material in materials) {
                     val id = material.id
-                    val solutionValue = material.solutionValue.value
+                    val weight = material.weight
                     var cc = 0
                     var mergeRow = 0
                     if (VITRIOL == id && isLimitLiquidAmmonia) {
@@ -246,7 +246,7 @@ class RecipeResult(private val solverName: String) {
                     } else if (VITRIOL == id) {
                         if (isLimitLiquidAmmonia) {
                             val vsolutionValue = material.solutionValue
-                            val vitriolNormal = vsolutionValue.normal ?: vsolutionValue.value
+                            val vitriolNormal = vsolutionValue.normal ?: material.weight
                             val vitriolExcess = vsolutionValue.overdose
                             val relationPair = liquidAmmoniaMaterialRatio!![MaterialIDs.of(id)]
                             val normal = relationPair?.normal
@@ -348,7 +348,7 @@ class RecipeResult(private val solverName: String) {
                                     sheet,
                                     r + m,
                                     cc++,
-                                    (solutionValue * (limit.min) * (la2CAUseRatio))
+                                    (weight * (limit.min) * (la2CAUseRatio))
                                             .scale(2),
                                     mergeRow)
 
@@ -366,7 +366,7 @@ class RecipeResult(private val solverName: String) {
                                     sheet,
                                     r + m,
                                     cc++,
-                                    (solutionValue * (limit.max) * (la2CAUseRatio))
+                                    (weight * (limit.max) * (la2CAUseRatio))
                                             .scale(2),
                                     mergeRow)
                         } else {
@@ -386,13 +386,13 @@ class RecipeResult(private val solverName: String) {
                                         sheet,
                                         r + m,
                                         cc,
-                                        (solutionValue * (normal.min)).scale(2))
+                                        (weight * (normal.min)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最小过量硫酸量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        (solutionValue * (excess!!.min)).scale(2))
+                                        (weight * (excess!!.min)).scale(2))
                                 // 硫酸系数
                                 sheet.comment(r + m, cc, "所需最大硫酸系数")
                                 value(sheet, r + m, cc, normal.max)
@@ -404,13 +404,13 @@ class RecipeResult(private val solverName: String) {
                                         sheet,
                                         r + m,
                                         cc,
-                                        (solutionValue * (normal.max)).scale(2))
+                                        (weight * (normal.max)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最大过量硫酸量")
                                 value(
                                         sheet,
                                         r + m + 1,
                                         cc++,
-                                        (solutionValue * (excess.max)).scale(2))
+                                        (weight * (excess.max)).scale(2))
                             } else {
                                 cc += 4
                             }
@@ -418,7 +418,7 @@ class RecipeResult(private val solverName: String) {
                     }
 
                     // 投料量
-                    value(sheet, r + m, cc++, solutionValue.scale(2), mergeRow)
+                    value(sheet, r + m, cc++, weight.scale(2), mergeRow)
 
                     // 成本
                     val price = material.price
@@ -426,7 +426,7 @@ class RecipeResult(private val solverName: String) {
                             sheet,
                             r + m,
                             cc++,
-                            (solutionValue * price / 1000).scale(2),
+                            (weight * price / 1000).scale(2),
                             mergeRow)
                     // 单价
                     value(sheet, r + m, cc, price, mergeRow)

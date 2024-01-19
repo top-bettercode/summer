@@ -10,8 +10,12 @@ class RecipeMaterialValue(
         val solutionValue: SolutionValue
 ) : IRecipeMaterial by material {
 
+    val weight: Double by lazy { solutionValue.value }
+    val normalWeight: Double by lazy { solutionValue.normal ?: 0.0 }
+    val overdoseWeight: Double by lazy { solutionValue.overdose ?: 0.0 }
+
     fun indicatorWeight(index: Int): Double {
-        return indicators.valueOf(index) * solutionValue.value
+        return indicators.valueOf(index) * weight
     }
 
     fun totalNutrient(): Double {

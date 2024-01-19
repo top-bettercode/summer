@@ -23,10 +23,10 @@ internal class RecipeSolverTest {
     @Test
     fun solve() {
         solve("13-05-07高氯枸磷")
-//        solve("24-06-10高氯枸磷")
-//        solve("15-15-15喷浆氯基")
-//        solve("15-15-15喷浆硫基")
-//        solve("15-15-15常规氯基")
+        solve("24-06-10高氯枸磷")
+        solve("15-15-15喷浆氯基")
+        solve("15-15-15喷浆硫基")
+        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
@@ -38,16 +38,25 @@ internal class RecipeSolverTest {
         val solve = MultiRecipeSolver.solve(solver = coptSolver, requirement = requirement, maxResult = maxResult)
         val solve1 = MultiRecipeSolver.solve(solver = cbcSolver, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solver = scipSolver, requirement = requirement, maxResult = maxResult)
-        solve.toExcel()
+//        solve.toExcel()
 //        solve1.toExcel()
 //        solve2.toExcel()
         System.err.println("copt:" + solve.time)
         System.err.println("cbc:" + solve1.time)
         System.err.println("scip:" + solve2.time)
 //        System.err.println(json(solve.recipes[0].materials))
+        validate(solve)
+        validate(solve1)
+        validate(solve2)
         assert(solve, solve1)
         assert(solve, solve2)
         assert(solve1, solve2)
+    }
+
+    private fun validate(solve: RecipeResult) {
+        for (recipe in solve.recipes) {
+            Assertions.assertTrue(recipe.validate())
+        }
     }
 
     private fun assert(solve: RecipeResult, solve1: RecipeResult) {
