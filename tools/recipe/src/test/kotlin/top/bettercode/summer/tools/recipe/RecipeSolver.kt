@@ -182,30 +182,26 @@ class RecipeSolver(val solver: Solver) {
                 val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.toTypedArray().sum()
                 val boolVar = boolVar()
                 val whenCon = whenCondition.condition
+//                whenVar.eq(16.0)
                 when (whenCon.operator) {
                     Operator.EQUAL -> {
-                        whenVar.eqIf(whenCon.value, boolVar)
                         //todo
 //                        whenVar.neIfNot(whenCon.value, boolVar)
                     }
 
                     Operator.GREATER -> {
-                        whenVar.gtIf(whenCon.value, boolVar)
                         whenVar.leIfNot(whenCon.value, boolVar)
                     }
 
                     Operator.LESS -> {
-                        whenVar.ltIf(whenCon.value, boolVar)
                         whenVar.geIfNot(whenCon.value, boolVar)
                     }
 
                     Operator.GREATER_EQUAL -> {
-                        whenVar.geIf(whenCon.value, boolVar)
                         whenVar.ltIfNot(whenCon.value, boolVar)
                     }
 
                     Operator.LESS_EQUAL -> {
-                        whenVar.leIf(whenCon.value, boolVar)
                         whenVar.gtIfNot(whenCon.value, boolVar)
                     }
                 }
