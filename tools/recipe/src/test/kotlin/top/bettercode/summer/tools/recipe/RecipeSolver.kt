@@ -185,6 +185,7 @@ class RecipeSolver(val solver: Solver) {
                 when (whenCon.operator) {
                     Operator.EQUAL -> {
                         whenVar.eqIf(whenCon.value, boolVar)
+                        //todo
 //                        whenVar.neIfNot(whenCon.value, boolVar)
                     }
 
