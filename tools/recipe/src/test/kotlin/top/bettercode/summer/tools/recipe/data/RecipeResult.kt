@@ -67,7 +67,7 @@ class RecipeResult(private val solverName: String) {
                             + "个-"
                             + System.currentTimeMillis()
                             + ".xlsx")
-            outFile.getParentFile().mkdirs()
+            outFile.parentFile.mkdirs()
             val workbook = Workbook(Files.newOutputStream(outFile.toPath()), "", "1.0")
             var sheet = workbook.newWorksheet("最终候选原料")
             val titles = ("原料名称 价格 " + PrepareData.INDICATOR_NAME_STRING).split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -87,12 +87,7 @@ class RecipeResult(private val solverName: String) {
                 val indicators = matrial.indicators
                 // 原料成份
                 for (index in indicators) {
-                    value(
-                            sheet,
-                            r,
-                            cc + index.index, (index.value
-                            * 100.0).scale(2)
-                            .toString() + "%")
+                    value(sheet, r, cc + index.index, index.value.scale(4), "0.0%")
                 }
             }
             //
@@ -200,26 +195,13 @@ class RecipeResult(private val solverName: String) {
                     value(sheet, r++, c1, weight.scale(2))
 
                     val limit = index.value
-                    value(
-                            sheet,
-                            r++,
-                            c1, (limit.max * 100.0).scale(2)
-                            .toString() + "%")
-                    value(
-                            sheet,
-                            r++,
-                            c1, (limit.min * (100.0)).scale(2)
-                            .toString() + "%")
+                    value(sheet, r++, c1, limit.max.scale(4), "0.0%")
+                    value(sheet, r++, c1, limit.min.scale(4), "0.0%")
                     var v = (weight / targetWeight).scale(4)
                     if (index.isRateToOther)
                         v = (weight / materials.sumOf { m -> m.indicatorWeight(index.otherIndex!!) }).scale(4)
                     val valid = v >= limit.min && v <= limit.max
-                    value(
-                            sheet,
-                            r++,
-                            c1,
-                            ((v * 100.0).scale(2)).toString() + "%",
-                            valid)
+                    value(sheet, r++, c1, v.scale(4), "0.0%", valid)
                 }
                 var m = 0
                 val vitriolMaterialRatio = requirement.sulfuricAcidRelation
@@ -452,12 +434,7 @@ class RecipeResult(private val solverName: String) {
                     // 原料成份
                     val components = material.indicators
                     for (index in components) {
-                        value(
-                                sheet,
-                                r + m,
-                                c + index.index, (index.value * 100.0).scale(2)
-                                .toString() + "%",
-                                mergeRow)
+                        value(sheet, r + m, c + index.index, index.value.scale(4), mergeRow, "0.0%")
                     }
                     m++
                     if (mergeRow > 0) {
@@ -524,14 +501,9 @@ class RecipeResult(private val solverName: String) {
             style(sheet, r, c, null)
         }
 
-        fun value(sheet: Worksheet, r: Int, c: Int, value: String?, ok: Boolean?) {
+        fun value(sheet: Worksheet, r: Int, c: Int, value: Double?, mergeRow: Int, format: String? = null) {
             sheet.value(r, c, value)
-            style(sheet, r, c, ok)
-        }
-
-        fun value(sheet: Worksheet, r: Int, c: Int, value: String?, mergeRow: Int) {
-            sheet.value(r, c, value)
-            style(sheet, r, c, null)
+            style(sheet, r, c, null, format)
             if (mergeRow > 0) {
                 for (i in 0 until mergeRow) {
                     sheet.value(r + i + 1, c)
@@ -540,9 +512,9 @@ class RecipeResult(private val solverName: String) {
             }
         }
 
-        fun value(sheet: Worksheet, r: Int, c: Int, value: Double?, mergeRow: Int) {
+        fun value(sheet: Worksheet, r: Int, c: Int, value: String?, mergeRow: Int, format: String? = null) {
             sheet.value(r, c, value)
-            style(sheet, r, c, null)
+            style(sheet, r, c, null, format)
             if (mergeRow > 0) {
                 for (i in 0 until mergeRow) {
                     sheet.value(r + i + 1, c)
@@ -551,9 +523,9 @@ class RecipeResult(private val solverName: String) {
             }
         }
 
-        fun value(sheet: Worksheet, r: Int, c: Int, value: Double?) {
+        fun value(sheet: Worksheet, r: Int, c: Int, value: Double?, format: String? = null, ok: Boolean? = null) {
             sheet.value(r, c, value)
-            style(sheet, r, c, null)
+            style(sheet, r, c, ok, format)
         }
 
         fun value(sheet: Worksheet, r: Int, c: Int, value: Long, mergeRow: Int) {
@@ -572,11 +544,12 @@ class RecipeResult(private val solverName: String) {
             style(sheet, r, c, null)
         }
 
-        private fun style(sheet: Worksheet, r: Int, c: Int, ok: Boolean?) {
+        private fun style(sheet: Worksheet, r: Int, c: Int, ok: Boolean?, format: String? = null) {
             val styleSetter = sheet
                     .style(r, c)
                     .horizontalAlignment(Alignment.CENTER.value)
                     .verticalAlignment(Alignment.CENTER.value)
+                    .format(format)
                     .wrapText(true)
             if (ok != null) {
                 styleSetter.fontColor(if (ok) "1fbb7d" else "FF0000")
