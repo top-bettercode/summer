@@ -36,7 +36,7 @@ object MultiRecipeSolver {
                     // 约束
                     val first = recipeResult.recipes.isEmpty()
                     val useMaterials: MutableMap<String, RecipeMaterialValue> = HashMap()
-                    val recipe = Recipe(requirement, objective.value.scale(4),
+                    val recipe = Recipe(requirement, objective.value.scale(),
                             recipeMaterials.mapNotNull { (t, u) ->
                                 val value = u.solutionVar.value
                                 if (value != 0.0) {

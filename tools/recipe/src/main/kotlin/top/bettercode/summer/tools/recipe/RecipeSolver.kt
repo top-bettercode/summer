@@ -27,7 +27,7 @@ object RecipeSolver {
                 return null
             }
             if (isOptimal()) {
-                return Recipe(requirement, objective.value.scale(4),
+                return Recipe(requirement, objective.value.scale(),
                         recipeMaterials.mapNotNull { (_, u) ->
                             val value = u.solutionVar.value
                             if (value != 0.0) {

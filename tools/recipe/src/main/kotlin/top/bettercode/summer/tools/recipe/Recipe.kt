@@ -28,12 +28,12 @@ data class Recipe(
 
     /** 需要烘干的水分含量  */
     val dryWater: Double
-        get() = (materials.sumOf { it.weight } - requirement.targetWeight).scale(9)
+        get() = (materials.sumOf { it.weight } - requirement.targetWeight).scale()
 
 
     /** 配方成本  */
     val trueCost: Double
-        get() = materials.sumOf { it.weight * it.price / 1000 }.scale(4)
+        get() = materials.sumOf { it.weight * it.price / 1000 }.scale()
 
 
     //检查结果
@@ -44,23 +44,23 @@ data class Recipe(
             return false
         }
         //检查成本
-        if (trueCost != cost) {
+        if ((trueCost - cost).scale() !in -1e-9..1e-9) {
             log.warn("配方成本不匹配:{} / {}", trueCost, cost)
             return false
         }
         //检查烘干水分
-        if (dryWater < 0) {
+        if (dryWater < -1e-10) {
             log.warn("配方烘干水分异常：{}", dryWater)
             return false
         }
-        if (requirement.maxBakeWeight >= 0 && dryWater > requirement.maxBakeWeight) {
+        if (requirement.maxBakeWeight >= 0 && (dryWater - requirement.maxBakeWeight).scale() > 1e-10) {
             log.warn("配方烘干水分:{} 超过最大可烘干水分：{}", dryWater, requirement.maxBakeWeight)
             return false
         }
         val totalWater = materials.sumOf {
             it.weight * (it.indicators.water?.value ?: 0.0)
-        }.scale(9)
-        if (dryWater > totalWater) {
+        }.scale()
+        if ((dryWater - totalWater).scale() > 1e-10) {
             log.warn("配方烘干水分:{} 超过总水分：{}", dryWater, totalWater)
             return false
         }

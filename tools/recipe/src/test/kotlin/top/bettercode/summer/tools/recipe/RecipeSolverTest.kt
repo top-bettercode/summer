@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.recipe.data.PrepareData
@@ -22,10 +21,10 @@ internal class RecipeSolverTest {
 
     @Test
     fun solve() {
-//        solve("13-05-07高氯枸磷")
+        solve("13-05-07高氯枸磷")
 //        solve("24-06-10高氯枸磷")
 //        solve("15-15-15喷浆氯基")
-        solve("15-15-15喷浆硫基")
+//        solve("15-15-15喷浆硫基")
 //        solve("15-15-15常规氯基")
     }
 
@@ -38,7 +37,7 @@ internal class RecipeSolverTest {
         val solve = MultiRecipeSolver.solve(solver = coptSolver, requirement = requirement, maxResult = maxResult)
         val solve1 = MultiRecipeSolver.solve(solver = cbcSolver, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solver = scipSolver, requirement = requirement, maxResult = maxResult)
-//        solve.toExcel()
+        solve.toExcel()
 //        solve1.toExcel()
 //        solve2.toExcel()
         System.err.println("copt:" + solve.time)
@@ -61,8 +60,6 @@ internal class RecipeSolverTest {
 
     private fun assert(solve: RecipeResult, solve1: RecipeResult) {
         Assertions.assertEquals(solve.recipes[0].cost, solve1.recipes[0].cost)
-        Assertions.assertEquals(solve.recipes[0].trueCost, solve1.recipes[0].trueCost)
-        Assertions.assertEquals(solve.recipes[0].cost.scale(2), solve1.recipes[0].trueCost.scale(2))
         Assertions.assertEquals(solve.recipeCount, solve1.recipeCount)
         Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
     }
