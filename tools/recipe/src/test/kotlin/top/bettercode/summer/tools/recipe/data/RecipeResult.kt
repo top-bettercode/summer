@@ -253,76 +253,35 @@ class RecipeResult(private val solverName: String) {
                             val originExcess = relationPair?.overdose
                             // 耗液氨系数
                             sheet.comment(r + m, cc, "所需硫酸最小耗" + liquidAmmonia + "系数")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc,
-                                    (normal?.min!!).scale(9))
+                            value(sheet, r + m, cc, (normal?.min!! * LA_2_CAUSE_RATIO).scale(9))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "系数")
-                                value(
-                                        sheet,
-                                        r + m + 1,
-                                        cc++,
-                                        (originExcess
-                                                .min)
-                                                .scale(9))
+                                value(sheet, r + m + 1, cc++, (originExcess.min * LA_2_CAUSE_RATIO).scale(9))
                             } else {
                                 cc++
                             }
                             // 耗液氨数量
                             sheet.comment(r + m, cc, "所需硫酸最小耗" + liquidAmmonia + "数量")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc,
-                                    (vitriolNormal * (normal.min))
-                                            .scale(2))
+                            value(sheet, r + m, cc, (vitriolNormal * normal.min * LA_2_CAUSE_RATIO).scale(2))
                             if (originExcess != null && vitriolExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "数量")
-                                value(
-                                        sheet,
-                                        r + m + 1,
-                                        cc++,
-                                        (vitriolExcess * (originExcess.min))
-                                                .scale(2))
+                                value(sheet, r + m + 1, cc++, (vitriolExcess * originExcess.min * LA_2_CAUSE_RATIO).scale(2))
                             } else {
                                 cc++
                             }
                             sheet.comment(r + m, cc, "所需硫酸最大耗" + liquidAmmonia + "系数")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc,
-                                    (normal.max).scale(9))
+                            value(sheet, r + m, cc, (normal.max * LA_2_CAUSE_RATIO).scale(9))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "系数")
-                                value(
-                                        sheet,
-                                        r + m + 1,
-                                        cc++,
-                                        (originExcess.max)
-                                                .scale(9))
+                                value(sheet, r + m + 1, cc++, (originExcess.max * LA_2_CAUSE_RATIO).scale(9))
                             } else {
                                 cc++
                             }
                             sheet.comment(r + m, cc, "所需硫酸最大耗" + liquidAmmonia + "数量")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc,
-                                    (vitriolNormal * (normal.max))
-                                            .scale(2))
+                            value(sheet, r + m, cc, (vitriolNormal * normal.max * LA_2_CAUSE_RATIO).scale(2))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "数量")
-                                value(
-                                        sheet,
-                                        r + m + 1,
-                                        cc++,
-                                        (vitriolExcess!!
-                                                * (originExcess.max)
-                                                )
-                                                .scale(2))
+                                value(sheet, r + m + 1, cc++, (vitriolExcess!! * originExcess.max * LA_2_CAUSE_RATIO).scale(2))
                             } else {
                                 cc++
                             }
@@ -336,39 +295,17 @@ class RecipeResult(private val solverName: String) {
                             val limit = liqRelationPair.normal
                             // 耗液氨系数
                             sheet.comment(r + m, cc, id + "最小耗" + liquidAmmonia + "系数")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc++,
-                                    (limit.min * (la2CAUseRatio)).scale(9),
-                                    mergeRow)
+                            value(sheet, r + m, cc++, (limit.min * (la2CAUseRatio)).scale(9), mergeRow)
                             // 耗液氨数量
                             sheet.comment(r + m, cc, id + "最小耗" + liquidAmmonia + "数量")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc++,
-                                    (weight * (limit.min) * (la2CAUseRatio))
-                                            .scale(2),
-                                    mergeRow)
+                            value(sheet, r + m, cc++, (weight * (limit.min) * (la2CAUseRatio)).scale(2), mergeRow)
 
                             // 耗液氨系数
                             sheet.comment(r + m, cc, id + "最大耗" + liquidAmmonia + "系数")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc++,
-                                    (limit.max * (la2CAUseRatio)).scale(9),
-                                    mergeRow)
+                            value(sheet, r + m, cc++, (limit.max * (la2CAUseRatio)).scale(9), mergeRow)
                             // 耗液氨数量
                             sheet.comment(r + m, cc, id + "最大耗" + liquidAmmonia + "数量")
-                            value(
-                                    sheet,
-                                    r + m,
-                                    cc++,
-                                    (weight * (limit.max) * (la2CAUseRatio))
-                                            .scale(2),
-                                    mergeRow)
+                            value(sheet, r + m, cc++, (weight * (limit.max) * (la2CAUseRatio)).scale(2), mergeRow)
                         } else {
                             val relationPair = if (isLimitVitriol) vitriolMaterialRatio!!.filter { it.key.contains(id) }.values.firstOrNull()
                             else null
@@ -382,17 +319,9 @@ class RecipeResult(private val solverName: String) {
                                 value(sheet, r + m + 1, cc++, excess?.min)
                                 // 硫酸量
                                 sheet.comment(r + m, cc, "所需最小硫酸量")
-                                value(
-                                        sheet,
-                                        r + m,
-                                        cc,
-                                        (weight * (normal.min)).scale(2))
+                                value( sheet, r + m, cc, (weight * (normal.min)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最小过量硫酸量")
-                                value(
-                                        sheet,
-                                        r + m + 1,
-                                        cc++,
-                                        (weight * (excess!!.min)).scale(2))
+                                value( sheet, r + m + 1, cc++, (weight * (excess!!.min)).scale(2))
                                 // 硫酸系数
                                 sheet.comment(r + m, cc, "所需最大硫酸系数")
                                 value(sheet, r + m, cc, normal.max)
@@ -400,17 +329,9 @@ class RecipeResult(private val solverName: String) {
                                 value(sheet, r + m + 1, cc++, excess.max)
                                 // 硫酸量
                                 sheet.comment(r + m, cc, "所需最大硫酸量")
-                                value(
-                                        sheet,
-                                        r + m,
-                                        cc,
-                                        (weight * (normal.max)).scale(2))
+                                value( sheet, r + m, cc, (weight * (normal.max)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最大过量硫酸量")
-                                value(
-                                        sheet,
-                                        r + m + 1,
-                                        cc++,
-                                        (weight * (excess.max)).scale(2))
+                                value( sheet, r + m + 1, cc++, (weight * (excess.max)).scale(2))
                             } else {
                                 cc += 4
                             }

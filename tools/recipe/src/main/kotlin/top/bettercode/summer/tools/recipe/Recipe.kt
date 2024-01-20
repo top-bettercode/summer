@@ -7,6 +7,7 @@ import top.bettercode.summer.tools.recipe.criteria.Operator
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
+import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
 
 /**
@@ -152,12 +153,14 @@ data class Recipe(
         // 关联物料约束
         val materialRelationConstraints = requirement.materialRelationConstraints
         for ((ids, relation) in materialRelationConstraints) {
+            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toTypedArray().toMaterialIDs()
+            val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
             val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             val usedNormalWeight = materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
             val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
             if ((usedWeight - usedAddWeight).scale() !in -1e-10..1e-10) {
-                log.warn("原料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", ids, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
+                log.warn("原料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
                 return false
             }
 
@@ -171,33 +174,33 @@ data class Recipe(
                 val normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight }
 
                 if (normalWeight > 0) {
-                    usedMinNormalWeights += normalWeight * normal.min
-                    usedMaxNormalWeights += normalWeight * normal.max
+                    usedMinNormalWeights += normalWeight * normal.min * replaceRate
+                    usedMaxNormalWeights += normalWeight * normal.max * replaceRate
                 } else {
-                    usedMinNormalWeights += weight * normal.min
-                    usedMaxNormalWeights += weight * normal.max
+                    usedMinNormalWeights += weight * normal.min * replaceRate
+                    usedMaxNormalWeights += weight * normal.max * replaceRate
                 }
                 val overdose = recipeRelation.overdose
                 if (overdose != null) {
                     val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight }
                     if (overdoseWeight > 0) {
-                        usedMinOverdoseWeights += overdoseWeight * overdose.min
-                        usedMaxOverdoseWeights += overdoseWeight * overdose.max
+                        usedMinOverdoseWeights += overdoseWeight * overdose.min * replaceRate
+                        usedMaxOverdoseWeights += overdoseWeight * overdose.max * replaceRate
                     } else {
-                        usedMinOverdoseWeights += weight * overdose.min
-                        usedMaxOverdoseWeights += weight * overdose.max
+                        usedMinOverdoseWeights += weight * overdose.min * replaceRate
+                        usedMaxOverdoseWeights += weight * overdose.max * replaceRate
                     }
                 }
             }
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
             if (usedNormalWeight !in (usedMinNormalWeights - 1e-10).scale()..(usedMaxNormalWeights + 1e-10).scale()) {
-                log.warn("原料{}正常使用量：{} 不在范围{}-{}内", ids, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
+                log.warn("原料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
                 return false
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
             if (usedOverdoseWeight !in (usedMinOverdoseWeights - 1e-10).scale()..(usedMaxOverdoseWeights + 1e-10).scale()) {
-                log.warn("原料{}过量使用量：{} 不在范围{}-{}内", ids, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
+                log.warn("原料{}过量使用量：{} 不在范围{}-{}内", usedIds, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
                 return false
             }
         }
