@@ -58,7 +58,7 @@ data class Recipe(
             return false
         }
         val totalWater = materials.sumOf {
-            it.weight * (it.indicators.water?.value ?: 0.0)
+            it.waterWeight
         }.scale()
         if ((dryWater - totalWater).scale() > 1e-10) {
             log.warn("配方烘干水分:{} 超过总水分：{}", dryWater, totalWater)
@@ -70,19 +70,9 @@ data class Recipe(
         val rangeIndicators = requirement.rangeIndicators
         for (indicator in rangeIndicators) {
             val indicatorValue = when (indicator.type) {
-                RecipeIndicatorType.WATER -> ((materials.sumOf {
-                    it.weight * (it.indicators.valueOf(indicator.index))
-                } - (if (indicator.isWater) dryWater else 0.0)) / targetWeight).scale()
-
-                RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf {
-                    it.weight * (it.indicators.valueOf(indicator.itIndex!!))
-                } / materials.sumOf {
-                    it.weight * (it.indicators.valueOf(indicator.otherIndex!!))
-                }).scale()
-
-                else -> (materials.sumOf {
-                    it.weight * (it.indicators.valueOf(indicator.index))
-                } / targetWeight).scale()
+                RecipeIndicatorType.WATER -> ((materials.sumOf { it.waterWeight } - dryWater) / targetWeight).scale()
+                RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itIndex!!) } / materials.sumOf { it.indicatorWeight(indicator.otherIndex!!) }).scale()
+                else -> (materials.sumOf { it.indicatorWeight(indicator.index) } / targetWeight).scale()
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
             if (indicatorValue !in indicator.value.min..indicator.value.max) {

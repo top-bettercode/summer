@@ -11,7 +11,7 @@ class RecipeMaterialVar(
 ) : IRecipeMaterial by material {
 
     fun totalNutrient(): Double {
-        return indicators.nutrients.sumOf { it.value }
+        return indicators.nutrients.sumOf { indicators.valueOf(it.index) }
     }
 
     fun toMaterialValue(): RecipeMaterialValue {

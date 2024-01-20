@@ -82,34 +82,34 @@ object RecipeSolver {
 
         val rangeIndicators = requirement.rangeIndicators
         // 水分
-        val waterTarget = rangeIndicators.water?.value
+        val waterRange = rangeIndicators.water?.value
         // 定义产品干净重
-        val minDryWeight = targetWeight * (1 - (waterTarget?.max ?: 0.0))
-        val maxDryWeight = targetWeight * (1 - (waterTarget?.min ?: 0.0))
+        val minDryWeight = targetWeight * (1 - (waterRange?.max ?: 0.0))
+        val maxDryWeight = targetWeight * (1 - (waterRange?.min ?: 0.0))
         recipeMaterials.map {
             val material = it.value
             val indicators = material.indicators
-            it.value.solutionVar.coeff(1 - (indicators.water?.value ?: 0.0))
+            it.value.solutionVar.coeff(1 - indicators.waterValue)
         }.toTypedArray()
                 .between(minDryWeight, maxDryWeight)
 
         // 添加成份约束条件
         // 成份要求 总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 水分 硼 锌
         for (indicator in rangeIndicators) {
-            val limit = indicator.value
+            val range = indicator.value
             if (indicator.isWater) {
                 continue
             }
             if (indicator.isRateToOther) {
                 val otherVar = recipeMaterials.map {
                     val material = it.value
-                    val coeff = material.indicators[indicator.otherIndex!!]!!.value
+                    val coeff = material.indicators.valueOf(indicator.otherIndex!!)
                     it.value.solutionVar.coeff(coeff)
                 }.toTypedArray().sum()
 
                 val itVar = recipeMaterials.map {
                     val material = it.value
-                    val coeff = material.indicators[indicator.itIndex!!]!!.value
+                    val coeff = material.indicators.valueOf(indicator.itIndex!!)
                     it.value.solutionVar.coeff(coeff)
                 }.toTypedArray().sum()
 
@@ -120,10 +120,10 @@ object RecipeSolver {
                 recipeMaterials.map {
                     val material = it.value
                     val indicators = material.indicators
-                    val coeff = indicators[indicator.index]!!.value
+                    val coeff = indicators.valueOf(indicator.index)
                     material.solutionVar.coeff(coeff)
                 }.toTypedArray()
-                        .between(targetWeight * limit.min, targetWeight * limit.max)
+                        .between(targetWeight * range.min, targetWeight * range.max)
             }
         }
 
@@ -207,7 +207,6 @@ object RecipeSolver {
             val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.toTypedArray().sum()
             val boolVar = boolVar()
             val whenCon = whenCondition.condition
-            //                whenVar.eq(16.0)
             when (whenCon.operator) {
                 Operator.EQUAL -> {
                     whenVar.neIfNot(whenCon.value, boolVar)

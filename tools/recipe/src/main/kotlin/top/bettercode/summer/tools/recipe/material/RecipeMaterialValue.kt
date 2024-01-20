@@ -13,6 +13,14 @@ class RecipeMaterialValue(
     val weight: Double by lazy { solutionValue.value }
     val normalWeight: Double by lazy { solutionValue.normal ?: 0.0 }
     val overdoseWeight: Double by lazy { solutionValue.overdose ?: 0.0 }
+    val waterWeight: Double by lazy {
+        val water = indicators.water
+        if (water != null) {
+            indicatorWeight(water.index)
+        } else {
+            0.0
+        }
+    }
 
     fun indicatorWeight(index: Int): Double {
         return indicators.valueOf(index) * weight

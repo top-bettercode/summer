@@ -8,8 +8,17 @@ import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
  */
 class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>>) : RecipeIndicators<Double>(indicators) {
 
-    val key: String
-        get() = values.filter { it.type != RecipeIndicatorType.WATER }.joinToString(",") { it.value.scale(4).toString() }
+    val key: String by lazy {
+        values.filter { it.type != RecipeIndicatorType.WATER }.joinToString(",") { it.value.scale(4).toString() }
+    }
+
+    val waterValue: Double by lazy {
+        if (water == null) {
+            0.0
+        } else {
+            valueOf(water.index)
+        }
+    }
 
     fun valueOf(index: Int): Double {
         return get(index)?.value ?: 0.0
