@@ -4,9 +4,9 @@ package top.bettercode.summer.tools.recipe.material
  *
  * @author Peter Wu
  */
-open class MaterialIDs(private val ids: Set<String>) : Set<String> by ids {
-
-    constructor(vararg id: String) : this(id.toSet())
+open class MaterialIDs(private val ids: HashSet<String>) : Set<String> by ids {
+    constructor(vararg id: String) : this(id.toHashSet())
+    constructor(ids: Iterable<String>) : this(ids.toHashSet())
 
     companion object {
 
@@ -19,7 +19,7 @@ open class MaterialIDs(private val ids: Set<String>) : Set<String> by ids {
         }
 
         fun Iterable<String>.toMaterialIDs(): MaterialIDs {
-            return MaterialIDs(this.toSet())
+            return MaterialIDs(this)
         }
 
         fun Iterable<String>.toReplacebleMaterialIDs(): ReplacebleMaterialIDs {

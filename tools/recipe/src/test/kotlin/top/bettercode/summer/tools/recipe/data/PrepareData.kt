@@ -246,13 +246,15 @@ object PrepareData {
                 val m1 = materialIds.filter { isNeedLiquidAmmon(materialNameFragment, it) }.toTypedArray()
                 val m2 = materialIds.filter { it == LIQUID_AMMONIA }.toTypedArray()
 
-                val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toMaterialIDs().toReplacebleMaterialIDs(AMMONIUM_CARBONATE, LA_2_CAUSE_RATIO)) { HashMap<MaterialIDs, RecipeRelation>() }
-                val doubleRange = DoubleRange(minUse.toDouble(), maxUse.toDouble())
-                val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
-                if (isOverdose) {
-                    rangePair.overdose = doubleRange
-                } else {
-                    rangePair.normal = doubleRange
+                if (m1.isNotEmpty() && m2.isNotEmpty()) {
+                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toMaterialIDs().toReplacebleMaterialIDs(AMMONIUM_CARBONATE, LA_2_CAUSE_RATIO)) { HashMap<MaterialIDs, RecipeRelation>() }
+                    val doubleRange = DoubleRange(minUse.toDouble(), maxUse.toDouble())
+                    val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
+                    if (isOverdose) {
+                        rangePair.overdose = doubleRange
+                    } else {
+                        rangePair.normal = doubleRange
+                    }
                 }
             }
             index++
@@ -271,13 +273,15 @@ object PrepareData {
                 val m1 = materialIds.filter { it.contains(materialNameFragment) }.toTypedArray()
                 val m2 = materialIds.filter { it == SULFURIC_ACID }.toTypedArray()
 
-                val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toReplacebleMaterialIDs()) { HashMap<MaterialIDs, RecipeRelation>() }
-                val doubleRange = DoubleRange(minUse.toDouble(), maxUse.toDouble())
-                val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
-                if (isOverdose) {
-                    rangePair.overdose = doubleRange
-                } else {
-                    rangePair.normal = doubleRange
+                if (m1.isNotEmpty() && m2.isNotEmpty()) {
+                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toReplacebleMaterialIDs()) { HashMap<MaterialIDs, RecipeRelation>() }
+                    val doubleRange = DoubleRange(minUse.toDouble(), maxUse.toDouble())
+                    val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
+                    if (isOverdose) {
+                        rangePair.overdose = doubleRange
+                    } else {
+                        rangePair.normal = doubleRange
+                    }
                 }
             }
             index++

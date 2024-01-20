@@ -175,7 +175,7 @@ class RecipeRequirement(
         val ids = this.mapNotNull { materials[it] }.groupBy { it.indicators.key }.values.mapNotNull { list ->
             list.minOfWithOrNull(materialComparator) { it }?.id
         }
-        return MaterialIDs(ids.toSet())
+        return MaterialIDs(ids)
     }
 
     private fun ReplacebleMaterialIDs.min(materials: RecipeMaterials): ReplacebleMaterialIDs {

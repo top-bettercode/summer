@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.material
  * 可替换物料
  * @author Peter Wu
  */
-class ReplacebleMaterialIDs(ids: Iterable<String>,
+class ReplacebleMaterialIDs(ids: HashSet<String>,
                             /**
                              * 可替换物料
                              */
@@ -13,8 +13,9 @@ class ReplacebleMaterialIDs(ids: Iterable<String>,
                              * 对可替换物料使用量比例,1单位ids使用replaceRate单位replaceIds
                              */
                             val replaceRate: Double? = null
-) : MaterialIDs(ids.toSet()) {
-    constructor(vararg id: String, replaceIds: MaterialIDs? = null, replaceRate: Double? = null) : this(id.toList(), replaceIds, replaceRate)
+) : MaterialIDs(ids) {
+    constructor(vararg id: String, replaceIds: MaterialIDs? = null, replaceRate: Double? = null) : this(id.toHashSet(), replaceIds, replaceRate)
+    constructor(ids: Iterable<String>, replaceIds: MaterialIDs? = null, replaceRate: Double? = null) : this(ids.toHashSet(), replaceIds, replaceRate)
 
     override fun contains(element: String): Boolean {
         return if (replaceIds?.contains(element) == true) {
