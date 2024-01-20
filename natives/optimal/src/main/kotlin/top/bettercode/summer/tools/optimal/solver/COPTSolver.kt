@@ -107,8 +107,12 @@ class COPTSolver @JvmOverloads constructor(
     }
 
     override fun boolVar(): IVar {
+        return boolVar(0.0, 1.0)
+    }
+
+    override fun boolVar(lb: Double, ub: Double): IVar {
         val numVariables = numVariables()
-        return COPTVar(model.addVar(0.0, 1.0, 1.0, copt.Consts.BINARY, "b" + (numVariables + 1)))
+        return COPTVar(model.addVar(lb, ub, 1.0, copt.Consts.BINARY, "b" + (numVariables + 1)))
     }
 
     override fun intVar(lb: Double, ub: Double): IVar {
@@ -371,14 +375,6 @@ class COPTSolver @JvmOverloads constructor(
      */
     override fun IVar.eqIfNot(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr(this), copt.Consts.EQUAL, value)
-    }
-
-    override fun IVar.neIf(value: Double, bool: IVar) {
-        throw UnsupportedOperationException("COPT不支持的约束")
-    }
-
-    override fun IVar.neIfNot(value: Double, bool: IVar) {
-        throw UnsupportedOperationException("COPT不支持的约束")
     }
 
     /**

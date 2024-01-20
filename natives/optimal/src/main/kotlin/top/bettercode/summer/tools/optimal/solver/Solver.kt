@@ -37,6 +37,7 @@ abstract class Solver(
     abstract fun intVarArray(count: Int, lb: Double, ub: Double): Array<out IVar>
     abstract fun numVarArray(count: Int, lb: Double, ub: Double): Array<out IVar>
     abstract fun boolVar(): IVar
+    abstract fun boolVar(lb: Double = 0.0, ub: Double = 1.0): IVar
     abstract fun intVar(lb: Double, ub: Double): IVar
     abstract fun numVar(lb: Double, ub: Double): IVar
     abstract fun Array<out IVar>.ge(lb: Double)
@@ -133,14 +134,14 @@ abstract class Solver(
     abstract fun IVar.eqIf(value: Double, bool: IVar)
     abstract fun IVar.eqIfNot(value: Double, bool: IVar)
     open fun IVar.neIf(value: Double, bool: IVar) {
-        val intVar = intVar(0.0, Double.POSITIVE_INFINITY)
+        val intVar = boolVar(0.0, Double.POSITIVE_INFINITY)
         gtIf(value, intVar)
         ltIfNot(value, intVar)
         intVar.betweenIf(0.0, 1.0, bool)
     }
 
     open fun IVar.neIfNot(value: Double, bool: IVar) {
-        val intVar = intVar(0.0, Double.POSITIVE_INFINITY)
+        val intVar = boolVar(0.0, Double.POSITIVE_INFINITY)
         gtIf(value, intVar)
         ltIfNot(value, intVar)
         intVar.betweenIfNot(0.0, 1.0, bool)

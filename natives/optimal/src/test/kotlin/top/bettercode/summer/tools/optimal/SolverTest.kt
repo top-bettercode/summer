@@ -26,7 +26,6 @@ class SolverTest {
         cpSolver.ge()
     }
 
-
     @Test
     fun ge() {
         val ge = cbcSolver.ge()
@@ -676,11 +675,11 @@ class SolverTest {
 
     @Test
     fun neIf() {
-//        val eq = coptSolver.neIf()
+        val eq = coptSolver.neIf()
         val eq1 = scipSolver.neIf()
         val eq2 = cbcSolver.neIf()
-//        Assertions.assertEquals(eq, eq1)
-//        Assertions.assertEquals(eq, eq2)
+        Assertions.assertEquals(eq, eq1)
+        Assertions.assertEquals(eq, eq2)
     }
 
     private fun Solver.neIf(): Double {
@@ -704,11 +703,11 @@ class SolverTest {
 
     @Test
     fun neIfNot() {
-//        val eq = coptSolver.neIfNot()
+        val eq = coptSolver.neIfNot()
         val eq1 = scipSolver.neIfNot()
         val eq2 = cbcSolver.neIfNot()
-//        Assertions.assertEquals(eq, eq1)
-//        Assertions.assertEquals(eq, eq2)
+        Assertions.assertEquals(eq, eq1)
+        Assertions.assertEquals(eq, eq2)
     }
 
     private fun Solver.neIfNot(): Double {

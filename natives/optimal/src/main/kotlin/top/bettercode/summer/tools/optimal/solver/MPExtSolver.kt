@@ -99,6 +99,11 @@ open class MPExtSolver @JvmOverloads constructor(
         return MPVar(solver.makeBoolVar("b" + (numVariables + 1)))
     }
 
+    override fun boolVar(lb: Double, ub: Double): IVar {
+        val numVariables = numVariables()
+        return MPVar(solver.makeIntVar(lb, ub, "b" + (numVariables + 1)))
+    }
+
     override fun intVar(lb: Double, ub: Double): IVar {
         val numVariables = numVariables()
         return MPVar(solver.makeIntVar(lb, ub, "i" + (numVariables + 1)))
