@@ -309,7 +309,7 @@ object PrepareData {
     }
 
     private fun ofMaterialConstraint(materialsNames: List<String>, desc: String): MaterialCondition {
-        val split = desc.split(">=|<=|=|>|<".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val split = desc.split(">=|<=|=|!=|>|<".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val materials = materialsNames.filter { it.contains(split[0]) }.toTypedArray().toMaterialIDs()
         val value = split[1].toDouble()
         val typeStr = desc.substringAfter(split[0]).substringBeforeLast(split[1])

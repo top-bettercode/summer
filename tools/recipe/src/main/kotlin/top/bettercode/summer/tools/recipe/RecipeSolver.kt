@@ -213,6 +213,10 @@ object RecipeSolver {
                     throw UnsupportedOperationException("不支持等于条件约束")
                 }
 
+                Operator.NOT_EQUAL -> {
+                    whenVar.eqIfNot(whenCon.value, boolVar)
+                }
+
                 Operator.GREATER -> {
                     whenVar.leIfNot(whenCon.value, boolVar)
                 }
@@ -232,6 +236,9 @@ object RecipeSolver {
             val thenCon = thenCondition.condition
             when (thenCon.operator) {
                 Operator.EQUAL -> thenVar.eqIf(thenCon.value, boolVar)
+                Operator.NOT_EQUAL -> {
+                    throw UnsupportedOperationException("不支持等于条件约束")
+                }
                 Operator.GREATER -> thenVar.gtIf(thenCon.value, boolVar)
                 Operator.LESS -> thenVar.ltIf(thenCon.value, boolVar)
                 Operator.GREATER_EQUAL -> thenVar.geIf(thenCon.value, boolVar)

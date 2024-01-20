@@ -75,6 +75,15 @@ abstract class Solver(
 
     abstract fun IVar.le(ub: IVar)
     abstract fun IVar.lt(ub: IVar)
+
+    open fun IVar.isTrue() {
+        eq(1.0)
+    }
+
+    open fun IVar.isFalse() {
+        eq(0.0)
+    }
+
     abstract fun IVar.eq(value: Double)
     abstract fun IVar.eq(value: IVar)
     abstract fun IVar.between(lb: Double, ub: Double)

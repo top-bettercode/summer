@@ -9,7 +9,10 @@ enum class Operator(val symbol: String) {
      * 等于
      */
     EQUAL("="),
-
+    /**
+     * 不等于
+     */
+    NOT_EQUAL("!="),
     /**
      * 大于
      */
