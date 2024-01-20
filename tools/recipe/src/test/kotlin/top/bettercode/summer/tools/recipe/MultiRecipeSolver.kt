@@ -77,7 +77,7 @@ object MultiRecipeSolver {
                     // 前十个每3元价差一推，后十个每5元价差一推。
                     recipeMaterials.map { (_, material) ->
                         val price = material.price
-                        material.solutionVar.coeff(price * 1.0 / 1000)
+                        material.solutionVar.coeff(price)
                     }.toTypedArray().ge(cost + if (recipeCount < 10) 3 else 5)
                 } else {
                     log.error("Could not find optimal solution:${getResultStatus()}")

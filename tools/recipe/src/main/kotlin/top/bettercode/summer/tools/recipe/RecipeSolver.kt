@@ -246,7 +246,7 @@ object RecipeSolver {
 
         // 定义目标函数：最小化成本
         val objective = recipeMaterials.values.map {
-            it.solutionVar.coeff(it.price * 1.0 / 1000)
+            it.solutionVar.coeff(it.price)
         }.toTypedArray().minimize()
 
         return recipeMaterials to objective

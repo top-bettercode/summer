@@ -33,7 +33,7 @@ data class Recipe(
 
     /** 配方成本  */
     val trueCost: Double
-        get() = materials.sumOf { it.weight * it.price / 1000 }.scale()
+        get() = materials.sumOf { it.weight * it.price }.scale()
 
 
     //检查结果

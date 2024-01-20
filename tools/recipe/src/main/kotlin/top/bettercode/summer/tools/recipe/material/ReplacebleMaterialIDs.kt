@@ -49,6 +49,7 @@ class ReplacebleMaterialIDs(ids: Iterable<String>,
         return result
     }
 
+
     override fun toString(): String {
         return this.joinToString(",", "[", "]") + (if (replaceRate != null) "\n" + replaceRate else "") + (if (replaceIds != null) "\n" + replaceIds.joinToString(",", "[", "]") else "")
     }

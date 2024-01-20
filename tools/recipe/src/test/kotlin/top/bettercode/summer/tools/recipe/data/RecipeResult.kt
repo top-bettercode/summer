@@ -161,7 +161,7 @@ class RecipeResult(private val solverName: String) {
                 var liquidAmmonia: String = LIQUID_AMMONIA
                 var la2CAUseRatio = 1.0
                 val materials = recipe.materials.toSortedSet()
-                if (!materials.any { it.name == liquidAmmonia }) {
+                if (!materials.any { it.id == liquidAmmonia }) {
                     la2CAUseRatio = LA_2_CAUSE_RATIO
                     liquidAmmonia = CLIQUID_AMMONIA
                 }
@@ -252,35 +252,35 @@ class RecipeResult(private val solverName: String) {
                             val originExcess = relationPair?.overdose
                             // 耗液氨系数
                             sheet.comment(r + m, cc, "所需硫酸最小耗" + liquidAmmonia + "系数")
-                            value(sheet, r + m, cc, (normal?.min!! * LA_2_CAUSE_RATIO).scale(9))
+                            value(sheet, r + m, cc, (normal?.min!! * la2CAUseRatio).scale(9))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "系数")
-                                value(sheet, r + m + 1, cc++, (originExcess.min * LA_2_CAUSE_RATIO).scale(9))
+                                value(sheet, r + m + 1, cc++, (originExcess.min * la2CAUseRatio).scale(9))
                             } else {
                                 cc++
                             }
                             // 耗液氨数量
                             sheet.comment(r + m, cc, "所需硫酸最小耗" + liquidAmmonia + "数量")
-                            value(sheet, r + m, cc, (vitriolNormal * normal.min * LA_2_CAUSE_RATIO).scale(2))
+                            value(sheet, r + m, cc, (vitriolNormal * normal.min * la2CAUseRatio).scale(2))
                             if (originExcess != null && vitriolExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最小耗" + liquidAmmonia + "数量")
-                                value(sheet, r + m + 1, cc++, (vitriolExcess * originExcess.min * LA_2_CAUSE_RATIO).scale(2))
+                                value(sheet, r + m + 1, cc++, (vitriolExcess * originExcess.min * la2CAUseRatio).scale(2))
                             } else {
                                 cc++
                             }
                             sheet.comment(r + m, cc, "所需硫酸最大耗" + liquidAmmonia + "系数")
-                            value(sheet, r + m, cc, (normal.max * LA_2_CAUSE_RATIO).scale(9))
+                            value(sheet, r + m, cc, (normal.max * la2CAUseRatio).scale(9))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "系数")
-                                value(sheet, r + m + 1, cc++, (originExcess.max * LA_2_CAUSE_RATIO).scale(9))
+                                value(sheet, r + m + 1, cc++, (originExcess.max * la2CAUseRatio).scale(9))
                             } else {
                                 cc++
                             }
                             sheet.comment(r + m, cc, "所需硫酸最大耗" + liquidAmmonia + "数量")
-                            value(sheet, r + m, cc, (vitriolNormal * normal.max * LA_2_CAUSE_RATIO).scale(2))
+                            value(sheet, r + m, cc, (vitriolNormal * normal.max * la2CAUseRatio).scale(2))
                             if (originExcess != null) {
                                 sheet.comment(r + m + 1, cc, "所需过量硫酸最大耗" + liquidAmmonia + "数量")
-                                value(sheet, r + m + 1, cc++, (vitriolExcess!! * originExcess.max * LA_2_CAUSE_RATIO).scale(2))
+                                value(sheet, r + m + 1, cc++, (vitriolExcess!! * originExcess.max * la2CAUseRatio).scale(2))
                             } else {
                                 cc++
                             }
@@ -346,10 +346,10 @@ class RecipeResult(private val solverName: String) {
                             sheet,
                             r + m,
                             cc++,
-                            (weight * price / 1000).scale(2),
+                            (weight * price).scale(2),
                             mergeRow)
                     // 单价
-                    value(sheet, r + m, cc, price, mergeRow)
+                    value(sheet, r + m, cc, price * 1000, mergeRow)
 
                     // 原料成份
                     val components = material.indicators

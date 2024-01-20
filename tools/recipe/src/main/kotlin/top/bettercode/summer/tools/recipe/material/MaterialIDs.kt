@@ -35,4 +35,18 @@ open class MaterialIDs(private val ids: Set<String>) : Set<String> by ids {
         return ids.joinToString(",", "[", "]")
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is MaterialIDs) return false
+
+        if (ids != other.ids) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return ids.hashCode()
+    }
+
+
 }

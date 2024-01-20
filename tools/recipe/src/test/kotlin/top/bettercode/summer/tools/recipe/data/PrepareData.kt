@@ -461,7 +461,7 @@ object PrepareData {
                 else -> RecipeMaterialType.GENERAL
             }
 
-            val material = RecipeMaterial(index = index, id = materialName, name = materialName, price = materialPrice, indicators = RecipeValueIndicators(indicators), type = type)
+            val material = RecipeMaterial(index = index, id = materialName, name = materialName, price = materialPrice / 1000, indicators = RecipeValueIndicators(indicators), type = type)
             materials.add(material)
             index++
         }
