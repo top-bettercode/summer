@@ -33,10 +33,7 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
     val type: RecipeMaterialType
 
     override fun compareTo(other: IRecipeMaterial): Int {
-        return if (price == other.price)
-            index.compareTo(other.index)
-        else
-            price.compareTo(other.price)
+        return index.compareTo(other.index)
     }
 
 }

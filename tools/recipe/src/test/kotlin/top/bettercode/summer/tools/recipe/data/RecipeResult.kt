@@ -9,7 +9,6 @@ import top.bettercode.summer.tools.excel.Alignment
 import top.bettercode.summer.tools.excel.ColumnWidths
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.Recipe
-import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
 import top.bettercode.summer.tools.recipe.material.MaterialIDs
 import java.io.File
@@ -76,7 +75,7 @@ class RecipeResult(private val solverName: String) {
             for (i in titles.indices) {
                 value(sheet, r, i, titles[i])
             }
-            val reqMaterials: Collection<IRecipeMaterial> = requirement.materials.values
+            val reqMaterials = requirement.materials.values.toSortedSet()
             for (matrial in reqMaterials) {
                 val matrialName = matrial.name
                 var cc = 0
@@ -117,7 +116,7 @@ class RecipeResult(private val solverName: String) {
                 if (notMixMaterials.isNotEmpty()) {
                     // 不能混用原料约束
                     value(sheet, r, 0, "不能混用约束：")
-                    val str = notMixMaterials.joinToString("，") { arr: Array<MaterialIDs> -> arr.joinToString("和", "(", ")") { it.toString() } }
+                    val str = notMixMaterials.joinToString("，") { arr: Array<MaterialIDs> -> arr.joinToString("和") { it.toString() } }
                     value(sheet, r, 1, str)
                     sheet.style(r, 1).horizontalAlignment(Alignment.LEFT.value).set()
                     sheet.range(r, 1, r, 14).merge()
@@ -136,7 +135,7 @@ class RecipeResult(private val solverName: String) {
                 val componentNames: List<String> = PrepareData.indicatorNames
                 for (index in materialIDIndicators.values) {
                     val limit = index.value
-                    limitMaterialStrings.add(index.name + "只能用：" + limit)
+                    limitMaterialStrings.add("[${index.name}]只能用：$limit")
                 }
                 val materialRangeConstraints = requirement.materialRangeConstraints
                 val materialIDConstraints = requirement.materialIDConstraints
@@ -150,7 +149,7 @@ class RecipeResult(private val solverName: String) {
                             limitMaterialStrings.add(
                                     "当" + condition1.toString() + "时，" + condition2.toString())
                         }
-                value(sheet, r, 1, StringUtils.collectionToDelimitedString(limitMaterialStrings, "；"))
+                value(sheet, r, 1, StringUtils.collectionToDelimitedString(limitMaterialStrings, "，"))
                 sheet.style(r, 1).horizontalAlignment(Alignment.LEFT.value).set()
                 sheet.range(r, 1, r, 14).merge()
                 r++
@@ -161,7 +160,7 @@ class RecipeResult(private val solverName: String) {
                 value(sheet, r, c++, "最大用量")
                 var liquidAmmonia: String = LIQUID_AMMONIA
                 var la2CAUseRatio = 1.0
-                val materials = recipe.materials
+                val materials = recipe.materials.toSortedSet()
                 if (!materials.any { it.name == liquidAmmonia }) {
                     la2CAUseRatio = LA_2_CAUSE_RATIO
                     liquidAmmonia = CLIQUID_AMMONIA
@@ -248,7 +247,7 @@ class RecipeResult(private val solverName: String) {
                             val vsolutionValue = material.solutionValue
                             val vitriolNormal = vsolutionValue.normal ?: material.weight
                             val vitriolExcess = vsolutionValue.overdose
-                            val relationPair = liquidAmmoniaMaterialRatio!![MaterialIDs.of(id)]
+                            val relationPair = liquidAmmoniaMaterialRatio!![MaterialIDs(id)]
                             val normal = relationPair?.normal
                             val originExcess = relationPair?.overdose
                             // 耗液氨系数
@@ -319,9 +318,9 @@ class RecipeResult(private val solverName: String) {
                                 value(sheet, r + m + 1, cc++, excess?.min)
                                 // 硫酸量
                                 sheet.comment(r + m, cc, "所需最小硫酸量")
-                                value( sheet, r + m, cc, (weight * (normal.min)).scale(2))
+                                value(sheet, r + m, cc, (weight * (normal.min)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最小过量硫酸量")
-                                value( sheet, r + m + 1, cc++, (weight * (excess!!.min)).scale(2))
+                                value(sheet, r + m + 1, cc++, (weight * (excess!!.min)).scale(2))
                                 // 硫酸系数
                                 sheet.comment(r + m, cc, "所需最大硫酸系数")
                                 value(sheet, r + m, cc, normal.max)
@@ -329,9 +328,9 @@ class RecipeResult(private val solverName: String) {
                                 value(sheet, r + m + 1, cc++, excess.max)
                                 // 硫酸量
                                 sheet.comment(r + m, cc, "所需最大硫酸量")
-                                value( sheet, r + m, cc, (weight * (normal.max)).scale(2))
+                                value(sheet, r + m, cc, (weight * (normal.max)).scale(2))
                                 sheet.comment(r + m + 1, cc, "所需最大过量硫酸量")
-                                value( sheet, r + m + 1, cc++, (weight * (excess.max)).scale(2))
+                                value(sheet, r + m + 1, cc++, (weight * (excess.max)).scale(2))
                             } else {
                                 cc += 4
                             }

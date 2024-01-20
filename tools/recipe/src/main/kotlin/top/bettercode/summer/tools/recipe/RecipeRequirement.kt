@@ -35,9 +35,9 @@ class RecipeRequirement(
         val materialIDIndicators: RecipeMaterialIDIndicators,
 
         /** 限用原料ID  */
-        val useMaterials: List<String>,
+        val useMaterials: MaterialIDs,
         /** 不使用的原料ID  */
-        val noUseMaterials: List<String>,
+        val noUseMaterials: MaterialIDs,
         /** 不能混用的原料,value: 原料ID  */
         val notMixMaterials: List<Array<MaterialIDs>>,
 
@@ -158,11 +158,14 @@ class RecipeRequirement(
         val materialList = materials.groupBy { it.indicators.key }.values
                 .asSequence()
                 .map { list ->
-                    list.filter { f -> materialMust.test(f) } +
-                            list.filter { f -> materialFalse.test(f) }
-                                    .minByOrNull { it }
-                }.filter { it.isNotEmpty() }.flatten().filterNotNull()
-                .sortedBy { o -> o.index }
+                    val must = list.filter { f -> materialMust.test(f) }
+                    val min = list.filter { f -> materialFalse.test(f) }
+                            .minOfWithOrNull(materialComparator) { it }
+                    if (min == null)
+                        must
+                    else
+                        must + min
+                }.filter { it.isNotEmpty() }.flatten()
                 .toList()
         this.materials = RecipeMaterials(materialList)
     }
@@ -170,18 +173,28 @@ class RecipeRequirement(
 
     private fun MaterialIDs.min(materials: RecipeMaterials): MaterialIDs {
         val ids = this.mapNotNull { materials[it] }.groupBy { it.indicators.key }.values.mapNotNull { list ->
-            list.minByOrNull { it }?.id
-        }.toTypedArray()
-        return MaterialIDs(ids)
+            list.minOfWithOrNull(materialComparator) { it }?.id
+        }
+        return MaterialIDs(ids.toSet())
     }
 
     private fun ReplacebleMaterialIDs.min(materials: RecipeMaterials): ReplacebleMaterialIDs {
         val ids = this.mapNotNull { materials[it] }.groupBy { it.indicators.key }.values.mapNotNull { list ->
-            list.minByOrNull { it }?.id
-        }.toTypedArray()
+            list.minOfWithOrNull(materialComparator) { it }?.id
+        }
         val replaceIds = this.replaceIds?.mapNotNull { materials[it] }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-            list.minByOrNull { it }?.id
-        }?.toTypedArray()?.toMaterialIDs()
+            list.minOfWithOrNull(materialComparator) { it }?.id
+        }?.toMaterialIDs()
         return ReplacebleMaterialIDs(ids, replaceIds, this.replaceRate)
     }
+
+    companion object {
+        private val materialComparator: Comparator<IRecipeMaterial> = Comparator { o1, o2 ->
+            if (o1.price == o2.price)
+                o1.index.compareTo(o2.index)
+            else
+                o1.price.compareTo(o2.price)
+        }
+    }
+
 }

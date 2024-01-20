@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.material
  * 可替换物料
  * @author Peter Wu
  */
-class ReplacebleMaterialIDs(ids: Array<out String>,
+class ReplacebleMaterialIDs(ids: Iterable<String>,
                             /**
                              * 可替换物料
                              */
@@ -13,13 +13,22 @@ class ReplacebleMaterialIDs(ids: Array<out String>,
                              * 对可替换物料使用量比例,1单位ids使用replaceRate单位replaceIds
                              */
                             val replaceRate: Double? = null
-) : MaterialIDs(ids) {
+) : MaterialIDs(ids.toSet()) {
+    constructor(vararg id: String, replaceIds: MaterialIDs? = null, replaceRate: Double? = null) : this(id.toList(), replaceIds, replaceRate)
 
-    override fun contains(id: String): Boolean {
-        if (replaceIds?.contains(id) == true) {
-            return true
+    override fun contains(element: String): Boolean {
+        return if (replaceIds?.contains(element) == true) {
+            true
+        } else
+            super.contains(element)
+    }
+
+    override fun containsAll(elements: Collection<String>): Boolean {
+        return if (replaceIds == null)
+            super.containsAll(elements)
+        else {
+            (this + replaceIds).containsAll(elements)
         }
-        return super.contains(id)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -40,5 +49,8 @@ class ReplacebleMaterialIDs(ids: Array<out String>,
         return result
     }
 
+    override fun toString(): String {
+        return this.joinToString(",", "[", "]") + (if (replaceRate != null) "\n" + replaceRate else "") + (if (replaceIds != null) "\n" + replaceIds.joinToString(",", "[", "]") else "")
+    }
 
 }

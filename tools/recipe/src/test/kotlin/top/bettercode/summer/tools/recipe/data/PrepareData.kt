@@ -93,7 +93,7 @@ object PrepareData {
         // 不使用的原料
         val notUseMaterialCol = conditionStartCol
         conditionStartCol++
-        val noUseMaterials = mutableListOf<String>()
+        val noUseMaterials = mutableSetOf<String>()
         rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
@@ -127,7 +127,7 @@ object PrepareData {
         // 限用原料
         val limitUseMaterialCol = conditionStartCol
         conditionStartCol++
-        val useMaterials = mutableListOf<String>()
+        val useMaterials = mutableSetOf<String>()
         rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
@@ -284,7 +284,7 @@ object PrepareData {
         }
 
 //        val relationIndexList = listOf(ReplacebleMaterialIDs(arrayOf(LIQUID_AMMONIA), MaterialIDs.of(AMMONIUM_CARBONATE), LA_2_CAUSE_RATIO),ReplacebleMaterialIDs(arrayOf(SULFURIC_ACID)))
-        val relationIndexList = listOf(ReplacebleMaterialIDs(arrayOf(SULFURIC_ACID)), ReplacebleMaterialIDs(arrayOf(LIQUID_AMMONIA), MaterialIDs.of(AMMONIUM_CARBONATE), LA_2_CAUSE_RATIO))
+        val relationIndexList = listOf(ReplacebleMaterialIDs(SULFURIC_ACID), ReplacebleMaterialIDs(id = arrayOf(LIQUID_AMMONIA), MaterialIDs(AMMONIUM_CARBONATE), LA_2_CAUSE_RATIO))
 
         val materialRelationConstraints2 = materialRelationConstraints.toSortedMap { o1, o2 ->
             relationIndexList.indexOf(o1).compareTo(relationIndexList.indexOf(o2))
@@ -297,8 +297,8 @@ object PrepareData {
                 materials = materials,
                 rangeIndicators = RecipeRangeIndicators(rangeIndicators),
                 materialIDIndicators = RecipeMaterialIDIndicators(materialIDIndicators),
-                useMaterials = useMaterials,
-                noUseMaterials = noUseMaterials,
+                useMaterials = useMaterials.toMaterialIDs(),
+                noUseMaterials = noUseMaterials.toMaterialIDs(),
                 notMixMaterials = notMixMaterials,
                 materialRangeConstraints = materialRangeConstraints,
                 materialIDConstraints = materialIDConstraints,
