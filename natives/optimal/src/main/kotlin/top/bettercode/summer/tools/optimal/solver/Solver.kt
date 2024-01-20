@@ -86,6 +86,12 @@ abstract class Solver(
 
     abstract fun IVar.eq(value: Double)
     abstract fun IVar.eq(value: IVar)
+    open fun IVar.ne(value: Double) {
+        val boolVar = boolVar()
+        gtIf(value, boolVar)
+        ltIfNot(value, boolVar)
+    }
+
     abstract fun IVar.between(lb: Double, ub: Double)
     abstract fun IVar.between(lb: IVar, ub: IVar)
 
@@ -126,6 +132,20 @@ abstract class Solver(
 
     abstract fun IVar.eqIf(value: Double, bool: IVar)
     abstract fun IVar.eqIfNot(value: Double, bool: IVar)
+    open fun IVar.neIf(value: Double, bool: IVar) {
+        val intVar = intVar(0.0, Double.POSITIVE_INFINITY)
+        gtIf(value, intVar)
+        ltIfNot(value, intVar)
+        intVar.betweenIf(0.0, 1.0, bool)
+    }
+
+    open fun IVar.neIfNot(value: Double, bool: IVar) {
+        val intVar = intVar(0.0, Double.POSITIVE_INFINITY)
+        gtIf(value, intVar)
+        ltIfNot(value, intVar)
+        intVar.betweenIfNot(0.0, 1.0, bool)
+    }
+
     abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
     abstract fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar)
     abstract fun Array<out IVar>.sum(): IVar

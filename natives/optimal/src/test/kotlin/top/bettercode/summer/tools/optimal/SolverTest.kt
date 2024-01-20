@@ -26,6 +26,7 @@ class SolverTest {
         cpSolver.ge()
     }
 
+
     @Test
     fun ge() {
         val ge = cbcSolver.ge()
@@ -216,6 +217,33 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         Assertions.assertTrue(numVar1.value < 10.0)
+        return numVar1.value
+    }
+
+
+    @Test
+    fun ne() {
+        val eq = cbcSolver.ne()
+        val eq1 = scipSolver.ne()
+        val eq2 = coptSolver.ne()
+        Assertions.assertEquals(eq, eq1)
+        Assertions.assertEquals(eq, eq2)
+    }
+
+    private fun Solver.ne(): Double {
+        val numVar1 = numVar(0.0, 100.0)
+        arrayOf(numVar1).maximize()
+        solve()
+        System.err.println(numVar1.value)
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        Assertions.assertEquals(100.0, numVar1.value)
+        numVar1.ne(100.0)
+        arrayOf(numVar1).maximize()
+        solve()
+        System.err.println(numVar1.value)
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        Assertions.assertTrue(numVar1.value < 100.0)
+
         return numVar1.value
     }
 
@@ -643,6 +671,62 @@ class SolverTest {
         System.err.println(numVar1.value)
         Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         Assertions.assertTrue(numVar1.value == 10.0)
+        return numVar1.value
+    }
+
+    @Test
+    fun neIf() {
+//        val eq = coptSolver.neIf()
+        val eq1 = scipSolver.neIf()
+        val eq2 = cbcSolver.neIf()
+//        Assertions.assertEquals(eq, eq1)
+//        Assertions.assertEquals(eq, eq2)
+    }
+
+    private fun Solver.neIf(): Double {
+        val numVar1 = numVar(0.0, 100.0)
+        val boolVar = boolVar()
+        numVar1.neIf(100.0, boolVar)
+        arrayOf(numVar1).maximize()
+        solve()
+        System.err.println(boolVar.value)
+        System.err.println(numVar1.value)
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        arrayOf(numVar1).maximize()
+        boolVar.eq(1.0)
+        solve()
+        System.err.println(boolVar.value)
+        System.err.println(numVar1.value)
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        Assertions.assertTrue(numVar1.value < 100.0)
+        return numVar1.value
+    }
+
+    @Test
+    fun neIfNot() {
+//        val eq = coptSolver.neIfNot()
+        val eq1 = scipSolver.neIfNot()
+        val eq2 = cbcSolver.neIfNot()
+//        Assertions.assertEquals(eq, eq1)
+//        Assertions.assertEquals(eq, eq2)
+    }
+
+    private fun Solver.neIfNot(): Double {
+        val numVar1 = numVar(0.0, 100.0)
+        val boolVar = boolVar()
+        numVar1.neIfNot(100.0, boolVar)
+        arrayOf(numVar1).maximize()
+        solve()
+        System.err.println(boolVar.value)
+        System.err.println(numVar1.value)
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        arrayOf(numVar1).maximize()
+        boolVar.eq(0.0)
+        solve()
+        System.err.println(boolVar.value)
+        System.err.println(numVar1.value)
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        Assertions.assertTrue(numVar1.value < 100.0)
         return numVar1.value
     }
 

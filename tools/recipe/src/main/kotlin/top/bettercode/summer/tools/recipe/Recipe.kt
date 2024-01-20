@@ -209,7 +209,7 @@ data class Recipe(
             var whenTrue = false
             when (whenCon.condition.operator) {
                 Operator.EQUAL -> {
-                    throw UnsupportedOperationException("不支持等于条件约束")
+                    whenTrue = whenWeight == whenCon.condition.value
                 }
 
                 Operator.NOT_EQUAL -> {
@@ -241,7 +241,10 @@ data class Recipe(
                 }
 
                 Operator.NOT_EQUAL -> {
-                    throw UnsupportedOperationException("不支持等于条件约束")
+                    if (whenTrue && thenWeight == thenCon.condition.value) {
+                        log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
+                        return false
+                    }
                 }
 
                 Operator.GREATER -> {

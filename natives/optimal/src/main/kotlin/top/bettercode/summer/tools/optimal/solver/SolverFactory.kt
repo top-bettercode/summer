@@ -7,7 +7,7 @@ object SolverFactory {
     @JvmStatic
     @JvmOverloads
     fun createSolver(solverType: SolverType,
-                     epsilon: Double = 1e-6,
+                     epsilon: Double = 1e-5,
                      logging: Boolean = false,
                      /**
                       * 变量默认下界

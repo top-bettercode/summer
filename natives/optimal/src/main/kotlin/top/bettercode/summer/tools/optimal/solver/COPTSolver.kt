@@ -373,6 +373,14 @@ class COPTSolver @JvmOverloads constructor(
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr(this), copt.Consts.EQUAL, value)
     }
 
+    override fun IVar.neIf(value: Double, bool: IVar) {
+        throw UnsupportedOperationException("COPT不支持的约束")
+    }
+
+    override fun IVar.neIfNot(value: Double, bool: IVar) {
+        throw UnsupportedOperationException("COPT不支持的约束")
+    }
+
     /**
      * <pre>
      * bool为1时：lb <= var <= ub
