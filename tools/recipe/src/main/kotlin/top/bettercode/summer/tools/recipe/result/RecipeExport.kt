@@ -53,7 +53,7 @@ object RecipeExport {
         cell(r++, c).value("不能混用约束").width(20.0).set()
         val notMixMaterials = requirement.notMixMaterials
         notMixMaterials.forEach {
-            cell(r++, c).value(it.joinToString("和")).width(20.0).set()
+            cell(r++, c).value(it.joinToString("和")).width(20.0).wrapText().set()
         }
 
         c++
@@ -61,7 +61,7 @@ object RecipeExport {
         cell(r++, c).value("不使用的原料").width(20.0).set()
         val noUseMaterials = requirement.noUseMaterials
         noUseMaterials.forEach {
-            cell(r++, c).value(it).width(20.0).set()
+            cell(r++, c).value(it).width(20.0).wrapText().set()
         }
 
         c++
@@ -69,12 +69,13 @@ object RecipeExport {
         cell(r++, c).value("限用原料").width(20.0).set()
         val useMaterials = requirement.useMaterials
         useMaterials.forEach {
-            cell(r++, c).value(it).width(20.0).set()
+            cell(r++, c).value(it).width(20.0).wrapText().set()
         }
 
         c++
         r = 0
         cell(r, c).value("指标限用物料").width(20.0).set()
+        cell(r, c + 1).width(20.0).set()
         rangeCell(r, c, r++, c + 1).merge()
         val materialIDIndicators = requirement.materialIDIndicators
         materialIDIndicators.forEach { (_, indicator) ->
@@ -85,6 +86,7 @@ object RecipeExport {
         c += 2
         r = 0
         cell(r, c).value("指定物料约束").width(20.0).set()
+        cell(r, c + 1).width(20.0).set()
         rangeCell(r, c, r++, c + 1).merge()
         val materialIDConstraints = requirement.materialIDConstraints
         materialIDConstraints.forEach { (materials, limit) ->
@@ -97,7 +99,7 @@ object RecipeExport {
         cell(r++, c).value("条件约束").width(20.0).set()
         val materialConditions = requirement.materialConditions
         materialConditions.forEach { (whenCon: MaterialCondition, thenCon: MaterialCondition) ->
-            cell(r++, c).value("当" + whenCon.toString() + "时，" + thenCon.toString()).width(20.0).set()
+            cell(r++, c).value("当" + whenCon.toString() + "时，" + thenCon.toString()).width(20.0).wrapText().set()
         }
     }
 
@@ -111,7 +113,7 @@ object RecipeExport {
             rangeCell(0, 0, materials.size + 7, titles.size + indicators.size).set()
 
             var r = 0
-            cell(r, 0).value("配方成本：").width(20.0).set()
+            cell(r, 0).value("配方成本：").width(22.0).set()
             cell(r, 1).value(recipe.cost).format("0.00").width(10.0).set()
             cell(++r, 0).value("产品量：").set()
             cell(r, 1).value(requirement.targetWeight).format("0").set()
@@ -174,7 +176,7 @@ object RecipeExport {
             materials.forEach { material ->
                 c = 0
                 //最小用量 最大用量 最小耗液氨/硫酸系数 最小耗液氨/硫酸量 最大耗液氨/硫酸系数 最大耗液氨/硫酸量 投料量 成本 单价(/吨)
-                cell(r, c++).value(material.name).set()
+                cell(r, c++).value(material.name).wrapText().set()
                 cell(r, c++).value(material.minWeight).format("0").set()
                 cell(r, c++).value(material.maxWeight).format("0").set()
                 val minNormalRelationRate = material.minNormalRelationRate
