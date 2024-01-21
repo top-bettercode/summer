@@ -151,12 +151,15 @@ object RecipeExport {
                     else -> materials.sumOf { it.indicatorWeight(indicator.index) }.scale()
                 }
                 cell(r++, c).value(indicatorValue).format("0.00").set()
+
                 //目标成份量(最大值)
-                val min = rangeIndicators[indicator.index]?.value?.min
-                cell(r++, c).value(min).format("0.0%").set()
-                //目标成份量(最小值)
                 val max = rangeIndicators[indicator.index]?.value?.max
                 cell(r++, c).value(max).format("0.0%").set()
+
+                //目标成份量(最小值)
+                val min = rangeIndicators[indicator.index]?.value?.min
+                cell(r++, c).value(min).format("0.0%").set()
+
                 //成份量(百分比)
                 val value = when (indicator.type) {
                     RecipeIndicatorType.WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWater) / requirement.targetWeight).scale()
