@@ -12,7 +12,7 @@ import java.io.File
  *
  * @author Peter Wu
  */
-class RecipeResult(private val solverName: String) {
+class RecipeResult(val solverName: String) {
 
     /** 配方  */
     var recipes: MutableList<Recipe> = ArrayList()

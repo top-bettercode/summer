@@ -1,6 +1,8 @@
 package top.bettercode.summer.tools.recipe.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialType
 
@@ -9,6 +11,7 @@ import top.bettercode.summer.tools.recipe.material.RecipeMaterialType
  *
  * @author Peter Wu
  */
+@JsonPropertyOrder(alphabetic = true)
 interface RecipeMaterialView {
     /**
      * 序号，从0开始
@@ -37,4 +40,8 @@ interface RecipeMaterialView {
 
 }
 
-
+@JsonPropertyOrder(alphabetic = true)
+interface RecipeView {
+    @get:JsonIgnore
+    val requirement: RecipeRequirement
+}

@@ -1,0 +1,62 @@
+{
+  "cost" : 1248.3162055336,
+  "dryWater" : 190.0225861096,
+  "materials" : [ {
+    "cost" : 28.0,
+    "id" : "白泥",
+    "index" : 53,
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "solutionValue" : {
+      "value" : 80.0
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 5.6000000000000005,
+    "weight" : 80.0
+  }, {
+    "cost" : 225.000000000006,
+    "id" : "低白肥（14%）",
+    "index" : 25,
+    "name" : "低白肥（14%）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.42,
+    "solutionValue" : {
+      "value" : 535.7142857143
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 187.50000000000497,
+    "weight" : 535.7142857143
+  }, {
+    "cost" : 355.0,
+    "id" : "95%氯化钾烘干粉（国产）",
+    "index" : 26,
+    "name" : "95%氯化钾烘干粉（国产）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.55,
+    "solutionValue" : {
+      "value" : 100.0
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 1.0,
+    "weight" : 100.0
+  }, {
+    "cost" : 640.3162055336551,
+    "id" : "氯化铵（干）",
+    "index" : 3,
+    "name" : "氯化铵（干）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.35,
+    "solutionValue" : {
+      "value" : 474.3083003953
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 4.743083003953,
+    "weight" : 474.3083003953
+  } ],
+  "trueCost" : 1248.3162055337
+}

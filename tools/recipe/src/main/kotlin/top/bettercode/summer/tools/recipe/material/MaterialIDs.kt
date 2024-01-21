@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.material
  *
  * @author Peter Wu
  */
-open class MaterialIDs(private val ids: HashSet<String>) : Set<String> by ids {
+open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialIDs>,Set<String> by ids {
     constructor(vararg id: String) : this(id.toHashSet())
     constructor(ids: Iterable<String>) : this(ids.toHashSet())
 
@@ -48,5 +48,7 @@ open class MaterialIDs(private val ids: HashSet<String>) : Set<String> by ids {
         return ids.hashCode()
     }
 
-
+    override fun compareTo(other: MaterialIDs): Int {
+        return toString().compareTo(other.toString())
+    }
 }

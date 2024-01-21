@@ -1,0 +1,136 @@
+{
+  "cost" : 2643.3832490758,
+  "dryWater" : 588.6639427969,
+  "materials" : [ {
+    "cost" : 185.0083783874,
+    "id" : "8-40-0再浆肥（粉）",
+    "index" : 16,
+    "name" : "8-40-0再浆肥（粉）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "solutionValue" : {
+      "value" : 92.5041891937
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 1.850083783874,
+    "weight" : 92.5041891937
+  }, {
+    "cost" : 424.51413176703994,
+    "id" : "喷浆专用尿素",
+    "index" : 90,
+    "name" : "喷浆专用尿素",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.8,
+    "solutionValue" : {
+      "value" : 151.6121899168
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 37.9030474792,
+    "weight" : 151.6121899168
+  }, {
+    "cost" : 16.0,
+    "id" : "防结油（白色）",
+    "index" : 61,
+    "name" : "防结油（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "solutionValue" : {
+      "value" : 2.0
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 0.0,
+    "weight" : 2.0
+  }, {
+    "cost" : 376.68536481996,
+    "id" : "液氨",
+    "index" : 9,
+    "name" : "液氨",
+    "normalWeight" : 89.1493464575,
+    "overdoseWeight" : 9.9783811267,
+    "price" : 3.8,
+    "solutionValue" : {
+      "value" : 99.1277275842,
+      "normal" : 89.1493464575,
+      "overdose" : 9.9783811267
+    },
+    "type" : "LIQUID_AMMONIA",
+    "waterWeight" : 0.49563863792100005,
+    "weight" : 99.1277275842
+  }, {
+    "cost" : 6.0,
+    "id" : "防结粉（白色）",
+    "index" : 62,
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "solutionValue" : {
+      "value" : 3.0
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 0.0,
+    "weight" : 3.0
+  }, {
+    "cost" : 68.906121744966,
+    "id" : "硫酸",
+    "index" : 36,
+    "name" : "硫酸",
+    "normalWeight" : 284.7360402685,
+    "overdoseWeight" : 28.4736040268,
+    "price" : 0.22,
+    "solutionValue" : {
+      "value" : 313.2096442953,
+      "normal" : 284.7360402685,
+      "overdose" : 28.4736040268
+    },
+    "type" : "SULFURIC_ACID",
+    "waterWeight" : 1.5660482214765,
+    "weight" : 313.2096442953
+  }, {
+    "cost" : 727.6442523562794,
+    "id" : "磷酸",
+    "index" : 29,
+    "name" : "磷酸",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.055,
+    "solutionValue" : {
+      "value" : 689.7101918069
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 448.31162467448496,
+    "weight" : 689.7101918069
+  }, {
+    "cost" : 13.25,
+    "id" : "生化黄腐酸钾",
+    "index" : 67,
+    "name" : "生化黄腐酸钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.65,
+    "solutionValue" : {
+      "value" : 5.0
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 0.1,
+    "weight" : 5.0
+  }, {
+    "cost" : 825.375,
+    "id" : "喷浆硫基用95氯化钾",
+    "index" : 89,
+    "name" : "喷浆硫基用95氯化钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.55,
+    "solutionValue" : {
+      "value" : 232.5
+    },
+    "type" : "GENERAL",
+    "waterWeight" : 110.4375,
+    "weight" : 232.5
+  } ],
+  "trueCost" : 2643.3832490756
+}
