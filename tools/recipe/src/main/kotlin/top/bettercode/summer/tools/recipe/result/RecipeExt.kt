@@ -146,43 +146,10 @@ class RecipeExt(private val recipe: Recipe) {
     private val RecipeMaterialValue.relationValue: Pair<DoubleRange, DoubleRange>?
         get() {
             val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.key.contains(this.id) }
-            val ids = materialRelationConstraints.keys.firstOrNull() ?: return null
-
-            val materials = recipe.materials
-            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
-            val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
-
-            var usedMinNormalWeights = 0.0
-            var usedMaxNormalWeights = 0.0
-            var usedMinOverdoseWeights = 0.0
-            var usedMaxOverdoseWeights = 0.0
-            val relation = materialRelationConstraints.values.firstOrNull()
-            relation?.forEach { (materialIDs, recipeRelation) ->
-                val normal = recipeRelation.normal
-                val weight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.weight }
-                val normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight }
-
-                if (normalWeight > 0) {
-                    usedMinNormalWeights += normalWeight * normal.min * replaceRate
-                    usedMaxNormalWeights += normalWeight * normal.max * replaceRate
-                } else {
-                    usedMinNormalWeights += weight * normal.min * replaceRate
-                    usedMaxNormalWeights += weight * normal.max * replaceRate
-                }
-                val overdose = recipeRelation.overdose
-                if (overdose != null) {
-                    val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight }
-                    if (overdoseWeight > 0) {
-                        usedMinOverdoseWeights += overdoseWeight * overdose.min * replaceRate
-                        usedMaxOverdoseWeights += overdoseWeight * overdose.max * replaceRate
-                    } else {
-                        usedMinOverdoseWeights += weight * overdose.min * replaceRate
-                        usedMaxOverdoseWeights += weight * overdose.max * replaceRate
-                    }
-                }
+            val entry = materialRelationConstraints.entries.firstOrNull() ?: return null
+            recipe.apply {
+                return entry.relationValue
             }
-
-            return DoubleRange(usedMinNormalWeights, usedMaxNormalWeights) to DoubleRange(usedMinOverdoseWeights, usedMaxOverdoseWeights)
         }
 
 }

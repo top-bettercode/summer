@@ -4,12 +4,16 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
+import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.Operator
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
+import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
+import top.bettercode.summer.tools.recipe.material.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
+import top.bettercode.summer.tools.recipe.material.ReplacebleMaterialIDs
 
 /**
  * 配方
@@ -143,9 +147,9 @@ data class Recipe(
         }
         // 关联物料约束
         val materialRelationConstraints = requirement.materialRelationConstraints
-        for ((ids, relation) in materialRelationConstraints) {
+        for (entry in materialRelationConstraints) {
+            val ids = entry.key
             val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
-            val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
             val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             val usedNormalWeight = materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
             val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
@@ -154,35 +158,12 @@ data class Recipe(
                 log.warn("原料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
                 return false
             }
+            val (normal, overdose) = entry.relationValue
+            val usedMinNormalWeights = normal.min
+            val usedMaxNormalWeights = normal.max
+            val usedMinOverdoseWeights = overdose.min
+            val usedMaxOverdoseWeights = overdose.max
 
-            var usedMinNormalWeights = 0.0
-            var usedMaxNormalWeights = 0.0
-            var usedMinOverdoseWeights = 0.0
-            var usedMaxOverdoseWeights = 0.0
-            relation.forEach { (materialIDs, recipeRelation) ->
-                val normal = recipeRelation.normal
-                val weight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.weight }
-                val normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight }
-
-                if (normalWeight > 0) {
-                    usedMinNormalWeights += normalWeight * normal.min * replaceRate
-                    usedMaxNormalWeights += normalWeight * normal.max * replaceRate
-                } else {
-                    usedMinNormalWeights += weight * normal.min * replaceRate
-                    usedMaxNormalWeights += weight * normal.max * replaceRate
-                }
-                val overdose = recipeRelation.overdose
-                if (overdose != null) {
-                    val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight }
-                    if (overdoseWeight > 0) {
-                        usedMinOverdoseWeights += overdoseWeight * overdose.min * replaceRate
-                        usedMaxOverdoseWeights += overdoseWeight * overdose.max * replaceRate
-                    } else {
-                        usedMinOverdoseWeights += weight * overdose.min * replaceRate
-                        usedMaxOverdoseWeights += weight * overdose.max * replaceRate
-                    }
-                }
-            }
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
             if (usedNormalWeight !in (usedMinNormalWeights - 1e-10).scale()..(usedMaxNormalWeights + 1e-10).scale()) {
                 log.warn("原料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
@@ -274,4 +255,42 @@ data class Recipe(
         return true
     }
 
+    val Map.Entry<ReplacebleMaterialIDs, Map<MaterialIDs, RecipeRelation>>.relationValue: Pair<DoubleRange, DoubleRange>
+        get() {
+            val ids = this.key
+            val materials = materials
+            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
+            val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
+
+            var usedMinNormalWeights = 0.0
+            var usedMaxNormalWeights = 0.0
+            var usedMinOverdoseWeights = 0.0
+            var usedMaxOverdoseWeights = 0.0
+            this.value.forEach { (materialIDs, recipeRelation) ->
+                val normal = recipeRelation.normal
+                val weight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.weight }
+                val normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight }
+
+                if (normalWeight > 0) {
+                    usedMinNormalWeights += normalWeight * normal.min * replaceRate
+                    usedMaxNormalWeights += normalWeight * normal.max * replaceRate
+                } else {
+                    usedMinNormalWeights += weight * normal.min * replaceRate
+                    usedMaxNormalWeights += weight * normal.max * replaceRate
+                }
+                val overdose = recipeRelation.overdose
+                if (overdose != null) {
+                    val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight }
+                    if (overdoseWeight > 0) {
+                        usedMinOverdoseWeights += overdoseWeight * overdose.min * replaceRate
+                        usedMaxOverdoseWeights += overdoseWeight * overdose.max * replaceRate
+                    } else {
+                        usedMinOverdoseWeights += weight * overdose.min * replaceRate
+                        usedMaxOverdoseWeights += weight * overdose.max * replaceRate
+                    }
+                }
+            }
+
+            return DoubleRange(usedMinNormalWeights, usedMaxNormalWeights) to DoubleRange(usedMinOverdoseWeights, usedMaxOverdoseWeights)
+        }
 }
