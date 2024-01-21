@@ -35,6 +35,10 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
         this.sheet = workbook.createSheet(sheetname)
     }
 
+    override fun keepInActiveTab() {
+        workbook.setActiveSheet(this.workbook.indexOf(this.sheet))
+    }
+
     override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         val poiCellStyle = PoiCellStyle(workbook.createCellStyle())
         poiCellStyle.style(workbook, cellStyle)
@@ -50,7 +54,7 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
         sheet.setColumnWidth(column, (width * 256).toInt())
     }
 
-    override fun rowHeight(row: Int, height: Double) {
+    override fun height(row: Int, height: Double) {
         sheet.row(row).height = (height * 20).toInt().toShort()
     }
 
@@ -59,15 +63,17 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
     }
 
     override fun comment(row: Int, column: Int, commen: String?) {
-        val creationHelper: CreationHelper = workbook.creationHelper
-        val drawing: Drawing<*> = sheet.createDrawingPatriarch()
-        val anchor = creationHelper.createClientAnchor()
-        anchor.setCol1(column) // 批注起始列
-        anchor.row1 = row // 批注起始行
-        val comment: Comment = drawing.createCellComment(anchor)
-        val commentText = creationHelper.createRichTextString(commen)
-        comment.string = commentText
-        sheet.row(row).cell(column).setCellComment(comment)
+        if (!commen.isNullOrBlank()) {
+            val creationHelper: CreationHelper = workbook.creationHelper
+            val drawing: Drawing<*> = sheet.createDrawingPatriarch()
+            val anchor = creationHelper.createClientAnchor()
+            anchor.setCol1(column) // 批注起始列
+            anchor.row1 = row // 批注起始行
+            val comment: Comment = drawing.createCellComment(anchor)
+            val commentText = creationHelper.createRichTextString(commen)
+            comment.string = commentText
+            sheet.row(row).cell(column).setCellComment(comment)
+        }
     }
 
     override fun value(row: Int, column: Int) {

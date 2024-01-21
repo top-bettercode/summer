@@ -30,6 +30,15 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         this.sheet = workbook.newWorksheet(sheetname)
     }
 
+    override fun keepInActiveTab() {
+        this.sheet.keepInActiveTab()
+    }
+
+    override fun setCellStyle(row: Int, column: Int, cellStyle: CellStyle) {
+        sheet.style(row, column)
+                .style(cellStyle)
+                .set()
+    }
 
     override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         sheet.range(top, left, bottom, right).style()
@@ -41,7 +50,7 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         this.sheet.width(column, width)
     }
 
-    override fun rowHeight(row: Int, height: Double) {
+    override fun height(row: Int, height: Double) {
         this.sheet.rowHeight(row, height)
     }
 
@@ -50,7 +59,8 @@ class FastExcel(outputStream: OutputStream) : IExcel {
     }
 
     override fun comment(row: Int, column: Int, commen: String?) {
-        sheet.comment(row, column, commen)
+        if (!commen.isNullOrBlank())
+            sheet.comment(row, column, commen)
     }
 
     override fun value(row: Int, column: Int, value: String?) {

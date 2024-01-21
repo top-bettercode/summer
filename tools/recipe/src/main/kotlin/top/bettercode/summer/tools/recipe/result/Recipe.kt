@@ -1,8 +1,9 @@
-package top.bettercode.summer.tools.recipe
+package top.bettercode.summer.tools.recipe.result
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.Operator
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
@@ -143,7 +144,7 @@ data class Recipe(
         // 关联物料约束
         val materialRelationConstraints = requirement.materialRelationConstraints
         for ((ids, relation) in materialRelationConstraints) {
-            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toTypedArray().toMaterialIDs()
+            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
             val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
             val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             val usedNormalWeight = materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }

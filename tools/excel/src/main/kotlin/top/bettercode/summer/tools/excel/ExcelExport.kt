@@ -53,7 +53,7 @@ class ExcelExport(val excel: IExcel) {
         horizontalAlignment(Alignment.CENTER.value)
         verticalAlignment(Alignment.CENTER.value)
         borderStyle(BorderStyle.THIN)
-        borderColor(Color.BLACK)
+        borderColor(Color.GRAY8)
     }
     private val headerStyle: CellStyle = CellStyle().apply {
         fillColor("808080")
@@ -62,7 +62,7 @@ class ExcelExport(val excel: IExcel) {
         horizontalAlignment(Alignment.CENTER.value)
         verticalAlignment(Alignment.CENTER.value)
         borderStyle(BorderStyle.THIN)
-        borderColor(Color.BLACK)
+        borderColor(Color.GRAY8)
         bold()
     }
 
@@ -77,17 +77,13 @@ class ExcelExport(val excel: IExcel) {
     }
 
     @JvmOverloads
-    fun headerStyle(top: Int, left: Int, bottom: Int = top, right: Int = left): RangeCellStyle {
-        val rangeCellStyle = RangeCellStyle(this.excel, top, left, bottom, right)
-        rangeCellStyle.style(headerStyle)
-        return rangeCellStyle
+    fun cell(row: Int = this.row, column: Int = this.column, style: CellStyle = this.cellStyle.clone()): ExportCell {
+        return ExportCell(this.excel, style, row, column)
     }
 
     @JvmOverloads
-    fun cellStyle(top: Int, left: Int, bottom: Int = top, right: Int = left): RangeCellStyle {
-        val rangeCellStyle = RangeCellStyle(this.excel, top, left, bottom, right)
-        rangeCellStyle.style(cellStyle)
-        return rangeCellStyle
+    fun rangeCell(top: Int, left: Int, bottom: Int = top, right: Int = left, style: CellStyle = this.cellStyle.clone()): ExportRangeCell {
+        return ExportRangeCell(this.excel, style, top, left, bottom, right)
     }
 
     fun bHeaderStyle(): ExcelExport {
@@ -357,7 +353,7 @@ class ExcelExport(val excel: IExcel) {
         this.excel.setCellStyle(row, column, row, column, style)
 
         if (excelField.height != -1.0) {
-            this.excel.rowHeight(row, excelField.height)
+            this.excel.height(row, excelField.height)
         }
         if (excelCell.needSetValue()) {
             val cellValue = excelCell.cellValue

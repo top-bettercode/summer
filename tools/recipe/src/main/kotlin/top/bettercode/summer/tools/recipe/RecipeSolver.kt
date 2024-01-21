@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.recipe.criteria.Operator
 import top.bettercode.summer.tools.recipe.material.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.SolutionVar
+import top.bettercode.summer.tools.recipe.result.Recipe
 
 object RecipeSolver {
 

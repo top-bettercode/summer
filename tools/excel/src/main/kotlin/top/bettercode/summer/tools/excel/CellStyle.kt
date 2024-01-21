@@ -495,5 +495,4 @@ open class CellStyle : Cloneable {
         return super.clone() as CellStyle
     }
 
-    open fun set() {}
 }

@@ -21,11 +21,11 @@ internal class RecipeSolverTest {
 
     @Test
     fun solve() {
-//        solve("13-05-07高氯枸磷")
-//        solve("24-06-10高氯枸磷")
-//        solve("15-15-15喷浆氯基")
+        solve("13-05-07高氯枸磷")
+        solve("24-06-10高氯枸磷")
+        solve("15-15-15喷浆氯基")
         solve("15-15-15喷浆硫基")
-//        solve("15-15-15常规氯基")
+        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
@@ -60,7 +60,7 @@ internal class RecipeSolverTest {
 
     private fun assert(solve: RecipeResult, solve1: RecipeResult) {
         Assertions.assertEquals(solve.recipes[0].cost, solve1.recipes[0].cost)
-        Assertions.assertEquals(solve.recipeCount, solve1.recipeCount)
+        Assertions.assertEquals(solve.recipes.size, solve1.recipes.size)
         Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
     }
 

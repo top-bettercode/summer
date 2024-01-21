@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.material
  *
  * @author Peter Wu
  */
-class RecipeMaterialVar(
+data class RecipeMaterialVar(
         private val material: IRecipeMaterial,
         /** 最终使用量  */
         val solutionVar: SolutionVar

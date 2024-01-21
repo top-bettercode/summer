@@ -11,12 +11,13 @@ import java.util.*
  */
 interface IExcel {
     fun newSheet(sheetname: String)
-    fun setCellStyle(top: Int, left: Int, cellStyle: CellStyle) {
-        setCellStyle(top, left, top, left, cellStyle)
+    fun setCellStyle(row: Int, column: Int, cellStyle: CellStyle) {
+        setCellStyle(row, column, row, column, cellStyle)
     }
+
     fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle)
     fun width(column: Int, width: Double)
-    fun rowHeight(row: Int, height: Double)
+    fun height(row: Int, height: Double)
     fun formula(row: Int, column: Int, expression: String?)
     fun comment(row: Int, column: Int, commen: String?)
     fun value(row: Int, column: Int)
@@ -30,4 +31,5 @@ interface IExcel {
     fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>)
     fun merge(top: Int, left: Int, bottom: Int, right: Int)
     fun finish()
+    fun keepInActiveTab()
 }

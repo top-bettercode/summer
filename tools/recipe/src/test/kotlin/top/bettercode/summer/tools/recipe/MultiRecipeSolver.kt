@@ -7,6 +7,7 @@ import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.recipe.RecipeSolver.prepare
 import top.bettercode.summer.tools.recipe.data.RecipeResult
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
+import top.bettercode.summer.tools.recipe.result.Recipe
 
 object MultiRecipeSolver {
 
@@ -20,11 +21,11 @@ object MultiRecipeSolver {
             val recipeResult = RecipeResult(name)
             log.trace("==================================================")
             while ((e - s) / 1000 < requirement.timeout
-                    && recipeResult.recipeCount < maxResult) {
+                    && recipeResult.recipes.size < maxResult) {
                 // 求解
                 solve()
                 log.trace(
-                        "solve times: " + recipeResult.solveCount + " 耗时：" + (e - s) + "ms " + "变量数量："
+                        "solve times: " + recipeResult.recipes.size + " 耗时：" + (e - s) + "ms " + "变量数量："
                                 + numVariables() + " 约束数量："
                                 + numConstraints())
                 if (numVariables() > 2000 || numConstraints() > 2000) {
@@ -32,7 +33,6 @@ object MultiRecipeSolver {
                     return recipeResult
                 }
                 if (isOptimal()) {
-                    recipeResult.addSolveCount()
                     // 约束
                     val first = recipeResult.recipes.isEmpty()
                     val useMaterials: MutableMap<String, RecipeMaterialValue> = HashMap()
@@ -51,8 +51,7 @@ object MultiRecipeSolver {
                             })
                     recipeResult.addRecipe(recipe)
 
-                    val recipeCount = recipeResult.recipeCount
-                    log.trace("====================solve size: $recipeCount")
+                    log.trace("====================solve size: ${recipeResult.recipes.size}")
                     val cost = objective.value
                     if (first) {
                         // 后续配方原料不变
@@ -78,7 +77,7 @@ object MultiRecipeSolver {
                     recipeMaterials.map { (_, material) ->
                         val price = material.price
                         material.solutionVar.coeff(price)
-                    }.toTypedArray().ge(cost + if (recipeCount < 10) 3 else 5)
+                    }.toTypedArray().ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
                 } else {
                     log.error("Could not find optimal solution:${getResultStatus()}")
                     return recipeResult

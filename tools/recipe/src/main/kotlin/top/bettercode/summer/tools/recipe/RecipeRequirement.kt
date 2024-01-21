@@ -30,7 +30,7 @@ class RecipeRequirement(
          */
         val rangeIndicators: RecipeRangeIndicators,
         /**
-         * 指标物料约束
+         * 指标限用物料约束
          */
         val materialIDIndicators: RecipeMaterialIDIndicators,
 
@@ -54,6 +54,7 @@ class RecipeRequirement(
         /** 条件约束，当条件1满足时，条件2必须满足  */
         val materialConditions: List<Pair<MaterialCondition, MaterialCondition>>
 ) {
+
     val materials: RecipeMaterials
 
     /** 超时时间  */

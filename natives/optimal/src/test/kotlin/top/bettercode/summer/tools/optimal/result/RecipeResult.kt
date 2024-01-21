@@ -264,7 +264,36 @@ class RecipeResult // --------------------------------------------
                         cc += 2
                     }
                     if (liquidAmmonia == matrialName) {
-                        cc += 4
+                        if (reqData.isLimitLiquidAmmonia) {
+                            // 耗液氨系数
+                            value(sheet, r + m, cc++, "", mergeRow)
+                            // 耗液氨数量
+                            sheet.comment(r + m, cc, "最小耗" + liquidAmmonia + "总数量")
+                            value(
+                                    sheet,
+                                    r + m,
+                                    cc++,
+                                    (recipe
+                                            .minLiquidAmmoniaWeight!!
+                                            * (la2CAUseRatio))
+                                            .scale(2),
+                                    mergeRow)
+                            // 耗液氨系数
+                            value(sheet, r + m, cc++, "", mergeRow)
+                            // 耗液氨数量
+                            sheet.comment(r + m, cc, "最大耗" + liquidAmmonia + "总数量")
+                            value(
+                                    sheet,
+                                    r + m,
+                                    cc++,
+                                    (recipe
+                                            .maxLiquidAmmoniaWeight
+                                    !! * (la2CAUseRatio))
+                                            .scale(2),
+                                    mergeRow)
+                        } else {
+                            cc += 4
+                        }
                     } else if (ReqData.VITRIOL == matrialName) {
                         if (reqData.isLimitLiquidAmmonia) {
                             val vitriolNormal = recipe.vitriolNormal
