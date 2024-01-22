@@ -9,7 +9,7 @@ import java.math.BigDecimal
  *
  * @author Peter Wu
  */
-class ExportRangeCell @JvmOverloads constructor(
+class ExcelRange @JvmOverloads constructor(
         private val excel: IExcel,
         private val style: CellStyle,
         private val top: Int,
@@ -17,117 +17,117 @@ class ExportRangeCell @JvmOverloads constructor(
         private val bottom: Int = top,
         private val right: Int = left) {
 
-    fun set(): ExportRangeCell {
-        this.excel.setCellStyle(this.top, left, bottom, right, style)
+    fun set(): ExcelRange {
+        this.excel.setStyle(this.top, left, bottom, right, style)
         return this
     }
 
-    fun merge(): ExportRangeCell {
+    fun merge(): ExcelRange {
         this.excel.merge(this.top, left, bottom, right)
         return this
     }
 
-    fun style(style: CellStyle): ExportRangeCell {
+    fun style(style: CellStyle): ExcelRange {
         this.style.style(style)
         return this
     }
 
-    fun format(numberingFormat: String?): ExportRangeCell {
+    fun format(numberingFormat: String?): ExcelRange {
         style.format(numberingFormat)
         return this
     }
 
-    fun fillColor(rgb: String?): ExportRangeCell {
+    fun fillColor(rgb: String?): ExcelRange {
         style.fillColor(rgb)
         return this
     }
 
-    fun fontColor(rgb: String?): ExportRangeCell {
+    fun fontColor(rgb: String?): ExcelRange {
         style.fontColor(rgb)
         return this
     }
 
-    fun fontName(name: String?): ExportRangeCell {
+    fun fontName(name: String?): ExcelRange {
         style.fontName(name)
         return this
     }
 
-    fun fontSize(size: BigDecimal?): ExportRangeCell {
+    fun fontSize(size: BigDecimal?): ExcelRange {
         style.fontSize(size)
         return this
     }
 
-    fun fontSize(size: Int): ExportRangeCell {
+    fun fontSize(size: Int): ExcelRange {
         style.fontSize(size)
         return this
     }
 
-    fun bold(): ExportRangeCell {
+    fun bold(): ExcelRange {
         style.bold()
         return this
     }
 
-    fun italic(): ExportRangeCell {
+    fun italic(): ExcelRange {
         style.italic()
         return this
     }
 
-    fun underlined(): ExportRangeCell {
+    fun underlined(): ExcelRange {
         style.underlined()
         return this
     }
 
-    fun horizontalAlignment(alignment: String?): ExportRangeCell {
+    fun horizontalAlignment(alignment: String?): ExcelRange {
         style.horizontalAlignment(alignment)
         return this
     }
 
-    fun verticalAlignment(alignment: String?): ExportRangeCell {
+    fun verticalAlignment(alignment: String?): ExcelRange {
         style.verticalAlignment(alignment)
         return this
     }
 
-    fun wrapText(wrapText: Boolean): ExportRangeCell {
+    fun wrapText(wrapText: Boolean): ExcelRange {
         style.wrapText(wrapText)
         return this
     }
 
-    fun rotation(degrees: Int): ExportRangeCell {
+    fun rotation(degrees: Int): ExcelRange {
         style.rotation(degrees)
         return this
     }
 
-    fun borderStyle(borderStyle: BorderStyle?): ExportRangeCell {
+    fun borderStyle(borderStyle: BorderStyle?): ExcelRange {
         style.borderStyle(borderStyle)
         return this
     }
 
-    fun borderStyle(borderStyle: String?): ExportRangeCell {
+    fun borderStyle(borderStyle: String?): ExcelRange {
         style.borderStyle(borderStyle)
         return this
     }
 
-    fun borderStyle(side: BorderSide, borderStyle: BorderStyle): ExportRangeCell {
+    fun borderStyle(side: BorderSide, borderStyle: BorderStyle): ExcelRange {
         style.borderStyle(side, borderStyle)
         return this
     }
 
-    fun borderStyle(side: BorderSide, borderStyle: String): ExportRangeCell {
+    fun borderStyle(side: BorderSide, borderStyle: String): ExcelRange {
         style.borderStyle(side, borderStyle)
         return this
     }
 
-    fun borderColor(borderColor: String?): ExportRangeCell {
+    fun borderColor(borderColor: String?): ExcelRange {
         style.borderColor(borderColor)
         return this
     }
 
-    fun borderColor(side: BorderSide, borderColor: String): ExportRangeCell {
+    fun borderColor(side: BorderSide, borderColor: String): ExcelRange {
         style.borderColor(side, borderColor)
         return this
     }
 
-    fun protectionOption(option: ProtectionOption, value: Boolean): ExportRangeCell {
+    fun protectionOption(option: ProtectionOption, value: Boolean): ExcelRange {
         style.protectionOption(option, value)
         return this
     }

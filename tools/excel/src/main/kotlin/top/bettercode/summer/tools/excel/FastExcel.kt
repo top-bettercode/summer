@@ -4,7 +4,9 @@ import org.dhatim.fastexcel.AbsoluteListDataValidation
 import org.dhatim.fastexcel.Workbook
 import org.dhatim.fastexcel.Worksheet
 import top.bettercode.summer.tools.excel.CellStyle.Companion.style
+import java.io.File
 import java.io.OutputStream
+import java.nio.file.Files
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -15,6 +17,21 @@ import java.util.*
  * @author Peter Wu
  */
 class FastExcel(outputStream: OutputStream) : IExcel {
+
+    companion object {
+        fun of(outputStream: OutputStream): FastExcel {
+            return FastExcel(outputStream)
+        }
+
+        fun of(filename: String): FastExcel {
+            return of(File(filename))
+        }
+
+        fun of(file: File): FastExcel {
+            return FastExcel(Files.newOutputStream(file.toPath()))
+        }
+    }
+
     /**
      * 工作薄对象
      */
@@ -26,7 +43,7 @@ class FastExcel(outputStream: OutputStream) : IExcel {
     lateinit var sheet: Worksheet
         private set
 
-    override fun newSheet(sheetname: String) {
+    override fun sheet(sheetname: String) {
         this.sheet = workbook.newWorksheet(sheetname)
     }
 
@@ -34,13 +51,13 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         this.sheet.keepInActiveTab()
     }
 
-    override fun setCellStyle(row: Int, column: Int, cellStyle: CellStyle) {
+    override fun setStyle(row: Int, column: Int, cellStyle: CellStyle) {
         sheet.style(row, column)
                 .style(cellStyle)
                 .set()
     }
 
-    override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
+    override fun setStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         sheet.range(top, left, bottom, right).style()
                 .style(cellStyle)
                 .set()

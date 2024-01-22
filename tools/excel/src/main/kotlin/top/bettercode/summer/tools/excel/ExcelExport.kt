@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.excel
 
-import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.Color
 import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
@@ -47,24 +46,14 @@ class ExcelExport(val excel: IExcel) {
 
     private var fillColor = "F8F8F7"
 
-    private val cellStyle: CellStyle = CellStyle().apply {
-        fontColor(Color.BLACK)
-        fontName("Arial")
-        horizontalAlignment(Alignment.CENTER.value)
-        verticalAlignment(Alignment.CENTER.value)
-        borderStyle(BorderStyle.THIN)
-        borderColor(Color.GRAY8)
-    }
-    private val headerStyle: CellStyle = CellStyle().apply {
+    private val cellStyle: CellStyle = IExcel.defaultStyle
+
+    private val headerStyle: CellStyle = IExcel.defaultStyle.apply {
         fillColor("808080")
         fontColor(Color.WHITE)
-        fontName("Arial")
-        horizontalAlignment(Alignment.CENTER.value)
-        verticalAlignment(Alignment.CENTER.value)
-        borderStyle(BorderStyle.THIN)
-        borderColor(Color.GRAY8)
         bold()
     }
+
 
     private val columnWidths = ColumnWidths()
 
@@ -77,16 +66,16 @@ class ExcelExport(val excel: IExcel) {
     }
 
     @JvmOverloads
-    fun cell(row: Int = this.row, column: Int = this.column, style: CellStyle = this.cellStyle.clone()): ExportCell {
+    fun cell(row: Int = this.row, column: Int = this.column, style: CellStyle = this.cellStyle.clone()): ExcelCell {
         return this.excel.cell(row, column, style)
     }
 
     @JvmOverloads
-    fun rangeCell(top: Int, left: Int, bottom: Int = top, right: Int = left, style: CellStyle = this.cellStyle.clone()): ExportRangeCell {
-        return this.excel.rangeCell(top, left, bottom, right, style)
+    fun range(top: Int, left: Int, bottom: Int = top, right: Int = left, style: CellStyle = this.cellStyle.clone()): ExcelRange {
+        return this.excel.range(top, left, bottom, right, style)
     }
 
-    fun bHeaderStyle(): ExcelExport {
+    fun blankHeaderStyle(): ExcelExport {
         this.headerStyle.fillColor("d9d9d9").fontColor(Color.BLACK)
         return this
     }
@@ -96,7 +85,7 @@ class ExcelExport(val excel: IExcel) {
      * @return this
      */
     fun sheet(sheetname: String): ExcelExport {
-        excel.newSheet(sheetname)
+        excel.sheet(sheetname)
         setRowAndColumn(0, 0)
         columnWidths.clear()
         return this
@@ -168,7 +157,7 @@ class ExcelExport(val excel: IExcel) {
     @JvmOverloads
     fun createTitle(title: String, cells: Int, headerStyle: CellStyle = this.headerStyle): ExcelExport {
         this.excel.value(row, column, title)
-        excel.setCellStyle(row, column, row, column + cells - 1, headerStyle)
+        excel.setStyle(row, column, row, column + cells - 1, headerStyle)
         return this
     }
 
@@ -190,12 +179,12 @@ class ExcelExport(val excel: IExcel) {
                 } else {
                     excel.width(column, width)
                 }
-                excel.setCellStyle(row, column, row, column, headerStyle)
+                excel.setStyle(row, column, row, column, headerStyle)
 
                 if (template) {
                     val style = this.cellStyle.clone()
                     style.style(excelField.cellStyle)
-                    excel.setCellStyle(row + 1, column, row + 100, column, style)
+                    excel.setStyle(row + 1, column, row + 100, column, style)
                 }
                 if (includeComment) {
                     val commentStr = excelField.comment
@@ -246,7 +235,7 @@ class ExcelExport(val excel: IExcel) {
                 if (this.excel !is PoiExcel && excelField.cellSetter != null) {
                     continue
                 }
-                setCell(ExcelCell(row, column, firstRow, lastRow, excelField, e))
+                setCell(ExcelFieldCell(row, column, firstRow, lastRow, excelField, e))
                 column++
             }
             column = firstColumn
@@ -289,7 +278,7 @@ class ExcelExport(val excel: IExcel) {
             val e = converter(iterator.next())
             val lastRow = !iterator.hasNext()
             var mergeIndex = 0
-            val indexCells: MutableList<ExcelRangeCell<T>>? = if (mergeFirstColumn) null else ArrayList()
+            val indexCells: MutableList<ExcelFieldRange<T>>? = if (mergeFirstColumn) null else ArrayList()
             var merge: Boolean
             for (excelField in excelFields) {
                 if (this.excel !is PoiExcel && excelField.cellSetter != null) {
@@ -313,17 +302,17 @@ class ExcelExport(val excel: IExcel) {
                     if (newRange) {
                         lastRangeTops[mergeIndex] = row
                     }
-                    val rangeCell = ExcelRangeCell(row, column, index, firstRow, lastRow,
+                    val rangeCell = ExcelFieldRange(row, column, index, firstRow, lastRow,
                             newRange, lastRangeTop, excelField, preEntity, e)
-                    setRangeCell(rangeCell)
+                    setRange(rangeCell)
                     mergeIndex++
                 } else {
-                    val rangeCell = ExcelRangeCell(row, column, index, firstRow, lastRow,
+                    val rangeCell = ExcelFieldRange(row, column, index, firstRow, lastRow,
                             false, row, excelField, preEntity, e)
                     if (!mergeFirstColumn && excelField.isIndexColumn) {
                         indexCells!!.add(rangeCell)
                     } else {
-                        setRangeCell(rangeCell)
+                        setRange(rangeCell)
                     }
                 }
                 column++
@@ -331,7 +320,7 @@ class ExcelExport(val excel: IExcel) {
             if (!mergeFirstColumn) {
                 for (indexCell in indexCells!!) {
                     indexCell.setFillColor(index)
-                    setRangeCell(indexCell)
+                    setRange(indexCell)
                 }
             }
             column = firstColumn
@@ -341,7 +330,7 @@ class ExcelExport(val excel: IExcel) {
         return this
     }
 
-    private fun <T : Any> setCell(excelCell: ExcelCell<T>) {
+    private fun <T : Any> setCell(excelCell: ExcelFieldCell<T>) {
         val column = excelCell.column
         val row = excelCell.row
         val excelField = excelCell.excelField
@@ -350,7 +339,7 @@ class ExcelExport(val excel: IExcel) {
         if (excelCell.isFillColor) {
             style.fillColor(fillColor)
         }
-        this.excel.setCellStyle(row, column, row, column, style)
+        this.excel.setStyle(row, column, row, column, style)
 
         if (excelField.height != -1.0) {
             this.excel.height(row, excelField.height)
@@ -396,7 +385,7 @@ class ExcelExport(val excel: IExcel) {
         }
     }
 
-    private fun <T : Any> setRangeCell(excelCell: ExcelRangeCell<T>) {
+    private fun <T : Any> setRange(excelCell: ExcelFieldRange<T>) {
         val column = excelCell.column
         setCell(excelCell)
         if (excelCell.needRange) {
@@ -466,7 +455,7 @@ class ExcelExport(val excel: IExcel) {
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
-            excelContentDisposition(request, response, fileName)
+            excelDisposition(request, response, fileName)
             if (cacheKey != null) {
                 val tmpPath = System.getProperty("java.io.tmpdir")
                 val file = File(tmpPath,
@@ -512,9 +501,9 @@ class ExcelExport(val excel: IExcel) {
             }
         }
 
-        private fun excelContentDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String) {
+        private fun excelDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String) {
             response.reset()
-            attachmentContentDisposition(request, response, "$fileName.xlsx")
+            attachmentDisposition(request, response, "$fileName.xlsx")
         }
 
         /**
@@ -527,7 +516,7 @@ class ExcelExport(val excel: IExcel) {
          */
         @JvmStatic
         @JvmOverloads
-        fun attachmentContentDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String, contentType: String = "application/vnd.ms-excel; charset=utf-8") {
+        fun attachmentDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String, contentType: String = "application/vnd.ms-excel; charset=utf-8") {
             val agent = request.getHeader("USER-AGENT")
             val encodeFileName = URLEncoder.encode(fileName, "UTF-8")
             val newFileName: String = if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {

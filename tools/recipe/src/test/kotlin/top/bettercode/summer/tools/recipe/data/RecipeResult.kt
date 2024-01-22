@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.recipe.data
 
-import top.bettercode.summer.tools.excel.ExcelExport
+import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.recipe.result.Recipe
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportMaterial
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportRecipe
@@ -36,7 +36,7 @@ class RecipeResult(val solverName: String) {
         val fileName: String = (requirement.productName + if (requirement.maxMaterialNum <= 0) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxMaterialNum}")
         val outFile = File("build/" + solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
         val filePath = outFile.absolutePath
-        ExcelExport.of(filePath).apply {
+        FastExcel.of(filePath).apply {
             sheet("最终候选原料")
             exportMaterial(requirement)
             sheet("配方要求")
@@ -44,7 +44,7 @@ class RecipeResult(val solverName: String) {
             for ((index, recipe) in recipes.withIndex()) {
                 sheet("配方" + (index + 1))
                 if (index == 0) {
-                    excel.keepInActiveTab()
+                    keepInActiveTab()
                 }
                 exportRecipe(recipe)
             }

@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.recipe.result
 
-import top.bettercode.summer.tools.excel.ExcelExport
+import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
@@ -12,7 +12,7 @@ import top.bettercode.summer.tools.recipe.material.MaterialCondition
  */
 object RecipeExport {
 
-    fun ExcelExport.exportMaterial(requirement: RecipeRequirement) {
+    fun FastExcel.exportMaterial(requirement: RecipeRequirement) {
         val materials = requirement.materials.values.toSortedSet()
         val indicators = if (materials.isEmpty()) {
             return
@@ -41,11 +41,11 @@ object RecipeExport {
         }
     }
 
-    fun ExcelExport.exportRequirement(requirement: RecipeRequirement) {
+    fun FastExcel.exportRequirement(requirement: RecipeRequirement) {
 
         val rowLen = arrayOf(requirement.notMixMaterials.size, requirement.noUseMaterials.size, requirement.useMaterials.size, requirement.materialIDIndicators.size, requirement.materialIDConstraints.size, requirement.materialConditions.size).maxOrNull()
                 ?: 0
-        rangeCell(0, 0, rowLen, 7).set()
+        range(0, 0, rowLen, 7).set()
 
         var r = 0
         var c = 0
@@ -76,7 +76,7 @@ object RecipeExport {
         r = 0
         cell(r, c).value("指标限用物料").width(20.0).set()
         cell(r, c + 1).width(20.0).set()
-        rangeCell(r, c, r++, c + 1).merge()
+        range(r, c, r++, c + 1).merge()
         val materialIDIndicators = requirement.materialIDIndicators
         materialIDIndicators.forEach { (_, indicator) ->
             cell(r, c).value(indicator.name).width(20.0).wrapText().set()
@@ -87,7 +87,7 @@ object RecipeExport {
         r = 0
         cell(r, c).value("指定物料约束").width(20.0).set()
         cell(r, c + 1).width(20.0).set()
-        rangeCell(r, c, r++, c + 1).merge()
+        range(r, c, r++, c + 1).merge()
         val materialIDConstraints = requirement.materialIDConstraints
         materialIDConstraints.forEach { (materials, limit) ->
             cell(r, c).value(materials.toString()).width(20.0).wrapText().set()
@@ -104,13 +104,13 @@ object RecipeExport {
     }
 
 
-    fun ExcelExport.exportRecipe(recipe: Recipe) {
+    fun FastExcel.exportRecipe(recipe: Recipe) {
         val requirement = recipe.requirement
         RecipeExt(recipe).apply {
             val titles = "最小用量\t最大用量\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量\t投料量\t成本\t单价(/吨)".split("\t")
             val materials = recipe.materials.toSortedSet()
             val indicators = materials.first().indicators
-            rangeCell(0, 0, materials.size + 7, titles.size + indicators.size).set()
+            range(0, 0, materials.size + 7, titles.size + indicators.size).set()
 
             var r = 0
             cell(r, 0).value("配方成本：").width(22.0).set()
@@ -118,7 +118,7 @@ object RecipeExport {
             cell(++r, 0).value("产品量：").set()
             cell(r, 1).value(requirement.targetWeight).format("0").set()
             cell(r, 2).value("至少需要哄干的水分：")
-            rangeCell(r, 2, r, 3).merge().set()
+            range(r, 2, r, 3).merge().set()
             cell(r, 4).value(recipe.dryWater).format("0.00").width(10.0).set()
 
             r += 2
@@ -210,7 +210,7 @@ object RecipeExport {
                     cell(r1, c++).value(maxOverdoseRelationValue).comment(if (maxOverdoseRelationValue == null || relationName == null) null else "${material.name}过量最大耗${relationName}数量").format("0.00").set()
                     for (i in 0..columnSize) {
                         if (i !in 3..6) {
-                            rangeCell(r, i, r1, i).merge()
+                            range(r, i, r1, i).merge()
                         }
                     }
                     r++
@@ -218,7 +218,7 @@ object RecipeExport {
                 r++
             }
             if (r - 1 > materials.size + 7)
-                rangeCell(materials.size + 8, 0, r - 1, columnSize).set()
+                range(materials.size + 8, 0, r - 1, columnSize).set()
         }
     }
 

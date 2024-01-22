@@ -3,9 +3,9 @@ package top.bettercode.summer.tools.excel
 /**
  * @author Peter Wu
  */
-class ExcelRangeCell<T>(row: Int, column: Int, index: Int, firstRow: Int, lastRow: Boolean,
-                        val newRange: Boolean, val lastRangeTop: Int,
-                        excelField: ExcelField<T, *>, preEntity: T?, entity: T) : ExcelCell<T>(row, column, lastRow, if (excelField.isMerge) index else row - firstRow + 1, index % 2 == 0,
+class ExcelFieldRange<T>(row: Int, column: Int, index: Int, firstRow: Int, lastRow: Boolean,
+                         val newRange: Boolean, val lastRangeTop: Int,
+                         excelField: ExcelField<T, *>, preEntity: T?, entity: T) : ExcelFieldCell<T>(row, column, lastRow, if (excelField.isMerge) index else row - firstRow + 1, index % 2 == 0,
         excelField, entity) {
     val lastRangeBottom: Int = if (newRange && index > 1) row - 1 else row
 

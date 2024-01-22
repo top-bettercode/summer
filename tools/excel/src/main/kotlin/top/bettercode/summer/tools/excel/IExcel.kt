@@ -12,43 +12,43 @@ import java.util.*
  * @author Peter Wu
  */
 interface IExcel {
-    fun newSheet(sheetname: String)
 
-    fun cell(row: Int, column: Int): ExportCell {
-        return ExportCell(this, CellStyle().apply {
-            fontColor(Color.BLACK)
-            fontName("Arial")
-            horizontalAlignment(Alignment.CENTER.value)
-            verticalAlignment(Alignment.CENTER.value)
-            borderStyle(BorderStyle.THIN)
-            borderColor(Color.GRAY8)
-        }, row, column)
+   companion object{
+       val defaultStyle: CellStyle
+           get() = CellStyle().apply {
+               fontColor(Color.BLACK)
+               fontName("Arial")
+               horizontalAlignment(Alignment.CENTER.value)
+               verticalAlignment(Alignment.CENTER.value)
+               borderStyle(BorderStyle.THIN)
+               borderColor(Color.GRAY8)
+           }
+   }
+
+    fun sheet(sheetname: String)
+
+    fun cell(row: Int, column: Int): ExcelCell {
+        return ExcelCell(this, defaultStyle, row, column)
     }
 
-    fun cell(row: Int, column: Int, style: CellStyle): ExportCell {
-        return ExportCell(this, style, row, column)
+    fun cell(row: Int, column: Int, style: CellStyle): ExcelCell {
+        return ExcelCell(this, style, row, column)
     }
 
-    fun rangeCell(top: Int, left: Int, bottom: Int, right: Int): ExportRangeCell {
-        return ExportRangeCell(this, CellStyle().apply {
-            fontColor(Color.BLACK)
-            fontName("Arial")
-            horizontalAlignment(Alignment.CENTER.value)
-            verticalAlignment(Alignment.CENTER.value)
-            borderStyle(BorderStyle.THIN)
-            borderColor(Color.GRAY8)
-        }, top, left, bottom, right)
+    fun range(top: Int, left: Int, bottom: Int, right: Int): ExcelRange {
+        return ExcelRange(this, defaultStyle, top, left, bottom, right)
     }
 
-    fun rangeCell(top: Int, left: Int, bottom: Int, right: Int, style: CellStyle): ExportRangeCell {
-        return ExportRangeCell(this, style, top, left, bottom, right)
+    fun range(top: Int, left: Int, bottom: Int, right: Int, style: CellStyle): ExcelRange {
+        return ExcelRange(this, style, top, left, bottom, right)
     }
 
-    fun setCellStyle(row: Int, column: Int, cellStyle: CellStyle) {
-        setCellStyle(row, column, row, column, cellStyle)
+    fun setStyle(row: Int, column: Int, cellStyle: CellStyle) {
+        setStyle(row, column, row, column, cellStyle)
     }
 
-    fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle)
+    fun setStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle)
+
     fun width(column: Int, width: Double)
     fun height(row: Int, height: Double)
     fun formula(row: Int, column: Int, expression: String?)
@@ -63,6 +63,6 @@ interface IExcel {
     fun value(row: Int, column: Int, value: ZonedDateTime?)
     fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>)
     fun merge(top: Int, left: Int, bottom: Int, right: Int)
-    fun finish()
     fun keepInActiveTab()
+    fun finish()
 }

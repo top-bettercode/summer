@@ -8,8 +8,10 @@ import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.xssf.usermodel.*
 import org.dhatim.fastexcel.Worksheet
 import top.bettercode.summer.tools.excel.CellStyle.Companion.style
+import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.Files
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -31,7 +33,7 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
 
     private fun XSSFSheet.row(row: Int): XSSFRow = this.getRow(row) ?: this.createRow(row)
 
-    override fun newSheet(sheetname: String) {
+    override fun sheet(sheetname: String) {
         this.sheet = workbook.createSheet(sheetname)
     }
 
@@ -39,7 +41,7 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
         workbook.setActiveSheet(this.workbook.indexOf(this.sheet))
     }
 
-    override fun setCellStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
+    override fun setStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         val poiCellStyle = PoiCellStyle(workbook.createCellStyle())
         poiCellStyle.style(workbook, cellStyle)
         for (i in top..bottom) {
@@ -137,12 +139,24 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
     }
 
     companion object {
-        val imageSetter: ((PoiExcel, ExcelCell<*>) -> Unit) = { excel, cell ->
+        fun of(outputStream: OutputStream): PoiExcel {
+            return PoiExcel(outputStream)
+        }
+
+        fun of(filename: String): PoiExcel {
+            return of(File(filename))
+        }
+
+        fun of(file: File): PoiExcel {
+            return PoiExcel(Files.newOutputStream(file.toPath()))
+        }
+
+        val imageSetter: ((PoiExcel, ExcelFieldCell<*>) -> Unit) = { excel, cell ->
             val workbook = excel.workbook
             val sheet = excel.sheet
             val helper: CreationHelper = workbook.creationHelper
             val drawing: Drawing<XSSFShape> = sheet.createDrawingPatriarch()
-            if (cell is ExcelRangeCell<*> && cell.excelField.isMerge) {
+            if (cell is ExcelFieldRange<*> && cell.excelField.isMerge) {
                 var lastRangeTop = cell.lastRangeTop
                 val rowHeight = cell.lastRangeBottom - lastRangeTop
                 if (rowHeight > 1) {

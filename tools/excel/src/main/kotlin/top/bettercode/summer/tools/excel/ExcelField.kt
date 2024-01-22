@@ -46,7 +46,7 @@ class ExcelField<T, P : Any?> {
     /**
      * poi字段设置方法
      */
-    var cellSetter: ((PoiExcel, ExcelCell<T>) -> Unit)? = null
+    var cellSetter: ((PoiExcel, ExcelFieldCell<T>) -> Unit)? = null
 
     /**
      * 公式字段
@@ -82,15 +82,15 @@ class ExcelField<T, P : Any?> {
             }
 
             LocalDate::class.java -> {
-                ExcelCell.DEFAULT_DATE_FORMAT
+                ExcelFieldCell.DEFAULT_DATE_FORMAT
             }
 
             Date::class.java, LocalDateTime::class.java -> {
-                ExcelCell.DEFAULT_DATE_TIME_FORMAT
+                ExcelFieldCell.DEFAULT_DATE_TIME_FORMAT
             }
 
             else -> {
-                ExcelCell.DEFAULT_FORMAT
+                ExcelFieldCell.DEFAULT_FORMAT
             }
         }
     }
@@ -393,7 +393,7 @@ class ExcelField<T, P : Any?> {
      * @return this
      */
     @JvmOverloads
-    fun date(format: String = ExcelCell.DEFAULT_DATE_TIME_FORMAT): ExcelField<T, P> {
+    fun date(format: String = ExcelFieldCell.DEFAULT_DATE_TIME_FORMAT): ExcelField<T, P> {
         this.cellStyle.format(format)
         isDateField = true
         return this
@@ -466,7 +466,7 @@ class ExcelField<T, P : Any?> {
         return this
     }
 
-    fun cellSetter(cellSetter: (PoiExcel, ExcelCell<T>) -> Unit): ExcelField<T, P> {
+    fun cellSetter(cellSetter: (PoiExcel, ExcelFieldCell<T>) -> Unit): ExcelField<T, P> {
         this.cellSetter = cellSetter
         return this
     }
@@ -547,7 +547,7 @@ class ExcelField<T, P : Any?> {
         this.title = title
         this.isIndexColumn = indexColumn
         this.isFormula = formula
-        this.cellStyle.format(ExcelCell.DEFAULT_FORMAT)
+        this.cellStyle.format(ExcelFieldCell.DEFAULT_FORMAT)
     }
 
     @JvmOverloads
@@ -734,7 +734,7 @@ class ExcelField<T, P : Any?> {
         }
 
         @JvmStatic
-        fun <T, P> poi(title: String, propertyGetter: ExcelConverter<T, P?>, cellSetter: (PoiExcel, ExcelCell<T>) -> Unit): ExcelField<T, P> {
+        fun <T, P> poi(title: String, propertyGetter: ExcelConverter<T, P?>, cellSetter: (PoiExcel, ExcelFieldCell<T>) -> Unit): ExcelField<T, P> {
             return ExcelField(title, propertyGetter).cellSetter(cellSetter)
         }
 
