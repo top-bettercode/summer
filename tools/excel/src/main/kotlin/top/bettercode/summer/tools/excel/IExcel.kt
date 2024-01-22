@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.excel
 
+import org.dhatim.fastexcel.BorderStyle
+import org.dhatim.fastexcel.Color
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -11,6 +13,37 @@ import java.util.*
  */
 interface IExcel {
     fun newSheet(sheetname: String)
+
+    fun cell(row: Int, column: Int): ExportCell {
+        return ExportCell(this, CellStyle().apply {
+            fontColor(Color.BLACK)
+            fontName("Arial")
+            horizontalAlignment(Alignment.CENTER.value)
+            verticalAlignment(Alignment.CENTER.value)
+            borderStyle(BorderStyle.THIN)
+            borderColor(Color.GRAY8)
+        }, row, column)
+    }
+
+    fun cell(row: Int, column: Int, style: CellStyle): ExportCell {
+        return ExportCell(this, style, row, column)
+    }
+
+    fun rangeCell(top: Int, left: Int, bottom: Int, right: Int): ExportRangeCell {
+        return ExportRangeCell(this, CellStyle().apply {
+            fontColor(Color.BLACK)
+            fontName("Arial")
+            horizontalAlignment(Alignment.CENTER.value)
+            verticalAlignment(Alignment.CENTER.value)
+            borderStyle(BorderStyle.THIN)
+            borderColor(Color.GRAY8)
+        }, top, left, bottom, right)
+    }
+
+    fun rangeCell(top: Int, left: Int, bottom: Int, right: Int, style: CellStyle): ExportRangeCell {
+        return ExportRangeCell(this, style, top, left, bottom, right)
+    }
+
     fun setCellStyle(row: Int, column: Int, cellStyle: CellStyle) {
         setCellStyle(row, column, row, column, cellStyle)
     }

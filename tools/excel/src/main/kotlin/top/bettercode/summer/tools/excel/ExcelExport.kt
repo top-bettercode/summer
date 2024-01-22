@@ -78,12 +78,12 @@ class ExcelExport(val excel: IExcel) {
 
     @JvmOverloads
     fun cell(row: Int = this.row, column: Int = this.column, style: CellStyle = this.cellStyle.clone()): ExportCell {
-        return ExportCell(this.excel, style, row, column)
+        return this.excel.cell(row, column, style)
     }
 
     @JvmOverloads
     fun rangeCell(top: Int, left: Int, bottom: Int = top, right: Int = left, style: CellStyle = this.cellStyle.clone()): ExportRangeCell {
-        return ExportRangeCell(this.excel, style, top, left, bottom, right)
+        return this.excel.rangeCell(top, left, bottom, right, style)
     }
 
     fun bHeaderStyle(): ExcelExport {
