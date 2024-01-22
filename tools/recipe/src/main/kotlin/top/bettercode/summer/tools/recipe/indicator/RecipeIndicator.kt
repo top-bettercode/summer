@@ -27,7 +27,7 @@ data class RecipeIndicator<T>(
          */
         val itId: Int? = null,
         /**
-         * type为RATE_TO_OTHER时，other ID
+         * type为RATE_TO_OTHER时，other指标 ID
          */
         val otherId: Int? = null
 ):Comparable<RecipeIndicator<T>> {

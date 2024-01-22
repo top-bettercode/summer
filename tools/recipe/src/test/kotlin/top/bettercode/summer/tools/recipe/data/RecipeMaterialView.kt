@@ -45,3 +45,6 @@ interface RecipeView {
     @get:JsonIgnore
     val requirement: RecipeRequirement
 }
+
+@JsonPropertyOrder(alphabetic = true)
+interface RecipeRequirementView

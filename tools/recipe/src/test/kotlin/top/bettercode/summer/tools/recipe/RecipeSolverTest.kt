@@ -8,10 +8,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
-import top.bettercode.summer.tools.recipe.data.PrepareData
-import top.bettercode.summer.tools.recipe.data.RecipeMaterialView
-import top.bettercode.summer.tools.recipe.data.RecipeResult
-import top.bettercode.summer.tools.recipe.data.RecipeView
+import top.bettercode.summer.tools.recipe.data.*
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.result.Recipe
 import java.io.File
@@ -25,10 +22,10 @@ internal class RecipeSolverTest {
     @Test
     fun solve() {
         solve("13-05-07高氯枸磷")
-//        solve("24-06-10高氯枸磷")
-//        solve("15-15-15喷浆氯基")
-//        solve("15-15-15喷浆硫基")
-//        solve("15-15-15常规氯基")
+        solve("24-06-10高氯枸磷")
+        solve("15-15-15喷浆氯基")
+        solve("15-15-15喷浆硫基")
+        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
@@ -40,13 +37,14 @@ internal class RecipeSolverTest {
         val solve = MultiRecipeSolver.solve(solver = coptSolver, requirement = requirement, maxResult = maxResult)
         val solve1 = MultiRecipeSolver.solve(solver = cbcSolver, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solver = scipSolver, requirement = requirement, maxResult = maxResult)
-        solve.toExcel()
+//        solve.toExcel()
 //        solve1.toExcel()
 //        solve2.toExcel()
         System.err.println("copt:" + solve.time)
         System.err.println("cbc:" + solve1.time)
         System.err.println("scip:" + solve2.time)
-        System.err.println(json(solve.recipes[0], true))
+//        System.err.println(json(solve.recipes[0], IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
+
         validate(solve)
         validate(solve1)
         validate(solve2)
@@ -58,7 +56,6 @@ internal class RecipeSolverTest {
 //        saveRecipe(solve)
 //        saveRecipe(solve1)
 //        saveRecipe(solve2)
-
     }
 
     private fun validate(recipeResult: RecipeResult) {
@@ -71,12 +68,12 @@ internal class RecipeSolverTest {
 
         val expectedRequirement = RecipeResult::class.java.getResourceAsStream("/recipe/$productName/requirement.json")!!.bufferedReader().readText()
         //配方要求
-        Assertions.assertEquals(expectedRequirement, json(requirement))
+        Assertions.assertEquals(expectedRequirement, json(requirement, RecipeRequirement::class.java to RecipeRequirementView::class.java))
         //配方
         val dir = "recipe/$productName/${recipeResult.solverName}"
         recipes.forEachIndexed { index, recipe ->
             val expectedRecipe = RecipeResult::class.java.getResourceAsStream("/$dir/配方${index + 1}.json")!!.bufferedReader().readText()
-            Assertions.assertEquals(expectedRecipe, json(recipe, true))
+            Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
         }
     }
 
@@ -86,17 +83,16 @@ internal class RecipeSolverTest {
         Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
     }
 
-    fun json(value: Any, useView: Boolean = false): String {
+    fun json(value: Any, vararg view: Pair<Class<*>, Class<*>>): String {
         val objectMapper = ObjectMapper()
         objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
-        if (useView) {
-            val simpleModule = SimpleModule()
-            simpleModule.setMixInAnnotation(IRecipeMaterial::class.java, RecipeMaterialView::class.java)
-            simpleModule.setMixInAnnotation(Recipe::class.java, RecipeView::class.java)
-            objectMapper.registerModule(simpleModule)
+        val simpleModule = SimpleModule()
+        view.forEach { (targetType, mixinClass) ->
+            simpleModule.setMixInAnnotation(targetType, mixinClass)
         }
+        objectMapper.registerModule(simpleModule)
         return objectMapper.writeValueAsString(value)
     }
 
@@ -107,10 +103,10 @@ internal class RecipeSolverTest {
         val dir = File("recipe/$productName/${recipeResult.solverName}")
         dir.mkdirs()
         //配方要求
-        File("recipe/$productName/requirement.json").writeText(json(requirement))
+        File("recipe/$productName/requirement.json").writeText(json(requirement, RecipeRequirement::class.java to RecipeRequirementView::class.java))
         //配方
         recipes.forEachIndexed { index, recipe ->
-            File("$dir/配方${index + 1}.json").writeText(json(recipe, true))
+            File("$dir/配方${index + 1}.json").writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
         }
     }
 }
