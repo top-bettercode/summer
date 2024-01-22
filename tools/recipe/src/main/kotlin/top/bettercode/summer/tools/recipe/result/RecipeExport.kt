@@ -35,7 +35,7 @@ object RecipeExport {
             cell(r, c++).value(matrial.price * 1000).set()
             // 原料成份
             for (indicator in matrial.indicators) {
-                val column = c + indicator.index
+                val column = c + indicator.id
                 cell(r, column).value(indicator.value.scale(4)).width(8.0).format("0.0%").set()
             }
         }
@@ -147,24 +147,24 @@ object RecipeExport {
                 //成份量
                 val indicatorValue = when (indicator.type) {
                     RecipeIndicatorType.WATER -> (materials.sumOf { it.waterWeight } - recipe.dryWater).scale()
-                    RecipeIndicatorType.RATE_TO_OTHER -> materials.sumOf { it.indicatorWeight(indicator.itIndex!!) }.scale()
-                    else -> materials.sumOf { it.indicatorWeight(indicator.index) }.scale()
+                    RecipeIndicatorType.RATE_TO_OTHER -> materials.sumOf { it.indicatorWeight(indicator.itId!!) }.scale()
+                    else -> materials.sumOf { it.indicatorWeight(indicator.id) }.scale()
                 }
                 cell(r++, c).value(indicatorValue).format("0.00").set()
 
                 //目标成份量(最大值)
-                val max = rangeIndicators[indicator.index]?.value?.max
+                val max = rangeIndicators[indicator.id]?.value?.max
                 cell(r++, c).value(max).format("0.0%").set()
 
                 //目标成份量(最小值)
-                val min = rangeIndicators[indicator.index]?.value?.min
+                val min = rangeIndicators[indicator.id]?.value?.min
                 cell(r++, c).value(min).format("0.0%").set()
 
                 //成份量(百分比)
                 val value = when (indicator.type) {
                     RecipeIndicatorType.WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWater) / requirement.targetWeight).scale()
-                    RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itIndex!!) } / materials.sumOf { it.indicatorWeight(indicator.otherIndex!!) }).scale()
-                    else -> (materials.sumOf { it.indicatorWeight(indicator.index) } / requirement.targetWeight).scale()
+                    RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
+                    else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }
                 if (min == null || max == null) {
                     cell(r++, c).value(value).format("0.0%").set()

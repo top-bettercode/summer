@@ -76,8 +76,8 @@ data class Recipe(
         for (indicator in rangeIndicators) {
             val indicatorValue = when (indicator.type) {
                 RecipeIndicatorType.WATER -> ((materials.sumOf { it.waterWeight } - dryWater) / targetWeight).scale()
-                RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itIndex!!) } / materials.sumOf { it.indicatorWeight(indicator.otherIndex!!) }).scale()
-                else -> (materials.sumOf { it.indicatorWeight(indicator.index) } / targetWeight).scale()
+                RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
+                else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / targetWeight).scale()
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
             if (indicatorValue !in indicator.value.min..indicator.value.max) {
@@ -92,7 +92,7 @@ data class Recipe(
         // 指标物料约束
         val materialIDIndicators = requirement.materialIDIndicators
         for (indicator in materialIDIndicators) {
-            val indicatorUsedMaterials = materials.filter { it.indicators.valueOf(indicator.index) > 0.0 }.map { it.id }.filter { !mustUseMaterials.contains(it) }
+            val indicatorUsedMaterials = materials.filter { it.indicators.valueOf(indicator.id) > 0.0 }.map { it.id }.filter { !mustUseMaterials.contains(it) }
             if (!indicator.value.toList().containsAll(indicatorUsedMaterials)) {
                 log.warn("指标:{}所用物料：{} 不在范围{}内", indicator.name, indicatorUsedMaterials, indicator.value)
                 return false

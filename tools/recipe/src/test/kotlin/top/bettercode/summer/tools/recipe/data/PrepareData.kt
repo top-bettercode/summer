@@ -149,7 +149,7 @@ object PrepareData {
                                 if (str.isNotBlank()) {
                                     val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                                     val key = split[0]
-                                    val indicator = RecipeIndicator(index = indicatorNames.indexOf(key), name = key, value = Arrays.copyOfRange(split, 1, split.size).toMaterialIDs())
+                                    val indicator = RecipeIndicator(id = indicatorNames.indexOf(key), name = key, value = Arrays.copyOfRange(split, 1, split.size).toMaterialIDs())
                                     materialIDIndicators.add(indicator)
                                 }
                             }
@@ -187,13 +187,13 @@ object PrepareData {
                 val min = (targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble()
                 val max = (targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble()
                 val indicator = when (i) {
-                    3 -> RecipeIndicator(index = 6, name = indicatorNames[6], value = DoubleRange(min, max), type = RecipeIndicatorType.RATE_TO_OTHER, itIndex = 7, otherIndex = 2)
-                    4 -> RecipeIndicator(index = 3, name = indicatorNames[3], value = DoubleRange(min, max))
-                    5 -> RecipeIndicator(index = 4, name = indicatorNames[4], value = DoubleRange(min, max))
-                    6 -> RecipeIndicator(index = 5, name = indicatorNames[5], value = DoubleRange(min, max), type = RecipeIndicatorType.WATER)
-                    8 -> RecipeIndicator(index = 9, name = indicatorNames[9], value = DoubleRange(min, max))
-                    9 -> RecipeIndicator(index = 10, name = indicatorNames[10], value = DoubleRange(min, max))
-                    else -> RecipeIndicator(index = i, name = indicatorNames[i], value = DoubleRange(min, max))
+                    3 -> RecipeIndicator(id = 6, name = indicatorNames[6], value = DoubleRange(min, max), type = RecipeIndicatorType.RATE_TO_OTHER, itId = 7, otherId = 2)
+                    4 -> RecipeIndicator(id = 3, name = indicatorNames[3], value = DoubleRange(min, max))
+                    5 -> RecipeIndicator(id = 4, name = indicatorNames[4], value = DoubleRange(min, max))
+                    6 -> RecipeIndicator(id = 5, name = indicatorNames[5], value = DoubleRange(min, max), type = RecipeIndicatorType.WATER)
+                    8 -> RecipeIndicator(id = 9, name = indicatorNames[9], value = DoubleRange(min, max))
+                    9 -> RecipeIndicator(id = 10, name = indicatorNames[10], value = DoubleRange(min, max))
+                    else -> RecipeIndicator(id = i, name = indicatorNames[i], value = DoubleRange(min, max))
                 }
                 rangeIndicators.add(indicator)
             } else {

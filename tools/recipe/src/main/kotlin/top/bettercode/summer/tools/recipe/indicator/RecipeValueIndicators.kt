@@ -16,7 +16,7 @@ class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>>) : RecipeI
         if (water == null) {
             0.0
         } else {
-            valueOf(water.index)
+            valueOf(water.id)
         }
     }
 

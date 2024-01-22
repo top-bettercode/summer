@@ -146,7 +146,7 @@ class RecipeRequirement(
             // 过滤不在成份约束的原料
             materialIDIndicators.values.forEach { indicator ->
                 val materialIDs = indicator.value
-                val materialIndicator = material.indicators.valueOf(indicator.index)
+                val materialIndicator = material.indicators.valueOf(indicator.id)
                 if (materialIndicator > 0 && !materialIDs.contains(materialId)) {
                     return@Predicate false
                 }

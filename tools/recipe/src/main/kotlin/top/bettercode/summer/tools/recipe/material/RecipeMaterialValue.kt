@@ -24,7 +24,7 @@ data class RecipeMaterialValue(
     val waterWeight: Double by lazy {
         val water = indicators.water
         if (water != null) {
-            indicatorWeight(water.index)
+            indicatorWeight(water.id)
         } else {
             0.0
         }
@@ -35,7 +35,7 @@ data class RecipeMaterialValue(
     }
 
     fun totalNutrient(): Double {
-        return indicators.nutrients.sumOf { indicatorWeight(it.index) }
+        return indicators.nutrients.sumOf { indicatorWeight(it.id) }
     }
 
 }

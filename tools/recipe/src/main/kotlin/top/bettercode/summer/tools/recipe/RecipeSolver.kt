@@ -104,13 +104,13 @@ object RecipeSolver {
             if (indicator.isRateToOther) {
                 val otherVar = recipeMaterials.map {
                     val material = it.value
-                    val coeff = material.indicators.valueOf(indicator.otherIndex!!)
+                    val coeff = material.indicators.valueOf(indicator.otherId!!)
                     it.value.solutionVar.coeff(coeff)
                 }.toTypedArray().sum()
 
                 val itVar = recipeMaterials.map {
                     val material = it.value
-                    val coeff = material.indicators.valueOf(indicator.itIndex!!)
+                    val coeff = material.indicators.valueOf(indicator.itId!!)
                     it.value.solutionVar.coeff(coeff)
                 }.toTypedArray().sum()
 
@@ -121,7 +121,7 @@ object RecipeSolver {
                 recipeMaterials.map {
                     val material = it.value
                     val indicators = material.indicators
-                    val coeff = indicators.valueOf(indicator.index)
+                    val coeff = indicators.valueOf(indicator.id)
                     material.solutionVar.coeff(coeff)
                 }.toTypedArray()
                         .between(targetWeight * range.min, targetWeight * range.max)

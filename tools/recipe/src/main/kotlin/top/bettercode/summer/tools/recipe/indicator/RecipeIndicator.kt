@@ -7,9 +7,9 @@ package top.bettercode.summer.tools.recipe.indicator
  */
 data class RecipeIndicator<T>(
         /**
-         * 序号，从0开始
+         * ID
          */
-        val index: Int,
+        val id: Int,
         /**
          * 名称
          */
@@ -23,13 +23,13 @@ data class RecipeIndicator<T>(
          */
         val type: RecipeIndicatorType = RecipeIndicatorType.GENERAL,
         /**
-         * type为RATE_TO_OTHER时，itself指标 序号
+         * type为RATE_TO_OTHER时，itself指标 ID
          */
-        val itIndex: Int? = null,
+        val itId: Int? = null,
         /**
-         * type为RATE_TO_OTHER时，other 序号
+         * type为RATE_TO_OTHER时，other ID
          */
-        val otherIndex: Int? = null
+        val otherId: Int? = null
 ):Comparable<RecipeIndicator<T>> {
 
     val isNutrient = type == RecipeIndicatorType.NUTRIENT
@@ -39,6 +39,6 @@ data class RecipeIndicator<T>(
     val isRateToOther = type == RecipeIndicatorType.RATE_TO_OTHER
 
     override fun compareTo(other: RecipeIndicator<T>): Int {
-        return index .compareTo(other.index)
+        return id .compareTo(other.id)
     }
 }

@@ -7,7 +7,7 @@ package top.bettercode.summer.tools.recipe.indicator
 open class RecipeIndicators<T>(indicators: List<RecipeIndicator<T>>) : HashMap<Int, RecipeIndicator<T>>() {
     init {
         indicators.forEach {
-            put(it.index, it)
+            put(it.id, it)
         }
     }
 
