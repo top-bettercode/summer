@@ -14,6 +14,6 @@ class PackagingFee(
 ) {
 
     val fee: Double = materials.sumOf {
-        it.price * it.materialQuantity
+        it.price * it.value
     }
 }

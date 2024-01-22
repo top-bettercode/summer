@@ -17,13 +17,13 @@ class RecipeRequirement(
         val productName: String,
         /** 目标重量，单位KG  */
         val targetWeight: Double = 1000.0,
-        /** 原料进料口最大数，-1不限  */
+        /** 物料进料口最大数，-1不限  */
         val maxMaterialNum: Int = -1,
         /**
          * 最大烘干量，单位KG，-1允许烘干全部水份
          */
         val maxBakeWeight: Double = -1.0,
-        /** 原料  */
+        /** 物料  */
         materials: List<IRecipeMaterial>,
         /**
          * 指标范围约束
@@ -34,14 +34,14 @@ class RecipeRequirement(
          */
         val materialIDIndicators: RecipeMaterialIDIndicators,
 
-        /** 限用原料ID  */
+        /** 限用物料ID  */
         val useMaterials: MaterialIDs,
-        /** 不使用的原料ID  */
+        /** 不使用的物料ID  */
         val noUseMaterials: MaterialIDs,
-        /** 不能混用的原料,value: 原料ID  */
+        /** 不能混用的物料,value: 物料ID  */
         val notMixMaterials: List<Array<MaterialIDs>>,
 
-        /** 原料约束,key:原料ID, value: 原料使用范围约束  */
+        /** 物料约束,key:物料ID, value: 物料使用范围约束  */
         var materialRangeConstraints: Map<MaterialIDs, DoubleRange>,
         /**
          * 指定物料约束
@@ -88,7 +88,7 @@ class RecipeRequirement(
         val materialMust = Predicate { material: IRecipeMaterial ->
             val materialId = material.id
 
-            // 用量>0的原料
+            // 用量>0的物料
             materialRangeConstraints.forEach { (t, u) ->
                 if (t.contains(materialId) && u.min > 0) {
                     return@Predicate true
@@ -126,7 +126,7 @@ class RecipeRequirement(
                 }
             }
 
-            // 过滤不使用的原料
+            // 过滤不使用的物料
             if (noUseMaterials.contains(materialId)) {
                 return@Predicate false
             }
@@ -143,7 +143,7 @@ class RecipeRequirement(
                 }
             }
 
-            // 过滤不在成份约束的原料
+            // 过滤不在成份约束的物料
             materialIDIndicators.values.forEach { indicator ->
                 val materialIDs = indicator.value
                 val materialIndicator = material.indicators.valueOf(indicator.id)

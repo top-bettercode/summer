@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.recipe.material
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
 /**
- * 原料
+ * 物料
  *
  * @author Peter Wu
  */
@@ -13,17 +13,17 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
      */
     val index: Int
 
-    /** 原料ID  */
+    /** 物料ID  */
     val id: String
 
-    /** 原料名称  */
+    /** 物料名称  */
     val name: String
 
-    /** 原料价格  */
+    /** 物料价格  */
     val price: Double
 
     /**
-     * 原料指标
+     * 物料指标
      */
     val indicators: RecipeValueIndicators
 

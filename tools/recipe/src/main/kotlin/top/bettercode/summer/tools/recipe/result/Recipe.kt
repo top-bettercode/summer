@@ -26,7 +26,7 @@ data class Recipe(
          */
         val requirement: RecipeRequirement,
         val cost: Double,
-        /** 选用的原料  */
+        /** 选用的物料  */
         val materials: List<RecipeMaterialValue>
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
@@ -100,38 +100,38 @@ data class Recipe(
         }
 
         val usedMaterials = materials.map { it.id }
-        // 限用原料ID
+        // 限用物料ID
         val useMaterials = requirement.useMaterials
         if (useMaterials.isNotEmpty()) {
             if (!useMaterials.containsAll(usedMaterials)) {
-                log.warn("配方所用原料：{} 不在范围{}内", usedMaterials, useMaterials)
+                log.warn("配方所用物料：{} 不在范围{}内", usedMaterials, useMaterials)
                 return false
             }
         }
-        // 不使用的原料ID
+        // 不使用的物料ID
         val noUseMaterials = requirement.noUseMaterials
         if (noUseMaterials.isNotEmpty()) {
             if (usedMaterials.any { noUseMaterials.contains(it) }) {
-                log.warn("配方所用原料：{} 包含不可用物料{}内", usedMaterials, noUseMaterials)
+                log.warn("配方所用物料：{} 包含不可用物料{}内", usedMaterials, noUseMaterials)
                 return false
             }
         }
-        // 不能混用的原料,value: 原料ID
+        // 不能混用的物料,value: 物料ID
         val notMixMaterials = requirement.notMixMaterials
         for (notMixMaterial in notMixMaterials) {
             val mixMaterials = notMixMaterial.map { notMix -> usedMaterials.filter { notMix.contains(it) } }.filter { it.isNotEmpty() }
             val size = mixMaterials.size
             if (size > 1) {
-                log.warn("配方混用原料：{}", mixMaterials.joinToString(",", "[", "]") { it.joinToString("、") })
+                log.warn("配方混用物料：{}", mixMaterials.joinToString(",", "[", "]") { it.joinToString("、") })
                 return false
             }
         }
 
-        // 原料约束,key:原料ID, value: 原料使用范围约束
+        // 物料约束,key:物料ID, value: 物料使用范围约束
         for ((ids, range) in materialRangeConstraints) {
             val weight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             if (weight !in range.min..range.max) {
-                log.warn("原料{}使用量：{} 不在范围{}-{}内", ids, weight, range.min, range.max)
+                log.warn("物料{}使用量：{} 不在范围{}-{}内", ids, weight, range.min, range.max)
                 return false
             }
         }
@@ -155,7 +155,7 @@ data class Recipe(
             val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
             if ((usedWeight - usedAddWeight).scale() !in -1e-10..1e-10) {
-                log.warn("原料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
+                log.warn("物料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
                 return false
             }
             val (normal, overdose) = entry.relationValue
@@ -166,13 +166,13 @@ data class Recipe(
 
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
             if (usedNormalWeight !in (usedMinNormalWeights - 1e-10).scale()..(usedMaxNormalWeights + 1e-10).scale()) {
-                log.warn("原料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
+                log.warn("物料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
                 return false
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
             if (usedOverdoseWeight !in (usedMinOverdoseWeights - 1e-10).scale()..(usedMaxOverdoseWeights + 1e-10).scale()) {
-                log.warn("原料{}过量使用量：{} 不在范围{}-{}内", usedIds, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
+                log.warn("物料{}过量使用量：{} 不在范围{}-{}内", usedIds, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
                 return false
             }
         }
