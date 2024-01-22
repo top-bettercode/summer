@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.recipe.data.*
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
@@ -31,12 +30,9 @@ internal class RecipeSolverTest {
     fun solve(productName: String) {
         val requirement = PrepareData.readRequirement(productName)
         val maxResult = 20
-        val coptSolver = SolverFactory.createSolver(SolverType.COPT)
-        val cbcSolver = SolverFactory.createSolver(SolverType.CBC)
-        val scipSolver = SolverFactory.createSolver(SolverType.SCIP)
-        val solve = MultiRecipeSolver.solve(solver = coptSolver, requirement = requirement, maxResult = maxResult)
-        val solve1 = MultiRecipeSolver.solve(solver = cbcSolver, requirement = requirement, maxResult = maxResult)
-        val solve2 = MultiRecipeSolver.solve(solver = scipSolver, requirement = requirement, maxResult = maxResult)
+        val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult)
+        val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult)
+        val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult)
         solve.toExcel()
 //        solve1.toExcel()
 //        solve2.toExcel()

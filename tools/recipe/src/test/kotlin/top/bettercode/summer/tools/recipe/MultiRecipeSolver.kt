@@ -3,7 +3,8 @@ package top.bettercode.summer.tools.recipe
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
-import top.bettercode.summer.tools.optimal.solver.Solver
+import top.bettercode.summer.tools.optimal.solver.SolverFactory
+import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.recipe.RecipeSolver.prepare
 import top.bettercode.summer.tools.recipe.data.RecipeResult
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
@@ -13,8 +14,8 @@ object MultiRecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(MultiRecipeSolver::class.java)
 
-    fun solve(solver: Solver, requirement: RecipeRequirement, maxResult: Int = 1): RecipeResult {
-        solver.apply {
+    fun solve(solverType: SolverType, requirement: RecipeRequirement, maxResult: Int = 1): RecipeResult {
+        SolverFactory.createSolver(solverType).apply {
             val s = System.currentTimeMillis()
             val (recipeMaterials, objective) = prepare(requirement)
             var e = System.currentTimeMillis()

@@ -4,6 +4,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.Solver
+import top.bettercode.summer.tools.optimal.solver.SolverFactory
+import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.recipe.criteria.Operator
 import top.bettercode.summer.tools.recipe.material.MaterialIDs
@@ -15,8 +17,8 @@ object RecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
-    fun solve(solver: Solver, requirement: RecipeRequirement): Recipe? {
-        solver.apply {
+    fun solve(solverType: SolverType, requirement: RecipeRequirement): Recipe? {
+        SolverFactory.createSolver(solverType).apply {
             val s = System.currentTimeMillis()
             val (recipeMaterials, objective) = prepare(requirement)
             // 求解
