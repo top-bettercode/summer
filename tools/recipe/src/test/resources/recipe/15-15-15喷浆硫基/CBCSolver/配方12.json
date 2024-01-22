@@ -12,7 +12,6 @@
     "solutionValue" : {
       "value" : 126.1631548243
     },
-    "type" : "GENERAL",
     "waterWeight" : 2.523263096486,
     "weight" : 126.1631548243
   }, {
@@ -26,7 +25,6 @@
     "solutionValue" : {
       "value" : 180.1779964954
     },
-    "type" : "GENERAL",
     "waterWeight" : 45.04449912385,
     "weight" : 180.1779964954
   }, {
@@ -40,7 +38,6 @@
     "solutionValue" : {
       "value" : 2.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.0,
     "weight" : 2.0
   }, {
@@ -56,7 +53,6 @@
       "normal" : 78.7914216777,
       "overdose" : 9.9783811267
     },
-    "type" : "LIQUID_AMMONIA",
     "waterWeight" : 0.443849014022,
     "weight" : 88.7698028044
   }, {
@@ -70,7 +66,6 @@
     "solutionValue" : {
       "value" : 3.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.0,
     "weight" : 3.0
   }, {
@@ -86,7 +81,6 @@
       "normal" : 284.7360402685,
       "overdose" : 28.4736040268
     },
-    "type" : "SULFURIC_ACID",
     "waterWeight" : 1.5660482214765,
     "weight" : 313.2096442953
   }, {
@@ -100,7 +94,6 @@
     "solutionValue" : {
       "value" : 563.6987458186
     },
-    "type" : "GENERAL",
     "waterWeight" : 366.40418478209,
     "weight" : 563.6987458186
   }, {
@@ -114,7 +107,6 @@
     "solutionValue" : {
       "value" : 5.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.1,
     "weight" : 5.0
   }, {
@@ -128,7 +120,6 @@
     "solutionValue" : {
       "value" : 232.5
     },
-    "type" : "GENERAL",
     "waterWeight" : 110.4375,
     "weight" : 232.5
   } ],

@@ -44,8 +44,8 @@ data class Recipe(
     //检查结果
     fun validate(): Boolean {
         //检查进料口
-        if (requirement.maxUseMaterials > 0 && materials.size > requirement.maxUseMaterials) {
-            log.warn("配方所需进料口：{} 超过最大进料口：{}", materials.size, requirement.maxUseMaterials)
+        if (requirement.maxMaterialNum > 0 && materials.size > requirement.maxMaterialNum) {
+            log.warn("配方所需进料口：{} 超过最大进料口：{}", materials.size, requirement.maxMaterialNum)
             return false
         }
         //检查成本

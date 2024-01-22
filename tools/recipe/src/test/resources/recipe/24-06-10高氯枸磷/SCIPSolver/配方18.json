@@ -12,7 +12,6 @@
     "solutionValue" : {
       "value" : 12.3598016905
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.24719603381,
     "weight" : 12.3598016905
   }, {
@@ -26,7 +25,6 @@
     "solutionValue" : {
       "value" : 97.94799853
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.48973999265000007,
     "weight" : 97.94799853
   }, {
@@ -40,7 +38,6 @@
     "solutionValue" : {
       "value" : 79.6701597425
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.796701597425,
     "weight" : 79.6701597425
   }, {
@@ -54,7 +51,6 @@
     "solutionValue" : {
       "value" : 380.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 1.9000000000000001,
     "weight" : 380.0
   }, {
@@ -68,7 +64,6 @@
     "solutionValue" : {
       "value" : 150.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 1.5,
     "weight" : 150.0
   }, {
@@ -82,7 +77,6 @@
     "solutionValue" : {
       "value" : 2.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.0,
     "weight" : 2.0
   }, {
@@ -96,7 +90,6 @@
     "solutionValue" : {
       "value" : 3.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.0,
     "weight" : 3.0
   }, {
@@ -110,7 +103,6 @@
     "solutionValue" : {
       "value" : 275.022040037
     },
-    "type" : "GENERAL",
     "waterWeight" : 2.7502204003700004,
     "weight" : 275.022040037
   } ],

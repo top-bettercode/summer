@@ -18,7 +18,7 @@ class RecipeRequirement(
         /** 目标重量，单位KG  */
         val targetWeight: Double = 1000.0,
         /** 原料进料口最大数，-1不限  */
-        val maxUseMaterials: Int = -1,
+        val maxMaterialNum: Int = -1,
         /**
          * 最大烘干量，单位KG，-1允许烘干全部水份
          */

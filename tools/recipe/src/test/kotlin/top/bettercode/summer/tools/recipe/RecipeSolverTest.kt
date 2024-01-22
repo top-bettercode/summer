@@ -100,13 +100,13 @@ internal class RecipeSolverTest {
         val recipes = recipeResult.recipes
         val requirement = recipes[0].requirement
         val productName = requirement.productName
-        val dir = File("recipe/$productName/${recipeResult.solverName}")
+        val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe/$productName")
         dir.mkdirs()
         //配方要求
-        File("recipe/$productName/requirement.json").writeText(json(requirement, RecipeRequirement::class.java to RecipeRequirementView::class.java))
+        File("$dir/requirement.json").writeText(json(requirement, RecipeRequirement::class.java to RecipeRequirementView::class.java))
         //配方
         recipes.forEachIndexed { index, recipe ->
-            File("$dir/配方${index + 1}.json").writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
+            File("$dir/${recipeResult.solverName}/配方${index + 1}.json").writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
         }
     }
 }

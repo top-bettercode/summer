@@ -48,7 +48,7 @@ object RecipeSolver {
         // 物料数量
         val materials = requirement.materials
         val numRawMaterials = materials.size
-        val numMaxMaterials = requirement.maxUseMaterials
+        val numMaxMaterials = requirement.maxMaterialNum
         val targetWeight = requirement.targetWeight
 
         val recipeMaterials = materials.mapValues {

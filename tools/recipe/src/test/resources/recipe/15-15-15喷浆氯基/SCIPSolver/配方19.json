@@ -12,7 +12,6 @@
     "solutionValue" : {
       "value" : 93.9409378418
     },
-    "type" : "GENERAL",
     "waterWeight" : 1.878818756836,
     "weight" : 93.9409378418
   }, {
@@ -26,7 +25,6 @@
     "solutionValue" : {
       "value" : 233.3333333333
     },
-    "type" : "GENERAL",
     "waterWeight" : 2.333333333333,
     "weight" : 233.3333333333
   }, {
@@ -40,7 +38,6 @@
     "solutionValue" : {
       "value" : 15.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 3.75,
     "weight" : 15.0
   }, {
@@ -54,7 +51,6 @@
     "solutionValue" : {
       "value" : 2.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.0,
     "weight" : 2.0
   }, {
@@ -70,7 +66,6 @@
       "normal" : 37.9464383128,
       "overdose" : 0.0
     },
-    "type" : "LIQUID_AMMONIA",
     "waterWeight" : 0.189732191564,
     "weight" : 37.9464383128
   }, {
@@ -84,7 +79,6 @@
     "solutionValue" : {
       "value" : 3.0
     },
-    "type" : "GENERAL",
     "waterWeight" : 0.0,
     "weight" : 3.0
   }, {
@@ -98,7 +92,6 @@
     "solutionValue" : {
       "value" : 665.8182764868
     },
-    "type" : "GENERAL",
     "waterWeight" : 432.78187971642,
     "weight" : 665.8182764868
   }, {
@@ -112,7 +105,6 @@
     "solutionValue" : {
       "value" : 381.7118969933
     },
-    "type" : "GENERAL",
     "waterWeight" : 3.817118969933,
     "weight" : 381.7118969933
   } ],

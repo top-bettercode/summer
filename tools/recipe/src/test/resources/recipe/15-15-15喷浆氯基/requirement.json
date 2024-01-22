@@ -508,11 +508,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "32-4-0硝磷" : {
       "index" : 11,
@@ -981,11 +977,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "52%曼海姆硫酸钾（粉）" : {
       "index" : 35,
@@ -1454,11 +1446,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "52%罗布泊硫酸钾（粉）" : {
       "index" : 34,
@@ -1927,11 +1915,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "55磷酸一铵（粉）" : {
       "index" : 12,
@@ -2400,11 +2384,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "58磷酸一铵（粉）" : {
       "index" : 13,
@@ -2873,11 +2853,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "60磷酸一铵（粉）" : {
       "index" : 14,
@@ -3346,11 +3322,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "64全水溶磷酸一铵" : {
       "index" : 19,
@@ -3819,11 +3791,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "64磷酸二铵（颗粒）" : {
       "index" : 18,
@@ -4292,11 +4260,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "67全水溶磷酸一铵" : {
       "index" : 20,
@@ -4765,11 +4729,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "8-40-0再浆肥（粉）" : {
       "index" : 16,
@@ -5238,11 +5198,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "80氧化镁" : {
       "index" : 42,
@@ -5711,11 +5667,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "85氧化镁" : {
       "index" : 43,
@@ -6184,11 +6136,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "95%氯化钾烘干粉（国产）" : {
       "index" : 30,
@@ -6657,11 +6605,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "95%进口红钾（粉）" : {
       "index" : 32,
@@ -7130,11 +7074,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "EDTA-钙" : {
       "index" : 44,
@@ -7603,11 +7543,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "EDTA-铁" : {
       "index" : 47,
@@ -8076,11 +8012,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "EDTA-铜" : {
       "index" : 48,
@@ -8549,11 +8481,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "EDTA-锌" : {
       "index" : 45,
@@ -9022,11 +8950,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "EDTA-锰" : {
       "index" : 46,
@@ -9495,11 +9419,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "EDTA-镁" : {
       "index" : 37,
@@ -9968,11 +9888,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "一水硫酸锌" : {
       "index" : 50,
@@ -10441,11 +10357,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "一水硫酸锰" : {
       "index" : 56,
@@ -10914,11 +10826,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "一水硫酸镁" : {
       "index" : 38,
@@ -11387,11 +11295,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "七水硫酸锌" : {
       "index" : 51,
@@ -11860,11 +11764,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "七水硫酸镁" : {
       "index" : 40,
@@ -12333,11 +12233,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "七水黄镁" : {
       "index" : 41,
@@ -12806,11 +12702,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "七钼酸铵" : {
       "index" : 49,
@@ -13279,11 +13171,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "中白肥（24%)" : {
       "index" : 26,
@@ -13752,11 +13640,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "五水硫酸铜" : {
       "index" : 55,
@@ -14225,11 +14109,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "低白肥（14%）" : {
       "index" : 27,
@@ -14698,11 +14578,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "喷浆专用尿素" : {
       "index" : 90,
@@ -15171,11 +15047,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "四水八硼酸钠" : {
       "index" : 54,
@@ -15644,11 +15516,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "工业一铵73%" : {
       "index" : 21,
@@ -16117,11 +15985,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "己内级硫铵" : {
       "index" : 8,
@@ -16590,11 +16454,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "心连心矿源黄腐酸钾" : {
       "index" : 68,
@@ -17063,11 +16923,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "无水硫酸镁" : {
       "index" : 39,
@@ -17536,11 +17392,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "有机质（褐煤）" : {
       "index" : 66,
@@ -18009,11 +17861,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "植物氨基酸" : {
       "index" : 69,
@@ -18482,11 +18330,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "氯化铵（干）" : {
       "index" : 6,
@@ -18955,11 +18799,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "氯化铵（湿）" : {
       "index" : 5,
@@ -19428,11 +19268,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "液氨" : {
       "index" : 9,
@@ -19901,11 +19737,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "LIQUID_AMMONIA",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : true,
-      "ammmoniumCarbonate" : false
+      }
     },
     "焦化硫铵" : {
       "index" : 7,
@@ -20374,11 +20206,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "生化黄腐酸钾" : {
       "index" : 67,
@@ -20847,11 +20675,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "盐酸" : {
       "index" : 59,
@@ -21320,11 +21144,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "硝酸钾" : {
       "index" : 25,
@@ -21793,11 +21613,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "硫酸" : {
       "index" : 36,
@@ -22266,11 +22082,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "SULFURIC_ACID",
-      "sulfuricAcid" : true,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "硼砂" : {
       "index" : 52,
@@ -22739,11 +22551,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "硼酸" : {
       "index" : 53,
@@ -23212,11 +23020,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "碳铵" : {
       "index" : 10,
@@ -23685,11 +23489,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "AMMONIUM_CARBONATE",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : true
+      }
     },
     "磷矿粉" : {
       "index" : 28,
@@ -24158,11 +23958,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "磷酸" : {
       "index" : 29,
@@ -24631,11 +24427,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "磷酸二氢钾" : {
       "index" : 23,
@@ -25104,11 +24896,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "锌工铵" : {
       "index" : 22,
@@ -25577,11 +25365,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "防结油（白色）" : {
       "index" : 61,
@@ -26050,11 +25834,7 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     },
     "防结粉（白色）" : {
       "index" : 62,
@@ -26523,15 +26303,11 @@
           "water" : false,
           "rateToOther" : false
         }
-      },
-      "type" : "GENERAL",
-      "sulfuricAcid" : false,
-      "liquidAmmonia" : false,
-      "ammmoniumCarbonate" : false
+      }
     }
   },
   "maxBakeWeight" : -1.0,
-  "maxUseMaterials" : -1,
+  "maxMaterialNum" : -1,
   "noUseMaterials" : [ "喷浆硫基用95氯化钾" ],
   "notMixMaterials" : [ ],
   "productName" : "15-15-15喷浆氯基",

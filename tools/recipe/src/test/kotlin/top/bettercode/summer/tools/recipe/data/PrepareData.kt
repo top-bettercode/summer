@@ -296,7 +296,7 @@ object PrepareData {
 
         val requirement = RecipeRequirement(productName = productName,
                 targetWeight = 1000.0,
-                maxUseMaterials = -1,
+                maxMaterialNum = -1,
                 maxBakeWeight = -1.0,
                 materials = materials,
                 rangeIndicators = RecipeRangeIndicators(rangeIndicators),
@@ -458,14 +458,8 @@ object PrepareData {
             indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index48!!))
             indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index49!!))
             indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index50!!))
-            val type = when (materialName) {
-                LIQUID_AMMONIA -> RecipeMaterialType.LIQUID_AMMONIA
-                AMMONIUM_CARBONATE -> RecipeMaterialType.AMMONIUM_CARBONATE
-                SULFURIC_ACID -> RecipeMaterialType.SULFURIC_ACID
-                else -> RecipeMaterialType.GENERAL
-            }
 
-            val material = RecipeMaterial(index = index, id = materialName, name = materialName, price = materialPrice / 1000, indicators = RecipeValueIndicators(indicators), type = type)
+            val material = RecipeMaterial(index = index, id = materialName, name = materialName, price = materialPrice / 1000, indicators = RecipeValueIndicators(indicators))
             materials.add(material)
             index++
         }

@@ -33,7 +33,7 @@ class RecipeResult(val solverName: String) {
             return
         }
         val requirement = recipes[0].requirement
-        val fileName: String = (requirement.productName + if (requirement.maxUseMaterials <= 0) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxUseMaterials}")
+        val fileName: String = (requirement.productName + if (requirement.maxMaterialNum <= 0) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxMaterialNum}")
         val outFile = File("build/" + solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
         val filePath = outFile.absolutePath
         ExcelExport.of(filePath).apply {

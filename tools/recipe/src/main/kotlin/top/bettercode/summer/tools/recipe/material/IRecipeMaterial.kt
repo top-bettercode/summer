@@ -27,11 +27,6 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
      */
     val indicators: RecipeValueIndicators
 
-    /**
-     * 类型
-     */
-    val type: RecipeMaterialType
-
     override fun compareTo(other: IRecipeMaterial): Int {
         return index.compareTo(other.index)
     }
