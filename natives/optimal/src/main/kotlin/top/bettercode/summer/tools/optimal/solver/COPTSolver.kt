@@ -14,7 +14,7 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
  * @author Peter Wu
  */
 class COPTSolver @JvmOverloads constructor(
-        epsilon: Double = 1e-6,
+        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
         logging: Boolean = false,
         name: String = "COPTSolver"
 ) : Solver(name, epsilon) {
@@ -26,7 +26,7 @@ class COPTSolver @JvmOverloads constructor(
         model = env.createModel(name)
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
-        model.setDblParam(copt.DblParam.FeasTol, 1e-9)
+        model.setDblParam(copt.DblParam.FeasTol, OptimalUtil.DEFAULT_MIN_EPSILON)
     }
 
     override fun setTimeLimit(seconds: Int) {

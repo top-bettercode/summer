@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.recipe.result
 
 import top.bettercode.summer.tools.excel.FastExcel
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
@@ -36,7 +37,7 @@ object RecipeExport {
             // 原料成份
             for (indicator in matrial.indicators) {
                 val column = c + indicator.id
-                cell(r, column).value(indicator.value.scale(4)).width(8.0).format("0.0%").setStyle()
+                cell(r, column).value(indicator.value.scale()).width(8.0).format("0.0%").setStyle()
             }
         }
     }
@@ -169,7 +170,7 @@ object RecipeExport {
                 if (min == null || max == null) {
                     cell(r++, c).value(value).format("0.0%").setStyle()
                 } else {
-                    val valid = value - min >= -1e-10 && value - max <= 1e-10
+                    val valid = value - min >= -OptimalUtil.DEFAULT_MIN_EPSILON && value - max <= OptimalUtil.DEFAULT_MIN_EPSILON
                     cell(r++, c).value(value).format("0.0%").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 }
                 c++

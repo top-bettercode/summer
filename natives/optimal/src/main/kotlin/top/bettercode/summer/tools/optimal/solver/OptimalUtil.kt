@@ -8,9 +8,24 @@ import kotlin.math.pow
  */
 object OptimalUtil {
     /**
+     * 默认下限
+     */
+    const val DEFAULT_LB: Double = 0.0
+
+    /**
      * 默认上限
      */
-    const val DEFAULT_DUB: Double = 1000.0
+    const val DEFAULT_UB: Double = 1000.0
+
+    /**
+     * 默认误差
+     */
+    const val DEFAULT_EPSILON = 1e-5
+
+    /**
+     * 默认最小误差
+     */
+    const val DEFAULT_MIN_EPSILON = 1e-9
 
     /**
      * 求解结果小数位

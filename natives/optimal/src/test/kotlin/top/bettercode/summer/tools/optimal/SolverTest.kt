@@ -673,7 +673,7 @@ class SolverTest {
         return numVar1.value
     }
 
-//    @Test
+    //    @Test
     fun neIf() {
         val eq = coptSolver.neIf()
         val eq1 = scipSolver.neIf()
@@ -702,7 +702,7 @@ class SolverTest {
         return numVar1.value
     }
 
-//    @Test
+    //    @Test
     fun neIfNot() {
         val eq = coptSolver.neIfNot()
         val eq1 = scipSolver.neIfNot()

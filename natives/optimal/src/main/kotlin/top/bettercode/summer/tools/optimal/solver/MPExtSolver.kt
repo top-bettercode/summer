@@ -18,13 +18,13 @@ open class MPExtSolver @JvmOverloads constructor(
         /**
          * 变量默认下界
          */
-        val dlb: Double = 0.0,
+        val dlb: Double = OptimalUtil.DEFAULT_LB,
 
         /**
          * 变量默认上界
          */
-        val dub: Double = OptimalUtil.DEFAULT_DUB,
-        epsilon: Double = 1e-6,
+        val dub: Double = OptimalUtil.DEFAULT_UB,
+        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
         name: String = "MPSolver"
 ) : Solver(name, epsilon) {
 

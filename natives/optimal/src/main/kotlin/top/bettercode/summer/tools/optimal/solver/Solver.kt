@@ -15,7 +15,7 @@ abstract class Solver(
         /**
          * 极小的正数，用于描述误差，大于 转换为 大于等于
          */
-        protected val epsilon: Double = 1e-6
+        protected val epsilon: Double = OptimalUtil.DEFAULT_EPSILON
 ) {
 
     protected val log: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass)

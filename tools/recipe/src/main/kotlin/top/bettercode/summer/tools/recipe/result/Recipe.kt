@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe.result
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
@@ -49,23 +50,23 @@ data class Recipe(
             return false
         }
         //检查成本
-        if ((trueCost - cost).scale() !in -1e-9..1e-9) {
+        if ((trueCost - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
             log.warn("配方成本不匹配:{} / {}", trueCost, cost)
             return false
         }
         //检查烘干水分
-        if (dryWater < -1e-10) {
+        if (dryWater < -OptimalUtil.DEFAULT_MIN_EPSILON) {
             log.warn("配方烘干水分异常：{}", dryWater)
             return false
         }
-        if (requirement.maxBakeWeight >= 0 && (dryWater - requirement.maxBakeWeight).scale() > 1e-10) {
+        if (requirement.maxBakeWeight >= 0 && (dryWater - requirement.maxBakeWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
             log.warn("配方烘干水分:{} 超过最大可烘干水分：{}", dryWater, requirement.maxBakeWeight)
             return false
         }
         val totalWater = materials.sumOf {
             it.waterWeight
         }.scale()
-        if ((dryWater - totalWater).scale() > 1e-10) {
+        if ((dryWater - totalWater).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
             log.warn("配方烘干水分:{} 超过总水分：{}", dryWater, totalWater)
             return false
         }
@@ -154,7 +155,7 @@ data class Recipe(
             val usedNormalWeight = materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
             val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
-            if ((usedWeight - usedAddWeight).scale() !in -1e-10..1e-10) {
+            if ((usedWeight - usedAddWeight).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
                 log.warn("物料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
                 return false
             }
@@ -165,13 +166,13 @@ data class Recipe(
             val usedMaxOverdoseWeights = overdose.max
 
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
-            if (usedNormalWeight !in (usedMinNormalWeights - 1e-10).scale()..(usedMaxNormalWeights + 1e-10).scale()) {
+            if (usedNormalWeight !in (usedMinNormalWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxNormalWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
                 log.warn("物料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
                 return false
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
-            if (usedOverdoseWeight !in (usedMinOverdoseWeights - 1e-10).scale()..(usedMaxOverdoseWeights + 1e-10).scale()) {
+            if (usedOverdoseWeight !in (usedMinOverdoseWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxOverdoseWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
                 log.warn("物料{}过量使用量：{} 不在范围{}-{}内", usedIds, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
                 return false
             }

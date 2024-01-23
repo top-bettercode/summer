@@ -14,7 +14,7 @@ open class CPExtSolver @JvmOverloads constructor(
          * 变量放大倍数
          */
         private val times: Int = 0,
-        epsilon: Double = 1e-6,
+        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
         name: String = "CPSolver"
 ) : Solver(name, epsilon) {
 
