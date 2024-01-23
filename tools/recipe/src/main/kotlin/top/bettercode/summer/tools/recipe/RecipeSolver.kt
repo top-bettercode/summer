@@ -93,8 +93,7 @@ object RecipeSolver {
             val material = it.value
             val indicators = material.indicators
             it.value.solutionVar.coeff(1 - indicators.waterValue)
-        }
-                .between(minDryWeight, maxDryWeight)
+        }.between(minDryWeight, maxDryWeight)
 
         // 添加成份约束条件
         // 成份要求 总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 水分 硼 锌
@@ -125,8 +124,7 @@ object RecipeSolver {
                     val indicators = material.indicators
                     val coeff = indicators.valueOf(indicator.id)
                     material.solutionVar.coeff(coeff)
-                }
-                        .between(targetWeight * range.min, targetWeight * range.max)
+                }.between(targetWeight * range.min, targetWeight * range.max)
             }
         }
 
@@ -135,7 +133,6 @@ object RecipeSolver {
         val materialRangeConstraints = requirement.materialRangeConstraints
         materialRangeConstraints.forEach { (t, u) ->
             t.mapNotNull { recipeMaterials[it]?.solutionVar }
-
                     .between(u.min, u.max)
         }
 
