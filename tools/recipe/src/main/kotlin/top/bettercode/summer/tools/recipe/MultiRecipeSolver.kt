@@ -14,7 +14,12 @@ object MultiRecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(MultiRecipeSolver::class.java)
 
-    fun solve(solverType: SolverType, requirement: RecipeRequirement, maxResult: Int = 1): RecipeResult {
+    fun solve(solverType: SolverType,
+              requirement: RecipeRequirement,
+              maxResult: Int = 1,
+              materialUnchanged: Boolean = true,
+              nutrientUnchanged: Boolean = true
+    ): RecipeResult {
         SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight).apply {
             val s = System.currentTimeMillis()
             val (recipeMaterials, objective) = prepare(requirement)
@@ -50,22 +55,25 @@ object MultiRecipeSolver {
                     val cost = objective.value
                     if (first) {
                         // 后续配方原料不变
-                        recipeMaterials.forEach { (id, material) ->
-                            if (useMaterials.contains(id)) {
-                                material.solutionVar.gt(0.0)
-                            } else {
-                                material.solutionVar.eq(0.0)
+                        if (materialUnchanged) {
+                            recipeMaterials.forEach { (id, material) ->
+                                if (useMaterials.contains(id)) {
+                                    material.solutionVar.gt(0.0)
+                                } else {
+                                    material.solutionVar.eq(0.0)
+                                }
                             }
                         }
                         // 养份保持不变 总养份
-                        val totalNutrient = recipe.materials.sumOf { m ->
-                            m.totalNutrient()
+                        if (nutrientUnchanged) {
+                            val totalNutrient = recipe.materials.sumOf { m ->
+                                m.totalNutrient()
+                            }
+                            recipeMaterials.map { (_, material) ->
+                                val value = material.totalNutrient()
+                                material.solutionVar.coeff(value)
+                            }.eq(totalNutrient)
                         }
-
-                        recipeMaterials.map { (_, material) ->
-                            val value = material.totalNutrient()
-                            material.solutionVar.coeff(value)
-                        }.eq(totalNutrient)
                     }
                     // 添加价格约束，约束下一个解的范围
                     // 前十个每3元价差一推，后十个每5元价差一推。
