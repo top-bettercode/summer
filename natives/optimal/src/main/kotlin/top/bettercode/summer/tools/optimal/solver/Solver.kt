@@ -133,13 +133,13 @@ abstract class Solver(
     abstract fun IVar.eqIf(value: Double, bool: IVar)
     abstract fun IVar.eqIfNot(value: Double, bool: IVar)
     open fun IVar.neIf(value: Double, bool: IVar) {
-        throw UnsupportedOperationException("不支持条件不等于约束")
+        throw UnsupportedOperationException("不支持的约束")
         //if bool=0,this==value
         //if bool=1,this<value,this>value
     }
 
     open fun IVar.neIfNot(value: Double, bool: IVar) {
-        throw UnsupportedOperationException("不支持条件不等于约束")
+        throw UnsupportedOperationException("不支持的约束")
         //if bool=1,this==value
         //if bool=0,this<value,this>value
     }
