@@ -19,7 +19,7 @@ class ExcelCell(
         private val row: Int,
         private val column: Int) {
 
-    fun set(): ExcelCell {
+    fun setStyle(): ExcelCell {
         this.excel.setStyle(this.row, this.column, style)
         return this
     }

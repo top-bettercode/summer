@@ -11,7 +11,7 @@ import java.math.BigDecimal
 import java.util.*
 
 
-open class CellStyle : Cloneable {
+class CellStyle : Cloneable {
 
     var defaultValueFormatting: String? = null
 

@@ -17,7 +17,7 @@ class ExcelRange @JvmOverloads constructor(
         private val bottom: Int = top,
         private val right: Int = left) {
 
-    fun set(): ExcelRange {
+    fun setStyle(): ExcelRange {
         this.excel.setStyle(this.top, left, bottom, right, style)
         return this
     }
