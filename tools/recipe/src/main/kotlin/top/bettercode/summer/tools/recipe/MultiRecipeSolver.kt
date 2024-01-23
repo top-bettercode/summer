@@ -6,29 +6,24 @@ import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.recipe.RecipeSolver.prepare
-import top.bettercode.summer.tools.recipe.data.RecipeResult
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
 import top.bettercode.summer.tools.recipe.result.Recipe
+import top.bettercode.summer.tools.recipe.result.RecipeResult
 
 object MultiRecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(MultiRecipeSolver::class.java)
 
     fun solve(solverType: SolverType, requirement: RecipeRequirement, maxResult: Int = 1): RecipeResult {
-        SolverFactory.createSolver(solverType).apply {
+        SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight).apply {
             val s = System.currentTimeMillis()
             val (recipeMaterials, objective) = prepare(requirement)
             var e = System.currentTimeMillis()
             val recipeResult = RecipeResult(name)
-            log.trace("==================================================")
             while ((e - s) / 1000 < requirement.timeout
                     && recipeResult.recipes.size < maxResult) {
                 // 求解
                 solve()
-                log.trace(
-                        "solve times: " + recipeResult.recipes.size + " 耗时：" + (e - s) + "ms " + "变量数量："
-                                + numVariables() + " 约束数量："
-                                + numConstraints())
                 if (numVariables() > 2000 || numConstraints() > 2000) {
                     log.error("变量或约束过多，变量数量：" + numVariables() + " 约束数量：" + numConstraints())
                     return recipeResult
@@ -52,7 +47,6 @@ object MultiRecipeSolver {
                             })
                     recipeResult.addRecipe(recipe)
 
-                    log.trace("====================solve size: ${recipeResult.recipes.size}")
                     val cost = objective.value
                     if (first) {
                         // 后续配方原料不变

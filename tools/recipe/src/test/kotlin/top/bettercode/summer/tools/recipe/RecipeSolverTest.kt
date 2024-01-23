@@ -7,9 +7,13 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.solver.SolverType
-import top.bettercode.summer.tools.recipe.data.*
+import top.bettercode.summer.tools.recipe.data.PrepareData
+import top.bettercode.summer.tools.recipe.data.RecipeMaterialView
+import top.bettercode.summer.tools.recipe.data.RecipeRequirementView
+import top.bettercode.summer.tools.recipe.data.RecipeView
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.result.Recipe
+import top.bettercode.summer.tools.recipe.result.RecipeResult
 import java.io.File
 
 
@@ -33,9 +37,9 @@ internal class RecipeSolverTest {
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult)
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult)
-//        solve.toExcel()
-//        solve1.toExcel()
-//        solve2.toExcel()
+        toExcel(solve)
+//        toExcel(solve1)
+//        toExcel(solve2)
         System.err.println("copt:" + solve.time)
         System.err.println("cbc:" + solve1.time)
         System.err.println("scip:" + solve2.time)
@@ -52,6 +56,16 @@ internal class RecipeSolverTest {
 //        saveRecipe(solve)
 //        saveRecipe(solve1)
 //        saveRecipe(solve2)
+    }
+
+    private fun toExcel(recipeResult: RecipeResult) {
+        val excel = recipeResult.toExcel()
+        if (excel != null) {
+            Runtime.getRuntime().exec(arrayOf("xdg-open", excel.absolutePath))
+        }
+        System.err.println("==================================================")
+        System.err.println(" 耗时：" + recipeResult.time + "ms" + " 结果：" + recipeResult.recipes.size + "个")
+        System.err.println("==================================================")
     }
 
     private fun validate(recipeResult: RecipeResult) {
@@ -79,7 +93,7 @@ internal class RecipeSolverTest {
         Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
     }
 
-    fun json(value: Any, vararg view: Pair<Class<*>, Class<*>>): String {
+    private fun json(value: Any, vararg view: Pair<Class<*>, Class<*>>): String {
         val objectMapper = ObjectMapper()
         objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -92,7 +106,7 @@ internal class RecipeSolverTest {
         return objectMapper.writeValueAsString(value)
     }
 
-    fun saveRecipe(recipeResult: RecipeResult) {
+    private fun saveRecipe(recipeResult: RecipeResult) {
         val recipes = recipeResult.recipes
         val requirement = recipes[0].requirement
         val productName = requirement.productName

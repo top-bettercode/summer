@@ -1,7 +1,6 @@
-package top.bettercode.summer.tools.recipe.data
+package top.bettercode.summer.tools.recipe.result
 
 import top.bettercode.summer.tools.excel.FastExcel
-import top.bettercode.summer.tools.recipe.result.Recipe
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportMaterial
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportRecipe
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportRequirement
@@ -26,11 +25,11 @@ class RecipeResult(val solverName: String) {
     }
 
     // 输出 Excel
-    fun toExcel() {
+    fun toExcel(): File? {
         // 结果输出
         val size = recipes.size
         if (size == 0) {
-            return
+            return null
         }
         val requirement = recipes[0].requirement
         val fileName: String = (requirement.productName + if (requirement.maxMaterialNum <= 0) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxMaterialNum}")
@@ -51,11 +50,7 @@ class RecipeResult(val solverName: String) {
 
             finish()
         }
-
-        Runtime.getRuntime().exec(arrayOf("xdg-open", filePath))
-        System.err.println("==================================================")
-        System.err.println(" 耗时：" + time + "ms" + " 结果：" + size + "个")
-        System.err.println("==================================================")
+        return outFile
     }
 
 }
