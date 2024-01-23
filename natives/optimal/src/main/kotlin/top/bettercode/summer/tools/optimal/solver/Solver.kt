@@ -40,25 +40,43 @@ abstract class Solver(
     abstract fun intVar(lb: Double, ub: Double): IVar
     abstract fun numVar(lb: Double, ub: Double): IVar
     abstract fun Array<out IVar>.ge(lb: Double)
+    abstract fun Iterable<IVar>.ge(lb: Double)
 
     open fun Array<out IVar>.gt(lb: Double) {
         ge(lb + epsilon)
     }
 
+    open fun Iterable<IVar>.gt(lb: Double) {
+        ge(lb + epsilon)
+    }
+
     abstract fun Array<out IVar>.ge(lb: IVar)
+    abstract fun Iterable<IVar>.ge(lb: IVar)
     abstract fun Array<out IVar>.gt(lb: IVar)
+    abstract fun Iterable<IVar>.gt(lb: IVar)
     abstract fun Array<out IVar>.le(ub: Double)
+    abstract fun Iterable<IVar>.le(ub: Double)
 
     open fun Array<out IVar>.lt(ub: Double) {
         le(ub - epsilon)
     }
 
+    open fun Iterable<IVar>.lt(ub: Double) {
+        le(ub - epsilon)
+    }
+
     abstract fun Array<out IVar>.le(ub: IVar)
+    abstract fun Iterable<IVar>.le(ub: IVar)
     abstract fun Array<out IVar>.lt(ub: IVar)
+    abstract fun Iterable<IVar>.lt(ub: IVar)
     abstract fun Array<out IVar>.eq(value: Double)
+    abstract fun Iterable<IVar>.eq(value: Double)
     abstract fun Array<out IVar>.eq(value: IVar)
+    abstract fun Iterable<IVar>.eq(value: IVar)
     abstract fun Array<out IVar>.between(lb: Double, ub: Double)
+    abstract fun Iterable<IVar>.between(lb: Double, ub: Double)
     abstract fun Array<out IVar>.between(lb: IVar, ub: IVar)
+    abstract fun Iterable<IVar>.between(lb: IVar, ub: IVar)
     abstract fun IVar.ge(lb: Double)
 
     open fun IVar.gt(lb: Double) {
@@ -147,13 +165,20 @@ abstract class Solver(
     abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
     abstract fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar)
     abstract fun Array<out IVar>.sum(): IVar
+    abstract fun Iterable<IVar>.sum(): IVar
     abstract fun Array<out IVar>.minimize(): IVar
+    abstract fun Iterable<IVar>.minimize(): IVar
     abstract fun Array<out IVar>.maximize(): IVar
+    abstract fun Iterable<IVar>.maximize(): IVar
 
     /**
      * 最多1个非零变量,至少size-1个零
      */
     open fun Array<out IVar>.atMostOne() {
+        atMost(1)
+    }
+
+    open fun Collection<IVar>.atMostOne() {
         atMost(1)
     }
 
@@ -167,8 +192,20 @@ abstract class Solver(
         }
         val boolVarArray = boolVarArray(count)
         boolVarArray.eq(n.toDouble())
-        for (i in indices) {
-            this[i].eqIfNot(0.0, boolVarArray[i])
+        for ((i, it) in this.withIndex()) {
+            it.eqIfNot(0.0, boolVarArray[i])
+        }
+    }
+
+    open fun Collection<IVar>.atMost(n: Int) {
+        val count = size
+        if (n >= count) {
+            return
+        }
+        val boolVarArray = boolVarArray(count)
+        boolVarArray.eq(n.toDouble())
+        for ((i, it) in this.withIndex()) {
+            it.eqIfNot(0.0, boolVarArray[i])
         }
     }
 
@@ -180,6 +217,10 @@ abstract class Solver(
         atLeast(1, gt)
     }
 
+    fun Collection<IVar>.atLeastOne(gt: Boolean = true) {
+        atLeast(1, gt)
+    }
+
     /**
      * 最少n个非零变量,最多size-n个零
      */
@@ -187,22 +228,42 @@ abstract class Solver(
     open fun Array<out IVar>.atLeast(n: Int, gt: Boolean = true) {
         val count = size
         if (n >= count) {
-            for (i in indices) {
+            for (it in this) {
                 if (gt)
-                    this[i].gt(0.0)
+                    it.gt(0.0)
                 else
-                    this[i].lt(0.0)
+                    it.lt(0.0)
             }
             return
         }
         val boolVarArray = boolVarArray(count)
         boolVarArray.eq(n.toDouble())
-        for (i in indices) {
+        for ((i, it) in this.withIndex()) {
             if (gt)
-                this[i].gtIf(0.0, boolVarArray[i])
+                it.gtIf(0.0, boolVarArray[i])
             else
-                this[i].ltIf(0.0, boolVarArray[i])
+                it.ltIf(0.0, boolVarArray[i])
         }
     }
 
+    open fun Collection<IVar>.atLeast(n: Int, gt: Boolean = true) {
+        val count = size
+        if (n >= count) {
+            for (it in this) {
+                if (gt)
+                    it.gt(0.0)
+                else
+                    it.lt(0.0)
+            }
+            return
+        }
+        val boolVarArray = boolVarArray(count)
+        boolVarArray.eq(n.toDouble())
+        for ((i, it) in this.withIndex()) {
+            if (gt)
+                it.gtIf(0.0, boolVarArray[i])
+            else
+                it.ltIf(0.0, boolVarArray[i])
+        }
+    }
 }

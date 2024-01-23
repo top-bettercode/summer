@@ -126,7 +126,7 @@ class Sequence {
                 /*
        * GET jvmPid
        */
-                mpid.append(name.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0])
+                mpid.append(name.split("@".toRegex()).dropLastWhile { it.isEmpty() }[0])
             }
             /*
      * MAC + PID 的 hashcode 获取16个低位

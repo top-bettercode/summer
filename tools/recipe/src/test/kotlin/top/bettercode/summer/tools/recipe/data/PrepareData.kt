@@ -78,13 +78,13 @@ object PrepareData {
                     row.getCellAsString(notMixMaterialCol)
                             .ifPresent { str: String ->
                                 if (str.isNotBlank()) {
-                                    val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                                    val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }
                                     val typedArray = split.map { s: String ->
-                                        materialIds.filter { it.contains(s) }.toTypedArray().toMaterialIDs()
-                                    }.filter { it.isNotEmpty() }.toTypedArray()
+                                        materialIds.filter { it.contains(s) }.toMaterialIDs()
+                                    }.filter { it.isNotEmpty() }
 
                                     if (typedArray.size > 1) {
-                                        notMixMaterials.add(typedArray)
+                                        notMixMaterials.add(typedArray.toTypedArray())
                                     }
                                 }
                             }
@@ -118,7 +118,7 @@ object PrepareData {
                                 if (str.isNotBlank()) {
                                     val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                                     val key = split[0]
-                                    val array = materialIds.filter { it.contains(key) }.toTypedArray().toMaterialIDs()
+                                    val array = materialIds.filter { it.contains(key) }.toMaterialIDs()
                                     materialIDConstraints[array] = Arrays.copyOfRange(split, 1, split.size).toMaterialIDs()
                                 }
                             }
@@ -147,9 +147,9 @@ object PrepareData {
                     row.getCellAsString(conditionStartCol)
                             .ifPresent { str: String ->
                                 if (str.isNotBlank()) {
-                                    val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                                    val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }
                                     val key = split[0]
-                                    val indicator = RecipeIndicator(id = indicatorNames.indexOf(key), name = key, value = Arrays.copyOfRange(split, 1, split.size).toMaterialIDs())
+                                    val indicator = RecipeIndicator(id = indicatorNames.indexOf(key), name = key, value = Arrays.copyOfRange(split.toTypedArray(), 1, split.size).toMaterialIDs())
                                     materialIDIndicators.add(indicator)
                                 }
                             }
@@ -165,7 +165,7 @@ object PrepareData {
                     row.getCellAsString(conditionCol)
                             .ifPresent { str: String ->
                                 if (str.isNotBlank()) {
-                                    val split = str.split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                                    val split = str.split(" +".toRegex()).dropLastWhile { it.isEmpty() }
                                     if (split.size == 2) {
                                         val condition1 = ofMaterialConstraint(materialIds, split[0])
                                         val condition2 = ofMaterialConstraint(materialIds, split[1])
@@ -221,7 +221,7 @@ object PrepareData {
                 val minUse = rows[minLimitCol]!!
                         .getCellAsNumber(index)
                         .orElseThrow { RuntimeException("找不到用量") }
-                val array = materialIds.filter { it.contains(materialNameFragment) }.toTypedArray().toMaterialIDs()
+                val array = materialIds.filter { it.contains(materialNameFragment) }.toMaterialIDs()
                 materialRangeConstraints[array] = DoubleRange(minUse.toDouble(), maxUse.toDouble())
             }
             index++
@@ -243,8 +243,8 @@ object PrepareData {
                         .replace("氯化钾反应所需(.*)量".toRegex(), "$1")
                 val maxUse = rows[maxLimitCol]!!.getCell(index).value as BigDecimal
                 val minUse = rows[minLimitCol]!!.getCell(index).value as BigDecimal
-                val m1 = materialIds.filter { isNeedLiquidAmmon(materialNameFragment, it) }.toTypedArray()
-                val m2 = materialIds.filter { it == LIQUID_AMMONIA }.toTypedArray()
+                val m1 = materialIds.filter { isNeedLiquidAmmon(materialNameFragment, it) }
+                val m2 = materialIds.filter { it == LIQUID_AMMONIA }
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
                     val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toMaterialIDs().toReplacebleMaterialIDs(AMMONIUM_CARBONATE, LA_2_CAUSE_RATIO)) { HashMap<MaterialIDs, RecipeRelation>() }
@@ -270,8 +270,8 @@ object PrepareData {
                 materialNameFragment = materialNameFragment.replace("反应所需硫酸系数", "").replace("反应需硫酸量系数", "")
                 val maxUse = rows[maxLimitCol]!!.getCell(index).value as BigDecimal
                 val minUse = rows[minLimitCol]!!.getCell(index).value as BigDecimal
-                val m1 = materialIds.filter { it.contains(materialNameFragment) }.toTypedArray()
-                val m2 = materialIds.filter { it == SULFURIC_ACID }.toTypedArray()
+                val m1 = materialIds.filter { it.contains(materialNameFragment) }
+                val m2 = materialIds.filter { it == SULFURIC_ACID }
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
                     val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toReplacebleMaterialIDs()) { HashMap<MaterialIDs, RecipeRelation>() }
@@ -313,8 +313,8 @@ object PrepareData {
     }
 
     private fun ofMaterialConstraint(materialsNames: List<String>, desc: String): MaterialCondition {
-        val split = desc.split(">=|<=|=|!=|>|<".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val materials = materialsNames.filter { it.contains(split[0]) }.toTypedArray().toMaterialIDs()
+        val split = desc.split(">=|<=|=|!=|>|<".toRegex()).dropLastWhile { it.isEmpty() }
+        val materials = materialsNames.filter { it.contains(split[0]) }.toMaterialIDs()
         val value = split[1].toDouble()
         val typeStr = desc.substringAfter(split[0]).substringBeforeLast(split[1])
         val op = when (typeStr) {
@@ -524,7 +524,7 @@ object PrepareData {
         val costLines = readLines("/$productName/原料价格.txt")
         val costMap: MutableMap<String, Double> = HashMap()
         for (i in 1 until costLines.size) {
-            val split = costLines[i].split(" +".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val split = costLines[i].split(" +".toRegex()).dropLastWhile { it.isEmpty() }
             costMap[split[0]] = split[1].toDouble()
         }
 

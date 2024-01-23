@@ -71,14 +71,14 @@ object MultiRecipeSolver {
                         recipeMaterials.map { (_, material) ->
                             val value = material.totalNutrient()
                             material.solutionVar.coeff(value)
-                        }.toTypedArray().eq(totalNutrient)
+                        }.eq(totalNutrient)
                     }
                     // 添加价格约束，约束下一个解的范围
                     // 前十个每3元价差一推，后十个每5元价差一推。
                     recipeMaterials.map { (_, material) ->
                         val price = material.price
                         material.solutionVar.coeff(price)
-                    }.toTypedArray().ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
+                    }.ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
                 } else {
                     log.error("Could not find optimal solution:${getResultStatus()}")
                     return recipeResult

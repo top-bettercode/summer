@@ -30,7 +30,7 @@ class JsonEmbeddedIdTest {
         constructor()
         constructor(key: String) {
             Assert.hasText(key, "key不能为空")
-            val split = key.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val split = key.split(",".toRegex()).dropLastWhile { it.isEmpty() }
             Assert.isTrue(split.size == 2, "key格式不对")
             id = split[0]
             this.key = split[1]

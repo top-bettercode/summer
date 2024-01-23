@@ -81,8 +81,8 @@ constructor(private val formatExpression: String? = null,
                 }
             } else {
                 val path = v
-                val split = path.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                genCollection(path, gen, mapper, Arrays.stream(split))
+                val split = path.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
+                genCollection(path, gen, mapper, split.stream())
             }
         } else if (type.isArray) {
             val array = v as Array<*>

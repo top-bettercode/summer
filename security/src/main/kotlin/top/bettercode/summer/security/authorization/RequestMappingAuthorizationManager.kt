@@ -163,18 +163,18 @@ class RequestMappingAuthorizationManager(
             val ress = resource.ress
             val configAttribute = resource.mark.trim { it <= ' ' }
             Assert.hasText(configAttribute, "权限标记不能为空")
-            for (api in ress.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+            for (api in ress.split(",".toRegex()).dropLastWhile { it.isEmpty() }) {
                 if (api.contains(":")) {
-                    val methodUrl = api.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val methodUrl = api.split(":".toRegex()).dropLastWhile { it.isEmpty() }
                     val method = methodUrl[0].uppercase(Locale.getDefault())
                     val url = methodUrl[1]
-                    for (u in url.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+                    for (u in url.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }) {
                         val urlMatcher = AntPathRequestMatcher(u)
                         if (method.isNotBlank()) {
                             Assert.isNull(configAuthorities[urlMatcher],
                                     "\"" + u + "\"对应RequestMapping不包含请求方法描述，请使用通用路径\"" + u
                                             + "\"配置权限")
-                            for (m in method.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+                            for (m in method.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }) {
                                 val authorities = configAuthorities.computeIfAbsent(
                                         AntPathRequestMatcher(u, m)) { _: AntPathRequestMatcher? -> HashSet() }
                                 authorities.add(configAttribute)
@@ -186,7 +186,7 @@ class RequestMappingAuthorizationManager(
                         }
                     }
                 } else {
-                    for (u in api.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+                    for (u in api.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }) {
                         val authorities = configAuthorities.computeIfAbsent(
                                 AntPathRequestMatcher(u)) { _: AntPathRequestMatcher? -> HashSet() }
                         authorities.add(configAttribute)

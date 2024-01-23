@@ -132,7 +132,19 @@ open class CPExtSolver @JvmOverloads constructor(
         numConstraints++
     }
 
+    override fun Iterable<IVar>.ge(lb: Double) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addGreaterOrEqual(sumExpr, times(lb))
+        numConstraints++
+    }
+
     override fun Array<out IVar>.gt(lb: Double) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addGreaterThan(sumExpr, times(lb))
+        numConstraints++
+    }
+
+    override fun Iterable<IVar>.gt(lb: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
         model.addGreaterThan(sumExpr, times(lb))
         numConstraints++
@@ -148,8 +160,20 @@ open class CPExtSolver @JvmOverloads constructor(
         numConstraints++
     }
 
+    override fun Iterable<IVar>.ge(lb: IVar) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addGreaterOrEqual(sumExpr, times(lb))
+        numConstraints++
+    }
+
 
     override fun Array<out IVar>.gt(lb: IVar) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addGreaterThan(sumExpr, times(lb))
+        numConstraints++
+    }
+
+    override fun Iterable<IVar>.gt(lb: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
         model.addGreaterThan(sumExpr, times(lb))
         numConstraints++
@@ -161,7 +185,19 @@ open class CPExtSolver @JvmOverloads constructor(
         numConstraints++
     }
 
+    override fun Iterable<IVar>.le(ub: Double) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addLessOrEqual(sumExpr, times(ub))
+        numConstraints++
+    }
+
     override fun Array<out IVar>.lt(ub: Double) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addLessThan(sumExpr, times(ub))
+        numConstraints++
+    }
+
+    override fun Iterable<IVar>.lt(ub: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
         model.addLessThan(sumExpr, times(ub))
         numConstraints++
@@ -177,7 +213,19 @@ open class CPExtSolver @JvmOverloads constructor(
         numConstraints++
     }
 
+    override fun Iterable<IVar>.le(ub: IVar) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addLessOrEqual(sumExpr, times(ub))
+        numConstraints++
+    }
+
     override fun Array<out IVar>.lt(ub: IVar) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addLessThan(sumExpr, times(ub))
+        numConstraints++
+    }
+
+    override fun Iterable<IVar>.lt(ub: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
         model.addLessThan(sumExpr, times(ub))
         numConstraints++
@@ -189,7 +237,19 @@ open class CPExtSolver @JvmOverloads constructor(
         numConstraints++
     }
 
+    override fun Iterable<IVar>.eq(value: Double) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addEquality(sumExpr, times(value))
+        numConstraints++
+    }
+
     override fun Array<out IVar>.eq(value: IVar) {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        model.addEquality(sumExpr, times(value))
+        numConstraints++
+    }
+
+    override fun Iterable<IVar>.eq(value: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
         model.addEquality(sumExpr, times(value))
         numConstraints++
@@ -203,12 +263,22 @@ open class CPExtSolver @JvmOverloads constructor(
         this.le(ub)
     }
 
+    override fun Iterable<IVar>.between(lb: Double, ub: Double) {
+        this.ge(lb)
+        this.le(ub)
+    }
+
     /**
      * lb<=this<=ub
      * this-lb>=0
      * this-ub<=0
      */
     override fun Array<out IVar>.between(lb: IVar, ub: IVar) {
+        this.ge(lb)
+        this.le(ub)
+    }
+
+    override fun Iterable<IVar>.between(lb: IVar, ub: IVar) {
         this.ge(lb)
         this.le(ub)
     }
@@ -441,13 +511,34 @@ open class CPExtSolver @JvmOverloads constructor(
         return CPVar(_delegate = delegate, times = times, solver = solver)
     }
 
+    override fun Iterable<IVar>.sum(): IVar {
+        val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
+        val sum = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        val delegate = sum.getDelegate<IntVar>()
+        model.addEquality(sumExpr, delegate)
+        numConstraints++
+        return CPVar(_delegate = delegate, times = times, solver = solver)
+    }
+
     override fun Array<out IVar>.minimize(): IVar {
         val sum = sum()
         model.minimize(sum.getDelegate<IntVar>())
         return sum
     }
 
+    override fun Iterable<IVar>.minimize(): IVar {
+        val sum = sum()
+        model.minimize(sum.getDelegate<IntVar>())
+        return sum
+    }
+
     override fun Array<out IVar>.maximize(): IVar {
+        val sum = sum()
+        model.maximize(sum.getDelegate<IntVar>())
+        return sum
+    }
+
+    override fun Iterable<IVar>.maximize(): IVar {
         val sum = sum()
         model.maximize(sum.getDelegate<IntVar>())
         return sum
@@ -461,30 +552,65 @@ open class CPExtSolver @JvmOverloads constructor(
         val boolVarArray = boolVarArray(count)
         val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
         model.addEquality(sumExpr, n.toLong())
-        for (i in indices) {
-            this[i].eqIfNot(0.0, boolVarArray[i])
+        for ((i, it) in this.withIndex()) {
+            it.eqIfNot(0.0, boolVarArray[i])
+        }
+    }
+
+    override fun Collection<IVar>.atMost(n: Int) {
+        val count = size
+        if (n >= count) {
+            return
+        }
+        val boolVarArray = boolVarArray(count)
+        val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
+        model.addEquality(sumExpr, n.toLong())
+        for ((i, it) in this.withIndex()) {
+            it.eqIfNot(0.0, boolVarArray[i])
         }
     }
 
     override fun Array<out IVar>.atLeast(n: Int, gt: Boolean) {
         val count = size
         if (n >= count) {
-            for (i in indices) {
+            for (it in this) {
                 if (gt)
-                    this[i].gt(0.0)
+                    it.gt(0.0)
                 else
-                    this[i].lt(0.0)
+                    it.lt(0.0)
             }
             return
         }
         val boolVarArray = boolVarArray(count)
         val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
         model.addEquality(sumExpr, n.toLong())
-        for (i in indices) {
+        for ((i, it) in this.withIndex()) {
             if (gt)
-                this[i].gtIf(0.0, boolVarArray[i])
+                it.gtIf(0.0, boolVarArray[i])
             else
-                this[i].ltIf(0.0, boolVarArray[i])
+                it.ltIf(0.0, boolVarArray[i])
+        }
+    }
+
+    override fun Collection<IVar>.atLeast(n: Int, gt: Boolean) {
+        val count = size
+        if (n >= count) {
+            for (it in this) {
+                if (gt)
+                    it.gt(0.0)
+                else
+                    it.lt(0.0)
+            }
+            return
+        }
+        val boolVarArray = boolVarArray(count)
+        val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
+        model.addEquality(sumExpr, n.toLong())
+        for ((i, it) in this.withIndex()) {
+            if (gt)
+                it.gtIf(0.0, boolVarArray[i])
+            else
+                it.ltIf(0.0, boolVarArray[i])
         }
     }
 }

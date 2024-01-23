@@ -456,8 +456,8 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         val cacheKey = CacheKey()
         cacheKey.update(resultMapping)
         if (columns != null && names != null) {
-            val columnsArray = columns.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val namesArray = names.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val columnsArray = columns.split(",".toRegex()).dropLastWhile { it.isEmpty() }
+            val namesArray = names.split(",".toRegex()).dropLastWhile { it.isEmpty() }
             for (i in columnsArray.indices) {
                 val value: Any? = rs.getString(columnsArray[i])
                 if (value != null) {

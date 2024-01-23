@@ -54,8 +54,8 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
                 gen.writeStringField(urlFieldName, qvodClient.antiLeechUrl(url))
             } else {
                 val split =
-                        value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                genCollection(value, gen, fieldName, Arrays.stream(split))
+                        value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
+                genCollection(value, gen, fieldName, split.stream())
             }
         } else if (value is Array<*>) {
             genCollection(value, gen, fieldName, Arrays.stream(value))

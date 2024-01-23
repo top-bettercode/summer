@@ -355,7 +355,7 @@ object StringUtil {
     private fun splitWorker(
             str: String?, separatorChars: String?, max: Int,
             preserveAllTokens: Boolean
-    ): Array<String>? {
+    ): List<String>? {
         // Performance tuned for 2.0 (JDK1.4)
         // Direct code is quicker than StringTokenizer.
         // Also, StringTokenizer uses isSpace() not isWhitespace()
@@ -365,7 +365,7 @@ object StringUtil {
         }
         val len = str.length
         if (len == 0) {
-            return arrayOf()
+            return emptyList()
         }
         val list = ArrayList<String>()
         var sizePlus1 = 1
@@ -438,7 +438,7 @@ object StringUtil {
         if (match || preserveAllTokens && lastMatch) {
             list.add(str.substring(start, i))
         }
-        return list.toTypedArray()
+        return list
     }
 
     /**

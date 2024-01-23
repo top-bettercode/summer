@@ -116,11 +116,26 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
+    override fun Iterable<IVar>.ge(lb: Double) {
+        val constraint = solver.makeConstraint(lb, Double.POSITIVE_INFINITY)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
     /**
      * this>=lb
      * this-lb>=0
      */
     override fun Array<out IVar>.ge(lb: IVar) {
+        val constraint = solver.makeConstraint(0.0, Double.POSITIVE_INFINITY)
+        constraint.setCoefficient(lb.getDelegate(), -lb.coeff)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
+    override fun Iterable<IVar>.ge(lb: IVar) {
         val constraint = solver.makeConstraint(0.0, Double.POSITIVE_INFINITY)
         constraint.setCoefficient(lb.getDelegate(), -lb.coeff)
         for (v in this) {
@@ -136,7 +151,22 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
+    override fun Iterable<IVar>.gt(lb: IVar) {
+        val constraint = solver.makeConstraint(epsilon, Double.POSITIVE_INFINITY)
+        constraint.setCoefficient(lb.getDelegate(), -lb.coeff)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
     override fun Array<out IVar>.le(ub: Double) {
+        val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, ub)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
+    override fun Iterable<IVar>.le(ub: Double) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, ub)
         for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
@@ -155,7 +185,23 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
+    override fun Iterable<IVar>.le(ub: IVar) {
+        val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, 0.0)
+        constraint.setCoefficient(ub.getDelegate(), -ub.coeff)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
     override fun Array<out IVar>.lt(ub: IVar) {
+        val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, -epsilon)
+        constraint.setCoefficient(ub.getDelegate(), -ub.coeff)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
+    override fun Iterable<IVar>.lt(ub: IVar) {
         val constraint = solver.makeConstraint(Double.NEGATIVE_INFINITY, -epsilon)
         constraint.setCoefficient(ub.getDelegate(), -ub.coeff)
         for (v in this) {
@@ -170,7 +216,22 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
+    override fun Iterable<IVar>.eq(value: Double) {
+        val constraint = solver.makeConstraint(value, value)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
     override fun Array<out IVar>.eq(value: IVar) {
+        val constraint = solver.makeConstraint(0.0, 0.0)
+        constraint.setCoefficient(value.getDelegate(), -value.coeff)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
+    override fun Iterable<IVar>.eq(value: IVar) {
         val constraint = solver.makeConstraint(0.0, 0.0)
         constraint.setCoefficient(value.getDelegate(), -value.coeff)
         for (v in this) {
@@ -188,12 +249,24 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
+    override fun Iterable<IVar>.between(lb: Double, ub: Double) {
+        val constraint = solver.makeConstraint(lb, ub)
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+    }
+
     /**
      * lb<=this<=ub
      * this-lb>=0
      * this-ub<=0
      */
     override fun Array<out IVar>.between(lb: IVar, ub: IVar) {
+        this.ge(lb)
+        this.le(ub)
+    }
+
+    override fun Iterable<IVar>.between(lb: IVar, ub: IVar) {
         this.ge(lb)
         this.le(ub)
     }
@@ -391,8 +464,19 @@ open class MPExtSolver @JvmOverloads constructor(
 
         val constraint = solver.makeConstraint(0.0, 0.0)
         constraint.setCoefficient(sum, -1.0)
-        for (i in this.indices) {
-            val v = this[i]
+        for (v in this) {
+            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        }
+        return MPVar(sum)
+    }
+
+    override fun Iterable<IVar>.sum(): IVar {
+        val numVariables = numVariables()
+        val sum = solver.makeNumVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, "n" + (numVariables + 1))
+
+        val constraint = solver.makeConstraint(0.0, 0.0)
+        constraint.setCoefficient(sum, -1.0)
+        for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
         return MPVar(sum)
@@ -400,8 +484,17 @@ open class MPExtSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.minimize(): IVar {
         val objective = solver.objective()
-        for (i in this.indices) {
-            val v = this[i]
+        for (v in this) {
+            objective.setCoefficient(v.getDelegate(), v.coeff)
+        }
+
+        objective.setMinimization()
+        return MPObjectiveVar(objective)
+    }
+
+    override fun Iterable<IVar>.minimize(): IVar {
+        val objective = solver.objective()
+        for (v in this) {
             objective.setCoefficient(v.getDelegate(), v.coeff)
         }
 
@@ -411,8 +504,17 @@ open class MPExtSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.maximize(): IVar {
         val objective = solver.objective()
-        for (i in this.indices) {
-            val v = this[i]
+        for (v in this) {
+            objective.setCoefficient(v.getDelegate(), v.coeff)
+        }
+
+        objective.setMaximization()
+        return MPObjectiveVar(objective)
+    }
+
+    override fun Iterable<IVar>.maximize(): IVar {
+        val objective = solver.objective()
+        for (v in this) {
             objective.setCoefficient(v.getDelegate(), v.coeff)
         }
 

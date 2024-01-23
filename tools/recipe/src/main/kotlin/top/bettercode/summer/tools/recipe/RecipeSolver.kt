@@ -57,7 +57,7 @@ object RecipeSolver {
             RecipeMaterialVar(it.value, SolutionVar(delegate = numVar(0.0, targetWeight)))
         }
 
-        val materialVars = recipeMaterials.values.map { it.solutionVar }.toTypedArray()
+        val materialVars = recipeMaterials.values.map { it.solutionVar }
 
         // 进料口数量
         if (numMaxMaterials in 1 until numRawMaterials) {
@@ -72,10 +72,10 @@ object RecipeSolver {
             //一组变量至多有一个变量可取非零值
             val noMixedVars = notMixedMaterial
                     .map { materialIDs: MaterialIDs ->
-                        val vars = materialIDs.mapNotNull { recipeMaterials[it]?.solutionVar }.toTypedArray()
+                        val vars = materialIDs.mapNotNull { recipeMaterials[it]?.solutionVar }
                         if (vars.isEmpty()) return@map null
                         vars.sum()
-                    }.filterNotNull().toTypedArray()
+                    }.filterNotNull()
             noMixedVars.atMostOne()
         }
 
@@ -93,7 +93,7 @@ object RecipeSolver {
             val material = it.value
             val indicators = material.indicators
             it.value.solutionVar.coeff(1 - indicators.waterValue)
-        }.toTypedArray()
+        }
                 .between(minDryWeight, maxDryWeight)
 
         // 添加成份约束条件
@@ -108,13 +108,13 @@ object RecipeSolver {
                     val material = it.value
                     val coeff = material.indicators.valueOf(indicator.otherId!!)
                     it.value.solutionVar.coeff(coeff)
-                }.toTypedArray().sum()
+                }.sum()
 
                 val itVar = recipeMaterials.map {
                     val material = it.value
                     val coeff = material.indicators.valueOf(indicator.itId!!)
                     it.value.solutionVar.coeff(coeff)
-                }.toTypedArray().sum()
+                }.sum()
 
                 val minRate = indicator.value.min
                 val maxRate = indicator.value.max
@@ -125,7 +125,7 @@ object RecipeSolver {
                     val indicators = material.indicators
                     val coeff = indicators.valueOf(indicator.id)
                     material.solutionVar.coeff(coeff)
-                }.toTypedArray()
+                }
                         .between(targetWeight * range.min, targetWeight * range.max)
             }
         }
@@ -135,7 +135,7 @@ object RecipeSolver {
         val materialRangeConstraints = requirement.materialRangeConstraints
         materialRangeConstraints.forEach { (t, u) ->
             t.mapNotNull { recipeMaterials[it]?.solutionVar }
-                    .toTypedArray()
+
                     .between(u.min, u.max)
         }
 
@@ -199,15 +199,15 @@ object RecipeSolver {
                     }
                 }
             }
-            normalVars.toTypedArray().between(normalMinVars.toTypedArray().sum(), normalMaxVars.toTypedArray().sum())
-            overdoseVars.toTypedArray().between(overdoseMinVars.toTypedArray().sum(), overdoseMaxVars.toTypedArray().sum())
+            normalVars.between(normalMinVars.sum(), normalMaxVars.sum())
+            overdoseVars.between(overdoseMinVars.sum(), overdoseMaxVars.sum())
         }
 
 
         // 条件约束
         requirement.materialConditions.forEach { (whenCondition, thenCondition) ->
-            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.toTypedArray().sum()
-            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.toTypedArray().sum()
+            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.sum()
+            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.sum()
             val boolVar = boolVar()
             val whenCon = whenCondition.condition
             when (whenCon.operator) {
@@ -249,7 +249,7 @@ object RecipeSolver {
         // 定义目标函数：最小化成本
         val objective = recipeMaterials.values.map {
             it.solutionVar.coeff(it.price)
-        }.toTypedArray().minimize()
+        }.minimize()
 
         return recipeMaterials to objective
     }

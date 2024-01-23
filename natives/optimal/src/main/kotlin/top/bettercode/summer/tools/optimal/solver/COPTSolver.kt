@@ -130,7 +130,25 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
     }
 
+    override fun Iterable<IVar>.ge(lb: Double) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+    }
+
     override fun Array<out IVar>.ge(lb: IVar) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+    }
+
+    override fun Iterable<IVar>.ge(lb: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -149,6 +167,16 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
     }
 
+    override fun Iterable<IVar>.gt(lb: IVar) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        expr.addConstant(-epsilon)
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+    }
+
     override fun Array<out IVar>.le(ub: Double) {
         val expr = copt.Expr()
         for (v in this) {
@@ -158,7 +186,25 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
     }
 
+    override fun Iterable<IVar>.le(ub: Double) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
+    }
+
     override fun Array<out IVar>.le(ub: IVar) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+    }
+
+    override fun Iterable<IVar>.le(ub: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -177,6 +223,16 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
     }
 
+    override fun Iterable<IVar>.lt(ub: IVar) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        expr.addConstant(epsilon)
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+    }
+
     override fun Array<out IVar>.eq(value: Double) {
         val expr = copt.Expr()
         for (v in this) {
@@ -186,7 +242,25 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (size + 1))
     }
 
+    override fun Iterable<IVar>.eq(value: Double) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (size + 1))
+    }
+
     override fun Array<out IVar>.eq(value: IVar) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.EQUAL, expr(value), "c" + (size + 1))
+    }
+
+    override fun Iterable<IVar>.eq(value: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -208,10 +282,30 @@ class COPTSolver @JvmOverloads constructor(
         model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 2))
     }
 
+    override fun Iterable<IVar>.between(lb: Double, ub: Double) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 2))
+    }
+
     /**
      * 两数之间
      */
     override fun Array<out IVar>.between(lb: IVar, ub: IVar) {
+        val expr = copt.Expr()
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 2))
+    }
+
+    override fun Iterable<IVar>.between(lb: IVar, ub: IVar) {
         val expr = copt.Expr()
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
@@ -403,9 +497,20 @@ class COPTSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.sum(): IVar {
         val expr = copt.Expr()
-        for (i in this.indices) {
-            val v = this[i]
-            expr.addTerm(v.getDelegate(), v.coeff)
+        for (it in this) {
+            expr.addTerm(it.getDelegate(), it.coeff)
+        }
+        val numVariables = numVariables()
+        val sum = model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
+        return COPTVar(sum)
+    }
+
+    override fun Iterable<IVar>.sum(): IVar {
+        val expr = copt.Expr()
+        for (it in this) {
+            expr.addTerm(it.getDelegate(), it.coeff)
         }
         val numVariables = numVariables()
         val sum = model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
@@ -416,8 +521,16 @@ class COPTSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.minimize(): IVar {
         val expr = copt.Expr()
-        for (i in this.indices) {
-            val v = this[i]
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        model.setObjective(expr, copt.Consts.MINIMIZE)
+        return COPTExprVar(expr)
+    }
+
+    override fun Iterable<IVar>.minimize(): IVar {
+        val expr = copt.Expr()
+        for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         model.setObjective(expr, copt.Consts.MINIMIZE)
@@ -426,8 +539,16 @@ class COPTSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.maximize(): IVar {
         val expr = copt.Expr()
-        for (i in this.indices) {
-            val v = this[i]
+        for (v in this) {
+            expr.addTerm(v.getDelegate(), v.coeff)
+        }
+        model.setObjective(expr, copt.Consts.MAXIMIZE)
+        return COPTExprVar(expr)
+    }
+
+    override fun Iterable<IVar>.maximize(): IVar {
+        val expr = copt.Expr()
+        for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         model.setObjective(expr, copt.Consts.MAXIMIZE)
@@ -440,4 +561,9 @@ class COPTSolver @JvmOverloads constructor(
         model.addSos(varArry, weights, copt.Consts.SOS_TYPE1)
     }
 
+    override fun Collection<IVar>.atMostOne() {
+        val varArry: Array<copt.Var> = this.map { it.getDelegate<copt.Var>() }.toTypedArray()
+        val weights = this.map { it.coeff }.toTypedArray().toDoubleArray()
+        model.addSos(varArry, weights, copt.Consts.SOS_TYPE1)
+    }
 }

@@ -38,8 +38,8 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
                 gen.writeStringField("${fieldName}Thumb", process(value))
             } else {
                 val split =
-                        value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                genCollection(gen, fieldName, Arrays.stream(split))
+                        value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
+                genCollection(gen, fieldName, split.stream())
             }
         } else if (value is Array<*>) {
             genCollection(gen, fieldName, Arrays.stream(value))

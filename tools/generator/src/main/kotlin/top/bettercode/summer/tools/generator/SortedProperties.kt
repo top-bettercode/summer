@@ -47,7 +47,7 @@ class SortedProperties
         val baos = ByteArrayOutputStream()
         super.store(baos, if (omitComments) null else comments)
         val contents = baos.toString(StandardCharsets.ISO_8859_1.name())
-        for (line in contents.split(EOL).toTypedArray()) {
+        for (line in contents.split(EOL)) {
             if (!(omitComments && line.startsWith("#"))) {
                 out.write((line + EOL).toByteArray(StandardCharsets.ISO_8859_1))
             }
@@ -59,7 +59,7 @@ class SortedProperties
         val stringWriter = StringWriter()
         super.store(stringWriter, if (omitComments) null else comments)
         val contents = stringWriter.toString()
-        for (line in contents.split(EOL).toTypedArray()) {
+        for (line in contents.split(EOL)) {
             if (!(omitComments && line.startsWith("#"))) {
                 writer.write(line + EOL)
             }

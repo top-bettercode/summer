@@ -120,7 +120,7 @@ open class PackageScanClassResolver @JvmOverloads constructor(classLoader: Class
     protected fun addFoundClass(type: Class<*>) {
         if (type.getPackage() != null) {
             val packageName = type.getPackage().name
-            val packageNameParts = listOf(*packageName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            val packageNameParts = packageName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }
             for (i in packageNameParts.indices) {
                 val thisPackage = packageNameParts.subList(0, i + 1).joinToString("/")
                 addFoundClass(thisPackage, type)
