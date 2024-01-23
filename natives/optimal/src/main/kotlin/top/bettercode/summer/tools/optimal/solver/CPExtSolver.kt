@@ -114,12 +114,6 @@ open class CPExtSolver @JvmOverloads constructor(
         return CPVar(_delegate = model.newBoolVar("b" + (numVariables + 1)), times = 0, solver = solver)
     }
 
-    override fun boolVar(lb: Double, ub: Double): IVar {
-        val numVariables = numVariables()
-        this.numVariables++
-        return CPVar(_delegate = model.newIntVar(lb.toLong(), ub.toLong(), "b" + (numVariables + 1)), times = 0, solver = solver)
-    }
-
     override fun intVar(lb: Double, ub: Double): IVar {
         val numVariables = numVariables()
         this.numVariables++
