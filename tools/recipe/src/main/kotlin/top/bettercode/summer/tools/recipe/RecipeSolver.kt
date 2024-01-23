@@ -18,7 +18,7 @@ object RecipeSolver {
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
     fun solve(solverType: SolverType, requirement: RecipeRequirement): Recipe? {
-        SolverFactory.createSolver(solverType).apply {
+        SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight).apply {
             val s = System.currentTimeMillis()
             val (recipeMaterials, objective) = prepare(requirement)
             // 求解
