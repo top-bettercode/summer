@@ -33,7 +33,7 @@ internal class RecipeSolverTest {
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult)
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult)
-        solve.toExcel()
+//        solve.toExcel()
 //        solve1.toExcel()
 //        solve2.toExcel()
         System.err.println("copt:" + solve.time)
@@ -64,7 +64,7 @@ internal class RecipeSolverTest {
 
         val expectedRequirement = RecipeResult::class.java.getResourceAsStream("/recipe/$productName/requirement.json")!!.bufferedReader().readText()
         //配方要求
-        Assertions.assertEquals(expectedRequirement, json(requirement, RecipeRequirement::class.java to RecipeRequirementView::class.java))
+        Assertions.assertEquals(expectedRequirement, json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java))
         //配方
         val dir = "recipe/$productName/${recipeResult.solverName}"
         recipes.forEachIndexed { index, recipe ->
@@ -99,7 +99,7 @@ internal class RecipeSolverTest {
         val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe/$productName")
         dir.mkdirs()
         //配方要求
-        File("$dir/requirement.json").writeText(json(requirement, RecipeRequirement::class.java to RecipeRequirementView::class.java))
+        File("$dir/requirement.json").writeText(json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java))
         //配方
         recipes.forEachIndexed { index, recipe ->
             File("$dir/${recipeResult.solverName}/配方${index + 1}.json").writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
