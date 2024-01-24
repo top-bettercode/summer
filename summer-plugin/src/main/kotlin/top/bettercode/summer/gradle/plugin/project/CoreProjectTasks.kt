@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
+import com.fasterxml.jackson.databind.JsonNode
 import isCore
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -13,6 +14,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.StringUtil
 import java.util.*
 
 
@@ -226,6 +228,22 @@ object CoreProjectTasks {
                     }
                 })
             }
+
+            create("printAuthCode") {
+                it.group = GeneratorPlugin.PRINT_GROUP
+                it.doLast(object : Action<Task> {
+                    override fun execute(t: Task) {
+                        val file = project.rootProject.file("conf/auth.json")
+                        val map = StringUtil.readJsonTree(file.readText())
+                        project.logger.lifecycle("======================================")
+                        map.forEach { node ->
+                            printNode(project, node)
+                        }
+                        project.logger.lifecycle("======================================")
+                    }
+                })
+            }
+
             create("genErrorCode") { t ->
                 t.group = GeneratorPlugin.GEN_GROUP
                 t.doLast(object : Action<Task> {
@@ -289,6 +307,14 @@ object CoreProjectTasks {
             }
         }
 
+    }
+
+    private fun printNode(project: Project, node: JsonNode) {
+        project.logger.lifecycle("auth.${node.get("id").intValue()}=${node.get("name").asText()}")
+        val jsonNode = node.get("children")
+        if (!jsonNode.isEmpty) {
+            jsonNode.forEach { printNode(project, it) }
+        }
     }
 
     private fun findReadName(lines: List<String>, i: Int): String {
