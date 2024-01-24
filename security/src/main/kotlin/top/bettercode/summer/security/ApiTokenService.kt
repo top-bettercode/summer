@@ -50,41 +50,41 @@ class ApiTokenService(
     }
 
     @JvmOverloads
-    fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, username: String): IAccessToken {
+    fun getAccessToken(clientId: String = defaultClientId, scope: Set<String>, username: String): IAccessToken {
         val userDetails = getUserDetails(clientId, scope, username)
         return getAccessToken(clientId, scope, userDetails, validate(clientId, scope, userDetails))
     }
 
     @JvmOverloads
-    fun getAccessToken(clientId: String = getClientId(), scope: String, username: String): IAccessToken {
+    fun getAccessToken(clientId: String = defaultClientId, scope: String, username: String): IAccessToken {
         return getAccessToken(clientId, setOf(scope), username)
     }
 
     @JvmOverloads
-    fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, username: String, loginKickedOut: Boolean): IAccessToken {
+    fun getAccessToken(clientId: String = defaultClientId, scope: Set<String>, username: String, loginKickedOut: Boolean): IAccessToken {
         val userDetails = getUserDetails(clientId, scope, username)
         return getAccessToken(clientId, scope, userDetails, loginKickedOut)
     }
 
     @JvmOverloads
-    fun getAccessToken(clientId: String = getClientId(), scope: String, username: String, loginKickedOut: Boolean): IAccessToken {
+    fun getAccessToken(clientId: String = defaultClientId, scope: String, username: String, loginKickedOut: Boolean): IAccessToken {
         return getAccessToken(clientId, setOf(scope), username, loginKickedOut)
     }
 
     @JvmOverloads
-    fun getAccessToken(clientId: String = getClientId(), scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): IAccessToken {
+    fun getAccessToken(clientId: String = defaultClientId, scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): IAccessToken {
         val storeToken = getStoreToken(clientId, scope, userDetails, loginKickedOut)
         storeTokenRepository.save(storeToken)
         return accessTokenConverter.convert(storeToken)
     }
 
     @JvmOverloads
-    fun getAccessToken(clientId: String = getClientId(), scope: String, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, setOf(scope), userDetails)): IAccessToken {
+    fun getAccessToken(clientId: String = defaultClientId, scope: String, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, setOf(scope), userDetails)): IAccessToken {
         return getAccessToken(clientId, setOf(scope), userDetails, loginKickedOut)
     }
 
     @JvmOverloads
-    fun refreshUserDetails(clientId: String = getClientId(), scope: Set<String>, oldUsername: String, newUsername: String) {
+    fun refreshUserDetails(clientId: String = defaultClientId, scope: Set<String>, oldUsername: String, newUsername: String) {
         val oldUserDetails = getUserDetails(clientId, scope, oldUsername)
         val apiToken = getStoreToken(clientId, scope, oldUserDetails, false)
         apiToken.userDetails = getUserDetails(clientId, scope, newUsername)
@@ -92,33 +92,26 @@ class ApiTokenService(
     }
 
     @JvmOverloads
-    fun refreshUserDetails(clientId: String = getClientId(), scope: String, username: String) {
+    fun refreshUserDetails(clientId: String = defaultClientId, scope: String, username: String) {
         refreshUserDetails(clientId, setOf(scope), username)
     }
 
     @JvmOverloads
-    fun refreshUserDetails(clientId: String = getClientId(), scope: Set<String>, username: String) {
+    fun refreshUserDetails(clientId: String = defaultClientId, scope: Set<String>, username: String) {
         val userDetails = getUserDetails(clientId, scope, username)
         getAccessToken(clientId, scope, userDetails)
     }
 
     @JvmOverloads
-    fun getStoreToken(clientId: String = getClientId(), scope: String, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, setOf(scope), userDetails)): StoreToken {
+    fun getStoreToken(clientId: String = defaultClientId, scope: String, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, setOf(scope), userDetails)): StoreToken {
         return getStoreToken(clientId, setOf(scope), userDetails, loginKickedOut)
     }
 
 
     @JvmOverloads
-    fun getStoreToken(clientId: String = getClientId(), scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): StoreToken {
+    fun getStoreToken(clientId: String = defaultClientId, scope: Set<String>, userDetails: UserDetails, loginKickedOut: Boolean = validate(clientId, scope, userDetails)): StoreToken {
         val clientDetails = getClientDetails(clientId)
-        val isScopeClientId = securityProperties.isScopeClientId && clientDetailsService.isSingleClient
-        //兼容
-        val tokenId =
-                if (isScopeClientId && scope.isNotEmpty()) {
-                    TokenId(clientId = scope.joinToString(","), username = userDetails.username)
-                } else {
-                    TokenId(clientId = clientId, username = userDetails.username)
-                }
+        val tokenId = TokenId(clientId = clientId, scope = scope, username = userDetails.username)
 
         var storeToken: StoreToken?
         if (loginKickedOut) {
@@ -148,12 +141,12 @@ class ApiTokenService(
     }
 
     @JvmOverloads
-    fun getUserDetails(clientId: String = getClientId(), scope: String, username: String): UserDetails {
+    fun getUserDetails(clientId: String = defaultClientId, scope: String, username: String): UserDetails {
         return getUserDetails(clientId, setOf(scope), username)
     }
 
     @JvmOverloads
-    fun getUserDetails(clientId: String = getClientId(), scope: Set<String>, username: String): UserDetails {
+    fun getUserDetails(clientId: String = defaultClientId, scope: Set<String>, username: String): UserDetails {
         val userDetails: UserDetails = if (userDetailsService is ClientUserDetailsService) {
             userDetailsService.loadUserByClientAndUsername(clientId, scope, username)
         } else {
@@ -162,14 +155,23 @@ class ApiTokenService(
         return userDetails
     }
 
-    @JvmOverloads
-    fun removeToken(clientId: String = getClientId(), username: String) {
-        storeTokenRepository.remove(TokenId(clientId = clientId, username = username))
+    fun removeTokenByScope(scope: String, username: String) {
+        storeTokenRepository.remove(TokenId(clientId = defaultClientId, scope = setOf(scope), username = username))
     }
 
     @JvmOverloads
-    fun removeToken(clientId: String = getClientId(), usernames: List<String>) {
-        storeTokenRepository.remove(usernames.map { TokenId(clientId = clientId, username = it) })
+    fun removeToken(clientId: String = defaultClientId, scope: String = defaultScope.first(), username: String) {
+        storeTokenRepository.remove(TokenId(clientId = clientId, scope = setOf(scope), username = username))
+    }
+
+    @JvmOverloads
+    fun removeToken(clientId: String = defaultClientId, scope: String = defaultScope.first(), username: List<String>) {
+        storeTokenRepository.remove(username.map { TokenId(clientId = clientId, scope = setOf(scope), username = it) })
+    }
+
+    @JvmOverloads
+    fun removeTokens(clientId: String = defaultClientId, scope: Set<String> = defaultScope, username: List<String>) {
+        storeTokenRepository.remove(username.map { TokenId(clientId = clientId, scope = scope, username = it) })
     }
 
     override fun beforeLogin(request: HttpServletRequest, grantType: String, clientId: String, scope: Set<String>) {
@@ -200,9 +202,15 @@ class ApiTokenService(
         }
     }
 
-    private fun getClientId(): String {
-        return clientDetailsService.getClientId()
-    }
+    private val defaultClientId: String
+        get() {
+            return clientDetailsService.getClientId()
+        }
+
+    private val defaultScope: Set<String>
+        get() {
+            return securityProperties.scope
+        }
 
     fun getClientDetails(clientId: String): ClientDetails {
         return clientDetailsService.getClientDetails(clientId)

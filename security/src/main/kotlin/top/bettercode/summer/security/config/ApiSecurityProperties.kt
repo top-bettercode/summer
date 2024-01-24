@@ -32,11 +32,6 @@ open class ApiSecurityProperties : ClientDetails() {
 
     var secureRandomSeed: String? = null
 
-    /**
-     * 以scope 为 clientId
-     */
-    var isScopeClientId = false
-
     var authorizedGrantTypes: Array<String> = arrayOf("password", "refresh_token")
 
     //--------------------------------------------

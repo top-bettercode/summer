@@ -8,11 +8,12 @@ import java.io.Serializable
  */
 class TokenId(
         val clientId: String,
+        val scope: Set<String>,
         val username: String
 ) : Serializable {
 
     override fun toString(): String {
-        return "$clientId:$username"
+        return "$clientId:$scope:$username"
     }
 
     companion object {
