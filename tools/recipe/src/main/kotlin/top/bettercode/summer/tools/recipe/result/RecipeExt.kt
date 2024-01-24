@@ -89,18 +89,25 @@ class RecipeExt(private val recipe: Recipe) {
                         usedMaxOverdoseWeight += weight * overdose.max * replaceRate
                     }
                 }
-
+                //过量物料
+                var usedMinOverdoseMaterialWeight = 0.0
+                var usedMaxOverdoseMaterialWeight = 0.0
                 val overdoseMaterial = relationRate.overdoseMaterial
                 if (overdoseMaterial != null && overdoseWeight > 0) {
                     val overdoseMaterialNormal = overdoseMaterial.normal
                     val overdoseMaterialOverdose = overdoseMaterial.overdose
-                    //在过量中显示
-                    usedMinOverdoseWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
-                    usedMaxOverdoseWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
+                    usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
+                    usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
                     if (overdoseMaterialOverdose != null) {
-                        usedMinOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.min * replaceRate
-                        usedMaxOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate
+                        usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.min * replaceRate
+                        usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate
                     }
+                }
+                if (usedMinOverdoseWeight == 0.0) {
+                    usedMinOverdoseWeight = usedMinOverdoseMaterialWeight
+                }
+                if (usedMaxOverdoseWeight == 0.0) {
+                    usedMaxOverdoseWeight = usedMaxOverdoseMaterialWeight
                 }
 
                 return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(usedMinOverdoseWeight, usedMaxOverdoseWeight)
