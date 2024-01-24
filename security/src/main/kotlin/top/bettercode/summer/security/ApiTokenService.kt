@@ -159,6 +159,10 @@ class ApiTokenService(
         storeTokenRepository.remove(TokenId(clientId = defaultClientId, scope = setOf(scope), username = username))
     }
 
+    fun removeTokenByScope(scope: String, username: List<String>) {
+        storeTokenRepository.remove(username.map { TokenId(clientId = defaultClientId, scope = setOf(scope), username = it) })
+    }
+
     @JvmOverloads
     fun removeToken(clientId: String = defaultClientId, scope: String = defaultScope.first(), username: String) {
         storeTokenRepository.remove(TokenId(clientId = clientId, scope = setOf(scope), username = username))
