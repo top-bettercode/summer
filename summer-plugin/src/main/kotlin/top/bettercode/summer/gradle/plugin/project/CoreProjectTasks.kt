@@ -19,6 +19,7 @@ import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.util.*
 
 
@@ -240,10 +241,16 @@ object CoreProjectTasks {
                         val file = project.rootProject.file("conf/auth.json")
                         val map = StringUtil.readJsonTree(file.readText())
                         project.logger.lifecycle("======================================")
+                        project.logger.lifecycle("#auth\n" +
+                                "auth=权限\n" +
+                                "auth|TYPE=String")
                         map.forEach { node ->
                             printNode(project, node)
                         }
                         project.logger.lifecycle("======================================")
+                        map.forEach { node ->
+                            genNode(project, node)
+                        }
                     }
                 })
             }
@@ -314,11 +321,18 @@ object CoreProjectTasks {
     }
 
     private fun printNode(project: Project, node: JsonNode) {
-        project.logger.lifecycle("auth.${node.get("id").intValue()}=${node.get("name").asText()}")
-        genCode(project, "${node.get("id").intValue()}", node.get("name").asText())
+        project.logger.lifecycle("auth.${node.get("id").asText()}=${node.get("name").asText()}")
         val jsonNode = node.get("children")
         if (!jsonNode.isEmpty) {
             jsonNode.forEach { printNode(project, it) }
+        }
+    }
+
+    private fun genNode(project: Project, node: JsonNode) {
+        genCode(project, node.get("id").asText(), node.get("name").asText())
+        val jsonNode = node.get("children")
+        if (!jsonNode.isEmpty) {
+            jsonNode.forEach { genNode(project, it) }
         }
     }
 
@@ -364,7 +378,18 @@ object CoreProjectTasks {
             annotation("@java.lang.annotation.Inherited")
             annotation("@java.lang.annotation.Documented")
 
-            annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(\"${code}\")")
+            val codeFieldName = (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
+            ) {
+                "CODE_${code.replace("-", "MINUS_")}"
+            } else if (code.isBlank()) {
+                "BLANK"
+            } else {
+                code.replace("-", "_").replace(".", "_").toUnderscore()
+            }
+                    ).replace(Regex("_+"), "_")
+
+            import("$packageName.support.dic.AuthEnum.AuthConst")
+            annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(AuthConst.$codeFieldName)")
 
         }.writeTo(directory)
 

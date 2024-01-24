@@ -2,10 +2,7 @@ package top.bettercode.summer.gradle.plugin.project
 
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
-import com.github.stuxuhai.jpinyin.PinyinFormat
-import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.gradle.api.Project
-import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.dom.java.JavaType
@@ -184,25 +181,9 @@ class DicCodeGen(private val project: Project) {
                         }
 
                         //auth
-                        if ("auth" == codeType || "securityScope" == codeType) {
-                            val directory = if ("auth" == codeType) try {
-                                project.rootProject.project(project.findProperty("app.authProject")?.toString()
-                                        ?: "admin").projectDir
-                            } catch (e: UnknownProjectException) {
-                                try {
-                                    project.rootProject.project("app").projectDir
-                                } catch (e: UnknownProjectException) {
-                                    project.projectDir
-                                }
-                            } else project.projectDir
-                            val authName = if ("auth" == codeType)
-                                PinyinHelper.convertToPinyinString(
-                                        name,
-                                        "_",
-                                        PinyinFormat.WITHOUT_TONE
-                                ).split('_').joinToString("") {
-                                    it.capitalized()
-                                } else code.toString().capitalized()
+                        if ("securityScope" == codeType) {
+                            val directory = project.projectDir
+                            val authName = code.toString().capitalized()
 
                             val codeTypeClassName = codeType.capitalized()
                             val authClassName = "Auth${authName}"
