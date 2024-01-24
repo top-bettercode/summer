@@ -42,6 +42,10 @@ open class AccessToken : IAccessToken {
         additionalInformation = if (userDetails is AdditionalUserDetails) userDetails.additionalInformation else mutableMapOf()
     }
 
+    override fun getClientId(): String? {
+        return this.storeToken?.clientId
+    }
+
     @get:JsonIgnore
     val userDetails: UserDetails?
         get() = storeToken?.userDetails
