@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.User
 
 open class AdditionalUserDetails : User {
 
-    val additionalInformation: MutableMap<String, Any?> = HashMap()
+    open val additionalInformation: MutableMap<String, Any?> = HashMap()
 
     constructor(
             username: String?, password: String?,
