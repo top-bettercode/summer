@@ -3,10 +3,9 @@ package top.bettercode.summer.tools.excel
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.dhatim.fastexcel.BorderSide
+import org.dhatim.fastexcel.*
 import org.dhatim.fastexcel.BorderStyle
-import org.dhatim.fastexcel.ProtectionOption
-import org.dhatim.fastexcel.StyleSetter
+import org.dhatim.fastexcel.Color
 import java.math.BigDecimal
 import java.util.*
 
@@ -221,6 +220,14 @@ class CellStyle : Cloneable {
             val xssfColor = XSSFColor(byteArrayOf(red.toByte(), green.toByte(), blue.toByte()))
             return xssfColor
         }
+    }
+
+    @JvmOverloads
+    fun headerStyle(headerStyle: Pair<String, String> = "d9d9d9" to Color.BLACK): CellStyle {
+        fillColor(headerStyle.first)
+        fontColor(headerStyle.second)
+        bold()
+        return this
     }
 
     fun style(style: CellStyle): CellStyle {

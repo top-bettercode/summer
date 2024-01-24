@@ -13,17 +13,17 @@ import java.util.*
  */
 interface IExcel {
 
-   companion object{
-       val defaultStyle: CellStyle
-           get() = CellStyle().apply {
-               fontColor(Color.BLACK)
-               fontName("Arial")
-               horizontalAlignment(Alignment.CENTER.value)
-               verticalAlignment(Alignment.CENTER.value)
-               borderStyle(BorderStyle.THIN)
-               borderColor(Color.GRAY8)
-           }
-   }
+    companion object {
+        val defaultStyle: CellStyle
+            get() = CellStyle().apply {
+                fontColor(Color.BLACK)
+                fontName("Arial")
+                horizontalAlignment(Alignment.CENTER.value)
+                verticalAlignment(Alignment.CENTER.value)
+                borderStyle(BorderStyle.THIN)
+                borderColor(Color.GRAY8)
+            }
+    }
 
     fun sheet(sheetname: String)
 

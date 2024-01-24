@@ -48,12 +48,10 @@ class ExcelExport(val excel: IExcel) {
 
     private val cellStyle: CellStyle = IExcel.defaultStyle
 
-    private val headerStyle: CellStyle = IExcel.defaultStyle.apply {
+    private val headerStyle: CellStyle = IExcel.defaultStyle.headerStyle().apply {
         fillColor("808080")
         fontColor(Color.WHITE)
-        bold()
     }
-
 
     private val columnWidths = ColumnWidths()
 
