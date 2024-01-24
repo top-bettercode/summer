@@ -1,14 +1,18 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.stuxuhai.jpinyin.PinyinFormat
+import com.github.stuxuhai.jpinyin.PinyinHelper
 import isCore
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
@@ -311,10 +315,59 @@ object CoreProjectTasks {
 
     private fun printNode(project: Project, node: JsonNode) {
         project.logger.lifecycle("auth.${node.get("id").intValue()}=${node.get("name").asText()}")
+        genCode(project, "${node.get("id").intValue()}", node.get("name").asText())
         val jsonNode = node.get("children")
         if (!jsonNode.isEmpty) {
             jsonNode.forEach { printNode(project, it) }
         }
+    }
+
+    private fun genCode(project: Project, code: String, name: String) {
+        val directory = try {
+            project.rootProject.project(project.findProperty("app.authProject")?.toString()
+                    ?: "admin").projectDir
+        } catch (e: UnknownProjectException) {
+            try {
+                project.rootProject.project("app").projectDir
+            } catch (e: UnknownProjectException) {
+                project.projectDir
+            }
+        }
+        val authName =
+                PinyinHelper.convertToPinyinString(
+                        name,
+                        "_",
+                        PinyinFormat.WITHOUT_TONE
+                ).split('_').joinToString("") {
+                    it.capitalized()
+                }
+
+        val authClassName = "Auth${authName}"
+        val packageName = project.rootProject.property("app.packageName") as String
+        Interface(
+                type = JavaType("$packageName.security.auth.$authClassName"),
+                overwrite = true
+        ).apply {
+            isAnnotation = true
+            javadoc {
+                +"/**"
+                +" * $name 权限标识"
+                +" *"
+                +" */"
+            }
+
+            import("java.lang.annotation.ElementType")
+            annotation("@java.lang.annotation.Target({ElementType.METHOD, ElementType.TYPE})")
+
+            import("java.lang.annotation.RetentionPolicy")
+            annotation("@java.lang.annotation.Retention(RetentionPolicy.RUNTIME)")
+            annotation("@java.lang.annotation.Inherited")
+            annotation("@java.lang.annotation.Documented")
+
+            annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(\"${code}\")")
+
+        }.writeTo(directory)
+
     }
 
     private fun findReadName(lines: List<String>, i: Int): String {

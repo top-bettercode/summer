@@ -189,7 +189,11 @@ class DicCodeGen(private val project: Project) {
                                 project.rootProject.project(project.findProperty("app.authProject")?.toString()
                                         ?: "admin").projectDir
                             } catch (e: UnknownProjectException) {
-                                project.projectDir
+                                try {
+                                    project.rootProject.project("app").projectDir
+                                } catch (e: UnknownProjectException) {
+                                    project.projectDir
+                                }
                             } else project.projectDir
                             val authName = if ("auth" == codeType)
                                 PinyinHelper.convertToPinyinString(
