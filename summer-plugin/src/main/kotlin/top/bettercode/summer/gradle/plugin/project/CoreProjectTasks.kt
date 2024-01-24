@@ -233,8 +233,8 @@ object CoreProjectTasks {
                 })
             }
 
-            create("printAuthCode") {
-                it.group = GeneratorPlugin.PRINT_GROUP
+            create("genAuthCode") {
+                it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(t: Task) {
                         val file = project.rootProject.file("conf/auth.json")
