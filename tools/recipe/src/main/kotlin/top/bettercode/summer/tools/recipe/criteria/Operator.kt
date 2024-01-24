@@ -8,30 +8,30 @@ enum class Operator(val symbol: String) {
     /**
      * 等于
      */
-    EQUAL("="),
+    EQ("="),
     /**
      * 不等于
      */
-    NOT_EQUAL("!="),
+    NE("!="),
     /**
      * 大于
      */
-    GREATER(">"),
+    GT(">"),
 
     /**
      * 小于
      */
-    LESS("<"),
+    LT("<"),
 
     /**
      * 大于等于
      */
-    GREATER_EQUAL(">="),
+    GE(">="),
 
     /**
      * 小于等于
      */
-    LESS_EQUAL("<=");
+    LE("<=");
 
     override fun toString(): String {
         return symbol

@@ -184,53 +184,53 @@ data class Recipe(
             val thenWeight = materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
             var whenTrue = false
             when (whenCon.condition.operator) {
-                Operator.EQUAL -> {
+                Operator.EQ -> {
                     whenTrue = whenWeight == whenCon.condition.value
                 }
 
-                Operator.NOT_EQUAL -> {
+                Operator.NE -> {
                     whenTrue = whenWeight != whenCon.condition.value
                 }
 
-                Operator.GREATER -> {
+                Operator.GT -> {
                     whenTrue = whenWeight > whenCon.condition.value
                 }
 
-                Operator.LESS -> {
+                Operator.LT -> {
                     whenTrue = whenWeight < whenCon.condition.value
                 }
 
-                Operator.GREATER_EQUAL -> {
+                Operator.GE -> {
                     whenTrue = whenWeight >= whenCon.condition.value
                 }
 
-                Operator.LESS_EQUAL -> {
+                Operator.LE -> {
                     whenTrue = whenWeight <= whenCon.condition.value
                 }
             }
             when (thenCon.condition.operator) {
-                Operator.EQUAL -> {
+                Operator.EQ -> {
                     if (whenTrue && thenWeight != thenCon.condition.value) {
                         log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
                         return false
                     }
                 }
 
-                Operator.NOT_EQUAL -> {
+                Operator.NE -> {
                     if (whenTrue && thenWeight == thenCon.condition.value) {
                         log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
                         return false
                     }
                 }
 
-                Operator.GREATER -> {
+                Operator.GT -> {
                     if (whenTrue && thenWeight <= thenCon.condition.value) {
                         log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
                         return false
                     }
                 }
 
-                Operator.LESS -> {
+                Operator.LT -> {
                     if (whenTrue && thenWeight >= thenCon.condition.value) {
                         log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
                         return false
@@ -238,14 +238,14 @@ data class Recipe(
                     }
                 }
 
-                Operator.GREATER_EQUAL -> {
+                Operator.GE -> {
                     if (whenTrue && thenWeight < thenCon.condition.value) {
                         log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
                         return false
                     }
                 }
 
-                Operator.LESS_EQUAL -> {
+                Operator.LE -> {
                     if (whenTrue && thenWeight > thenCon.condition.value) {
                         log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
                         return false

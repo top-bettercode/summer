@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.excel
 
 import org.dhatim.fastexcel.BorderSide
 import org.dhatim.fastexcel.BorderStyle
-import org.dhatim.fastexcel.Color
 import org.dhatim.fastexcel.ProtectionOption
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -156,7 +155,7 @@ class ExcelCell(
     }
 
     @JvmOverloads
-    fun wrapText(wrapText: Boolean=true): ExcelCell {
+    fun wrapText(wrapText: Boolean = true): ExcelCell {
         style.wrapText(wrapText)
         return this
     }

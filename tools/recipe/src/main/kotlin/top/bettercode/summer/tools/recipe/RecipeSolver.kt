@@ -222,38 +222,38 @@ object RecipeSolver {
             val boolVar = boolVar()
             val whenCon = whenCondition.condition
             when (whenCon.operator) {
-                Operator.EQUAL -> {
+                Operator.EQ -> {
                     whenVar.neIfNot(whenCon.value, boolVar)
                 }
 
-                Operator.NOT_EQUAL -> {
+                Operator.NE -> {
                     whenVar.eqIfNot(whenCon.value, boolVar)
                 }
 
-                Operator.GREATER -> {
+                Operator.GT -> {
                     whenVar.leIfNot(whenCon.value, boolVar)
                 }
 
-                Operator.LESS -> {
+                Operator.LT -> {
                     whenVar.geIfNot(whenCon.value, boolVar)
                 }
 
-                Operator.GREATER_EQUAL -> {
+                Operator.GE -> {
                     whenVar.ltIfNot(whenCon.value, boolVar)
                 }
 
-                Operator.LESS_EQUAL -> {
+                Operator.LE -> {
                     whenVar.gtIfNot(whenCon.value, boolVar)
                 }
             }
             val thenCon = thenCondition.condition
             when (thenCon.operator) {
-                Operator.EQUAL -> thenVar.eqIf(thenCon.value, boolVar)
-                Operator.NOT_EQUAL -> thenVar.neIf(thenCon.value, boolVar)
-                Operator.GREATER -> thenVar.gtIf(thenCon.value, boolVar)
-                Operator.LESS -> thenVar.ltIf(thenCon.value, boolVar)
-                Operator.GREATER_EQUAL -> thenVar.geIf(thenCon.value, boolVar)
-                Operator.LESS_EQUAL -> thenVar.leIf(thenCon.value, boolVar)
+                Operator.EQ -> thenVar.eqIf(thenCon.value, boolVar)
+                Operator.NE -> thenVar.neIf(thenCon.value, boolVar)
+                Operator.GT -> thenVar.gtIf(thenCon.value, boolVar)
+                Operator.LT -> thenVar.ltIf(thenCon.value, boolVar)
+                Operator.GE -> thenVar.geIf(thenCon.value, boolVar)
+                Operator.LE -> thenVar.leIf(thenCon.value, boolVar)
             }
         }
 

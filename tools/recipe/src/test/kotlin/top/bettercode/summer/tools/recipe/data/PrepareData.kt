@@ -318,11 +318,11 @@ object PrepareData {
         val value = split[1].toDouble()
         val typeStr = desc.substringAfter(split[0]).substringBeforeLast(split[1])
         val op = when (typeStr) {
-            "=" -> Operator.EQUAL
-            ">" -> Operator.GREATER
-            "<" -> Operator.LESS
-            ">=" -> Operator.GREATER_EQUAL
-            "<=" -> Operator.LESS_EQUAL
+            "=" -> Operator.EQ
+            ">" -> Operator.GT
+            "<" -> Operator.LT
+            ">=" -> Operator.GE
+            "<=" -> Operator.LE
             else -> throw RuntimeException("不支持的操作符")
         }
         return MaterialCondition(materials, RecipeCondition(op, value))
