@@ -1,8 +1,8 @@
 {
   "cost" : 2605.3832490758,
-  "dryWater" : 527.1119048882,
+  "dryWater" : 527.1119048881,
   "materials" : [ {
-    "cost" : 259.7440158796,
+    "cost" : 259.7440158794,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "name" : "8-40-0再浆肥（粉）",
@@ -10,10 +10,10 @@
     "overdoseWeight" : 0.0,
     "price" : 2.0,
     "solutionValue" : {
-      "value" : 129.8720079398
+      "value" : 129.8720079397
     },
-    "waterWeight" : 2.597440158796,
-    "weight" : 129.8720079398
+    "waterWeight" : 2.5974401587940004,
+    "weight" : 129.8720079397
   }, {
     "cost" : 433.05097342639993,
     "id" : "喷浆专用尿素",
@@ -45,13 +45,13 @@
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 84.1601040538,
-    "overdoseWeight" : 9.9783811267,
+    "normalWeight" : 94.1384851805,
+    "overdoseWeight" : 0.0,
     "price" : 3.8,
     "solutionValue" : {
       "value" : 94.1384851805,
-      "normal" : 84.1601040538,
-      "overdose" : 9.9783811267
+      "normal" : 94.1384851805,
+      "overdose" : 0.0
     },
     "waterWeight" : 0.4706924259025,
     "weight" : 94.1384851805
@@ -123,5 +123,5 @@
     "waterWeight" : 110.4375,
     "weight" : 232.5
   } ],
-  "trueCost" : 2605.3832490759
+  "trueCost" : 2605.3832490757
 }

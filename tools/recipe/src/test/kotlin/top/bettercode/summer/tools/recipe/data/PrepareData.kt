@@ -251,7 +251,7 @@ object PrepareData {
                     val doubleRange = DoubleRange(minUse.toDouble(), maxUse.toDouble())
                     val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
                     if (isOverdose) {
-                        rangePair.overdose = doubleRange
+                        rangePair.overdoseMaterial = RecipeRelation(doubleRange)
                     } else {
                         rangePair.normal = doubleRange
                     }

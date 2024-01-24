@@ -18,12 +18,16 @@ class BoolVarTest {
     fun test() {
         scipSolver.apply {
             val boolVar = boolVar()
-            val numVar = numVar(0.0, 10.0)
-            numVar.eqIf(1.0, boolVar)
-            arrayOf(numVar).minimize()
-            boolVar.eq(1.0)
+            val a = numVar(0.0, 10.0)
+            val b = numVar(0.0, 10.0)
+            //if a >0 ,b <=0
+            a.leIfNot(0.0, boolVar)
+            b.leIf(0.0,boolVar)
+            b.gt(0.0)
+            arrayOf(a).maximize()
             solve()
-            System.err.println(numVar.value)
+            System.err.println(a.value)
+            System.err.println(b.value)
             System.err.println(boolVar.value)
         }
     }

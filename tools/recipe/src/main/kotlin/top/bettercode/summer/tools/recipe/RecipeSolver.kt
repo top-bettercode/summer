@@ -175,23 +175,37 @@ object RecipeSolver {
             relation.forEach { (t, u) ->
                 val normal = u.normal
                 val overdose = u.overdose
+                val overdoseMaterial = u.overdoseMaterial
                 t.mapNotNull { recipeMaterials[it]?.solutionVar }.forEach {
                     val normalDelegate = it.normalDelegate
                     if (normalDelegate != null) {
+                        //物料消耗
                         normalMinVars.add(normalDelegate.coeff(normal.min))
                         normalMaxVars.add(normalDelegate.coeff(normal.max))
+                        if (overdose != null) {
+                            overdoseMinVars.add(normalDelegate.coeff(overdose.min))
+                            overdoseMaxVars.add(normalDelegate.coeff(overdose.max))
+                        }
                     } else {
+                        //物料过量消耗
                         normalMinVars.add(it.coeff(normal.min))
                         normalMaxVars.add(it.coeff(normal.max))
-                    }
-                    if (overdose != null) {
-                        val overdoseDelegate = it.overdoseDelegate
-                        if (overdoseDelegate != null) {
-                            overdoseMinVars.add(overdoseDelegate.coeff(overdose.min))
-                            overdoseMaxVars.add(overdoseDelegate.coeff(overdose.max))
-                        } else {
+                        if (overdose != null) {
                             overdoseMinVars.add(it.coeff(overdose.min))
                             overdoseMaxVars.add(it.coeff(overdose.max))
+                        }
+                    }
+                    val overdoseDelegate = it.overdoseDelegate
+                    if (overdoseMaterial != null && overdoseDelegate != null) {
+                        val overdoseMaterialNormal = overdoseMaterial.normal
+                        val overdoseMaterialOverdose = overdoseMaterial.overdose
+                        //过量物料消耗
+                        normalMinVars.add(overdoseDelegate.coeff(overdoseMaterialNormal.min))
+                        normalMaxVars.add(overdoseDelegate.coeff(overdoseMaterialNormal.max))
+                        //过量物料过量消耗
+                        if (overdoseMaterialOverdose != null) {
+                            overdoseMinVars.add(overdoseDelegate.coeff(overdoseMaterialOverdose.min))
+                            overdoseMaxVars.add(overdoseDelegate.coeff(overdoseMaterialOverdose.max))
                         }
                     }
                 }

@@ -1,8 +1,8 @@
 {
   "cost" : 2605.3832490758,
-  "dryWater" : 509.7796442307,
+  "dryWater" : 520.1845521167,
   "materials" : [ {
-    "cost" : 269.2340186364,
+    "cost" : 263.7211541474,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "name" : "8-40-0再浆肥（粉）",
@@ -10,12 +10,12 @@
     "overdoseWeight" : 0.0,
     "price" : 2.0,
     "solutionValue" : {
-      "value" : 134.6170093182
+      "value" : 131.8605770737
     },
-    "waterWeight" : 2.692340186364,
-    "weight" : 134.6170093182
+    "waterWeight" : 2.637211541474,
+    "weight" : 131.8605770737
   }, {
-    "cost" : 479.41468190812,
+    "cost" : 462.07185519208,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "name" : "喷浆专用尿素",
@@ -23,10 +23,10 @@
     "overdoseWeight" : 0.0,
     "price" : 2.8,
     "solutionValue" : {
-      "value" : 171.2195292529
+      "value" : 165.0256625686
     },
-    "waterWeight" : 42.804882313225,
-    "weight" : 171.2195292529
+    "waterWeight" : 41.25641564215,
+    "weight" : 165.0256625686
   }, {
     "cost" : 16.0,
     "id" : "防结油（白色）",
@@ -41,20 +41,20 @@
     "waterWeight" : 0.0,
     "weight" : 2.0
   }, {
-    "cost" : 336.83244997396,
+    "cost" : 340.20461844714,
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 78.6617372875,
-    "overdoseWeight" : 9.9783811267,
+    "normalWeight" : 89.5275311703,
+    "overdoseWeight" : 0.0,
     "price" : 3.8,
     "solutionValue" : {
-      "value" : 88.6401184142,
-      "normal" : 78.6617372875,
-      "overdose" : 9.9783811267
+      "value" : 89.5275311703,
+      "normal" : 89.5275311703,
+      "overdose" : 0.0
     },
-    "waterWeight" : 0.44320059207100004,
-    "weight" : 88.6401184142
+    "waterWeight" : 0.4476376558515,
+    "weight" : 89.5275311703
   }, {
     "cost" : 6.0,
     "id" : "防结粉（白色）",
@@ -84,7 +84,7 @@
     "waterWeight" : 1.5660482214765,
     "weight" : 313.2096442953
   }, {
-    "cost" : 590.3709768123555,
+    "cost" : 609.854499544284,
     "id" : "磷酸",
     "index" : 29,
     "name" : "磷酸",
@@ -92,10 +92,10 @@
     "overdoseWeight" : 0.0,
     "price" : 1.055,
     "solutionValue" : {
-      "value" : 559.5933429501
+      "value" : 578.0611370088
     },
-    "waterWeight" : 363.735672917565,
-    "weight" : 559.5933429501
+    "waterWeight" : 375.73973905572,
+    "weight" : 578.0611370088
   }, {
     "cost" : 13.25,
     "id" : "生化黄腐酸钾",
@@ -123,5 +123,5 @@
     "waterWeight" : 110.4375,
     "weight" : 232.5
   } ],
-  "trueCost" : 2605.3832490758
+  "trueCost" : 2605.3832490759
 }

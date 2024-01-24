@@ -45,13 +45,13 @@
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 88.4928671938,
-    "overdoseWeight" : 9.9783811267,
+    "normalWeight" : 98.4712483205,
+    "overdoseWeight" : 0.0,
     "price" : 3.8,
     "solutionValue" : {
       "value" : 98.4712483205,
-      "normal" : 88.4928671938,
-      "overdose" : 9.9783811267
+      "normal" : 98.4712483205,
+      "overdose" : 0.0
     },
     "waterWeight" : 0.49235624160249997,
     "weight" : 98.4712483205

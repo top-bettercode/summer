@@ -263,35 +263,46 @@ data class Recipe(
             val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
             val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
 
-            var usedMinNormalWeights = 0.0
-            var usedMaxNormalWeights = 0.0
-            var usedMinOverdoseWeights = 0.0
-            var usedMaxOverdoseWeights = 0.0
+            var usedMinNormalWeight = 0.0
+            var usedMaxNormalWeight = 0.0
+            var usedMinOverdoseWeight = 0.0
+            var usedMaxOverdoseWeight = 0.0
             this.value.forEach { (materialIDs, recipeRelation) ->
                 val normal = recipeRelation.normal
+                val overdose = recipeRelation.overdose
                 val weight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.weight }
                 val normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight }
 
                 if (normalWeight > 0) {
-                    usedMinNormalWeights += normalWeight * normal.min * replaceRate
-                    usedMaxNormalWeights += normalWeight * normal.max * replaceRate
+                    usedMinNormalWeight += normalWeight * normal.min * replaceRate
+                    usedMaxNormalWeight += normalWeight * normal.max * replaceRate
+                    if (overdose != null) {
+                        usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
+                        usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
+                    }
                 } else {
-                    usedMinNormalWeights += weight * normal.min * replaceRate
-                    usedMaxNormalWeights += weight * normal.max * replaceRate
+                    usedMinNormalWeight += weight * normal.min * replaceRate
+                    usedMaxNormalWeight += weight * normal.max * replaceRate
+                    if (overdose != null) {
+                        usedMinOverdoseWeight += weight * overdose.min * replaceRate
+                        usedMaxOverdoseWeight += weight * overdose.max * replaceRate
+                    }
                 }
-                val overdose = recipeRelation.overdose
-                if (overdose != null) {
-                    val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight }
-                    if (overdoseWeight > 0) {
-                        usedMinOverdoseWeights += overdoseWeight * overdose.min * replaceRate
-                        usedMaxOverdoseWeights += overdoseWeight * overdose.max * replaceRate
-                    } else {
-                        usedMinOverdoseWeights += weight * overdose.min * replaceRate
-                        usedMaxOverdoseWeights += weight * overdose.max * replaceRate
+
+                val overdoseMaterial = recipeRelation.overdoseMaterial
+                val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight }
+                if (overdoseMaterial != null && overdoseWeight > 0) {
+                    val overdoseMaterialNormal = overdoseMaterial.normal
+                    val overdoseMaterialOverdose = overdoseMaterial.overdose
+                    usedMinNormalWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
+                    usedMaxNormalWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
+                    if (overdoseMaterialOverdose != null) {
+                        usedMinOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.min * replaceRate
+                        usedMaxOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate
                     }
                 }
             }
 
-            return DoubleRange(usedMinNormalWeights, usedMaxNormalWeights) to DoubleRange(usedMinOverdoseWeights, usedMaxOverdoseWeights)
+            return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(usedMinOverdoseWeight, usedMaxOverdoseWeight)
         }
 }

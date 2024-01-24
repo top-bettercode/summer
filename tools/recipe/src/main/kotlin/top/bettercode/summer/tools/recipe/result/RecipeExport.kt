@@ -181,17 +181,18 @@ object RecipeExport {
                 c = 0
                 //最小用量 最大用量 最小耗液氨/硫酸系数 最小耗液氨/硫酸量 最大耗液氨/硫酸系数 最大耗液氨/硫酸量 投料量 成本 单价(/吨)
                 cell(r, c++).value(material.name).wrapText().setStyle()
-                cell(r, c++).value(material.minWeight).format("0").setStyle()
-                cell(r, c++).value(material.maxWeight).format("0").setStyle()
-                val minNormalRelationRate = material.minNormalRelationRate
+                val range = material.range
+                cell(r, c++).value(range?.min).format("0").setStyle()
+                cell(r, c++).value(range?.max).format("0").setStyle()
+                val relationRate = material.relationRate
+                val normal = relationRate?.normal
+                val relationValue = material.relationValue
+                val normalValue = relationValue?.first
                 val relationName = material.relationName
-                cell(r, c++).value(minNormalRelationRate).comment(if (minNormalRelationRate == null || relationName == null) null else "${material.name}最小耗${relationName}系数").format("0.000000000").setStyle()
-                val minNormalRelationValue = material.minNormalRelationValue
-                cell(r, c++).value(minNormalRelationValue).comment(if (minNormalRelationValue == null || relationName == null) null else "${material.name}最小耗${relationName}数量").format("0.00").setStyle()
-                val maxNormalRelationRate = material.maxNormalRelationRate
-                cell(r, c++).value(maxNormalRelationRate).comment(if (maxNormalRelationRate == null || relationName == null) null else "${material.name}最大耗${relationName}系数").format("0.000000000").setStyle()
-                val maxNormalRelationValue = material.maxNormalRelationValue
-                cell(r, c++).value(maxNormalRelationValue).comment(if (maxNormalRelationValue == null || relationName == null) null else "${material.name}最大耗${relationName}数量").format("0.00").setStyle()
+                cell(r, c++).value(normal?.min).comment(if (normal?.min == null || relationName == null) null else "${material.name}最小耗${relationName}系数").format("0.000000000").setStyle()
+                cell(r, c++).value(normalValue?.min).comment(if (normalValue?.min == null || relationName == null) null else "${material.name}最小耗${relationName}数量").format("0.00").setStyle()
+                cell(r, c++).value(normal?.max).comment(if (normal?.max == null || relationName == null) null else "${material.name}最大耗${relationName}系数").format("0.000000000").setStyle()
+                cell(r, c++).value(normalValue?.max).comment(if (normalValue?.max == null || relationName == null) null else "${material.name}最大耗${relationName}数量").format("0.00").setStyle()
                 cell(r, c++).value(material.weight).format("0.00").setStyle()
                 cell(r, c++).value(material.cost).format("0.00").setStyle()
                 cell(r, c++).value(material.price * 1000).format("0").setStyle()
@@ -201,14 +202,12 @@ object RecipeExport {
                 if (material.double) {
                     c = 3
                     val r1 = r + 1
-                    val minOverdoseRelationRate = material.minOverdoseRelationRate
-                    cell(r1, c++).value(minOverdoseRelationRate).comment(if (minOverdoseRelationRate == null || relationName == null) null else "${material.name}过量最小耗${relationName}系数").format("0.000000000").setStyle()
-                    val minOverdoseRelationValue = material.minOverdoseRelationValue
-                    cell(r1, c++).value(minOverdoseRelationValue).comment(if (minOverdoseRelationValue == null || relationName == null) null else "${material.name}过量最小耗${relationName}数量").format("0.00").setStyle()
-                    val maxOverdoseRelationRate = material.maxOverdoseRelationRate
-                    cell(r1, c++).value(maxOverdoseRelationRate).comment(if (maxOverdoseRelationRate == null || relationName == null) null else "${material.name}过量最大耗${relationName}系数").format("0.000000000").setStyle()
-                    val maxOverdoseRelationValue = material.maxOverdoseRelationValue
-                    cell(r1, c++).value(maxOverdoseRelationValue).comment(if (maxOverdoseRelationValue == null || relationName == null) null else "${material.name}过量最大耗${relationName}数量").format("0.00").setStyle()
+                    val overdose = relationRate?.overdose ?: relationRate?.overdoseMaterial?.normal
+                    val overdoseValue = relationValue?.second
+                    cell(r1, c++).value(overdose?.min).comment(if (overdose?.min == null || relationName == null) null else "${material.name}过量最小耗${relationName}系数").format("0.000000000").setStyle()
+                    cell(r1, c++).value(overdoseValue?.min).comment(if (overdoseValue?.min == null || relationName == null) null else "${material.name}过量最小耗${relationName}数量").format("0.00").setStyle()
+                    cell(r1, c++).value(overdose?.max).comment(if (overdose?.max == null || relationName == null) null else "${material.name}过量最大耗${relationName}系数").format("0.000000000").setStyle()
+                    cell(r1, c++).value(overdoseValue?.max).comment(if (overdoseValue?.max == null || relationName == null) null else "${material.name}过量最大耗${relationName}数量").format("0.00").setStyle()
                     for (i in 0..columnSize) {
                         if (i !in 3..6) {
                             range(r, i, r1, i).merge()
