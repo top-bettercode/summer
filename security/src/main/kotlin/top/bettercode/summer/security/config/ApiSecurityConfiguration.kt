@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import top.bettercode.summer.security.ApiTokenService
 import top.bettercode.summer.security.IResourceService
+import top.bettercode.summer.security.client.ClientDetails
 import top.bettercode.summer.security.client.ClientDetailsService
 import top.bettercode.summer.security.repository.InMemoryStoreTokenRepository
 import top.bettercode.summer.security.repository.StoreTokenRepository
@@ -49,10 +50,9 @@ class ApiSecurityConfiguration(
         return DefaulAccessTokenConverter()
     }
 
-    @ConditionalOnMissingBean(ClientDetailsService::class)
     @Bean
-    fun clientDetailsService(): ClientDetailsService {
-        return ClientDetailsService(listOf(securityProperties))
+    fun clientDetailsService(clientDetails: List<ClientDetails>): ClientDetailsService {
+        return ClientDetailsService(clientDetails)
     }
 
     @ConditionalOnMissingBean(PasswordEncoder::class)
