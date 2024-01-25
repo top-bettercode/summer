@@ -8,7 +8,7 @@ import top.bettercode.summer.web.support.ApplicationContextHolder
  *
  * @author Peter Wu
  */
-@Suppress("LeakingThis", "JoinDeclarationAndAssignment")
+@Suppress("LeakingThis")
 abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
 
     lateinit var clientId: String
@@ -19,13 +19,17 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
     lateinit var userDetailsService: TestAuthenticationService
 
     init {
-        this.clientId = ApplicationContextHolder.getProperty("summer.security.client-id", "") ?: ""
+        this.clientId = ""
         this.username = "root"
         this.scope = "app"
     }
 
     public override fun defaultBeforeEach() {
         beforeEach()
+        if (clientId.isBlank()) {
+            this.clientId = ApplicationContextHolder.getProperty("summer.security.client-id", "")
+                    ?: ""
+        }
         userDetailsService.loadAuthentication(clientId, setOf(scope), username)
     }
 
