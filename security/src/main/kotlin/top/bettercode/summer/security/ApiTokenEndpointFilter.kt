@@ -90,7 +90,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                         revokeToken(userDetails, storeTokenRepository, storeToken, response, request)
                         return
                     } catch (e: Exception) {
-                        throw UnauthorizedException("请重新登录", e)
+                        throw UnauthorizedException(e.message, e)
                     }
                 } else {
                     val scope = request.getParameterValues(SecurityParameterNames.SCOPE)
@@ -126,7 +126,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                             storeToken.accessToken = apiTokenService.createAccessToken(clientDetails)
                             storeToken.userDetails = userDetails
                         } catch (e: Exception) {
-                            throw UnauthorizedException("请重新登录", e)
+                            throw UnauthorizedException(e.message, e)
                         }
                     } else if (apiTokenService.securityProperties.authorizedGrantTypes.contains(grantType)) {
                         val userDetails = apiTokenService.getUserDetails(grantType, request)
