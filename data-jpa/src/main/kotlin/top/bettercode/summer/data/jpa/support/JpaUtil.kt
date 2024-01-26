@@ -3,10 +3,8 @@ package top.bettercode.summer.data.jpa.support
 import org.hibernate.type.spi.TypeConfiguration
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import org.slf4j.MarkerFactory
 import org.springframework.util.ClassUtils
-import top.bettercode.summer.logging.RequestLoggingFilter
-import top.bettercode.summer.logging.logback.AlarmMarker
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
@@ -50,11 +48,8 @@ object JpaUtil {
                         ?: 2) * 1000
                 if (duration > timeoutAlarmSeconds) {
                     if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
-                        val marker = MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER)
-                        val initialComment = "$id：执行速度慢"
-                        val timeoutMsg = "(${duration / 1000}秒)"
-                        marker.add(AlarmMarker(initialComment, timeoutMsg))
-                        log.warn(marker, "cost:{}ms", duration)
+                        val initialComment = "$id：执行速度慢(${duration / 1000}秒)"
+                        log.warn(AlarmMarker(initialComment, true), initialComment + "cost:{}ms", duration)
                     } else {
                         log.warn("cost:{}ms", duration)
                     }

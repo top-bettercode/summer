@@ -20,7 +20,7 @@ import java.time.LocalDateTime
  */
 class OkHttpClientLoggingInterceptor(private val collectionName: String,
                                      private val name: String,
-                                     private val logMarker: String? = null,
+                                     private val logMarker: String,
                                      private val logClazz: Class<*> = OkHttpClientLoggingInterceptor::class.java,
                                      private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
                                      private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
@@ -68,7 +68,7 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                         request = convert(request, dateTime!!),
                         response = operationResponse
                 )
-                val msg = operation.toString(
+                var msg = operation.toString(
                         RequestLoggingConfig(
                                 includeRequestBody = true,
                                 includeResponseBody = true,
@@ -82,24 +82,26 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                         requestDecrypt,
                         responseDecrypt
                 )
-                val hasException = stackTrace.isNotBlank()
-                if (logMarker.isNullOrBlank()) {
-                    if (hasException) {
-                        log.warn(msg)
-                    } else
-                        log.info(msg)
+
+                val marker = MarkerFactory.getMarker(logMarker)
+                if (operation.duration > 5 * 1000) {
+                    val initialComment = "${operation.name}(${operation.request.restUri})：请求响应速度慢"
+                    val timeoutMsg = "(${operation.duration / 1000}秒)"
+                    marker.add(AlarmMarker(initialComment + timeoutMsg, true))
+                    msg = "$initialComment${timeoutMsg}\n$msg"
+                    log.warn(marker, msg)
                 } else {
+                    val hasException = stackTrace.isNotBlank()
                     if (hasException) {
-                        log.warn(MarkerFactory.getMarker(logMarker), msg)
+                        log.warn(marker, msg)
                     } else
-                        log.info(MarkerFactory.getMarker(logMarker), msg)
+                        log.info(marker, msg)
                 }
                 if (exception != null) {
                     throw exception
                 }
             }
         }
-
     }
 
     fun convert(request: Request, dateTime: LocalDateTime): OperationRequest {

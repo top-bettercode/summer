@@ -20,7 +20,7 @@ import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.util.WebUtils
 import top.bettercode.summer.logging.annotation.NoRequestLogging
 import top.bettercode.summer.logging.annotation.RequestLogging
-import top.bettercode.summer.logging.logback.AlarmMarker
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.operation.*
 import top.bettercode.summer.tools.lang.operation.HttpOperation.REQUEST_DATE_TIME
 import top.bettercode.summer.tools.lang.operation.HttpOperation.REQUEST_LOG_MARKER
@@ -50,8 +50,6 @@ class RequestLoggingFilter(
 ) : OncePerRequestFilter(), Ordered {
 
     companion object {
-        const val ALARM_LOG_MARKER = "alarm"
-        const val NO_ALARM_LOG_MARKER = "no_alarm"
         const val NOT_IN_ALL = "not_in_all"
         const val OPERATION_MARKER = "operation"
         const val IS_OPERATION_MARKER = "is_operation"
@@ -176,8 +174,7 @@ class RequestLoggingFilter(
                 if (!hasError && requestTimeout) {
                     val initialComment = "$uriName($restUri)：请求响应速度慢"
                     val timeoutMsg = "(${operation.duration / 1000}秒)"
-                    marker.add(MarkerFactory.getMarker(ALARM_LOG_MARKER))
-                    marker.add(AlarmMarker(initialComment, timeoutMsg))
+                    marker.add(AlarmMarker(initialComment + timeoutMsg, true))
                     msg = "$initialComment${timeoutMsg}\n$msg"
                 }
 

@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import top.bettercode.summer.logging.annotation.NoRequestLogging
 import top.bettercode.summer.logging.annotation.RequestLogging
-import top.bettercode.summer.logging.logback.AlarmMarker
+import top.bettercode.summer.tools.lang.log.AlarmAppender
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.web.resolver.NoWrapResp
 
 /**
@@ -39,9 +40,7 @@ class TestController {
 
     @RequestMapping("/error/{path}")
     fun error(request: String?): Any {
-        val marker = MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER)
-        marker.add(AlarmMarker("initialComment"))
-        log.warn(marker, "警告")
+        log.warn(AlarmMarker("initialComment"), "警告")
         log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))

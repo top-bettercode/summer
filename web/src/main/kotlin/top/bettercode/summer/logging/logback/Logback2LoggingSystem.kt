@@ -21,6 +21,7 @@ import ch.qos.logback.core.spi.FilterReply
 import ch.qos.logback.core.spi.LifeCycle
 import ch.qos.logback.core.util.FileSize
 import ch.qos.logback.core.util.OptionHelper
+import com.github.benmanes.caffeine.cache.Caffeine
 import net.logstash.logback.appender.LogstashTcpSocketAppender
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger
@@ -45,6 +46,7 @@ import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * 自定义 LogbackLoggingSystem
@@ -133,8 +135,14 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     val managementPath =
                             environment.getProperty("management.endpoints.web.base-path")
                                     ?: "/actuator"
+
+                    val cacheMap = Caffeine.newBuilder().expireAfterWrite(slackProperties.cacheSeconds, TimeUnit.SECONDS)
+                            .maximumSize(1000).build<String, Int>().asMap()
+                    val timeoutCacheMap =
+                            Caffeine.newBuilder().expireAfterWrite(slackProperties.timeoutCacheSeconds, TimeUnit.SECONDS)
+                                    .maximumSize(1000).build<String, Int>().asMap()
                     val slackAppender = SlackAppender(
-                            slackProperties, warnSubject, logsPath, "$managementPath/logs${logsPath.substringAfter(logsViewPath)}", fileLogPattern
+                            slackProperties, warnSubject, logsPath, "$managementPath/logs${logsPath.substringAfter(logsViewPath)}", fileLogPattern, cacheMap, timeoutCacheMap
                     )
                     slackAppender.context = context
                     slackAppender.start()

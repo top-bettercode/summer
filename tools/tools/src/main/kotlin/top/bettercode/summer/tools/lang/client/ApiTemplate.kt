@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 open class ApiTemplate @JvmOverloads constructor(
         private val collectionName: String,
         private val name: String,
-        protected val logMarker: String?,
+        protected val logMarker: String,
         connectTimeout: Int,
         readTimeout: Int,
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
@@ -41,8 +41,8 @@ open class ApiTemplate @JvmOverloads constructor(
             .connectTimeout(connectTimeout.toLong(), TimeUnit.SECONDS)
             .readTimeout(readTimeout.toLong(), TimeUnit.SECONDS)
 
-    constructor(connectTimeout: Int, readTimeout: Int) : this("", "", connectTimeout, readTimeout)
-    constructor(collectionName: String, name: String, connectTimeout: Int, readTimeout: Int) : this(collectionName, name, null, connectTimeout, readTimeout)
+    constructor(connectTimeout: Int, readTimeout: Int) : this(collectionName = "", name = "", connectTimeout = connectTimeout, readTimeout = readTimeout)
+    constructor(collectionName: String, name: String, connectTimeout: Int, readTimeout: Int) : this(collectionName = collectionName, name = name, logMarker = "third-party", connectTimeout = connectTimeout, readTimeout = readTimeout)
 
     init {
         this.restTemplate.requestFactory = OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())

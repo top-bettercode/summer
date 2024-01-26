@@ -3,21 +3,23 @@ package top.bettercode.summer.logging.slack
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
-import top.bettercode.summer.logging.RequestLoggingFilter
-import top.bettercode.summer.logging.logback.AlarmAppender
+import top.bettercode.summer.tools.lang.log.AlarmAppender
+import java.util.concurrent.ConcurrentMap
 
 open class SlackAppender(
         private val properties: top.bettercode.summer.logging.SlackProperties,
         private val warnSubject: String,
         logsPath: String,
         managementLogPath: String,
-        logPattern: String
+        logPattern: String,
+        cacheMap: ConcurrentMap<String, Int>,
+        timeoutCacheMap: ConcurrentMap<String, Int>
 ) : AlarmAppender(
         properties.cyclicBufferSize,
-        properties.cacheSeconds,
-        properties.timeoutCacheSeconds,
         properties.ignoredWarnLogger,
-        logPattern
+        logPattern,
+        cacheMap,
+        timeoutCacheMap
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
@@ -53,7 +55,7 @@ open class SlackAppender(
             )
         } catch (e: Exception) {
             log.error(
-                    MarkerFactory.getMarker(RequestLoggingFilter.NO_ALARM_LOG_MARKER),
+                    MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
                     "slack 发送信息失败",
                     e
             )

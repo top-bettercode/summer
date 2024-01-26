@@ -1,4 +1,4 @@
-package top.bettercode.summer.logging.logback
+package top.bettercode.summer.tools.lang.log
 
 import ch.qos.logback.classic.ClassicConstants
 import ch.qos.logback.classic.Level
@@ -13,27 +13,25 @@ import ch.qos.logback.core.helpers.CyclicBuffer
 import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
-import com.github.benmanes.caffeine.cache.Caffeine
 import org.slf4j.Marker
-import top.bettercode.summer.logging.RequestLoggingFilter
 import java.util.concurrent.ConcurrentMap
-import java.util.concurrent.TimeUnit
 
 
 abstract class AlarmAppender(
         private val cyclicBufferSize: Int,
-        private val cacheSeconds: Long,
-        private val timeoutCacheSeconds: Long,
         private val ignoredWarnLogger: Array<String>,
-        private val logPattern: String
+        private val logPattern: String,
+        private val cacheMap: ConcurrentMap<String, Int>,
+        private val timeoutCacheMap: ConcurrentMap<String, Int>
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
+        const val ALARM_LOG_MARKER = "alarm"
+        const val NO_ALARM_LOG_MARKER = "no_alarm"
     }
 
-    private lateinit var cacheMap: ConcurrentMap<String, Int>
-    private lateinit var timeoutCacheMap: ConcurrentMap<String, Int>
+
     private var eventEvaluator: EventEvaluator<ILoggingEvent>? = null
     private val discriminator = DefaultDiscriminator<ILoggingEvent>()
     private var cbTracker: CyclicBufferTracker<ILoggingEvent>? = null
@@ -46,12 +44,6 @@ abstract class AlarmAppender(
     private var asynchronousSending = true
 
     override fun start() {
-        cacheMap = Caffeine.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
-                .maximumSize(1000).build<String, Int>().asMap()
-        timeoutCacheMap =
-                Caffeine.newBuilder().expireAfterWrite(timeoutCacheSeconds, TimeUnit.SECONDS)
-                        .maximumSize(1000).build<String, Int>().asMap()
-
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
             override fun evaluate(event: ILoggingEvent): Boolean {
                 val loggerName = event.loggerName
@@ -61,9 +53,9 @@ abstract class AlarmAppender(
                     }
                 }
                 return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
-                        RequestLoggingFilter.ALARM_LOG_MARKER
+                        ALARM_LOG_MARKER
                 ) == true || event.formattedMessage.matches(Regex("^Started .*? in .*? seconds \\(.*?\\)$"))) && (event.marker == null || !event.marker.contains(
-                        RequestLoggingFilter.NO_ALARM_LOG_MARKER
+                        NO_ALARM_LOG_MARKER
                 ))
             }
         }
@@ -92,7 +84,7 @@ abstract class AlarmAppender(
         val cb = cbTracker!!.getOrCreate(key, now)
         event.callerData
         event.prepareForDeferredProcessing()
-        if (event.marker?.contains(RequestLoggingFilter.ALARM_LOG_MARKER) == true)
+        if (event.marker?.contains(ALARM_LOG_MARKER) == true)
             cb.clear()
         cb.add(event)
 
@@ -142,16 +134,13 @@ abstract class AlarmAppender(
         val len = cbClone.length()
         var initialComment = ""
 
-        var alarmMarker: AlarmMarker? = null
+        val alarmMarker: AlarmMarker? = findAlarmMarker(event.marker)
         for (i in 0 until len) {
             val e = cbClone.get()
             message.add(String(encoder.encode(e)))
             if (i == len - 1) {
                 val tp = e.throwableProxy
-                val marker = findAlarmMarker(e.marker)
-                if (e == event)
-                    alarmMarker = marker
-                initialComment = marker?.name
+                initialComment = alarmMarker?.initialComment
                         ?: (if (tp != null) "${tp.className}:${tp.message ?: event.message}" else e.formattedMessage
                                 ?: event.message)
                                 ?: ""
@@ -159,23 +148,16 @@ abstract class AlarmAppender(
         }
 
         val timeStamp = event.timeStamp
-        if (alarmMarker == null)
-            alarmMarker = findAlarmMarker(event.marker)
-        val needSend = if (cacheSeconds > 0) {
-            if (!cacheMap.containsKey(initialComment)) {
-                cacheMap[initialComment] = 1
-                true
-            } else {
-                false
-            }
-        } else {
+        val needSend = if (!cacheMap.containsKey(initialComment)) {
+            cacheMap[initialComment] = 1
             true
+        } else {
+            false
         }
+
         if (needSend) {
-            val timeoutMsg = alarmMarker?.timeoutMsg
-            val timeout = !timeoutMsg.isNullOrBlank()
+            val timeout = alarmMarker?.timeout == true
             if (timeout) {
-                initialComment += timeoutMsg
                 if (!timeoutCacheMap.containsKey(initialComment)) {
                     timeoutCacheMap[initialComment] = 1
                     send(timeStamp, initialComment, message, true)

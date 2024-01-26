@@ -1,4 +1,4 @@
-package top.bettercode.summer.logging.logback
+package top.bettercode.summer.tools.lang.log
 
 import org.slf4j.Marker
 import java.util.concurrent.CopyOnWriteArrayList
@@ -7,10 +7,10 @@ import java.util.concurrent.CopyOnWriteArrayList
  * A alarm implementation of the [Marker] interface.
  *
  */
-class AlarmMarker(private val name: String, val timeoutMsg: String? = null) : Marker {
+class AlarmMarker(val initialComment: String? = null, val timeout: Boolean = false) : Marker {
     private val referenceList: MutableList<Marker> = CopyOnWriteArrayList()
     override fun getName(): String {
-        return name
+        return AlarmAppender.ALARM_LOG_MARKER
     }
 
     override fun add(reference: Marker) {

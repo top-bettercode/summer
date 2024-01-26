@@ -12,7 +12,7 @@ class OkHttpClientTest {
     fun log() {
         // 创建 OkHttpClient 实例
         val client = OkHttpClient.Builder()
-                .addInterceptor(OkHttpClientLoggingInterceptor("第三方服务","测试")) // 添加日志拦截器
+                .addInterceptor(OkHttpClientLoggingInterceptor("第三方服务", "测试", "test")) // 添加日志拦截器
                 .build()
 
         // 创建一个 Request 对象，表示要发送的请求
