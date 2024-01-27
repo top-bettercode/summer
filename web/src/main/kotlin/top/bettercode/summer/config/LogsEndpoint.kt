@@ -386,7 +386,7 @@ class LogsEndpoint(
                     )
 
                 files.sortWith(comparator)
-                files.forEach {
+                files.filter { it.length() > 0 }.forEach {
                     val millis = it.lastModified()
                     val lastModify =
                             if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
