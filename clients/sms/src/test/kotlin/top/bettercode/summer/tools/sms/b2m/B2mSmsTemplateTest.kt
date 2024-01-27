@@ -14,41 +14,44 @@ import java.util.*
 @Disabled
 internal class B2mSmsTemplateTest : BaseTest() {
     @Autowired
-    var b2mTemplate: B2mSmsTemplate? = null
+    lateinit var b2mTemplate: B2mSmsTemplate
 
     @Autowired
-    var simpleB2mTemplate: SimpleB2mSmsTemplate? = null
+    lateinit var simpleB2mTemplate: SimpleB2mSmsTemplate
 
-    @Value("\${mobile}")
+    @Value("\${mobile:}")
     var mobile: String? = null
 
-    @Disabled
     @Test
     fun simpleSendSms() {
-        simpleB2mTemplate!!.simpleSendSms(Collections.singletonMap(mobile,
+        simpleB2mTemplate.simpleSendSms(Collections.singletonMap(mobile,
                 "【云图复肥】客户您好，2020年09月22日您的订单在应城市新都化工有限责任公司复合肥工厂12已发货物料：45%241407新氨化掺混腐植酸中氯黑， 数量：12.700，单位：吨，请注意查收，如有异议请在48小时内联系热线028-83950223。"))
     }
 
-    @Disabled
     @Test
     fun sendSms() {
-        b2mTemplate!!.sendSms(Collections.singletonMap(mobile,
+        b2mTemplate.sendSms(Collections.singletonMap(mobile,
                 "【云图复肥】客户您好，2020年09月22日您的订单在应城市新都化工有限责任公司复合肥工厂12已发货物料：45%241407新氨化掺混腐植酸中氯黑， 数量：12.700，单位：吨，请注意查收，如有异议请在48小时内联系热线028-83950223。"))
     }
 
     @Test
     fun simpleQuerySendReport() {
-        simpleB2mTemplate!!.simpleQuerySendReport()
+        simpleB2mTemplate.simpleQuerySendReport()
     }
 
     @Test
     fun querySendReport() {
-        b2mTemplate!!.querySendReport()
+        b2mTemplate.querySendReport()
     }
 
-    @Disabled
     @Test
     fun retrieveReport() {
-        simpleB2mTemplate!!.retrieveReport(LocalDateTime.of(2022, 3, 30, 9, 0))
+        simpleB2mTemplate.retrieveReport(LocalDateTime.of(2022, 3, 30, 9, 0))
     }
+
+    @Test
+    fun getBalance() {
+        b2mTemplate.getBalance()
+    }
+
 }

@@ -208,4 +208,67 @@ open class B2mSmsTemplate(
         }
     }
 
+    /**
+     *
+     * 获取余额接口
+     *
+     * 文档：http://www.b2m.cn/static/doc/sms/getbalance.html
+     *
+     * @return 结果
+     */
+    open fun getBalance(): B2mBalance {
+        val headers = HttpHeaders()
+        headers.add("appId", b2mProperties.appId)
+        headers.add("gzip", "on")
+        headers.add("encode", "UTF-8")
+        val params: MutableMap<String, Any> = mutableMapOf()
+        params["requestTime"] = System.currentTimeMillis()
+        params["requestValidPeriod"] = b2mProperties.requestValidPeriod
+        val json = json(params)
+        var data = json.toByteArray(StandardCharsets.UTF_8)
+        data = gzip(data)
+        data = encrypt(data, b2mProperties.secretKey)
+        val requestCallback = this.restTemplate.httpEntityCallback<ByteArray>(
+                HttpEntity(data, headers),
+                ByteArray::class.java
+        )
+        val entity: ResponseEntity<ByteArray> = try {
+            execute(
+                    b2mProperties.url + "/inter/getBalance", HttpMethod.POST,
+                    requestCallback,
+                    this.restTemplate.responseEntityExtractor(ByteArray::class.java)
+            )
+        } catch (e: Exception) {
+            throw SmsException(e)
+        } ?: throw SmsException()
+
+        return if (entity.statusCode.is2xxSuccessful) {
+            val code = entity.headers.getFirst("result")
+            if (B2mResponse.SUCCESS == code) {
+                var respData = entity.body
+                respData = decrypt(respData!!, b2mProperties.secretKey)
+                respData = ungzip(respData)
+                readJson(
+                        respData,
+                        B2mBalance::class.java
+                )
+            } else {
+                val message = B2mResponse.getMessage(code)
+                throw SmsSysException(message ?: "请求失败")
+            }
+        } else {
+            throw SmsException()
+        }
+    }
+
+    fun checkBalance(): Boolean {
+        val balance = getBalance().balance
+        val hasBalance = balance != null && balance > 1000
+        if (!hasBalance)
+            log.error("亿美短信余额不足，请及时充值，当前余额：$balance")
+        else
+            log.info("亿美短信余额：$balance")
+        return hasBalance
+    }
+
 }
