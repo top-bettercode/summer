@@ -108,10 +108,12 @@ object RecipeExport {
     fun FastExcel.exportRecipe(recipe: Recipe) {
         val requirement = recipe.requirement
         RecipeExt(recipe).apply {
-            val titles = "最小用量\t最大用量\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量\t投料量\t成本\t单价(/吨)\t产品水分".split("\t")
+            val titles = "最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量\t投料量\t成本\t单价(/吨)".split("\t")
             val materials = recipe.materials.toSortedSet()
-            val indicators = materials.first().indicators
-            range(0, 0, materials.size + 7, titles.size + indicators.size).setStyle()
+            val rangeIndicators = requirement.rangeIndicators
+            val limitMaterials = materials.filter { it.range != null }
+            val columnSize = titles.size + rangeIndicators.size + limitMaterials.size
+            range(0, 0, materials.size + 7, columnSize).setStyle()
 
             var r = 0
             cell(r, 0).value("配方成本：").width(22.0).setStyle()
@@ -127,49 +129,24 @@ object RecipeExport {
             //标题
             cell(r, 0).headerStyle().setStyle()
             titles.forEach { s ->
-                cell(r, c++).value(s).headerStyle().width(if (c in 4..7) 16.0 else 8.0).setStyle()
+                cell(r, c++).value(s).headerStyle().width(if (c in 1..5) 16.0 else 8.0).setStyle()
             }
             if (materials.isEmpty()) {
                 return
             }
-            indicators.values.forEach { indicator ->
+            rangeIndicators.values.forEach { indicator ->
                 cell(r, c++).value(indicator.name).headerStyle().width(8.0).setStyle()
             }
 
-            val rangeIndicators = requirement.rangeIndicators
             //成份量 //目标成份量(最大值) //目标成份量(最小值) //成份量(百分比)
             r++
             cell(r++, 0).value("成份量").bold().setStyle()
             cell(r++, 0).value("目标成份量(最大值)").bold().setStyle()
             cell(r++, 0).value("目标成份量(最小值)").bold().setStyle()
             cell(r++, 0).value("成份量(百分比)").bold().setStyle()
-            c = titles.size
+            c = titles.size + 1
 
-            //产品水分
-            r = 4
-            //成份量
-            val productWaterWeight = (materials.sumOf { it.waterWeight } - recipe.dryWater).scale()
-            cell(r++, c).value(productWaterWeight).bold().format("0.00").setStyle()
-
-            //目标成份量(最大值)
-            val productWaterMax = rangeIndicators.productWater?.value?.max
-            cell(r++, c).value(productWaterMax).bold().format("0.0%").setStyle()
-
-            //目标成份量(最小值)
-            val productWaterMin = rangeIndicators.productWater?.value?.min
-            cell(r++, c).value(productWaterMin).bold().format("0.0%").setStyle()
-
-            //成份量(百分比)
-            val productWaterValue =((materials.sumOf { it.waterWeight } - recipe.dryWater) / requirement.targetWeight).scale()
-            if (productWaterMin == null || productWaterMax == null) {
-                cell(r++, c).value(productWaterValue).bold().format("0.0%").setStyle()
-            } else {
-                val valid = productWaterValue - productWaterMin >= -OptimalUtil.DEFAULT_MIN_EPSILON && productWaterValue - productWaterMax <= OptimalUtil.DEFAULT_MIN_EPSILON
-                cell(r++, c).value(productWaterValue).bold().format("0.0%").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
-            }
-            c++
-
-            indicators.values.forEach { indicator ->
+            rangeIndicators.values.forEach { indicator ->
                 r = 4
                 //成份量
                 val indicatorValue = when (indicator.type) {
@@ -201,15 +178,21 @@ object RecipeExport {
                 }
                 c++
             }
+            // 物料限量
+            limitMaterials.forEach {
+                r = 3
+                cell(r++, c).value(it.name + "用量").headerStyle().width(8.0).setStyle()
+                cell(r++, c).value(it.weight).bold().format("0").setStyle()
+                cell(r++, c).value(it.range!!.max).bold().format("0").setStyle()
+                cell(r++, c).value(it.range!!.min).bold().format("0").setStyle()
+                val valid = it.weight - it.range!!.min >= -OptimalUtil.DEFAULT_MIN_EPSILON && it.weight - it.range!!.max <= OptimalUtil.DEFAULT_MIN_EPSILON
+                cell(r++, c++).value(it.weight).bold().format("0").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
+            }
             //物料
-            val columnSize = titles.size + indicators.size
             materials.forEach { material ->
                 c = 0
                 //最小用量 最大用量 最小耗液氨/硫酸系数 最小耗液氨/硫酸量 最大耗液氨/硫酸系数 最大耗液氨/硫酸量 投料量 成本 单价(/吨)
                 cell(r, c++).value(material.name).wrapText().setStyle()
-                val range = material.range
-                cell(r, c++).value(range?.min).format("0").setStyle()
-                cell(r, c++).value(range?.max).format("0").setStyle()
                 val relationRate = material.relationRate
                 val normal = relationRate?.normal
                 val relationValue = material.relationValue
@@ -222,9 +205,15 @@ object RecipeExport {
                 cell(r, c++).value(material.weight).bold().format("0.00").setStyle()
                 cell(r, c++).value(material.cost).format("0.00").setStyle()
                 cell(r, c++).value(material.price * 1000).format("0").setStyle()
-                cell(r, c++).value(material.indicators.water?.value).format("0.0%").setStyle()
-                material.indicators.forEach { (_, indicator) ->
-                    cell(r, c++).value(indicator.value).format("0.0%").setStyle()
+                rangeIndicators.values.forEach { indicator ->
+                    val value = when (indicator.type) {
+                        RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue
+                        else -> material.indicators[indicator.id]?.value
+                    }
+                    cell(r, c++).value(value).format("0.0%").setStyle()
+                }
+                limitMaterials.forEach { _ ->
+                    cell(r, c++).value("-").setStyle()
                 }
                 if (material.double) {
                     c = 3
