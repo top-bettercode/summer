@@ -33,11 +33,24 @@ object ResponseConverter {
         )
     }
 
+
     fun convert(response: ClientHttpResponseWrapper): OperationResponse {
         return OperationResponse(
                 response.statusCode.value(),
                 response.headers, response.content
         )
+    }
+
+    fun unwrapHttpServletResponse(response: ServletResponse): ServletResponse {
+        return when (response) {
+            is HttpServletResponseWrapper -> {
+                unwrapHttpServletResponse(response.response)
+            }
+
+            else -> {
+                response
+            }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

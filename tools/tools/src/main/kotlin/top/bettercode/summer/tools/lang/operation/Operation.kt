@@ -49,6 +49,7 @@ open class Operation(
 ) {
 
 
+    @JvmOverloads
     fun toString(
             config: RequestLoggingConfig,
             requestDecrypt: ((ByteArray) -> ByteArray)? = null,

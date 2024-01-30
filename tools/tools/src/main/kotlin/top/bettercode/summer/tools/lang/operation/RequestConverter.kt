@@ -172,25 +172,25 @@ object RequestConverter {
         ) {
             parts.addAll(extractServletRequestParts(request))
         }
-        val multipartHttpServletRequest = unwrapMultipartHttpServletRequest(request)
+        val multipartHttpServletRequest = unwrapHttpServletRequest(request)
         if (multipartHttpServletRequest is MultipartHttpServletRequest) {
             parts.addAll(extractMultipartRequestParts(multipartHttpServletRequest))
         }
         return parts
     }
 
-    private fun unwrapMultipartHttpServletRequest(servletRequest: ServletRequest): ServletRequest {
-        return when (servletRequest) {
+    fun unwrapHttpServletRequest(request: ServletRequest): ServletRequest {
+        return when (request) {
             is MultipartHttpServletRequest -> {
-                servletRequest
+                request
             }
 
             is HttpServletRequestWrapper -> {
-                unwrapMultipartHttpServletRequest(servletRequest.request)
+                unwrapHttpServletRequest(request.request)
             }
 
             else -> {
-                servletRequest
+                request
             }
         }
     }

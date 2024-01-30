@@ -37,9 +37,14 @@ class TraceHttpServletRequestWrapper
 
 
     private val charset = if (!contentType.isNullOrBlank()) try {
-        MediaType.parseMediaType(
-                contentType
-        ).charset
+        try {
+            MediaType.parseMediaType(
+                    contentType
+            ).charset
+        } catch (e: NoSuchMethodError) {
+            null
+        }
+
     } catch (e: Exception) {
         log.warn("解析contentType失败", e)
         null

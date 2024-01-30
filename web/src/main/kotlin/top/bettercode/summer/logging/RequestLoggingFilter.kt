@@ -76,26 +76,33 @@ class RequestLoggingFilter(
             request: HttpServletRequest, response: HttpServletResponse,
             filterChain: FilterChain
     ) {
-//        ignored
         val uri = request.servletPath
-        if (properties.matchIgnored(uri)) {
-            filterChain.doFilter(request, response)
-            return
-        }
+        var requestToUse: HttpServletRequest
+        var responseToUse: HttpServletResponse
+        try {//        ignored
+            if (properties.matchIgnored(uri)) {
+                filterChain.doFilter(request, response)
+                return
+            }
 
-        request.setAttribute(REQUEST_DATE_TIME, LocalDateTime.now())
+            request.setAttribute(REQUEST_DATE_TIME, LocalDateTime.now())
 
-        val requestToUse: HttpServletRequest = if (properties.isIncludeRequestBody) {
-            TraceHttpServletRequestWrapper(request)
-        } else {
-            request
-        }
-        val responseToUse: HttpServletResponse = if (properties.isIncludeResponseBody) {
-            TraceHttpServletResponseWrapper(
-                    response
-            )
-        } else {
-            response
+            requestToUse = if (properties.isIncludeRequestBody) {
+                TraceHttpServletRequestWrapper(request)
+            } else {
+                request
+            }
+            responseToUse = if (properties.isIncludeResponseBody) {
+                TraceHttpServletResponseWrapper(
+                        response
+                )
+            } else {
+                response
+            }
+        } catch (e: Exception) {
+            log.error(e.message, e)
+            requestToUse = request
+            responseToUse = response
         }
         try {
             filterChain.doFilter(requestToUse, responseToUse)
@@ -106,6 +113,7 @@ class RequestLoggingFilter(
                 log.error(e.message, e)
             }
         }
+
     }
 
     private fun record(
