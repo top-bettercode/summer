@@ -1,6 +1,6 @@
 {
   "cost" : 2596.3832486084,
-  "dryWater" : 506.0498576532,
+  "dryWater" : 506.0498576534,
   "materials" : [ {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -8,7 +8,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
-    "weight" : 140.5835619028
+    "weight" : 140.5835619029
   }, {
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -16,7 +16,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.8,
-    "weight" : 165.0843247346
+    "weight" : 165.0843247347
   }, {
     "id" : "防结油（白色）",
     "index" : 61,
@@ -74,5 +74,5 @@
     "price" : 3.55,
     "weight" : 232.5
   } ],
-  "trueCost" : 2596.3832486083
+  "trueCost" : 2596.3832486088
 }

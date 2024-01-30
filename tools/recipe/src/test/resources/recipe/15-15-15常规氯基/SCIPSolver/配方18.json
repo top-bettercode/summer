@@ -1,6 +1,6 @@
 {
   "cost" : 2381.506214331,
-  "dryWater" : 0.0,
+  "dryWater" : -1.0E-10,
   "materials" : [ {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
@@ -64,7 +64,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 348.762946845
+    "weight" : 348.7629468449
   } ],
-  "trueCost" : 2381.506214331
+  "trueCost" : 2381.5062143308
 }
