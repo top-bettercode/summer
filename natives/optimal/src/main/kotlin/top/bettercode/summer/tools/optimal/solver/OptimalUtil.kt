@@ -10,22 +10,26 @@ object OptimalUtil {
     /**
      * 默认下限
      */
-    const val DEFAULT_LB: Double = 0.0
+    @JvmStatic
+    var DEFAULT_LB: Double = 0.0
 
     /**
      * 默认上限
      */
-    const val DEFAULT_UB: Double = 1000.0
+    @JvmStatic
+    var DEFAULT_UB: Double = 1000.0
 
     /**
      * 默认误差
      */
-    const val DEFAULT_EPSILON = 1e-5
+    @JvmStatic
+    var DEFAULT_EPSILON = 1e-5
 
     /**
      * 默认最小误差
      */
-    const val DEFAULT_MIN_EPSILON = 1e-9
+    @JvmStatic
+    var DEFAULT_MIN_EPSILON = 1e-9
 
     /**
      * 求解结果小数位
@@ -33,7 +37,7 @@ object OptimalUtil {
      * Math.abs(Math.log10(epsilon)).toInt()
      */
     @JvmStatic
-    var defaultScale: Int = 10
+    var DEFAULT_SCALE: Int = 10
 
     /**
      * 将数字转换为指定小数位数的数字
@@ -43,7 +47,7 @@ object OptimalUtil {
      * @return 指定小数位数的数字
      */
     @JvmStatic
-    fun Double.scale(scale: Int = defaultScale): Double {
+    fun Double.scale(scale: Int = DEFAULT_SCALE): Double {
         require(scale >= 0) { "小数位数不能为负数" }
         val scaleFactor: Double = 10.0.pow(scale.toDouble())
         return Math.round(this * scaleFactor) / scaleFactor

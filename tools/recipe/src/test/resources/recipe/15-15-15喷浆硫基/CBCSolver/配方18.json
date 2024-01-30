@@ -1,6 +1,6 @@
 {
-  "cost" : 2648.3832490758,
-  "dryWater" : 590.988636323,
+  "cost" : 2648.3832486084,
+  "dryWater" : 590.9886358327,
   "materials" : [ {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -8,7 +8,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
-    "weight" : 30.4704993125
+    "weight" : 30.4704994752
   }, {
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -16,7 +16,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.8,
-    "weight" : 149.9380788216
+    "weight" : 149.9380783864
   }, {
     "id" : "防结油（白色）",
     "index" : 61,
@@ -29,10 +29,10 @@
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 105.9675590883,
+    "normalWeight" : 105.9675592576,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
-    "weight" : 105.9675590883
+    "weight" : 105.9675592576
   }, {
     "id" : "防结粉（白色）",
     "index" : 62,
@@ -45,10 +45,10 @@
     "id" : "硫酸",
     "index" : 36,
     "name" : "硫酸",
-    "normalWeight" : 325.240166398,
-    "overdoseWeight" : 32.5240166398,
+    "normalWeight" : 325.240166578,
+    "overdoseWeight" : 32.5240166312,
     "price" : 0.22,
-    "weight" : 357.7641830378
+    "weight" : 357.7641832093
   }, {
     "id" : "磷酸",
     "index" : 29,
@@ -56,7 +56,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.055,
-    "weight" : 671.2748445196
+    "weight" : 671.2748438272
   }, {
     "id" : "生化黄腐酸钾",
     "index" : 67,
@@ -72,7 +72,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 265.5734715432
+    "weight" : 265.573471677
   } ],
-  "trueCost" : 2648.3832490759
+  "trueCost" : 2648.3832486083
 }

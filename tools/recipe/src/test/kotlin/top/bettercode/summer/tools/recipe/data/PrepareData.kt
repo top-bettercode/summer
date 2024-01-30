@@ -7,6 +7,7 @@ import org.springframework.util.Assert
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
 import top.bettercode.summer.tools.lang.util.FileUtil
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.Operator
@@ -183,8 +184,8 @@ object PrepareData {
         // 0     1     2     3       4     5     6       7         8  9
         // 总养份 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 物料水分 硼 锌
         for (i in 0..9) {
-            val min = (targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble()
-            val max = (targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble()
+            val min = (targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble().scale()
+            val max = (targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble().scale()
             val indicator = when (i) {
                 3 -> RecipeIndicator(id = 6, name = indicatorNames[6], value = DoubleRange(min, max), type = RecipeIndicatorType.RATE_TO_OTHER, itId = 7, otherId = 2)
                 4 -> RecipeIndicator(id = 3, name = indicatorNames[3], value = DoubleRange(min, max))
@@ -219,7 +220,7 @@ object PrepareData {
                         .getCellAsNumber(index)
                         .orElseThrow { RuntimeException("找不到用量") }
                 val array = materialIds.filter { it.contains(materialNameFragment) }.toMaterialIDs()
-                materialRangeConstraints[array] = DoubleRange(minUse.toDouble(), maxUse.toDouble())
+                materialRangeConstraints[array] = DoubleRange(minUse.toDouble().scale(), maxUse.toDouble().scale())
             }
             index++
         }
@@ -245,7 +246,7 @@ object PrepareData {
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
                     val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toMaterialIDs().toReplacebleMaterialIDs(AMMONIUM_CARBONATE, LA_2_CAUSE_RATIO)) { HashMap<MaterialIDs, RecipeRelation>() }
-                    val doubleRange = DoubleRange(minUse.toDouble(), maxUse.toDouble())
+                    val doubleRange = DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
                     val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
                     if (isOverdose) {
                         rangePair.overdoseMaterial = RecipeRelation(doubleRange)
@@ -272,7 +273,7 @@ object PrepareData {
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
                     val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toReplacebleMaterialIDs()) { HashMap<MaterialIDs, RecipeRelation>() }
-                    val doubleRange = DoubleRange(minUse.toDouble(), maxUse.toDouble())
+                    val doubleRange = DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
                     val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
                     if (isOverdose) {
                         rangePair.overdose = doubleRange
@@ -404,57 +405,57 @@ object PrepareData {
             val materialPrice = materialPrices[materialName] ?: continue
             val indicators = mutableListOf<RecipeIndicator<Double>>()
             var i = 0
-            indicators.add(RecipeIndicator(i, indicatorNames[i], materialForm.totalNutrient))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.nitrogen!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.phosphorus!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.potassium!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.chlorine!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.water!!, RecipeIndicatorType.WATER))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.waterSolublePhosphorusRate!!, RecipeIndicatorType.RATE_TO_OTHER, 7, 2))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.waterSolublePhosphorus!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.nitrateNitrogen!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.boron!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.zinc!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.manganese!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.copper!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.iron!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.molybdenum!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.magnesium!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.sulfur!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.calcium!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.organicMatter!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.humicAcid!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.fulvicAcid!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.activeBacteria!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.silicon!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index23!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index24!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index25!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index26!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index27!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index28!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index29!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index30!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index31!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index32!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index33!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index34!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index35!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index36!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index37!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index38!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index39!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index40!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index41!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index42!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index43!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index44!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index45!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index46!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index47!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index48!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index49!!))
-            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index50!!))
+            indicators.add(RecipeIndicator(i, indicatorNames[i], materialForm.totalNutrient.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.nitrogen!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.phosphorus!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.potassium!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.chlorine!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.water!!.scale(), RecipeIndicatorType.WATER))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.waterSolublePhosphorusRate!!.scale(), RecipeIndicatorType.RATE_TO_OTHER, 7, 2))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.waterSolublePhosphorus!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.nitrateNitrogen!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.boron!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.zinc!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.manganese!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.copper!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.iron!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.molybdenum!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.magnesium!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.sulfur!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.calcium!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.organicMatter!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.humicAcid!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.fulvicAcid!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.activeBacteria!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.silicon!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index23!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index24!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index25!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index26!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index27!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index28!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index29!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index30!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index31!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index32!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index33!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index34!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index35!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index36!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index37!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index38!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index39!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index40!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index41!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index42!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index43!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index44!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index45!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index46!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index47!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index48!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index49!!.scale()))
+            indicators.add(RecipeIndicator(++i, indicatorNames[i], materialForm.index50!!.scale()))
 
             val material = RecipeMaterial(index = index, id = materialName, name = materialName, price = materialPrice / 1000, indicators = RecipeValueIndicators(indicators))
             materials.add(material)

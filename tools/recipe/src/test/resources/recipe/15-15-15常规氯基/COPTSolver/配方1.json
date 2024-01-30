@@ -1,6 +1,6 @@
 {
-  "cost" : 2314.506214349,
-  "dryWater" : 21.0456066639,
+  "cost" : 2314.506214331,
+  "dryWater" : 21.045606863,
   "materials" : [ {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
@@ -24,7 +24,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 182.6032279641
+    "weight" : 182.6032275411
   }, {
     "id" : "防结油（白色）",
     "index" : 64,
@@ -37,10 +37,10 @@
     "id" : "液氨",
     "index" : 10,
     "name" : "液氨",
-    "normalWeight" : 2.5164190141,
+    "normalWeight" : 2.5164189236,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "weight" : 2.5164190141
+    "weight" : 2.5164189236
   }, {
     "id" : "防结粉（白色）",
     "index" : 65,
@@ -56,7 +56,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 50.7301053692
+    "weight" : 50.7301057922
   }, {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -64,7 +64,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 366.0300934469
+    "weight" : 366.0300937365
   } ],
-  "trueCost" : 2314.506214349
+  "trueCost" : 2314.5062143309
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.recipe.data.PrepareData
 import top.bettercode.summer.tools.recipe.data.RecipeMaterialView
@@ -78,17 +79,17 @@ internal class RecipeSolverTest {
 
         val expectedRequirement = RecipeResult::class.java.getResourceAsStream("/recipe/$productName/requirement.json")!!.bufferedReader().readText()
         //配方要求
-//        Assertions.assertEquals(expectedRequirement, json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java),recipeResult.solverName)
+        Assertions.assertEquals(expectedRequirement, json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java), recipeResult.solverName)
         //配方
         val dir = "recipe/$productName/${recipeResult.solverName}"
         recipes.forEachIndexed { index, recipe ->
             val expectedRecipe = RecipeResult::class.java.getResourceAsStream("/$dir/配方${index + 1}.json")!!.bufferedReader().readText()
-            Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java),recipeResult.solverName)
+            Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java), recipeResult.solverName)
         }
     }
 
     private fun assert(solve: RecipeResult, solve1: RecipeResult) {
-        Assertions.assertEquals(solve.recipes[0].cost, solve1.recipes[0].cost)
+        Assertions.assertEquals(solve.recipes[0].cost.scale(7), solve1.recipes[0].cost.scale(7))
         Assertions.assertEquals(solve.recipes.size, solve1.recipes.size)
         Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
     }

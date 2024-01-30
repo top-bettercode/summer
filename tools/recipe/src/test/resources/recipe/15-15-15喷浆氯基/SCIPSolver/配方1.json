@@ -1,6 +1,6 @@
 {
-  "cost" : 2325.0511239151,
-  "dryWater" : 332.3836351318,
+  "cost" : 2325.0511237291,
+  "dryWater" : 332.3836347502,
   "materials" : [ {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -8,7 +8,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 174.9996885093
+    "weight" : 174.9996888218
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
@@ -56,7 +56,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.05,
-    "weight" : 490.4767837917
+    "weight" : 490.4767831965
   }, {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -64,7 +64,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 384.5058832562
+    "weight" : 384.5058831573
   } ],
-  "trueCost" : 2325.051123915
+  "trueCost" : 2325.0511237289
 }
