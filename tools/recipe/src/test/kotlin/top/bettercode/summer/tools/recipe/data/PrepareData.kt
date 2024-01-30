@@ -26,7 +26,7 @@ import java.util.stream.Collectors
  */
 object PrepareData {
 
-    const val INDICATOR_NAME_STRING = "总养分 氮 磷 钾 氯离子 水分 水溶磷率 水溶磷 硝态氮 硼 锌 锰 铜 铁 钼 镁 硫 钙 有机质（%） 腐植酸 黄腐酸 活性菌 硅 指标23 指标24 指标25 指标26 指标27 指标28 指标29 指标30 指标31 指标32 指标33 指标34 指标35 指标36 指标37 指标38 指标39 指标40 指标41 指标42 指标43 指标44 指标45 指标46 指标47 指标48 指标49 指标50"
+    const val INDICATOR_NAME_STRING = "总养分 氮 磷 钾 氯离子 物料水分 水溶磷率 水溶磷 硝态氮 硼 锌 锰 铜 铁 钼 镁 硫 钙 有机质（%） 腐植酸 黄腐酸 活性菌 硅 指标23 指标24 指标25 指标26 指标27 指标28 指标29 指标30 指标31 指标32 指标33 指标34 指标35 指标36 指标37 指标38 指标39 指标40 指标41 指标42 指标43 指标44 指标45 指标46 指标47 指标48 指标49 指标50"
     val indicatorNames: List<String> = INDICATOR_NAME_STRING.split(" +".toRegex())
 
 
@@ -181,24 +181,21 @@ object PrepareData {
         val targetMinLimitRow = rows[11]
         val rangeIndicators = mutableListOf<RecipeIndicator<DoubleRange>>()
         // 0     1     2     3       4     5     6       7         8  9
-        // 总养份 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 系统物料水分 硼 锌
+        // 总养份 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 物料水分 硼 锌
         for (i in 0..9) {
-            if (i != 7) {
-                val min = (targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble()
-                val max = (targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble()
-                val indicator = when (i) {
-                    3 -> RecipeIndicator(id = 6, name = indicatorNames[6], value = DoubleRange(min, max), type = RecipeIndicatorType.RATE_TO_OTHER, itId = 7, otherId = 2)
-                    4 -> RecipeIndicator(id = 3, name = indicatorNames[3], value = DoubleRange(min, max))
-                    5 -> RecipeIndicator(id = 4, name = indicatorNames[4], value = DoubleRange(min, max))
-                    6 -> RecipeIndicator(id = 5, name = indicatorNames[5], value = DoubleRange(min, max), type = RecipeIndicatorType.WATER)
-                    8 -> RecipeIndicator(id = 9, name = indicatorNames[9], value = DoubleRange(min, max))
-                    9 -> RecipeIndicator(id = 10, name = indicatorNames[10], value = DoubleRange(min, max))
-                    else -> RecipeIndicator(id = i, name = indicatorNames[i], value = DoubleRange(min, max))
-                }
-                rangeIndicators.add(indicator)
-            } else {
-                index++
+            val min = (targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble()
+            val max = (targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble()
+            val indicator = when (i) {
+                3 -> RecipeIndicator(id = 6, name = indicatorNames[6], value = DoubleRange(min, max), type = RecipeIndicatorType.RATE_TO_OTHER, itId = 7, otherId = 2)
+                4 -> RecipeIndicator(id = 3, name = indicatorNames[3], value = DoubleRange(min, max))
+                5 -> RecipeIndicator(id = 4, name = indicatorNames[4], value = DoubleRange(min, max))
+                6 -> RecipeIndicator(id = -1, name = "产品水分", value = DoubleRange(min, max), type = RecipeIndicatorType.PRODUCT_WATER)
+                7 -> RecipeIndicator(id = 5, name = indicatorNames[5], value = DoubleRange(min, max), type = RecipeIndicatorType.WATER)
+                8 -> RecipeIndicator(id = 9, name = indicatorNames[9], value = DoubleRange(min, max))
+                9 -> RecipeIndicator(id = 10, name = indicatorNames[10], value = DoubleRange(min, max))
+                else -> RecipeIndicator(id = i, name = indicatorNames[i], value = DoubleRange(min, max))
             }
+            rangeIndicators.add(indicator)
         }
 
         val limitRowStart = 4

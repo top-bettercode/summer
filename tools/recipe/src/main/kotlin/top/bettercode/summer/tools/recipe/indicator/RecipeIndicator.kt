@@ -34,6 +34,8 @@ data class RecipeIndicator<T>(
 
     val isNutrient = type == RecipeIndicatorType.NUTRIENT
 
+    val isProductWater = type == RecipeIndicatorType.PRODUCT_WATER
+
     val isWater = type == RecipeIndicatorType.WATER
 
     val isRateToOther = type == RecipeIndicatorType.RATE_TO_OTHER

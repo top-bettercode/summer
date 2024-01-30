@@ -39,7 +39,7 @@ object MultiRecipeSolver {
                     val useMaterials: MutableMap<String, RecipeMaterialValue> = HashMap()
                     val recipe = Recipe(requirement, objective.value.scale(),
                             recipeMaterials.mapNotNull { (t, u) ->
-                                val value = u.solutionVar.value
+                                val value = u.weight.value
                                 if (value != 0.0) {
                                     val material = u.toMaterialValue()
                                     if (first) {
@@ -58,9 +58,9 @@ object MultiRecipeSolver {
                         if (materialUnchanged) {
                             recipeMaterials.forEach { (id, material) ->
                                 if (useMaterials.contains(id)) {
-                                    material.solutionVar.gt(0.0)
+                                    material.weight.gt(0.0)
                                 } else {
-                                    material.solutionVar.eq(0.0)
+                                    material.weight.eq(0.0)
                                 }
                             }
                         }
@@ -71,7 +71,7 @@ object MultiRecipeSolver {
                             }
                             recipeMaterials.map { (_, material) ->
                                 val value = material.totalNutrient()
-                                material.solutionVar.coeff(value)
+                                material.weight.coeff(value)
                             }.eq(totalNutrient)
                         }
                     }
@@ -79,7 +79,7 @@ object MultiRecipeSolver {
                     // 前十个每3元价差一推，后十个每5元价差一推。
                     recipeMaterials.map { (_, material) ->
                         val price = material.price
-                        material.solutionVar.coeff(price)
+                        material.weight.coeff(price)
                     }.ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
                 } else {
                     log.error("Could not find optimal solution:${getResultStatus()}")

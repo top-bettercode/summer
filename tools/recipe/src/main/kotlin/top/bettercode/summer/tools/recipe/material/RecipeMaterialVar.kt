@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.recipe.material
 
+import top.bettercode.summer.tools.optimal.solver.`var`.IVar
+
 /**
  *
  * @author Peter Wu
@@ -7,7 +9,9 @@ package top.bettercode.summer.tools.recipe.material
 data class RecipeMaterialVar(
         private val material: IRecipeMaterial,
         /** 最终使用量  */
-        val solutionVar: SolutionVar
+        val weight: IVar,
+        var normalWeight: IVar? = null,
+        var overdoseWeight: IVar? = null
 ) : IRecipeMaterial by material {
 
     fun totalNutrient(): Double {
@@ -15,6 +19,10 @@ data class RecipeMaterialVar(
     }
 
     fun toMaterialValue(): RecipeMaterialValue {
-        return RecipeMaterialValue(material, solutionVar.solve())
+        return RecipeMaterialValue(
+                material, weight.value,
+                normalWeight?.value ?: 0.0,
+                overdoseWeight?.value ?: 0.0,
+        )
     }
 }

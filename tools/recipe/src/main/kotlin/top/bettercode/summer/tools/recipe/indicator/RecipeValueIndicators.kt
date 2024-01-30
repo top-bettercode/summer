@@ -9,7 +9,7 @@ import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>>) : RecipeIndicators<Double>(indicators) {
 
     val key: String by lazy {
-        values.filter { it.type != RecipeIndicatorType.WATER }.joinToString(",") { it.value.scale().toString() }
+        values.filter { it.type != RecipeIndicatorType.WATER && it.type != RecipeIndicatorType.PRODUCT_WATER }.joinToString(",") { it.value.scale().toString() }
     }
 
     val waterValue: Double by lazy {

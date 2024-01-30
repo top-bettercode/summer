@@ -10,7 +10,6 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.recipe.criteria.Operator
 import top.bettercode.summer.tools.recipe.material.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
-import top.bettercode.summer.tools.recipe.material.SolutionVar
 import top.bettercode.summer.tools.recipe.result.Recipe
 
 object RecipeSolver {
@@ -32,7 +31,7 @@ object RecipeSolver {
             if (isOptimal()) {
                 return Recipe(requirement, objective.value.scale(),
                         recipeMaterials.mapNotNull { (_, u) ->
-                            val value = u.solutionVar.value
+                            val value = u.weight.value
                             if (value != 0.0) {
                                 u.toMaterialValue()
                             } else {
@@ -54,10 +53,10 @@ object RecipeSolver {
         val targetWeight = requirement.targetWeight
 
         val recipeMaterials = materials.mapValues {
-            RecipeMaterialVar(it.value, SolutionVar(delegate = numVar(0.0, targetWeight)))
+            RecipeMaterialVar(it.value, numVar(0.0, targetWeight))
         }
 
-        val materialVars = recipeMaterials.values.map { it.solutionVar }
+        val materialVars = recipeMaterials.values.map { it.weight }
 
         // 进料口数量
         if (numMaxMaterials in 1 until numRawMaterials) {
@@ -72,7 +71,7 @@ object RecipeSolver {
             //一组变量至多有一个变量可取非零值
             val noMixedVars = notMixedMaterial
                     .map { materialIDs: MaterialIDs ->
-                        val vars = materialIDs.mapNotNull { recipeMaterials[it]?.solutionVar }
+                        val vars = materialIDs.mapNotNull { recipeMaterials[it]?.weight }
                         if (vars.isEmpty()) return@map null
                         vars.sum()
                     }.filterNotNull()
@@ -84,35 +83,35 @@ object RecipeSolver {
         materialVars.between(targetWeight, if (requirement.maxBakeWeight < 0) Double.POSITIVE_INFINITY else targetWeight + requirement.maxBakeWeight)
 
         val rangeIndicators = requirement.rangeIndicators
-        // 水分
-        val waterRange = rangeIndicators.water?.value
+        // 产品水分指标
+        val waterRange = rangeIndicators.productWater?.value
         // 定义产品干净重
         val minDryWeight = targetWeight * (1 - (waterRange?.max ?: 0.0))
         val maxDryWeight = targetWeight * (1 - (waterRange?.min ?: 0.0))
         recipeMaterials.map {
             val material = it.value
             val indicators = material.indicators
-            it.value.solutionVar.coeff(1 - indicators.waterValue)
+            it.value.weight.coeff(1 - indicators.waterValue)
         }.between(minDryWeight, maxDryWeight)
 
         // 添加成份约束条件
-        // 成份要求 总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 水分 硼 锌
+        // 成份要求 总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 物料水分 硼 锌
         for (indicator in rangeIndicators) {
             val range = indicator.value
-            if (indicator.isWater) {
+            if (indicator.isProductWater) {
                 continue
             }
             if (indicator.isRateToOther) {
                 val otherVar = recipeMaterials.map {
                     val material = it.value
                     val coeff = material.indicators.valueOf(indicator.otherId!!)
-                    it.value.solutionVar.coeff(coeff)
+                    it.value.weight.coeff(coeff)
                 }.sum()
 
                 val itVar = recipeMaterials.map {
                     val material = it.value
                     val coeff = material.indicators.valueOf(indicator.itId!!)
-                    it.value.solutionVar.coeff(coeff)
+                    it.value.weight.coeff(coeff)
                 }.sum()
 
                 val minRate = indicator.value.min
@@ -123,7 +122,7 @@ object RecipeSolver {
                     val material = it.value
                     val indicators = material.indicators
                     val coeff = indicators.valueOf(indicator.id)
-                    material.solutionVar.coeff(coeff)
+                    material.weight.coeff(coeff)
                 }.between(targetWeight * range.min, targetWeight * range.max)
             }
         }
@@ -132,7 +131,7 @@ object RecipeSolver {
         // 原料用量
         val materialRangeConstraints = requirement.materialRangeConstraints
         materialRangeConstraints.forEach { (t, u) ->
-            t.mapNotNull { recipeMaterials[it]?.solutionVar }
+            t.mapNotNull { recipeMaterials[it]?.weight }
                     .between(u.min, u.max)
         }
 
@@ -144,26 +143,26 @@ object RecipeSolver {
             val overdoseVars = mutableListOf<IVar>()
             val useReplace = boolVar()
             ids.mapNotNull { recipeMaterials[it] }.forEach {
-                it.solutionVar.eqIf(0.0, useReplace)
+                it.weight.eqIf(0.0, useReplace)
                 val normalVar = numVar(0.0, targetWeight)
-                it.solutionVar.normalDelegate = normalVar
+                it.normalWeight = normalVar
                 normalVars.add(normalVar)
                 val overdoseVar = numVar(0.0, targetWeight)
-                it.solutionVar.overdoseDelegate = overdoseVar
+                it.overdoseWeight = overdoseVar
                 overdoseVars.add(overdoseVar)
-                arrayOf(normalVar, overdoseVar).eq(it.solutionVar)
+                arrayOf(normalVar, overdoseVar).eq(it.weight)
             }
 
             ids.replaceIds?.mapNotNull { recipeMaterials[it] }?.forEach {
                 val replaceRate = ids.replaceRate!!
-                it.solutionVar.eqIfNot(0.0, useReplace)
+                it.weight.eqIfNot(0.0, useReplace)
                 val normalVar = numVar(0.0, targetWeight)
-                it.solutionVar.normalDelegate = normalVar
+                it.normalWeight = normalVar
                 normalVars.add(normalVar.coeff(1 / replaceRate))
                 val overdoseVar = numVar(0.0, targetWeight)
-                it.solutionVar.overdoseDelegate = overdoseVar
+                it.overdoseWeight = overdoseVar
                 overdoseVars.add(overdoseVar.coeff(1 / replaceRate))
-                arrayOf(normalVar, overdoseVar).eq(it.solutionVar)
+                arrayOf(normalVar, overdoseVar).eq(it.weight)
             }
 
             //关联物料
@@ -176,36 +175,36 @@ object RecipeSolver {
                 val normal = u.normal
                 val overdose = u.overdose
                 val overdoseMaterial = u.overdoseMaterial
-                t.mapNotNull { recipeMaterials[it]?.solutionVar }.forEach {
-                    val normalDelegate = it.normalDelegate
-                    if (normalDelegate != null) {
+                t.mapNotNull { recipeMaterials[it] }.forEach {
+                    val normalWeight = it.normalWeight
+                    if (normalWeight != null) {
                         //物料消耗
-                        normalMinVars.add(normalDelegate.coeff(normal.min))
-                        normalMaxVars.add(normalDelegate.coeff(normal.max))
+                        normalMinVars.add(normalWeight.coeff(normal.min))
+                        normalMaxVars.add(normalWeight.coeff(normal.max))
                         if (overdose != null) {
-                            overdoseMinVars.add(normalDelegate.coeff(overdose.min))
-                            overdoseMaxVars.add(normalDelegate.coeff(overdose.max))
+                            overdoseMinVars.add(normalWeight.coeff(overdose.min))
+                            overdoseMaxVars.add(normalWeight.coeff(overdose.max))
                         }
                     } else {
                         //物料过量消耗
-                        normalMinVars.add(it.coeff(normal.min))
-                        normalMaxVars.add(it.coeff(normal.max))
+                        normalMinVars.add(it.weight.coeff(normal.min))
+                        normalMaxVars.add(it.weight.coeff(normal.max))
                         if (overdose != null) {
-                            overdoseMinVars.add(it.coeff(overdose.min))
-                            overdoseMaxVars.add(it.coeff(overdose.max))
+                            overdoseMinVars.add(it.weight.coeff(overdose.min))
+                            overdoseMaxVars.add(it.weight.coeff(overdose.max))
                         }
                     }
-                    val overdoseDelegate = it.overdoseDelegate
-                    if (overdoseMaterial != null && overdoseDelegate != null) {
+                    val overdoseWeight = it.overdoseWeight
+                    if (overdoseMaterial != null && overdoseWeight != null) {
                         val overdoseMaterialNormal = overdoseMaterial.normal
                         val overdoseMaterialOverdose = overdoseMaterial.overdose
                         //过量物料消耗
-                        normalMinVars.add(overdoseDelegate.coeff(overdoseMaterialNormal.min))
-                        normalMaxVars.add(overdoseDelegate.coeff(overdoseMaterialNormal.max))
+                        normalMinVars.add(overdoseWeight.coeff(overdoseMaterialNormal.min))
+                        normalMaxVars.add(overdoseWeight.coeff(overdoseMaterialNormal.max))
                         //过量物料过量消耗
                         if (overdoseMaterialOverdose != null) {
-                            overdoseMinVars.add(overdoseDelegate.coeff(overdoseMaterialOverdose.min))
-                            overdoseMaxVars.add(overdoseDelegate.coeff(overdoseMaterialOverdose.max))
+                            overdoseMinVars.add(overdoseWeight.coeff(overdoseMaterialOverdose.min))
+                            overdoseMaxVars.add(overdoseWeight.coeff(overdoseMaterialOverdose.max))
                         }
                     }
                 }
@@ -217,8 +216,8 @@ object RecipeSolver {
 
         // 条件约束
         requirement.materialConditions.forEach { (whenCondition, thenCondition) ->
-            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.sum()
-            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.solutionVar }.sum()
+            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
+            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
             val boolVar = boolVar()
             val whenCon = whenCondition.condition
             when (whenCon.operator) {
@@ -259,7 +258,7 @@ object RecipeSolver {
 
         // 定义目标函数：最小化成本
         val objective = recipeMaterials.values.map {
-            it.solutionVar.coeff(it.price)
+            it.weight.coeff(it.price)
         }.minimize()
 
         return recipeMaterials to objective

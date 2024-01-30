@@ -108,7 +108,7 @@ object RecipeExport {
     fun FastExcel.exportRecipe(recipe: Recipe) {
         val requirement = recipe.requirement
         RecipeExt(recipe).apply {
-            val titles = "最小用量\t最大用量\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量\t投料量\t成本\t单价(/吨)".split("\t")
+            val titles = "最小用量\t最大用量\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量\t投料量\t成本\t单价(/吨)\t产品水分".split("\t")
             val materials = recipe.materials.toSortedSet()
             val indicators = materials.first().indicators
             range(0, 0, materials.size + 7, titles.size + indicators.size).setStyle()
@@ -143,12 +143,37 @@ object RecipeExport {
             cell(r++, 0).value("目标成份量(最大值)").bold().setStyle()
             cell(r++, 0).value("目标成份量(最小值)").bold().setStyle()
             cell(r++, 0).value("成份量(百分比)").bold().setStyle()
-            c = titles.size + 1
+            c = titles.size
+
+            //产品水分
+            r = 4
+            //成份量
+            val productWaterWeight = (materials.sumOf { it.waterWeight } - recipe.dryWater).scale()
+            cell(r++, c).value(productWaterWeight).bold().format("0.00").setStyle()
+
+            //目标成份量(最大值)
+            val productWaterMax = rangeIndicators.productWater?.value?.max
+            cell(r++, c).value(productWaterMax).bold().format("0.0%").setStyle()
+
+            //目标成份量(最小值)
+            val productWaterMin = rangeIndicators.productWater?.value?.min
+            cell(r++, c).value(productWaterMin).bold().format("0.0%").setStyle()
+
+            //成份量(百分比)
+            val productWaterValue =((materials.sumOf { it.waterWeight } - recipe.dryWater) / requirement.targetWeight).scale()
+            if (productWaterMin == null || productWaterMax == null) {
+                cell(r++, c).value(productWaterValue).bold().format("0.0%").setStyle()
+            } else {
+                val valid = productWaterValue - productWaterMin >= -OptimalUtil.DEFAULT_MIN_EPSILON && productWaterValue - productWaterMax <= OptimalUtil.DEFAULT_MIN_EPSILON
+                cell(r++, c).value(productWaterValue).bold().format("0.0%").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
+            }
+            c++
+
             indicators.values.forEach { indicator ->
                 r = 4
                 //成份量
                 val indicatorValue = when (indicator.type) {
-                    RecipeIndicatorType.WATER -> (materials.sumOf { it.waterWeight } - recipe.dryWater).scale()
+                    RecipeIndicatorType.PRODUCT_WATER -> (materials.sumOf { it.waterWeight } - recipe.dryWater).scale()
                     RecipeIndicatorType.RATE_TO_OTHER -> materials.sumOf { it.indicatorWeight(indicator.itId!!) }.scale()
                     else -> materials.sumOf { it.indicatorWeight(indicator.id) }.scale()
                 }
@@ -164,7 +189,7 @@ object RecipeExport {
 
                 //成份量(百分比)
                 val value = when (indicator.type) {
-                    RecipeIndicatorType.WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWater) / requirement.targetWeight).scale()
+                    RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWater) / requirement.targetWeight).scale()
                     RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }
@@ -197,6 +222,7 @@ object RecipeExport {
                 cell(r, c++).value(material.weight).bold().format("0.00").setStyle()
                 cell(r, c++).value(material.cost).format("0.00").setStyle()
                 cell(r, c++).value(material.price * 1000).format("0").setStyle()
+                cell(r, c++).value(material.indicators.water?.value).format("0.0%").setStyle()
                 material.indicators.forEach { (_, indicator) ->
                     cell(r, c++).value(indicator.value).format("0.0%").setStyle()
                 }

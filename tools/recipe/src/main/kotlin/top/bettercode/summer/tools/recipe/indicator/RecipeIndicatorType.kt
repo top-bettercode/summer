@@ -16,7 +16,12 @@ enum class RecipeIndicatorType {
     NUTRIENT,
 
     /**
-     * 水
+     * 产品水分
+     */
+    PRODUCT_WATER,
+
+    /**
+     * 物料水分
      */
     WATER,
 

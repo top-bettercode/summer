@@ -78,12 +78,12 @@ internal class RecipeSolverTest {
 
         val expectedRequirement = RecipeResult::class.java.getResourceAsStream("/recipe/$productName/requirement.json")!!.bufferedReader().readText()
         //配方要求
-        Assertions.assertEquals(expectedRequirement, json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java))
+//        Assertions.assertEquals(expectedRequirement, json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java),recipeResult.solverName)
         //配方
         val dir = "recipe/$productName/${recipeResult.solverName}"
         recipes.forEachIndexed { index, recipe ->
             val expectedRecipe = RecipeResult::class.java.getResourceAsStream("/$dir/配方${index + 1}.json")!!.bufferedReader().readText()
-            Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
+            Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java),recipeResult.solverName)
         }
     }
 

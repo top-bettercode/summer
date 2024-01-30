@@ -11,6 +11,7 @@
       "value" : [ "喷浆硫基用95氯化钾" ],
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     }
@@ -383,6 +384,19 @@
   "notMixMaterials" : [ ],
   "productName" : "15-15-15喷浆硫基",
   "rangeIndicators" : {
+    "-1" : {
+      "id" : -1,
+      "name" : "产品水分",
+      "value" : {
+        "min" : 0.012,
+        "max" : 0.012
+      },
+      "type" : "PRODUCT_WATER",
+      "nutrient" : false,
+      "productWater" : true,
+      "water" : false,
+      "rateToOther" : false
+    },
     "0" : {
       "id" : 0,
       "name" : "总养分",
@@ -392,6 +406,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -404,6 +419,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -416,6 +432,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -428,6 +445,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -440,18 +458,20 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
     "5" : {
       "id" : 5,
-      "name" : "水分",
+      "name" : "物料水分",
       "value" : {
-        "min" : 0.012,
-        "max" : 0.012
+        "min" : 0.0,
+        "max" : 1.0
       },
       "type" : "WATER",
       "nutrient" : false,
+      "productWater" : false,
       "water" : true,
       "rateToOther" : false
     },
@@ -466,6 +486,7 @@
       "itId" : 7,
       "otherId" : 2,
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : true
     },
@@ -478,6 +499,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -490,6 +512,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     }

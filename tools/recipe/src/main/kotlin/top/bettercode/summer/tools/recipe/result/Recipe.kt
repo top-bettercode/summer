@@ -76,7 +76,7 @@ data class Recipe(
         val rangeIndicators = requirement.rangeIndicators
         for (indicator in rangeIndicators) {
             val indicatorValue = when (indicator.type) {
-                RecipeIndicatorType.WATER -> ((materials.sumOf { it.waterWeight } - dryWater) / targetWeight).scale()
+                RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - dryWater) / targetWeight).scale()
                 RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
                 else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / targetWeight).scale()
             }

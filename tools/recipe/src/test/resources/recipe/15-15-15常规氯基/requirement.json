@@ -397,6 +397,19 @@
   "notMixMaterials" : [ [ [ "多肽尿素", "普通尿素", "大颗粒尿素", "60天缓释尿素", "90天缓释尿素" ], [ "硝铵" ] ], [ [ "多肽尿素", "普通尿素", "大颗粒尿素", "60天缓释尿素", "90天缓释尿素" ], [ "过钙（12%）" ] ] ],
   "productName" : "15-15-15常规氯基",
   "rangeIndicators" : {
+    "-1" : {
+      "id" : -1,
+      "name" : "产品水分",
+      "value" : {
+        "min" : 0.015,
+        "max" : 0.015
+      },
+      "type" : "PRODUCT_WATER",
+      "nutrient" : false,
+      "productWater" : true,
+      "water" : false,
+      "rateToOther" : false
+    },
     "0" : {
       "id" : 0,
       "name" : "总养分",
@@ -406,6 +419,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -418,6 +432,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -430,6 +445,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -442,6 +458,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -454,18 +471,20 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
     "5" : {
       "id" : 5,
-      "name" : "水分",
+      "name" : "物料水分",
       "value" : {
-        "min" : 0.015,
-        "max" : 0.015
+        "min" : 0.0,
+        "max" : 1.0
       },
       "type" : "WATER",
       "nutrient" : false,
+      "productWater" : false,
       "water" : true,
       "rateToOther" : false
     },
@@ -480,6 +499,7 @@
       "itId" : 7,
       "otherId" : 2,
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : true
     },
@@ -492,6 +512,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     },
@@ -504,6 +525,7 @@
       },
       "type" : "GENERAL",
       "nutrient" : false,
+      "productWater" : false,
       "water" : false,
       "rateToOther" : false
     }

@@ -2,110 +2,68 @@
   "cost" : 2391.506214349,
   "dryWater" : 21.1210017067,
   "materials" : [ {
-    "cost" : 380.52889395768,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "solutionValue" : {
-      "value" : 211.4049410876
-    },
-    "waterWeight" : 4.228098821752,
     "weight" : 211.4049410876
   }, {
-    "cost" : 463.992153750125,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "name" : "64磷酸二铵（颗粒）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.85,
-    "solutionValue" : {
-      "value" : 120.5174425325
-    },
-    "waterWeight" : 0.6025872126625,
     "weight" : 120.5174425325
   }, {
-    "cost" : 836.8497797455849,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "solutionValue" : {
-      "value" : 235.7323323227
-    },
-    "waterWeight" : 2.357323323227,
     "weight" : 235.7323323227
   }, {
-    "cost" : 16.0,
     "id" : "防结油（白色）",
     "index" : 64,
     "name" : "防结油（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 8.0,
-    "solutionValue" : {
-      "value" : 2.0
-    },
-    "waterWeight" : 0.0,
     "weight" : 2.0
   }, {
-    "cost" : 9.35422201308,
     "id" : "液氨",
     "index" : 10,
     "name" : "液氨",
     "normalWeight" : 2.2271957174,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "solutionValue" : {
-      "value" : 2.2271957174,
-      "normal" : 2.2271957174,
-      "overdose" : 0.0
-    },
-    "waterWeight" : 0.011135978587,
     "weight" : 2.2271957174
   }, {
-    "cost" : 6.0,
     "id" : "防结粉（白色）",
     "index" : 65,
     "name" : "防结粉（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
-    "solutionValue" : {
-      "value" : 3.0
-    },
-    "waterWeight" : 0.0,
     "weight" : 3.0
   }, {
-    "cost" : 186.733553587985,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "name" : "喷浆硫基用95氯化钾",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "solutionValue" : {
-      "value" : 52.6010010107
-    },
-    "waterWeight" : 24.9854754800825,
     "weight" : 52.6010010107
   }, {
-    "cost" : 492.04761129475,
     "id" : "氯化铵（干）",
     "index" : 6,
     "name" : "氯化铵（干）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "solutionValue" : {
-      "value" : 393.6380890358
-    },
-    "waterWeight" : 3.9363808903580004,
     "weight" : 393.6380890358
   } ],
   "trueCost" : 2391.5062143492
