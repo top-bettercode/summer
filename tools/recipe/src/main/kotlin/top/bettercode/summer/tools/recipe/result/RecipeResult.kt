@@ -45,7 +45,7 @@ class RecipeResult(val solverName: String) {
                 if (index == 0) {
                     keepInActiveTab()
                 }
-                exportRecipe(recipe)
+                exportRecipe(recipe, true)
             }
 
             finish()

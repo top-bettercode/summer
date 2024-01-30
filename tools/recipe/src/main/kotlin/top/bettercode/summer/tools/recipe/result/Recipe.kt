@@ -34,8 +34,13 @@ data class Recipe(
 
     /** 需要烘干的水分含量  */
     val dryWater: Double
-        get() = (materials.sumOf { it.weight } - requirement.targetWeight).scale()
+        get() = (weight - requirement.targetWeight).scale()
 
+    /**
+     * 产出重量
+     */
+    val weight: Double
+        get() = materials.sumOf { it.weight }.scale()
 
     /** 配方成本  */
     val trueCost: Double
