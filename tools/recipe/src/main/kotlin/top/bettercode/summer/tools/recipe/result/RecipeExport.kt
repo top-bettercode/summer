@@ -115,7 +115,6 @@ object RecipeExport {
             val rangeIndicators = requirement.rangeIndicators.values.sortedBy { it.index }
             val limitMaterials = materials.filter { it.range != null }
             val columnSize = titles.size + rangeIndicators.size + limitMaterials.size
-            range(0, 0, materials.size + 3, columnSize).setStyle()
 
             var r = 0
             var c = 0
@@ -137,8 +136,11 @@ object RecipeExport {
             c = titles.size
             // 投料量
             for (i in 1..2) {
-                cell(i, c - 1).value("/").setStyle()
+                for (j in 1..5)
+                    cell(i, j).value("/").setStyle()
             }
+            for (j in 1..4)
+                cell(3, j).value("/").setStyle()
             cell(3, c - 1).value(recipe.weight).bold().format("0.00").setStyle()
             rangeIndicators.forEach { indicator ->
                 r = 1
