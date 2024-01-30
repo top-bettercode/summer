@@ -32,8 +32,8 @@ data class RecipeMaterialValue(
         }
     }
 
-    fun indicatorWeight(index: Int): Double {
-        return indicators.valueOf(index) * weight
+    fun indicatorWeight(id: String): Double {
+        return indicators.valueOf(id) * weight
     }
 
     fun totalNutrient(): Double {

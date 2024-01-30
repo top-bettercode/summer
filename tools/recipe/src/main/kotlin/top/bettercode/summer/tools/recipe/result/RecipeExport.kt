@@ -37,8 +37,8 @@ object RecipeExport {
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
             // 原料成份
-            for (indicator in matrial.indicators) {
-                val column = c + indicator.id
+            matrial.indicators.values.forEachIndexed { index, indicator ->
+                val column = c + index
                 cell(r, column).value(indicator.value.scale()).width(8.0).format("0.0%").setStyle()
             }
         }
@@ -112,7 +112,7 @@ object RecipeExport {
         RecipeExt(recipe).apply {
             val titles = "项目${if (showRate) "\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量" else ""}\t投料量".split("\t")
             val materials = recipe.materials.toSortedSet()
-            val rangeIndicators = requirement.rangeIndicators
+            val rangeIndicators = requirement.rangeIndicators.values.sortedBy { it.index }
             val limitMaterials = materials.filter { it.range != null }
             val columnSize = titles.size + rangeIndicators.size + limitMaterials.size
             range(0, 0, materials.size + 3, columnSize).setStyle()
@@ -126,7 +126,7 @@ object RecipeExport {
             if (materials.isEmpty()) {
                 return
             }
-            rangeIndicators.values.forEach { indicator ->
+            rangeIndicators.forEach { indicator ->
                 cell(r, c++).value(indicator.name).headerStyle().width(8.0).setStyle()
             }
 
@@ -140,14 +140,14 @@ object RecipeExport {
                 cell(i, c - 1).value("/").setStyle()
             }
             cell(3, c - 1).value(recipe.weight).bold().format("0.00").setStyle()
-            rangeIndicators.values.forEach { indicator ->
+            rangeIndicators.forEach { indicator ->
                 r = 1
                 //配方目标最大值
-                val max = rangeIndicators[indicator.id]?.value?.max
+                val max = indicator.value.max
                 cell(r++, c).value(max).bold().format("0.0%").setStyle()
 
                 //配方目标最小值
-                val min = rangeIndicators[indicator.id]?.value?.min
+                val min = indicator.value.min
                 cell(r++, c).value(min).bold().format("0.0%").setStyle()
 
                 //实配值
@@ -156,12 +156,8 @@ object RecipeExport {
                     RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }
-                if (min == null || max == null) {
-                    cell(r++, c).value(value).bold().format("0.0%").setStyle()
-                } else {
-                    val valid = value - min >= -OptimalUtil.DEFAULT_MIN_EPSILON && value - max <= OptimalUtil.DEFAULT_MIN_EPSILON
-                    cell(r++, c).value(value).bold().format("0.0%").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
-                }
+                val valid = value - min >= -OptimalUtil.DEFAULT_MIN_EPSILON && value - max <= OptimalUtil.DEFAULT_MIN_EPSILON
+                cell(r++, c).value(value).bold().format("0.0%").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
             // 物料限量
@@ -209,7 +205,7 @@ object RecipeExport {
                 }
                 // 投料量
                 cell(r, c++).value(material.weight).bold().format("0.00").setStyle()
-                rangeIndicators.values.forEach { indicator ->
+                rangeIndicators.forEach { indicator ->
                     val value = when (indicator.type) {
                         RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue
                         else -> material.indicators[indicator.id]?.value

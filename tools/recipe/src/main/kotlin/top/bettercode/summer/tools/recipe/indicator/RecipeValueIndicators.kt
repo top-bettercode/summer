@@ -20,8 +20,8 @@ class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>>) : RecipeI
         }
     }
 
-    fun valueOf(index: Int): Double {
-        return get(index)?.value ?: 0.0
+    fun valueOf(id: String): Double {
+        return get(id)?.value ?: 0.0
     }
 
 }

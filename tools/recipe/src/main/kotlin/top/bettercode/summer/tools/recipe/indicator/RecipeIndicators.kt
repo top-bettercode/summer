@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.indicator
  *
  * @author Peter Wu
  */
-open class RecipeIndicators<T>(indicators: List<RecipeIndicator<T>>) : HashMap<Int, RecipeIndicator<T>>() {
+open class RecipeIndicators<T>(indicators: List<RecipeIndicator<T>>) : HashMap<String, RecipeIndicator<T>>() {
     init {
         indicators.forEach {
             put(it.id, it)
