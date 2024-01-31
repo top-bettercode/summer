@@ -21,7 +21,7 @@ object RecipeExport {
             return
         } else
             materials.first().indicators
-        cell(0, 0).value("原料名称").headerStyle().setStyle()
+        cell(0, 0).value("物料名称").headerStyle().setStyle()
         cell(0, 1).value("价格").headerStyle().setStyle()
         var i = 2
         for (indicator in indicators) {
@@ -32,11 +32,11 @@ object RecipeExport {
         for (matrial in materials) {
             val matrialName = matrial.name
             var c = 0
-            // 原料名称
+            // 物料名称
             cell(++r, c++).value(matrialName).setStyle()
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
-            // 原料成份
+            // 物料成份
             matrial.indicators.values.forEachIndexed { index, indicator ->
                 val column = c + index
                 cell(r, column).value(indicator.value.scale()).width(8.0).format("0.0%").setStyle()
@@ -61,7 +61,7 @@ object RecipeExport {
 
         c++
         r = 0
-        cell(r++, c).value("不使用的原料").headerStyle().width(20.0).setStyle()
+        cell(r++, c).value("不使用的物料").headerStyle().width(20.0).setStyle()
         val noUseMaterials = requirement.noUseMaterials
         noUseMaterials.forEach {
             cell(r++, c).value(it).width(20.0).wrapText().setStyle()
@@ -69,7 +69,7 @@ object RecipeExport {
 
         c++
         r = 0
-        cell(r++, c).value("限用原料").headerStyle().width(20.0).setStyle()
+        cell(r++, c).value("限用物料").headerStyle().width(20.0).setStyle()
         val useMaterials = requirement.useMaterials
         useMaterials.forEach {
             cell(r++, c).value(it).width(20.0).wrapText().setStyle()
@@ -181,14 +181,14 @@ object RecipeExport {
             materials.forEach { material ->
                 c = 0
                 cell(r, c++).value(material.name).wrapText().setStyle()
-                val relationRate: RecipeRelation?
+                val recipeRelation: RecipeRelation?
                 val normal: DoubleRange?
                 val relationValue: Pair<DoubleRange, DoubleRange>?
                 val normalValue: DoubleRange?
                 val relationName: String?
                 if (showRate) {
-                    relationRate = material.relationRate
-                    normal = relationRate?.normal
+                    recipeRelation = material.recipeRelationPair?.second
+                    normal = recipeRelation?.normal
                     relationValue = material.relationValue
                     normalValue = relationValue?.first
                     relationName = material.relationName
@@ -201,7 +201,7 @@ object RecipeExport {
                     // 最大耗液氨/硫酸量
                     cell(r, c++).value(normalValue?.max).comment(if (normalValue?.max == null || relationName == null) null else "${material.name}最大耗${relationName}数量").format("0.00").setStyle()
                 } else {
-                    relationRate = null
+                    recipeRelation = null
                     relationValue = null
                     relationName = null
                 }
@@ -219,10 +219,10 @@ object RecipeExport {
                 }
                 // 费用合计
                 cell(r, c++).value(material.cost).format("0.00").setStyle()
-                if (showRate && material.double) {
+                if (showRate && material.hasOverdose) {
                     c = 1
                     val r1 = r + 1
-                    val overdose = relationRate?.overdose ?: relationRate?.overdoseMaterial?.normal
+                    val overdose = recipeRelation?.overdose ?: recipeRelation?.overdoseMaterial?.normal
                     val overdoseValue = relationValue?.second
                     // 最小耗液氨/硫酸系数
                     cell(r1, c++).value(overdose?.min).comment(if (overdose?.min == null || relationName == null) null else "${material.name}过量最小耗${relationName}系数").format("0.000000000").setStyle()

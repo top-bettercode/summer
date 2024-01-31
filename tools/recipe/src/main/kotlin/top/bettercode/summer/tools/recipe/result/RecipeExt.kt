@@ -4,6 +4,7 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
+import top.bettercode.summer.tools.recipe.material.RelationMaterialIDs
 
 /**
  *
@@ -16,7 +17,10 @@ class RecipeExt(private val recipe: Recipe) {
             return recipe.requirement.materialRangeConstraints.filter { it.key.contains(this.id) }.values.firstOrNull()
         }
 
-    val RecipeMaterialValue.double: Boolean
+    /**
+     * 是否存在过量消息
+     */
+    val RecipeMaterialValue.hasOverdose: Boolean
         get() {
             val relationMap = recipe.requirement.materialRelationConstraints.values.find { it.keys.any { m -> m.contains(this.id) } }
                     ?: return false
@@ -25,6 +29,9 @@ class RecipeExt(private val recipe: Recipe) {
             return recipeRelation?.overdose != null || recipeRelation?.overdoseMaterial != null
         }
 
+    /**
+     * 消耗物料ID
+     */
     val RecipeMaterialValue.relationName: String?
         get() {
             val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.value.keys.any { m -> m.contains(this.id) } }
@@ -35,6 +42,9 @@ class RecipeExt(private val recipe: Recipe) {
             return usedIds.toString()
         }
 
+    /**
+     * 消息物料替换比率
+     */
     private val RecipeMaterialValue.replaceRate: Double
         get() {
             val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.value.keys.any { m -> m.contains(this.id) } }
@@ -45,22 +55,24 @@ class RecipeExt(private val recipe: Recipe) {
             return if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
         }
 
-    val RecipeMaterialValue.relationRate: RecipeRelation?
+
+    val RecipeMaterialValue.recipeRelationPair: Pair<RelationMaterialIDs, RecipeRelation>?
         get() {
             val relationMap = recipe.requirement.materialRelationConstraints.values.find { it.keys.any { m -> m.contains(this.id) } }
                     ?: return null
             val iDs = relationMap.keys.first { it.contains(this.id) }
-            val recipeRelation = relationMap[iDs]
+            val recipeRelation = relationMap[iDs] ?: return null
 
-            return recipeRelation?.replaceRate(replaceRate)
+            return iDs to recipeRelation.replaceRate(replaceRate)
         }
 
 
     val RecipeMaterialValue.relationValue: Pair<DoubleRange, DoubleRange>?
         get() {
 
-            val relationRate = relationRate
-            if (relationRate == null) {
+            val recipeRelationPair = recipeRelationPair
+            if (recipeRelationPair == null) {
+                //消耗汇总
                 val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.key.contains(this.id) }
                 val entry = materialRelationConstraints.entries.firstOrNull() ?: return null
                 recipe.apply {
@@ -71,28 +83,26 @@ class RecipeExt(private val recipe: Recipe) {
                 var usedMaxNormalWeight = 0.0
                 var usedMinOverdoseWeight = 0.0
                 var usedMaxOverdoseWeight = 0.0
+                val relationIds = recipeRelationPair.first.relationIds
+                val recipeRelation = recipeRelationPair.second
+                val normal = recipeRelation.normal
+                val overdose = recipeRelation.overdose
+                var normalWeight = normalWeight(relationIds)
+                if (normalWeight == 0.0) {
+                    normalWeight = weight
+                }
 
-                val normal = relationRate.normal
-                val overdose = relationRate.overdose
-                if (normalWeight > 0) {
-                    usedMinNormalWeight += normalWeight * normal.min * replaceRate
-                    usedMaxNormalWeight += normalWeight * normal.max * replaceRate
-                    if (overdose != null) {
-                        usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
-                        usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
-                    }
-                } else {
-                    usedMinNormalWeight += weight * normal.min * replaceRate
-                    usedMaxNormalWeight += weight * normal.max * replaceRate
-                    if (overdose != null) {
-                        usedMinOverdoseWeight += weight * overdose.min * replaceRate
-                        usedMaxOverdoseWeight += weight * overdose.max * replaceRate
-                    }
+                usedMinNormalWeight += normalWeight * normal.min * replaceRate
+                usedMaxNormalWeight += normalWeight * normal.max * replaceRate
+                if (overdose != null) {
+                    usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
+                    usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
                 }
                 //过量物料
                 var usedMinOverdoseMaterialWeight = 0.0
                 var usedMaxOverdoseMaterialWeight = 0.0
-                val overdoseMaterial = relationRate.overdoseMaterial
+                val overdoseWeight = overdoseWeight(relationIds)
+                val overdoseMaterial = recipeRelation.overdoseMaterial
                 if (overdoseMaterial != null && overdoseWeight > 0) {
                     val overdoseMaterialNormal = overdoseMaterial.normal
                     val overdoseMaterialOverdose = overdoseMaterial.overdose

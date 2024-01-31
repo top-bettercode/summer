@@ -63,10 +63,10 @@ object RecipeSolver {
             materialVars.atMost(numMaxMaterials)
         }
 
-        // 不能混用的原料
+        // 不能混用的物料
         val notMixMaterials = requirement.notMixMaterials
 
-        // 不选取不能同时使用的原料对
+        // 不选取不能同时使用的物料对
         for (notMixedMaterial in notMixMaterials) {
             //一组变量至多有一个变量可取非零值
             val noMixedVars = notMixedMaterial
@@ -128,7 +128,7 @@ object RecipeSolver {
         }
 
 
-        // 原料用量
+        // 物料用量
         val materialRangeConstraints = requirement.materialRangeConstraints
         materialRangeConstraints.forEach { (t, u) ->
             t.mapNotNull { recipeMaterials[it]?.weight }
@@ -136,34 +136,14 @@ object RecipeSolver {
         }
 
 
-        // 原料比率约束
+        // 关联物料比率约束
         val materialRelationConstraints = requirement.materialRelationConstraints
         materialRelationConstraints.forEach { (ids, relation) ->
+            val consumeMaterialVars = ids.mapNotNull { recipeMaterials[it] }
+            val replaceConsumeMaterialVars = ids.replaceIds?.mapNotNull { recipeMaterials[it] }
             val normalVars = mutableListOf<IVar>()
             val overdoseVars = mutableListOf<IVar>()
             val useReplace = boolVar()
-            ids.mapNotNull { recipeMaterials[it] }.forEach {
-                it.weight.eqIf(0.0, useReplace)
-                val normalVar = numVar(0.0, targetWeight)
-                it.normalWeight = normalVar
-                normalVars.add(normalVar)
-                val overdoseVar = numVar(0.0, targetWeight)
-                it.overdoseWeight = overdoseVar
-                overdoseVars.add(overdoseVar)
-                arrayOf(normalVar, overdoseVar).eq(it.weight)
-            }
-
-            ids.replaceIds?.mapNotNull { recipeMaterials[it] }?.forEach {
-                val replaceRate = ids.replaceRate!!
-                it.weight.eqIfNot(0.0, useReplace)
-                val normalVar = numVar(0.0, targetWeight)
-                it.normalWeight = normalVar
-                normalVars.add(normalVar.coeff(1 / replaceRate))
-                val overdoseVar = numVar(0.0, targetWeight)
-                it.overdoseWeight = overdoseVar
-                overdoseVars.add(overdoseVar.coeff(1 / replaceRate))
-                arrayOf(normalVar, overdoseVar).eq(it.weight)
-            }
 
             //关联物料
             val normalMinVars = mutableListOf<IVar>()
@@ -175,26 +155,55 @@ object RecipeSolver {
                 val normal = u.normal
                 val overdose = u.overdose
                 val overdoseMaterial = u.overdoseMaterial
-                t.mapNotNull { recipeMaterials[it] }.forEach {
-                    val normalWeight = it.normalWeight
-                    if (normalWeight != null) {
-                        //物料消耗
-                        normalMinVars.add(normalWeight.coeff(normal.min))
-                        normalMaxVars.add(normalWeight.coeff(normal.max))
-                        if (overdose != null) {
-                            overdoseMinVars.add(normalWeight.coeff(overdose.min))
-                            overdoseMaxVars.add(normalWeight.coeff(overdose.max))
-                        }
-                    } else {
-                        //物料过量消耗
-                        normalMinVars.add(it.weight.coeff(normal.min))
-                        normalMaxVars.add(it.weight.coeff(normal.max))
-                        if (overdose != null) {
-                            overdoseMinVars.add(it.weight.coeff(overdose.min))
-                            overdoseMaxVars.add(it.weight.coeff(overdose.max))
-                        }
+                val relationIds = t.relationIds
+                t.mapNotNull { recipeMaterials[it] }.forEach { m ->
+                    //物料消耗变量初始化
+                    consumeMaterialVars.forEach {
+                        it.weight.eqIf(0.0, useReplace)
+                        val normalVar = numVar(0.0, targetWeight)
+                        normalVars.add(normalVar)
+                        val overdoseVar = numVar(0.0, targetWeight)
+                        overdoseVars.add(overdoseVar)
+                        it.consumes[m.id] = normalVar to overdoseVar
                     }
-                    val overdoseWeight = it.overdoseWeight
+                    //替换物料消耗变量初始化
+                    replaceConsumeMaterialVars?.forEach {
+                        val replaceRate = ids.replaceRate!!
+                        it.weight.eqIfNot(0.0, useReplace)
+                        val normalVar = numVar(0.0, targetWeight)
+                        normalVars.add(normalVar.coeff(1 / replaceRate))
+                        val overdoseVar = numVar(0.0, targetWeight)
+                        overdoseVars.add(overdoseVar.coeff(1 / replaceRate))
+                        it.consumes[m.id] = normalVar to overdoseVar
+                    }
+
+                    //m 对应原料的用量变量
+                    val normalWeight =
+                            if (m.consumes.isEmpty()) {//当无其他消耗m物料时，取本身用量
+                                m.weight
+                            } else if (relationIds == null) {//当有其他消耗物料时且关联物料不存在，如：硫酸量耗液氨，取所有消耗汇总
+                                m.consumes.values.map { it.first }.sum()
+                            } else {//当有其他消耗物料时且关联物料存在，如：氯化钾反应所需硫酸量耗液氨,取关联物料消耗汇总
+                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.first }.sum()
+                            }
+                    val overdoseWeight =
+                            if (m.consumes.isEmpty()) {//当无其他消耗m物料时，不存在过量消耗
+                                null
+                            } else if (relationIds == null) {//当有其他消耗物料时且关联物料不存在，如：硫酸量耗液氨，取所有消耗汇总
+                                m.consumes.values.map { it.second }.sum()
+                            } else {//当有其他消耗物料时且关联物料存在，如：氯化钾反应所需硫酸量耗液氨,取关联物料消耗汇总
+                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.second }.sum()
+                            }
+
+                    //物料消耗
+                    normalMinVars.add(normalWeight.coeff(normal.min))
+                    normalMaxVars.add(normalWeight.coeff(normal.max))
+                    if (overdose != null) {
+                        overdoseMinVars.add(normalWeight.coeff(overdose.min))
+                        overdoseMaxVars.add(normalWeight.coeff(overdose.max))
+                    }
+
+                    // 过量物料
                     if (overdoseMaterial != null && overdoseWeight != null) {
                         val overdoseMaterialNormal = overdoseMaterial.normal
                         val overdoseMaterialOverdose = overdoseMaterial.overdose
@@ -208,6 +217,12 @@ object RecipeSolver {
                         }
                     }
                 }
+            }
+            consumeMaterialVars.forEach {
+                it.consumes.values.flatMap { c -> listOf(c.first, c.second) }.sum().eq(it.weight)
+            }
+            replaceConsumeMaterialVars?.forEach {
+                it.consumes.values.flatMap { c -> listOf(c.first, c.second) }.sum().eq(it.weight)
             }
             normalVars.between(normalMinVars.sum(), normalMaxVars.sum())
             overdoseVars.between(overdoseMinVars.sum(), overdoseMaxVars.sum())

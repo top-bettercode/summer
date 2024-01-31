@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.material
  *
  * @author Peter Wu
  */
-open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialIDs>,Set<String> by ids {
+open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialIDs>, Set<String> by ids {
     constructor(vararg id: String) : this(id.toHashSet())
     constructor(ids: Iterable<String>) : this(ids.toHashSet())
 
@@ -18,6 +18,11 @@ open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialID
             return ReplacebleMaterialIDs(*this)
         }
 
+        fun Array<String>.toRelationMaterialIDs(relationIds: MaterialIDs? = null): RelationMaterialIDs {
+            return RelationMaterialIDs(id= this, relationIds = relationIds)
+        }
+
+
         fun Iterable<String>.toMaterialIDs(): MaterialIDs {
             return MaterialIDs(this)
         }
@@ -25,6 +30,11 @@ open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialID
         fun Iterable<String>.toReplacebleMaterialIDs(): ReplacebleMaterialIDs {
             return ReplacebleMaterialIDs(this)
         }
+
+        fun Iterable<String>.toRelationMaterialIDs(relationIds: MaterialIDs? = null): RelationMaterialIDs {
+            return RelationMaterialIDs(this, relationIds)
+        }
+
     }
 
     fun toReplacebleMaterialIDs(replaceId: String, replaceRate: Double): ReplacebleMaterialIDs {

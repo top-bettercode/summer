@@ -50,7 +50,7 @@ class RecipeRequirement(
         /**
          *关联物料约束
          */
-        var materialRelationConstraints: Map<ReplacebleMaterialIDs, Map<MaterialIDs, RecipeRelation>>,
+        var materialRelationConstraints: Map<ReplacebleMaterialIDs, Map<RelationMaterialIDs, RecipeRelation>>,
         /** 条件约束，当条件1满足时，条件2必须满足  */
         val materialConditions: List<Pair<MaterialCondition, MaterialCondition>>
 ) {
@@ -177,6 +177,16 @@ class RecipeRequirement(
             list.minOfWithOrNull(materialComparator) { it }?.id
         }
         return MaterialIDs(ids)
+    }
+
+    private fun RelationMaterialIDs.min(materials: RecipeMaterials): RelationMaterialIDs {
+        val ids = this.mapNotNull { materials[it] }.groupBy { it.indicators.key }.values.mapNotNull { list ->
+            list.minOfWithOrNull(materialComparator) { it }?.id
+        }
+        val relationIds = this.relationIds?.mapNotNull { materials[it] }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
+            list.minOfWithOrNull(materialComparator) { it }?.id
+        }?.toMaterialIDs()
+        return RelationMaterialIDs(ids, relationIds)
     }
 
     private fun ReplacebleMaterialIDs.min(materials: RecipeMaterials): ReplacebleMaterialIDs {

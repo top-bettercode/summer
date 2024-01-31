@@ -11,9 +11,9 @@ import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
-import top.bettercode.summer.tools.recipe.material.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
+import top.bettercode.summer.tools.recipe.material.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.ReplacebleMaterialIDs
 
 /**
@@ -261,7 +261,10 @@ data class Recipe(
         return true
     }
 
-    val Map.Entry<ReplacebleMaterialIDs, Map<MaterialIDs, RecipeRelation>>.relationValue: Pair<DoubleRange, DoubleRange>
+    /**
+     * 消耗物料汇总相关值
+     */
+    val Map.Entry<ReplacebleMaterialIDs, Map<RelationMaterialIDs, RecipeRelation>>.relationValue: Pair<DoubleRange, DoubleRange>
         get() {
             val ids = this.key
             val materials = materials
@@ -275,27 +278,22 @@ data class Recipe(
             this.value.forEach { (materialIDs, recipeRelation) ->
                 val normal = recipeRelation.normal
                 val overdose = recipeRelation.overdose
+                val relationIds = materialIDs.relationIds
                 val weight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.weight }
-                val normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight }
+                var normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight(relationIds) }
+                if (normalWeight == 0.0) {
+                    normalWeight = weight
+                }
 
-                if (normalWeight > 0) {
-                    usedMinNormalWeight += normalWeight * normal.min * replaceRate
-                    usedMaxNormalWeight += normalWeight * normal.max * replaceRate
-                    if (overdose != null) {
-                        usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
-                        usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
-                    }
-                } else {
-                    usedMinNormalWeight += weight * normal.min * replaceRate
-                    usedMaxNormalWeight += weight * normal.max * replaceRate
-                    if (overdose != null) {
-                        usedMinOverdoseWeight += weight * overdose.min * replaceRate
-                        usedMaxOverdoseWeight += weight * overdose.max * replaceRate
-                    }
+                usedMinNormalWeight += normalWeight * normal.min * replaceRate
+                usedMaxNormalWeight += normalWeight * normal.max * replaceRate
+                if (overdose != null) {
+                    usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
+                    usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
                 }
 
                 val overdoseMaterial = recipeRelation.overdoseMaterial
-                val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight }
+                val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight(relationIds) }
                 if (overdoseMaterial != null && overdoseWeight > 0) {
                     val overdoseMaterialNormal = overdoseMaterial.normal
                     val overdoseMaterialOverdose = overdoseMaterial.overdose

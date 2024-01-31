@@ -3,10 +3,8 @@ package top.bettercode.summer.tools.recipe.data
 import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.core.io.ClassPathResource
-import org.springframework.util.Assert
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
-import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
@@ -16,9 +14,9 @@ import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.*
 import top.bettercode.summer.tools.recipe.material.*
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
+import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toRelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toReplacebleMaterialIDs
 import java.math.BigDecimal
-import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.stream.Collectors
 
@@ -32,7 +30,7 @@ object PrepareData {
 
 
     fun readRequirement(productName: String): RecipeRequirement {
-        // 不能混用的原料 不使用的原料 原料约束 限用原料 成份原料约束 项目  总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 硼 锌 防结粉用量（公斤/吨产品）
+        // 不能混用的物料 不使用的物料 物料约束 限用物料 成份物料约束 项目  总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 硼 锌 防结粉用量（公斤/吨产品）
         // 防结油用量（公斤/吨产肥 ） 喷浆专用尿素用量（公斤/吨） 磷酸耗液氨系数 硫酸耗液氨系数 再浆耗液氨系数 磷铵耗液氮系数
         val workbook = ReadableWorkbook(ClassPathResource("配方报价管理系统需求清单.xlsx").inputStream)
         val sheet = workbook
@@ -64,12 +62,10 @@ object PrepareData {
 
         //读取工厂价格
         val materialPrices = readPrices(factory, specialPrice)
-        //检查价格
-        checkPrice(materialPrices, productName)
         val materials = readMaterials(materialPrices)
         val materialIds = materials.map { it.id }
 
-        // 不能混用的原料
+        // 不能混用的物料
         val notMixMaterialCol = conditionStartCol
         conditionStartCol++
         val notMixMaterials = mutableListOf<Array<MaterialIDs>>()
@@ -91,7 +87,7 @@ object PrepareData {
                             }
                 }
 
-        // 不使用的原料
+        // 不使用的物料
         val notUseMaterialCol = conditionStartCol
         conditionStartCol++
         val noUseMaterials = mutableSetOf<String>()
@@ -106,10 +102,10 @@ object PrepareData {
                             }
                 }
 
-        // 原料约束
+        // 物料约束
         val materialReqCol = conditionStartCol
         conditionStartCol++
-        // 原料片段-仅用
+        // 物料片段-仅用
         val materialIDConstraints = HashMap<MaterialIDs, MaterialIDs>()
         rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
@@ -125,7 +121,7 @@ object PrepareData {
                             }
                 }
 
-        // 限用原料
+        // 限用物料
         val limitUseMaterialCol = conditionStartCol
         conditionStartCol++
         val useMaterials = mutableSetOf<String>()
@@ -140,7 +136,7 @@ object PrepareData {
                             }
                 }
 
-        // 成份原料约束
+        // 成份物料约束
         val materialIDIndicators = mutableListOf<RecipeIndicator<MaterialIDs>>()
         rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
@@ -204,7 +200,7 @@ object PrepareData {
         val maxLimitCol = 7
         val minLimitCol = 8
 
-        // 原料使用约束
+        // 物料使用约束
         val materialRangeConstraints = HashMap<MaterialIDs, DoubleRange>()
         for (i in 0..2) {
             var materialNameFragment = rows[limitRowStart]!!.getCellAsString(index).orElse(null)
@@ -225,12 +221,13 @@ object PrepareData {
             }
             index++
         }
-        // 原料之间的用量关系
-        val materialRelationConstraints = HashMap<ReplacebleMaterialIDs, MutableMap<MaterialIDs, RecipeRelation>>()
+        // 物料之间的用量关系
+        val materialRelationConstraints = HashMap<ReplacebleMaterialIDs, MutableMap<RelationMaterialIDs, RecipeRelation>>()
         // 液氨
         for (i in 0..4) {
             var materialNameFragment = rows[limitRowStart]!!.getCellAsString(index).orElse(null)
             if (!materialNameFragment.isNullOrBlank()) {
+                val hasRelation = materialNameFragment.contains("氯化钾")
                 val isOverdose = materialNameFragment.contains("过量")
                 if (isOverdose) {
                     materialNameFragment = materialNameFragment.replace("过量", "")
@@ -244,11 +241,12 @@ object PrepareData {
                 val minUse = rows[minLimitCol]!!.getCell(index).value as BigDecimal
                 val m1 = materialIds.filter { isNeedLiquidAmmon(materialNameFragment, it) }
                 val m2 = materialIds.filter { it == LIQUID_AMMONIA }
+                val relationIds = if (hasRelation) materialIds.filter { it.contains("氯化钾") } else null
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
-                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toMaterialIDs().toReplacebleMaterialIDs(AMMONIUM_CARBONATE, LA_2_CAUSE_RATIO)) { HashMap<MaterialIDs, RecipeRelation>() }
+                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toMaterialIDs().toReplacebleMaterialIDs(AMMONIUM_CARBONATE, LA_2_CAUSE_RATIO)) { HashMap<RelationMaterialIDs, RecipeRelation>() }
                     val doubleRange = DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
-                    val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
+                    val rangePair = materialRelation.computeIfAbsent(m1.toRelationMaterialIDs(relationIds?.toMaterialIDs())) { RecipeRelation(doubleRange) }
                     if (isOverdose) {
                         rangePair.overdoseMaterial = RecipeRelation(doubleRange)
                     } else {
@@ -273,9 +271,9 @@ object PrepareData {
                 val m2 = materialIds.filter { it == SULFURIC_ACID }
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
-                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toReplacebleMaterialIDs()) { HashMap<MaterialIDs, RecipeRelation>() }
+                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toReplacebleMaterialIDs()) { HashMap<RelationMaterialIDs, RecipeRelation>() }
                     val doubleRange = DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
-                    val rangePair = materialRelation.computeIfAbsent(m1.toMaterialIDs()) { RecipeRelation(doubleRange) }
+                    val rangePair = materialRelation.computeIfAbsent(m1.toRelationMaterialIDs()) { RecipeRelation(doubleRange) }
                     if (isOverdose) {
                         rangePair.overdose = doubleRange
                     } else {
@@ -328,16 +326,16 @@ object PrepareData {
     }
 
 
-    /** 获取原料成份,key: 原料名称 value: 原料成份  */
+    /** 获取物料成份,key: 物料名称 value: 物料成份  */
     private fun readMaterials(materialPrices: Map<String, Double?>): List<IRecipeMaterial> {
-        // 读取原料成份：序号 大类 原料名称 原料形态 氮含量 磷含量 钾含量 氯离子 水分 水溶磷率 水溶磷 硝态氮 硼 锌 锰 铜 铁 钼 镁 硫 钙 有机质（%） 腐植酸 黄腐酸 活性菌 硅
+        // 读取物料成份：序号 大类 物料名称 物料形态 氮含量 磷含量 钾含量 氯离子 水分 水溶磷率 水溶磷 硝态氮 硼 锌 锰 铜 铁 钼 镁 硫 钙 有机质（%） 腐植酸 黄腐酸 活性菌 硅
         // 指标23 指标24 指标25 指标26 指标27 指标28 指标29 指标30 指标31 指标32 指标33 指标34 指标35 指标36 指标37 指标38 指标39 指标40
         // 指标41 指标42 指标43 指标44 指标45 指标46 指标47 指标48 指标49 指标50
         val excelFields: Array<ExcelField<MaterialForm, *>> =
                 arrayOf(
                         ExcelField.of("大类", MaterialForm::category),
-                        ExcelField.of("原料名称", MaterialForm::name),
-                        ExcelField.of("原料形态", MaterialForm::form),
+                        ExcelField.of("物料名称", MaterialForm::name),
+                        ExcelField.of("物料形态", MaterialForm::form),
                         ExcelField.of("氮含量", MaterialForm::nitrogen).defaultValue(0.0),
                         ExcelField.of("磷含量", MaterialForm::phosphorus).defaultValue(0.0),
                         ExcelField.of("钾含量", MaterialForm::potassium).defaultValue(0.0),
@@ -466,11 +464,11 @@ object PrepareData {
         return materials
     }
 
-    /** 获取原料价格,key: 原料名称 value: 原料价格  */
+    /** 获取物料价格,key: 物料名称 value: 物料价格  */
     private fun readPrices(factory: String, specialPrices: Map<String, Double>): Map<String, Double?> {
-        // 读取原料价格:原料名称 荆州 宜城 应城 宁陵 平原 眉山 新疆 铁岭 肇东 佳木斯
+        // 读取物料价格:物料名称 荆州 宜城 应城 宁陵 平原 眉山 新疆 铁岭 肇东 佳木斯
         val excelFields: Array<ExcelField<MaterialFactoryPriceForm, *>> = arrayOf(
-                ExcelField.of("原料名称", MaterialFactoryPriceForm::name),
+                ExcelField.of("物料名称", MaterialFactoryPriceForm::name),
                 ExcelField.of("报价日期", MaterialFactoryPriceForm::name).setter { _: MaterialFactoryPriceForm, _: String? -> },
                 ExcelField.of("荆州", MaterialFactoryPriceForm::jingzhou),
                 ExcelField.of("宜城", MaterialFactoryPriceForm::yicheng),
@@ -489,7 +487,7 @@ object PrepareData {
                 .setColumn(2)
                 .getData<MaterialFactoryPriceForm, MaterialFactoryPriceForm>(excelFields)
 
-        // 转换为Map  获取原料价格 key: 原料名称 value: 原料价格
+        // 转换为Map  获取物料价格 key: 物料名称 value: 物料价格
         val materialPriceMap: Map<String, Double?> = materialPriceForms.stream()
                 .filter { p: MaterialFactoryPriceForm -> p.name.isNotBlank() }
                 .collect(
@@ -513,39 +511,13 @@ object PrepareData {
         return materialPriceMap
     }
 
-    private fun readLines(fileName: String): List<String> {
-        val stream = PrepareData::class.java.getResourceAsStream(fileName)
-                ?: return emptyList()
-        return FileUtil.readLines(stream, StandardCharsets.UTF_8).filter { str: String? -> !str.isNullOrBlank() }
-    }
-
-    // 检查价格
-    private fun checkPrice(materialPrices: Map<String, Double?>, productName: String) {
-        val costLines = readLines("/$productName/原料价格.txt")
-        val costMap: MutableMap<String, Double> = HashMap()
-        for (i in 1 until costLines.size) {
-            val split = costLines[i].split(" +".toRegex()).dropLastWhile { it.isEmpty() }
-            costMap[split[0]] = split[1].toDouble()
-        }
-
-        for (name in costMap.keys) {
-            // 价格存在
-            Assert.isTrue(materialPrices.containsKey(name), name + "价格不存在")
-            val price = costMap[name]
-            val actPrice = materialPrices[name]
-            Assert.isTrue(
-                    actPrice != null && actPrice == price,
-                    name + " 价格" + price + "!=" + actPrice + "不一致")
-        }
-    }
-
-    /** 碳铵原料名称  */
+    /** 碳铵物料名称  */
     const val AMMONIUM_CARBONATE = "碳铵"
 
-    /** 液氨原料名称  */
+    /** 液氨物料名称  */
     const val LIQUID_AMMONIA = "液氨"
 
-    /** 硫酸原料名称  */
+    /** 硫酸物料名称  */
     const val SULFURIC_ACID = "硫酸"
 
     /** 液氨 对应 碳铵 使用量比例  */

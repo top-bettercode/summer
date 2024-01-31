@@ -10,8 +10,10 @@ data class RecipeMaterialVar(
         private val material: IRecipeMaterial,
         /** 最终使用量  */
         val weight: IVar,
-        var normalWeight: IVar? = null,
-        var overdoseWeight: IVar? = null
+        /**
+         * 其他物料消耗详情,key:物料ID,value: Pair first:正常消耗，second:过量消耗
+         */
+        val consumes: MutableMap<String, Pair<IVar, IVar>> = mutableMapOf()
 ) : IRecipeMaterial by material {
 
     fun totalNutrient(): Double {
@@ -21,8 +23,7 @@ data class RecipeMaterialVar(
     fun toMaterialValue(): RecipeMaterialValue {
         return RecipeMaterialValue(
                 material, weight.value,
-                normalWeight?.value ?: 0.0,
-                overdoseWeight?.value ?: 0.0,
+                consumes.mapValues { it.value.first.value to it.value.second.value }
         )
     }
 }

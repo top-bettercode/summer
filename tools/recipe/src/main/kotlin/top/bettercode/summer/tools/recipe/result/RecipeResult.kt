@@ -36,7 +36,7 @@ class RecipeResult(val solverName: String) {
         val outFile = File("build/" + solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
         val filePath = outFile.absolutePath
         FastExcel.of(filePath).apply {
-            sheet("最终候选原料")
+            sheet("最终候选物料")
             exportMaterial(requirement)
             sheet("配方要求")
             exportRequirement(requirement)

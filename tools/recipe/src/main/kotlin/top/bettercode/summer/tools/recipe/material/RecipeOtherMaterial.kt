@@ -21,7 +21,7 @@ class RecipeOtherMaterial(
         val value: Double,
 ) : IRecipeMaterial {
     /**
-     * 原料指标
+     * 物料指标
      */
     override val indicators: RecipeValueIndicators = RecipeValueIndicators(emptyList())
 }

@@ -54,7 +54,7 @@ object MultiRecipeSolver {
 
                     val cost = objective.value
                     if (first) {
-                        // 后续配方原料不变
+                        // 后续配方物料不变
                         if (materialUnchanged) {
                             recipeMaterials.forEach { (id, material) ->
                                 if (useMaterials.contains(id)) {
