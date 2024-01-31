@@ -428,146 +428,146 @@
   "productName" : "15-15-15常规氯基",
   "rangeIndicators" : {
     "产品水分" : {
-      "index" : 5,
       "id" : "产品水分",
+      "index" : 5,
       "name" : "产品水分",
+      "nutrient" : false,
+      "productWater" : true,
+      "rateToOther" : false,
+      "type" : "PRODUCT_WATER",
       "value" : {
         "min" : 0.015,
         "max" : 0.015
       },
-      "type" : "PRODUCT_WATER",
-      "nutrient" : false,
-      "productWater" : true,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     },
     "总养分" : {
-      "index" : 0,
       "id" : "总养分",
+      "index" : 0,
       "name" : "总养分",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
       "value" : {
         "min" : 0.453,
         "max" : 1.0
       },
-      "type" : "GENERAL",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     },
     "氮" : {
-      "index" : 1,
       "id" : "氮",
+      "index" : 1,
       "name" : "氮",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
       "value" : {
         "min" : 0.14,
         "max" : 1.0
       },
-      "type" : "GENERAL",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     },
     "氯离子" : {
-      "index" : 4,
       "id" : "氯离子",
+      "index" : 4,
       "name" : "氯离子",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
       "value" : {
         "min" : 0.0,
         "max" : 0.995
       },
-      "type" : "GENERAL",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     },
     "水溶磷率" : {
-      "index" : 7,
       "id" : "水溶磷率",
+      "index" : 7,
+      "itId" : "水溶磷",
       "name" : "水溶磷率",
+      "nutrient" : false,
+      "otherId" : "磷",
+      "productWater" : false,
+      "rateToOther" : true,
+      "type" : "RATE_TO_OTHER",
       "value" : {
         "min" : 0.61,
         "max" : 1.0
       },
-      "type" : "RATE_TO_OTHER",
-      "itId" : "水溶磷",
-      "otherId" : "磷",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : true
+      "water" : false
     },
     "物料水分" : {
-      "index" : 6,
       "id" : "物料水分",
+      "index" : 6,
       "name" : "物料水分",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "WATER",
       "value" : {
         "min" : 0.0,
         "max" : 1.0
       },
-      "type" : "WATER",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : true,
-      "rateToOther" : false
+      "water" : true
     },
     "硼" : {
-      "index" : 10,
       "id" : "硼",
+      "index" : 10,
       "name" : "硼",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
       "value" : {
         "min" : 0.0,
         "max" : 0.0
       },
-      "type" : "GENERAL",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     },
     "磷" : {
-      "index" : 2,
       "id" : "磷",
+      "index" : 2,
       "name" : "磷",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
       "value" : {
         "min" : 0.14,
         "max" : 1.0
       },
-      "type" : "GENERAL",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     },
     "钾" : {
-      "index" : 3,
       "id" : "钾",
+      "index" : 3,
       "name" : "钾",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
       "value" : {
         "min" : 0.14,
         "max" : 1.0
       },
-      "type" : "GENERAL",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     },
     "锌" : {
-      "index" : 11,
       "id" : "锌",
+      "index" : 11,
       "name" : "锌",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
       "value" : {
         "min" : 0.0,
         "max" : 0.0
       },
-      "type" : "GENERAL",
-      "nutrient" : false,
-      "productWater" : false,
-      "water" : false,
-      "rateToOther" : false
+      "water" : false
     }
   },
   "targetWeight" : 1000.0,

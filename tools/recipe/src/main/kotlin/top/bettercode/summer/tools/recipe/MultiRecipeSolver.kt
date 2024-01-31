@@ -34,6 +34,7 @@ object MultiRecipeSolver {
                     if (numVariables > 2000 || numConstraints > 2000) {
                         log.error("变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
                     }
+//                    (this as top.bettercode.summer.tools.optimal.solver.COPTSolver).model.writeMps("test.mps")
                 }
                 // 求解
                 solve()

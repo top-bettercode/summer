@@ -8,10 +8,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.SolverType
-import top.bettercode.summer.tools.recipe.data.PrepareData
-import top.bettercode.summer.tools.recipe.data.RecipeMaterialView
-import top.bettercode.summer.tools.recipe.data.RecipeRequirementView
-import top.bettercode.summer.tools.recipe.data.RecipeView
+import top.bettercode.summer.tools.recipe.data.*
+import top.bettercode.summer.tools.recipe.indicator.RecipeIndicator
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.result.Recipe
 import top.bettercode.summer.tools.recipe.result.RecipeResult
@@ -25,9 +23,9 @@ internal class RecipeSolverTest {
 
     @Test
     fun solve() {
-//        solve("13-05-07高氯枸磷")
+        solve("13-05-07高氯枸磷")
 //        solve("24-06-10高氯枸磷")
-        solve("15-15-15喷浆氯基")
+//        solve("15-15-15喷浆氯基")
 //        solve("15-15-15喷浆硫基")
 //        solve("15-15-15常规氯基")
     }
@@ -39,22 +37,22 @@ internal class RecipeSolverTest {
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult)
 //        toExcel(solve)
-        toExcel(solve1)
+//        toExcel(solve1)
 //        toExcel(solve2)
-//        System.err.println("copt:" + solve.time)
+        System.err.println("copt:" + solve.time)
         System.err.println("cbc:" + solve1.time)
         System.err.println("scip:" + solve2.time)
 //        System.err.println(json(solve.recipes[0], IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
 
 //        validate(solve)
-        validate(solve1)
-        validate(solve2)
+//        validate(solve1)
+//        validate(solve2)
 
-//        assert(solve, solve1)
-//        assert(solve, solve2)
+        assert(solve, solve1)
+        assert(solve, solve2)
         assert(solve1, solve2)
 
-//        saveRecipe(solve)
+        saveRecipe(solve)
         saveRecipe(solve1)
         saveRecipe(solve2)
     }
@@ -79,7 +77,10 @@ internal class RecipeSolverTest {
 
         val expectedRequirement = RecipeResult::class.java.getResourceAsStream("/recipe/$productName/requirement.json")!!.bufferedReader().readText()
         //配方要求
-        Assertions.assertEquals(expectedRequirement, json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java), recipeResult.solverName)
+        Assertions.assertEquals(expectedRequirement, json(requirement,
+                IRecipeMaterial::class.java to RecipeMaterialView::class.java,
+                RecipeRequirement::class.java to RecipeRequirementView::class.java,
+                RecipeIndicator::class.java to RecipeIndicatorView::class.java), recipeResult.solverName)
         //配方
         val dir = "recipe/$productName/${recipeResult.solverName}"
         recipes.forEachIndexed { index, recipe ->
@@ -114,7 +115,10 @@ internal class RecipeSolverTest {
         val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe/$productName")
         dir.mkdirs()
         //配方要求
-        File("$dir/requirement.json").writeText(json(requirement, IRecipeMaterial::class.java to RecipeMaterialView::class.java, RecipeRequirement::class.java to RecipeRequirementView::class.java))
+        File("$dir/requirement.json").writeText(json(requirement,
+                IRecipeMaterial::class.java to RecipeMaterialView::class.java,
+                RecipeRequirement::class.java to RecipeRequirementView::class.java,
+                RecipeIndicator::class.java to RecipeIndicatorView::class.java))
         //配方
         recipes.forEachIndexed { index, recipe ->
             File("$dir/${recipeResult.solverName}/配方${index + 1}.json").writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))

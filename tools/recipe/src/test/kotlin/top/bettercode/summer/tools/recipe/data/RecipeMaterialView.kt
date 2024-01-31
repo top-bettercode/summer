@@ -24,3 +24,6 @@ interface RecipeView {
 
 @JsonPropertyOrder(alphabetic = true)
 interface RecipeRequirementView
+
+@JsonPropertyOrder(alphabetic = true)
+interface RecipeIndicatorView
