@@ -38,7 +38,7 @@ internal class RecipeSolverTest {
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult)
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult)
-        toExcel(solve)
+//        toExcel(solve)
 //        toExcel(solve1)
 //        toExcel(solve2)
         System.err.println("copt:" + solve.time)

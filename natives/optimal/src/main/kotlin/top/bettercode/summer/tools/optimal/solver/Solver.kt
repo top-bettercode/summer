@@ -150,16 +150,31 @@ abstract class Solver(
 
     abstract fun IVar.eqIf(value: Double, bool: IVar)
     abstract fun IVar.eqIfNot(value: Double, bool: IVar)
+
+    /**
+     * if bool=1,this<value,this>value
+     *
+     */
     open fun IVar.neIf(value: Double, bool: IVar) {
-        throw UnsupportedOperationException("不支持的约束")
-        //if bool=0,this==value
-        //if bool=1,this<value,this>value
+        val bool1 = boolVar()
+        gtIf(value, bool1)
+        val bool2 = boolVar()
+        ltIf(value, bool2)
+        val sum = arrayOf(bool1, bool2).sum()
+        sum.eqIf(1.0, bool)
     }
 
+    /**
+     * if bool=0,this<value,this>value
+     *
+     */
     open fun IVar.neIfNot(value: Double, bool: IVar) {
-        throw UnsupportedOperationException("不支持的约束")
-        //if bool=1,this==value
-        //if bool=0,this<value,this>value
+        val bool1 = boolVar()
+        gtIf(value, bool1)
+        val bool2 = boolVar()
+        ltIf(value, bool2)
+        val sum = arrayOf(bool1, bool2).sum()
+        sum.eqIfNot(1.0, bool)
     }
 
     abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)

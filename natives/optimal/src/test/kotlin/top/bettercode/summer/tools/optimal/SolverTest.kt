@@ -673,7 +673,7 @@ class SolverTest {
         return numVar1.value
     }
 
-    //    @Test
+    @Test
     fun neIf() {
         val eq = coptSolver.neIf()
         val eq1 = scipSolver.neIf()
@@ -688,21 +688,21 @@ class SolverTest {
         numVar1.neIf(100.0, boolVar)
         arrayOf(numVar1).maximize()
         solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         System.err.println(boolVar.value)
         System.err.println(numVar1.value)
         Assertions.assertTrue(numVar1.value == 100.0)
-        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         arrayOf(numVar1).maximize()
         boolVar.eq(1.0)
         solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         System.err.println(boolVar.value)
         System.err.println(numVar1.value)
-        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         Assertions.assertTrue(numVar1.value < 100.0)
         return numVar1.value
     }
 
-    //    @Test
+    @Test
     fun neIfNot() {
         val eq = coptSolver.neIfNot()
         val eq1 = scipSolver.neIfNot()
@@ -717,16 +717,16 @@ class SolverTest {
         numVar1.neIfNot(100.0, boolVar)
         arrayOf(numVar1).maximize()
         solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         System.err.println(boolVar.value)
         System.err.println(numVar1.value)
         Assertions.assertTrue(numVar1.value == 100.0)
-        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         arrayOf(numVar1).maximize()
         boolVar.eq(0.0)
         solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         System.err.println(boolVar.value)
         System.err.println(numVar1.value)
-        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
         Assertions.assertTrue(numVar1.value < 100.0)
         return numVar1.value
     }
