@@ -12,7 +12,8 @@ class COPTFileTest {
     fun read() {
         val env = copt.COPTEnvr()
         val model = env.createModel("")
-        model.readMps("test.mps")
+        model.setIntParam(copt.IntParam.Presolve, 0)
+        model.readMps("test2.mps")
         model.solve()
         println(StringUtil.valueOf(model.solution))
     }
