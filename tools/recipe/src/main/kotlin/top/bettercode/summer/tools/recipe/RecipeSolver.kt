@@ -20,14 +20,19 @@ object RecipeSolver {
         SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight).apply {
             val s = System.currentTimeMillis()
             val (recipeMaterials, objective) = prepare(requirement)
+            if (SolverType.COPT == solverType) {
+                val numVariables = numVariables()
+                val numConstraints = numConstraints()
+                log.info("变量数量：{},约束数量：{}", numConstraints, numConstraints)
+                if (numVariables > 2000 || numConstraints > 2000) {
+                    log.error("变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
+                }
+            }
             // 求解
             solve()
             val e = System.currentTimeMillis()
             log.info("${requirement.productName}求解耗时：" + (e - s) + "ms")
-            if (numVariables() > 2000 || numConstraints() > 2000) {
-                log.error("变量或约束过多，变量数量：" + numVariables() + " 约束数量：" + numConstraints())
-                return null
-            }
+
             if (isOptimal()) {
                 return Recipe(requirement, objective.value.scale(),
                         recipeMaterials.mapNotNull { (_, u) ->

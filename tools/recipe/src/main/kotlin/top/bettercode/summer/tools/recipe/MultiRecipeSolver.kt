@@ -20,19 +20,23 @@ object MultiRecipeSolver {
               materialUnchanged: Boolean = true,
               nutrientUnchanged: Boolean = true
     ): RecipeResult {
-        SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight).apply {
+        SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight, logging = true).apply {
             val s = System.currentTimeMillis()
             val (recipeMaterials, objective) = prepare(requirement)
             var e = System.currentTimeMillis()
             val recipeResult = RecipeResult(name)
             while ((e - s) / 1000 < requirement.timeout
                     && recipeResult.recipes.size < maxResult) {
+                if (SolverType.COPT == solverType) {
+                    val numVariables = numVariables()
+                    val numConstraints = numConstraints()
+                    log.info("=========变量数量：{},约束数量：{}", numConstraints, numConstraints)
+                    if (numVariables > 2000 || numConstraints > 2000) {
+                        log.error("变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
+                    }
+                }
                 // 求解
                 solve()
-                if (numVariables() > 2000 || numConstraints() > 2000) {
-                    log.error("变量或约束过多，变量数量：" + numVariables() + " 约束数量：" + numConstraints())
-                    return recipeResult
-                }
                 if (isOptimal()) {
                     // 约束
                     val first = recipeResult.recipes.isEmpty()
