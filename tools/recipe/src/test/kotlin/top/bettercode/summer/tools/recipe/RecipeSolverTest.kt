@@ -33,10 +33,12 @@ internal class RecipeSolverTest {
     fun solve(productName: String) {
         val requirement = PrepareData.readRequirement(productName)
         val maxResult = 20
-        val includeProductionCost = false
-        val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost)
-        val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost)
-        val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost)
+        val includeProductionCost = true
+        val nutrientUnchanged = false
+        val materialUnchanged = false
+        val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         toExcel(solve)
 //        toExcel(solve1)
 //        toExcel(solve2)
