@@ -29,7 +29,7 @@ class CPVar(private val _delegate: IntVar,
     override val ub: Double
         get() = _delegate.domain.max().toDouble() / 10.0.pow(dataTimes)
 
-    override fun coeff(coeff: Double): IVar {
+    override fun times(coeff: Double): IVar {
         dataTimes = times
         return CPVar(_delegate = _delegate, times = times, solver = solver, coeff = coeff * 10.0.pow(times))
     }

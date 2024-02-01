@@ -20,7 +20,7 @@ class COPTExprVar(private val _delegate: Expr,
     override val ub: Double
         get() = _delegate.evaluate().scale()
 
-    override fun coeff(coeff: Double): IVar {
+    override fun times(coeff: Double): IVar {
         return COPTExprVar(_delegate, coeff)
     }
 

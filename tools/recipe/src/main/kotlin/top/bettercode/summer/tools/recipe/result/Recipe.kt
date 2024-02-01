@@ -33,8 +33,14 @@ data class Recipe(
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
 
     /** 需要烘干的水分含量  */
-    val dryWater: Double
+    val dryWaterWeight: Double
         get() = (weight - requirement.targetWeight).scale()
+
+    /**
+     * 物料水分重量
+     */
+    val waterWeight: Double
+        get() = materials.sumOf { it.waterWeight }.scale()
 
     /**
      * 产出重量
@@ -60,19 +66,16 @@ data class Recipe(
             return false
         }
         //检查烘干水分
-        if (dryWater < -OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方烘干水分异常：{}", dryWater)
+        if (dryWaterWeight < -OptimalUtil.DEFAULT_MIN_EPSILON) {
+            log.warn("配方烘干水分异常：{}", dryWaterWeight)
             return false
         }
-        if (requirement.maxBakeWeight >= 0 && (dryWater - requirement.maxBakeWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方烘干水分:{} 超过最大可烘干水分：{}", dryWater, requirement.maxBakeWeight)
+        if (requirement.maxBakeWeight >= 0 && (dryWaterWeight - requirement.maxBakeWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
+            log.warn("配方烘干水分:{} 超过最大可烘干水分：{}", dryWaterWeight, requirement.maxBakeWeight)
             return false
         }
-        val totalWater = materials.sumOf {
-            it.waterWeight
-        }.scale()
-        if ((dryWater - totalWater).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方烘干水分:{} 超过总水分：{}", dryWater, totalWater)
+        if ((dryWaterWeight - waterWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
+            log.warn("配方烘干水分:{} 超过总水分：{}", dryWaterWeight, waterWeight)
             return false
         }
 
@@ -81,7 +84,7 @@ data class Recipe(
         val rangeIndicators = requirement.indicatorRangeConstraints
         for (indicator in rangeIndicators) {
             val indicatorValue = when (indicator.type) {
-                RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - dryWater) / targetWeight).scale()
+                RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight).scale()
                 RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
                 else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / targetWeight).scale()
             }

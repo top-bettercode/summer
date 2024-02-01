@@ -6,12 +6,12 @@ package top.bettercode.summer.tools.recipe.productioncost
  */
 enum class ChangeLogicType {
     /**
-     * 原料总水分超过
+     * 使用指定原料，且物料水分超过
      */
     WATER_OVER,
 
     /**
-     * 超过
+     * 使用指定原料超过
      */
     OVER,
 

@@ -34,25 +34,39 @@ abstract class Solver(
     abstract fun numConstraints(): Int
 
     abstract fun boolVarArray(count: Int): Array<out IVar>
-    abstract fun intVarArray(count: Int, lb: Double, ub: Double): Array<out IVar>
-    abstract fun numVarArray(count: Int, lb: Double, ub: Double): Array<out IVar>
+    abstract fun intVarArray(count: Int, lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): Array<out IVar>
+    abstract fun numVarArray(count: Int, lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): Array<out IVar>
     abstract fun boolVar(): IVar
-    abstract fun intVar(lb: Double, ub: Double): IVar
-    abstract fun numVar(lb: Double, ub: Double): IVar
+    abstract fun intVar(lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): IVar
+    abstract fun numVar(lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): IVar
 
-    /**
+    /*
      * result = this + value
      * sum(result-this)= value
      */
-    open fun IVar.plus(value: Double): IVar {
+    operator fun IVar.plus(value: Double): IVar {
         val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-        arrayOf(result, this.coeff(-1.0)).eq(value)
+        arrayOf(result, this * -1.0).eq(value)
         return result
     }
 
-    open fun IVar.plus(value: IVar): IVar {
+    operator fun IVar.plus(value: IVar): IVar {
         val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-        arrayOf(result, this.coeff(-1.0)).eq(value)
+        arrayOf(result, this * -1.0).eq(value)
+        return result
+    }
+
+    operator fun IVar.minus(value: Double): IVar {
+        return this + (-value)
+    }
+
+    /**
+     * result = this - value
+     * sum(result-this)= value*-1
+     */
+    operator fun IVar.minus(value: IVar): IVar {
+        val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        arrayOf(result, this * -1.0).eq(value * -1.0)
         return result
     }
 
@@ -137,8 +151,8 @@ abstract class Solver(
      * whole*ub >= this
      */
     fun IVar.ratioInRange(whole: IVar, lb: Double, ub: Double) {
-        whole.coeff(lb).le(this)
-        whole.coeff(ub).ge(this)
+        (whole* lb).le(this)
+        (whole* ub).ge(this)
     }
 
     abstract fun IVar.geIf(value: Double, bool: IVar)

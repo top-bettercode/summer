@@ -349,7 +349,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.geIf(value: Double, bool: IVar) {
-        arrayOf(this, bool.coeff(-(value - dlb))).ge(dlb)
+        arrayOf(this, bool * (-(value - dlb))).ge(dlb)
     }
 
     /**
@@ -367,7 +367,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.geIfNot(value: Double, bool: IVar) {
-        arrayOf(this, bool.coeff((value - dlb))).ge(value)
+        arrayOf(this, bool * (value - dlb)).ge(value)
     }
 
     /**
@@ -385,7 +385,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.leIf(value: Double, bool: IVar) {
-        arrayOf(this, bool.coeff(-(value - dub))).le(dub)
+        arrayOf(this, bool * -(value - dub)).le(dub)
     }
 
     /**
@@ -402,7 +402,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.leIfNot(value: Double, bool: IVar) {
-        arrayOf(this, bool.coeff((value - dub))).le(value)
+        arrayOf(this, bool * (value - dub)).le(value)
     }
 
     /**

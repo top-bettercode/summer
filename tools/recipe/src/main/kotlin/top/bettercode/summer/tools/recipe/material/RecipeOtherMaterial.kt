@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
  * 其他原料
  * @author Peter Wu
  */
-class RecipeOtherMaterial(
+open class RecipeOtherMaterial(
         /**
          * 序号，从0开始
          */
@@ -19,6 +19,10 @@ class RecipeOtherMaterial(
         override val price: Double,
         /** 数量  */
         val value: Double,
+        /**
+         * 增减比率
+         */
+        var change: Double = 1.0
 ) : IRecipeMaterial {
     /**
      * 原料指标

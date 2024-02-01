@@ -20,7 +20,7 @@ class MPVar(private val _delegate: MPVariable,
     override val ub: Double
         get() = _delegate.ub().scale()
 
-    override fun coeff(coeff: Double): IVar {
+    override fun times(coeff: Double): IVar {
         return MPVar(_delegate, coeff)
     }
 

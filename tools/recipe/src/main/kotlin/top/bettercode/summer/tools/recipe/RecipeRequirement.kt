@@ -6,6 +6,7 @@ import top.bettercode.summer.tools.recipe.indicator.RecipeMaterialIDIndicators
 import top.bettercode.summer.tools.recipe.indicator.RecipeRangeIndicators
 import top.bettercode.summer.tools.recipe.material.*
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
+import top.bettercode.summer.tools.recipe.productioncost.ProductionCost
 import java.util.function.Predicate
 
 /**
@@ -29,6 +30,10 @@ class RecipeRequirement(
         val maxBakeWeight: Double = -1.0,
         /** 原料  */
         var materials: List<RecipeMaterial>,
+        /**
+         * 制造费用
+         */
+        val productionCost: ProductionCost,
         /**
          * 指标指定用原料约束,key:指标ID,value:原料ID
          */

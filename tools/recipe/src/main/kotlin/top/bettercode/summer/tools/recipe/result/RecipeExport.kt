@@ -160,7 +160,7 @@ object RecipeExport {
         //其它产线信息
         c = 1
         cell(r, c++).value("其它产线信息").height(20.0).setStyle()
-        cell(r, c).value("可用原料种类最大数：${requirement.maxUseMaterialNum}；单吨产品水份最大烘干量：${requirement.maxBakeWeight}公斤；")
+        cell(r, c).value("可用原料种类最大数：${requirement.maxUseMaterialNum}；单吨产品水份最大烘干量：${requirement.maxBakeWeight}公斤；收率：${requirement.yield * 100}%")
         range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
 
     }
@@ -212,7 +212,7 @@ object RecipeExport {
 
                 //实配值
                 val value = when (indicator.type) {
-                    RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWater) / requirement.targetWeight).scale()
+                    RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight).scale()
                     RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }

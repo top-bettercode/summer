@@ -32,7 +32,7 @@ open class CPExtSolver @JvmOverloads constructor(
     private var numVariables: Int = 0
     private var numConstraints: Int = 0
 
-    private fun times(value: Double): Long {
+    private fun enlarge(value: Double): Long {
         val long = (value * 10.0.pow(times) * 10.0.pow(times)).toLong()
         return if (long < Integer.MIN_VALUE) {
             Integer.MIN_VALUE.toLong()
@@ -43,7 +43,7 @@ open class CPExtSolver @JvmOverloads constructor(
         }
     }
 
-    private fun times(value: IVar): IntVar {
+    private fun enlarge(value: IVar): IntVar {
         return value.getDelegate()
     }
 
@@ -93,7 +93,7 @@ open class CPExtSolver @JvmOverloads constructor(
         val numVariables = numVariables()
         for (i in 0 until count) {
             this.numVariables++
-            array[i] = CPVar(model.newIntVar(times(lb), times(ub), "i" + (numVariables + i + 1)), times = times, solver = solver)
+            array[i] = CPVar(model.newIntVar(enlarge(lb), enlarge(ub), "i" + (numVariables + i + 1)), times = times, solver = solver)
         }
         return array.requireNoNulls()
     }
@@ -103,7 +103,7 @@ open class CPExtSolver @JvmOverloads constructor(
         val numVariables = numVariables()
         for (i in 0 until count) {
             this.numVariables++
-            array[i] = CPVar(model.newIntVar(times(lb), times(ub), "i" + (numVariables + i + 1)), times = times, solver = solver)
+            array[i] = CPVar(model.newIntVar(enlarge(lb), enlarge(ub), "i" + (numVariables + i + 1)), times = times, solver = solver)
         }
         return array.requireNoNulls()
     }
@@ -117,36 +117,36 @@ open class CPExtSolver @JvmOverloads constructor(
     override fun intVar(lb: Double, ub: Double): IVar {
         val numVariables = numVariables()
         this.numVariables++
-        return CPVar(_delegate = model.newIntVar(times(lb), times(ub), "i" + (numVariables + 1)), times = times, solver = solver)
+        return CPVar(_delegate = model.newIntVar(enlarge(lb), enlarge(ub), "i" + (numVariables + 1)), times = times, solver = solver)
     }
 
     override fun numVar(lb: Double, ub: Double): IVar {
         val numVariables = numVariables()
         this.numVariables++
-        return CPVar(_delegate = model.newIntVar(times(lb), times(ub), "i" + (numVariables + 1)), times = times, solver = solver)
+        return CPVar(_delegate = model.newIntVar(enlarge(lb), enlarge(ub), "i" + (numVariables + 1)), times = times, solver = solver)
     }
 
     override fun Array<out IVar>.ge(lb: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterOrEqual(sumExpr, times(lb))
+        model.addGreaterOrEqual(sumExpr, enlarge(lb))
         numConstraints++
     }
 
     override fun Iterable<IVar>.ge(lb: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterOrEqual(sumExpr, times(lb))
+        model.addGreaterOrEqual(sumExpr, enlarge(lb))
         numConstraints++
     }
 
     override fun Array<out IVar>.gt(lb: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterThan(sumExpr, times(lb))
+        model.addGreaterThan(sumExpr, enlarge(lb))
         numConstraints++
     }
 
     override fun Iterable<IVar>.gt(lb: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterThan(sumExpr, times(lb))
+        model.addGreaterThan(sumExpr, enlarge(lb))
         numConstraints++
     }
 
@@ -156,50 +156,50 @@ open class CPExtSolver @JvmOverloads constructor(
      */
     override fun Array<out IVar>.ge(lb: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterOrEqual(sumExpr, times(lb))
+        model.addGreaterOrEqual(sumExpr, enlarge(lb))
         numConstraints++
     }
 
     override fun Iterable<IVar>.ge(lb: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterOrEqual(sumExpr, times(lb))
+        model.addGreaterOrEqual(sumExpr, enlarge(lb))
         numConstraints++
     }
 
 
     override fun Array<out IVar>.gt(lb: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterThan(sumExpr, times(lb))
+        model.addGreaterThan(sumExpr, enlarge(lb))
         numConstraints++
     }
 
     override fun Iterable<IVar>.gt(lb: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addGreaterThan(sumExpr, times(lb))
+        model.addGreaterThan(sumExpr, enlarge(lb))
         numConstraints++
     }
 
     override fun Array<out IVar>.le(ub: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessOrEqual(sumExpr, times(ub))
+        model.addLessOrEqual(sumExpr, enlarge(ub))
         numConstraints++
     }
 
     override fun Iterable<IVar>.le(ub: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessOrEqual(sumExpr, times(ub))
+        model.addLessOrEqual(sumExpr, enlarge(ub))
         numConstraints++
     }
 
     override fun Array<out IVar>.lt(ub: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessThan(sumExpr, times(ub))
+        model.addLessThan(sumExpr, enlarge(ub))
         numConstraints++
     }
 
     override fun Iterable<IVar>.lt(ub: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessThan(sumExpr, times(ub))
+        model.addLessThan(sumExpr, enlarge(ub))
         numConstraints++
     }
 
@@ -209,49 +209,49 @@ open class CPExtSolver @JvmOverloads constructor(
      */
     override fun Array<out IVar>.le(ub: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessOrEqual(sumExpr, times(ub))
+        model.addLessOrEqual(sumExpr, enlarge(ub))
         numConstraints++
     }
 
     override fun Iterable<IVar>.le(ub: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessOrEqual(sumExpr, times(ub))
+        model.addLessOrEqual(sumExpr, enlarge(ub))
         numConstraints++
     }
 
     override fun Array<out IVar>.lt(ub: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessThan(sumExpr, times(ub))
+        model.addLessThan(sumExpr, enlarge(ub))
         numConstraints++
     }
 
     override fun Iterable<IVar>.lt(ub: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addLessThan(sumExpr, times(ub))
+        model.addLessThan(sumExpr, enlarge(ub))
         numConstraints++
     }
 
     override fun Array<out IVar>.eq(value: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addEquality(sumExpr, times(value))
+        model.addEquality(sumExpr, enlarge(value))
         numConstraints++
     }
 
     override fun Iterable<IVar>.eq(value: Double) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addEquality(sumExpr, times(value))
+        model.addEquality(sumExpr, enlarge(value))
         numConstraints++
     }
 
     override fun Array<out IVar>.eq(value: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addEquality(sumExpr, times(value))
+        model.addEquality(sumExpr, enlarge(value))
         numConstraints++
     }
 
     override fun Iterable<IVar>.eq(value: IVar) {
         val sumExpr: LinearExpr = LinearExpr.weightedSum(this.map { it.getDelegate<IntVar>() }.toTypedArray(), this.map { it.coeff.toLong() }.toLongArray())
-        model.addEquality(sumExpr, times(value))
+        model.addEquality(sumExpr, enlarge(value))
         numConstraints++
     }
 
@@ -284,12 +284,12 @@ open class CPExtSolver @JvmOverloads constructor(
     }
 
     override fun IVar.ge(lb: Double) {
-        model.addGreaterOrEqual(this.getDelegate<IntVar>(), times(lb))
+        model.addGreaterOrEqual(this.getDelegate<IntVar>(), enlarge(lb))
         numConstraints++
     }
 
     override fun IVar.gt(lb: Double) {
-        model.addGreaterThan(this.getDelegate<IntVar>(), times(lb))
+        model.addGreaterThan(this.getDelegate<IntVar>(), enlarge(lb))
         numConstraints++
     }
 
@@ -298,22 +298,22 @@ open class CPExtSolver @JvmOverloads constructor(
      * this-lb>=0
      */
     override fun IVar.ge(lb: IVar) {
-        model.addGreaterOrEqual(this.getDelegate<IntVar>(), times(lb))
+        model.addGreaterOrEqual(this.getDelegate<IntVar>(), enlarge(lb))
         numConstraints++
     }
 
     override fun IVar.gt(lb: IVar) {
-        model.addGreaterThan(this.getDelegate<IntVar>(), times(lb))
+        model.addGreaterThan(this.getDelegate<IntVar>(), enlarge(lb))
         numConstraints++
     }
 
     override fun IVar.le(ub: Double) {
-        model.addLessOrEqual(this.getDelegate<IntVar>(), times(ub))
+        model.addLessOrEqual(this.getDelegate<IntVar>(), enlarge(ub))
         numConstraints++
     }
 
     override fun IVar.lt(ub: Double) {
-        model.addLessThan(this.getDelegate<IntVar>(), times(ub))
+        model.addLessThan(this.getDelegate<IntVar>(), enlarge(ub))
         numConstraints++
     }
 
@@ -321,22 +321,22 @@ open class CPExtSolver @JvmOverloads constructor(
      * this<=ub
      */
     override fun IVar.le(ub: IVar) {
-        model.addLessOrEqual(this.getDelegate<IntVar>(), times(ub))
+        model.addLessOrEqual(this.getDelegate<IntVar>(), enlarge(ub))
         numConstraints++
     }
 
     override fun IVar.lt(ub: IVar) {
-        model.addLessThan(this.getDelegate<IntVar>(), times(ub))
+        model.addLessThan(this.getDelegate<IntVar>(), enlarge(ub))
         numConstraints++
     }
 
     override fun IVar.eq(value: Double) {
-        model.addEquality(this.getDelegate<IntVar>(), times(value))
+        model.addEquality(this.getDelegate<IntVar>(), enlarge(value))
         numConstraints++
     }
 
     override fun IVar.eq(value: IVar) {
-        model.addEquality(this.getDelegate<IntVar>(), times(value))
+        model.addEquality(this.getDelegate<IntVar>(), enlarge(value))
         numConstraints++
     }
 
@@ -365,12 +365,12 @@ open class CPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.geIf(value: Double, bool: IVar) {
-        model.addGreaterOrEqual(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
+        model.addGreaterOrEqual(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
         numConstraints++
     }
 
     override fun IVar.gtIf(value: Double, bool: IVar) {
-        model.addGreaterThan(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
+        model.addGreaterThan(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
         numConstraints++
     }
 
@@ -390,12 +390,12 @@ open class CPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.geIfNot(value: Double, bool: IVar) {
-        model.addGreaterOrEqual(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
+        model.addGreaterOrEqual(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
         numConstraints++
     }
 
     override fun IVar.gtIfNot(value: Double, bool: IVar) {
-        model.addGreaterThan(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
+        model.addGreaterThan(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
         numConstraints++
     }
 
@@ -415,12 +415,12 @@ open class CPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.leIf(value: Double, bool: IVar) {
-        model.addLessOrEqual(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
+        model.addLessOrEqual(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
         numConstraints++
     }
 
     override fun IVar.ltIf(value: Double, bool: IVar) {
-        model.addLessThan(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
+        model.addLessThan(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>())
         numConstraints++
     }
 
@@ -439,12 +439,12 @@ open class CPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.leIfNot(value: Double, bool: IVar) {
-        model.addLessOrEqual(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
+        model.addLessOrEqual(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
         numConstraints++
     }
 
     override fun IVar.ltIfNot(value: Double, bool: IVar) {
-        model.addLessThan(this.getDelegate<IntVar>(), times(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
+        model.addLessThan(this.getDelegate<IntVar>(), enlarge(value)).onlyEnforceIf(bool.getDelegate<BoolVar>().not())
         numConstraints++
     }
 

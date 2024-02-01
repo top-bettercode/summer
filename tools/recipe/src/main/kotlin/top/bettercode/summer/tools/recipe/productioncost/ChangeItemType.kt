@@ -1,17 +1,17 @@
 package top.bettercode.summer.tools.recipe.productioncost
 
 /**
- * 修改类型
+ * 结果项目类型
  * @author Peter Wu
  */
-enum class EachChangeType {
+enum class ChangeItemType {
     /**
-     * 增加
+     * 原料品类
      */
-    ADD,
+    MATERIAL,
 
     /**
-     * 减少
+     * 制造费用项
      */
-    REDUCE
+    DICT
 }

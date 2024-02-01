@@ -10,6 +10,8 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.recipe.criteria.Operator
 import top.bettercode.summer.tools.recipe.material.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
+import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
+import top.bettercode.summer.tools.recipe.productioncost.*
 import top.bettercode.summer.tools.recipe.result.Recipe
 
 object RecipeSolver {
@@ -95,7 +97,7 @@ object RecipeSolver {
         val maxDryWeight = targetWeight * (1 - (waterRange?.min ?: 0.0))
         recipeMaterials.map {
             val material = it.value
-            it.value.weight.coeff(1 - material.indicators.waterValue)
+            it.value.weight * (1 - material.indicators.waterValue)
         }.between(minDryWeight, maxDryWeight)
 
         // 添加成份约束条件
@@ -109,13 +111,13 @@ object RecipeSolver {
                 val otherVar = recipeMaterials.map {
                     val material = it.value
                     val coeff = material.indicators.valueOf(indicator.otherId!!)
-                    it.value.weight.coeff(coeff)
+                    it.value.weight * coeff
                 }.sum()
 
                 val itVar = recipeMaterials.map {
                     val material = it.value
                     val coeff = material.indicators.valueOf(indicator.itId!!)
-                    it.value.weight.coeff(coeff)
+                    it.value.weight * coeff
                 }.sum()
 
                 val minRate = indicator.value.min
@@ -125,7 +127,7 @@ object RecipeSolver {
                 recipeMaterials.map {
                     val material = it.value
                     val coeff = material.indicators.valueOf(indicator.id)
-                    material.weight.coeff(coeff)
+                    material.weight * coeff
                 }.between(targetWeight * range.min, targetWeight * range.max)
             }
         }
@@ -173,9 +175,9 @@ object RecipeSolver {
                         val replaceRate = ids.replaceRate!!
                         it.weight.eqIfNot(0.0, useReplace)
                         val normalVar = numVar(0.0, targetWeight)
-                        normalVars.add(normalVar.coeff(1 / replaceRate))
+                        normalVars.add(normalVar * (1 / replaceRate))
                         val overdoseVar = numVar(0.0, targetWeight)
-                        overdoseVars.add(overdoseVar.coeff(1 / replaceRate))
+                        overdoseVars.add(overdoseVar * (1 / replaceRate))
                         it.consumes[m.id] = normalVar to overdoseVar
                     }
 
@@ -198,11 +200,11 @@ object RecipeSolver {
                             }
 
                     //原料消耗
-                    normalMinVars.add(normalWeight.coeff(normal.min))
-                    normalMaxVars.add(normalWeight.coeff(normal.max))
+                    normalMinVars.add(normalWeight * normal.min)
+                    normalMaxVars.add(normalWeight * normal.max)
                     if (overdose != null) {
-                        overdoseMinVars.add(normalWeight.coeff(overdose.min))
-                        overdoseMaxVars.add(normalWeight.coeff(overdose.max))
+                        overdoseMinVars.add(normalWeight * overdose.min)
+                        overdoseMaxVars.add(normalWeight * overdose.max)
                     }
 
                     // 过量原料
@@ -210,12 +212,12 @@ object RecipeSolver {
                         val overdoseMaterialNormal = overdoseMaterial.normal
                         val overdoseMaterialOverdose = overdoseMaterial.overdose
                         //过量原料消耗
-                        normalMinVars.add(overdoseWeight.coeff(overdoseMaterialNormal.min))
-                        normalMaxVars.add(overdoseWeight.coeff(overdoseMaterialNormal.max))
+                        normalMinVars.add(overdoseWeight * overdoseMaterialNormal.min)
+                        normalMaxVars.add(overdoseWeight * overdoseMaterialNormal.max)
                         //过量原料过量消耗
                         if (overdoseMaterialOverdose != null) {
-                            overdoseMinVars.add(overdoseWeight.coeff(overdoseMaterialOverdose.min))
-                            overdoseMaxVars.add(overdoseWeight.coeff(overdoseMaterialOverdose.max))
+                            overdoseMinVars.add(overdoseWeight * overdoseMaterialOverdose.min)
+                            overdoseMaxVars.add(overdoseWeight * overdoseMaterialOverdose.max)
                         }
                     }
                 }
@@ -273,12 +275,87 @@ object RecipeSolver {
             }
         }
 
+        //制造费用
+        val productionCost = requirement.productionCost
+        val materialItems = productionCost.materialItems.map { CarrierVar(it, numVar(1.0, 1.0)) }
+        val dictItems = productionCost.dictItems.mapValues { CarrierVar(it.value, numVar(1.0, 1.0)) }
+        //费用增减
+        var allChange = 1.0
+        productionCost.changes.forEach { changeLogic ->
+            when (changeLogic.type) {
+                ChangeLogicType.WATER_OVER -> {
+                    changeProductionCost(recipeMaterials, changeLogic, recipeMaterials.map {
+                        it.value.weight * it.value.indicators.waterValue
+                    }.sum(), materialItems, dictItems)
+                }
+
+                ChangeLogicType.OVER -> {
+                    changeProductionCost(recipeMaterials, changeLogic, null, materialItems, dictItems)
+                }
+
+                ChangeLogicType.OTHER -> allChange = changeLogic.changeValue
+            }
+        }
+        //能耗费用
+        val energyFee = materialItems.map { (it.value + 1.0) * (it.`object`.price * it.`object`.value) }.sum()
+        //人工+折旧费+其他费用
+        val otherFee = dictItems.values.map { (it.value + 1.0) * (it.`object`.price * it.`object`.value) }.sum()
+        //税费 =（人工+折旧费+其他费用）*0.09+15
+        val taxFee = otherFee * productionCost.taxRate + productionCost.taxFloat
+        val fee = (energyFee + otherFee + taxFee) * (1.0 + allChange)
+
+
         // 定义目标函数：最小化成本
-        val objective = recipeMaterials.values.map {
-            it.weight.coeff(it.price)
-        }.minimize()
+        val objective = (recipeMaterials.values.map {
+            it.weight * it.price
+        } + fee).minimize()
 
         return recipeMaterials to objective
+    }
+
+    private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierVar<RecipeOtherMaterial>>, dictItems: Map<DictType, CarrierVar<Cost>>) {
+        val useMaterial = materials[changeLogic.materialId]
+        if (useMaterial != null) {
+            val boolVar = boolVar()
+            useMaterial.weight.leIfNot(0.0, boolVar)
+            changeLogic.changeItems!!.forEach { item ->
+                when (item.type) {
+                    ChangeItemType.MATERIAL -> {//能耗费用
+                        //(1+(value-exceedValue)/eachValue*changeValue)
+                        val material = materialItems.find { it.`object`.id == item.id }
+                        if (material != null) {
+                            //change
+                            val tmpValue = intVar(0.0, 1.0)
+                            tmpValue.eqIf(1.0, boolVar)
+                            tmpValue.eqIfNot(0.0, boolVar)
+                            material.value += ((value
+                                    ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                        }
+                    }
+
+                    ChangeItemType.DICT -> {
+                        when (val dictType = DictType.valueOf(item.id)) {
+                            DictType.ENERGY -> {
+                                materialItems.forEach {
+                                    //change
+                                    it.value += ((value
+                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                }
+                            }
+
+                            else -> {
+                                val cost = dictItems[dictType]
+                                if (cost != null) {
+                                    //change
+                                    cost.value += ((value
+                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -33,7 +33,15 @@ interface IVar {
      *  @param coeff 系数
      *  @return 带coeff系数的新变量
      */
-    fun coeff(coeff: Double): IVar
+    operator fun times(coeff: Double): IVar
+
+    /**
+     * 除
+     */
+    operator fun div(coeff: Double): IVar {
+        return this * (1.0 / coeff)
+    }
+
 
     /**
      * 获取委托变量

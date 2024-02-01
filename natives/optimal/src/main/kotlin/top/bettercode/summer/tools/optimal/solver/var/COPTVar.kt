@@ -22,7 +22,7 @@ class COPTVar(
     override val ub: Double
         get() = _delegate.get(DblInfo.UB).scale()
 
-    override fun coeff(coeff: Double): IVar {
+    override fun times(coeff: Double): IVar {
         return COPTVar(_delegate, coeff)
     }
 

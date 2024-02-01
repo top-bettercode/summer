@@ -76,7 +76,7 @@ object MultiRecipeSolver {
                             }
                             recipeMaterials.map { (_, material) ->
                                 val value = material.totalNutrient()
-                                material.weight.coeff(value)
+                                material.weight * value
                             }.eq(totalNutrient)
                         }
                     }
@@ -84,7 +84,7 @@ object MultiRecipeSolver {
                     // 前十个每3元价差一推，后十个每5元价差一推。
                     recipeMaterials.map { (_, material) ->
                         val price = material.price
-                        material.weight.coeff(price)
+                        material.weight * (price)
                     }.ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
                 } else {
                     log.error("Could not find optimal solution:${getResultStatus()}")

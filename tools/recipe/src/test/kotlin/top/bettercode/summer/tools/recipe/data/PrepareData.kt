@@ -16,6 +16,7 @@ import top.bettercode.summer.tools.recipe.material.*
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toRelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toReplacebleMaterialIDs
+import top.bettercode.summer.tools.recipe.productioncost.*
 import java.math.BigDecimal
 import java.util.*
 import java.util.stream.Collectors
@@ -291,11 +292,32 @@ object PrepareData {
             relationIndexList.indexOf(o1).compareTo(relationIndexList.indexOf(o2))
         }
 
+        // 能耗费用
+        val materialItems: List<RecipeOtherMaterial> = listOf(
+                RecipeOtherMaterial(index = 9001, id = "煤", name = "煤", price = 50.0, value = 23.0),
+                RecipeOtherMaterial(index = 9002, id = "电费", name = "电费", price = 100.0, value = 53.0),
+        )
+        // 其他固定费用
+        val dictItems: Map<DictType, Cost> = mapOf(
+                DictType.STAFF to Cost(1.0, 42.0),
+                DictType.DEPRECIATION to Cost(1.0, 52.0),
+                DictType.OTHER to Cost(1.0, 62.0),
+        )
+        // 费用增减
+        val changes: List<CostChangeLogic> = listOf(
+                CostChangeLogic(type = ChangeLogicType.WATER_OVER, materialId = "液氨", exceedValue = 50.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.MATERIAL, "9001")), changeValue = 0.01),
+                CostChangeLogic(type = ChangeLogicType.OVER, materialId = "硫酸", exceedValue = 100.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.DICT, "STAFF")), changeValue = 0.01),
+                CostChangeLogic(type = ChangeLogicType.OTHER, changeValue = 0.01)
+        )
+
+        val productionCost = ProductionCost(materialItems = materialItems, dictItems = dictItems, taxRate = 0.09, taxFloat = 15.0, changes = changes)
+
         val requirement = RecipeRequirement(productName = productName,
                 targetWeight = 1000.0,
                 maxUseMaterialNum = -1,
                 maxBakeWeight = -1.0,
                 materials = materials,
+                productionCost = productionCost,
                 indicatorRangeConstraints = RecipeRangeIndicators(rangeIndicators),
                 indicatorMaterialIDConstraints = RecipeMaterialIDIndicators(materialIDIndicators),
                 useMaterialConstraints = useMaterials.toMaterialIDs(),
