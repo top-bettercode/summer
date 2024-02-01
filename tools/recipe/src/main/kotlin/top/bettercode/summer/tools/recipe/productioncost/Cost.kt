@@ -13,12 +13,6 @@ data class Cost(
          * 价格
          */
         val price: Double,
-
-        /**
-         * 增减比率
-         */
-        var change: Double = 1.0
 ) {
-
-    val cost: Double = value * price
+    val cost = price * value
 }

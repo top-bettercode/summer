@@ -32,7 +32,7 @@ class RecipeResult(val solverName: String) {
             return null
         }
         val requirement = recipes[0].requirement
-        val fileName: String = (requirement.productName + if (requirement.maxUseMaterialNum <= 0) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxUseMaterialNum}")
+        val fileName: String = (requirement.productName + if (requirement.maxUseMaterialNum == null) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxUseMaterialNum}")
         val outFile = File("build/" + solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
         val filePath = outFile.absolutePath
         FastExcel.of(filePath).apply {

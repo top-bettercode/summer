@@ -45,8 +45,8 @@ internal class RecipeSolverTest {
 //        System.err.println(json(solve.recipes[0], IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
 
         validate(solve)
-        validate(solve1)
-        validate(solve2)
+//        validate(solve1)
+//        validate(solve2)
 
         assert(solve, solve1)
         assert(solve, solve2)

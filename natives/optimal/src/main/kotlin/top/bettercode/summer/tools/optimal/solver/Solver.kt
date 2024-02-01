@@ -44,30 +44,20 @@ abstract class Solver(
      * result = this + value
      * sum(result-this)= value
      */
-    operator fun IVar.plus(value: Double): IVar {
-        val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-        arrayOf(result, this * -1.0).eq(value)
-        return result
+    open operator fun IVar.plus(value: Double): IVar {
+        return arrayOf(this, numVar(1.0, 1.0) * value).sum()
     }
 
     operator fun IVar.plus(value: IVar): IVar {
-        val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-        arrayOf(result, this * -1.0).eq(value)
-        return result
+        return arrayOf(this, value).sum()
     }
 
     operator fun IVar.minus(value: Double): IVar {
         return this + (-value)
     }
 
-    /**
-     * result = this - value
-     * sum(result-this)= value*-1
-     */
     operator fun IVar.minus(value: IVar): IVar {
-        val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
-        arrayOf(result, this * -1.0).eq(value * -1.0)
-        return result
+        return arrayOf(this, value * -1.0).sum()
     }
 
     abstract fun Array<out IVar>.ge(lb: Double)
@@ -151,8 +141,8 @@ abstract class Solver(
      * whole*ub >= this
      */
     fun IVar.ratioInRange(whole: IVar, lb: Double, ub: Double) {
-        (whole* lb).le(this)
-        (whole* ub).ge(this)
+        (whole * lb).le(this)
+        (whole * ub).ge(this)
     }
 
     abstract fun IVar.geIf(value: Double, bool: IVar)

@@ -23,11 +23,11 @@ class RecipeRequirement(
          */
         val yield: Double = 1.0,
         /** 原料进料口最大数，-1不限  */
-        val maxUseMaterialNum: Int = -1,
+        val maxUseMaterialNum: Int? = null,
         /**
          * 最大烘干量，单位KG，-1允许烘干全部水份
          */
-        val maxBakeWeight: Double = -1.0,
+        val maxBakeWeight: Double? = null,
         /** 原料  */
         var materials: List<RecipeMaterial>,
         /**

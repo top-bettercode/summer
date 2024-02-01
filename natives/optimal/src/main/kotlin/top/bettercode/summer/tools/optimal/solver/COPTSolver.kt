@@ -123,6 +123,17 @@ class COPTSolver @JvmOverloads constructor(
         return COPTVar(model.addVar(lb, ub, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1)))
     }
 
+    override fun IVar.plus(value: Double): IVar {
+        val expr = copt.Expr()
+        expr.addTerm(this.getDelegate(), this.coeff)
+        expr.addConstant(value)
+        val numVariables = numVariables()
+        val sum = model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
+        val size = numConstraints()
+        model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
+        return COPTVar(sum)
+    }
+
     override fun Array<out IVar>.ge(lb: Double) {
         val expr = copt.Expr()
         for (v in this) {

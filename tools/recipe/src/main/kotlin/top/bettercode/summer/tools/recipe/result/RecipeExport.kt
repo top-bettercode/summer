@@ -7,6 +7,8 @@ import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
+import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
+import top.bettercode.summer.tools.recipe.productioncost.DictType.*
 
 /**
  *
@@ -125,6 +127,43 @@ object RecipeExport {
         }
         cell(r, c).value(relationConstraintsStr)
         range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+
+        //标准制造费用
+        val productionCost = requirement.productionCost
+        c = 1
+        cell(r, c++).value("标准制造费用").height(80.0).setStyle()
+        val productionCostStr = """
+            ${"费用项目".fill()} ${productionCost.materialItems.joinToString(" ") { it.name.fill() }} ${
+            productionCost.dictItems.keys.joinToString(" ") {
+                when (it) {
+                    STAFF -> "人工费".fill()
+                    DEPRECIATION -> "折旧费".fill()
+                    OTHER -> "其他费用".fill()
+                    ENERGY -> "能耗费用".fill()
+                }
+            }
+        } ${"税费".fill()}
+           ${"单价".fill()} ${productionCost.materialItems.joinToString(" ") { it.price.toString().fill() }} ${productionCost.dictItems.values.joinToString(" ") { it.price.toString().fill() }} ${productionCost.taxRate.toString().fill()}
+           ${"数量".fill()} ${productionCost.materialItems.joinToString(" ") { it.value.toString().fill() }} ${productionCost.dictItems.values.joinToString(" ") { it.value.toString().fill() }} ${productionCost.taxFloat.toString().fill()}
+           ${"合计".fill()} ${productionCost.materialItems.joinToString(" ") { it.cost.scale(2).toString() }} ${productionCost.dictItems.values.joinToString(" ") { it.cost.scale(2).toString().fill() }} ${(productionCost.dictItems.values.sumOf { it.cost } * productionCost.taxRate + productionCost.taxFloat).scale(2).toString().fill()}
+        """.trimIndent()
+        cell(r, c).value(productionCostStr)
+        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+
+        //制造费用增减逻辑
+        val changes = productionCost.changes
+        c = 1
+        cell(r, c++).value("制造费用增减逻辑").height(20.0 * (changes.size + 1)).setStyle()
+        val changesStr = changes.joinToString("\n") {
+            when (it.type) {
+                ChangeLogicType.WATER_OVER -> "当使用${requirement.materials.find { m -> m.id == it.materialId }?.name}产肥一吨总水分超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，能耗费用增加${it.changeValue * 100}%"
+                ChangeLogicType.OVER -> "当产肥一吨使用${requirement.materials.find { m -> m.id == it.materialId }?.name}超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，${it.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${it.changeValue * 100}%"
+                ChangeLogicType.OTHER -> "其他额外增加制造费用${it.changeValue * 100}%"
+            }
+        }
+        cell(r, c).value(changesStr)
+        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+
         //指标指定用原料
         val materialIDIndicators = requirement.indicatorMaterialIDConstraints
         if (materialIDIndicators.isNotEmpty()) {
@@ -160,11 +199,14 @@ object RecipeExport {
         //其它产线信息
         c = 1
         cell(r, c++).value("其它产线信息").height(20.0).setStyle()
-        cell(r, c).value("可用原料种类最大数：${requirement.maxUseMaterialNum}；单吨产品水份最大烘干量：${requirement.maxBakeWeight}公斤；收率：${requirement.yield * 100}%")
+        cell(r, c).value("可用原料种类最大数：${requirement.maxUseMaterialNum ?: ""}；单吨产品水份最大烘干量：${requirement.maxBakeWeight ?: ""}公斤；收率：${requirement.yield * 100}%")
         range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
 
     }
 
+    private fun String.fill(length: Int = 5): String {
+        return if (length <= this.length) this else this.padEnd(this.length + (length - this.length) * 2, ' ')
+    }
 
     fun FastExcel.exportRecipe(recipe: Recipe, showRate: Boolean = false) {
         val requirement = recipe.requirement
@@ -225,7 +267,7 @@ object RecipeExport {
             for (i in 1..2) {
                 cell(i, c).value("/").setStyle()
             }
-            cell(3, c).value(recipe.cost).bold().format("0.00").setStyle()
+            cell(3, c).value(recipe.trueCost).bold().format("0.00").setStyle()
             //原料
             materials.forEach { material ->
                 c = 0

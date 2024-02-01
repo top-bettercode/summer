@@ -18,10 +18,10 @@ object RecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
-    fun solve(solverType: SolverType, requirement: RecipeRequirement): Recipe? {
+    fun solve(solverType: SolverType, requirement: RecipeRequirement, includeProductionCost: Boolean = true): Recipe? {
         SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight).apply {
             val s = System.currentTimeMillis()
-            val (recipeMaterials, objective) = prepare(requirement)
+            val (recipeMaterials, objective) = prepare(requirement, includeProductionCost)
             if (SolverType.COPT == solverType) {
                 val numVariables = numVariables()
                 val numConstraints = numConstraints()
@@ -50,7 +50,7 @@ object RecipeSolver {
         }
     }
 
-    fun Solver.prepare(requirement: RecipeRequirement): Pair<Map<String, RecipeMaterialVar>, IVar> {
+    fun Solver.prepare(requirement: RecipeRequirement, includeProductionCost: Boolean = true): Pair<Map<String, RecipeMaterialVar>, IVar> {
 
         setTimeLimit(requirement.timeout)
         // 原料数量
@@ -66,7 +66,7 @@ object RecipeSolver {
         val materialVars = recipeMaterials.values.map { it.weight }
 
         // 进料口数量
-        if (numMaxMaterials in 1 until numRawMaterials) {
+        if (numMaxMaterials != null && numMaxMaterials in 1 until numRawMaterials) {
             materialVars.atMost(numMaxMaterials)
         }
 
@@ -87,7 +87,7 @@ object RecipeSolver {
 
 
         // 定义产品净重 >=1000kg，含水，最大烘干量
-        materialVars.between(targetWeight, if (requirement.maxBakeWeight < 0) Double.POSITIVE_INFINITY else targetWeight + requirement.maxBakeWeight)
+        materialVars.between(targetWeight, if (requirement.maxBakeWeight == null) Double.POSITIVE_INFINITY else targetWeight + requirement.maxBakeWeight)
 
         val rangeIndicators = requirement.indicatorRangeConstraints
         // 产品水分指标
@@ -276,60 +276,65 @@ object RecipeSolver {
         }
 
         //制造费用
-        val productionCost = requirement.productionCost
-        val materialItems = productionCost.materialItems.map { CarrierVar(it, numVar(1.0, 1.0)) }
-        val dictItems = productionCost.dictItems.mapValues { CarrierVar(it.value, numVar(1.0, 1.0)) }
-        //费用增减
-        var allChange = 1.0
-        productionCost.changes.forEach { changeLogic ->
-            when (changeLogic.type) {
-                ChangeLogicType.WATER_OVER -> {
-                    changeProductionCost(recipeMaterials, changeLogic, recipeMaterials.map {
-                        it.value.weight * it.value.indicators.waterValue
-                    }.sum(), materialItems, dictItems)
-                }
+        val objectiveVarList = if (includeProductionCost) {
+            val productionCost = requirement.productionCost
+            val materialItems = productionCost.materialItems.map { CarrierValue(it, numVar(1.0, 1.0)) }
+            val dictItems = productionCost.dictItems.mapValues { CarrierValue(it.value, numVar(1.0, 1.0)) }
+            //费用增减
+            var allChange = 1.0
+            productionCost.changes.forEach { changeLogic ->
+                when (changeLogic.type) {
+                    ChangeLogicType.WATER_OVER -> {
+                        changeProductionCost(recipeMaterials, changeLogic, recipeMaterials.map {
+                            it.value.weight * it.value.indicators.waterValue
+                        }.sum(), materialItems, dictItems)
+                    }
 
-                ChangeLogicType.OVER -> {
-                    changeProductionCost(recipeMaterials, changeLogic, null, materialItems, dictItems)
-                }
+                    ChangeLogicType.OVER -> {
+                        changeProductionCost(recipeMaterials, changeLogic, null, materialItems, dictItems)
+                    }
 
-                ChangeLogicType.OTHER -> allChange = changeLogic.changeValue
+                    ChangeLogicType.OTHER -> allChange += changeLogic.changeValue
+                }
+            }
+            //能耗费用
+            val energyFee = materialItems.map { it.value * it.it.cost }.sum()
+            //人工+折旧费+其他费用
+            val otherFee = dictItems.values.map { it.value * it.it.cost }.sum()
+            //税费 =（人工+折旧费+其他费用）*0.09+15
+            val taxFee = otherFee * productionCost.taxRate + productionCost.taxFloat
+            val fee = arrayOf(energyFee, otherFee, taxFee).sum() * allChange
+
+            recipeMaterials.values.map {
+                it.weight * it.price
+            } + fee
+        } else {
+            recipeMaterials.values.map {
+                it.weight * it.price
             }
         }
-        //能耗费用
-        val energyFee = materialItems.map { (it.value + 1.0) * (it.`object`.price * it.`object`.value) }.sum()
-        //人工+折旧费+其他费用
-        val otherFee = dictItems.values.map { (it.value + 1.0) * (it.`object`.price * it.`object`.value) }.sum()
-        //税费 =（人工+折旧费+其他费用）*0.09+15
-        val taxFee = otherFee * productionCost.taxRate + productionCost.taxFloat
-        val fee = (energyFee + otherFee + taxFee) * (1.0 + allChange)
-
-
         // 定义目标函数：最小化成本
-        val objective = (recipeMaterials.values.map {
-            it.weight * it.price
-        } + fee).minimize()
+        val objective = objectiveVarList.minimize()
 
         return recipeMaterials to objective
     }
 
-    private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierVar<RecipeOtherMaterial>>, dictItems: Map<DictType, CarrierVar<Cost>>) {
+    private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>) {
         val useMaterial = materials[changeLogic.materialId]
         if (useMaterial != null) {
             val boolVar = boolVar()
-            useMaterial.weight.leIfNot(0.0, boolVar)
+            useMaterial.weight.gtIfNot(0.0, boolVar)
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
                     ChangeItemType.MATERIAL -> {//能耗费用
                         //(1+(value-exceedValue)/eachValue*changeValue)
-                        val material = materialItems.find { it.`object`.id == item.id }
+                        val material = materialItems.find { it.it.id == item.id }
                         if (material != null) {
                             //change
-                            val tmpValue = intVar(0.0, 1.0)
-                            tmpValue.eqIf(1.0, boolVar)
-                            tmpValue.eqIfNot(0.0, boolVar)
-                            material.value += ((value
+                            val changeVar = ((value
                                     ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                            changeVar.eqIf(0.0, boolVar)
+                            material.value += changeVar
                         }
                     }
 
@@ -338,8 +343,10 @@ object RecipeSolver {
                             DictType.ENERGY -> {
                                 materialItems.forEach {
                                     //change
-                                    it.value += ((value
+                                    val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                    changeVar.eqIf(0.0, boolVar)
+                                    it.value += changeVar
                                 }
                             }
 
@@ -347,8 +354,10 @@ object RecipeSolver {
                                 val cost = dictItems[dictType]
                                 if (cost != null) {
                                     //change
-                                    cost.value += ((value
+                                    val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                    changeVar.eqIf(0.0, boolVar)
+                                    cost.value += changeVar
                                 }
                             }
                         }

@@ -15,6 +15,7 @@ import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMater
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
 import top.bettercode.summer.tools.recipe.material.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.ReplacebleMaterialIDs
+import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
 
 /**
  * 配方
@@ -31,6 +32,8 @@ data class Recipe(
         val materials: List<RecipeMaterialValue>
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
+
+    val productionCost: ProductionCostValue = requirement.productionCost.computeFee(this)
 
     /** 需要烘干的水分含量  */
     val dryWaterWeight: Double
@@ -56,13 +59,14 @@ data class Recipe(
     //检查结果
     fun validate(): Boolean {
         //检查进料口
-        if (requirement.maxUseMaterialNum > 0 && materials.size > requirement.maxUseMaterialNum) {
+        if (requirement.maxUseMaterialNum != null && materials.size > requirement.maxUseMaterialNum) {
             log.warn("配方所需进料口：{} 超过最大进料口：{}", materials.size, requirement.maxUseMaterialNum)
             return false
         }
         //检查成本
-        if ((trueCost - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方成本不匹配:{} / {}", trueCost, cost)
+        val productionCostFee = productionCost.totalFee
+        if ((trueCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
+            log.warn("配方成本不匹配:{}+{}={} / {},差：{}", trueCost, productionCostFee, trueCost + productionCostFee, cost, trueCost + productionCostFee - cost)
             return false
         }
         //检查烘干水分
@@ -70,7 +74,7 @@ data class Recipe(
             log.warn("配方烘干水分异常：{}", dryWaterWeight)
             return false
         }
-        if (requirement.maxBakeWeight >= 0 && (dryWaterWeight - requirement.maxBakeWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
+        if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
             log.warn("配方烘干水分:{} 超过最大可烘干水分：{}", dryWaterWeight, requirement.maxBakeWeight)
             return false
         }
