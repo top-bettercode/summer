@@ -117,7 +117,7 @@ data class Recipe(
         }
 
         val usedMaterials = materials.map { it.id }
-        // 限用原料ID
+        // 指定用原料ID
         val useMaterials = requirement.useMaterialConstraints
         if (useMaterials.isNotEmpty()) {
             if (!useMaterials.containsAll(usedMaterials)) {
@@ -125,7 +125,7 @@ data class Recipe(
                 return false
             }
         }
-        // 不使用的原料ID
+        // 不能用原料ID
         val noUseMaterials = requirement.noUseMaterialConstraints
         if (noUseMaterials.isNotEmpty()) {
             if (usedMaterials.any { noUseMaterials.contains(it) }) {
