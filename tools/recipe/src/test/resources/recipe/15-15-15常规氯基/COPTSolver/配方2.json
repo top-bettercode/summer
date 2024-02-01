@@ -1,14 +1,30 @@
 {
   "cost" : 2317.506214331,
-  "dryWater" : 20.5075750048,
+  "dryWater" : 35.8389944329,
   "materials" : [ {
+    "id" : "氯化铵（干）",
+    "index" : 6,
+    "name" : "氯化铵（干）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.25,
+    "weight" : 394.9372841951
+  }, {
+    "id" : "液氨",
+    "index" : 10,
+    "name" : "液氨",
+    "normalWeight" : 2.9674636108,
+    "overdoseWeight" : 0.0,
+    "price" : 4.2,
+    "weight" : 2.9674636108
+  }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 288.5769945146
+    "weight" : 281.6710183375
   }, {
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
@@ -16,7 +32,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.85,
-    "weight" : 120.8212859481
+    "weight" : 117.9298949561
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
@@ -24,7 +40,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 187.0049600497
+    "weight" : 150.9282126926
   }, {
     "id" : "防结油（白色）",
     "index" : 64,
@@ -33,14 +49,6 @@
     "overdoseWeight" : 0.0,
     "price" : 8.0,
     "weight" : 2.0
-  }, {
-    "id" : "液氨",
-    "index" : 10,
-    "name" : "液氨",
-    "normalWeight" : 3.040219527,
-    "overdoseWeight" : 0.0,
-    "price" : 4.2,
-    "weight" : 3.040219527
   }, {
     "id" : "防结粉（白色）",
     "index" : 65,
@@ -56,16 +64,8 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 49.6473910471
-  }, {
-    "id" : "氯化铵（干）",
-    "index" : 6,
-    "name" : "氯化铵（干）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 1.25,
-    "weight" : 366.4167239183
+    "weight" : 82.4051206408
   } ],
-  "trueCost" : 2317.5062143314,
-  "weight" : 1020.5075750048
+  "trueCost" : 2317.5062143313,
+  "weight" : 1035.8389944329
 }

@@ -92,7 +92,8 @@ class ExcelRange @JvmOverloads constructor(
         return this
     }
 
-    fun wrapText(wrapText: Boolean): ExcelRange {
+    @JvmOverloads
+    fun wrapText(wrapText: Boolean=true): ExcelRange {
         style.wrapText(wrapText)
         return this
     }

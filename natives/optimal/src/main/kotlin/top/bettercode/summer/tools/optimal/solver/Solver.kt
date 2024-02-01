@@ -39,6 +39,23 @@ abstract class Solver(
     abstract fun boolVar(): IVar
     abstract fun intVar(lb: Double, ub: Double): IVar
     abstract fun numVar(lb: Double, ub: Double): IVar
+
+    /**
+     * result = this + value
+     * sum(result-this)= value
+     */
+    open fun IVar.plus(value: Double): IVar {
+        val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        arrayOf(result, this.coeff(-1.0)).eq(value)
+        return result
+    }
+
+    open fun IVar.plus(value: IVar): IVar {
+        val result = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        arrayOf(result, this.coeff(-1.0)).eq(value)
+        return result
+    }
+
     abstract fun Array<out IVar>.ge(lb: Double)
     abstract fun Iterable<IVar>.ge(lb: Double)
 

@@ -54,10 +54,10 @@ object RecipeSolver {
         // 物料数量
         val materials = requirement.materials
         val numRawMaterials = materials.size
-        val numMaxMaterials = requirement.maxMaterialNum
+        val numMaxMaterials = requirement.maxUseMaterialNum
         val targetWeight = requirement.targetWeight
 
-        val recipeMaterials = materials.mapValues {
+        val recipeMaterials = materials.associateBy { it.id }.mapValues {
             RecipeMaterialVar(it.value, numVar(0.0, targetWeight))
         }
 
@@ -69,7 +69,7 @@ object RecipeSolver {
         }
 
         // 不能混用的物料
-        val notMixMaterials = requirement.notMixMaterials
+        val notMixMaterials = requirement.notMixMaterialConstraints
 
         // 不选取不能同时使用的物料对
         for (notMixedMaterial in notMixMaterials) {
@@ -87,7 +87,7 @@ object RecipeSolver {
         // 定义产品净重 >=1000kg，含水，最大烘干量
         materialVars.between(targetWeight, if (requirement.maxBakeWeight < 0) Double.POSITIVE_INFINITY else targetWeight + requirement.maxBakeWeight)
 
-        val rangeIndicators = requirement.rangeIndicators
+        val rangeIndicators = requirement.indicatorRangeConstraints
         // 产品水分指标
         val waterRange = rangeIndicators.productWater?.value
         // 定义产品干净重
@@ -95,8 +95,7 @@ object RecipeSolver {
         val maxDryWeight = targetWeight * (1 - (waterRange?.min ?: 0.0))
         recipeMaterials.map {
             val material = it.value
-            val indicators = material.indicators
-            it.value.weight.coeff(1 - indicators.waterValue)
+            it.value.weight.coeff(1 - material.indicators.waterValue)
         }.between(minDryWeight, maxDryWeight)
 
         // 添加成份约束条件
@@ -125,8 +124,7 @@ object RecipeSolver {
             } else {
                 recipeMaterials.map {
                     val material = it.value
-                    val indicators = material.indicators
-                    val coeff = indicators.valueOf(indicator.id)
+                    val coeff = material.indicators.valueOf(indicator.id)
                     material.weight.coeff(coeff)
                 }.between(targetWeight * range.min, targetWeight * range.max)
             }
@@ -139,7 +137,6 @@ object RecipeSolver {
             t.mapNotNull { recipeMaterials[it]?.weight }
                     .between(u.min, u.max)
         }
-
 
         // 关联物料比率约束
         val materialRelationConstraints = requirement.materialRelationConstraints
@@ -235,7 +232,7 @@ object RecipeSolver {
 
 
         // 条件约束
-        requirement.materialConditions.forEach { (whenCondition, thenCondition) ->
+        requirement.materialConditionConstraints.forEach { (whenCondition, thenCondition) ->
             val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
             val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
             val boolVar = boolVar()

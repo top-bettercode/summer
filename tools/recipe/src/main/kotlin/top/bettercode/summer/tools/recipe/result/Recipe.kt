@@ -50,8 +50,8 @@ data class Recipe(
     //检查结果
     fun validate(): Boolean {
         //检查进料口
-        if (requirement.maxMaterialNum > 0 && materials.size > requirement.maxMaterialNum) {
-            log.warn("配方所需进料口：{} 超过最大进料口：{}", materials.size, requirement.maxMaterialNum)
+        if (requirement.maxUseMaterialNum > 0 && materials.size > requirement.maxUseMaterialNum) {
+            log.warn("配方所需进料口：{} 超过最大进料口：{}", materials.size, requirement.maxUseMaterialNum)
             return false
         }
         //检查成本
@@ -78,7 +78,7 @@ data class Recipe(
 
         val targetWeight = requirement.targetWeight
         // 指标范围约束
-        val rangeIndicators = requirement.rangeIndicators
+        val rangeIndicators = requirement.indicatorRangeConstraints
         for (indicator in rangeIndicators) {
             val indicatorValue = when (indicator.type) {
                 RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - dryWater) / targetWeight).scale()
@@ -96,18 +96,21 @@ data class Recipe(
         val mustUseMaterials = materialRangeConstraints.filter { it.value.min > 0 }.map { it.key }.flatten()
 
         // 指标物料约束
-        val materialIDIndicators = requirement.materialIDIndicators
+        val materialIDIndicators = requirement.indicatorMaterialIDConstraints
         for (indicator in materialIDIndicators) {
-            val indicatorUsedMaterials = materials.filter { it.indicators.valueOf(indicator.id) > 0.0 }.map { it.id }.filter { !mustUseMaterials.contains(it) }
-            if (!indicator.value.toList().containsAll(indicatorUsedMaterials)) {
-                log.warn("指标:{}所用物料：{} 不在范围{}内", indicator.name, indicatorUsedMaterials, indicator.value)
-                return false
+            val materialList = materials.filter { it.indicators.valueOf(indicator.id) > 0.0 }
+            if (materialList.isNotEmpty()) {
+                val indicatorUsedMaterials = materialList.map { it.id }.filter { !mustUseMaterials.contains(it) }
+                if (!indicator.value.containsAll(indicatorUsedMaterials)) {
+                    log.warn("指标:{}所用物料：{} 不在范围{}内", indicator.name, indicatorUsedMaterials, indicator.value)
+                    return false
+                }
             }
         }
 
         val usedMaterials = materials.map { it.id }
         // 限用物料ID
-        val useMaterials = requirement.useMaterials
+        val useMaterials = requirement.useMaterialConstraints
         if (useMaterials.isNotEmpty()) {
             if (!useMaterials.containsAll(usedMaterials)) {
                 log.warn("配方所用物料：{} 不在范围{}内", usedMaterials, useMaterials)
@@ -115,7 +118,7 @@ data class Recipe(
             }
         }
         // 不使用的物料ID
-        val noUseMaterials = requirement.noUseMaterials
+        val noUseMaterials = requirement.noUseMaterialConstraints
         if (noUseMaterials.isNotEmpty()) {
             if (usedMaterials.any { noUseMaterials.contains(it) }) {
                 log.warn("配方所用物料：{} 包含不可用物料{}内", usedMaterials, noUseMaterials)
@@ -123,7 +126,7 @@ data class Recipe(
             }
         }
         // 不能混用的物料,value: 物料ID
-        val notMixMaterials = requirement.notMixMaterials
+        val notMixMaterials = requirement.notMixMaterialConstraints
         for (notMixMaterial in notMixMaterials) {
             val mixMaterials = notMixMaterial.map { notMix -> usedMaterials.filter { notMix.contains(it) } }.filter { it.isNotEmpty() }
             val size = mixMaterials.size
@@ -183,7 +186,7 @@ data class Recipe(
             }
         }
         // 条件约束，当条件1满足时，条件2必须满足
-        val materialConditions = requirement.materialConditions
+        val materialConditions = requirement.materialConditionConstraints
         for ((whenCon, thenCon) in materialConditions) {
             val whenWeight = materials.filter { whenCon.materials.contains(it.id) }.sumOf { it.weight }
             val thenWeight = materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }

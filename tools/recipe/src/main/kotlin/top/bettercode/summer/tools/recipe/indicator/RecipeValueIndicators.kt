@@ -24,4 +24,7 @@ class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>>) : RecipeI
         return get(id)?.value ?: 0.0
     }
 
+    companion object {
+        val EMPTY = RecipeValueIndicators(emptyList())
+    }
 }

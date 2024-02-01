@@ -1,14 +1,38 @@
 {
   "cost" : 2334.0511237291,
-  "dryWater" : 347.2061206902,
+  "dryWater" : 375.8090028856,
   "materials" : [ {
+    "id" : "氯化铵（干）",
+    "index" : 6,
+    "name" : "氯化铵（干）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.25,
+    "weight" : 402.9355693705
+  }, {
+    "id" : "液氨",
+    "index" : 9,
+    "name" : "液氨",
+    "normalWeight" : 32.7034467156,
+    "overdoseWeight" : 0.0,
+    "price" : 4.2,
+    "weight" : 32.7034467156
+  }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 160.3442576555
+    "weight" : 136.8076669022
+  }, {
+    "id" : "磷酸",
+    "index" : 29,
+    "name" : "磷酸",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.05,
+    "weight" : 563.2234916149
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
@@ -18,14 +42,6 @@
     "price" : 3.55,
     "weight" : 233.3333333333
   }, {
-    "id" : "喷浆专用尿素",
-    "index" : 90,
-    "name" : "喷浆专用尿素",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.8,
-    "weight" : 15.0
-  }, {
     "id" : "防结油（白色）",
     "index" : 61,
     "name" : "防结油（白色）",
@@ -33,14 +49,6 @@
     "overdoseWeight" : 0.0,
     "price" : 8.0,
     "weight" : 2.0
-  }, {
-    "id" : "液氨",
-    "index" : 9,
-    "name" : "液氨",
-    "normalWeight" : 30.4629974661,
-    "overdoseWeight" : 0.0,
-    "price" : 4.2,
-    "weight" : 30.4629974661
   }, {
     "id" : "防结粉（白色）",
     "index" : 62,
@@ -50,22 +58,14 @@
     "price" : 2.0,
     "weight" : 3.0
   }, {
-    "id" : "磷酸",
-    "index" : 29,
-    "name" : "磷酸",
+    "id" : "喷浆专用尿素",
+    "index" : 90,
+    "name" : "喷浆专用尿素",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.05,
-    "weight" : 518.3918901799
-  }, {
-    "id" : "氯化铵（干）",
-    "index" : 6,
-    "name" : "氯化铵（干）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 1.25,
-    "weight" : 384.6736420554
+    "price" : 2.8,
+    "weight" : 1.8054949491
   } ],
   "trueCost" : 2334.0511237289,
-  "weight" : 1347.2061206902
+  "weight" : 1375.8090028856
 }

@@ -27,6 +27,34 @@ class SolverTest {
     }
 
     @Test
+    fun plus() {
+        val ge = cbcSolver.plus()
+        val ge1 = scipSolver.plus()
+        val ge2 = coptSolver.plus()
+        Assertions.assertEquals(ge, ge1)
+        Assertions.assertEquals(ge, ge2)
+    }
+
+    private fun Solver.plus(): Double {
+        val var1 = numVar(10.0, 10.0)
+        val var3 = numVar(20.0, 20.0)
+        val var2 = var1.plus(-50.0)
+        val var4 = var1.plus(var3)
+        arrayOf(var1, var2).minimize()
+        solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        System.err.println(var1.value)
+        System.err.println(var2.value)
+        System.err.println(var3.value)
+        System.err.println(var4.value)
+        Assertions.assertEquals(10.0, var1.value)
+        Assertions.assertEquals(-40.0, var2.value)
+        Assertions.assertEquals(20.0, var3.value)
+        Assertions.assertEquals(30.0, var4.value)
+        return var2.value
+    }
+
+    @Test
     fun ge() {
         val ge = cbcSolver.ge()
         val ge1 = scipSolver.ge()

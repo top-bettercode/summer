@@ -19,7 +19,7 @@ open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialID
         }
 
         fun Array<String>.toRelationMaterialIDs(relationIds: MaterialIDs? = null): RelationMaterialIDs {
-            return RelationMaterialIDs(id= this, relationIds = relationIds)
+            return RelationMaterialIDs(id = this, relationIds = relationIds)
         }
 
 
@@ -41,8 +41,10 @@ open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialID
         return ReplacebleMaterialIDs(this, MaterialIDs(replaceId), replaceRate)
     }
 
+    val idStr: String = this.toString()
+
     override fun toString(): String {
-        return ids.joinToString(",", "[", "]")
+        return if (ids.size == 1) ids.first() else ids.joinToString(",", "[", "]")
     }
 
     override fun equals(other: Any?): Boolean {

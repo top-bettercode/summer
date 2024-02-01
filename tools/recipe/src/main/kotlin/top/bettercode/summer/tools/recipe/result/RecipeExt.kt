@@ -12,11 +12,6 @@ import top.bettercode.summer.tools.recipe.material.RelationMaterialIDs
  */
 class RecipeExt(private val recipe: Recipe) {
 
-    val RecipeMaterialValue.range: DoubleRange?
-        get() {
-            return recipe.requirement.materialRangeConstraints.filter { it.key.contains(this.id) }.values.firstOrNull()
-        }
-
     /**
      * 是否存在过量消息
      */

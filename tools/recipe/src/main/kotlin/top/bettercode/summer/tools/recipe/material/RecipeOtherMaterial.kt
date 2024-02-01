@@ -23,5 +23,5 @@ class RecipeOtherMaterial(
     /**
      * 物料指标
      */
-    override val indicators: RecipeValueIndicators = RecipeValueIndicators(emptyList())
+    override val indicators: RecipeValueIndicators = RecipeValueIndicators.EMPTY
 }

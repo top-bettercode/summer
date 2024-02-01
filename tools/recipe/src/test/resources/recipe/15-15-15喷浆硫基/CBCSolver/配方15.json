@@ -1,22 +1,38 @@
 {
   "cost" : 2633.3832486084,
-  "dryWater" : 567.9845232574,
+  "dryWater" : 572.4660375659,
   "materials" : [ {
+    "id" : "液氨",
+    "index" : 9,
+    "name" : "液氨",
+    "normalWeight" : 97.8147691655,
+    "overdoseWeight" : 0.0,
+    "price" : 3.8,
+    "weight" : 97.8147691655
+  }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
-    "weight" : 58.008313621
+    "weight" : 102.3378261122
   }, {
-    "id" : "喷浆专用尿素",
-    "index" : 90,
-    "name" : "喷浆专用尿素",
+    "id" : "磷酸",
+    "index" : 29,
+    "name" : "磷酸",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 2.8,
-    "weight" : 151.426567941
+    "price" : 1.055,
+    "weight" : 664.1892736908
+  }, {
+    "id" : "硫酸",
+    "index" : 36,
+    "name" : "硫酸",
+    "normalWeight" : 284.7360402825,
+    "overdoseWeight" : 28.473604005,
+    "price" : 0.22,
+    "weight" : 313.2096442875
   }, {
     "id" : "防结油（白色）",
     "index" : 61,
@@ -26,14 +42,6 @@
     "price" : 8.0,
     "weight" : 2.0
   }, {
-    "id" : "液氨",
-    "index" : 9,
-    "name" : "液氨",
-    "normalWeight" : 102.6137888527,
-    "overdoseWeight" : 0.0,
-    "price" : 3.8,
-    "weight" : 102.6137888527
-  }, {
     "id" : "防结粉（白色）",
     "index" : 62,
     "name" : "防结粉（白色）",
@@ -41,22 +49,6 @@
     "overdoseWeight" : 0.0,
     "price" : 2.0,
     "weight" : 3.0
-  }, {
-    "id" : "硫酸",
-    "index" : 36,
-    "name" : "硫酸",
-    "normalWeight" : 316.1720786014,
-    "overdoseWeight" : 31.6172078343,
-    "price" : 0.22,
-    "weight" : 347.7892864357
-  }, {
-    "id" : "磷酸",
-    "index" : 29,
-    "name" : "磷酸",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 1.055,
-    "weight" : 639.9776033144
   }, {
     "id" : "生化黄腐酸钾",
     "index" : 67,
@@ -72,8 +64,16 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 258.1689630926
+    "weight" : 232.5
+  }, {
+    "id" : "喷浆专用尿素",
+    "index" : 90,
+    "name" : "喷浆专用尿素",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.8,
+    "weight" : 152.4145243099
   } ],
-  "trueCost" : 2633.3832486083,
-  "weight" : 1567.9845232574
+  "trueCost" : 2633.3832486081,
+  "weight" : 1572.4660375659
 }

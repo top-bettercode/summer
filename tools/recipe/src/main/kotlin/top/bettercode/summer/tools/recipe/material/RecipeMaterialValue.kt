@@ -23,7 +23,7 @@ data class RecipeMaterialValue(
     fun normalWeight(ids: MaterialIDs?): Double {
         return if (ids == null) {
             normalWeight
-        }else{
+        } else {
             consumes.filter { ids.contains(it.key) }.values.sumOf { it.first }
         }
     }
@@ -31,7 +31,7 @@ data class RecipeMaterialValue(
     fun overdoseWeight(ids: MaterialIDs?): Double {
         return if (ids == null) {
             overdoseWeight
-        }else{
+        } else {
             consumes.filter { ids.contains(it.key) }.values.sumOf { it.second }
         }
     }

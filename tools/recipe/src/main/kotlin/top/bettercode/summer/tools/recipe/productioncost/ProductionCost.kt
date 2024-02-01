@@ -4,6 +4,12 @@ import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
 
 /**
  * 制造费用
+ *
+ * 制造费用合计=人工费+能耗费+折旧费+其他费用+税费
+ * 税费=（人工+折旧费+其他费用）*0.09+15
+ * 能耗费=煤/生物质耗费+电耗+蒸汽耗+天然气耗+∑其他1~4（若有）
+ * 原型增加税率和15
+ *
  * @author Peter Wu
  */
 data class ProductionCost(
