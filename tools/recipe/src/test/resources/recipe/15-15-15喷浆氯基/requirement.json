@@ -507,5 +507,6 @@
   "productName" : "15-15-15喷浆氯基",
   "targetWeight" : 1000.0,
   "timeout" : 30,
-  "useMaterialConstraints" : [ ]
+  "useMaterialConstraints" : [ ],
+  "yield" : 1.0
 }

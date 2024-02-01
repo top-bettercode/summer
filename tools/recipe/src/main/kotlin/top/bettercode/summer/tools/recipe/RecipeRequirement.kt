@@ -17,6 +17,10 @@ class RecipeRequirement(
         val productName: String,
         /** 目标重量，单位KG  */
         val targetWeight: Double = 1000.0,
+        /**
+         * 收率
+         */
+        val yield: Double = 1.0,
         /** 原料进料口最大数，-1不限  */
         val maxUseMaterialNum: Int = -1,
         /**
@@ -26,27 +30,27 @@ class RecipeRequirement(
         /** 原料  */
         var materials: List<RecipeMaterial>,
         /**
-         * 指标范围约束,key：指标ID,value:指标值范围
-         */
-        val indicatorRangeConstraints: RecipeRangeIndicators,
-        /**
          * 指标指定用原料约束,key:指标ID,value:原料ID
          */
         val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
-
+        /**
+         * 指定原料约束
+         */
+        val materialIDConstraints: Map<MaterialIDs, MaterialIDs>,
         /** 指定用原料ID  */
         val useMaterialConstraints: MaterialIDs,
         /** 不能用原料ID  */
         val noUseMaterialConstraints: MaterialIDs,
+        /**
+         * 指标范围约束,key：指标ID,value:指标值范围
+         */
+        val indicatorRangeConstraints: RecipeRangeIndicators,
+
         /** 不能混用的原料,value: 原料ID  */
         val notMixMaterialConstraints: List<Array<MaterialIDs>>,
 
         /** 原料约束,key:原料ID, value: 原料使用范围约束  */
         var materialRangeConstraints: Map<MaterialIDs, DoubleRange>,
-        /**
-         * 指定原料约束
-         */
-        val materialIDConstraints: Map<MaterialIDs, MaterialIDs>,
         /**
          *关联原料约束
          */
