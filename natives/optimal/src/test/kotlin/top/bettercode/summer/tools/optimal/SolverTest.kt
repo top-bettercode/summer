@@ -760,6 +760,94 @@ class SolverTest {
     }
 
     @Test
+    fun condition() {
+        val eq = coptSolver.condition()
+        val eq1 = scipSolver.condition()
+        Assertions.assertEquals(eq, eq1)
+//        val eq2 = cbcSolver.condition()
+//        Assertions.assertEquals(eq, eq2)
+    }
+
+    private fun Solver.condition(): Double {
+        System.err.println("===============${name}==============")
+//        OptimalUtil.DEFAULT_EPSILON = 1e-6
+        val numVar1 = numVar(0.0, 100.0)
+        val numVar2 = numVar(0.0, 100.0)
+        val boolVar = boolVar()
+        numVar1.neIfNot(10.0, boolVar)
+        numVar2.eqIf(20.0, boolVar)
+        numVar1.eq(10.0)
+        arrayOf(numVar1, numVar2).maximize()
+        solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        System.err.println(boolVar.value)
+        System.err.println(numVar1.value)
+        System.err.println(numVar2.value)
+        Assertions.assertEquals(numVar1.value, 10.0)
+        Assertions.assertEquals(numVar2.value, 20.0)
+        return numVar2.value
+    }
+
+    @Test
+    fun condition1() {
+        val eq = coptSolver.condition1()
+        val eq1 = scipSolver.condition1()
+        Assertions.assertEquals(eq, eq1)
+//        val eq2 = cbcSolver.condition1()
+//        Assertions.assertEquals(eq, eq2)
+    }
+
+    private fun Solver.condition1(): Double {
+        System.err.println("===============${name}==============")
+//        OptimalUtil.DEFAULT_EPSILON = 1e-6
+        val numVar1 = numVar(0.0, 100.0)
+        val numVar2 = numVar(0.0, 20.0)
+        val boolVar = boolVar()
+        numVar1.neIfNot(10.0, boolVar)
+        numVar2.neIf(20.0, boolVar)
+        numVar1.eq(10.0)
+        arrayOf(numVar1, numVar2).maximize()
+        solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        System.err.println(boolVar.value)
+        System.err.println(numVar1.value)
+        System.err.println(numVar2.value)
+        Assertions.assertEquals(numVar1.value, 10.0)
+        Assertions.assertTrue(numVar2.value < 20.0)
+        return numVar2.value
+    }
+
+
+    @Test
+    fun condition2() {
+        val eq = coptSolver.condition2()
+        val eq1 = scipSolver.condition2()
+        Assertions.assertEquals(eq, eq1)
+        val eq2 = cbcSolver.condition2()
+        Assertions.assertEquals(eq, eq2)
+    }
+
+    private fun Solver.condition2(): Double {
+        System.err.println("===============${name}==============")
+//        OptimalUtil.DEFAULT_EPSILON = 1e-9
+        val numVar1 = numVar(0.0, 100.0)
+        val numVar2 = numVar(0.0, 20.0)
+        val boolVar = boolVar()
+        numVar1.eq(10.0)
+        numVar1.gtIfNot(10.0, boolVar)
+        numVar2.ltIf(20.0, boolVar)
+        arrayOf(numVar1, numVar2).maximize()
+        solve()
+        Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+        System.err.println(boolVar.value)
+        System.err.println(numVar1.value)
+        System.err.println(numVar2.value)
+        Assertions.assertTrue(numVar1.value == 10.0)
+        Assertions.assertTrue(numVar2.value < 20.0)
+        return numVar2.value
+    }
+
+    @Test
     fun betweenIf() {
         val bt = coptSolver.betweenIf()
         val bt1 = scipSolver.betweenIf()
