@@ -17,38 +17,38 @@ class RecipeRequirement(
         val productName: String,
         /** 目标重量，单位KG  */
         val targetWeight: Double = 1000.0,
-        /** 物料进料口最大数，-1不限  */
+        /** 原料进料口最大数，-1不限  */
         val maxUseMaterialNum: Int = -1,
         /**
          * 最大烘干量，单位KG，-1允许烘干全部水份
          */
         val maxBakeWeight: Double = -1.0,
-        /** 物料  */
+        /** 原料  */
         var materials: List<RecipeMaterial>,
         /**
          * 指标范围约束,key：指标ID,value:指标值范围
          */
         val indicatorRangeConstraints: RecipeRangeIndicators,
         /**
-         * 指标限用物料约束,key:指标ID,value:物料ID
+         * 指标指定用原料约束,key:指标ID,value:原料ID
          */
         val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
 
-        /** 限用物料ID  */
+        /** 指定用原料ID  */
         val useMaterialConstraints: MaterialIDs,
-        /** 不使用的物料ID  */
+        /** 不能用原料ID  */
         val noUseMaterialConstraints: MaterialIDs,
-        /** 不能混用的物料,value: 物料ID  */
+        /** 不能混用的原料,value: 原料ID  */
         val notMixMaterialConstraints: List<Array<MaterialIDs>>,
 
-        /** 物料约束,key:物料ID, value: 物料使用范围约束  */
+        /** 原料约束,key:原料ID, value: 原料使用范围约束  */
         var materialRangeConstraints: Map<MaterialIDs, DoubleRange>,
         /**
-         * 指定物料约束
+         * 指定原料约束
          */
         val materialIDConstraints: Map<MaterialIDs, MaterialIDs>,
         /**
-         *关联物料约束
+         *关联原料约束
          */
         var materialRelationConstraints: Map<ReplacebleMaterialIDs, Map<RelationMaterialIDs, RecipeRelation>>,
         /** 条件约束，当条件1满足时，条件2必须满足  */
@@ -62,7 +62,7 @@ class RecipeRequirement(
     //--------------------------------------------
 
     init {
-        //约束物料
+        //约束原料
         indicatorMaterialIDConstraints.values.forEach { indicator ->
             val materialIDs = indicator.value
             indicator.value = materialIDs.min()
@@ -83,18 +83,18 @@ class RecipeRequirement(
             second.materials = second.materials.min()
         }
 
-        // 必选物料
+        // 必选原料
         val materialMust = Predicate { material: IRecipeMaterial ->
             val materialId = material.id
 
-            // 用量>0的物料
+            // 用量>0的原料
             materialRangeConstraints.forEach { (t, u) ->
                 if (t.contains(materialId) && u.min > 0) {
                     return@Predicate true
                 }
             }
 
-            //关联物料
+            //关联原料
             for (replacebleMaterialIDs in materialRelationConstraints.keys) {
                 if (replacebleMaterialIDs.contains(materialId)) {
                     return@Predicate true
@@ -110,7 +110,7 @@ class RecipeRequirement(
 
             return@Predicate false
         }
-        //不用物料
+        //不用原料
         val materialFalse = Predicate { material: IRecipeMaterial ->
             val materialId = material.id
 
@@ -118,31 +118,31 @@ class RecipeRequirement(
                 return@Predicate true
             }
 
-            // 条件 约束物料
+            // 条件 约束原料
             for (condition in materialConditionConstraints) {
                 if (condition.second.materials.contains(materialId)) {
                     return@Predicate true
                 }
             }
 
-            // 过滤不使用的物料
+            // 过滤不使用的原料
             if (noUseMaterialConstraints.contains(materialId)) {
                 return@Predicate false
             }
 
-            // 排除全局非限用物料
+            // 排除全局非限用原料
             if (useMaterialConstraints.isNotEmpty()) {
                 if (!useMaterialConstraints.contains(materialId)) return@Predicate false
             }
 
-            // 排除非限用物料
+            // 排除非限用原料
             materialIDConstraints.forEach { (t, u) ->
                 if (t.contains(materialId) && !u.contains(materialId)) {
                     return@Predicate false
                 }
             }
 
-            // 过滤不在成份约束的物料
+            // 过滤不在成份约束的原料
             indicatorMaterialIDConstraints.values.forEach { indicator ->
                 val materialIDs = indicator.value
                 val materialIndicator = material.indicators.valueOf(indicator.id)

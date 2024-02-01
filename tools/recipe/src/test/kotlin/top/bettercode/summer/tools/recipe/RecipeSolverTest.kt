@@ -23,11 +23,11 @@ internal class RecipeSolverTest {
 
     @Test
     fun solve() {
-        solve("13-05-07高氯枸磷")
-        solve("24-06-10高氯枸磷")
+//        solve("13-05-07高氯枸磷")
+//        solve("24-06-10高氯枸磷")
 //        solve("15-15-15喷浆氯基")
         solve("15-15-15喷浆硫基")
-        solve("15-15-15常规氯基")
+//        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
@@ -36,7 +36,7 @@ internal class RecipeSolverTest {
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult)
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult)
         val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult)
-//        toExcel(solve)
+        toExcel(solve)
 //        toExcel(solve1)
 //        toExcel(solve2)
         System.err.println("copt:" + solve.time)
@@ -44,17 +44,17 @@ internal class RecipeSolverTest {
         System.err.println("scip:" + solve2.time)
 //        System.err.println(json(solve.recipes[0], IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
 
-//        validate(solve)
-//        validate(solve1)
-//        validate(solve2)
+        validate(solve)
+        validate(solve1)
+        validate(solve2)
 
         assert(solve, solve1)
         assert(solve, solve2)
         assert(solve1, solve2)
 
-        saveRecipe(solve)
-        saveRecipe(solve1)
-        saveRecipe(solve2)
+//        saveRecipe(solve)
+//        saveRecipe(solve1)
+//        saveRecipe(solve2)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {

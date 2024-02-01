@@ -21,23 +21,23 @@ object RecipeExport {
         } else
             materials.first().indicators.values.sortedBy { it.index }
         //标题
-        cell(0, 0).value("物料名称").headerStyle().setStyle()
+        cell(0, 0).value("原料名称").headerStyle().setStyle()
         cell(0, 1).value("价格").headerStyle().setStyle()
         var i = 2
         for (indicator in indicators) {
             val column = i++
             cell(0, column).value(indicator.name).headerStyle().setStyle()
         }
-        //物料
+        //原料
         var r = 0
         for (matrial in materials) {
             val matrialName = matrial.name
             var c = 0
-            // 物料名称
+            // 原料名称
             cell(++r, c++).value(matrialName).setStyle()
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
-            // 物料成份
+            // 原料成份
             matrial.indicators.values.sortedBy { it.index }.forEachIndexed { index, indicator ->
                 val column = c + index
                 cell(r, column).value(indicator.value.scale()).width(8.0).format("0.0%").setStyle()
@@ -74,9 +74,21 @@ object RecipeExport {
         c = 1
         val limitMaterials = requirement.materialRangeConstraints
         cell(r, c++).value("推优原料用量范围").height(20.0 * limitMaterials.size).setStyle()
-        val limitMaterialsStr = limitMaterials.entries.joinToString("\n") { "${it.key} 用量范围：${it.value.min} 至 ${it.value.max} 公斤" }
+        val limitMaterialsStr = limitMaterials.entries.joinToString("\n") {
+            "${it.key} 用量范围：${it.value.min} 至 ${it.value.max} 公斤；"
+        }
         cell(r, c).value(limitMaterialsStr)
         range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+        // 推优原料用量限制
+        c = 1
+        val materialConditionConstraints = requirement.materialConditionConstraints
+        cell(r, c++).value("推优原料用量范围").height(20.0 * materialConditionConstraints.size).setStyle()
+        val materialConditionConstraintsStr = materialConditionConstraints.joinToString("\n") {
+            "如果 ${it.first.materials} ${it.first.condition}公斤时，${it.first.materials} ${it.first.condition}公斤；"
+        }
+        cell(r, c).value(materialConditionConstraintsStr)
+        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+
         // 硫酸/液氨/碳铵计算规则
         c = 1
         val relationConstraints = requirement.materialRelationConstraints
@@ -113,13 +125,37 @@ object RecipeExport {
         }
         cell(r, c).value(relationConstraintsStr)
         range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-        //指标限用物料
-        c = 1
+        //指标指定用原料
         val materialIDIndicators = requirement.indicatorMaterialIDConstraints
-        cell(r, c++).value("指标限用物料").height(20.0 * materialIDIndicators.size).setStyle()
-        val materialIDIndicatorsStr = materialIDIndicators.entries.joinToString("\n") { "指标${it.value.name} 限用原料：${it.value.value}" }
-        cell(r, c).value(materialIDIndicatorsStr)
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+        if (materialIDIndicators.isNotEmpty()) {
+            c = 1
+            cell(r, c++).value("指标指定用原料").height(20.0 * materialIDIndicators.size).setStyle()
+            val materialIDIndicatorsStr = materialIDIndicators.entries.joinToString("\n") { "指标${it.value.name} 限用原料：${it.value.value}" }
+            cell(r, c).value(materialIDIndicatorsStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+        }
+        // 不能混用的原料
+        val notMixMaterialConstraints = requirement.notMixMaterialConstraints
+        if (notMixMaterialConstraints.isNotEmpty()) {
+            c = 1
+            cell(r, c++).value("不能混用的原料").height(20.0 * notMixMaterialConstraints.size).setStyle()
+            val notMixMaterialConstraintsStr = notMixMaterialConstraints.joinToString("\n") {
+                it.joinToString("和") + "不能混用"
+            }
+            cell(r, c).value(notMixMaterialConstraintsStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+        }
+        // 指定原料约束
+        val materialIDConstraints = requirement.materialIDConstraints
+        if (materialIDConstraints.isNotEmpty()) {
+            c = 1
+            cell(r, c++).value("指定原料约束").height(20.0 * materialIDConstraints.size).setStyle()
+            val materialIDConstraintsStr = materialIDConstraints.entries.joinToString("\n") {
+                "${it.key}中指定使用原料：${it.value}"
+            }
+            cell(r, c).value(materialIDConstraintsStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+        }
 
         //其它产线信息
         c = 1
@@ -190,7 +226,7 @@ object RecipeExport {
                 cell(i, c).value("/").setStyle()
             }
             cell(3, c).value(recipe.cost).bold().format("0.00").setStyle()
-            //物料
+            //原料
             materials.forEach { material ->
                 c = 0
                 cell(r, c++).value(material.name).wrapText().setStyle()
