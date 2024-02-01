@@ -31,4 +31,9 @@ class BoolVarTest {
             System.err.println(boolVar.value)
         }
     }
+
+    @Test
+    fun double() {
+        System.err.println(0.0* Double.MAX_VALUE)
+    }
 }
