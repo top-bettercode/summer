@@ -25,15 +25,15 @@ internal class RecipeSolverTest {
     fun solve() {
 //        solve("13-05-07高氯枸磷")
 //        solve("24-06-10高氯枸磷")
-//        solve("15-15-15喷浆氯基")
-        solve("15-15-15喷浆硫基")
+        solve("15-15-15喷浆氯基")
+//        solve("15-15-15喷浆硫基")
 //        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
         val requirement = PrepareData.readRequirement(productName)
         val maxResult = 20
-        val includeProductionCost = true
+        val includeProductionCost = false
         val nutrientUnchanged = false
         val materialUnchanged = false
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
