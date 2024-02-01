@@ -1,12 +1,12 @@
 package top.bettercode.summer.tools.recipe.material
 
 /**
- * 关联物料
+ * 关联原料
  * @author Peter Wu
  */
 class RelationMaterialIDs(ids: HashSet<String>,
                           /**
-                           * 关联物料
+                           * 关联原料
                            */
                           val relationIds: MaterialIDs? = null
 ) : MaterialIDs(ids) {

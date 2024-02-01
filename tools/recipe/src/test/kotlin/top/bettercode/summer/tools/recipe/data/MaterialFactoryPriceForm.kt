@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.recipe.data
 
 class MaterialFactoryPriceForm {
-    // 物料名称
+    // 原料名称
     var name: String = ""
 
     // 荆州

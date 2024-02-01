@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
 /**
- * 物料
+ * 原料
  *
  * @author Peter Wu
  */

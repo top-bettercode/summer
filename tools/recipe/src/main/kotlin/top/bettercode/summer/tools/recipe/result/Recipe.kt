@@ -27,7 +27,7 @@ data class Recipe(
          */
         val requirement: RecipeRequirement,
         val cost: Double,
-        /** 选用的物料  */
+        /** 选用的原料  */
         val materials: List<RecipeMaterialValue>
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
@@ -95,66 +95,66 @@ data class Recipe(
         val materialRangeConstraints = requirement.materialRangeConstraints
         val mustUseMaterials = materialRangeConstraints.filter { it.value.min > 0 }.map { it.key }.flatten()
 
-        // 指标物料约束
+        // 指标原料约束
         val materialIDIndicators = requirement.indicatorMaterialIDConstraints
         for (indicator in materialIDIndicators) {
             val materialList = materials.filter { it.indicators.valueOf(indicator.id) > 0.0 }
             if (materialList.isNotEmpty()) {
                 val indicatorUsedMaterials = materialList.map { it.id }.filter { !mustUseMaterials.contains(it) }
                 if (!indicator.value.containsAll(indicatorUsedMaterials)) {
-                    log.warn("指标:{}所用物料：{} 不在范围{}内", indicator.name, indicatorUsedMaterials, indicator.value)
+                    log.warn("指标:{}所用原料：{} 不在范围{}内", indicator.name, indicatorUsedMaterials, indicator.value)
                     return false
                 }
             }
         }
 
         val usedMaterials = materials.map { it.id }
-        // 限用物料ID
+        // 限用原料ID
         val useMaterials = requirement.useMaterialConstraints
         if (useMaterials.isNotEmpty()) {
             if (!useMaterials.containsAll(usedMaterials)) {
-                log.warn("配方所用物料：{} 不在范围{}内", usedMaterials, useMaterials)
+                log.warn("配方所用原料：{} 不在范围{}内", usedMaterials, useMaterials)
                 return false
             }
         }
-        // 不使用的物料ID
+        // 不使用的原料ID
         val noUseMaterials = requirement.noUseMaterialConstraints
         if (noUseMaterials.isNotEmpty()) {
             if (usedMaterials.any { noUseMaterials.contains(it) }) {
-                log.warn("配方所用物料：{} 包含不可用物料{}内", usedMaterials, noUseMaterials)
+                log.warn("配方所用原料：{} 包含不可用原料{}内", usedMaterials, noUseMaterials)
                 return false
             }
         }
-        // 不能混用的物料,value: 物料ID
+        // 不能混用的原料,value: 原料ID
         val notMixMaterials = requirement.notMixMaterialConstraints
         for (notMixMaterial in notMixMaterials) {
             val mixMaterials = notMixMaterial.map { notMix -> usedMaterials.filter { notMix.contains(it) } }.filter { it.isNotEmpty() }
             val size = mixMaterials.size
             if (size > 1) {
-                log.warn("配方混用物料：{}", mixMaterials.joinToString(",", "[", "]") { it.joinToString("、") })
+                log.warn("配方混用原料：{}", mixMaterials.joinToString(",", "[", "]") { it.joinToString("、") })
                 return false
             }
         }
 
-        // 物料约束,key:物料ID, value: 物料使用范围约束
+        // 原料约束,key:原料ID, value: 原料使用范围约束
         for ((ids, range) in materialRangeConstraints) {
             val weight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             if (weight !in range.min..range.max) {
-                log.warn("物料{}使用量：{} 不在范围{}-{}内", ids, weight, range.min, range.max)
+                log.warn("原料{}使用量：{} 不在范围{}-{}内", ids, weight, range.min, range.max)
                 return false
             }
         }
-        // 指定物料约束
+        // 指定原料约束
         val materialIDConstraints = requirement.materialIDConstraints
         for ((ids, value) in materialIDConstraints) {
             for (id in ids) {
                 if (usedMaterials.contains(id) && !value.contains(id)) {
-                    log.warn("{}使用了不在指定物料{}范围内的物料：{}", ids, value, id)
+                    log.warn("{}使用了不在指定原料{}范围内的原料：{}", ids, value, id)
                     return false
                 }
             }
         }
-        // 关联物料约束
+        // 关联原料约束
         val materialRelationConstraints = requirement.materialRelationConstraints
         for (entry in materialRelationConstraints) {
             val ids = entry.key
@@ -164,7 +164,7 @@ data class Recipe(
             val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
             if ((usedWeight - usedAddWeight).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
-                log.warn("物料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
+                log.warn("原料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
                 return false
             }
             val (normal, overdose) = entry.relationValue
@@ -175,13 +175,13 @@ data class Recipe(
 
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
             if (usedNormalWeight !in (usedMinNormalWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxNormalWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
-                log.warn("物料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
+                log.warn("原料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
                 return false
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
             if (usedOverdoseWeight !in (usedMinOverdoseWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxOverdoseWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
-                log.warn("物料{}过量使用量：{} 不在范围{}-{}内", usedIds, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
+                log.warn("原料{}过量使用量：{} 不在范围{}-{}内", usedIds, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
                 return false
             }
         }
@@ -265,7 +265,7 @@ data class Recipe(
     }
 
     /**
-     * 消耗物料汇总相关值
+     * 消耗原料汇总相关值
      */
     val Map.Entry<ReplacebleMaterialIDs, Map<RelationMaterialIDs, RecipeRelation>>.relationValue: Pair<DoubleRange, DoubleRange>
         get() {

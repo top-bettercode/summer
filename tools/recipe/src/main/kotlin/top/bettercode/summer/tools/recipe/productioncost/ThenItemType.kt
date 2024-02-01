@@ -6,7 +6,7 @@ package top.bettercode.summer.tools.recipe.productioncost
  */
 enum class ThenItemType {
     /**
-     * 物料品类
+     * 原料品类
      */
     MATERIAL,
 

@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.recipe.material
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
 /**
- * 物料
+ * 原料
  *
  * @author Peter Wu
  */
@@ -12,14 +12,14 @@ class RecipeMaterial(
          * 序号，从0开始
          */
         override val index: Int,
-        /** 物料ID  */
+        /** 原料ID  */
         override val id: String,
-        /** 物料名称  */
+        /** 原料名称  */
         override val name: String,
-        /** 物料价格  */
+        /** 原料价格  */
         override val price: Double,
         /**
-         * 物料指标
+         * 原料指标
          */
         override val indicators: RecipeValueIndicators
 ) : IRecipeMaterial

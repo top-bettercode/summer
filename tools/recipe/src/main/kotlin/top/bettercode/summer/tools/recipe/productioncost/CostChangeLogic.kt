@@ -1,10 +1,17 @@
 package top.bettercode.summer.tools.recipe.productioncost
 
-/** 制造费用增减逻辑 */
+/**
+ * 制造费用增减逻辑:
+ *  原料
+ *  WATER_OVER:
+ *
+ *  OVER:
+ *
+ */
 data class CostChangeLogic(
         /** 增减类型 */
         val type: ChangeLogicType,
-        /** 物料ID  */
+        /** 原料ID  */
         val materialId: String,
         /** 超过条件值（公斤）  */
         val whenExceedValue: Double,

@@ -14,11 +14,11 @@ import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
  */
 data class ProductionCost(
         /**
-         * 投入物料
+         * 投入原料
          */
         val materials: List<RecipeMaterialValue>,
         /**
-         * 制造费用项-物料类
+         * 制造费用项-原料类
          */
         val materialItems: List<CostMaterialItem>,
         /**

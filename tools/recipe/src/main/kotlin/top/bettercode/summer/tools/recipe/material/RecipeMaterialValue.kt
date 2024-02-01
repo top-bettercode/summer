@@ -11,7 +11,7 @@ data class RecipeMaterialValue(
         /** 最终使用量  */
         val weight: Double,
         /**
-         * 其他物料消耗详情,key:物料ID,value: Pair first:正常消耗，second:过量消耗
+         * 其他原料消耗详情,key:原料ID,value: Pair first:正常消耗，second:过量消耗
          */
         @get:JsonIgnore
         val consumes: Map<String, Pair<Double, Double>>

@@ -1,16 +1,16 @@
 package top.bettercode.summer.tools.recipe.material
 
 /**
- * 可替换物料
+ * 可替换原料
  * @author Peter Wu
  */
 class ReplacebleMaterialIDs(ids: HashSet<String>,
                             /**
-                             * 可替换物料
+                             * 可替换原料
                              */
                             val replaceIds: MaterialIDs? = null,
                             /**
-                             * 对可替换物料使用量比例,1单位ids使用replaceRate单位replaceIds
+                             * 对可替换原料使用量比例,1单位ids使用replaceRate单位replaceIds
                              */
                             val replaceRate: Double? = null
 ) : MaterialIDs(ids) {

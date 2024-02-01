@@ -25,7 +25,7 @@ class RecipeExt(private val recipe: Recipe) {
         }
 
     /**
-     * 消耗物料ID
+     * 消耗原料ID
      */
     val RecipeMaterialValue.relationName: String?
         get() {
@@ -38,7 +38,7 @@ class RecipeExt(private val recipe: Recipe) {
         }
 
     /**
-     * 消息物料替换比率
+     * 消息原料替换比率
      */
     private val RecipeMaterialValue.replaceRate: Double
         get() {
@@ -93,7 +93,7 @@ class RecipeExt(private val recipe: Recipe) {
                     usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
                     usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
                 }
-                //过量物料
+                //过量原料
                 var usedMinOverdoseMaterialWeight = 0.0
                 var usedMaxOverdoseMaterialWeight = 0.0
                 val overdoseWeight = overdoseWeight(relationIds)
