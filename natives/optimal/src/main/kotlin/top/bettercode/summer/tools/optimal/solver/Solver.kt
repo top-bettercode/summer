@@ -34,11 +34,11 @@ abstract class Solver(
     abstract fun numConstraints(): Int
 
     abstract fun boolVarArray(count: Int): Array<out IVar>
-    abstract fun intVarArray(count: Int, lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): Array<out IVar>
-    abstract fun numVarArray(count: Int, lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): Array<out IVar>
+    abstract fun intVarArray(count: Int, lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): Array<out IVar>
+    abstract fun numVarArray(count: Int, lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): Array<out IVar>
     abstract fun boolVar(): IVar
-    abstract fun intVar(lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): IVar
-    abstract fun numVar(lb: Double = Double.NEGATIVE_INFINITY, ub: Double = Double.POSITIVE_INFINITY): IVar
+    abstract fun intVar(lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): IVar
+    abstract fun numVar(lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): IVar
 
     /*
      * result = this + value

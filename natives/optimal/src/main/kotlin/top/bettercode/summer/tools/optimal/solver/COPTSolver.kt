@@ -128,7 +128,7 @@ class COPTSolver @JvmOverloads constructor(
         expr.addTerm(this.getDelegate(), this.coeff)
         expr.addConstant(value)
         val numVariables = numVariables()
-        val sum = model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
+        val sum = model.addVar(-copt.Consts.INFINITY, copt.Consts.INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
         val size = numConstraints()
         model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
         return COPTVar(sum)
@@ -514,7 +514,7 @@ class COPTSolver @JvmOverloads constructor(
             expr.addTerm(it.getDelegate(), it.coeff)
         }
         val numVariables = numVariables()
-        val sum = model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
+        val sum = model.addVar(-copt.Consts.INFINITY, copt.Consts.INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
         val size = numConstraints()
         model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
         return COPTVar(sum)
@@ -526,7 +526,7 @@ class COPTSolver @JvmOverloads constructor(
             expr.addTerm(it.getDelegate(), it.coeff)
         }
         val numVariables = numVariables()
-        val sum = model.addVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
+        val sum = model.addVar(-copt.Consts.INFINITY, copt.Consts.INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
         val size = numConstraints()
         model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
         return COPTVar(sum)
