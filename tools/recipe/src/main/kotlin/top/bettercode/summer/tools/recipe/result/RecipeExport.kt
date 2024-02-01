@@ -267,7 +267,7 @@ object RecipeExport {
             for (i in 1..2) {
                 cell(i, c).value("/").setStyle()
             }
-            cell(3, c).value(recipe.trueCost).bold().format("0.00").setStyle()
+            cell(3, c).value(recipe.materialCost).bold().format("0.00").setStyle()
             //原料
             materials.forEach { material ->
                 c = 0

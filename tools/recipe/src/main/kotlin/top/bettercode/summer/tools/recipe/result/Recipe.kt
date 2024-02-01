@@ -53,7 +53,7 @@ data class Recipe(
         get() = materials.sumOf { it.weight }.scale()
 
     /** 配方成本  */
-    val trueCost: Double
+    val materialCost: Double
         get() = materials.sumOf { it.weight * it.price }.scale()
 
 
@@ -66,8 +66,8 @@ data class Recipe(
         }
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
-        if ((trueCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方成本不匹配:{}+{}={} / {},差：{}", trueCost, productionCostFee, trueCost + productionCostFee, cost, trueCost + productionCostFee - cost)
+        if ((materialCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
+            log.warn("配方成本不匹配，物料成本：{}+制造费用：{}={} / {},差：{}", materialCost, productionCostFee, materialCost + productionCostFee, cost, materialCost + productionCostFee - cost)
             return false
         }
         //检查烘干水分
