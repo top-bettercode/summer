@@ -27,6 +27,7 @@ data class Recipe(
          * 配方要求
          */
         val requirement: RecipeRequirement,
+        val includeProductionCost: Boolean,
         val cost: Double,
         /** 选用的原料  */
         val materials: List<RecipeMaterialValue>
@@ -64,7 +65,7 @@ data class Recipe(
             return false
         }
         //检查成本
-        val productionCostFee = productionCost.totalFee
+        val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
         if ((trueCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
             log.warn("配方成本不匹配:{}+{}={} / {},差：{}", trueCost, productionCostFee, trueCost + productionCostFee, cost, trueCost + productionCostFee - cost)
             return false

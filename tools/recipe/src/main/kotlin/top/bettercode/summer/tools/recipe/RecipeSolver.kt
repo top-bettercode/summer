@@ -36,8 +36,8 @@ object RecipeSolver {
             log.info("${requirement.productName}求解耗时：" + (e - s) + "ms")
 
             if (isOptimal()) {
-                return Recipe(requirement, objective.value.scale(),
-                        recipeMaterials.mapNotNull { (_, u) ->
+                return Recipe(requirement = requirement, includeProductionCost = includeProductionCost, cost = objective.value.scale(),
+                        materials = recipeMaterials.mapNotNull { (_, u) ->
                             val value = u.weight.value
                             if (value != 0.0) {
                                 u.toMaterialValue()
