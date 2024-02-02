@@ -1,0 +1,126 @@
+{
+  "cost" : 3044.1275503007,
+  "dryWaterWeight" : 0.0,
+  "includeProductionCost" : true,
+  "materialCost" : 2705.7371503006,
+  "materials" : [ {
+    "id" : "普通尿素",
+    "index" : 0,
+    "name" : "普通尿素",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.822,
+    "weight" : 380.0
+  }, {
+    "id" : "氯化铵（干）",
+    "index" : 3,
+    "name" : "氯化铵（干）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.35,
+    "weight" : 291.4895365767
+  }, {
+    "id" : "8-40-0再浆肥（粉）",
+    "index" : 14,
+    "name" : "8-40-0再浆肥（粉）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.2,
+    "weight" : 1.0E-5
+  }, {
+    "id" : "64磷酸二铵（颗粒）",
+    "index" : 15,
+    "name" : "64磷酸二铵（颗粒）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.95,
+    "weight" : 173.5104434233
+  }, {
+    "id" : "95%氯化钾烘干粉（国产）",
+    "index" : 27,
+    "name" : "95%氯化钾烘干粉（国产）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.55,
+    "weight" : 150.0
+  }, {
+    "id" : "石粉（尿基高塔用）",
+    "index" : 55,
+    "name" : "石粉（尿基高塔用）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.24,
+    "weight" : 1.0E-5
+  }, {
+    "id" : "防结油（白色）",
+    "index" : 58,
+    "name" : "防结油（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "weight" : 2.0
+  }, {
+    "id" : "防结粉（白色）",
+    "index" : 59,
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "weight" : 3.0
+  } ],
+  "productionCost" : {
+    "materialItems" : [ {
+      "it" : {
+        "cost" : 50.0,
+        "id" : "煤",
+        "index" : 9001,
+        "name" : "煤",
+        "price" : 50.0,
+        "value" : 1.0
+      },
+      "value" : 1.0
+    }, {
+      "it" : {
+        "cost" : 100.0,
+        "id" : "电费",
+        "index" : 9002,
+        "name" : "电费",
+        "price" : 100.0,
+        "value" : 1.0
+      },
+      "value" : 1.0
+    } ],
+    "dictItems" : {
+      "STAFF" : {
+        "it" : {
+          "value" : 1.0,
+          "price" : 42.0,
+          "cost" : 42.0
+        },
+        "value" : 1.0
+      },
+      "DEPRECIATION" : {
+        "it" : {
+          "value" : 1.0,
+          "price" : 52.0,
+          "cost" : 52.0
+        },
+        "value" : 1.0
+      },
+      "OTHER" : {
+        "it" : {
+          "value" : 1.0,
+          "price" : 62.0,
+          "cost" : 62.0
+        },
+        "value" : 1.0
+      }
+    },
+    "otherFee" : 156.0,
+    "energyFee" : 150.0,
+    "taxFee" : 29.04,
+    "totalFee" : 338.3904
+  },
+  "waterWeight" : 7.1824478829,
+  "weight" : 1000.0
+}
