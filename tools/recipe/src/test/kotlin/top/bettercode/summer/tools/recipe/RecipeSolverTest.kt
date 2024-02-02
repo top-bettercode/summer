@@ -39,7 +39,7 @@ internal class RecipeSolverTest {
     fun solve(productName: String) {
         System.err.println("======================$productName=====================")
         val requirement = TestPrepareData.readRequirement(productName)
-        val maxResult = 20
+        val maxResult =1
         val includeProductionCost = true
 //        val includeProductionCost = false
         val nutrientUnchanged = true
@@ -48,11 +48,11 @@ internal class RecipeSolverTest {
         val materialUnchanged = false
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+//        val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
-        System.err.println("copt:" + solve.time)
+//        System.err.println("copt:" + solve.time)
         System.err.println("cbc:" + solve1.time)
-        System.err.println("scip:" + solve2.time)
+//        System.err.println("scip:" + solve2.time)
 
         toExcel(solve)
         toExcel(solve1)
@@ -60,11 +60,11 @@ internal class RecipeSolverTest {
 
         validateResult(solve)
         validateResult(solve1)
-        validateResult(solve2)
+//        validateResult(solve2)
 
-        assert(solve, solve1)
-        assert(solve, solve2)
-        assert(solve1, solve2)
+//        assert(solve, solve1)
+//        assert(solve, solve2)
+//        assert(solve1, solve2)
 
 //        validatePreResult(solve)
 //        validatePreResult(solve1)

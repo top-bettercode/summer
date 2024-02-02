@@ -68,6 +68,7 @@ class RecipeRequirement(
     var timeout = 30
     private val tmpMaterial = materials.associateBy { it.id }
 
+    //todo conditoin 转noMix
     //--------------------------------------------
 
     init {

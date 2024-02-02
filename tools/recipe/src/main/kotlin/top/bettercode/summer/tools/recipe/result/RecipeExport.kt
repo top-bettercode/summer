@@ -8,7 +8,6 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
-import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
 
 /**
  *
@@ -204,8 +203,8 @@ object RecipeExport {
         return if (length <= this.length) this else this.padEnd(this.length + (length - this.length) * 2, ' ')
     }
 
-    fun FastExcel.exportProductionCost(cost: ProductionCostValue, row: Int = 0) {
-        cost.apply {
+    fun FastExcel.exportProductionCost(recipe: Recipe, row: Int = 0) {
+        recipe.productionCost.apply {
             var r = row
             var c = 0
             cell(r++, c).value("费用项目").headerStyle().setStyle()
@@ -215,6 +214,7 @@ object RecipeExport {
             cell(r++, c).value("合计").setStyle()
             cell(r++, c).value("税费").setStyle()
             cell(r++, c).value("制造费用合计(${(allChange * 100).scale(2)}%)").bold().setStyle()
+            cell(r++, c).value("成本合计").bold().setStyle()
 
             c++
             materialItems.forEach {
@@ -236,6 +236,8 @@ object RecipeExport {
             cell(r, 1).value(taxFee)
             range(r, 1, r++, materialItems.size + dictItems.size).merge().format("0.00").setStyle()
             cell(r, 1).value(totalFee)
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
+            cell(r, 1).value(recipe.cost)
             range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
         }
     }
@@ -365,7 +367,7 @@ object RecipeExport {
                 r++
             }
             //制造费用
-            exportProductionCost(cost = recipe.productionCost, row = ++r)
+            exportProductionCost(recipe = recipe, row = ++r)
         }
     }
 
