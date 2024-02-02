@@ -34,12 +34,12 @@ internal class RecipeSolverTest {
         val requirement = PrepareData.readRequirement(productName)
         val maxResult = 20
         val includeProductionCost = false
-        val nutrientUnchanged = false
-        val materialUnchanged = false
+        val nutrientUnchanged = true
+        val materialUnchanged = true
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        toExcel(solve)
+//        toExcel(solve)
 //        toExcel(solve1)
 //        toExcel(solve2)
         System.err.println("copt:" + solve.time)
@@ -47,7 +47,7 @@ internal class RecipeSolverTest {
         System.err.println("scip:" + solve2.time)
 //        System.err.println(json(solve.recipes[0], IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
 
-        validate(solve)
+//        validate(solve)
 //        validate(solve1)
 //        validate(solve2)
 
@@ -55,9 +55,9 @@ internal class RecipeSolverTest {
         assert(solve, solve2)
         assert(solve1, solve2)
 
-//        saveRecipe(solve)
-//        saveRecipe(solve1)
-//        saveRecipe(solve2)
+        saveRecipe(solve)
+        saveRecipe(solve1)
+        saveRecipe(solve2)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {

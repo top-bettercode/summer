@@ -1,6 +1,8 @@
 {
   "cost" : 2376.506214331,
-  "dryWater" : 26.3840318783,
+  "dryWaterWeight" : 26.3840318783,
+  "includeProductionCost" : false,
+  "materialCost" : 2376.506214331,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -66,6 +68,6 @@
     "price" : 3.55,
     "weight" : 63.4112433797
   } ],
-  "trueCost" : 2376.506214331,
+  "waterWeight" : 41.3840318783,
   "weight" : 1026.3840318783
 }

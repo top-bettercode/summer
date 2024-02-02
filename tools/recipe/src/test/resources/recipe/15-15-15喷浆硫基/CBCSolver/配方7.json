@@ -1,6 +1,8 @@
 {
   "cost" : 2599.3832486084,
-  "dryWater" : 517.3931615015,
+  "dryWaterWeight" : 517.3931615015,
+  "includeProductionCost" : false,
+  "materialCost" : 2599.3832486083,
   "materials" : [ {
     "id" : "液氨",
     "index" : 9,
@@ -74,6 +76,6 @@
     "price" : 2.8,
     "weight" : 155.1424624952
   } ],
-  "trueCost" : 2599.3832486083,
+  "waterWeight" : 529.3931615015,
   "weight" : 1517.3931615015
 }

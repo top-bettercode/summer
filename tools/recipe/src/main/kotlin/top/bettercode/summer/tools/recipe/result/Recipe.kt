@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.result
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil
@@ -34,6 +35,7 @@ data class Recipe(
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
 
+    @JsonIgnore
     val productionCost: ProductionCostValue = requirement.productionCost.computeFee(this)
 
     /** 需要烘干的水分含量  */

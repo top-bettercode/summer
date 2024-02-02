@@ -19,6 +19,26 @@ class SolverTest {
     private val cpSolver: Solver = SolverFactory.createSolver(solverType = SolverType.CP)
 
     @Test
+    fun operator() {
+        val ge = cbcSolver.operator()
+        val ge1 = scipSolver.operator()
+        val ge2 = coptSolver.operator()
+        Assertions.assertEquals(ge, ge1)
+        Assertions.assertEquals(ge, ge2)
+    }
+
+    private fun Solver.operator(): Double {
+        val var1 = numVar(10.0, 10.0)
+        val var2 = numVar(10.0, 10.0)
+        val var3 = numVar(20.0, 20.0)
+        val var4 = var1 + var2 * 2.0 + 10.0 + var3
+        solve()
+        System.err.println(var4.value)
+        Assertions.assertEquals(60.0, var4.value)
+        return var4.value
+    }
+
+    @Test
     fun cp() {
         val pow = 10.0.pow(6)
         System.err.println(100 * pow)
@@ -764,8 +784,8 @@ class SolverTest {
         val eq = coptSolver.condition()
         val eq1 = scipSolver.condition()
         Assertions.assertEquals(eq, eq1)
-//        val eq2 = cbcSolver.condition()
-//        Assertions.assertEquals(eq, eq2)
+        val eq2 = cbcSolver.condition()
+        Assertions.assertEquals(eq, eq2)
     }
 
     private fun Solver.condition(): Double {
@@ -774,9 +794,9 @@ class SolverTest {
         val numVar1 = numVar(0.0, 100.0)
         val numVar2 = numVar(0.0, 100.0)
         val boolVar = boolVar()
+        numVar1.eq(10.0)
         numVar1.neIfNot(10.0, boolVar)
         numVar2.eqIf(20.0, boolVar)
-        numVar1.eq(10.0)
         arrayOf(numVar1, numVar2).maximize()
         solve()
         Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
@@ -793,8 +813,8 @@ class SolverTest {
         val eq = coptSolver.condition1()
         val eq1 = scipSolver.condition1()
         Assertions.assertEquals(eq, eq1)
-//        val eq2 = cbcSolver.condition1()
-//        Assertions.assertEquals(eq, eq2)
+        val eq2 = cbcSolver.condition1()
+        Assertions.assertEquals(eq, eq2)
     }
 
     private fun Solver.condition1(): Double {
@@ -803,9 +823,9 @@ class SolverTest {
         val numVar1 = numVar(0.0, 100.0)
         val numVar2 = numVar(0.0, 20.0)
         val boolVar = boolVar()
+        numVar1.eq(10.0)
         numVar1.neIfNot(10.0, boolVar)
         numVar2.neIf(20.0, boolVar)
-        numVar1.eq(10.0)
         arrayOf(numVar1, numVar2).maximize()
         solve()
         Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
@@ -834,6 +854,7 @@ class SolverTest {
         val numVar2 = numVar(0.0, 20.0)
         val boolVar = boolVar()
         numVar1.eq(10.0)
+//        numVar1.eqIf(10.0, boolVar)
         numVar1.gtIfNot(10.0, boolVar)
         numVar2.ltIf(20.0, boolVar)
         arrayOf(numVar1, numVar2).maximize()

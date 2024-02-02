@@ -1,6 +1,8 @@
 {
   "cost" : 2406.3467503007,
-  "dryWater" : 0.0,
+  "dryWaterWeight" : 0.0,
+  "includeProductionCost" : false,
+  "materialCost" : 2406.3467503007,
   "materials" : [ {
     "id" : "普通尿素",
     "index" : 0,
@@ -66,6 +68,6 @@
     "price" : 2.0,
     "weight" : 3.0
   } ],
-  "trueCost" : 2406.3467503007,
+  "waterWeight" : 8.0694033754,
   "weight" : 1000.0
 }
