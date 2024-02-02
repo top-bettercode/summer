@@ -8,7 +8,7 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
-import top.bettercode.summer.tools.recipe.productioncost.DictType.*
+import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
 
 /**
  *
@@ -48,164 +48,196 @@ object RecipeExport {
     }
 
     fun FastExcel.exportRequirement(requirement: RecipeRequirement) {
-        var c = 1
-        var r = 0
-        cell(r++, c).value("项目").headerStyle().width(20.0).setStyle()
-        cell(r++, c).value("配方目标最大值").setStyle()
-        cell(r, c).value("配方目标最小值").setStyle()
-        //配方目标
-        c++
-        val rangeIndicators = requirement.indicatorRangeConstraints.values.sortedBy { it.index }
-        rangeIndicators.forEach {
-            r = 0
-            cell(r++, c).value(it.name).headerStyle().width(10.0).setStyle()
-            cell(r++, c).value(it.value.max).format("0.00%").setStyle()
-            cell(r++, c++).value(it.value.min).format("0.00%").setStyle()
-        }
-        val columnSize = rangeIndicators.size + 1
-        //推优原料限制
-        c = 1
-        cell(r, c++).value("推优原料限制").height(20.0).setStyle()
-        //指定用原料
-        val useMaterials = requirement.useMaterialConstraints
-        //不能用原料
-        val noUseMaterials = requirement.noUseMaterialConstraints
-        cell(r, c).value("指定用原料：${useMaterials}；不能用原料：${noUseMaterials}")
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").setStyle()
-        //推优原料用量范围
-        c = 1
-        val limitMaterials = requirement.materialRangeConstraints
-        cell(r, c++).value("推优原料用量范围").height(20.0 * limitMaterials.size).setStyle()
-        val limitMaterialsStr = limitMaterials.entries.joinToString("\n") {
-            "${it.key} 用量范围：${it.value.min} 至 ${it.value.max} 公斤；"
-        }
-        cell(r, c).value(limitMaterialsStr)
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-        // 推优原料用量限制
-        c = 1
-        val materialConditionConstraints = requirement.materialConditionConstraints
-        cell(r, c++).value("推优原料用量范围").height(20.0 * materialConditionConstraints.size).setStyle()
-        val materialConditionConstraintsStr = materialConditionConstraints.joinToString("\n") {
-            "如果 ${it.first.materials} ${it.first.condition}公斤时，${it.first.materials} ${it.first.condition}公斤；"
-        }
-        cell(r, c).value(materialConditionConstraintsStr)
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-
-        // 硫酸/液氨/碳铵计算规则
-        c = 1
-        val relationConstraints = requirement.materialRelationConstraints
-        cell(r, c++).value("硫酸/液氨/碳铵计算规则").height(40.0 * relationConstraints.values.sumOf { it.values.size }).setStyle()
-        val relationConstraintsStr = relationConstraints.entries.joinToString("\n\n") {
-            "启用${it.key.idStr}计算规则${if (it.key.replaceIds == null) "\n" else " ${it.key.idStr}/${it.key.replaceIds}用量换算系数：${it.key.replaceRate}\n"}${
-                it.value.entries.joinToString("\n") { v ->
-                    val normal = v.value.normal
-                    val overdose = v.value.overdose
-                    val overdoseMaterial = v.value.overdoseMaterial
-                    val overdoseMaterialNormal = overdoseMaterial?.normal
-                    val overdoseMaterialOverdose = overdoseMaterial?.overdose
-                    "${v.key.relationIds?.idStr ?: ""}使用 ${v.key.idStr} 时，耗${it.key.idStr}系数：${normal.min}-${normal.max}${
-                        if (overdose != null) {
-                            "\n${v.key.relationIds?.idStr ?: ""}使用 ${v.key.idStr} 时，过量耗${it.key.idStr}系数：${overdose.min}-${overdose.max}"
-                        } else {
-                            ""
-                        }
-                    }${
-                        if (overdoseMaterialNormal != null) {
-                            "\n${v.key.relationIds?.idStr ?: ""}使用过量 ${v.key.idStr} 时，耗${it.key.idStr}系数：${overdoseMaterialNormal.min}-${overdoseMaterialNormal.max}"
-                        } else {
-                            ""
-                        }
-                    }${
-                        if (overdoseMaterialOverdose != null) {
-                            "\n${v.key.relationIds?.idStr ?: ""}使用过量 ${v.key.idStr} 时，过量耗${it.key.idStr}系数：${overdoseMaterialOverdose.min}-${overdoseMaterialOverdose.max}"
-                        } else {
-                            ""
-                        }
-                    }"
-                }
-            }"
-        }
-        cell(r, c).value(relationConstraintsStr)
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-
-        //标准制造费用
-        val productionCost = requirement.productionCost
-        c = 1
-        cell(r, c++).value("标准制造费用").height(80.0).setStyle()
-        val productionCostStr = """
-            ${"费用项目".fill()} ${productionCost.materialItems.joinToString(" ") { it.name.fill() }} ${
-            productionCost.dictItems.keys.joinToString(" ") {
-                when (it) {
-                    STAFF -> "人工费".fill()
-                    DEPRECIATION -> "折旧费".fill()
-                    OTHER -> "其他费用".fill()
-                    ENERGY -> "能耗费用".fill()
-                }
+        requirement.apply {
+            var c = 1
+            var r = 0
+            cell(r++, c).value("项目").headerStyle().width(20.0).setStyle()
+            cell(r++, c).value("配方目标最大值").setStyle()
+            cell(r, c).value("配方目标最小值").setStyle()
+            //配方目标
+            c++
+            val rangeIndicators = indicatorRangeConstraints.values.sortedBy { it.index }
+            rangeIndicators.forEach {
+                r = 0
+                cell(r++, c).value(it.name).headerStyle().width(10.0).setStyle()
+                cell(r++, c).value(it.value.max).format("0.00%").setStyle()
+                cell(r++, c++).value(it.value.min).format("0.00%").setStyle()
             }
-        } ${"税费".fill()}
+            val columnSize = rangeIndicators.size + 1
+            //推优原料限制
+            c = 1
+            cell(r, c++).value("推优原料限制").height(20.0).setStyle()
+            //指定用原料
+            val useMaterials = useMaterialConstraints
+            //不能用原料
+            val noUseMaterials = noUseMaterialConstraints
+            cell(r, c).value("指定用原料：${useMaterials}；不能用原料：${noUseMaterials}")
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").setStyle()
+            //推优原料用量范围
+            c = 1
+            val limitMaterials = materialRangeConstraints
+            cell(r, c++).value("推优原料用量范围").height(20.0 * limitMaterials.size).setStyle()
+            val limitMaterialsStr = limitMaterials.entries.joinToString("\n") {
+                "${it.key} 用量范围：${it.value.min} 至 ${it.value.max} 公斤；"
+            }
+            cell(r, c).value(limitMaterialsStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+            // 推优原料用量限制
+            c = 1
+            val materialConditionConstraints = materialConditionConstraints
+            cell(r, c++).value("推优原料用量范围").height(20.0 * materialConditionConstraints.size).setStyle()
+            val materialConditionConstraintsStr = materialConditionConstraints.joinToString("\n") {
+                "如果 ${it.first.materials} ${it.first.condition}公斤时，${it.first.materials} ${it.first.condition}公斤；"
+            }
+            cell(r, c).value(materialConditionConstraintsStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+
+            // 硫酸/液氨/碳铵计算规则
+            c = 1
+            val relationConstraints = materialRelationConstraints
+            cell(r, c++).value("硫酸/液氨/碳铵计算规则").height(40.0 * relationConstraints.values.sumOf { it.values.size }).setStyle()
+            val relationConstraintsStr = relationConstraints.entries.joinToString("\n\n") {
+                "启用${it.key.idStr}计算规则${if (it.key.replaceIds == null) "\n" else " ${it.key.idStr}/${it.key.replaceIds}用量换算系数：${it.key.replaceRate}\n"}${
+                    it.value.entries.joinToString("\n") { v ->
+                        val normal = v.value.normal
+                        val overdose = v.value.overdose
+                        val overdoseMaterial = v.value.overdoseMaterial
+                        val overdoseMaterialNormal = overdoseMaterial?.normal
+                        val overdoseMaterialOverdose = overdoseMaterial?.overdose
+                        "${v.key.relationIds?.idStr ?: ""}使用 ${v.key.idStr} 时，耗${it.key.idStr}系数：${normal.min}-${normal.max}${
+                            if (overdose != null) {
+                                "\n${v.key.relationIds?.idStr ?: ""}使用 ${v.key.idStr} 时，过量耗${it.key.idStr}系数：${overdose.min}-${overdose.max}"
+                            } else {
+                                ""
+                            }
+                        }${
+                            if (overdoseMaterialNormal != null) {
+                                "\n${v.key.relationIds?.idStr ?: ""}使用过量 ${v.key.idStr} 时，耗${it.key.idStr}系数：${overdoseMaterialNormal.min}-${overdoseMaterialNormal.max}"
+                            } else {
+                                ""
+                            }
+                        }${
+                            if (overdoseMaterialOverdose != null) {
+                                "\n${v.key.relationIds?.idStr ?: ""}使用过量 ${v.key.idStr} 时，过量耗${it.key.idStr}系数：${overdoseMaterialOverdose.min}-${overdoseMaterialOverdose.max}"
+                            } else {
+                                ""
+                            }
+                        }"
+                    }
+                }"
+            }
+            cell(r, c).value(relationConstraintsStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+
+            //标准制造费用
+            val productionCost = productionCost
+            c = 1
+            cell(r, c++).value("标准制造费用").height(80.0).setStyle()
+            val productionCostStr = """
+            ${"费用项目".fill()} ${productionCost.materialItems.joinToString(" ") { it.name.fill() }} ${
+                productionCost.dictItems.keys.joinToString(" ") {
+                    it.remark.fill()
+                }
+            } ${"税费".fill()}
            ${"单价".fill()} ${productionCost.materialItems.joinToString(" ") { it.price.toString().fill() }} ${productionCost.dictItems.values.joinToString(" ") { it.price.toString().fill() }} ${productionCost.taxRate.toString().fill()}
            ${"数量".fill()} ${productionCost.materialItems.joinToString(" ") { it.value.toString().fill() }} ${productionCost.dictItems.values.joinToString(" ") { it.value.toString().fill() }} ${productionCost.taxFloat.toString().fill()}
            ${"合计".fill()} ${productionCost.materialItems.joinToString(" ") { it.cost.scale(2).toString() }} ${productionCost.dictItems.values.joinToString(" ") { it.cost.scale(2).toString().fill() }} ${(productionCost.dictItems.values.sumOf { it.cost } * productionCost.taxRate + productionCost.taxFloat).scale(2).toString().fill()}
         """.trimIndent()
-        cell(r, c).value(productionCostStr)
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+            cell(r, c).value(productionCostStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
 
-        //制造费用增减逻辑
-        val changes = productionCost.changes
-        c = 1
-        cell(r, c++).value("制造费用增减逻辑").height(20.0 * (changes.size + 1)).setStyle()
-        val changesStr = changes.joinToString("\n") {
-            when (it.type) {
-                ChangeLogicType.WATER_OVER -> "当使用${requirement.materials.find { m -> m.id == it.materialId }?.name}产肥一吨总水分超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，能耗费用增加${it.changeValue * 100}%"
-                ChangeLogicType.OVER -> "当产肥一吨使用${requirement.materials.find { m -> m.id == it.materialId }?.name}超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，${it.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${it.changeValue * 100}%"
-                ChangeLogicType.OTHER -> "其他额外增加制造费用${it.changeValue * 100}%"
-            }
-        }
-        cell(r, c).value(changesStr)
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-
-        //指标指定用原料
-        val materialIDIndicators = requirement.indicatorMaterialIDConstraints
-        if (materialIDIndicators.isNotEmpty()) {
+            //制造费用增减逻辑
+            val changes = productionCost.changes
             c = 1
-            cell(r, c++).value("指标指定用原料").height(20.0 * materialIDIndicators.size).setStyle()
-            val materialIDIndicatorsStr = materialIDIndicators.entries.joinToString("\n") { "指标${it.value.name} 限用原料：${it.value.value}" }
-            cell(r, c).value(materialIDIndicatorsStr)
+            cell(r, c++).value("制造费用增减逻辑").height(20.0 * (changes.size + 1)).setStyle()
+            val changesStr = changes.joinToString("\n") {
+                when (it.type) {
+                    ChangeLogicType.WATER_OVER -> "当使用${materials.find { m -> m.id == it.materialId }?.name}产肥一吨总水分超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，能耗费用增加${it.changeValue * 100}%"
+                    ChangeLogicType.OVER -> "当产肥一吨使用${materials.find { m -> m.id == it.materialId }?.name}超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，${it.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${it.changeValue * 100}%"
+                    ChangeLogicType.OTHER -> "其他额外增加制造费用${it.changeValue * 100}%"
+                }
+            }
+            cell(r, c).value(changesStr)
+            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+
+            //指标指定用原料
+            val materialIDIndicators = indicatorMaterialIDConstraints
+            if (materialIDIndicators.isNotEmpty()) {
+                c = 1
+                cell(r, c++).value("指标指定用原料").height(20.0 * materialIDIndicators.size).setStyle()
+                val materialIDIndicatorsStr = materialIDIndicators.entries.joinToString("\n") { "指标${it.value.name} 限用原料：${it.value.value}" }
+                cell(r, c).value(materialIDIndicatorsStr)
+                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+            }
+            // 不能混用的原料
+            val notMixMaterialConstraints = notMixMaterialConstraints
+            if (notMixMaterialConstraints.isNotEmpty()) {
+                c = 1
+                cell(r, c++).value("不能混用的原料").height(20.0 * notMixMaterialConstraints.size).setStyle()
+                val notMixMaterialConstraintsStr = notMixMaterialConstraints.joinToString("\n") {
+                    it.joinToString("和") + "不能混用"
+                }
+                cell(r, c).value(notMixMaterialConstraintsStr)
+                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+            }
+            // 指定原料约束
+            val materialIDConstraints = materialIDConstraints
+            if (materialIDConstraints.isNotEmpty()) {
+                c = 1
+                cell(r, c++).value("指定原料约束").height(20.0 * materialIDConstraints.size).setStyle()
+                val materialIDConstraintsStr = materialIDConstraints.entries.joinToString("\n") {
+                    "${it.key}中指定使用原料：${it.value}"
+                }
+                cell(r, c).value(materialIDConstraintsStr)
+                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+            }
+
+            //其它产线信息
+            c = 1
+            cell(r, c++).value("其它产线信息").height(20.0).setStyle()
+            cell(r, c).value("可用原料种类最大数：${maxUseMaterialNum ?: ""}；单吨产品水份最大烘干量：${maxBakeWeight ?: ""}公斤；收率：${this.yield * 100}%")
             range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
         }
-        // 不能混用的原料
-        val notMixMaterialConstraints = requirement.notMixMaterialConstraints
-        if (notMixMaterialConstraints.isNotEmpty()) {
-            c = 1
-            cell(r, c++).value("不能混用的原料").height(20.0 * notMixMaterialConstraints.size).setStyle()
-            val notMixMaterialConstraintsStr = notMixMaterialConstraints.joinToString("\n") {
-                it.joinToString("和") + "不能混用"
-            }
-            cell(r, c).value(notMixMaterialConstraintsStr)
-            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-        }
-        // 指定原料约束
-        val materialIDConstraints = requirement.materialIDConstraints
-        if (materialIDConstraints.isNotEmpty()) {
-            c = 1
-            cell(r, c++).value("指定原料约束").height(20.0 * materialIDConstraints.size).setStyle()
-            val materialIDConstraintsStr = materialIDConstraints.entries.joinToString("\n") {
-                "${it.key}中指定使用原料：${it.value}"
-            }
-            cell(r, c).value(materialIDConstraintsStr)
-            range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-        }
-
-        //其它产线信息
-        c = 1
-        cell(r, c++).value("其它产线信息").height(20.0).setStyle()
-        cell(r, c).value("可用原料种类最大数：${requirement.maxUseMaterialNum ?: ""}；单吨产品水份最大烘干量：${requirement.maxBakeWeight ?: ""}公斤；收率：${requirement.yield * 100}%")
-        range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
-
     }
 
     private fun String.fill(length: Int = 5): String {
         return if (length <= this.length) this else this.padEnd(this.length + (length - this.length) * 2, ' ')
+    }
+
+    fun FastExcel.exportProductionCost(cost: ProductionCostValue, row: Int = 0) {
+        cost.apply {
+            var r = row
+            var c = 0
+            cell(r++, c).value("费用项目").headerStyle().setStyle()
+            cell(r++, c).value("单价").setStyle()
+            cell(r++, c).value("数量").setStyle()
+            cell(r++, c).value("增减").setStyle()
+            cell(r++, c).value("合计").setStyle()
+            cell(r++, c).value("税费").setStyle()
+            cell(r++, c).value("制造费用合计").bold().setStyle()
+
+            c++
+            materialItems.forEach {
+                r = row
+                cell(r++, c).value(it.it.name).headerStyle().setStyle()
+                cell(r++, c).value(it.it.price).format("0.00").setStyle()
+                cell(r++, c).value(it.it.value).format("0.00").setStyle()
+                cell(r++, c).value(it.value).format("0.00%").setStyle()
+                cell(r++, c++).value(it.value * it.it.price * it.it.value).format("0.00").setStyle()
+            }
+            dictItems.forEach { (k, v) ->
+                r = row
+                cell(r++, c).value(k.remark).headerStyle().setStyle()
+                cell(r++, c).value(v.it.price).format("0.00").setStyle()
+                cell(r++, c).value(v.it.value).format("0.00").setStyle()
+                cell(r++, c).value(v.value).format("0.00%").setStyle()
+                cell(r++, c++).value(v.value * v.it.price * v.it.value).format("0.00").setStyle()
+            }
+            cell(r, 1).value(taxFee)
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().format("0.00").setStyle()
+            cell(r, 1).value(totalFee)
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
+        }
     }
 
     fun FastExcel.exportRecipe(recipe: Recipe, showRate: Boolean = false) {
@@ -225,6 +257,7 @@ object RecipeExport {
             if (materials.isEmpty()) {
                 return
             }
+            c++
             rangeIndicators.forEach { indicator ->
                 cell(r, c++).value(indicator.name).headerStyle().width(8.0).setStyle()
             }
@@ -242,6 +275,13 @@ object RecipeExport {
             for (j in 1..4)
                 cell(3, j).value("/").setStyle()
             cell(3, c - 1).value(recipe.weight).bold().format("0.00").setStyle()
+
+            // 费用合计
+            cell(0, c).value("费用合计").headerStyle().width(8.0).setStyle()
+            cell(1, c).value("/").setStyle()
+            cell(2, c).value("/").setStyle()
+            cell(3, c++).value(recipe.materialCost).bold().format("0.00").setStyle()
+
             rangeIndicators.forEach { indicator ->
                 r = 1
                 //配方目标最大值
@@ -262,11 +302,6 @@ object RecipeExport {
                 cell(r++, c).value(value).bold().format("0.0%").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
-            // 费用合计
-            cell(0, c).value("费用合计").headerStyle().width(8.0).setStyle()
-            cell(1, c).value(recipe.cost).bold().format("0.00").comment("成本合计").setStyle()
-            cell(2, c).value(recipe.productionCost.totalFee).bold().format("0.00").comment("制造费用").setStyle()
-            cell(3, c).value(recipe.materialCost).bold().format("0.00").setStyle()
             //原料
             materials.forEach { material ->
                 c = 0
@@ -297,6 +332,8 @@ object RecipeExport {
                 }
                 // 投料量
                 cell(r, c++).value(material.weight).bold().format("0.00").setStyle()
+                // 费用合计
+                cell(r, c++).value(material.cost).format("0.00").setStyle()
                 rangeIndicators.forEach { indicator ->
                     val value = when (indicator.type) {
                         RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue
@@ -304,8 +341,6 @@ object RecipeExport {
                     }
                     cell(r, c++).value(value).format("0.0%").setStyle()
                 }
-                // 费用合计
-                cell(r, c++).value(material.cost).format("0.00").setStyle()
                 if (showRate && material.hasOverdose) {
                     c = 1
                     val r1 = r + 1
@@ -329,6 +364,8 @@ object RecipeExport {
                 }
                 r++
             }
+            //制造费用
+            exportProductionCost(cost = recipe.productionCost, row = ++r)
         }
     }
 

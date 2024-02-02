@@ -42,7 +42,8 @@ class RecipeResult(val solverName: String) {
             exportRequirement(requirement)
 //            keepInActiveTab()
             for ((index, recipe) in recipes.withIndex()) {
-                sheet("配方" + (index + 1))
+                val sheetname = "配方" + (index + 1)
+                sheet(sheetname)
                 if (index == 0) {
                     keepInActiveTab()
                 }

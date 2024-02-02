@@ -15,12 +15,7 @@ class ChangeItem(
         return when (type) {
             ChangeItemType.MATERIAL -> materials.find { it.id == id }?.name ?: ""
             ChangeItemType.DICT -> {
-                when (DictType.valueOf(id)) {
-                    DictType.STAFF -> "人工费"
-                    DictType.DEPRECIATION -> "折旧费"
-                    DictType.OTHER -> "其他费用"
-                    DictType.ENERGY -> "能耗费用"
-                }
+                DictType.valueOf(id).remark
             }
         }
     }

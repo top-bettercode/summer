@@ -28,6 +28,7 @@ data class Recipe(
          */
         val requirement: RecipeRequirement,
         val includeProductionCost: Boolean,
+        val optimalProductionCost: ProductionCostValue?,
         val cost: Double,
         /** 选用的原料  */
         val materials: List<RecipeMaterialValue>
@@ -63,6 +64,9 @@ data class Recipe(
         if (requirement.maxUseMaterialNum != null && materials.size > requirement.maxUseMaterialNum) {
             throw IllegalRecipeException("配方所需进料口：${materials.size} 超过最大进料口：${requirement.maxUseMaterialNum}")
         }
+        //检查制造费用
+        optimalProductionCost?.validate(productionCost)
+
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
         if ((materialCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {

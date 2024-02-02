@@ -25,7 +25,7 @@ class COPTSolver @JvmOverloads constructor(
         val env = copt.COPTEnvr()
         model = env.createModel(name)
         //解决 presolve 异常,但会导致一些问题求解：free(): invalid next size (fast)
-        model.setIntParam(copt.IntParam.Presolve, 0)
+//        model.setIntParam(copt.IntParam.Presolve, 0)
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
         model.setDblParam(copt.DblParam.FeasTol, OptimalUtil.DEFAULT_MIN_EPSILON)

@@ -51,8 +51,7 @@ data class ProductionCost(
         changes.forEach { changeLogic ->
             when (changeLogic.type) {
                 WATER_OVER -> {
-                    changeProductionCost(recipe.materials, changeLogic, recipe.waterWeight
-                            , materialItems, dictItems)
+                    changeProductionCost(recipe.materials, changeLogic, recipe.waterWeight, materialItems, dictItems)
                 }
 
                 OVER -> {
@@ -60,6 +59,32 @@ data class ProductionCost(
                 }
 
                 OTHER -> allChange += changeLogic.changeValue
+            }
+        }
+        //人工+折旧费+其他费用
+        val otherFee = dictItems.values.sumOf { it.value * it.it.price * it.it.value }
+
+        //能耗费用
+        val energyFee = materialItems.sumOf { it.value * it.it.price * it.it.value }
+
+        //税费 =（人工+折旧费+其他费用）*0.09+15
+        val taxFee = otherFee * taxRate + taxFloat
+
+        // 制造费用合计=人工费+折旧费+其他费用+能耗费+税费
+        val totalFee: Double = (otherFee + energyFee + taxFee) * allChange
+        return ProductionCostValue(materialItems, dictItems, otherFee, energyFee, taxFee, totalFee)
+    }
+
+    fun computeFee(materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>?, dictItems: Map<DictType, CarrierValue<Cost, Double>>?): ProductionCostValue? {
+        if (materialItems == null || dictItems == null) {
+            return null
+        }
+        var allChange = 1.0
+        //费用增减
+        changes.forEach { changeLogic ->
+            when (changeLogic.type) {
+                OTHER -> allChange += changeLogic.changeValue
+                else -> {}
             }
         }
         //人工+折旧费+其他费用

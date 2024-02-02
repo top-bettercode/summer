@@ -23,7 +23,7 @@ object MultiRecipeSolver {
     ): RecipeResult {
         SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight, logging = true).apply {
             val s = System.currentTimeMillis()
-            val (recipeMaterials, objective) = prepare(requirement, includeProductionCost)
+            val prepareData = prepare(requirement, includeProductionCost)
             var e = System.currentTimeMillis()
             val recipeResult = RecipeResult(name)
             while ((e - s) / 1000 < requirement.timeout
@@ -40,10 +40,16 @@ object MultiRecipeSolver {
                 // 求解
                 solve()
                 if (isOptimal()) {
+                    val objective = prepareData.objective
+                    val recipeMaterials = prepareData.recipeMaterials
+
                     // 约束
                     val first = recipeResult.recipes.isEmpty()
                     val useMaterials: MutableMap<String, RecipeMaterialValue> = HashMap()
-                    val recipe = Recipe(requirement = requirement, includeProductionCost = includeProductionCost, cost = objective.value.scale(),
+                    val recipe = Recipe(requirement = requirement,
+                            includeProductionCost = includeProductionCost,
+                            optimalProductionCost = requirement.productionCost.computeFee(prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) }, prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.it.value) }),
+                            cost = objective.value.scale(),
                             materials = recipeMaterials.mapNotNull { (t, u) ->
                                 val value = u.weight.value
                                 if (value != 0.0) {
