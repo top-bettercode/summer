@@ -64,14 +64,7 @@ data class Recipe(
         if (requirement.maxUseMaterialNum != null && materials.size > requirement.maxUseMaterialNum) {
             throw IllegalRecipeException("配方所需进料口：${materials.size} 超过最大进料口：${requirement.maxUseMaterialNum}")
         }
-        //检查制造费用
-        optimalProductionCost?.validate(productionCost)
 
-        //检查成本
-        val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
-        if ((materialCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
-            throw IllegalRecipeException("配方成本不匹配，物料成本：${materialCost}+制造费用：${productionCostFee}=${materialCost + productionCostFee} / ${cost},差：${materialCost + productionCostFee - cost}")
-        }
         //检查烘干水分
         if (dryWaterWeight < -OptimalUtil.DEFAULT_MIN_EPSILON) {
             throw IllegalRecipeException("配方烘干水分异常：${dryWaterWeight}")
@@ -251,6 +244,16 @@ data class Recipe(
                 }
             }
         }
+
+        //检查制造费用
+        optimalProductionCost?.validate(productionCost)
+
+        //检查成本
+        val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
+        if ((materialCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
+            throw IllegalRecipeException("配方成本不匹配，物料成本：${materialCost}+制造费用：${productionCostFee}=${materialCost + productionCostFee} / ${cost},差：${materialCost + productionCostFee - cost}")
+        }
+
         return true
     }
 

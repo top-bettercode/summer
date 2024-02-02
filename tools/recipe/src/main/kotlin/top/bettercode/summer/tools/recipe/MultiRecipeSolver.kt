@@ -48,7 +48,9 @@ object MultiRecipeSolver {
                     val useMaterials: MutableMap<String, RecipeMaterialValue> = HashMap()
                     val recipe = Recipe(requirement = requirement,
                             includeProductionCost = includeProductionCost,
-                            optimalProductionCost = requirement.productionCost.computeFee(prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) }, prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.it.value) }),
+                            optimalProductionCost = requirement.productionCost.computeFee(
+                                    materialItems = prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) },
+                                    dictItems = prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
                             cost = objective.value.scale(),
                             materials = recipeMaterials.mapNotNull { (t, u) ->
                                 val value = u.weight.value

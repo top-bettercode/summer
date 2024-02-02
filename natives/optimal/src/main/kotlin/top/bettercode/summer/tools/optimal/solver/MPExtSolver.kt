@@ -414,8 +414,8 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun IVar.eqIf(value: Double, bool: IVar) {
-        geIf(value, bool)
         leIf(value, bool)
+        geIf(value, bool)
     }
 
     /**
