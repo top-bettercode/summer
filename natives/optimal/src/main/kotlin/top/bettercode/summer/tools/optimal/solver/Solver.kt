@@ -177,6 +177,7 @@ abstract class Solver(
      *
      */
     open fun IVar.neIf(value: Double, bool: IVar) {
+        log.warn("MPSolver eqIf experimental")
         val bool1 = boolVar()
         val bool2 = boolVar()
         arrayOf(bool1, bool2).sum().geIf(1.0, bool)
@@ -189,6 +190,7 @@ abstract class Solver(
      *
      */
     open fun IVar.neIfNot(value: Double, bool: IVar) {
+        log.warn("MPSolver eqIf experimental")
         val bool1 = boolVar()
         val bool2 = boolVar()
         arrayOf(bool1, bool2).sum().geIfNot(1.0, bool)

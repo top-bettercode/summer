@@ -22,7 +22,7 @@ import java.io.File
 internal class RecipeSolverTest {
 
     /**
-     * 1.15-15-15常规氯基 结果不一致，可能原因：if实现有问题
+     * 1.15-15-15常规氯基 结果不一致，原因：eqIf实现有问题
      * 2.15-15-15喷浆氯基 copt 程序异常终止，官方已定位问题，等待修复版本
      *
      */
@@ -32,14 +32,14 @@ internal class RecipeSolverTest {
 //        solve("24-06-10高氯枸磷")
 //        solve("15-15-15喷浆硫基")
 
-//        solve("15-15-15喷浆氯基")
-        solve("15-15-15常规氯基")
+        solve("15-15-15喷浆氯基")
+//        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
         System.err.println("======================$productName=====================")
         val requirement = TestPrepareData.readRequirement(productName)
-        val maxResult = 20
+        val maxResult = 1
         val includeProductionCost = true
 //        val includeProductionCost = false
         val nutrientUnchanged = true
@@ -55,8 +55,8 @@ internal class RecipeSolverTest {
 //        System.err.println("scip:" + solve2.time)
 
         toExcel(solve)
-//        toExcel(solve1)
-//        toExcel(solve2)
+        toExcel(solve1)
+        toExcel(solve2)
 
         validateResult(solve)
         validateResult(solve1)
@@ -88,7 +88,7 @@ internal class RecipeSolverTest {
 
     private fun validateResult(recipeResult: RecipeResult) {
         recipeResult.recipes.forEachIndexed { index, recipe ->
-            System.err.println("=============${recipeResult.solverName}配方${index}==============")
+            System.err.println("=============${recipeResult.solverName}配方${index + 1}==============")
             Assertions.assertTrue(recipe.validate())
         }
     }

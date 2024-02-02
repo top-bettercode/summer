@@ -414,6 +414,7 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun IVar.eqIf(value: Double, bool: IVar) {
+        log.warn("MPSolver eqIf experimental")
         leIf(value, bool)
         geIf(value, bool)
     }
@@ -427,6 +428,7 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun IVar.eqIfNot(value: Double, bool: IVar) {
+        log.warn("MPSolver eqIf experimental")
         geIfNot(value, bool)
         leIfNot(value, bool)
     }

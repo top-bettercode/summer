@@ -13,6 +13,7 @@ import top.bettercode.summer.tools.recipe.productioncost.DictType
 data class PrepareData(
         val recipeMaterials: Map<String, RecipeMaterialVar>,
         val objective: IVar,
+        val others: List<IVar>,
         val materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>?,
         val dictItems: Map<DictType, CarrierValue<Cost, IVar>>?,
 )
