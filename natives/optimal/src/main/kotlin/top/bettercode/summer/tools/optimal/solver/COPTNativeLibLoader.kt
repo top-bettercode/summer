@@ -36,7 +36,7 @@ object COPTNativeLibLoader {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
-            Files.copy(COPTNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+            Files.copy(COPTNativeLibLoader::class.java.getResourceAsStream("/native/copt/$libraryName")!!,
                     targetFile.toPath())
         }
         when {
