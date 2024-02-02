@@ -42,23 +42,20 @@ class RecipeExt(private val recipe: Recipe) {
      */
     private val RecipeMaterialValue.replaceRate: Double
         get() {
-            val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.value.keys.any { m -> m.contains(this.id) } }
-            val ids = materialRelationConstraints.keys.firstOrNull() ?: return 1.0
+            val ids = recipe.requirement.materialRelationConstraints.filter { it.value.keys.any { m -> m.contains(this.id) } }.keys.firstOrNull()
+                    ?: return 1.0
 
-            val materials = recipe.materials
-            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
+            val usedIds = recipe.materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
             return if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
         }
 
 
     val RecipeMaterialValue.recipeRelationPair: Pair<RelationMaterialIDs, RecipeRelation>?
         get() {
-            val relationMap = recipe.requirement.materialRelationConstraints.values.find { it.keys.any { m -> m.contains(this.id) } }
+            val entry = recipe.requirement.materialRelationConstraints.values.flatMap { it.entries }.firstOrNull { it.key.contains(this.id) }
                     ?: return null
-            val iDs = relationMap.keys.first { it.contains(this.id) }
-            val recipeRelation = relationMap[iDs] ?: return null
 
-            return iDs to recipeRelation.replaceRate(replaceRate)
+            return entry.key to entry.value.replaceRate(replaceRate)
         }
 
 
@@ -87,11 +84,11 @@ class RecipeExt(private val recipe: Recipe) {
                     normalWeight = weight
                 }
 
-                usedMinNormalWeight += normalWeight * normal.min * replaceRate
-                usedMaxNormalWeight += normalWeight * normal.max * replaceRate
+                usedMinNormalWeight += normalWeight * normal.min
+                usedMaxNormalWeight += normalWeight * normal.max
                 if (overdose != null) {
-                    usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
-                    usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
+                    usedMinOverdoseWeight += normalWeight * overdose.min
+                    usedMaxOverdoseWeight += normalWeight * overdose.max
                 }
                 //过量原料
                 var usedMinOverdoseMaterialWeight = 0.0
@@ -101,11 +98,11 @@ class RecipeExt(private val recipe: Recipe) {
                 if (overdoseMaterial != null && overdoseWeight > 0) {
                     val overdoseMaterialNormal = overdoseMaterial.normal
                     val overdoseMaterialOverdose = overdoseMaterial.overdose
-                    usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
-                    usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
+                    usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.min
+                    usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.max
                     if (overdoseMaterialOverdose != null) {
-                        usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.min * replaceRate
-                        usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate
+                        usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.min
+                        usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.max
                     }
                 }
                 if (usedMinOverdoseWeight == 0.0) {

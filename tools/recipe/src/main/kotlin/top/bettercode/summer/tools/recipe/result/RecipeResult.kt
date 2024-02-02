@@ -40,11 +40,11 @@ class RecipeResult(val solverName: String) {
             exportMaterial(requirement)
             sheet("配方要求")
             exportRequirement(requirement)
-            keepInActiveTab()
+//            keepInActiveTab()
             for ((index, recipe) in recipes.withIndex()) {
                 sheet("配方" + (index + 1))
                 if (index == 0) {
-//                    keepInActiveTab()
+                    keepInActiveTab()
                 }
                 exportRecipe(recipe, true)
             }

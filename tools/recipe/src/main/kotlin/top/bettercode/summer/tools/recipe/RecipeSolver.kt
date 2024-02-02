@@ -163,7 +163,7 @@ object RecipeSolver {
                 t.mapNotNull { recipeMaterials[it] }.forEach { m ->
                     //原料消耗变量初始化
                     consumeMaterialVars.forEach {
-                        it.weight.eqIf(0.0, useReplace)
+                        it.weight.leIf(0.0, useReplace)
                         val normalVar = numVar(0.0, targetWeight)
                         normalVars.add(normalVar)
                         val overdoseVar = numVar(0.0, targetWeight)
@@ -173,11 +173,11 @@ object RecipeSolver {
                     //替换原料消耗变量初始化
                     replaceConsumeMaterialVars?.forEach {
                         val replaceRate = ids.replaceRate!!
-                        it.weight.eqIfNot(0.0, useReplace)
+                        it.weight.leIfNot(0.0, useReplace)
                         val normalVar = numVar(0.0, targetWeight)
-                        normalVars.add(normalVar * (1 / replaceRate))
+                        normalVars.add(normalVar  / replaceRate)
                         val overdoseVar = numVar(0.0, targetWeight)
-                        overdoseVars.add(overdoseVar * (1 / replaceRate))
+                        overdoseVars.add(overdoseVar / replaceRate)
                         it.consumes[m.id] = normalVar to overdoseVar
                     }
 
@@ -323,6 +323,7 @@ object RecipeSolver {
         val useMaterial = materials[changeLogic.materialId]
         if (useMaterial != null) {
             val boolVar = boolVar()
+            //boolVar true <=0
             useMaterial.weight.gtIfNot(0.0, boolVar)
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
@@ -333,7 +334,7 @@ object RecipeSolver {
                             //change
                             val changeVar = ((value
                                     ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                            changeVar.eqIf(0.0, boolVar)
+                            changeVar.leIf(0.0, boolVar)
                             material.value += changeVar
                         }
                     }
@@ -345,7 +346,7 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
-                                    changeVar.eqIf(0.0, boolVar)
+                                    changeVar.leIf(0.0, boolVar)
                                     it.value += changeVar
                                 }
                             }
@@ -356,7 +357,7 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
-                                    changeVar.eqIf(0.0, boolVar)
+                                    changeVar.leIf(0.0, boolVar)
                                     cost.value += changeVar
                                 }
                             }

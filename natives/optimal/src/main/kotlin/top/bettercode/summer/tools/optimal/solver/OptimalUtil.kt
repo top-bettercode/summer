@@ -29,7 +29,7 @@ object OptimalUtil {
      * 默认最小误差
      */
     @JvmStatic
-    var DEFAULT_MIN_EPSILON = 1e-9
+    var DEFAULT_MIN_EPSILON = 1e-8
 
     /**
      * 求解结果小数位

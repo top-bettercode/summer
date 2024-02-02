@@ -10,10 +10,7 @@ data class RecipeRelation(
         var overdoseMaterial: RecipeRelation? = null,
 ) {
     fun replaceRate(rate: Double): RecipeRelation {
-        normal = normal.replaceRate(rate)
-        overdose = overdose?.replaceRate(rate)
-        overdoseMaterial = overdoseMaterial?.replaceRate(rate)
-        return this
+        return RecipeRelation(normal.replaceRate(rate), overdose?.replaceRate(rate), overdoseMaterial?.replaceRate(rate))
     }
 
     override fun toString(): String {

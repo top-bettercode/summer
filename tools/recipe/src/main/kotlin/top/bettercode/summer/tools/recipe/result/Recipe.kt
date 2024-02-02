@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.recipe.result
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil
@@ -35,7 +34,6 @@ data class Recipe(
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
 
-    @JsonIgnore
     val productionCost: ProductionCostValue = requirement.productionCost.computeFee(this)
 
     /** 需要烘干的水分含量  */
@@ -63,27 +61,22 @@ data class Recipe(
     fun validate(): Boolean {
         //检查进料口
         if (requirement.maxUseMaterialNum != null && materials.size > requirement.maxUseMaterialNum) {
-            log.warn("配方所需进料口：{} 超过最大进料口：{}", materials.size, requirement.maxUseMaterialNum)
-            return false
+            throw IllegalRecipeException("配方所需进料口：${materials.size} 超过最大进料口：${requirement.maxUseMaterialNum}")
         }
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
         if ((materialCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方成本不匹配，物料成本：{}+制造费用：{}={} / {},差：{}", materialCost, productionCostFee, materialCost + productionCostFee, cost, materialCost + productionCostFee - cost)
-            return false
+            throw IllegalRecipeException("配方成本不匹配，物料成本：${materialCost}+制造费用：${productionCostFee}=${materialCost + productionCostFee} / ${cost},差：${materialCost + productionCostFee - cost}")
         }
         //检查烘干水分
         if (dryWaterWeight < -OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方烘干水分异常：{}", dryWaterWeight)
-            return false
+            throw IllegalRecipeException("配方烘干水分异常：${dryWaterWeight}")
         }
         if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方烘干水分:{} 超过最大可烘干水分：{}", dryWaterWeight, requirement.maxBakeWeight)
-            return false
+            throw IllegalRecipeException("配方烘干水分:${dryWaterWeight} 超过最大可烘干水分：${requirement.maxBakeWeight}")
         }
         if ((dryWaterWeight - waterWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
-            log.warn("配方烘干水分:{} 超过总水分：{}", dryWaterWeight, waterWeight)
-            return false
+            throw IllegalRecipeException("配方烘干水分:${dryWaterWeight} 超过总水分：${waterWeight}")
         }
 
         val targetWeight = requirement.targetWeight
@@ -97,8 +90,7 @@ data class Recipe(
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
             if (indicatorValue !in indicator.value.min..indicator.value.max) {
-                log.warn("指标:{}：{} 不在范围{}-{}内", indicator.name, indicatorValue, indicator.value.min, indicator.value.max)
-                return false
+                throw IllegalRecipeException("指标:${indicator.name}：${indicatorValue} 不在范围${indicator.value.min}-${indicator.value.max}内")
             }
         }
 
@@ -112,8 +104,7 @@ data class Recipe(
             if (materialList.isNotEmpty()) {
                 val indicatorUsedMaterials = materialList.map { it.id }.filter { !mustUseMaterials.contains(it) }
                 if (!indicator.value.containsAll(indicatorUsedMaterials)) {
-                    log.warn("指标:{}所用原料：{} 不在范围{}内", indicator.name, indicatorUsedMaterials, indicator.value)
-                    return false
+                    throw IllegalRecipeException("指标:${indicator.name}所用原料：${indicatorUsedMaterials} 不在范围${indicator.value}内")
                 }
             }
         }
@@ -123,16 +114,14 @@ data class Recipe(
         val useMaterials = requirement.useMaterialConstraints
         if (useMaterials.isNotEmpty()) {
             if (!useMaterials.containsAll(usedMaterials)) {
-                log.warn("配方所用原料：{} 不在范围{}内", usedMaterials, useMaterials)
-                return false
+                throw IllegalRecipeException("配方所用原料：${usedMaterials} 不在范围${useMaterials}内")
             }
         }
         // 不能用原料ID
         val noUseMaterials = requirement.noUseMaterialConstraints
         if (noUseMaterials.isNotEmpty()) {
             if (usedMaterials.any { noUseMaterials.contains(it) }) {
-                log.warn("配方所用原料：{} 包含不可用原料{}内", usedMaterials, noUseMaterials)
-                return false
+                throw IllegalRecipeException("配方所用原料：${usedMaterials} 包含不可用原料${noUseMaterials}内")
             }
         }
         // 不能混用的原料,value: 原料ID
@@ -141,8 +130,7 @@ data class Recipe(
             val mixMaterials = notMixMaterial.map { notMix -> usedMaterials.filter { notMix.contains(it) } }.filter { it.isNotEmpty() }
             val size = mixMaterials.size
             if (size > 1) {
-                log.warn("配方混用原料：{}", mixMaterials.joinToString(",", "[", "]") { it.joinToString("、") })
-                return false
+                throw IllegalRecipeException("配方混用原料：${mixMaterials.joinToString(",", "[", "]") { it.joinToString("、") }}")
             }
         }
 
@@ -150,8 +138,7 @@ data class Recipe(
         for ((ids, range) in materialRangeConstraints) {
             val weight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             if (weight !in range.min..range.max) {
-                log.warn("原料{}使用量：{} 不在范围{}-{}内", ids, weight, range.min, range.max)
-                return false
+                throw IllegalRecipeException("原料${ids}使用量：${weight} 不在范围${range.min}-${range.max}内")
             }
         }
         // 指定原料约束
@@ -159,8 +146,7 @@ data class Recipe(
         for ((ids, value) in materialIDConstraints) {
             for (id in ids) {
                 if (usedMaterials.contains(id) && !value.contains(id)) {
-                    log.warn("{}使用了不在指定原料{}范围内的原料：{}", ids, value, id)
-                    return false
+                    throw IllegalRecipeException("${ids}使用了不在指定原料${value}范围内的原料：${id}")
                 }
             }
         }
@@ -174,8 +160,7 @@ data class Recipe(
             val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
             if ((usedWeight - usedAddWeight).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
-                log.warn("原料{}使用量：{} 不等于:{} = 正常使用量：{}+过量使用量：{}", usedIds, usedWeight, usedAddWeight, usedNormalWeight, usedOverdoseWeight)
-                return false
+                throw IllegalRecipeException("原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}")
             }
             val (normal, overdose) = entry.relationValue
             val usedMinNormalWeights = normal.min
@@ -185,14 +170,12 @@ data class Recipe(
 
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
             if (usedNormalWeight !in (usedMinNormalWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxNormalWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
-                log.warn("原料{}正常使用量：{} 不在范围{}-{}内", usedIds, usedNormalWeight, usedMinNormalWeights, usedMaxNormalWeights)
-                return false
+                throw IllegalRecipeException("原料${usedIds}正常使用量：${usedNormalWeight} 不在范围${usedMinNormalWeights}-${usedMaxNormalWeights}内")
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
             if (usedOverdoseWeight !in (usedMinOverdoseWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxOverdoseWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
-                log.warn("原料{}过量使用量：{} 不在范围{}-{}内", usedIds, usedOverdoseWeight, usedMinOverdoseWeights, usedMaxOverdoseWeights)
-                return false
+                throw IllegalRecipeException("原料${usedIds}过量使用量：${usedOverdoseWeight} 不在范围${usedMinOverdoseWeights}-${usedMaxOverdoseWeights}内")
             }
         }
         // 条件约束，当条件1满足时，条件2必须满足
@@ -229,44 +212,37 @@ data class Recipe(
             when (thenCon.condition.operator) {
                 Operator.EQ -> {
                     if (whenTrue && thenWeight != thenCon.condition.value) {
-                        log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
-                        return false
+                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
                 Operator.NE -> {
                     if (whenTrue && thenWeight == thenCon.condition.value) {
-                        log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
-                        return false
+                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
                 Operator.GT -> {
                     if (whenTrue && thenWeight <= thenCon.condition.value) {
-                        log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
-                        return false
+                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
                 Operator.LT -> {
                     if (whenTrue && thenWeight >= thenCon.condition.value) {
-                        log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
-                        return false
-
+                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
                 Operator.GE -> {
                     if (whenTrue && thenWeight < thenCon.condition.value) {
-                        log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
-                        return false
+                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
                 Operator.LE -> {
                     if (whenTrue && thenWeight > thenCon.condition.value) {
-                        log.warn("条件约束：当{}时，{}不成立:{}", whenCon, thenCon, MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight)))
-                        return false
+                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
             }

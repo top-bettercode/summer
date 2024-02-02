@@ -178,11 +178,10 @@ abstract class Solver(
      */
     open fun IVar.neIf(value: Double, bool: IVar) {
         val bool1 = boolVar()
-        gtIf(value, bool1)
         val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIf(1.0, bool)
+        gtIf(value, bool1)
         ltIf(value, bool2)
-        val sum = arrayOf(bool1, bool2).sum()
-        sum.eqIf(1.0, bool)
     }
 
     /**
@@ -191,11 +190,10 @@ abstract class Solver(
      */
     open fun IVar.neIfNot(value: Double, bool: IVar) {
         val bool1 = boolVar()
-        gtIf(value, bool1)
         val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIfNot(1.0, bool)
+        gtIf(value, bool1)
         ltIf(value, bool2)
-        val sum = arrayOf(bool1, bool2).sum()
-        sum.eqIfNot(1.0, bool)
     }
 
     abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
@@ -219,7 +217,7 @@ abstract class Solver(
     }
 
     /**
-     * 最多n个非零变量,至少size-n个零
+     * 最多n个>零变量,至少size-n个零
      */
     open fun Array<out IVar>.atMost(n: Int) {
         val count = size
@@ -229,7 +227,7 @@ abstract class Solver(
         val boolVarArray = boolVarArray(count)
         boolVarArray.eq(n.toDouble())
         for ((i, it) in this.withIndex()) {
-            it.eqIfNot(0.0, boolVarArray[i])
+            it.leIfNot(0.0, boolVarArray[i])
         }
     }
 
@@ -241,7 +239,7 @@ abstract class Solver(
         val boolVarArray = boolVarArray(count)
         boolVarArray.eq(n.toDouble())
         for ((i, it) in this.withIndex()) {
-            it.eqIfNot(0.0, boolVarArray[i])
+            it.leIfNot(0.0, boolVarArray[i])
         }
     }
 

@@ -264,9 +264,8 @@ object RecipeExport {
             }
             // 费用合计
             cell(0, c).value("费用合计").headerStyle().width(8.0).setStyle()
-            for (i in 1..2) {
-                cell(i, c).value("/").setStyle()
-            }
+            cell(1, c).value(recipe.cost).bold().format("0.00").comment("成本合计").setStyle()
+            cell(2, c).value(recipe.productionCost.totalFee).bold().format("0.00").comment("制造费用").setStyle()
             cell(3, c).value(recipe.materialCost).bold().format("0.00").setStyle()
             //原料
             materials.forEach { material ->

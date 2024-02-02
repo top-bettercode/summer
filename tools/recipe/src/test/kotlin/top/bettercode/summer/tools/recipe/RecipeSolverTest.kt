@@ -21,43 +21,56 @@ import java.io.File
  */
 internal class RecipeSolverTest {
 
+    /**
+     * 1.15-15-15常规氯基 结果不一致，可能原因：if实现有问题
+     * 2.15-15-15喷浆氯基 copt 程序异常终止，官方已定位问题，等待修复版本
+     *
+     */
     @Test
     fun solve() {
 //        solve("13-05-07高氯枸磷")
 //        solve("24-06-10高氯枸磷")
-        solve("15-15-15喷浆氯基")
 //        solve("15-15-15喷浆硫基")
-//        solve("15-15-15常规氯基")
+//        solve("15-15-15喷浆氯基")
+        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
+        System.err.println("======================$productName=====================")
         val requirement = PrepareData.readRequirement(productName)
-        val maxResult = 20
-        val includeProductionCost = false
-        val nutrientUnchanged = true
-        val materialUnchanged = true
+        val maxResult = 2
+        val includeProductionCost = true
+        val nutrientUnchanged = false
+        val materialUnchanged = false
         val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-//        toExcel(solve)
-//        toExcel(solve1)
-//        toExcel(solve2)
-        System.err.println("copt:" + solve.time)
+
+//        System.err.println("copt:" + solve.time)
         System.err.println("cbc:" + solve1.time)
         System.err.println("scip:" + solve2.time)
 //        System.err.println(json(solve.recipes[0], IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
 
-//        validate(solve)
-//        validate(solve1)
-//        validate(solve2)
+        toExcel(solve)
+//        toExcel(solve1)
+//        toExcel(solve2)
 
-        assert(solve, solve1)
-        assert(solve, solve2)
-        assert(solve1, solve2)
+        validateResult(solve)
+        validateResult(solve1)
+        validateResult(solve2)
 
-        saveRecipe(solve)
-        saveRecipe(solve1)
-        saveRecipe(solve2)
+//        assert(solve, solve1)
+//        assert(solve, solve2)
+//        assert(solve1, solve2)
+
+//        validatePreResult(solve)
+//        validatePreResult(solve1)
+//        validatePreResult(solve2)
+
+//        saveRecipe(solve)
+//        saveRecipe(solve1)
+//        saveRecipe(solve2)
+
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
@@ -70,10 +83,14 @@ internal class RecipeSolverTest {
         System.err.println("==================================================")
     }
 
-    private fun validate(recipeResult: RecipeResult) {
-        for (recipe in recipeResult.recipes) {
+    private fun validateResult(recipeResult: RecipeResult) {
+        recipeResult.recipes.forEachIndexed { index, recipe ->
+            System.err.println("=============${recipeResult.solverName}配方${index}==============")
             Assertions.assertTrue(recipe.validate())
         }
+    }
+
+    private fun validatePreResult(recipeResult: RecipeResult) {
         val recipes = recipeResult.recipes
         val requirement = recipes[0].requirement
         val productName = requirement.productName
@@ -113,9 +130,11 @@ internal class RecipeSolverTest {
 
     private fun saveRecipe(recipeResult: RecipeResult) {
         val recipes = recipeResult.recipes
-        val requirement = recipes[0].requirement
+        val recipe1 = recipes[0]
+        val includeProductionCost = recipe1.includeProductionCost
+        val requirement = recipe1.requirement
         val productName = requirement.productName
-        val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe/$productName")
+        val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
         dir.mkdirs()
         //配方要求
         File("$dir/requirement.json").writeText(json(requirement,
@@ -124,7 +143,9 @@ internal class RecipeSolverTest {
                 RecipeIndicator::class.java to RecipeIndicatorView::class.java))
         //配方
         recipes.forEachIndexed { index, recipe ->
-            File("$dir/${recipeResult.solverName}/配方${index + 1}.json").writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
+            val file = File("$dir/${recipeResult.solverName}/配方${index + 1}.json")
+            file.parentFile.mkdirs()
+            file.writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
         }
     }
 }

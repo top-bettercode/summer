@@ -553,7 +553,7 @@ open class CPExtSolver @JvmOverloads constructor(
         val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
         model.addEquality(sumExpr, n.toLong())
         for ((i, it) in this.withIndex()) {
-            it.eqIfNot(0.0, boolVarArray[i])
+            it.leIfNot(0.0, boolVarArray[i])
         }
     }
 
@@ -566,7 +566,7 @@ open class CPExtSolver @JvmOverloads constructor(
         val sumExpr: LinearExpr = LinearExpr.sum(boolVarArray.map { it.getDelegate<IntVar>() }.toTypedArray())
         model.addEquality(sumExpr, n.toLong())
         for ((i, it) in this.withIndex()) {
-            it.eqIfNot(0.0, boolVarArray[i])
+            it.leIfNot(0.0, boolVarArray[i])
         }
     }
 
