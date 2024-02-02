@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
-import kotlin.math.pow
 
 /**
  *
@@ -16,7 +15,6 @@ class SolverTest {
     private val coptSolver: Solver = SolverFactory.createSolver(solverType = SolverType.COPT, logging = true)
     private val cbcSolver: Solver = SolverFactory.createSolver(solverType = SolverType.CBC)
     private val scipSolver: Solver = SolverFactory.createSolver(solverType = SolverType.SCIP)
-    private val cpSolver: Solver = SolverFactory.createSolver(solverType = SolverType.CP)
 
     @Test
     fun operator() {
@@ -36,14 +34,6 @@ class SolverTest {
         System.err.println(var4.value)
         Assertions.assertEquals(60.0, var4.value)
         return var4.value
-    }
-
-    @Test
-    fun cp() {
-        val pow = 10.0.pow(6)
-        System.err.println(100 * pow)
-//        System.err.println(pow)
-        cpSolver.ge()
     }
 
     @Test
