@@ -152,8 +152,8 @@ object RecipeExport {
             cell(r, c++).value("制造费用增减逻辑").height(20.0 * (changes.size + 1)).setStyle()
             val changesStr = changes.joinToString("\n") {
                 when (it.type) {
-                    ChangeLogicType.WATER_OVER -> "当使用${materials.find { m -> m.id == it.materialId }?.name}产肥一吨总水分超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，能耗费用增加${it.changeValue * 100}%"
-                    ChangeLogicType.OVER -> "当产肥一吨使用${materials.find { m -> m.id == it.materialId }?.name}超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，${it.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${it.changeValue * 100}%"
+                    ChangeLogicType.WATER_OVER -> "当使用${materials.find { m -> m.id == it.materialId }?.name ?: it.materialId}产肥一吨总水分超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，能耗费用增加${it.changeValue * 100}%"
+                    ChangeLogicType.OVER -> "当产肥一吨使用${materials.find { m -> m.id == it.materialId }?.name ?: it.materialId}超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，${it.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${it.changeValue * 100}%"
                     ChangeLogicType.OTHER -> "其他额外增加制造费用${it.changeValue * 100}%"
                 }
             }
@@ -214,7 +214,7 @@ object RecipeExport {
             cell(r++, c).value("增减").setStyle()
             cell(r++, c).value("合计").setStyle()
             cell(r++, c).value("税费").setStyle()
-            cell(r++, c).value("制造费用合计").bold().setStyle()
+            cell(r++, c).value("制造费用合计(${(allChange * 100).scale(2)}%)").bold().setStyle()
 
             c++
             materialItems.forEach {
@@ -252,7 +252,7 @@ object RecipeExport {
             var c = 0
             //标题
             titles.forEach { s ->
-                cell(r, c++).value(s).headerStyle().width(if (c in 1..5) 16.0 else 8.0).setStyle()
+                cell(r, c++).value(s).headerStyle().width(if (c in 1..5) 18.0 else 8.0).setStyle()
             }
             if (materials.isEmpty()) {
                 return

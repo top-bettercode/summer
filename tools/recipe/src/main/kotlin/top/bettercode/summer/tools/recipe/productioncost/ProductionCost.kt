@@ -72,7 +72,7 @@ data class ProductionCost(
 
         // 制造费用合计=人工费+折旧费+其他费用+能耗费+税费
         val totalFee: Double = (otherFee + energyFee + taxFee) * allChange
-        return ProductionCostValue(materialItems, dictItems, otherFee, energyFee, taxFee, totalFee)
+        return ProductionCostValue(materialItems, dictItems, otherFee, energyFee, taxFee, totalFee, allChange)
     }
 
     fun computeFee(materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>?, dictItems: Map<DictType, CarrierValue<Cost, Double>>?): ProductionCostValue? {
@@ -98,7 +98,7 @@ data class ProductionCost(
 
         // 制造费用合计=人工费+折旧费+其他费用+能耗费+税费
         val totalFee: Double = (otherFee + energyFee + taxFee) * allChange
-        return ProductionCostValue(materialItems, dictItems, otherFee, energyFee, taxFee, totalFee)
+        return ProductionCostValue(materialItems, dictItems, otherFee, energyFee, taxFee, totalFee, allChange)
     }
 
     private fun changeProductionCost(materials: List<RecipeMaterialValue>, changeLogic: CostChangeLogic, value: Double?, materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>, dictItems: Map<DictType, CarrierValue<Cost, Double>>) {

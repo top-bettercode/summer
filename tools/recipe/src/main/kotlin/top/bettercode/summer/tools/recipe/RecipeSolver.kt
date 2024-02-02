@@ -329,9 +329,13 @@ object RecipeSolver {
     private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>) {
         val useMaterial = materials[changeLogic.materialId]
         if (useMaterial != null) {
-            val boolVar = boolVar()
-            //boolVar true <=0
-            useMaterial.weight.gtIfNot(0.0, boolVar)
+            val useBool = boolVar()
+            val nouseBool = boolVar()
+            //boolVar true > 0
+            useMaterial.weight.leIfNot(0.0, useBool)
+            useMaterial.weight.gtIf(0.0, useBool)
+            useMaterial.weight.gtIfNot(0.0, nouseBool)
+            useMaterial.weight.leIf(0.0, nouseBool)
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
                     ChangeItemType.MATERIAL -> {//能耗费用
@@ -341,7 +345,8 @@ object RecipeSolver {
                             //change
                             val changeVar = ((value
                                     ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                            changeVar.eqIf(0.0, boolVar)
+                            changeVar.eqIfNot(0.0, useBool)
+                            changeVar.eqIf(0.0, nouseBool)
                             material.value += changeVar
                         }
                     }
@@ -353,7 +358,8 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
-                                    changeVar.eqIf(0.0, boolVar)
+                                    changeVar.eqIfNot(0.0, useBool)
+                                    changeVar.eqIf(0.0, nouseBool)
                                     it.value += changeVar
                                 }
                             }
@@ -364,7 +370,8 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
-                                    changeVar.eqIf(0.0, boolVar)
+                                    changeVar.eqIfNot(0.0, useBool)
+                                    changeVar.eqIf(0.0, nouseBool)
                                     cost.value += changeVar
                                 }
                             }

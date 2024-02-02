@@ -37,7 +37,11 @@ class ProductionCostValue(
          *  制造费用合计=人工费+折旧费+其他费用+能耗费+税费
          *
          */
-        val totalFee: Double
+        val totalFee: Double,
+        /**
+         * 制造费用增减
+         */
+        val allChange: Double
 ) {
     private val log = LoggerFactory.getLogger(ProductionCostValue::class.java)
 
