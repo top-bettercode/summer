@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.optimal.solver
 
 import com.google.ortools.linearsolver.MPSolver
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.DEFAULT_UB
 
 /**
  *
@@ -11,7 +10,7 @@ class SCIPSolver @JvmOverloads constructor(
         /**
          * 变量默认下界
          */
-        dlb: Double = OptimalUtil.DEFAULT_LB,
+        dlb: Double = DEFAULT_LB,
 
         /**
          * 变量默认上界

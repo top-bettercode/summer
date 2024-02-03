@@ -7,23 +7,11 @@ import kotlin.math.pow
  * @author Peter Wu
  */
 object OptimalUtil {
-    /**
-     * 默认下限
-     */
-    @JvmStatic
-    var DEFAULT_LB: Double = 0.0
-
-    /**
-     * 默认上限
-     */
-    @JvmStatic
-    var DEFAULT_UB: Double = 1000.0
-
-    /**
+        /**
      * 默认误差
      */
     @JvmStatic
-    var DEFAULT_EPSILON = 1e-5
+    var DEFAULT_EPSILON = 1e-6
 
     /**
      * 默认最小误差

@@ -1,10 +1,10 @@
-package top.bettercode.summer.tools.recipe.criteria
+package top.bettercode.summer.tools.optimal.solver
 
 /**
  * 操作符
  * @author Peter Wu
  */
-enum class Operator(val symbol: String) {
+enum class Sense(val symbol: String) {
     /**
      * 等于
      */

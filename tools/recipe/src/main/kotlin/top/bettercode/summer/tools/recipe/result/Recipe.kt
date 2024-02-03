@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.optimal.solver.OptimalUtil
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
-import top.bettercode.summer.tools.recipe.criteria.Operator
+import top.bettercode.summer.tools.optimal.solver.Sense
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
@@ -181,63 +181,63 @@ data class Recipe(
             val whenWeight = materials.filter { whenCon.materials.contains(it.id) }.sumOf { it.weight }
             val thenWeight = materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
             var whenTrue = false
-            when (whenCon.condition.operator) {
-                Operator.EQ -> {
+            when (whenCon.condition.sense) {
+                Sense.EQ -> {
                     whenTrue = whenWeight == whenCon.condition.value
                 }
 
-                Operator.NE -> {
+                Sense.NE -> {
                     whenTrue = whenWeight != whenCon.condition.value
                 }
 
-                Operator.GT -> {
+                Sense.GT -> {
                     whenTrue = whenWeight > whenCon.condition.value
                 }
 
-                Operator.LT -> {
+                Sense.LT -> {
                     whenTrue = whenWeight < whenCon.condition.value
                 }
 
-                Operator.GE -> {
+                Sense.GE -> {
                     whenTrue = whenWeight >= whenCon.condition.value
                 }
 
-                Operator.LE -> {
+                Sense.LE -> {
                     whenTrue = whenWeight <= whenCon.condition.value
                 }
             }
-            when (thenCon.condition.operator) {
-                Operator.EQ -> {
+            when (thenCon.condition.sense) {
+                Sense.EQ -> {
                     if (whenTrue && thenWeight != thenCon.condition.value) {
                         throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
-                Operator.NE -> {
+                Sense.NE -> {
                     if (whenTrue && thenWeight == thenCon.condition.value) {
                         throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
-                Operator.GT -> {
+                Sense.GT -> {
                     if (whenTrue && thenWeight <= thenCon.condition.value) {
                         throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
-                Operator.LT -> {
+                Sense.LT -> {
                     if (whenTrue && thenWeight >= thenCon.condition.value) {
                         throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
-                Operator.GE -> {
+                Sense.GE -> {
                     if (whenTrue && thenWeight < thenCon.condition.value) {
                         throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }
                 }
 
-                Operator.LE -> {
+                Sense.LE -> {
                     if (whenTrue && thenWeight > thenCon.condition.value) {
                         throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
                     }

@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.recipe
 
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
-import top.bettercode.summer.tools.recipe.criteria.Operator
+import top.bettercode.summer.tools.optimal.solver.Sense
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeMaterialIDIndicators
 import top.bettercode.summer.tools.recipe.indicator.RecipeRangeIndicators
@@ -116,11 +116,11 @@ class RecipeRequirement(
         }
         // conditoin 转noMix
         val noMixConditions = materialConditionConstraints.filter {
-            val op = it.first.condition.operator
+            val op = it.first.condition.sense
             val value = it.first.condition.value
-            val otherOp = it.second.condition.operator
+            val otherOp = it.second.condition.sense
             val otherValue = it.second.condition.value
-            op == Operator.GT && value == 0.0 && (otherOp == Operator.LE || otherOp == Operator.EQ) && otherValue == 0.0
+            op == Sense.GT && value == 0.0 && (otherOp == Sense.LE || otherOp == Sense.EQ) && otherValue == 0.0
         }
         val noMixMaterials = noMixConditions.map {
             arrayOf(it.first.materials, it.second.materials)

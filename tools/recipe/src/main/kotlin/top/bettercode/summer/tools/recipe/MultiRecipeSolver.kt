@@ -41,10 +41,6 @@ object MultiRecipeSolver {
                 solve()
                 if (isOptimal()) {
 
-                    if (log.isDebugEnabled) {
-                        log.debug("others:{}", prepareData.others.joinToString { it.value.toString() })
-                    }
-
                     val objective = prepareData.objective
                     val recipeMaterials = prepareData.recipeMaterials
 

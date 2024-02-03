@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.optimal.solver
 
+import copt.Consts
 import org.slf4j.Logger
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import kotlin.math.abs
@@ -32,36 +33,64 @@ abstract class Solver(
     abstract fun getResultStatus(): String
     abstract fun numVariables(): Int
     abstract fun numConstraints(): Int
+    abstract fun boolVar(name: String? = null): IVar
+    abstract fun intVar(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY, name: String? = null): IVar
+    abstract fun numVar(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY, name: String? = null): IVar
+    fun boolVarArray(count: Int): Array<out IVar> {
+        val array = arrayOfNulls<IVar>(count)
+        val numVariables = numVariables()
+        for (i in 0 until count) {
+            array[i] = boolVar("b" + (numVariables + i + 1))
+        }
+        return array.requireNoNulls()
+    }
 
-    abstract fun boolVarArray(count: Int): Array<out IVar>
-    abstract fun intVarArray(count: Int, lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): Array<out IVar>
-    abstract fun numVarArray(count: Int, lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): Array<out IVar>
-    abstract fun boolVar(): IVar
-    abstract fun intVar(lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): IVar
-    abstract fun numVar(lb: Double = -copt.Consts.INFINITY, ub: Double = copt.Consts.INFINITY): IVar
+    fun intVarArray(count: Int, lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): Array<out IVar> {
+        val array = arrayOfNulls<IVar>(count)
+        val numVariables = numVariables()
+        for (i in 0 until count) {
+            array[i] = intVar(lb, ub, "i" + (numVariables + i + 1))
+        }
+        return array.requireNoNulls()
+    }
 
-    /*
-     * result = this + value
-     * sum(result-this)= value
-     */
+    fun numVarArray(count: Int, lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): Array<out IVar> {
+        val array = arrayOfNulls<IVar>(count)
+        val numVariables = numVariables()
+        for (i in 0 until count) {
+            array[i] = numVar(lb, ub, "n" + (numVariables + i + 1))
+        }
+        return array.requireNoNulls()
+    }
+
     open operator fun IVar.plus(value: Double): IVar {
         return arrayOf(this, numVar(1.0, 1.0) * value).sum()
     }
 
-    operator fun IVar.plus(value: IVar): IVar {
+    open operator fun IVar.plus(value: IVar): IVar {
         return arrayOf(this, value).sum()
     }
 
-    operator fun IVar.minus(value: Double): IVar {
+    open operator fun IVar.minus(value: Double): IVar {
         return this + (-value)
     }
 
-    operator fun IVar.minus(value: IVar): IVar {
+    open operator fun IVar.minus(value: IVar): IVar {
         return arrayOf(this, value * -1.0).sum()
     }
 
+    abstract fun IVar.ge(lb: Double)
+    abstract fun IVar.ge(lb: IVar)
     abstract fun Array<out IVar>.ge(lb: Double)
     abstract fun Iterable<IVar>.ge(lb: Double)
+    abstract fun Array<out IVar>.ge(lb: IVar)
+    abstract fun Iterable<IVar>.ge(lb: IVar)
+
+    open fun IVar.gt(lb: Double) {
+        ge(lb + epsilon)
+    }
+
+    abstract fun IVar.gt(lb: IVar)
 
     open fun Array<out IVar>.gt(lb: Double) {
         ge(lb + epsilon)
@@ -71,13 +100,20 @@ abstract class Solver(
         ge(lb + epsilon)
     }
 
-    abstract fun Array<out IVar>.ge(lb: IVar)
-    abstract fun Iterable<IVar>.ge(lb: IVar)
     abstract fun Array<out IVar>.gt(lb: IVar)
     abstract fun Iterable<IVar>.gt(lb: IVar)
+    abstract fun IVar.le(ub: Double)
+    abstract fun IVar.le(ub: IVar)
     abstract fun Array<out IVar>.le(ub: Double)
     abstract fun Iterable<IVar>.le(ub: Double)
+    abstract fun Array<out IVar>.le(ub: IVar)
+    abstract fun Iterable<IVar>.le(ub: IVar)
 
+    open fun IVar.lt(ub: Double) {
+        le(ub - epsilon)
+    }
+
+    abstract fun IVar.lt(ub: IVar)
     open fun Array<out IVar>.lt(ub: Double) {
         le(ub - epsilon)
     }
@@ -86,34 +122,32 @@ abstract class Solver(
         le(ub - epsilon)
     }
 
-    abstract fun Array<out IVar>.le(ub: IVar)
-    abstract fun Iterable<IVar>.le(ub: IVar)
     abstract fun Array<out IVar>.lt(ub: IVar)
     abstract fun Iterable<IVar>.lt(ub: IVar)
+
+
+    abstract fun IVar.eq(value: Double)
+    abstract fun IVar.eq(value: IVar)
+
     abstract fun Array<out IVar>.eq(value: Double)
     abstract fun Iterable<IVar>.eq(value: Double)
     abstract fun Array<out IVar>.eq(value: IVar)
     abstract fun Iterable<IVar>.eq(value: IVar)
+
+    open fun IVar.ne(value: Double) {
+        val boolVar = boolVar()
+        gtIf(value, boolVar)
+        ltIfNot(value, boolVar)
+    }
+
+
+    abstract fun IVar.between(lb: Double, ub: Double)
+    abstract fun IVar.between(lb: IVar, ub: IVar)
+
     abstract fun Array<out IVar>.between(lb: Double, ub: Double)
     abstract fun Iterable<IVar>.between(lb: Double, ub: Double)
     abstract fun Array<out IVar>.between(lb: IVar, ub: IVar)
     abstract fun Iterable<IVar>.between(lb: IVar, ub: IVar)
-    abstract fun IVar.ge(lb: Double)
-
-    open fun IVar.gt(lb: Double) {
-        ge(lb + epsilon)
-    }
-
-    abstract fun IVar.ge(lb: IVar)
-    abstract fun IVar.gt(lb: IVar)
-    abstract fun IVar.le(ub: Double)
-
-    open fun IVar.lt(ub: Double) {
-        le(ub - epsilon)
-    }
-
-    abstract fun IVar.le(ub: IVar)
-    abstract fun IVar.lt(ub: IVar)
 
     open fun IVar.isTrue() {
         eq(1.0)
@@ -122,17 +156,6 @@ abstract class Solver(
     open fun IVar.isFalse() {
         eq(0.0)
     }
-
-    abstract fun IVar.eq(value: Double)
-    abstract fun IVar.eq(value: IVar)
-    open fun IVar.ne(value: Double) {
-        val boolVar = boolVar()
-        gtIf(value, boolVar)
-        ltIfNot(value, boolVar)
-    }
-
-    abstract fun IVar.between(lb: Double, ub: Double)
-    abstract fun IVar.between(lb: IVar, ub: IVar)
 
     /**
      * lb <= this/whole <= ub
@@ -159,11 +182,10 @@ abstract class Solver(
 
     abstract fun IVar.leIf(value: Double, bool: IVar)
 
+    abstract fun IVar.leIfNot(value: Double, bool: IVar)
     open fun IVar.ltIf(value: Double, bool: IVar) {
         leIf(value - epsilon, bool)
     }
-
-    abstract fun IVar.leIfNot(value: Double, bool: IVar)
 
     open fun IVar.ltIfNot(value: Double, bool: IVar) {
         leIfNot(value - epsilon, bool)
@@ -200,6 +222,133 @@ abstract class Solver(
 
     abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
     abstract fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar)
+    open fun Constraint.onlyEnforceIf(condition: Constraint) {
+        val boolVar = boolVar()
+        val whenVariable = condition.variable
+        val whenValue = condition.value
+        when (condition.sense) {
+            Sense.EQ -> {
+                whenVariable.neIfNot(whenValue, boolVar)
+            }
+
+            Sense.NE -> {
+                whenVariable.eqIfNot(whenValue, boolVar)
+            }
+
+            Sense.GT -> {
+                whenVariable.leIfNot(whenValue, boolVar)
+            }
+
+            Sense.LT -> {
+                whenVariable.geIfNot(whenValue, boolVar)
+            }
+
+            Sense.GE -> {
+                whenVariable.ltIfNot(whenValue, boolVar)
+            }
+
+            Sense.LE -> {
+                whenVariable.gtIfNot(whenValue, boolVar)
+            }
+        }
+        val thenVar = this.variable
+        val thenValue = this.value
+        when (this.sense) {
+            Sense.EQ -> thenVar.eqIf(thenValue, boolVar)
+            Sense.NE -> thenVar.neIf(thenValue, boolVar)
+            Sense.GT -> thenVar.gtIf(thenValue, boolVar)
+            Sense.LT -> thenVar.ltIf(thenValue, boolVar)
+            Sense.GE -> thenVar.geIf(thenValue, boolVar)
+            Sense.LE -> thenVar.leIf(thenValue, boolVar)
+        }
+    }
+
+    open fun Array<Constraint>.onlyEnforceIf(condition: Constraint) {
+        val boolVar = boolVar()
+        val whenVariable = condition.variable
+        val whenValue = condition.value
+        when (condition.sense) {
+            Sense.EQ -> {
+                whenVariable.neIfNot(whenValue, boolVar)
+            }
+
+            Sense.NE -> {
+                whenVariable.eqIfNot(whenValue, boolVar)
+            }
+
+            Sense.GT -> {
+                whenVariable.leIfNot(whenValue, boolVar)
+            }
+
+            Sense.LT -> {
+                whenVariable.geIfNot(whenValue, boolVar)
+            }
+
+            Sense.GE -> {
+                whenVariable.ltIfNot(whenValue, boolVar)
+            }
+
+            Sense.LE -> {
+                whenVariable.gtIfNot(whenValue, boolVar)
+            }
+        }
+        this.forEach {
+            val thenVar = it.variable
+            val thenValue = it.value
+            when (it.sense) {
+                Sense.EQ -> thenVar.eqIf(thenValue, boolVar)
+                Sense.NE -> thenVar.neIf(thenValue, boolVar)
+                Sense.GT -> thenVar.gtIf(thenValue, boolVar)
+                Sense.LT -> thenVar.ltIf(thenValue, boolVar)
+                Sense.GE -> thenVar.geIf(thenValue, boolVar)
+                Sense.LE -> thenVar.leIf(thenValue, boolVar)
+            }
+        }
+    }
+
+    open fun Iterable<Constraint>.onlyEnforceIf(condition: Constraint) {
+        val boolVar = boolVar()
+        val whenVariable = condition.variable
+        val whenValue = condition.value
+        when (condition.sense) {
+            Sense.EQ -> {
+                whenVariable.neIfNot(whenValue, boolVar)
+            }
+
+            Sense.NE -> {
+                whenVariable.eqIfNot(whenValue, boolVar)
+            }
+
+            Sense.GT -> {
+                whenVariable.leIfNot(whenValue, boolVar)
+            }
+
+            Sense.LT -> {
+                whenVariable.geIfNot(whenValue, boolVar)
+            }
+
+            Sense.GE -> {
+                whenVariable.ltIfNot(whenValue, boolVar)
+            }
+
+            Sense.LE -> {
+                whenVariable.gtIfNot(whenValue, boolVar)
+            }
+        }
+        this.forEach {
+            val thenVar = it.variable
+            val thenValue = it.value
+            when (it.sense) {
+                Sense.EQ -> thenVar.eqIf(thenValue, boolVar)
+                Sense.NE -> thenVar.neIf(thenValue, boolVar)
+                Sense.GT -> thenVar.gtIf(thenValue, boolVar)
+                Sense.LT -> thenVar.ltIf(thenValue, boolVar)
+                Sense.GE -> thenVar.geIf(thenValue, boolVar)
+                Sense.LE -> thenVar.leIf(thenValue, boolVar)
+            }
+        }
+    }
+
     abstract fun Array<out IVar>.sum(): IVar
     abstract fun Iterable<IVar>.sum(): IVar
     abstract fun Array<out IVar>.minimize(): IVar

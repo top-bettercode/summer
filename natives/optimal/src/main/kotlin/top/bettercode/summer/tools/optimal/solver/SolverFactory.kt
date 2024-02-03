@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver
 
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.DEFAULT_UB
+import top.bettercode.summer.tools.optimal.solver.MPExtSolver.Companion.DEFAULT_LB
+import top.bettercode.summer.tools.optimal.solver.MPExtSolver.Companion.DEFAULT_UB
 
 object SolverFactory {
 
@@ -12,7 +13,7 @@ object SolverFactory {
                      /**
                       * 变量默认下界
                       */
-                     dlb: Double = OptimalUtil.DEFAULT_LB,
+                     dlb: Double = DEFAULT_LB,
 
                      /**
                       * 变量默认上界

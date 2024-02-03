@@ -1,6 +1,8 @@
 package top.bettercode.summer.tools.optimal.solver.`var`
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import top.bettercode.summer.tools.optimal.solver.Constraint
+import top.bettercode.summer.tools.optimal.solver.Sense
 
 /**
  *
@@ -48,5 +50,34 @@ interface IVar {
      */
     @JsonIgnore
     fun <T> getDelegate(): T
+
+    fun const(sense: Sense, value: Double): Constraint {
+        return Constraint(this, sense, value)
+    }
+
+    fun eqConst(value: Double): Constraint {
+        return Constraint(this, Sense.EQ, value)
+    }
+
+    fun neConst(value: Double): Constraint {
+        return Constraint(this, Sense.NE, value)
+    }
+
+    fun geConst(value: Double): Constraint {
+        return Constraint(this, Sense.GE, value)
+    }
+
+    fun gtConst(value: Double): Constraint {
+        return Constraint(this, Sense.GT, value)
+    }
+
+    fun leConst(value: Double): Constraint {
+        return Constraint(this, Sense.LE, value)
+    }
+
+    fun ltConst(value: Double): Constraint {
+        return Constraint(this, Sense.LT, value)
+    }
+
 
 }
