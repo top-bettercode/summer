@@ -1,10 +1,7 @@
-package top.bettercode.summer.tools.optimal
+package top.bettercode.summer.tools.optimal.solver
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.optimal.solver.Solver
-import top.bettercode.summer.tools.optimal.solver.SolverFactory
-import top.bettercode.summer.tools.optimal.solver.SolverType
 
 /**
  *

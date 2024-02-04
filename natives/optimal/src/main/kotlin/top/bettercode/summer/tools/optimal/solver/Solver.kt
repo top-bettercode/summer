@@ -19,6 +19,11 @@ abstract class Solver(
         protected val epsilon: Double = OptimalUtil.DEFAULT_EPSILON
 ) {
 
+
+    companion object {
+        const val INFINITY = Consts.INFINITY
+    }
+
     protected val log: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass)
 
     /**
@@ -34,8 +39,8 @@ abstract class Solver(
     abstract fun numVariables(): Int
     abstract fun numConstraints(): Int
     abstract fun boolVar(name: String? = null): IVar
-    abstract fun intVar(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY, name: String? = null): IVar
-    abstract fun numVar(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY, name: String? = null): IVar
+    abstract fun intVar(lb: Double = -INFINITY, ub: Double = INFINITY, name: String? = null): IVar
+    abstract fun numVar(lb: Double = -INFINITY, ub: Double = INFINITY, name: String? = null): IVar
     fun boolVarArray(count: Int): Array<out IVar> {
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
@@ -45,7 +50,7 @@ abstract class Solver(
         return array.requireNoNulls()
     }
 
-    fun intVarArray(count: Int, lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): Array<out IVar> {
+    fun intVarArray(count: Int, lb: Double = -INFINITY, ub: Double = INFINITY): Array<out IVar> {
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
@@ -54,7 +59,7 @@ abstract class Solver(
         return array.requireNoNulls()
     }
 
-    fun numVarArray(count: Int, lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): Array<out IVar> {
+    fun numVarArray(count: Int, lb: Double = -INFINITY, ub: Double = INFINITY): Array<out IVar> {
         val array = arrayOfNulls<IVar>(count)
         val numVariables = numVariables()
         for (i in 0 until count) {
@@ -347,8 +352,8 @@ abstract class Solver(
         }
     }
 
-    abstract fun Array<out IVar>.sum(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): IVar
-    abstract fun Iterable<IVar>.sum(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): IVar
+    abstract fun Array<out IVar>.sum(lb: Double = -INFINITY, ub: Double = INFINITY): IVar
+    abstract fun Iterable<IVar>.sum(lb: Double = -INFINITY, ub: Double = INFINITY): IVar
     abstract fun Array<out IVar>.minimize(): IVar
     abstract fun Iterable<IVar>.minimize(): IVar
     abstract fun Array<out IVar>.maximize(): IVar
