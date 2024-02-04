@@ -394,6 +394,8 @@ open class MPExtSolver @JvmOverloads constructor(
      *           value*bool + dlb*(1-bool) <= var <= value*bool + dub*(1-bool)
      *           dlb <= var-value*bool + dlb*bool
      *                  var-value*bool + dub*bool <= dub
+     *           dlb <= var - (value-dlb)*bool
+     *                  var - (value-dub)*bool <=  dub
      *
      * bool为0时：dlb <= var <= dub
      *
