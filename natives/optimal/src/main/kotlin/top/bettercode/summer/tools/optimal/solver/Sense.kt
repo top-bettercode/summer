@@ -9,19 +9,11 @@ enum class Sense(val symbol: String) {
      * 等于
      */
     EQ("="),
+
     /**
      * 不等于
      */
     NE("!="),
-    /**
-     * 大于
-     */
-    GT(">"),
-
-    /**
-     * 小于
-     */
-    LT("<"),
 
     /**
      * 大于等于
@@ -29,9 +21,20 @@ enum class Sense(val symbol: String) {
     GE(">="),
 
     /**
+     * 大于
+     */
+    GT(">"),
+
+    /**
      * 小于等于
      */
-    LE("<=");
+    LE("<="),
+
+    /**
+     * 小于
+     */
+    LT("<");
+
 
     override fun toString(): String {
         return symbol

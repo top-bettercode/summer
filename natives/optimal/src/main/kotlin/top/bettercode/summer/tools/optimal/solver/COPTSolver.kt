@@ -102,8 +102,7 @@ class COPTSolver @JvmOverloads constructor(
         expr.addTerm(this.getDelegate(), this.coeff)
         expr.addConstant(value)
         val sum = numVar()
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.EQUAL, sum.getDelegate<Var>(), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.EQUAL, sum.getDelegate<Var>(), "c" + (numConstraints() + 1))
         return sum
     }
 
@@ -120,8 +119,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.ge(lb: Double) {
@@ -129,8 +127,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
     }
 
     override fun Array<out IVar>.ge(lb: IVar) {
@@ -138,8 +135,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.ge(lb: IVar) {
@@ -147,15 +143,13 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (numConstraints() + 1))
     }
 
     override fun IVar.gt(lb: IVar) {
-        val size = numConstraints()
         val expr = expr(this)
         expr.addConstant(-epsilon)
-        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (numConstraints() + 1))
     }
 
     override fun Array<out IVar>.gt(lb: IVar) {
@@ -164,8 +158,7 @@ class COPTSolver @JvmOverloads constructor(
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         expr.addConstant(-epsilon)
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.gt(lb: IVar) {
@@ -174,19 +167,16 @@ class COPTSolver @JvmOverloads constructor(
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         expr.addConstant(-epsilon)
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.GREATER_EQUAL, expr(lb), "c" + (numConstraints() + 1))
     }
 
 
     override fun IVar.le(ub: Double) {
-        val size = numConstraints()
-        model.addConstr(expr(this), copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
+        model.addConstr(expr(this), copt.Consts.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
     }
 
     override fun IVar.le(ub: IVar) {
-        val size = numConstraints()
-        model.addConstr(expr(this), copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        model.addConstr(expr(this), copt.Consts.LESS_EQUAL, expr(ub), "c" + (numConstraints() + 1))
     }
 
     override fun Array<out IVar>.le(ub: Double) {
@@ -194,8 +184,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.le(ub: Double) {
@@ -203,8 +192,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
     }
 
     override fun Array<out IVar>.le(ub: IVar) {
@@ -212,8 +200,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.le(ub: IVar) {
@@ -221,15 +208,13 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (numConstraints() + 1))
     }
 
     override fun IVar.lt(ub: IVar) {
-        val size = numConstraints()
         val expr = expr(this)
         expr.addConstant(epsilon)
-        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (numConstraints() + 1))
     }
 
     override fun Array<out IVar>.lt(ub: IVar) {
@@ -238,8 +223,7 @@ class COPTSolver @JvmOverloads constructor(
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         expr.addConstant(epsilon)
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.lt(ub: IVar) {
@@ -248,19 +232,16 @@ class COPTSolver @JvmOverloads constructor(
             expr.addTerm(v.getDelegate(), v.coeff)
         }
         expr.addConstant(epsilon)
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.LESS_EQUAL, expr(ub), "c" + (numConstraints() + 1))
     }
 
 
     override fun IVar.eq(value: Double) {
-        val size = numConstraints()
-        model.addConstr(expr(this), copt.Consts.EQUAL, value, "c" + (size + 1))
+        model.addConstr(expr(this), copt.Consts.EQUAL, value, "c" + (numConstraints() + 1))
     }
 
     override fun IVar.eq(value: IVar) {
-        val size = numConstraints()
-        model.addConstr(expr(this), copt.Consts.EQUAL, expr(value), "c" + (size + 1))
+        model.addConstr(expr(this), copt.Consts.EQUAL, expr(value), "c" + (numConstraints() + 1))
     }
 
     override fun Array<out IVar>.eq(value: Double) {
@@ -268,8 +249,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.eq(value: Double) {
@@ -277,8 +257,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.EQUAL, value, "c" + (numConstraints() + 1))
     }
 
     override fun Array<out IVar>.eq(value: IVar) {
@@ -286,8 +265,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.EQUAL, expr(value), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.EQUAL, expr(value), "c" + (numConstraints() + 1))
     }
 
     override fun Iterable<IVar>.eq(value: IVar) {
@@ -295,8 +273,7 @@ class COPTSolver @JvmOverloads constructor(
         for (v in this) {
             expr.addTerm(v.getDelegate(), v.coeff)
         }
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.EQUAL, expr(value), "c" + (size + 1))
+        model.addConstr(expr, copt.Consts.EQUAL, expr(value), "c" + (numConstraints() + 1))
     }
 
 
@@ -359,124 +336,37 @@ class COPTSolver @JvmOverloads constructor(
     }
 
 
-    /**
-     * <pre>
-     * bool为1时：var >= value
-     *
-     * value <= var <= dub
-     * dlb*(1-bool) + value*bool <= var <= dub
-     * dlb <= var - value*bool + dlb*bool
-     * dlb <= var - (value-dlb)*bool
-     *
-     * bool为0时：dlb <= var <= dub
-     *
-     * </pre>
-     *
-     */
     override fun IVar.geIf(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 1, expr(this), copt.Consts.GREATER_EQUAL, value)
     }
 
-    /**
-     * <pre>
-     * bool为0时：var >= value
-     *
-     * value <= var <= dub
-     * dlb*bool + value*(1-bool) <= var <= dub
-     * value <= var + value*bool - dlb*bool
-     * value <= var + (value-dlb)*bool
-     *
-     * bool为1时：dlb <= var <= dub
-     *
-     * </pre>
-     *
-     */
     override fun IVar.geIfNot(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr(this), copt.Consts.GREATER_EQUAL, value)
     }
 
-    /**
-     * <pre>
-     * bool为1时：var <= value
-     *
-     * dlb <= var <= value
-     * dlb <= var <= value*bool + dub*(1-bool)
-     * var <= value*bool + dub*(1-bool)
-     * var - (value-dub)*bool <=  dub
-     *
-     * bool为0时：dlb <= var <= dub
-     *
-     * </pre>
-     *
-     */
     override fun IVar.leIf(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 1, expr(this), copt.Consts.LESS_EQUAL, value)
     }
 
-    /**
-     * <pre>
-     * bool为0时：var <= value
-     *
-     * dlb <= var <= value
-     * dlb <= var <= value*(1-bool) + dub*bool
-     * var + (value-dub)*bool <=  value
-     *
-     * bool为1时：dlb <= var <= dub
-     *
-     * </pre>
-     *
-     */
     override fun IVar.leIfNot(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr(this), copt.Consts.LESS_EQUAL, value)
     }
 
 
-    /**
-     * <pre>
-     * bool为1时：var == value
-     *
-     * bool为0时：dlb <= var <= dub
-     *
-     * </pre>
-     */
     override fun IVar.eqIf(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 1, expr(this), copt.Consts.EQUAL, value)
     }
 
-    /**
-     * <pre>
-     * bool为0时：var == value
-     *
-     * bool为1时：dlb <= var <= dub
-     *
-     * </pre>
-     */
     override fun IVar.eqIfNot(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr(this), copt.Consts.EQUAL, value)
     }
 
-    /**
-     * <pre>
-     * bool为1时：lb <= var <= ub
-     *
-     * bool为0时：dlb <= var <= dub
-     *
-     * </pre>
-     */
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
         val expr = expr(this)
         model.addGenConstrIndicator(bool.getDelegate(), 1, expr, copt.Consts.GREATER_EQUAL, lb)
         model.addGenConstrIndicator(bool.getDelegate(), 1, expr, copt.Consts.LESS_EQUAL, ub)
     }
 
-    /**
-     * <pre>
-     * bool为0时：lb <= var <= ub
-     *
-     * bool为1时：dlb <= var <= dub
-     *
-     * </pre>
-     */
     override fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar) {
         val expr = expr(this)
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr, copt.Consts.GREATER_EQUAL, lb)
@@ -488,11 +378,9 @@ class COPTSolver @JvmOverloads constructor(
         for (it in this) {
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val numVariables = numVariables()
-        val sum = model.addVar(-copt.Consts.INFINITY, copt.Consts.INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
-        return COPTVar(sum)
+        val sum = numVar()
+        model.addConstr(expr, copt.Consts.EQUAL, expr(sum), "c" + (numConstraints() + 1))
+        return sum
     }
 
     override fun Iterable<IVar>.sum(): IVar {
@@ -500,11 +388,9 @@ class COPTSolver @JvmOverloads constructor(
         for (it in this) {
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val numVariables = numVariables()
-        val sum = model.addVar(-copt.Consts.INFINITY, copt.Consts.INFINITY, 1.0, copt.Consts.CONTINUOUS, "n" + (numVariables + 1))
-        val size = numConstraints()
-        model.addConstr(expr, copt.Consts.EQUAL, sum, "c" + (size + 1))
-        return COPTVar(sum)
+        val sum = numVar()
+        model.addConstr(expr, copt.Consts.EQUAL, expr(sum), "c" + (numConstraints() + 1))
+        return sum
     }
 
     override fun Array<out IVar>.minimize(): IVar {
