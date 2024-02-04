@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.optimal
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.optimal.solver.CplexNativeLibLoader
 import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
@@ -12,7 +11,7 @@ import top.bettercode.summer.tools.optimal.solver.SolverType
  * @author Peter Wu
  */
 class CplexSolverTest : COPTSolverTest() {
-    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.CPLEX)
+    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.CPLEX, epsilon = 1e-5)
 
     @Test
     override fun lpNumVariables() {
