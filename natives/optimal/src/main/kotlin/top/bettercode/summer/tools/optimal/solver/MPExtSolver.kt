@@ -33,7 +33,7 @@ open class MPExtSolver @JvmOverloads constructor(
          * 默认下限
          */
         @JvmStatic
-        var DEFAULT_LB: Double = 0.0
+        var DEFAULT_LB: Double = -1000.0
 
         /**
          * 默认上限

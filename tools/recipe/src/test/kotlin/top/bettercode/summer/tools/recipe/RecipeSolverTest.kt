@@ -48,36 +48,36 @@ internal class RecipeSolverTest {
 //        val materialUnchanged = false
         val coptSolve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val cplexSolver = MultiRecipeSolver.solve(solverType = SolverType.CPLEX, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-//        val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val orSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
         System.err.println("copt:" + coptSolve.time)
         System.err.println("cplex:" + cplexSolver.time)
-//        System.err.println("scip:" + scipSolver.time)
+        System.err.println("or-tools:" + orSolver.time)
 
         System.err.println("============toExcel=============")
 //        toExcel(coptSolve)
 //        toExcel(cplexSolver)
-//        toExcel(scipSolver)
+//        toExcel(mpSolver)
 
         System.err.println("============效验结果=============")
         validateResult(coptSolve)
         validateResult(cplexSolver)
-//        validateResult(scipSolver)
+        validateResult(orSolver)
 
         System.err.println("============对比结果=============")
         assert(coptSolve, cplexSolver)
-//        assert(coptSolve, scipSolver)
-//        assert(cplexSolver, scipSolver)
+        assert(coptSolve, orSolver)
+        assert(cplexSolver, orSolver)
 
         System.err.println("============对比保存结果=============")
 //        validatePreResult(coptSolve)
 //        validatePreResult(cplexSolver)
-//        validatePreResult(scipSolver)
+//        validatePreResult(mpSolver)
 
         System.err.println("============保存结果=============")
 //        saveRecipe(coptSolve)
 //        saveRecipe(cplexSolver)
-//        saveRecipe(scipSolver)
+//        saveRecipe(mpSolver)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
