@@ -14,7 +14,7 @@ abstract class Solver(
         val name: String,
 
         /**
-         * 极小的正数，用于描述误差，大于 转换为 大于等于
+         * 容错程度，该参数控制如何在线性化期间管理严格的不等式。例如，当 x 是数字变量时， x < a 变为 x <= a-eplin
          */
         protected val epsilon: Double = OptimalUtil.DEFAULT_EPSILON
 ) {

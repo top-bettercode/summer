@@ -3,6 +3,8 @@ package top.bettercode.summer.tools.optimal.solver
 import ilog.concert.IloLinearNumExpr
 import ilog.concert.IloObjective
 import ilog.cplex.IloCplex
+import ilog.cplex.IloCplex.Param
+import ilog.cplex.IloCplex.Status
 import top.bettercode.summer.tools.optimal.solver.Sense.*
 import top.bettercode.summer.tools.optimal.solver.`var`.CplexNumVar
 import top.bettercode.summer.tools.optimal.solver.`var`.CplexObjectiveVar
@@ -29,8 +31,13 @@ class CplexSolver @JvmOverloads constructor(
     val model: IloCplex = IloCplex()
     var objective: IloObjective? = null
 
+
+    init {
+        model.setParam(Param.MIP.Tolerances.Linearization, epsilon)
+    }
+
     override fun setTimeLimit(seconds: Int) {
-        model.setParam(IloCplex.Param.TimeLimit, seconds.toDouble())
+        model.setParam(Param.TimeLimit, seconds.toDouble())
     }
 
     override fun solve() {
@@ -42,7 +49,7 @@ class CplexSolver @JvmOverloads constructor(
     }
 
     override fun isOptimal(): Boolean {
-        return IloCplex.Status.Optimal == model.status
+        return Status.Optimal == model.status
     }
 
     override fun getResultStatus(): String {

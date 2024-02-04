@@ -22,9 +22,9 @@ object SolverFactory {
     ): Solver {
         return when (solverType) {
             SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)
+            SolverType.CPLEX -> CplexSolver(epsilon = epsilon)
             SolverType.SCIP -> SCIPSolver(dlb = dlb, dub = dub, epsilon = epsilon)
             SolverType.CBC -> CBCSolver(dlb = dlb, dub = dub, epsilon = epsilon)
-            SolverType.CPLEX -> CplexSolver(epsilon = epsilon)
         }
     }
 

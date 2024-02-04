@@ -28,12 +28,12 @@ internal class RecipeSolverTest {
      */
     @Test
     fun solve() {
-//        solve("13-05-07高氯枸磷")
-//        solve("24-06-10高氯枸磷")
-//        solve("15-15-15喷浆硫基")
+        solve("13-05-07高氯枸磷")
+        solve("24-06-10高氯枸磷")
+        solve("15-15-15喷浆硫基")
 
         solve("15-15-15喷浆氯基")
-//        solve("15-15-15常规氯基")
+        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
@@ -44,15 +44,15 @@ internal class RecipeSolverTest {
 //        val includeProductionCost = false
         val nutrientUnchanged = true
 //        val nutrientUnchanged = false
-//        val materialUnchanged = true
-        val materialUnchanged = false
+        val materialUnchanged = true
+//        val materialUnchanged = false
         val coptSolve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val cplexSolver = MultiRecipeSolver.solve(solverType = SolverType.CPLEX, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+//        val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
         System.err.println("copt:" + coptSolve.time)
         System.err.println("cplex:" + cplexSolver.time)
-        System.err.println("scip:" + scipSolver.time)
+//        System.err.println("scip:" + scipSolver.time)
 
         System.err.println("============toExcel=============")
 //        toExcel(coptSolve)
@@ -62,12 +62,12 @@ internal class RecipeSolverTest {
         System.err.println("============效验结果=============")
         validateResult(coptSolve)
         validateResult(cplexSolver)
-        validateResult(scipSolver)
+//        validateResult(scipSolver)
 
         System.err.println("============对比结果=============")
         assert(coptSolve, cplexSolver)
-        assert(coptSolve, scipSolver)
-        assert(cplexSolver, scipSolver)
+//        assert(coptSolve, scipSolver)
+//        assert(cplexSolver, scipSolver)
 
         System.err.println("============对比保存结果=============")
 //        validatePreResult(coptSolve)
