@@ -7,11 +7,11 @@ import kotlin.math.pow
  * @author Peter Wu
  */
 object OptimalUtil {
-        /**
-     * 默认误差
+    /**
+     * 默认实现<,>约束，误差
      */
     @JvmStatic
-    var DEFAULT_EPSILON = 1e-6
+    var DEFAULT_EPSILON = 1e-5
 
     /**
      * 默认最小误差
