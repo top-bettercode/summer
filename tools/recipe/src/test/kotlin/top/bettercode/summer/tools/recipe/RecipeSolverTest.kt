@@ -54,22 +54,27 @@ internal class RecipeSolverTest {
         System.err.println("cbc:" + solve1.time)
 //        System.err.println("scip:" + solve2.time)
 
+        System.err.println("============toExcel=============")
         toExcel(solve)
         toExcel(solve1)
-        toExcel(solve2)
+//        toExcel(solve2)
 
+        System.err.println("============效验结果=============")
         validateResult(solve)
         validateResult(solve1)
         validateResult(solve2)
 
+        System.err.println("============对比结果=============")
         assert(solve, solve1)
         assert(solve, solve2)
         assert(solve1, solve2)
 
+        System.err.println("============对比保存结果=============")
 //        validatePreResult(solve)
 //        validatePreResult(solve1)
 //        validatePreResult(solve2)
 
+        System.err.println("============保存结果=============")
 //        saveRecipe(solve)
 //        saveRecipe(solve1)
 //        saveRecipe(solve2)

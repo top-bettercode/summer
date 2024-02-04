@@ -397,8 +397,11 @@ open class MPExtSolver @JvmOverloads constructor(
      */
     override fun IVar.eqIf(value: Double, bool: IVar) {
         log.warn("MPSolver eqIf experimental")
-        leIf(value, bool)
-        geIf(value, bool)
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIf(2.0, bool)
+        geIf(value, bool1)
+        leIf(value, bool2)
     }
 
     /**
@@ -410,9 +413,12 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun IVar.eqIfNot(value: Double, bool: IVar) {
-        log.warn("MPSolver eqIf experimental")
-        geIfNot(value, bool)
-        leIfNot(value, bool)
+        log.warn("MPSolver eqIfNot experimental")
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIfNot(2.0, bool)
+        geIf(value, bool1)
+        leIf(value, bool2)
     }
 
     override fun IVar.neIf(value: Double, bool: IVar) {
@@ -425,7 +431,7 @@ open class MPExtSolver @JvmOverloads constructor(
     }
 
     override fun IVar.neIfNot(value: Double, bool: IVar) {
-        log.warn("MPSolver eqIf experimental")
+        log.warn("MPSolver neIfNot experimental")
         val bool1 = boolVar()
         val bool2 = boolVar()
         arrayOf(bool1, bool2).sum().geIfNot(1.0, bool)
@@ -442,8 +448,11 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
-        geIf(lb, bool)
-        leIf(ub, bool)
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIf(2.0, bool)
+        geIf(lb, bool1)
+        leIf(ub, bool2)
     }
 
 
@@ -456,8 +465,11 @@ open class MPExtSolver @JvmOverloads constructor(
      * </pre>
      */
     override fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar) {
-        geIfNot(lb, bool)
-        leIfNot(ub, bool)
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIfNot(2.0, bool)
+        geIf(lb, bool1)
+        leIf(ub, bool2)
     }
 
     override fun Array<out IVar>.sum(): IVar {
