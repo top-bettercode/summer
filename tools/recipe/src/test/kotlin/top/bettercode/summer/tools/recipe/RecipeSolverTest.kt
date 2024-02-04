@@ -46,39 +46,38 @@ internal class RecipeSolverTest {
 //        val nutrientUnchanged = false
 //        val materialUnchanged = true
         val materialUnchanged = false
-        val solve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val solve1 = MultiRecipeSolver.solve(solverType = SolverType.CPLEX, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val solve2 = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val coptSolve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val cplexSolver = MultiRecipeSolver.solve(solverType = SolverType.CPLEX, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
-//        System.err.println("copt:" + solve.time)
-        System.err.println("cbc:" + solve1.time)
-//        System.err.println("scip:" + solve2.time)
+        System.err.println("copt:" + coptSolve.time)
+        System.err.println("cbc:" + cplexSolver.time)
+        System.err.println("scip:" + scipSolver.time)
 
         System.err.println("============toExcel=============")
-        toExcel(solve)
-        toExcel(solve1)
-//        toExcel(solve2)
+        toExcel(coptSolve)
+        toExcel(cplexSolver)
+        toExcel(scipSolver)
 
         System.err.println("============效验结果=============")
-        validateResult(solve)
-        validateResult(solve1)
-        validateResult(solve2)
+        validateResult(coptSolve)
+        validateResult(cplexSolver)
+        validateResult(scipSolver)
 
         System.err.println("============对比结果=============")
-        assert(solve, solve1)
-//        assert(solve, solve2)
-//        assert(solve1, solve2)
+        assert(coptSolve, cplexSolver)
+        assert(coptSolve, scipSolver)
+        assert(cplexSolver, scipSolver)
 
         System.err.println("============对比保存结果=============")
-//        validatePreResult(solve)
-//        validatePreResult(solve1)
-//        validatePreResult(solve2)
+//        validatePreResult(coptSolve)
+//        validatePreResult(cplexSolver)
+//        validatePreResult(scipSolver)
 
         System.err.println("============保存结果=============")
-//        saveRecipe(solve)
-//        saveRecipe(solve1)
-//        saveRecipe(solve2)
-
+//        saveRecipe(coptSolve)
+//        saveRecipe(cplexSolver)
+//        saveRecipe(scipSolver)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
