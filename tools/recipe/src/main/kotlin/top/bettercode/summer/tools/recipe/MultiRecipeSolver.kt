@@ -21,7 +21,7 @@ object MultiRecipeSolver {
               nutrientUnchanged: Boolean = true,
               includeProductionCost: Boolean = true
     ): RecipeResult {
-        SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight, logging = true).apply {
+        SolverFactory.createSolver(solverType = solverType, logging = true).apply {
             val s = System.currentTimeMillis()
             val prepareData = prepare(requirement, includeProductionCost)
             var e = System.currentTimeMillis()

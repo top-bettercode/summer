@@ -15,31 +15,11 @@ open class MPExtSolver @JvmOverloads constructor(
          * OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING
          */
         type: MPSolver.OptimizationProblemType,
-        /**
-         * 变量默认下界
-         */
-        val dlb: Double = DEFAULT_LB,
-
-        /**
-         * 变量默认上界
-         */
-        val dub: Double = DEFAULT_UB,
         epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
         name: String = "MPSolver"
 ) : Solver(name, epsilon) {
 
     companion object {
-        /**
-         * 默认下限
-         */
-        @JvmStatic
-        var DEFAULT_LB: Double = -1000.0
-
-        /**
-         * 默认上限
-         */
-        @JvmStatic
-        var DEFAULT_UB: Double = 1000.0
 
         init {
             Loader.loadNativeLibraries()
@@ -331,7 +311,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.geIf(value: Double, bool: IVar) {
-        arrayOf(this, bool * (-(value - dlb))).ge(dlb)
+        arrayOf(this, bool * (-(value - this.lb))).ge(this.lb)
     }
 
     /**
@@ -349,7 +329,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.geIfNot(value: Double, bool: IVar) {
-        arrayOf(this, bool * (value - dlb)).ge(value)
+        arrayOf(this, bool * (value - this.lb)).ge(value)
     }
 
     /**
@@ -367,7 +347,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.leIf(value: Double, bool: IVar) {
-        arrayOf(this, bool * -(value - dub)).le(dub)
+        arrayOf(this, bool * -(value - this.ub)).le(this.ub)
     }
 
     /**
@@ -384,7 +364,7 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.leIfNot(value: Double, bool: IVar) {
-        arrayOf(this, bool * (value - dub)).le(value)
+        arrayOf(this, bool * (value - this.ub)).le(value)
     }
 
     /**
@@ -478,9 +458,8 @@ open class MPExtSolver @JvmOverloads constructor(
         leIf(ub, bool2)
     }
 
-    override fun Array<out IVar>.sum(): IVar {
-        val numVariables = numVariables()
-        val sum = solver.makeNumVar(-MPSolver.infinity(), MPSolver.infinity(), "n" + (numVariables + 1))
+    override fun Array<out IVar>.sum(lb: Double, ub: Double): IVar {
+        val sum = solver.makeNumVar(lb, ub, "n" + (numVariables() + 1))
 
         val constraint = solver.makeConstraint(0.0, 0.0)
         constraint.setCoefficient(sum, -1.0)
@@ -490,9 +469,8 @@ open class MPExtSolver @JvmOverloads constructor(
         return MPVar(sum)
     }
 
-    override fun Iterable<IVar>.sum(): IVar {
-        val numVariables = numVariables()
-        val sum = solver.makeNumVar(-MPSolver.infinity(), MPSolver.infinity(), "n" + (numVariables + 1))
+    override fun Iterable<IVar>.sum(lb: Double, ub: Double): IVar {
+        val sum = solver.makeNumVar(lb, ub, "n" + (numVariables() + 1))
 
         val constraint = solver.makeConstraint(0.0, 0.0)
         constraint.setCoefficient(sum, -1.0)

@@ -15,11 +15,13 @@ class CplexObjectiveVar(
     override val value: Double
         get() = model.objValue.scale()
 
-    override val lb: Double
+    override var lb: Double
         get() = model.objValue.scale()
+        set(_) {}
 
-    override val ub: Double
+    override var ub: Double
         get() = model.objValue.scale()
+        set(_) {}
 
 
     override fun times(coeff: Double): IVar {

@@ -347,8 +347,8 @@ abstract class Solver(
         }
     }
 
-    abstract fun Array<out IVar>.sum(): IVar
-    abstract fun Iterable<IVar>.sum(): IVar
+    abstract fun Array<out IVar>.sum(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): IVar
+    abstract fun Iterable<IVar>.sum(lb: Double = -Consts.INFINITY, ub: Double = Consts.INFINITY): IVar
     abstract fun Array<out IVar>.minimize(): IVar
     abstract fun Iterable<IVar>.minimize(): IVar
     abstract fun Array<out IVar>.maximize(): IVar

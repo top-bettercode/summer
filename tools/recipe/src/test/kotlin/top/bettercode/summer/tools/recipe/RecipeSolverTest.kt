@@ -31,7 +31,7 @@ internal class RecipeSolverTest {
         solve("13-05-07高氯枸磷")
         solve("24-06-10高氯枸磷")
         solve("15-15-15喷浆硫基")
-
+//
         solve("15-15-15喷浆氯基")
         solve("15-15-15常规氯基")
     }
@@ -57,7 +57,7 @@ internal class RecipeSolverTest {
         System.err.println("============toExcel=============")
 //        toExcel(coptSolve)
 //        toExcel(cplexSolver)
-//        toExcel(mpSolver)
+//        toExcel(orSolver)
 
         System.err.println("============效验结果=============")
         validateResult(coptSolve)
@@ -72,12 +72,12 @@ internal class RecipeSolverTest {
         System.err.println("============对比保存结果=============")
 //        validatePreResult(coptSolve)
 //        validatePreResult(cplexSolver)
-//        validatePreResult(mpSolver)
+//        validatePreResult(orSolver)
 
         System.err.println("============保存结果=============")
 //        saveRecipe(coptSolve)
 //        saveRecipe(cplexSolver)
-//        saveRecipe(mpSolver)
+//        saveRecipe(orSolver)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {

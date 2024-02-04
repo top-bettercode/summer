@@ -14,11 +14,17 @@ class MPVar(private val _delegate: MPVariable,
     override val value: Double
         get() = _delegate.solutionValue().scale()
 
-    override val lb: Double
+    override var lb: Double
         get() = _delegate.lb().scale()
+        set(value) {
+            _delegate.setLb(value)
+        }
 
-    override val ub: Double
+    override var ub: Double
         get() = _delegate.ub().scale()
+        set(value) {
+            _delegate.setUb(value)
+        }
 
     override fun times(coeff: Double): IVar {
         return MPVar(_delegate, coeff)

@@ -17,11 +17,17 @@ class CplexNumVar(
     override val value: Double
         get() = model.getValue(_delegate).scale()
 
-    override val lb: Double
+    override var lb: Double
         get() = _delegate.lb.scale()
+        set(value) {
+            _delegate.lb = value
+        }
 
-    override val ub: Double
+    override var ub: Double
         get() = _delegate.ub.scale()
+        set(value) {
+            _delegate.ub = value
+        }
 
     override fun times(coeff: Double): IVar {
         return CplexNumVar(_delegate = _delegate, model = model, coeff = coeff)

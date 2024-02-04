@@ -19,7 +19,7 @@ object RecipeSolver {
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
     fun solve(solverType: SolverType, requirement: RecipeRequirement, includeProductionCost: Boolean = true): Recipe? {
-        SolverFactory.createSolver(solverType = solverType, dub = requirement.targetWeight).apply {
+        SolverFactory.createSolver(solverType = solverType).apply {
             val s = System.currentTimeMillis()
             val prepareData = prepare(requirement, includeProductionCost)
             if (SolverType.COPT == solverType) {
@@ -237,8 +237,8 @@ object RecipeSolver {
 
         // 条件约束
         requirement.materialConditionConstraints.forEach { (whenCondition, thenCondition) ->
-            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
-            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
+            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum(0.0, targetWeight)
+            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum(0.0, targetWeight)
             val whenCon = whenCondition.condition
             val thenCon = thenCondition.condition
             thenVar.const(thenCon.sense, thenCon.value).onlyEnforceIf(whenVar.const(whenCon.sense, whenCon.value))
@@ -257,7 +257,7 @@ object RecipeSolver {
                     ChangeLogicType.WATER_OVER -> {
                         changeProductionCost(recipeMaterials, changeLogic, recipeMaterials.map {
                             it.value.weight * it.value.indicators.waterValue
-                        }.sum(), materialItems, dictItems)
+                        }.sum(0.0, targetWeight), materialItems, dictItems)
                     }
 
                     ChangeLogicType.OVER -> {
@@ -294,7 +294,9 @@ object RecipeSolver {
     private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>) {
         val useMaterial = materials[changeLogic.materialId]
         if (useMaterial != null) {
-            val thens= mutableListOf<Constraint>()
+            val dlb = -1.0
+            val dub = 1000.0
+            val thens = mutableListOf<Constraint>()
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
                     ChangeItemType.MATERIAL -> {//能耗费用
@@ -304,6 +306,8 @@ object RecipeSolver {
                             //change
                             val changeVar = ((value
                                     ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                            changeVar.lb = dlb
+                            changeVar.ub = dub
                             thens.add(changeVar.eqConst(0.0))
                             material.value += changeVar
                         }
@@ -316,6 +320,8 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                    changeVar.lb = dlb
+                                    changeVar.ub = dub
                                     thens.add(changeVar.eqConst(0.0))
                                     it.value += changeVar
                                 }
@@ -327,6 +333,8 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                    changeVar.lb = dlb
+                                    changeVar.ub = dub
                                     thens.add(changeVar.eqConst(0.0))
                                     cost.value += changeVar
                                 }

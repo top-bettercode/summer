@@ -23,12 +23,12 @@ interface IVar {
     /**
      * 下限
      */
-    val lb: Double
+    var lb: Double
 
     /**
      * 上限
      */
-    val ub: Double
+    var ub: Double
 
     /**
      * 设置系数
