@@ -390,6 +390,10 @@ open class MPExtSolver @JvmOverloads constructor(
     /**
      * <pre>
      * bool为1时：var == value
+     *           value <= var <= value
+     *           value*bool + dlb*(1-bool) <= var <= value*bool + dub*(1-bool)
+     *           dlb <= var-value*bool + dlb*bool
+     *                  var-value*bool + dub*bool <= dub
      *
      * bool为0时：dlb <= var <= dub
      *

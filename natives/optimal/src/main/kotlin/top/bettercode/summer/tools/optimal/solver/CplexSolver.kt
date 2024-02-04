@@ -20,8 +20,10 @@ class CplexSolver @JvmOverloads constructor(
         name: String = "CplexSolver"
 ) : Solver(name, epsilon) {
 
-    init {
-        CplexNativeLibLoader.loadNativeLib()
+    companion object {
+        init {
+            CplexNativeLibLoader.loadNativeLib()
+        }
     }
 
     val model: IloCplex = IloCplex()

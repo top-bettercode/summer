@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.optimal.solver.SolverType
  *
  * @author Peter Wu
  */
-open class COPTSolverTest {
+open class COPTSolverTest{
 
     open val solver: Solver = SolverFactory.createSolver(solverType = SolverType.COPT, logging = true)
 

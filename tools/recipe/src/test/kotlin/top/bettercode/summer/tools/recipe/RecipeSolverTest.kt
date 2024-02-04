@@ -51,7 +51,7 @@ internal class RecipeSolverTest {
         val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
         System.err.println("copt:" + coptSolve.time)
-        System.err.println("cbc:" + cplexSolver.time)
+        System.err.println("cplex:" + cplexSolver.time)
         System.err.println("scip:" + scipSolver.time)
 
         System.err.println("============toExcel=============")
