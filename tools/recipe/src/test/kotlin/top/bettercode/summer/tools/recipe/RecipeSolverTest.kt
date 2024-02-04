@@ -22,8 +22,7 @@ import java.io.File
 internal class RecipeSolverTest {
 
     /**
-     * 1.15-15-15常规氯基 结果不一致，原因：eqIf实现有问题
-     * 2.15-15-15喷浆氯基 copt 程序异常终止，官方已定位问题，等待修复版本
+     * 1.15-15-15喷浆氯基 copt 程序异常终止，官方已定位问题，等待修复版本
      *
      */
     @Test
@@ -31,7 +30,7 @@ internal class RecipeSolverTest {
         solve("13-05-07高氯枸磷")
         solve("24-06-10高氯枸磷")
         solve("15-15-15喷浆硫基")
-//
+
         solve("15-15-15喷浆氯基")
         solve("15-15-15常规氯基")
     }
@@ -40,8 +39,8 @@ internal class RecipeSolverTest {
         System.err.println("======================$productName=====================")
         val requirement = TestPrepareData.readRequirement(productName)
         val maxResult = 1
-        val includeProductionCost = true
-//        val includeProductionCost = false
+//        val includeProductionCost = true
+        val includeProductionCost = false
         val nutrientUnchanged = true
 //        val nutrientUnchanged = false
         val materialUnchanged = true
@@ -70,9 +69,9 @@ internal class RecipeSolverTest {
         assert(cplexSolver, orSolver)
 
         System.err.println("============对比保存结果=============")
-//        validatePreResult(coptSolve)
-//        validatePreResult(cplexSolver)
-//        validatePreResult(orSolver)
+        validatePreResult(coptSolve)
+        validatePreResult(cplexSolver)
+        validatePreResult(orSolver)
 
         System.err.println("============保存结果=============")
 //        saveRecipe(coptSolve)
@@ -101,17 +100,19 @@ internal class RecipeSolverTest {
         val recipes = recipeResult.recipes
         val requirement = recipes[0].requirement
         val productName = requirement.productName
-
-        val expectedRequirement = RecipeResult::class.java.getResourceAsStream("/recipe/$productName/requirement.json")!!.bufferedReader().readText()
+        val recipe1 = recipes[0]
+        val includeProductionCost = recipe1.includeProductionCost
+        val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
+        dir.mkdirs()
+        val expectedRequirement = File("$dir/requirement.json").bufferedReader().readText()
         //配方要求
         Assertions.assertEquals(expectedRequirement, json(requirement,
                 IRecipeMaterial::class.java to RecipeMaterialView::class.java,
                 RecipeRequirement::class.java to RecipeRequirementView::class.java,
                 RecipeIndicator::class.java to RecipeIndicatorView::class.java), recipeResult.solverName)
         //配方
-        val dir = "recipe/$productName/${recipeResult.solverName}"
         recipes.forEachIndexed { index, recipe ->
-            val expectedRecipe = RecipeResult::class.java.getResourceAsStream("/$dir/配方${index + 1}.json")!!.bufferedReader().readText()
+            val expectedRecipe = File("$dir/${recipeResult.solverName}/配方${index + 1}.json").bufferedReader().readText()
             Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java), recipeResult.solverName)
         }
     }

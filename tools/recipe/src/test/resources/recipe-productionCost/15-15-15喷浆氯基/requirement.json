@@ -1,0 +1,570 @@
+{
+  "indicatorMaterialIDConstraints" : { },
+  "indicatorRangeConstraints" : {
+    "产品水分" : {
+      "id" : "产品水分",
+      "index" : 5,
+      "name" : "产品水分",
+      "nutrient" : false,
+      "productWater" : true,
+      "rateToOther" : false,
+      "type" : "PRODUCT_WATER",
+      "value" : {
+        "min" : 0.0,
+        "max" : 0.012
+      },
+      "water" : false
+    },
+    "总养分" : {
+      "id" : "总养分",
+      "index" : 0,
+      "name" : "总养分",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
+      "value" : {
+        "min" : 0.453,
+        "max" : 1.0
+      },
+      "water" : false
+    },
+    "氮" : {
+      "id" : "氮",
+      "index" : 1,
+      "name" : "氮",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
+      "value" : {
+        "min" : 0.14,
+        "max" : 1.0
+      },
+      "water" : false
+    },
+    "氯离子" : {
+      "id" : "氯离子",
+      "index" : 4,
+      "name" : "氯离子",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
+      "value" : {
+        "min" : 0.0,
+        "max" : 0.995
+      },
+      "water" : false
+    },
+    "水溶磷率" : {
+      "id" : "水溶磷率",
+      "index" : 7,
+      "itId" : "水溶磷",
+      "name" : "水溶磷率",
+      "nutrient" : false,
+      "otherId" : "磷",
+      "productWater" : false,
+      "rateToOther" : true,
+      "type" : "RATE_TO_OTHER",
+      "value" : {
+        "min" : 0.61,
+        "max" : 1.0
+      },
+      "water" : false
+    },
+    "物料水分" : {
+      "id" : "物料水分",
+      "index" : 6,
+      "name" : "物料水分",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "WATER",
+      "value" : {
+        "min" : 0.0,
+        "max" : 1.0
+      },
+      "water" : true
+    },
+    "硼" : {
+      "id" : "硼",
+      "index" : 10,
+      "name" : "硼",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
+      "value" : {
+        "min" : 0.0,
+        "max" : 0.0
+      },
+      "water" : false
+    },
+    "磷" : {
+      "id" : "磷",
+      "index" : 2,
+      "name" : "磷",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
+      "value" : {
+        "min" : 0.14,
+        "max" : 1.0
+      },
+      "water" : false
+    },
+    "钾" : {
+      "id" : "钾",
+      "index" : 3,
+      "name" : "钾",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
+      "value" : {
+        "min" : 0.14,
+        "max" : 1.0
+      },
+      "water" : false
+    },
+    "锌" : {
+      "id" : "锌",
+      "index" : 11,
+      "name" : "锌",
+      "nutrient" : false,
+      "productWater" : false,
+      "rateToOther" : false,
+      "type" : "GENERAL",
+      "value" : {
+        "min" : 0.0,
+        "max" : 0.0
+      },
+      "water" : false
+    }
+  },
+  "materialConditionConstraints" : [ ],
+  "materialIDConstraints" : {
+    "[喷浆专用尿素,普通尿素,90天缓释尿素,多肽尿素,大颗粒尿素,60天缓释尿素]" : [ "喷浆专用尿素" ]
+  },
+  "materialRangeConstraints" : {
+    "喷浆专用尿素" : {
+      "min" : 0.0,
+      "max" : 15.0
+    },
+    "防结油（白色）" : {
+      "min" : 2.0,
+      "max" : 2.0
+    },
+    "防结粉（白色）" : {
+      "min" : 3.0,
+      "max" : 3.0
+    }
+  },
+  "materialRelationConstraints" : {
+    "[液氨]\n4.7647\n[碳铵]" : {
+      "[8-40-0再浆肥（粉）,8-40-0再浆肥（颗料）]" : {
+        "normal" : {
+          "min" : 0.008619718,
+          "max" : 0.010535211
+        }
+      },
+      "[硫酸]" : {
+        "normal" : {
+          "min" : 0.350443208,
+          "max" : 0.350443208
+        }
+      },
+      "[磷酸]" : {
+        "normal" : {
+          "min" : 0.049338455,
+          "max" : 0.055505762
+        }
+      }
+    }
+  },
+  "materials" : [ {
+    "id" : "氯化铵（湿）",
+    "index" : 5,
+    "name" : "氯化铵（湿）",
+    "price" : 1.19
+  }, {
+    "id" : "氯化铵（干）",
+    "index" : 6,
+    "name" : "氯化铵（干）",
+    "price" : 1.25
+  }, {
+    "id" : "焦化硫铵",
+    "index" : 7,
+    "name" : "焦化硫铵",
+    "price" : 1.25
+  }, {
+    "id" : "己内级硫铵",
+    "index" : 8,
+    "name" : "己内级硫铵",
+    "price" : 1.3
+  }, {
+    "id" : "液氨",
+    "index" : 9,
+    "name" : "液氨",
+    "price" : 4.2
+  }, {
+    "id" : "液氨",
+    "index" : 9,
+    "name" : "液氨",
+    "price" : 4.2
+  }, {
+    "id" : "碳铵",
+    "index" : 10,
+    "name" : "碳铵",
+    "price" : 1.2
+  }, {
+    "id" : "碳铵",
+    "index" : 10,
+    "name" : "碳铵",
+    "price" : 1.2
+  }, {
+    "id" : "32-4-0硝磷",
+    "index" : 11,
+    "name" : "32-4-0硝磷",
+    "price" : 2.75
+  }, {
+    "id" : "55磷酸一铵（粉）",
+    "index" : 12,
+    "name" : "55磷酸一铵（粉）",
+    "price" : 3.28
+  }, {
+    "id" : "58磷酸一铵（粉）",
+    "index" : 13,
+    "name" : "58磷酸一铵（粉）",
+    "price" : 3.48
+  }, {
+    "id" : "60磷酸一铵（粉）",
+    "index" : 14,
+    "name" : "60磷酸一铵（粉）",
+    "price" : 3.68
+  }, {
+    "id" : "8-40-0再浆肥（粉）",
+    "index" : 16,
+    "name" : "8-40-0再浆肥（粉）",
+    "price" : 1.8
+  }, {
+    "id" : "8-40-0再浆肥（颗料）",
+    "index" : 17,
+    "name" : "8-40-0再浆肥（颗料）",
+    "price" : 2.25
+  }, {
+    "id" : "64磷酸二铵（颗粒）",
+    "index" : 18,
+    "name" : "64磷酸二铵（颗粒）",
+    "price" : 3.85
+  }, {
+    "id" : "64全水溶磷酸一铵",
+    "index" : 19,
+    "name" : "64全水溶磷酸一铵",
+    "price" : 4.75
+  }, {
+    "id" : "67全水溶磷酸一铵",
+    "index" : 20,
+    "name" : "67全水溶磷酸一铵",
+    "price" : 4.97
+  }, {
+    "id" : "工业一铵73%",
+    "index" : 21,
+    "name" : "工业一铵73%",
+    "price" : 6.15
+  }, {
+    "id" : "锌工铵",
+    "index" : 22,
+    "name" : "锌工铵",
+    "price" : 5.17
+  }, {
+    "id" : "磷酸二氢钾",
+    "index" : 23,
+    "name" : "磷酸二氢钾",
+    "price" : 10.5
+  }, {
+    "id" : "硝酸钾",
+    "index" : 25,
+    "name" : "硝酸钾",
+    "price" : 6.15
+  }, {
+    "id" : "中白肥（24%)",
+    "index" : 26,
+    "name" : "中白肥（24%)",
+    "price" : 0.8
+  }, {
+    "id" : "低白肥（14%）",
+    "index" : 27,
+    "name" : "低白肥（14%）",
+    "price" : 0.5
+  }, {
+    "id" : "磷矿粉",
+    "index" : 28,
+    "name" : "磷矿粉",
+    "price" : 1.45
+  }, {
+    "id" : "磷酸",
+    "index" : 29,
+    "name" : "磷酸",
+    "price" : 1.05
+  }, {
+    "id" : "95%氯化钾烘干粉（国产）",
+    "index" : 30,
+    "name" : "95%氯化钾烘干粉（国产）",
+    "price" : 3.55
+  }, {
+    "id" : "95%进口红钾（粉）",
+    "index" : 32,
+    "name" : "95%进口红钾（粉）",
+    "price" : 3.7
+  }, {
+    "id" : "52%罗布泊硫酸钾（粉）",
+    "index" : 34,
+    "name" : "52%罗布泊硫酸钾（粉）",
+    "price" : 3.85
+  }, {
+    "id" : "52%曼海姆硫酸钾（粉）",
+    "index" : 35,
+    "name" : "52%曼海姆硫酸钾（粉）",
+    "price" : 4.25
+  }, {
+    "id" : "硫酸",
+    "index" : 36,
+    "name" : "硫酸",
+    "price" : 0.295
+  }, {
+    "id" : "EDTA-镁",
+    "index" : 37,
+    "name" : "EDTA-镁",
+    "price" : 29.3
+  }, {
+    "id" : "一水硫酸镁",
+    "index" : 38,
+    "name" : "一水硫酸镁",
+    "price" : 3.0
+  }, {
+    "id" : "无水硫酸镁",
+    "index" : 39,
+    "name" : "无水硫酸镁",
+    "price" : 3.15
+  }, {
+    "id" : "七水硫酸镁",
+    "index" : 40,
+    "name" : "七水硫酸镁",
+    "price" : 0.8
+  }, {
+    "id" : "七水黄镁",
+    "index" : 41,
+    "name" : "七水黄镁",
+    "price" : 0.8
+  }, {
+    "id" : "80氧化镁",
+    "index" : 42,
+    "name" : "80氧化镁",
+    "price" : 1.23
+  }, {
+    "id" : "85氧化镁",
+    "index" : 43,
+    "name" : "85氧化镁",
+    "price" : 1.3
+  }, {
+    "id" : "EDTA-钙",
+    "index" : 44,
+    "name" : "EDTA-钙",
+    "price" : 29.0
+  }, {
+    "id" : "EDTA-锌",
+    "index" : 45,
+    "name" : "EDTA-锌",
+    "price" : 29.5
+  }, {
+    "id" : "EDTA-锰",
+    "index" : 46,
+    "name" : "EDTA-锰",
+    "price" : 29.0
+  }, {
+    "id" : "EDTA-铁",
+    "index" : 47,
+    "name" : "EDTA-铁",
+    "price" : 29.0
+  }, {
+    "id" : "EDTA-铜",
+    "index" : 48,
+    "name" : "EDTA-铜",
+    "price" : 39.5
+  }, {
+    "id" : "七钼酸铵",
+    "index" : 49,
+    "name" : "七钼酸铵",
+    "price" : 160.0
+  }, {
+    "id" : "一水硫酸锌",
+    "index" : 50,
+    "name" : "一水硫酸锌",
+    "price" : 6.7
+  }, {
+    "id" : "七水硫酸锌",
+    "index" : 51,
+    "name" : "七水硫酸锌",
+    "price" : 4.6
+  }, {
+    "id" : "硼砂",
+    "index" : 52,
+    "name" : "硼砂",
+    "price" : 5.4
+  }, {
+    "id" : "硼酸",
+    "index" : 53,
+    "name" : "硼酸",
+    "price" : 8.4
+  }, {
+    "id" : "四水八硼酸钠",
+    "index" : 54,
+    "name" : "四水八硼酸钠",
+    "price" : 13.5
+  }, {
+    "id" : "五水硫酸铜",
+    "index" : 55,
+    "name" : "五水硫酸铜",
+    "price" : 21.0
+  }, {
+    "id" : "一水硫酸锰",
+    "index" : 56,
+    "name" : "一水硫酸锰",
+    "price" : 4.7
+  }, {
+    "id" : "白泥",
+    "index" : 57,
+    "name" : "白泥",
+    "price" : 0.24
+  }, {
+    "id" : "元明粉",
+    "index" : 58,
+    "name" : "元明粉",
+    "price" : 0.42
+  }, {
+    "id" : "盐酸",
+    "index" : 59,
+    "name" : "盐酸",
+    "price" : -0.1
+  }, {
+    "id" : "磷石膏",
+    "index" : 60,
+    "name" : "磷石膏",
+    "price" : 0.05
+  }, {
+    "id" : "防结油（白色）",
+    "index" : 61,
+    "name" : "防结油（白色）",
+    "price" : 8.0
+  }, {
+    "id" : "防结粉（白色）",
+    "index" : 62,
+    "name" : "防结粉（白色）",
+    "price" : 2.0
+  }, {
+    "id" : "籽煤",
+    "index" : 81,
+    "name" : "籽煤",
+    "price" : 1.65
+  }, {
+    "id" : "有机质（褐煤）",
+    "index" : 66,
+    "name" : "有机质（褐煤）",
+    "price" : 0.6
+  }, {
+    "id" : "生化黄腐酸钾",
+    "index" : 67,
+    "name" : "生化黄腐酸钾",
+    "price" : 2.65
+  }, {
+    "id" : "心连心矿源黄腐酸钾",
+    "index" : 68,
+    "name" : "心连心矿源黄腐酸钾",
+    "price" : 8.5
+  }, {
+    "id" : "植物氨基酸",
+    "index" : 69,
+    "name" : "植物氨基酸",
+    "price" : 2.3
+  }, {
+    "id" : "1000亿微生物菌",
+    "index" : 70,
+    "name" : "1000亿微生物菌",
+    "price" : 24.0
+  }, {
+    "id" : "喷浆专用尿素",
+    "index" : 90,
+    "name" : "喷浆专用尿素",
+    "price" : 2.8
+  } ],
+  "noUseMaterialConstraints" : [ "喷浆硫基用95氯化钾" ],
+  "notMixMaterialConstraints" : [ ],
+  "productName" : "15-15-15喷浆氯基",
+  "productionCost" : {
+    "materialItems" : [ {
+      "cost" : 50.0,
+      "id" : "煤",
+      "index" : 9001,
+      "name" : "煤",
+      "price" : 50.0,
+      "value" : 1.0
+    }, {
+      "cost" : 100.0,
+      "id" : "电费",
+      "index" : 9002,
+      "name" : "电费",
+      "price" : 100.0,
+      "value" : 1.0
+    } ],
+    "dictItems" : {
+      "STAFF" : {
+        "value" : 1.0,
+        "price" : 42.0,
+        "cost" : 42.0
+      },
+      "DEPRECIATION" : {
+        "value" : 1.0,
+        "price" : 52.0,
+        "cost" : 52.0
+      },
+      "OTHER" : {
+        "value" : 1.0,
+        "price" : 62.0,
+        "cost" : 62.0
+      }
+    },
+    "taxRate" : 0.09,
+    "taxFloat" : 15.0,
+    "changes" : [ {
+      "type" : "WATER_OVER",
+      "changeValue" : 0.01,
+      "materialId" : "液氨",
+      "exceedValue" : 50.0,
+      "eachValue" : 1.0,
+      "changeItems" : [ {
+        "type" : "MATERIAL",
+        "id" : "煤"
+      } ]
+    }, {
+      "type" : "OVER",
+      "changeValue" : 0.01,
+      "materialId" : "硫酸",
+      "exceedValue" : 100.0,
+      "eachValue" : 1.0,
+      "changeItems" : [ {
+        "type" : "DICT",
+        "id" : "STAFF"
+      } ]
+    }, {
+      "type" : "OTHER",
+      "changeValue" : 0.01
+    } ]
+  },
+  "targetWeight" : 1000.0,
+  "timeout" : 30,
+  "useMaterialConstraints" : [ ],
+  "yield" : 1.0
+}

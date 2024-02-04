@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.recipe
 
-import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.optimal.solver.Sense
+import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeMaterialIDIndicators
 import top.bettercode.summer.tools.recipe.indicator.RecipeRangeIndicators
@@ -95,8 +95,7 @@ class RecipeRequirement(
         val tmpMaterial = materials.associateBy { it.id }
         //约束原料
         indicatorMaterialIDConstraints.values.forEach { indicator ->
-            val materialIDs = indicator.value
-            indicator.value = materialIDs.minFrom(tmpMaterial)
+            indicator.value = indicator.value.minFrom(tmpMaterial)
         }
         this.indicatorMaterialIDConstraints = indicatorMaterialIDConstraints
 
@@ -133,21 +132,21 @@ class RecipeRequirement(
             val materialId = material.id
 
             // 用量>0的原料
-            materialRangeConstraints.forEach { (t, u) ->
+            this.materialRangeConstraints.forEach { (t, u) ->
                 if (t.contains(materialId) && u.min > 0) {
                     return@Predicate true
                 }
             }
 
             //关联原料
-            for (replacebleMaterialIDs in materialRelationConstraints.keys) {
+            for (replacebleMaterialIDs in this.materialRelationConstraints.keys) {
                 if (replacebleMaterialIDs.contains(materialId)) {
                     return@Predicate true
                 }
             }
 
             //条件约束
-            materialConditionConstraints.forEach { (_, thenCon) ->
+            this.materialConditionConstraints.forEach { (_, thenCon) ->
                 if (thenCon.materials.contains(materialId)) {
                     return@Predicate true
                 }
@@ -164,31 +163,31 @@ class RecipeRequirement(
             }
 
             // 条件 约束原料
-            for (condition in materialConditionConstraints) {
+            for (condition in this.materialConditionConstraints) {
                 if (condition.second.materials.contains(materialId)) {
                     return@Predicate true
                 }
             }
 
             // 过滤不使用的原料
-            if (noUseMaterialConstraints.contains(materialId)) {
+            if (this.noUseMaterialConstraints.contains(materialId)) {
                 return@Predicate false
             }
 
             // 排除全局非限用原料
-            if (useMaterialConstraints.isNotEmpty()) {
-                if (!useMaterialConstraints.contains(materialId)) return@Predicate false
+            if (this.useMaterialConstraints.isNotEmpty()) {
+                if (!this.useMaterialConstraints.contains(materialId)) return@Predicate false
             }
 
             // 排除非限用原料
-            materialIDConstraints.forEach { (t, u) ->
+            this.materialIDConstraints.forEach { (t, u) ->
                 if (t.contains(materialId) && !u.contains(materialId)) {
                     return@Predicate false
                 }
             }
 
             // 过滤不在成份约束的原料
-            indicatorMaterialIDConstraints.values.forEach { indicator ->
+            this.indicatorMaterialIDConstraints.values.forEach { indicator ->
                 val materialIDs = indicator.value
                 val materialIndicator = material.indicators.valueOf(indicator.id)
                 if (materialIndicator > 0 && !materialIDs.contains(materialId)) {

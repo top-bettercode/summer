@@ -1,59 +1,51 @@
 {
-  "cost" : 3726.9083503007,
-  "dryWaterWeight" : 0.0,
-  "includeProductionCost" : true,
-  "materialCost" : 3388.5179503006,
+  "cost" : 2317.506214331,
+  "dryWaterWeight" : 37.617003878,
+  "includeProductionCost" : false,
+  "materialCost" : 2317.5062143311,
   "materials" : [ {
-    "id" : "普通尿素",
-    "index" : 0,
-    "name" : "普通尿素",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.822,
-    "weight" : 380.0
-  }, {
     "id" : "氯化铵（干）",
-    "index" : 3,
+    "index" : 6,
     "name" : "氯化铵（干）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.35,
-    "weight" : 28.8815365767
+    "price" : 1.25,
+    "weight" : 397.7959659636
+  }, {
+    "id" : "液氨",
+    "index" : 10,
+    "name" : "液氨",
+    "normalWeight" : 2.4246567442,
+    "overdoseWeight" : 0.0,
+    "price" : 4.2,
+    "weight" : 2.4246567442
   }, {
     "id" : "8-40-0再浆肥（粉）",
-    "index" : 14,
+    "index" : 20,
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 2.2,
-    "weight" : 1.0E-5
+    "price" : 1.8,
+    "weight" : 281.2918872948
   }, {
     "id" : "64磷酸二铵（颗粒）",
-    "index" : 15,
+    "index" : 23,
     "name" : "64磷酸二铵（颗粒）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.95,
-    "weight" : 436.1184434233
+    "price" : 3.85,
+    "weight" : 117.7711605421
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 27,
+    "index" : 36,
     "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 150.0
-  }, {
-    "id" : "石粉（尿基高塔用）",
-    "index" : 55,
-    "name" : "石粉（尿基高塔用）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.24,
-    "weight" : 1.0E-5
+    "weight" : 147.1421633276
   }, {
     "id" : "防结油（白色）",
-    "index" : 58,
+    "index" : 64,
     "name" : "防结油（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -61,12 +53,20 @@
     "weight" : 2.0
   }, {
     "id" : "防结粉（白色）",
-    "index" : 59,
+    "index" : 65,
     "name" : "防结粉（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
     "weight" : 3.0
+  }, {
+    "id" : "喷浆硫基用95氯化钾",
+    "index" : 102,
+    "name" : "喷浆硫基用95氯化钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.55,
+    "weight" : 86.1911700057
   } ],
   "productionCost" : {
     "materialItems" : [ {
@@ -78,7 +78,7 @@
         "price" : 50.0,
         "value" : 1.0
       },
-      "value" : 1.0
+      "value" : 1.026170038779
     }, {
       "it" : {
         "cost" : 100.0,
@@ -117,10 +117,11 @@
       }
     },
     "otherFee" : 156.0,
-    "energyFee" : 150.0,
+    "energyFee" : 151.30850193895,
     "taxFee" : 29.04,
-    "totalFee" : 338.3904
+    "totalFee" : 339.71198695833954,
+    "allChange" : 1.01
   },
-  "waterWeight" : 5.8694078829,
-  "weight" : 1000.0
+  "waterWeight" : 52.6170038779,
+  "weight" : 1037.617003878
 }

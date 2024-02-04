@@ -1,40 +1,72 @@
 {
-  "cost" : 1922.0970055336,
-  "dryWaterWeight" : 125.3391053392,
-  "includeProductionCost" : true,
-  "materialCost" : 1583.7066055337,
+  "cost" : 2396.3467503007,
+  "dryWaterWeight" : 0.0,
+  "includeProductionCost" : false,
+  "materialCost" : 2396.3467503006,
   "materials" : [ {
+    "id" : "普通尿素",
+    "index" : 0,
+    "name" : "普通尿素",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.822,
+    "weight" : 413.8653059656
+  }, {
     "id" : "氯化铵（干）",
     "index" : 3,
     "name" : "氯化铵（干）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 522.3526317495
+    "weight" : 70.5989109613
   }, {
-    "id" : "低白肥（14%）",
-    "index" : 25,
-    "name" : "低白肥（14%）",
+    "id" : "8-40-0再浆肥（粉）",
+    "index" : 14,
+    "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 0.42,
-    "weight" : 321.4285714286
+    "price" : 2.2,
+    "weight" : 140.0625
+  }, {
+    "id" : "64磷酸二铵（颗粒）",
+    "index" : 15,
+    "name" : "64磷酸二铵（颗粒）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.95,
+    "weight" : 58.6413043478
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 26,
+    "index" : 27,
     "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 201.5579021611
+    "weight" : 150.0
   }, {
-    "id" : "白泥",
-    "index" : 53,
-    "name" : "白泥",
+    "id" : "石粉（尿基高塔用）",
+    "index" : 55,
+    "name" : "石粉（尿基高塔用）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 0.35,
-    "weight" : 80.0
+    "price" : 0.24,
+    "weight" : 161.8319787253
+  }, {
+    "id" : "防结油（白色）",
+    "index" : 58,
+    "name" : "防结油（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "weight" : 2.0
+  }, {
+    "id" : "防结粉（白色）",
+    "index" : 59,
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "weight" : 3.0
   } ],
   "productionCost" : {
     "materialItems" : [ {
@@ -87,8 +119,9 @@
     "otherFee" : 156.0,
     "energyFee" : 150.0,
     "taxFee" : 29.04,
-    "totalFee" : 338.3904
+    "totalFee" : 338.3904,
+    "allChange" : 1.01
   },
-  "waterWeight" : 125.3391053391,
-  "weight" : 1125.3391053392
+  "waterWeight" : 8.9880919484,
+  "weight" : 1000.0
 }

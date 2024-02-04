@@ -148,14 +148,14 @@
     "first" : {
       "materials" : [ "普通尿素", "60天缓释尿素" ],
       "condition" : {
-        "operator" : "GT",
+        "sense" : "GT",
         "value" : 15.0
       }
     },
     "second" : {
       "materials" : [ "白泥" ],
       "condition" : {
-        "operator" : "GE",
+        "sense" : "GE",
         "value" : 80.0
       }
     }

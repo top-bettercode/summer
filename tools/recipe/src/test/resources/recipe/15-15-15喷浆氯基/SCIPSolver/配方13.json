@@ -119,7 +119,8 @@
     "otherFee" : 156.0,
     "energyFee" : 330.16644456705,
     "taxFee" : 29.04,
-    "totalFee" : 520.3585090127204
+    "totalFee" : 520.3585090127204,
+    "allChange" : 1.01
   },
   "waterWeight" : 410.3328891341,
   "weight" : 1398.332889134

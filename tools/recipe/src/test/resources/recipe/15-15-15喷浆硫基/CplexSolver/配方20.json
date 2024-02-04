@@ -1,0 +1,135 @@
+{
+  "cost" : 2658.3832486084,
+  "dryWaterWeight" : 695.5206029589,
+  "includeProductionCost" : false,
+  "materialCost" : 2658.3832486084,
+  "materials" : [ {
+    "id" : "液氨",
+    "index" : 9,
+    "name" : "液氨",
+    "normalWeight" : 117.4962674405,
+    "overdoseWeight" : 0.0,
+    "price" : 3.8,
+    "weight" : 117.4962674405
+  }, {
+    "id" : "8-40-0再浆肥（粉）",
+    "index" : 16,
+    "name" : "8-40-0再浆肥（粉）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "weight" : 1.0E-5
+  }, {
+    "id" : "磷酸",
+    "index" : 29,
+    "name" : "磷酸",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.055,
+    "weight" : 864.9358247322
+  }, {
+    "id" : "硫酸",
+    "index" : 36,
+    "name" : "硫酸",
+    "normalWeight" : 284.7360402825,
+    "overdoseWeight" : 55.9161631901,
+    "price" : 0.22,
+    "weight" : 340.6522034726
+  }, {
+    "id" : "防结油（白色）",
+    "index" : 61,
+    "name" : "防结油（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "weight" : 2.0
+  }, {
+    "id" : "防结粉（白色）",
+    "index" : 62,
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "weight" : 3.0
+  }, {
+    "id" : "生化黄腐酸钾",
+    "index" : 67,
+    "name" : "生化黄腐酸钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.65,
+    "weight" : 5.0
+  }, {
+    "id" : "喷浆硫基用95氯化钾",
+    "index" : 89,
+    "name" : "喷浆硫基用95氯化钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.55,
+    "weight" : 232.5
+  }, {
+    "id" : "喷浆专用尿素",
+    "index" : 90,
+    "name" : "喷浆专用尿素",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.8,
+    "weight" : 129.9362973136
+  } ],
+  "productionCost" : {
+    "materialItems" : [ {
+      "it" : {
+        "cost" : 50.0,
+        "id" : "煤",
+        "index" : 9001,
+        "name" : "煤",
+        "price" : 50.0,
+        "value" : 1.0
+      },
+      "value" : 7.575206029589
+    }, {
+      "it" : {
+        "cost" : 100.0,
+        "id" : "电费",
+        "index" : 9002,
+        "name" : "电费",
+        "price" : 100.0,
+        "value" : 1.0
+      },
+      "value" : 1.0
+    } ],
+    "dictItems" : {
+      "STAFF" : {
+        "it" : {
+          "value" : 1.0,
+          "price" : 42.0,
+          "cost" : 42.0
+        },
+        "value" : 3.4065220347259997
+      },
+      "DEPRECIATION" : {
+        "it" : {
+          "value" : 1.0,
+          "price" : 52.0,
+          "cost" : 52.0
+        },
+        "value" : 1.0
+      },
+      "OTHER" : {
+        "it" : {
+          "value" : 1.0,
+          "price" : 62.0,
+          "cost" : 62.0
+        },
+        "value" : 1.0
+      }
+    },
+    "otherFee" : 257.073925458492,
+    "energyFee" : 478.76030147945,
+    "taxFee" : 38.13665329126428,
+    "totalFee" : 781.7105890314984,
+    "allChange" : 1.01
+  },
+  "waterWeight" : 707.5206029589,
+  "weight" : 1695.5206029589
+}
