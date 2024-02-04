@@ -277,8 +277,13 @@ class DistPlugin : Plugin<Project> {
                     task.jvmArgs = application.applicationDefaultJvmArgs.toList()
                 else
                     task.jvmArgs = jvmArgs.toList()
+                //    在 AIX 上，设置环境变量 LIBPATH
+                //    在 GNU/Linux 上，设置环境变量 LD_LIBRARY_PATH
+                //    在 MacOS 上，设置环境变量 DYLD_LIBRARY_PATH
+                //    在 Windows 上，设置环境变量 PATH
                 if (Os.isFamily(Os.FAMILY_UNIX))
                     task.environment("LD_LIBRARY_PATH", dist.nativePath(project))
+
             }
 
             project.tasks.withType(JavaExec::class.java) { task ->

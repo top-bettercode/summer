@@ -32,8 +32,8 @@ internal class RecipeSolverTest {
 //        solve("24-06-10高氯枸磷")
 //        solve("15-15-15喷浆硫基")
 
-//        solve("15-15-15喷浆氯基")
-        solve("15-15-15常规氯基")
+        solve("15-15-15喷浆氯基")
+//        solve("15-15-15常规氯基")
     }
 
     fun solve(productName: String) {
@@ -55,9 +55,9 @@ internal class RecipeSolverTest {
         System.err.println("scip:" + scipSolver.time)
 
         System.err.println("============toExcel=============")
-        toExcel(coptSolve)
-        toExcel(cplexSolver)
-        toExcel(scipSolver)
+//        toExcel(coptSolve)
+//        toExcel(cplexSolver)
+//        toExcel(scipSolver)
 
         System.err.println("============效验结果=============")
         validateResult(coptSolve)

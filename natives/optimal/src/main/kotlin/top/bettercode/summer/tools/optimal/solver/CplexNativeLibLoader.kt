@@ -23,9 +23,11 @@ object CplexNativeLibLoader {
             targetFolder.mkdirs()
         }
         val libraryNames = when {
-            Os.isFamily(Os.FAMILY_MAC) -> arrayOf()
-            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf()
-            else -> arrayOf("cplex", "cplexamp", "cpxchecklic", "libcplex2211.so")
+            Os.isFamily(Os.FAMILY_MAC) -> if (Os.OS_ARCH.contains("arm64"))
+                arrayOf("arm64/libcplex2211.dylib") else arrayOf("libcplex2211.dylib")
+
+            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("cplex2211.dll")
+            else -> arrayOf("libcplex2211.so")
         }
 
         for (libraryName in libraryNames) {
@@ -39,9 +41,11 @@ object CplexNativeLibLoader {
         }
         when {
             Os.isFamily(Os.FAMILY_MAC) -> {
+                System.load("${targetFolder.absolutePath}/libcplex2211.dylib")
             }
 
             Os.isFamily(Os.FAMILY_WINDOWS) -> {
+                System.load("${targetFolder.absolutePath}/cplex2211.dll")
             }
 
             else -> {

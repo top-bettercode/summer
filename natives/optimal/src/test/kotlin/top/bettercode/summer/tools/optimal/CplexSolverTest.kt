@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.optimal.solver.SolverType
  * @author Peter Wu
  */
 class CplexSolverTest : COPTSolverTest() {
-    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.CPLEX, epsilon = 1e-5)
+    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.CPLEX)
 
     @Test
     override fun lpNumVariables() {
