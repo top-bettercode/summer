@@ -37,10 +37,10 @@ internal class RecipeSolverTest {
     fun solve(productName: String) {
         System.err.println("======================$productName=====================")
         val requirement = TestPrepareData.readRequirement(productName)
-//        val maxResult = 1
-        val maxResult = 20
-//        val includeProductionCost = true
-        val includeProductionCost = false
+        val maxResult = 1
+//        val maxResult = 20
+        val includeProductionCost = true
+//        val includeProductionCost = false
         val nutrientUnchanged = true
 //        val nutrientUnchanged = false
         val materialUnchanged = true
