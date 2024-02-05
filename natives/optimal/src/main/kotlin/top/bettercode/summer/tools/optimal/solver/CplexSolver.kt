@@ -13,7 +13,7 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 /**
  * https://www.ibm.com/docs/zh/icos/12.9.0?topic=cplex-users-manual
  *
- * No license found. The size is limited to 1000 variables and 1000 constraints
+ * No license. The size is limited to 1000 variables and 1000 constraints
  *
  * @author Peter Wu
  */
