@@ -39,7 +39,11 @@ data class ProductionCost(
         /**
          * 费用增减
          */
-        val changes: List<CostChangeLogic>
+        val changes: List<CostChangeLogic>,
+        /**
+         * 最大增减值
+         */
+        val maxChange: Double=1000.0
 ) {
 
     fun computeFee(recipe: Recipe): ProductionCostValue {

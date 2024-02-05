@@ -577,7 +577,8 @@
     }, {
       "type" : "OTHER",
       "changeValue" : 0.01
-    } ]
+    } ],
+    "maxChange" : 1000.0
   },
   "targetWeight" : 1000.0,
   "timeout" : 30,

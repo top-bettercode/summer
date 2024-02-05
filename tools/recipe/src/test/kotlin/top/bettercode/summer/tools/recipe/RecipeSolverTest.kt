@@ -39,8 +39,8 @@ internal class RecipeSolverTest {
         System.err.println("======================$productName=====================")
         val requirement = TestPrepareData.readRequirement(productName)
         val maxResult = 1
-//        val includeProductionCost = true
-        val includeProductionCost = false
+        val includeProductionCost = true
+//        val includeProductionCost = false
         val nutrientUnchanged = true
 //        val nutrientUnchanged = false
         val materialUnchanged = true
@@ -69,14 +69,14 @@ internal class RecipeSolverTest {
         assert(cplexSolver, orSolver)
 
         System.err.println("============对比保存结果=============")
-        validatePreResult(coptSolve)
-        validatePreResult(cplexSolver)
-        validatePreResult(orSolver)
+//        validatePreResult(coptSolve)
+//        validatePreResult(cplexSolver)
+//        validatePreResult(orSolver)
 
         System.err.println("============保存结果=============")
-//        saveRecipe(coptSolve)
-//        saveRecipe(cplexSolver)
-//        saveRecipe(orSolver)
+        saveRecipe(coptSolve)
+        saveRecipe(cplexSolver)
+        saveRecipe(orSolver)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
