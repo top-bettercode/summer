@@ -13,12 +13,13 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 /**
  * https://www.ibm.com/docs/zh/icos/12.9.0?topic=cplex-users-manual
  *
- * No license. The size is limited to 1000 variables and 1000 constraints
+ * without license the size is limited to 1000 variables and 1000 constraints
  *
  * @author Peter Wu
  */
 class CplexSolver @JvmOverloads constructor(
         epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+        logging: Boolean = false,
         name: String = "CplexSolver"
 ) : Solver(name, epsilon) {
 
@@ -33,6 +34,7 @@ class CplexSolver @JvmOverloads constructor(
 
 
     init {
+        model.setParam(Param.MIP.Display, if (logging) 2 else 0) // 0表示禁用日志，1表示启用
         model.setParam(Param.MIP.Tolerances.Linearization, epsilon)
     }
 

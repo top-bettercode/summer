@@ -11,7 +11,7 @@ object SolverFactory {
     ): Solver {
         return when (solverType) {
             SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)
-            SolverType.CPLEX -> CplexSolver(epsilon = epsilon)
+            SolverType.CPLEX -> CplexSolver(epsilon = epsilon, logging = logging)
             SolverType.SCIP -> SCIPSolver(epsilon = epsilon)
             SolverType.CBC -> CBCSolver(epsilon = epsilon)
         }

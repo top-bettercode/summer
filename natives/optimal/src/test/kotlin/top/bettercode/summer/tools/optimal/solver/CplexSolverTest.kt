@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
  * @author Peter Wu
  */
 class CplexSolverTest : COPTSolverTest() {
-    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.CPLEX)
+    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.CPLEX, logging = true)
 
     @Test
     override fun lpNumVariables() {

@@ -9,8 +9,8 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
  * https://guide.coap.online/copt/zh-doc/
  * https://github.com/COPT-Public/COPT-Release 7.0.6
  *
- * No license. The size is limited to 2000 variables and 2000 constraints
- * No license. LP size is limited to 10000 variables and 10000 constraints
+ * without license the size is limited to 2000 variables and 2000 constraints
+ * without license LP size is limited to 10000 variables and 10000 constraints
  *
  * @author Peter Wu
  */
