@@ -1,8 +1,8 @@
 {
-  "cost" : 2653.0787619804,
-  "dryWaterWeight" : 34.0,
+  "cost" : 2645.3386591104,
+  "dryWaterWeight" : 19.8144734229,
   "includeProductionCost" : true,
-  "materialCost" : 2315.1933619804,
+  "materialCost" : 2314.6169500322,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -10,15 +10,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 368.4644702841
+    "weight" : 364.2397560586
   }, {
     "id" : "液氨",
     "index" : 10,
     "name" : "液氨",
-    "normalWeight" : 2.5089738359,
+    "normalWeight" : 3.0756231613,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "weight" : 2.5089738359
+    "weight" : 3.0756231613
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
@@ -26,7 +26,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 291.0737724664
+    "weight" : 291.9375
   }, {
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
@@ -34,15 +34,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.85,
-    "weight" : 119.2239911876
-  }, {
-    "id" : "过钙（12%）",
-    "index" : 34,
-    "name" : "过钙（12%）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.75,
-    "weight" : 14.3954588927
+    "weight" : 122.2282608696
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
@@ -50,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 157.8229337632
+    "weight" : 185.2183374007
   }, {
     "id" : "防结油（白色）",
     "index" : 64,
@@ -74,7 +66,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 75.5103995701
+    "weight" : 48.1149959327
   } ],
   "optimalProductionCost" : {
     "materialItems" : [ {
@@ -86,7 +78,7 @@
         "price" : 50.0,
         "value" : 1.0
       },
-      "value" : 0.99
+      "value" : 0.8481447342
     }, {
       "it" : {
         "cost" : 100.0,
@@ -125,9 +117,9 @@
       }
     },
     "otherFee" : 156.0,
-    "energyFee" : 149.5,
+    "energyFee" : 142.40723671,
     "taxFee" : 29.04,
-    "totalFee" : 337.8854,
+    "totalFee" : 330.72170907710006,
     "allChange" : 1.01
   },
   "productionCost" : {
@@ -140,7 +132,7 @@
         "price" : 50.0,
         "value" : 1.0
       },
-      "value" : 0.99
+      "value" : 0.848144734228
     }, {
       "it" : {
         "cost" : 100.0,
@@ -179,11 +171,11 @@
       }
     },
     "otherFee" : 156.0,
-    "energyFee" : 149.5,
+    "energyFee" : 142.4072367114,
     "taxFee" : 29.04,
-    "totalFee" : 337.8854,
+    "totalFee" : 330.72170907851404,
     "allChange" : 1.01
   },
-  "waterWeight" : 49.0,
-  "weight" : 1034.0
+  "waterWeight" : 34.8144734228,
+  "weight" : 1019.8144734229
 }

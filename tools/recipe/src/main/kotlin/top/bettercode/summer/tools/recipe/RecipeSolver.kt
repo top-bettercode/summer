@@ -237,8 +237,8 @@ object RecipeSolver {
 
         // 条件约束
         requirement.materialConditionConstraints.forEach { (whenCondition, thenCondition) ->
-            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum(0.0, targetWeight)
-            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum(0.0, targetWeight)
+            val whenVar = whenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
+            val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
             val whenCon = whenCondition.condition
             val thenCon = thenCondition.condition
             thenVar.const(thenCon.sense, thenCon.value).onlyEnforceIf(whenVar.const(whenCon.sense, whenCon.value))
@@ -257,7 +257,7 @@ object RecipeSolver {
                     ChangeLogicType.WATER_OVER -> {
                         changeProductionCost(recipeMaterials, changeLogic, recipeMaterials.map {
                             it.value.weight * it.value.indicators.waterValue
-                        }.sum(0.0, targetWeight), materialItems, dictItems, productionCost.maxChange)
+                        }.sum(), materialItems, dictItems, productionCost.maxChange)
                     }
 
                     ChangeLogicType.OVER -> {
@@ -269,17 +269,11 @@ object RecipeSolver {
             }
             //能耗费用
             val energyFee = materialItems.map {
-                val value = it.value
-//                value.lb = 0.0
-//                value.ub = productionCost.maxChange + 1
-                value * it.it.cost
+                it.value * it.it.cost
             }.sum()
             //人工+折旧费+其他费用
             val otherFee = dictItems.values.map {
-                val value = it.value
-//                value.lb = 0.0
-//                value.ub = productionCost.maxChange + 1
-                value * it.it.cost
+                it.value * it.it.cost
             }.sum()
             //税费 =（人工+折旧费+其他费用）*0.09+15
             val taxFee = otherFee * productionCost.taxRate + productionCost.taxFloat
@@ -304,7 +298,7 @@ object RecipeSolver {
     private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>, maxChange: Double) {
         val useMaterial = materials[changeLogic.materialId]
         if (useMaterial != null) {
-            val dlb = -1.0
+            val dlb = -1.0 * 100
             val thens = mutableListOf<Constraint>()
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
@@ -319,6 +313,7 @@ object RecipeSolver {
                             changeVar.ub = maxChange
                             thens.add(changeVar.eqConst(0.0))
                             material.value += changeVar
+                            material.value.lb = 0.0
                         }
                     }
 
@@ -328,11 +323,12 @@ object RecipeSolver {
                                 materialItems.forEach {
                                     //change
                                     val changeVar = ((value
-                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                                     changeVar.lb = dlb
                                     changeVar.ub = maxChange
                                     thens.add(changeVar.eqConst(0.0))
                                     it.value += changeVar
+                                    it.value.lb = 0.0
                                 }
                             }
 
@@ -341,11 +337,12 @@ object RecipeSolver {
                                 if (cost != null) {
                                     //change
                                     val changeVar = ((value
-                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                                     changeVar.lb = dlb
                                     changeVar.ub = maxChange
                                     thens.add(changeVar.eqConst(0.0))
                                     cost.value += changeVar
+                                    cost.value.lb = 0.0
                                 }
                             }
                         }

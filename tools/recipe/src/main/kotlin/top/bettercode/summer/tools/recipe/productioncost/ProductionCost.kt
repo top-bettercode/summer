@@ -66,10 +66,10 @@ data class ProductionCost(
             }
         }
         //人工+折旧费+其他费用
-        val otherFee = dictItems.values.sumOf { it.value * it.it.price * it.it.value }
+        val otherFee = dictItems.values.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
 
         //能耗费用
-        val energyFee = materialItems.sumOf { it.value * it.it.price * it.it.value }
+        val energyFee = materialItems.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
 
         //税费 =（人工+折旧费+其他费用）*0.09+15
         val taxFee = otherFee * taxRate + taxFloat
@@ -92,10 +92,10 @@ data class ProductionCost(
             }
         }
         //人工+折旧费+其他费用
-        val otherFee = dictItems.values.sumOf { it.value * it.it.price * it.it.value }
+        val otherFee = dictItems.values.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
 
         //能耗费用
-        val energyFee = materialItems.sumOf { it.value * it.it.price * it.it.value }
+        val energyFee = materialItems.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
 
         //税费 =（人工+折旧费+其他费用）*0.09+15
         val taxFee = otherFee * taxRate + taxFloat
