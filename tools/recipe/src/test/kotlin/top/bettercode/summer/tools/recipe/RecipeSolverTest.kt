@@ -30,7 +30,6 @@ internal class RecipeSolverTest {
         solve("13-05-07高氯枸磷")
         solve("24-06-10高氯枸磷")
         solve("15-15-15喷浆硫基")
-
         solve("15-15-15喷浆氯基")
         solve("15-15-15常规氯基")
     }
@@ -38,10 +37,10 @@ internal class RecipeSolverTest {
     fun solve(productName: String) {
         System.err.println("======================$productName=====================")
         val requirement = TestPrepareData.readRequirement(productName)
-        val maxResult = 1
-//        val maxResult = 20
-        val includeProductionCost = true
-//        val includeProductionCost = false
+//        val maxResult = 1
+        val maxResult = 20
+//        val includeProductionCost = true
+        val includeProductionCost = false
         val nutrientUnchanged = true
 //        val nutrientUnchanged = false
         val materialUnchanged = true

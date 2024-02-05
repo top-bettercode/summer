@@ -257,11 +257,11 @@ object RecipeSolver {
                     ChangeLogicType.WATER_OVER -> {
                         changeProductionCost(recipeMaterials, changeLogic, recipeMaterials.map {
                             it.value.weight * it.value.indicators.waterValue
-                        }.sum(), materialItems, dictItems, productionCost.maxChange)
+                        }.sum(), materialItems, dictItems)
                     }
 
                     ChangeLogicType.OVER -> {
-                        changeProductionCost(recipeMaterials, changeLogic, null, materialItems, dictItems, productionCost.maxChange)
+                        changeProductionCost(recipeMaterials, changeLogic, null, materialItems, dictItems)
                     }
 
                     ChangeLogicType.OTHER -> allChange += changeLogic.changeValue
@@ -269,11 +269,19 @@ object RecipeSolver {
             }
             //能耗费用
             val energyFee = materialItems.map {
-                it.value * it.it.cost
+                val value = it.value
+                if (value.lb < 0.0) {
+                    value.lb = 0.0
+                }
+                value * it.it.cost
             }.sum()
             //人工+折旧费+其他费用
             val otherFee = dictItems.values.map {
-                it.value * it.it.cost
+                val value = it.value
+                if (value.lb < 0.0) {
+                    value.lb = 0.0
+                }
+                value * it.it.cost
             }.sum()
             //税费 =（人工+折旧费+其他费用）*0.09+15
             val taxFee = otherFee * productionCost.taxRate + productionCost.taxFloat
@@ -295,10 +303,9 @@ object RecipeSolver {
         return PrepareData(recipeMaterials = recipeMaterials, objective = objective, materialItems = materialItems, dictItems = dictItems)
     }
 
-    private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>, maxChange: Double) {
+    private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>) {
         val useMaterial = materials[changeLogic.materialId]
         if (useMaterial != null) {
-            val dlb = -1.0 * 100
             val thens = mutableListOf<Constraint>()
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
@@ -309,11 +316,8 @@ object RecipeSolver {
                             //change
                             val changeVar = ((value
                                     ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                            changeVar.lb = dlb
-                            changeVar.ub = maxChange
                             thens.add(changeVar.eqConst(0.0))
                             material.value += changeVar
-                            material.value.lb = 0.0
                         }
                     }
 
@@ -324,11 +328,8 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                    changeVar.lb = dlb
-                                    changeVar.ub = maxChange
                                     thens.add(changeVar.eqConst(0.0))
                                     it.value += changeVar
-                                    it.value.lb = 0.0
                                 }
                             }
 
@@ -338,11 +339,8 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                             ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                    changeVar.lb = dlb
-                                    changeVar.ub = maxChange
                                     thens.add(changeVar.eqConst(0.0))
                                     cost.value += changeVar
-                                    cost.value.lb = 0.0
                                 }
                             }
                         }
