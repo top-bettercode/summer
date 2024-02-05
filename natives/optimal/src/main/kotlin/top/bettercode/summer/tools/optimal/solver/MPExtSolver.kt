@@ -458,26 +458,24 @@ open class MPExtSolver @JvmOverloads constructor(
         leIf(ub, bool2)
     }
 
-    override fun Array<out IVar>.sum(lb: Double, ub: Double): IVar {
-        val sum = solver.makeNumVar(lb, ub, "n" + (numVariables() + 1))
-
+    override fun Array<out IVar>.sum(): IVar {
+        val sum = numVar()
         val constraint = solver.makeConstraint(0.0, 0.0)
-        constraint.setCoefficient(sum, -1.0)
+        constraint.setCoefficient(sum.getDelegate(), -1.0)
         for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
-        return MPVar(sum)
+        return sum
     }
 
-    override fun Iterable<IVar>.sum(lb: Double, ub: Double): IVar {
-        val sum = solver.makeNumVar(lb, ub, "n" + (numVariables() + 1))
-
+    override fun Iterable<IVar>.sum(): IVar {
+        val sum = numVar()
         val constraint = solver.makeConstraint(0.0, 0.0)
-        constraint.setCoefficient(sum, -1.0)
+        constraint.setCoefficient(sum.getDelegate(), -1.0)
         for (v in this) {
             constraint.setCoefficient(v.getDelegate(), v.coeff)
         }
-        return MPVar(sum)
+        return sum
     }
 
     override fun Array<out IVar>.minimize(): IVar {

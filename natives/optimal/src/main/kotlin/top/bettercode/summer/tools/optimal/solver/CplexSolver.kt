@@ -418,22 +418,22 @@ class CplexSolver @JvmOverloads constructor(
         }
     }
 
-    override fun Array<out IVar>.sum(lb: Double, ub: Double): IVar {
+    override fun Array<out IVar>.sum(): IVar {
         val expr = model.linearNumExpr()
         for (it in this) {
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar(lb, ub)
+        val sum = numVar()
         model.addEq(expr, expr(sum), "c" + (numConstraints() + 1))
         return sum
     }
 
-    override fun Iterable<IVar>.sum(lb: Double, ub: Double): IVar {
+    override fun Iterable<IVar>.sum(): IVar {
         val expr = model.linearNumExpr()
         for (it in this) {
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar(lb, ub)
+        val sum = numVar()
         model.addEq(expr, expr(sum), "c" + (numConstraints() + 1))
         return sum
     }

@@ -373,22 +373,22 @@ class COPTSolver @JvmOverloads constructor(
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr, copt.Consts.LESS_EQUAL, ub)
     }
 
-    override fun Array<out IVar>.sum(lb: Double, ub: Double): IVar {
+    override fun Array<out IVar>.sum(): IVar {
         val expr = copt.Expr()
         for (it in this) {
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar(lb, ub)
+        val sum = numVar()
         model.addConstr(expr, copt.Consts.EQUAL, expr(sum), "c" + (numConstraints() + 1))
         return sum
     }
 
-    override fun Iterable<IVar>.sum(lb: Double, ub: Double): IVar {
+    override fun Iterable<IVar>.sum(): IVar {
         val expr = copt.Expr()
         for (it in this) {
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar(lb, ub)
+        val sum = numVar()
         model.addConstr(expr, copt.Consts.EQUAL, expr(sum), "c" + (numConstraints() + 1))
         return sum
     }
