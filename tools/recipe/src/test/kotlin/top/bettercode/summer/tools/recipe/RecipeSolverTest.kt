@@ -69,14 +69,14 @@ internal class RecipeSolverTest {
         assert(cplexSolver, orSolver)
 
         System.err.println("============对比保存结果=============")
-//        validatePreResult(coptSolve)
-//        validatePreResult(cplexSolver)
-//        validatePreResult(orSolver)
+        validatePreResult(coptSolve)
+        validatePreResult(cplexSolver)
+        validatePreResult(orSolver)
 
         System.err.println("============保存结果=============")
-        saveRecipe(coptSolve)
-        saveRecipe(cplexSolver)
-        saveRecipe(orSolver)
+//        saveRecipe(coptSolve)
+//        saveRecipe(cplexSolver)
+//        saveRecipe(orSolver)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
