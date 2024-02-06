@@ -79,9 +79,9 @@ internal class RecipeSolverTest {
         validatePreResult(orSolver)
 
         System.err.println("============保存结果=============")
-//        saveRecipe(coptSolve)
-//        saveRecipe(cplexSolver)
-//        saveRecipe(orSolver)
+        saveRecipe(coptSolve)
+        saveRecipe(cplexSolver)
+        saveRecipe(orSolver)
     }
 
     private fun toExcel(recipeResult: RecipeResult) {

@@ -34,6 +34,11 @@ data class RecipeIndicator<T>(
         @JsonProperty("value")
         var value: T,
         /**
+         * 单位
+         */
+        @JsonProperty("unit")
+        val unit: String? = null,
+        /**
          * 类型
          */
         @JsonProperty("type")

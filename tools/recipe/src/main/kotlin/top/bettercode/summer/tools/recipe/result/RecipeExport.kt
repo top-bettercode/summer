@@ -41,7 +41,7 @@ object RecipeExport {
             // 原料成份
             matrial.indicators.values.sortedBy { it.index }.forEachIndexed { index, indicator ->
                 val column = c + index
-                cell(r, column).value(indicator.value.scale()).width(8.0).format("0.0%").setStyle()
+                cell(r, column).value(indicator.value.scale()).width(8.0).format(if (indicator.unit == "%") "0.0%" else "").setStyle()
             }
         }
     }
@@ -59,8 +59,8 @@ object RecipeExport {
             rangeIndicators.forEach {
                 r = 0
                 cell(r++, c).value(it.name).headerStyle().width(10.0).setStyle()
-                cell(r++, c).value(it.value.max).format("0.00%").setStyle()
-                cell(r++, c++).value(it.value.min).format("0.00%").setStyle()
+                cell(r++, c).value(it.value.max).format(if (it.unit == "%") "0.0%" else "").setStyle()
+                cell(r++, c++).value(it.value.min).format(if (it.unit == "%") "0.0%" else "").setStyle()
             }
             val columnSize = rangeIndicators.size + 1
             //推优原料限制
@@ -288,11 +288,11 @@ object RecipeExport {
                 r = 1
                 //配方目标最大值
                 val max = indicator.value.max
-                cell(r++, c).value(max).bold().format("0.0%").setStyle()
+                cell(r++, c).value(max).bold().format(if (indicator.unit == "%") "0.0%" else "").setStyle()
 
                 //配方目标最小值
                 val min = indicator.value.min
-                cell(r++, c).value(min).bold().format("0.0%").setStyle()
+                cell(r++, c).value(min).bold().format(if (indicator.unit == "%") "0.0%" else "").setStyle()
 
                 //实配值
                 val value = when (indicator.type) {
@@ -301,7 +301,7 @@ object RecipeExport {
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }
                 val valid = value - min >= -OptimalUtil.DEFAULT_MIN_EPSILON && value - max <= OptimalUtil.DEFAULT_MIN_EPSILON
-                cell(r++, c).value(value).bold().format("0.0%").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
+                cell(r++, c).value(value).bold().format(if (indicator.unit == "%") "0.0%" else "").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
             //原料
@@ -341,7 +341,7 @@ object RecipeExport {
                         RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue
                         else -> material.indicators[indicator.id]?.value
                     }
-                    cell(r, c++).value(value).format("0.0%").setStyle()
+                    cell(r, c++).value(value).format(if (indicator.unit == "%") "0.0%" else "").setStyle()
                 }
                 if (showRate && material.hasOverdose) {
                     c = 1

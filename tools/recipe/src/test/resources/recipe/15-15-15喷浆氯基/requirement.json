@@ -6,6 +6,7 @@
       "index" : 5,
       "name" : "产品水分",
       "type" : "PRODUCT_WATER",
+      "unit" : "%",
       "value" : {
         "max" : 0.012,
         "min" : 0.0
@@ -16,6 +17,7 @@
       "index" : 0,
       "name" : "总养分",
       "type" : "GENERAL",
+      "unit" : "%",
       "value" : {
         "max" : 1.0,
         "min" : 0.453
@@ -26,6 +28,7 @@
       "index" : 1,
       "name" : "氮",
       "type" : "GENERAL",
+      "unit" : "%",
       "value" : {
         "max" : 1.0,
         "min" : 0.14
@@ -36,6 +39,7 @@
       "index" : 4,
       "name" : "氯离子",
       "type" : "GENERAL",
+      "unit" : "%",
       "value" : {
         "max" : 0.995,
         "min" : 0.0
@@ -48,6 +52,7 @@
       "name" : "水溶磷率",
       "otherId" : "磷",
       "type" : "RATE_TO_OTHER",
+      "unit" : "%",
       "value" : {
         "max" : 1.0,
         "min" : 0.61
@@ -58,6 +63,7 @@
       "index" : 6,
       "name" : "物料水分",
       "type" : "WATER",
+      "unit" : "%",
       "value" : {
         "max" : 1.0,
         "min" : 0.0
@@ -68,6 +74,7 @@
       "index" : 10,
       "name" : "硼",
       "type" : "GENERAL",
+      "unit" : "%",
       "value" : {
         "max" : 0.0,
         "min" : 0.0
@@ -78,6 +85,7 @@
       "index" : 2,
       "name" : "磷",
       "type" : "GENERAL",
+      "unit" : "%",
       "value" : {
         "max" : 1.0,
         "min" : 0.14
@@ -88,6 +96,7 @@
       "index" : 3,
       "name" : "钾",
       "type" : "GENERAL",
+      "unit" : "%",
       "value" : {
         "max" : 1.0,
         "min" : 0.14
@@ -98,6 +107,7 @@
       "index" : 11,
       "name" : "锌",
       "type" : "GENERAL",
+      "unit" : "%",
       "value" : {
         "max" : 0.0,
         "min" : 0.0
