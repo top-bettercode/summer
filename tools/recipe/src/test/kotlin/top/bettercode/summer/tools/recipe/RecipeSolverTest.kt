@@ -59,7 +59,7 @@ internal class RecipeSolverTest {
         System.err.println("or-tools:" + orSolver.time)
 
         System.err.println("============toExcel=============")
-        toExcel(coptSolve)
+//        toExcel(coptSolve)
 //        toExcel(cplexSolver)
 //        toExcel(orSolver)
 
