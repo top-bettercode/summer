@@ -1,8 +1,10 @@
 package top.bettercode.summer.tools.recipe
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.springframework.util.Assert
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.optimal.solver.Sense
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
@@ -17,7 +19,7 @@ import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMa
 import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCost
-import java.util.*
+import java.io.File
 import java.util.function.Predicate
 
 /**
@@ -105,8 +107,18 @@ data class RecipeRequirement(
     }
 
     //--------------------------------------------
+    fun write(file: File) {
+        val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+        objectMapper.writeValue(file, this)
+    }
+    //--------------------------------------------
 
     companion object {
+
+        fun read(file: File): RecipeRequirement {
+            val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            return objectMapper.readValue(file, RecipeRequirement::class.java)
+        }
 
         /**
          * 生产配方

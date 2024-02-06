@@ -39,9 +39,8 @@ internal class RecipeSolverTest {
         System.err.println("======================$productName=====================")
         var requirement = TestPrepareData.readRequirement(productName)
         val file = File("build/requirement.json")
-        file.writeText(json(requirement))
-//        requirement = StringUtil.readJson(file.readBytes(), RecipeRequirement::class.java)
-//        file.writeText(json(requirement))
+        requirement.write(file)
+        requirement = RecipeRequirement.read(file)
 
         val maxResult = 1
 //        val maxResult = 20
@@ -86,12 +85,20 @@ internal class RecipeSolverTest {
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
-        val excel = recipeResult.toExcel()
-        if (excel != null) {
-            Runtime.getRuntime().exec(arrayOf("xdg-open", excel.absolutePath))
+        val recipes = recipeResult.recipes
+        val size = recipes.size
+        if (size == 0) {
+            return
         }
+        val requirement = recipes[0].requirement
+        val fileName: String = (requirement.productName + if (requirement.maxUseMaterialNum == null) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxUseMaterialNum}")
+        val outFile = File("build/excel/" + recipeResult.solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
+        outFile.parentFile.mkdirs()
+
+        recipeResult.toExcel(outFile)
+        Runtime.getRuntime().exec(arrayOf("xdg-open", outFile.absolutePath))
         System.err.println("==================================================")
-        System.err.println(" 耗时：" + recipeResult.time + "ms" + " 结果：" + recipeResult.recipes.size + "个")
+        System.err.println(" 耗时：" + recipeResult.time + "ms" + " 结果：" + size + "个")
         System.err.println("==================================================")
     }
 

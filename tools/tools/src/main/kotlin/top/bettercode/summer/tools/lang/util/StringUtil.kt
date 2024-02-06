@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.lang.util
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.json.JsonWriteFeature
@@ -38,7 +39,7 @@ object StringUtil {
 
     @JvmOverloads
     @JvmStatic
-    fun objectMapper(format: Boolean = false, escapeNonAscii: Boolean = false): ObjectMapper {
+    fun objectMapper(format: Boolean = false, escapeNonAscii: Boolean = false, include: JsonInclude.Include = JsonInclude.Include.USE_DEFAULTS): ObjectMapper {
         val key = "$format:$escapeNonAscii"
         return cacheObjectMapper.getOrPut(key) {
             val objectMapper = ObjectMapper()
@@ -54,6 +55,8 @@ object StringUtil {
             if (escapeNonAscii) {
                 config = config.with(JsonWriteFeature.ESCAPE_NON_ASCII)
             }
+
+            objectMapper.setSerializationInclusion(include)
             objectMapper.setConfig(config)
 
             return objectMapper
