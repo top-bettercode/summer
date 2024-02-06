@@ -51,10 +51,10 @@ open class MaterialIDs(
         return ids.containsAll(elements)
     }
 
-    fun idsString(): String = this.toString()
+    fun idsString(): String = if (ids.size == 1) ids.first() else ids.joinToString(",", "[", "]")
 
     override fun toString(): String {
-        return if (ids.size == 1) ids.first() else ids.joinToString(",", "[", "]")
+        return idsString()
     }
 
     override fun equals(other: Any?): Boolean {
