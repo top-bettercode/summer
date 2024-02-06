@@ -77,58 +77,58 @@
     "weight" : 123.6823545693
   } ],
   "productionCost" : {
-    "materialItems" : [ {
-      "it" : {
-        "cost" : 50.0,
-        "id" : "煤",
-        "index" : 9001,
-        "name" : "煤",
-        "price" : 50.0,
-        "value" : 1.0
-      },
-      "value" : 7.3737307755420005
-    }, {
-      "it" : {
-        "cost" : 100.0,
-        "id" : "电费",
-        "index" : 9002,
-        "name" : "电费",
-        "price" : 100.0,
-        "value" : 1.0
-      },
-      "value" : 1.0
-    } ],
+    "allChange" : 1.01,
     "dictItems" : {
       "STAFF" : {
         "it" : {
-          "value" : 1.0,
           "price" : 42.0,
+          "value" : 1.0,
           "cost" : 42.0
         },
         "value" : 3.52799666947
       },
       "DEPRECIATION" : {
         "it" : {
-          "value" : 1.0,
           "price" : 52.0,
+          "value" : 1.0,
           "cost" : 52.0
         },
         "value" : 1.0
       },
       "OTHER" : {
         "it" : {
-          "value" : 1.0,
           "price" : 62.0,
+          "value" : 1.0,
           "cost" : 62.0
         },
         "value" : 1.0
       }
     },
-    "otherFee" : 262.17586011774,
     "energyFee" : 468.68653877710005,
+    "materialItems" : [ {
+      "it" : {
+        "id" : "煤",
+        "index" : 9001,
+        "name" : "煤",
+        "price" : 50.0,
+        "value" : 1.0,
+        "cost" : 50.0
+      },
+      "value" : 7.3737307755420005
+    }, {
+      "it" : {
+        "id" : "电费",
+        "index" : 9002,
+        "name" : "电费",
+        "price" : 100.0,
+        "value" : 1.0,
+        "cost" : 100.0
+      },
+      "value" : 1.0
+    } ],
+    "otherFee" : 262.17586011774,
     "taxFee" : 38.5958274105966,
-    "totalFee" : 777.152808568491,
-    "allChange" : 1.01
+    "totalFee" : 777.152808568491
   },
   "waterWeight" : 687.3730775542,
   "weight" : 1675.3730775543

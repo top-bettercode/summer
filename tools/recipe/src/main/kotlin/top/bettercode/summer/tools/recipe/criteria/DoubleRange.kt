@@ -1,6 +1,14 @@
 package top.bettercode.summer.tools.recipe.criteria
 
-data class DoubleRange(val min: Double, val max: Double) {
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+
+@JsonPropertyOrder(alphabetic = true)
+data class DoubleRange(
+        @JsonProperty("min")
+        val min: Double,
+        @JsonProperty("max")
+        val max: Double) {
 
     fun replaceRate(rate: Double): DoubleRange {
         return DoubleRange(min * rate, max * rate)

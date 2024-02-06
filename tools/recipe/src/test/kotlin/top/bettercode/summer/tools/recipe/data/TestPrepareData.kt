@@ -6,16 +6,22 @@ import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.solver.Sense
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
-import top.bettercode.summer.tools.optimal.solver.Sense
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
+import top.bettercode.summer.tools.recipe.criteria.TermThen
 import top.bettercode.summer.tools.recipe.indicator.*
-import top.bettercode.summer.tools.recipe.material.*
-import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
-import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toRelationMaterialIDs
-import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toReplacebleMaterialIDs
+import top.bettercode.summer.tools.recipe.material.MaterialCondition
+import top.bettercode.summer.tools.recipe.material.RecipeMaterial
+import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toRelationMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toReplacebleMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.*
 import java.math.BigDecimal
 import java.util.*
@@ -79,7 +85,7 @@ object TestPrepareData {
                                     val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }
                                     val typedArray = split.map { s: String ->
                                         materialIds.filter { it.contains(s) }.toMaterialIDs()
-                                    }.filter { it.isNotEmpty() }
+                                    }.filter { it.ids.isNotEmpty() }
 
                                     if (typedArray.size > 1) {
                                         notMixMaterials.add(typedArray.toTypedArray())
@@ -107,7 +113,7 @@ object TestPrepareData {
         val materialReqCol = conditionStartCol
         conditionStartCol++
         // 原料片段-仅用
-        val materialIDConstraints = HashMap<MaterialIDs, MaterialIDs>()
+        val materialIDConstraints = mutableListOf<TermThen<MaterialIDs, MaterialIDs>>()
         rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
@@ -117,7 +123,7 @@ object TestPrepareData {
                                     val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                                     val key = split[0]
                                     val array = materialIds.filter { it.contains(key) }.toMaterialIDs()
-                                    materialIDConstraints[array] = Arrays.copyOfRange(split, 1, split.size).toMaterialIDs()
+                                    materialIDConstraints.add(TermThen(array, Arrays.copyOfRange(split, 1, split.size).toMaterialIDs()))
                                 }
                             }
                 }
@@ -156,7 +162,7 @@ object TestPrepareData {
         // 条件约束
         conditionStartCol++
         val conditionCol = conditionStartCol
-        val materialConditions = mutableListOf<Pair<MaterialCondition, MaterialCondition>>()
+        val materialConditions = mutableListOf<TermThen<MaterialCondition, MaterialCondition>>()
         rows.values
                 .filter { row: Row -> row.rowNum > conditionStartRow }
                 .forEach { row: Row ->
@@ -167,7 +173,7 @@ object TestPrepareData {
                                     if (split.size == 2) {
                                         val condition1 = ofMaterialConstraint(materialIds, split[0])
                                         val condition2 = ofMaterialConstraint(materialIds, split[1])
-                                        materialConditions.add(condition1 to condition2)
+                                        materialConditions.add(TermThen(condition1, condition2))
                                     }
                                 }
                             }
@@ -202,7 +208,7 @@ object TestPrepareData {
         val minLimitCol = 8
 
         // 原料使用约束
-        val materialRangeConstraints = HashMap<MaterialIDs, DoubleRange>()
+        val materialRangeConstraints = mutableListOf<TermThen<MaterialIDs, DoubleRange>>()
         for (i in 0..2) {
             var materialNameFragment = rows[limitRowStart]!!.getCellAsString(index).orElse(null)
             if (!materialNameFragment.isNullOrBlank()) {
@@ -218,12 +224,12 @@ object TestPrepareData {
                         .getCellAsNumber(index)
                         .orElseThrow { RuntimeException("找不到用量") }
                 val array = materialIds.filter { it.contains(materialNameFragment) }.toMaterialIDs()
-                materialRangeConstraints[array] = DoubleRange(minUse.toDouble().scale(), maxUse.toDouble().scale())
+                materialRangeConstraints.add(TermThen(array, DoubleRange(minUse.toDouble().scale(), maxUse.toDouble().scale())))
             }
             index++
         }
         // 原料之间的用量关系
-        val materialRelationConstraints = HashMap<ReplacebleMaterialIDs, MutableMap<RelationMaterialIDs, RecipeRelation>>()
+        val materialRelationConstraints = mutableListOf<TermThen<ReplacebleMaterialIDs, MutableList<TermThen<RelationMaterialIDs, RecipeRelation>>>>()
         // 液氨
         for (i in 0..4) {
             var materialNameFragment = rows[limitRowStart]!!.getCellAsString(index).orElse(null)
@@ -245,13 +251,23 @@ object TestPrepareData {
                 val relationIds = if (hasRelation) materialIds.filter { it.contains("氯化钾") } else null
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
-                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toMaterialIDs().toReplacebleMaterialIDs(AMMONIUM_CARBONATE, LA_2_CAUSE_RATIO)) { HashMap<RelationMaterialIDs, RecipeRelation>() }
+                    val replacebleMaterialIDs = m2.toMaterialIDs().replace(LA_2_CAUSE_RATIO, AMMONIUM_CARBONATE)
+                    var find = materialRelationConstraints.find { it.term == replacebleMaterialIDs }
+                    if (find == null) {
+                        find = TermThen(replacebleMaterialIDs, mutableListOf())
+                        materialRelationConstraints.add(find)
+                    }
+                    val relationMaterialIDs = m1.toRelationMaterialIDs(relationIds?.toMaterialIDs())
+                    var findRelation = find.then.find { it.term == relationMaterialIDs }
                     val doubleRange = DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
-                    val rangePair = materialRelation.computeIfAbsent(m1.toRelationMaterialIDs(relationIds?.toMaterialIDs())) { RecipeRelation(doubleRange) }
+                    if (findRelation == null) {
+                        findRelation = TermThen(relationMaterialIDs, RecipeRelation(doubleRange))
+                        find.then.add(findRelation)
+                    }
                     if (isOverdose) {
-                        rangePair.overdoseMaterial = RecipeRelation(doubleRange)
+                        findRelation.then.overdoseMaterial = RecipeRelation(doubleRange)
                     } else {
-                        rangePair.normal = doubleRange
+                        findRelation.then.normal = doubleRange
                     }
                 }
             }
@@ -272,24 +288,27 @@ object TestPrepareData {
                 val m2 = materialIds.filter { it == SULFURIC_ACID }
 
                 if (m1.isNotEmpty() && m2.isNotEmpty()) {
-                    val materialRelation = materialRelationConstraints.computeIfAbsent(m2.toReplacebleMaterialIDs()) { HashMap<RelationMaterialIDs, RecipeRelation>() }
+                    val replacebleMaterialIDs = m2.toReplacebleMaterialIDs()
+                    var find = materialRelationConstraints.find { it.term == replacebleMaterialIDs }
+                    if (find == null) {
+                        find = TermThen(replacebleMaterialIDs, mutableListOf())
+                        materialRelationConstraints.add(find)
+                    }
                     val doubleRange = DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
-                    val rangePair = materialRelation.computeIfAbsent(m1.toRelationMaterialIDs()) { RecipeRelation(doubleRange) }
+                    val relationMaterialIDs = m1.toRelationMaterialIDs()
+                    var findRelation = find.then.find { it.term == relationMaterialIDs }
+                    if (findRelation == null) {
+                        findRelation = TermThen(relationMaterialIDs, RecipeRelation(doubleRange))
+                        find.then.add(findRelation)
+                    }
                     if (isOverdose) {
-                        rangePair.overdose = doubleRange
+                        findRelation.then.overdose = doubleRange
                     } else {
-                        rangePair.normal = doubleRange
+                        findRelation.then.normal = doubleRange
                     }
                 }
             }
             index++
-        }
-
-//        val relationIndexList = listOf(ReplacebleMaterialIDs(arrayOf(LIQUID_AMMONIA), MaterialIDs.of(AMMONIUM_CARBONATE), LA_2_CAUSE_RATIO),ReplacebleMaterialIDs(arrayOf(SULFURIC_ACID)))
-        val relationIndexList = listOf(ReplacebleMaterialIDs(SULFURIC_ACID), ReplacebleMaterialIDs(id = arrayOf(LIQUID_AMMONIA), MaterialIDs(AMMONIUM_CARBONATE), LA_2_CAUSE_RATIO))
-
-        val materialRelationConstraints2 = materialRelationConstraints.toSortedMap { o1, o2 ->
-            relationIndexList.indexOf(o1).compareTo(relationIndexList.indexOf(o2))
         }
 
         // 能耗费用
@@ -312,7 +331,10 @@ object TestPrepareData {
 
         val productionCost = ProductionCost(materialItems = materialItems, dictItems = dictItems, taxRate = 0.09, taxFloat = 15.0, changes = changes)
 
-        val requirement = RecipeRequirement(productName = productName,
+        val relationIndexList = listOf(ReplacebleMaterialIDs(SULFURIC_ACID), ReplacebleMaterialIDs(id = arrayOf(LIQUID_AMMONIA), LA_2_CAUSE_RATIO, MaterialIDs(AMMONIUM_CARBONATE)))
+
+        val requirement = RecipeRequirement.of(
+                productName = productName,
                 targetWeight = 1000.0,
                 materials = materials,
                 productionCost = productionCost,
@@ -323,7 +345,7 @@ object TestPrepareData {
                 notMixMaterialConstraints = notMixMaterials,
                 materialRangeConstraints = materialRangeConstraints,
                 materialIDConstraints = materialIDConstraints,
-                materialRelationConstraints = materialRelationConstraints2,
+                materialRelationConstraints = materialRelationConstraints.map { TermThen(it.term, it.then.toList()) }.sortedBy { relationIndexList.indexOf(it.term) },
                 materialConditionConstraints = materialConditions
         )
         return requirement

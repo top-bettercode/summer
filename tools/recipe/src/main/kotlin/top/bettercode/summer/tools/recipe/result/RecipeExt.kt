@@ -2,9 +2,9 @@ package top.bettercode.summer.tools.recipe.result
 
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
-import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
-import top.bettercode.summer.tools.recipe.material.RelationMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 
 /**
  *
@@ -17,11 +17,10 @@ class RecipeExt(private val recipe: Recipe) {
      */
     val RecipeMaterialValue.hasOverdose: Boolean
         get() {
-            val relationMap = recipe.requirement.materialRelationConstraints.values.find { it.keys.any { m -> m.contains(this.id) } }
+            val relationMap = recipe.requirement.materialRelationConstraints.find { it.then.any { m -> m.term.contains(this.id) } }
                     ?: return false
-            val iDs = relationMap.keys.first { it.contains(this.id) }
-            val recipeRelation = relationMap[iDs]
-            return recipeRelation?.overdose != null || recipeRelation?.overdoseMaterial != null
+            val recipeRelation = relationMap.then.first().then
+            return recipeRelation.overdose != null || recipeRelation.overdoseMaterial != null
         }
 
     /**
@@ -29,11 +28,11 @@ class RecipeExt(private val recipe: Recipe) {
      */
     val RecipeMaterialValue.relationName: String?
         get() {
-            val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.value.keys.any { m -> m.contains(this.id) } }
-            val ids = materialRelationConstraints.keys.firstOrNull() ?: return null
+            val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.then.any { m -> m.term.contains(this.id) } }
+            val ids = materialRelationConstraints.firstOrNull() ?: return null
 
             val materials = recipe.materials
-            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
+            val usedIds = materials.filter { ids.term.contains(it.id) }.map { it.id }.toMaterialIDs()
             return usedIds.toString()
         }
 
@@ -42,7 +41,7 @@ class RecipeExt(private val recipe: Recipe) {
      */
     private val RecipeMaterialValue.replaceRate: Double
         get() {
-            val ids = recipe.requirement.materialRelationConstraints.filter { it.value.keys.any { m -> m.contains(this.id) } }.keys.firstOrNull()
+            val ids = recipe.requirement.materialRelationConstraints.firstOrNull { it.term.any { m -> m.contains(this.id) } }?.term
                     ?: return 1.0
 
             val usedIds = recipe.materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
@@ -52,10 +51,10 @@ class RecipeExt(private val recipe: Recipe) {
 
     val RecipeMaterialValue.recipeRelationPair: Pair<RelationMaterialIDs, RecipeRelation>?
         get() {
-            val entry = recipe.requirement.materialRelationConstraints.values.flatMap { it.entries }.firstOrNull { it.key.contains(this.id) }
+            val entry = recipe.requirement.materialRelationConstraints.flatMap { it.then }.firstOrNull { it.term.contains(this.id) }
                     ?: return null
 
-            return entry.key to entry.value.replaceRate(replaceRate)
+            return entry.term to entry.then.replaceRate(replaceRate)
         }
 
 
@@ -65,10 +64,10 @@ class RecipeExt(private val recipe: Recipe) {
             val recipeRelationPair = recipeRelationPair
             if (recipeRelationPair == null) {
                 //消耗汇总
-                val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.key.contains(this.id) }
-                val entry = materialRelationConstraints.entries.firstOrNull() ?: return null
+                val materialRelationConstraint = recipe.requirement.materialRelationConstraints.firstOrNull { it.term.contains(this.id) }
+                        ?: return null
                 recipe.apply {
-                    return entry.relationValue
+                    return materialRelationConstraint.relationValue
                 }
             } else {
                 var usedMinNormalWeight = 0.0

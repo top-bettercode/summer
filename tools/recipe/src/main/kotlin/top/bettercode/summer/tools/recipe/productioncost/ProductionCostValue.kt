@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.productioncost
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil
@@ -10,7 +11,8 @@ import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
  *
  * @author Peter Wu
  */
-class ProductionCostValue(
+@JsonPropertyOrder(alphabetic = true)
+data class ProductionCostValue(
         /**
          * 能耗费用
          */

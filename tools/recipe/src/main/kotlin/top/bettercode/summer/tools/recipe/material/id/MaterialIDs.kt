@@ -1,15 +1,18 @@
-package top.bettercode.summer.tools.recipe.material
+package top.bettercode.summer.tools.recipe.material.id
+
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  *
  * @author Peter Wu
  */
-open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialIDs>, Set<String> by ids {
-    constructor(vararg id: String) : this(id.toHashSet())
-    constructor(ids: Iterable<String>) : this(ids.toHashSet())
+open class MaterialIDs(
+        @JsonProperty("ids")
+        val ids: MutableList<String>) : Comparable<MaterialIDs>, Iterable<String> {
+    constructor(vararg id: String) : this(id.toMutableList())
+    constructor(ids: Iterable<String>) : this(ids.toMutableList())
 
     companion object {
-
         fun Array<String>.toMaterialIDs(): MaterialIDs {
             return MaterialIDs(*this)
         }
@@ -21,7 +24,6 @@ open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialID
         fun Array<String>.toRelationMaterialIDs(relationIds: MaterialIDs? = null): RelationMaterialIDs {
             return RelationMaterialIDs(id = this, relationIds = relationIds)
         }
-
 
         fun Iterable<String>.toMaterialIDs(): MaterialIDs {
             return MaterialIDs(this)
@@ -37,11 +39,19 @@ open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialID
 
     }
 
-    fun toReplacebleMaterialIDs(replaceId: String, replaceRate: Double): ReplacebleMaterialIDs {
-        return ReplacebleMaterialIDs(this, MaterialIDs(replaceId), replaceRate)
+    fun replace(replaceRate: Double, replaceId: String): ReplacebleMaterialIDs {
+        return ReplacebleMaterialIDs(ids, replaceRate, MaterialIDs(replaceId))
     }
 
-    val idStr: String = this.toString()
+    open fun contains(element: String): Boolean {
+        return ids.contains(element)
+    }
+
+    open fun containsAll(elements: Collection<String>): Boolean {
+        return ids.containsAll(elements)
+    }
+
+    fun idsString(): String = this.toString()
 
     override fun toString(): String {
         return if (ids.size == 1) ids.first() else ids.joinToString(",", "[", "]")
@@ -51,16 +61,18 @@ open class MaterialIDs(private val ids: HashSet<String>) : Comparable<MaterialID
         if (this === other) return true
         if (other !is MaterialIDs) return false
 
-        if (ids != other.ids) return false
+        if (ids.toSet() != other.ids.toSet()) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return ids.hashCode()
+        return ids.toSet().hashCode()
     }
 
     override fun compareTo(other: MaterialIDs): Int {
         return toString().compareTo(other.toString())
     }
+
+    override operator fun iterator(): MutableIterator<String> = ids.iterator()
 }

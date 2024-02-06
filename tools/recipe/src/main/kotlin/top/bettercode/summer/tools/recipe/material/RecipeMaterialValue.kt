@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.recipe.material
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 
 /**
  *

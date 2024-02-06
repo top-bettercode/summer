@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.material
  *
  * @author Peter Wu
  */
-class RecipeMaterials(materials: List<IRecipeMaterial>) : HashMap<String, IRecipeMaterial>() {
+class RecipeMaterials(materials: List<IRecipeMaterial> = emptyList()) : HashMap<String, IRecipeMaterial>() {
 
     init {
         materials.forEach {

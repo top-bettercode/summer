@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.result
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil
@@ -9,12 +10,13 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.optimal.solver.Sense
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
+import top.bettercode.summer.tools.recipe.criteria.TermThen
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
-import top.bettercode.summer.tools.recipe.material.MaterialIDs.Companion.toMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
-import top.bettercode.summer.tools.recipe.material.RelationMaterialIDs
-import top.bettercode.summer.tools.recipe.material.ReplacebleMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
 
 /**
@@ -22,6 +24,7 @@ import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
  *
  * @author Peter Wu
  */
+@JsonPropertyOrder(alphabetic = true)
 data class Recipe(
         /**
          * 配方要求
@@ -92,7 +95,7 @@ data class Recipe(
         }
 
         val materialRangeConstraints = requirement.materialRangeConstraints
-        val mustUseMaterials = materialRangeConstraints.filter { it.value.min > 0 }.map { it.key }.flatten()
+        val mustUseMaterials = materialRangeConstraints.filter { it.then.min > 0 }.map { it.term }.flatten()
 
         // 指标原料约束
         val materialIDIndicators = requirement.indicatorMaterialIDConstraints
@@ -109,14 +112,14 @@ data class Recipe(
         val usedMaterials = materials.map { it.id }
         // 指定用原料ID
         val useMaterials = requirement.useMaterialConstraints
-        if (useMaterials.isNotEmpty()) {
+        if (useMaterials.ids.isNotEmpty()) {
             if (!useMaterials.containsAll(usedMaterials)) {
                 throw IllegalRecipeException("配方所用原料：${usedMaterials} 不在范围${useMaterials}内")
             }
         }
         // 不能用原料ID
         val noUseMaterials = requirement.noUseMaterialConstraints
-        if (noUseMaterials.isNotEmpty()) {
+        if (noUseMaterials.ids.isNotEmpty()) {
             if (usedMaterials.any { noUseMaterials.contains(it) }) {
                 throw IllegalRecipeException("配方所用原料：${usedMaterials} 包含不可用原料${noUseMaterials}内")
             }
@@ -149,8 +152,8 @@ data class Recipe(
         }
         // 关联原料约束
         val materialRelationConstraints = requirement.materialRelationConstraints
-        for (entry in materialRelationConstraints) {
-            val ids = entry.key
+        for (termThen in materialRelationConstraints) {
+            val ids = termThen.term
             val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
             val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             val usedNormalWeight = materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
@@ -159,7 +162,7 @@ data class Recipe(
             if ((usedWeight - usedAddWeight).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException("原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}")
             }
-            val (normal, overdose) = entry.relationValue
+            val (normal, overdose) = termThen.relationValue
             val usedMinNormalWeights = normal.min
             val usedMaxNormalWeights = normal.max
             val usedMinOverdoseWeights = overdose.min
@@ -260,9 +263,9 @@ data class Recipe(
     /**
      * 消耗原料汇总相关值
      */
-    val Map.Entry<ReplacebleMaterialIDs, Map<RelationMaterialIDs, RecipeRelation>>.relationValue: Pair<DoubleRange, DoubleRange>
+    val TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>.relationValue: Pair<DoubleRange, DoubleRange>
         get() {
-            val ids = this.key
+            val ids = this.term
             val materials = materials
             val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
             val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
@@ -271,7 +274,7 @@ data class Recipe(
             var usedMaxNormalWeight = 0.0
             var usedMinOverdoseWeight = 0.0
             var usedMaxOverdoseWeight = 0.0
-            this.value.forEach { (materialIDs, recipeRelation) ->
+            this.then.forEach { (materialIDs, recipeRelation) ->
                 val normal = recipeRelation.normal
                 val overdose = recipeRelation.overdose
                 val relationIds = materialIDs.relationIds

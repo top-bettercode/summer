@@ -6,4 +6,4 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
  *
  * @author Peter Wu
  */
-class RecipeRangeIndicators(indicators: List<RecipeIndicator<DoubleRange>>) : RecipeIndicators<DoubleRange>(indicators)
+class RecipeRangeIndicators(indicators: List<RecipeIndicator<DoubleRange>> = emptyList()) : RecipeIndicators<DoubleRange>(indicators)

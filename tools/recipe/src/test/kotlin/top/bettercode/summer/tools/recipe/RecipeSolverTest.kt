@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.SolverType
-import top.bettercode.summer.tools.recipe.data.*
-import top.bettercode.summer.tools.recipe.indicator.RecipeIndicator
+import top.bettercode.summer.tools.recipe.data.RecipeMaterialView
+import top.bettercode.summer.tools.recipe.data.RecipeView
+import top.bettercode.summer.tools.recipe.data.TestPrepareData
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.result.Recipe
 import top.bettercode.summer.tools.recipe.result.RecipeResult
@@ -36,7 +37,12 @@ internal class RecipeSolverTest {
 
     fun solve(productName: String) {
         System.err.println("======================$productName=====================")
-        val requirement = TestPrepareData.readRequirement(productName)
+        var requirement = TestPrepareData.readRequirement(productName)
+        val file = File("build/requirement.json")
+        file.writeText(json(requirement))
+//        requirement = StringUtil.readJson(file.readBytes(), RecipeRequirement::class.java)
+//        file.writeText(json(requirement))
+
         val maxResult = 1
 //        val maxResult = 20
         val includeProductionCost = true
@@ -54,7 +60,7 @@ internal class RecipeSolverTest {
         System.err.println("or-tools:" + orSolver.time)
 
         System.err.println("============toExcel=============")
-//        toExcel(coptSolve)
+        toExcel(coptSolve)
 //        toExcel(cplexSolver)
 //        toExcel(orSolver)
 
@@ -107,9 +113,8 @@ internal class RecipeSolverTest {
         val expectedRequirement = File("$dir/requirement.json").bufferedReader().readText()
         //配方要求
         Assertions.assertEquals(expectedRequirement, json(requirement,
-                IRecipeMaterial::class.java to RecipeMaterialView::class.java,
-                RecipeRequirement::class.java to RecipeRequirementView::class.java,
-                RecipeIndicator::class.java to RecipeIndicatorView::class.java), recipeResult.solverName)
+                IRecipeMaterial::class.java to RecipeMaterialView::class.java
+        ), recipeResult.solverName)
         //配方
         recipes.forEachIndexed { index, recipe ->
             val expectedRecipe = File("$dir/${recipeResult.solverName}/配方${index + 1}.json").bufferedReader().readText()
@@ -146,9 +151,8 @@ internal class RecipeSolverTest {
         dir.mkdirs()
         //配方要求
         File("$dir/requirement.json").writeText(json(requirement,
-                IRecipeMaterial::class.java to RecipeMaterialView::class.java,
-                RecipeRequirement::class.java to RecipeRequirementView::class.java,
-                RecipeIndicator::class.java to RecipeIndicatorView::class.java))
+                IRecipeMaterial::class.java to RecipeMaterialView::class.java
+        ))
         //配方
         recipes.forEachIndexed { index, recipe ->
             val file = File("$dir/${recipeResult.solverName}/配方${index + 1}.json")

@@ -5,185 +5,179 @@
       "id" : "产品水分",
       "index" : 5,
       "name" : "产品水分",
-      "nutrient" : false,
-      "productWater" : true,
-      "rateToOther" : false,
       "type" : "PRODUCT_WATER",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.012
-      },
-      "water" : false
+        "max" : 0.012,
+        "min" : 0.0
+      }
     },
     "总养分" : {
       "id" : "总养分",
       "index" : 0,
       "name" : "总养分",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.453,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.453
+      }
     },
     "氮" : {
       "id" : "氮",
       "index" : 1,
       "name" : "氮",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.14,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.14
+      }
     },
     "氯离子" : {
       "id" : "氯离子",
       "index" : 4,
       "name" : "氯离子",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.995
-      },
-      "water" : false
+        "max" : 0.995,
+        "min" : 0.0
+      }
     },
     "水溶磷率" : {
       "id" : "水溶磷率",
       "index" : 7,
       "itId" : "水溶磷",
       "name" : "水溶磷率",
-      "nutrient" : false,
       "otherId" : "磷",
-      "productWater" : false,
-      "rateToOther" : true,
       "type" : "RATE_TO_OTHER",
       "value" : {
-        "min" : 0.61,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.61
+      }
     },
     "物料水分" : {
       "id" : "物料水分",
       "index" : 6,
       "name" : "物料水分",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "WATER",
       "value" : {
-        "min" : 0.0,
-        "max" : 1.0
-      },
-      "water" : true
+        "max" : 1.0,
+        "min" : 0.0
+      }
     },
     "硼" : {
       "id" : "硼",
       "index" : 10,
       "name" : "硼",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.0
-      },
-      "water" : false
+        "max" : 0.0,
+        "min" : 0.0
+      }
     },
     "磷" : {
       "id" : "磷",
       "index" : 2,
       "name" : "磷",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.14,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.14
+      }
     },
     "钾" : {
       "id" : "钾",
       "index" : 3,
       "name" : "钾",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.14,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.14
+      }
     },
     "锌" : {
       "id" : "锌",
       "index" : 11,
       "name" : "锌",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.0
-      },
-      "water" : false
-    }
-  },
-  "materialConditionConstraints" : [ ],
-  "materialIDConstraints" : {
-    "[喷浆专用尿素,普通尿素,90天缓释尿素,多肽尿素,大颗粒尿素,60天缓释尿素]" : [ "喷浆专用尿素" ]
-  },
-  "materialRangeConstraints" : {
-    "喷浆专用尿素" : {
-      "min" : 0.0,
-      "max" : 15.0
-    },
-    "防结油（白色）" : {
-      "min" : 2.0,
-      "max" : 2.0
-    },
-    "防结粉（白色）" : {
-      "min" : 3.0,
-      "max" : 3.0
-    }
-  },
-  "materialRelationConstraints" : {
-    "[液氨]\n4.7647\n[碳铵]" : {
-      "[8-40-0再浆肥（粉）,8-40-0再浆肥（颗料）]" : {
-        "normal" : {
-          "min" : 0.008619718,
-          "max" : 0.010535211
-        }
-      },
-      "[硫酸]" : {
-        "normal" : {
-          "min" : 0.350443208,
-          "max" : 0.350443208
-        }
-      },
-      "[磷酸]" : {
-        "normal" : {
-          "min" : 0.049338455,
-          "max" : 0.055505762
-        }
+        "max" : 0.0,
+        "min" : 0.0
       }
     }
   },
+  "materialConditionConstraints" : [ ],
+  "materialIDConstraints" : [ {
+    "term" : {
+      "ids" : [ "普通尿素", "大颗粒尿素", "多肽尿素", "60天缓释尿素", "90天缓释尿素", "喷浆专用尿素" ]
+    },
+    "then" : {
+      "ids" : [ "喷浆专用尿素" ]
+    }
+  } ],
+  "materialRangeConstraints" : [ {
+    "term" : {
+      "ids" : [ "防结粉（白色）" ]
+    },
+    "then" : {
+      "max" : 3.0,
+      "min" : 3.0
+    }
+  }, {
+    "term" : {
+      "ids" : [ "防结油（白色）" ]
+    },
+    "then" : {
+      "max" : 2.0,
+      "min" : 2.0
+    }
+  }, {
+    "term" : {
+      "ids" : [ "喷浆专用尿素" ]
+    },
+    "then" : {
+      "max" : 15.0,
+      "min" : 0.0
+    }
+  } ],
+  "materialRelationConstraints" : [ {
+    "term" : {
+      "ids" : [ "液氨" ],
+      "replaceRate" : 4.7647,
+      "replaceIds" : {
+        "ids" : [ "碳铵" ]
+      }
+    },
+    "then" : [ {
+      "term" : {
+        "ids" : [ "磷酸" ]
+      },
+      "then" : {
+        "normal" : {
+          "max" : 0.055505762,
+          "min" : 0.049338455
+        }
+      }
+    }, {
+      "term" : {
+        "ids" : [ "硫酸" ]
+      },
+      "then" : {
+        "normal" : {
+          "max" : 0.350443208,
+          "min" : 0.350443208
+        }
+      }
+    }, {
+      "term" : {
+        "ids" : [ "8-40-0再浆肥（粉）", "8-40-0再浆肥（颗料）" ]
+      },
+      "then" : {
+        "normal" : {
+          "max" : 0.010535211,
+          "min" : 0.008619718
+        }
+      }
+    } ]
+  } ],
   "materials" : [ {
     "id" : "氯化铵（湿）",
     "index" : 5,
@@ -500,71 +494,75 @@
     "name" : "喷浆专用尿素",
     "price" : 2.8
   } ],
-  "noUseMaterialConstraints" : [ "喷浆硫基用95氯化钾" ],
+  "noUseMaterialConstraints" : {
+    "ids" : [ "喷浆硫基用95氯化钾" ]
+  },
   "notMixMaterialConstraints" : [ ],
   "productName" : "15-15-15喷浆氯基",
   "productionCost" : {
+    "changes" : [ {
+      "changeItems" : [ {
+        "id" : "煤",
+        "type" : "MATERIAL"
+      } ],
+      "changeValue" : 0.01,
+      "eachValue" : 1.0,
+      "exceedValue" : 50.0,
+      "materialId" : "液氨",
+      "type" : "WATER_OVER"
+    }, {
+      "changeItems" : [ {
+        "id" : "STAFF",
+        "type" : "DICT"
+      } ],
+      "changeValue" : 0.01,
+      "eachValue" : 1.0,
+      "exceedValue" : 100.0,
+      "materialId" : "硫酸",
+      "type" : "OVER"
+    }, {
+      "changeValue" : 0.01,
+      "type" : "OTHER"
+    } ],
+    "dictItems" : {
+      "STAFF" : {
+        "price" : 42.0,
+        "value" : 1.0,
+        "cost" : 42.0
+      },
+      "DEPRECIATION" : {
+        "price" : 52.0,
+        "value" : 1.0,
+        "cost" : 52.0
+      },
+      "OTHER" : {
+        "price" : 62.0,
+        "value" : 1.0,
+        "cost" : 62.0
+      }
+    },
     "materialItems" : [ {
-      "cost" : 50.0,
       "id" : "煤",
       "index" : 9001,
       "name" : "煤",
       "price" : 50.0,
-      "value" : 1.0
+      "value" : 1.0,
+      "cost" : 50.0
     }, {
-      "cost" : 100.0,
       "id" : "电费",
       "index" : 9002,
       "name" : "电费",
       "price" : 100.0,
-      "value" : 1.0
+      "value" : 1.0,
+      "cost" : 100.0
     } ],
-    "dictItems" : {
-      "STAFF" : {
-        "value" : 1.0,
-        "price" : 42.0,
-        "cost" : 42.0
-      },
-      "DEPRECIATION" : {
-        "value" : 1.0,
-        "price" : 52.0,
-        "cost" : 52.0
-      },
-      "OTHER" : {
-        "value" : 1.0,
-        "price" : 62.0,
-        "cost" : 62.0
-      }
-    },
-    "taxRate" : 0.09,
     "taxFloat" : 15.0,
-    "changes" : [ {
-      "type" : "WATER_OVER",
-      "changeValue" : 0.01,
-      "materialId" : "液氨",
-      "exceedValue" : 50.0,
-      "eachValue" : 1.0,
-      "changeItems" : [ {
-        "type" : "MATERIAL",
-        "id" : "煤"
-      } ]
-    }, {
-      "type" : "OVER",
-      "changeValue" : 0.01,
-      "materialId" : "硫酸",
-      "exceedValue" : 100.0,
-      "eachValue" : 1.0,
-      "changeItems" : [ {
-        "type" : "DICT",
-        "id" : "STAFF"
-      } ]
-    }, {
-      "type" : "OTHER",
-      "changeValue" : 0.01
-    } ]
+    "taxRate" : 0.09
   },
   "targetWeight" : 1000.0,
-  "timeout" : 30,
-  "useMaterialConstraints" : [ ],
-  "yield" : 1.0
+  "useMaterialConstraints" : {
+    "ids" : [ ]
+  },
+  "yield" : 1.0,
+  "timeout" : 30
 }

@@ -5,154 +5,117 @@
       "id" : "产品水分",
       "index" : 5,
       "name" : "产品水分",
-      "nutrient" : false,
-      "productWater" : true,
-      "rateToOther" : false,
       "type" : "PRODUCT_WATER",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.05
-      },
-      "water" : false
+        "max" : 0.05,
+        "min" : 0.0
+      }
     },
     "总养分" : {
       "id" : "总养分",
       "index" : 0,
       "name" : "总养分",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.253,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.253
+      }
     },
     "氮" : {
       "id" : "氮",
       "index" : 1,
       "name" : "氮",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.12,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.12
+      }
     },
     "氯离子" : {
       "id" : "氯离子",
       "index" : 4,
       "name" : "氯离子",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.995
-      },
-      "water" : false
+        "max" : 0.995,
+        "min" : 0.0
+      }
     },
     "水溶磷率" : {
       "id" : "水溶磷率",
       "index" : 7,
       "itId" : "水溶磷",
       "name" : "水溶磷率",
-      "nutrient" : false,
       "otherId" : "磷",
-      "productWater" : false,
-      "rateToOther" : true,
       "type" : "RATE_TO_OTHER",
       "value" : {
-        "min" : 0.0,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.0
+      }
     },
     "物料水分" : {
       "id" : "物料水分",
       "index" : 6,
       "name" : "物料水分",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "WATER",
       "value" : {
-        "min" : 0.0,
-        "max" : 1.0
-      },
-      "water" : true
+        "max" : 1.0,
+        "min" : 0.0
+      }
     },
     "硼" : {
       "id" : "硼",
       "index" : 10,
       "name" : "硼",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.0
-      },
-      "water" : false
+        "max" : 0.0,
+        "min" : 0.0
+      }
     },
     "磷" : {
       "id" : "磷",
       "index" : 2,
       "name" : "磷",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.045,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.045
+      }
     },
     "钾" : {
       "id" : "钾",
       "index" : 3,
       "name" : "钾",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.06,
-        "max" : 1.0
-      },
-      "water" : false
+        "max" : 1.0,
+        "min" : 0.06
+      }
     },
     "锌" : {
       "id" : "锌",
       "index" : 11,
       "name" : "锌",
-      "nutrient" : false,
-      "productWater" : false,
-      "rateToOther" : false,
       "type" : "GENERAL",
       "value" : {
-        "min" : 0.0,
-        "max" : 0.0
-      },
-      "water" : false
+        "max" : 0.0,
+        "min" : 0.0
+      }
     }
   },
   "materialConditionConstraints" : [ ],
-  "materialIDConstraints" : { },
-  "materialRangeConstraints" : {
-    "白泥" : {
-      "min" : 80.0,
-      "max" : 100.0
+  "materialIDConstraints" : [ ],
+  "materialRangeConstraints" : [ {
+    "term" : {
+      "ids" : [ "白泥" ]
+    },
+    "then" : {
+      "max" : 100.0,
+      "min" : 80.0
     }
-  },
-  "materialRelationConstraints" : { },
+  } ],
+  "materialRelationConstraints" : [ ],
   "materials" : [ {
     "id" : "普通尿素",
     "index" : 0,
@@ -429,71 +392,79 @@
     "name" : "1000亿微生物菌",
     "price" : 24.0
   } ],
-  "noUseMaterialConstraints" : [ ],
-  "notMixMaterialConstraints" : [ [ [ "多肽尿素", "普通尿素", "大颗粒尿素" ], [ "硝铵" ] ] ],
+  "noUseMaterialConstraints" : {
+    "ids" : [ ]
+  },
+  "notMixMaterialConstraints" : [ [ {
+    "ids" : [ "普通尿素", "大颗粒尿素", "多肽尿素" ]
+  }, {
+    "ids" : [ "硝铵" ]
+  } ] ],
   "productName" : "13-05-07高氯枸磷",
   "productionCost" : {
+    "changes" : [ {
+      "changeItems" : [ {
+        "id" : "煤",
+        "type" : "MATERIAL"
+      } ],
+      "changeValue" : 0.01,
+      "eachValue" : 1.0,
+      "exceedValue" : 50.0,
+      "materialId" : "液氨",
+      "type" : "WATER_OVER"
+    }, {
+      "changeItems" : [ {
+        "id" : "STAFF",
+        "type" : "DICT"
+      } ],
+      "changeValue" : 0.01,
+      "eachValue" : 1.0,
+      "exceedValue" : 100.0,
+      "materialId" : "硫酸",
+      "type" : "OVER"
+    }, {
+      "changeValue" : 0.01,
+      "type" : "OTHER"
+    } ],
+    "dictItems" : {
+      "STAFF" : {
+        "price" : 42.0,
+        "value" : 1.0,
+        "cost" : 42.0
+      },
+      "DEPRECIATION" : {
+        "price" : 52.0,
+        "value" : 1.0,
+        "cost" : 52.0
+      },
+      "OTHER" : {
+        "price" : 62.0,
+        "value" : 1.0,
+        "cost" : 62.0
+      }
+    },
     "materialItems" : [ {
-      "cost" : 50.0,
       "id" : "煤",
       "index" : 9001,
       "name" : "煤",
       "price" : 50.0,
-      "value" : 1.0
+      "value" : 1.0,
+      "cost" : 50.0
     }, {
-      "cost" : 100.0,
       "id" : "电费",
       "index" : 9002,
       "name" : "电费",
       "price" : 100.0,
-      "value" : 1.0
+      "value" : 1.0,
+      "cost" : 100.0
     } ],
-    "dictItems" : {
-      "STAFF" : {
-        "value" : 1.0,
-        "price" : 42.0,
-        "cost" : 42.0
-      },
-      "DEPRECIATION" : {
-        "value" : 1.0,
-        "price" : 52.0,
-        "cost" : 52.0
-      },
-      "OTHER" : {
-        "value" : 1.0,
-        "price" : 62.0,
-        "cost" : 62.0
-      }
-    },
-    "taxRate" : 0.09,
     "taxFloat" : 15.0,
-    "changes" : [ {
-      "type" : "WATER_OVER",
-      "changeValue" : 0.01,
-      "materialId" : "液氨",
-      "exceedValue" : 50.0,
-      "eachValue" : 1.0,
-      "changeItems" : [ {
-        "type" : "MATERIAL",
-        "id" : "煤"
-      } ]
-    }, {
-      "type" : "OVER",
-      "changeValue" : 0.01,
-      "materialId" : "硫酸",
-      "exceedValue" : 100.0,
-      "eachValue" : 1.0,
-      "changeItems" : [ {
-        "type" : "DICT",
-        "id" : "STAFF"
-      } ]
-    }, {
-      "type" : "OTHER",
-      "changeValue" : 0.01
-    } ]
+    "taxRate" : 0.09
   },
   "targetWeight" : 1000.0,
-  "timeout" : 30,
-  "useMaterialConstraints" : [ ],
-  "yield" : 1.0
+  "useMaterialConstraints" : {
+    "ids" : [ ]
+  },
+  "yield" : 1.0,
+  "timeout" : 30
 }

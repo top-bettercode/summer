@@ -8,7 +8,7 @@ import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
-import top.bettercode.summer.tools.recipe.material.MaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.productioncost.*

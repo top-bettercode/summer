@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.recipe.productioncost
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.recipe.CarrierValue
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
@@ -19,26 +21,32 @@ import top.bettercode.summer.tools.recipe.result.Recipe
  *
  * @author Peter Wu
  */
+@JsonPropertyOrder(alphabetic = true)
 data class ProductionCost(
         /**
          * 能耗费用
          */
+        @JsonProperty("materialItems")
         val materialItems: List<RecipeOtherMaterial>,
         /**
          * 其他固定费用
          */
+        @JsonProperty("dictItems")
         val dictItems: Map<DictType, Cost>,
         /**
          * 税费税率
          */
+        @JsonProperty("taxRate")
         val taxRate: Double,
         /**
          * 税费浮动值
          */
+        @JsonProperty("taxFloat")
         val taxFloat: Double,
         /**
          * 费用增减
          */
+        @JsonProperty("changes")
         val changes: List<CostChangeLogic>
 ) {
 

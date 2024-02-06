@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.material
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
 /**
@@ -7,6 +8,7 @@ import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
  *
  * @author Peter Wu
  */
+@JsonPropertyOrder(alphabetic = true)
 interface IRecipeMaterial : Comparable<IRecipeMaterial> {
     /**
      * 序号，从0开始

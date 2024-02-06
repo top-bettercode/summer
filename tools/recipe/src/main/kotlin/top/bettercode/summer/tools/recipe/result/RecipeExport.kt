@@ -76,8 +76,8 @@ object RecipeExport {
             c = 1
             val limitMaterials = materialRangeConstraints
             cell(r, c++).value("推优原料用量范围").height(20.0 * limitMaterials.size).setStyle()
-            val limitMaterialsStr = limitMaterials.entries.joinToString("\n") {
-                "${it.key} 用量范围：${it.value.min} 至 ${it.value.max} 公斤；"
+            val limitMaterialsStr = limitMaterials.joinToString("\n") {
+                "${it.term} 用量范围：${it.then.min} 至 ${it.then.max} 公斤；"
             }
             cell(r, c).value(limitMaterialsStr)
             range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
@@ -86,7 +86,7 @@ object RecipeExport {
             val materialConditionConstraints = materialConditionConstraints
             cell(r, c++).value("推优原料用量范围").height(20.0 * materialConditionConstraints.size).setStyle()
             val materialConditionConstraintsStr = materialConditionConstraints.joinToString("\n") {
-                "如果 ${it.first.materials} ${it.first.condition}公斤时，${it.first.materials} ${it.first.condition}公斤；"
+                "如果 ${it.term.materials} ${it.term.condition}公斤时，${it.then.materials} ${it.then.condition}公斤；"
             }
             cell(r, c).value(materialConditionConstraintsStr)
             range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
@@ -94,30 +94,30 @@ object RecipeExport {
             // 硫酸/液氨/碳铵计算规则
             c = 1
             val relationConstraints = materialRelationConstraints
-            cell(r, c++).value("硫酸/液氨/碳铵计算规则").height(40.0 * relationConstraints.values.sumOf { it.values.size }).setStyle()
-            val relationConstraintsStr = relationConstraints.entries.joinToString("\n\n") {
-                "启用${it.key.idStr}计算规则${if (it.key.replaceIds == null) "\n" else " ${it.key.idStr}/${it.key.replaceIds}用量换算系数：${it.key.replaceRate}\n"}${
-                    it.value.entries.joinToString("\n") { v ->
-                        val normal = v.value.normal
-                        val overdose = v.value.overdose
-                        val overdoseMaterial = v.value.overdoseMaterial
+            cell(r, c++).value("硫酸/液氨/碳铵计算规则").height(40.0 * relationConstraints.sumOf { it.then.size }).setStyle()
+            val relationConstraintsStr = relationConstraints.joinToString("\n\n") {
+                "启用${it.term.idsString()}计算规则${if (it.term.replaceIds == null) "\n" else " ${it.term.idsString()}/${it.term.replaceIds}用量换算系数：${it.term.replaceRate}\n"}${
+                    it.then.joinToString("\n") { v ->
+                        val normal = v.then.normal
+                        val overdose = v.then.overdose
+                        val overdoseMaterial = v.then.overdoseMaterial
                         val overdoseMaterialNormal = overdoseMaterial?.normal
                         val overdoseMaterialOverdose = overdoseMaterial?.overdose
-                        "${v.key.relationIds?.idStr ?: ""}使用 ${v.key.idStr} 时，耗${it.key.idStr}系数：${normal.min}-${normal.max}${
+                        "${v.term.relationIds?.idsString() ?: ""}使用 ${v.term.idsString()} 时，耗${it.term.idsString()}系数：${normal.min}-${normal.max}${
                             if (overdose != null) {
-                                "\n${v.key.relationIds?.idStr ?: ""}使用 ${v.key.idStr} 时，过量耗${it.key.idStr}系数：${overdose.min}-${overdose.max}"
+                                "\n${v.term.relationIds?.idsString() ?: ""}使用 ${v.term.idsString()} 时，过量耗${it.term.idsString()}系数：${overdose.min}-${overdose.max}"
                             } else {
                                 ""
                             }
                         }${
                             if (overdoseMaterialNormal != null) {
-                                "\n${v.key.relationIds?.idStr ?: ""}使用过量 ${v.key.idStr} 时，耗${it.key.idStr}系数：${overdoseMaterialNormal.min}-${overdoseMaterialNormal.max}"
+                                "\n${v.term.relationIds?.idsString() ?: ""}使用过量 ${v.term.idsString()} 时，耗${it.term.idsString()}系数：${overdoseMaterialNormal.min}-${overdoseMaterialNormal.max}"
                             } else {
                                 ""
                             }
                         }${
                             if (overdoseMaterialOverdose != null) {
-                                "\n${v.key.relationIds?.idStr ?: ""}使用过量 ${v.key.idStr} 时，过量耗${it.key.idStr}系数：${overdoseMaterialOverdose.min}-${overdoseMaterialOverdose.max}"
+                                "\n${v.term.relationIds?.idsString() ?: ""}使用过量 ${v.term.idsString()} 时，过量耗${it.term.idsString()}系数：${overdoseMaterialOverdose.min}-${overdoseMaterialOverdose.max}"
                             } else {
                                 ""
                             }
@@ -184,8 +184,8 @@ object RecipeExport {
             if (materialIDConstraints.isNotEmpty()) {
                 c = 1
                 cell(r, c++).value("指定原料约束").height(20.0 * materialIDConstraints.size).setStyle()
-                val materialIDConstraintsStr = materialIDConstraints.entries.joinToString("\n") {
-                    "${it.key}中指定使用原料：${it.value}"
+                val materialIDConstraintsStr = materialIDConstraints.joinToString("\n") {
+                    "${it.term}中指定使用原料：${it.then}"
                 }
                 cell(r, c).value(materialIDConstraintsStr)
                 range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
