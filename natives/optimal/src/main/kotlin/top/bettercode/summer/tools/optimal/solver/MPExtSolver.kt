@@ -38,6 +38,10 @@ open class MPExtSolver @JvmOverloads constructor(
         resultStatus = solver.solve()
     }
 
+    override fun close() {
+        solver.clear()
+    }
+
     override fun clear() {
         solver.clear()
     }

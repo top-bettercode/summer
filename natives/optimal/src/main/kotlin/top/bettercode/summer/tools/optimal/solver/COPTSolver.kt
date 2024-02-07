@@ -20,11 +20,10 @@ class COPTSolver @JvmOverloads constructor(
         name: String = "COPTSolver"
 ) : Solver(name, epsilon) {
 
-    val model: copt.Model
+    private val env: copt.COPTEnvr = copt.COPTEnvr()
+    val model: copt.Model = env.createModel(name)
 
     init {
-        val env = copt.COPTEnvr()
-        model = env.createModel(name)
         //解决 presolve 异常,但会导致一些问题求解：free(): invalid next size (fast)
         model.setIntParam(copt.IntParam.Presolve, 0)
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
@@ -38,6 +37,11 @@ class COPTSolver @JvmOverloads constructor(
 
     override fun solve() {
         model.solve()
+    }
+
+    override fun close() {
+        model.dispose()
+        env.dispose()
     }
 
     override fun clear() {

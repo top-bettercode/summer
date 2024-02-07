@@ -47,6 +47,10 @@ class CplexSolver @JvmOverloads constructor(
         model.solve()
     }
 
+    override fun close() {
+        model.close()
+    }
+
     override fun clear() {
         model.clearModel()
     }

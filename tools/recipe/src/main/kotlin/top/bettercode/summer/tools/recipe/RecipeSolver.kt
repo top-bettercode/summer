@@ -8,9 +8,9 @@ import top.bettercode.summer.tools.optimal.solver.Solver
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
-import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.*
 import top.bettercode.summer.tools.recipe.result.Recipe
 
@@ -19,37 +19,39 @@ object RecipeSolver {
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
     fun solve(solverType: SolverType, requirement: RecipeRequirement, includeProductionCost: Boolean = true): Recipe? {
-        SolverFactory.createSolver(solverType = solverType).apply {
-            val s = System.currentTimeMillis()
-            val prepareData = prepare(requirement, includeProductionCost)
-            if (SolverType.COPT == solverType) {
-                val numVariables = numVariables()
-                val numConstraints = numConstraints()
-                log.info("变量数量：{},约束数量：{}", numConstraints, numConstraints)
-                if (numVariables > 2000 || numConstraints > 2000) {
-                    log.error("变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
+        SolverFactory.createSolver(solverType = solverType).use {
+            it.apply {
+                val s = System.currentTimeMillis()
+                val prepareData = prepare(requirement, includeProductionCost)
+                if (SolverType.COPT == solverType) {
+                    val numVariables = numVariables()
+                    val numConstraints = numConstraints()
+                    log.info("变量数量：{},约束数量：{}", numConstraints, numConstraints)
+                    if (numVariables > 2000 || numConstraints > 2000) {
+                        log.error("变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
+                    }
                 }
-            }
-            // 求解
-            solve()
-            val e = System.currentTimeMillis()
-            log.info("${requirement.productName}求解耗时：" + (e - s) + "ms")
+                // 求解
+                solve()
+                val e = System.currentTimeMillis()
+                log.info("${requirement.productName}求解耗时：" + (e - s) + "ms")
 
-            if (isOptimal()) {
-                return Recipe(requirement = requirement,
-                        includeProductionCost = includeProductionCost,
-                        optimalProductionCost = requirement.productionCost.computeFee(prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) }, prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.it.value) }),
-                        cost = prepareData.objective.value.scale(),
-                        materials = prepareData.recipeMaterials.mapNotNull { (_, u) ->
-                            val value = u.weight.value
-                            if (value != 0.0) {
-                                u.toMaterialValue()
-                            } else {
-                                null
-                            }
-                        })
+                if (isOptimal()) {
+                    return Recipe(requirement = requirement,
+                            includeProductionCost = includeProductionCost,
+                            optimalProductionCost = requirement.productionCost.computeFee(prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) }, prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.it.value) }),
+                            cost = prepareData.objective.value.scale(),
+                            materials = prepareData.recipeMaterials.mapNotNull { (_, u) ->
+                                val value = u.weight.value
+                                if (value != 0.0) {
+                                    u.toMaterialValue()
+                                } else {
+                                    null
+                                }
+                            })
+                }
+                return null
             }
-            return null
         }
     }
 
