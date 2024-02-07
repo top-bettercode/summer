@@ -11,11 +11,15 @@ class CBCSolverTest : COPTSolverTest() {
 
     @Test
     override fun lpNumVariables() {
-        solver.lpNumVariables(10001)
+        solver.use {
+            it.lpNumVariables(10001)
+        }
     }
 
     @Test
     override fun numVariables() {
-        solver.numVariables(2001)
+        solver.use {
+            it.numVariables(2001)
+        }
     }
 }

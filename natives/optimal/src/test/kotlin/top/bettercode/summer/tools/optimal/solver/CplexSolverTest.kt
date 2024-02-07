@@ -12,17 +12,21 @@ class CplexSolverTest : COPTSolverTest() {
 
     @Test
     override fun lpNumVariables() {
-        solver.lpNumVariables(1000)
-        Assertions.assertThrows(ilog.cplex.CpxException::class.java) {
-            solver.lpNumVariables(1001)
+        solver.use {
+            it.lpNumVariables(1000)
+            Assertions.assertThrows(ilog.cplex.CpxException::class.java) {
+                it.lpNumVariables(1001)
+            }
         }
     }
 
     @Test
     override fun numVariables() {
-        solver.numVariables(1000)
-        Assertions.assertThrows(ilog.cplex.CpxException::class.java) {
-            solver.numVariables(1001)
+        solver.use {
+            it.numVariables(1000)
+            Assertions.assertThrows(ilog.cplex.CpxException::class.java) {
+                it.numVariables(1001)
+            }
         }
     }
 }
