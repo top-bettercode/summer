@@ -644,8 +644,8 @@ open class COPTSolverTest {
 
     @Test
     fun betweenIf() {
-        solver.use {
-            it.apply {
+        solver.use { solv ->
+            solv.apply {
                 val numVar1 = numVar(0.0, 100.0)
                 val boolVar = boolVar()
                 numVar1.betweenIf(10.0, 20.0, boolVar)
@@ -676,8 +676,8 @@ open class COPTSolverTest {
 
     @Test
     fun betweenIfNot() {
-        solver.use {
-            it.apply {
+        solver.use { solv ->
+            solv.apply {
                 val numVar1 = numVar(0.0, 100.0)
                 val boolVar = boolVar()
                 numVar1.betweenIfNot(10.0, 20.0, boolVar)
@@ -708,8 +708,8 @@ open class COPTSolverTest {
 
     @Test
     fun atMostOne() {
-        solver.use {
-            it.apply {
+        solver.use { sol ->
+            sol.apply {
                 val numVarArray = numVarArray(20, 0.0, 1000.0)
                 numVarArray.atMostOne()
                 numVarArray.maximize()
@@ -727,8 +727,8 @@ open class COPTSolverTest {
 
     @Test
     fun atMost() {
-        solver.use {
-            it.apply {
+        solver.use { sol ->
+            sol.apply {
                 val numVarArray = numVarArray(20, 0.0, 1000.0)
                 numVarArray.atMost(5)
                 numVarArray.maximize()
@@ -746,8 +746,8 @@ open class COPTSolverTest {
 
     @Test
     fun atLeastOne() {
-        solver.use {
-            it.apply {
+        solver.use { sol ->
+            sol.apply {
                 val numVarArray = numVarArray(20, 0.0, 1000.0)
                 numVarArray.atLeastOne()
                 numVarArray.minimize()
@@ -766,8 +766,8 @@ open class COPTSolverTest {
 
     @Test
     fun atLeast() {
-        solver.use {
-            it.apply {
+        solver.use { sol ->
+            sol.apply {
                 val numVarArray = numVarArray(20, 0.0, 1000.0)
                 numVarArray.atLeast(5)
                 numVarArray.minimize()

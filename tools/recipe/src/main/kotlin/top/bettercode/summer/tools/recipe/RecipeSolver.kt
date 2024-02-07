@@ -19,8 +19,8 @@ object RecipeSolver {
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
     fun solve(solverType: SolverType, requirement: RecipeRequirement, includeProductionCost: Boolean = true): Recipe? {
-        SolverFactory.createSolver(solverType = solverType).use {
-            it.apply {
+        SolverFactory.createSolver(solverType = solverType).use { solver ->
+            solver.apply {
                 val s = System.currentTimeMillis()
                 val prepareData = prepare(requirement, includeProductionCost)
                 if (SolverType.COPT == solverType) {
