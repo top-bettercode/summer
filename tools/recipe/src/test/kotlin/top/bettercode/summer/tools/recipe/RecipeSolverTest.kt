@@ -32,6 +32,7 @@ internal class RecipeSolverTest {
 //        val listOf = solveList()
         val listOf = solveList(20)
         val file = File("build/excel/time-${System.currentTimeMillis()}.xlsx")
+        file.parentFile.mkdirs()
         FastExcel.of(file).apply {
             sheet("sheet1")
             var r = 0
