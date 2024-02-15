@@ -16,7 +16,6 @@ internal class SapCostServiceTest {
     var sapCostService: SapCostService? = null
 
     @Test
-    @Disabled
     fun testGetCosts() {
         val costs = sapCostService!!.costs
         System.err.println(costs)

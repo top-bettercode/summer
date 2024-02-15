@@ -23,11 +23,11 @@ object COPTNativeLibLoader {
             targetFolder.mkdirs()
         }
         val libraryNames = when {
-            Os.isFamily(Os.FAMILY_MAC) -> arrayOf("libcopt_cpp.dylib", "libcoptjniwrap.dylib")
-            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("copt_cpp.dll", "coptjniwrap.dll")
+            Os.isFamily(Os.FAMILY_MAC) -> arrayOf("macos_universal2/libcopt_cpp.dylib", "macos_universal2/libcoptjniwrap.dylib")
+            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("win64/copt_cpp.dll", "win64/coptjniwrap.dll")
             //判断是否是 arm64 架构
-            Os.OS_ARCH.contains("arm64") -> arrayOf("arm64/libcopt_cpp.so", "arm64/libcoptjniwrap.so")
-            else -> arrayOf("libcopt_cpp.so", "libcoptjniwrap.so")
+            Os.OS_ARCH.contains("arm64") -> arrayOf("armlinux64/libcopt_cpp.so", "armlinux64/libcoptjniwrap.so")
+            else -> arrayOf("linux64/libcopt_cpp.so", "linux64/libcoptjniwrap.so")
         }
 
         for (libraryName in libraryNames) {

@@ -17,7 +17,6 @@ internal class SapStockServiceTest {
     var orderToSap: SapStockService? = null
 
     @Test
-    @Disabled
     fun testGetStore() {
         val store = orderToSap!!.getStore("20103962", "1090")
         //    StockLsReturn store = orderToSap.getStore("20101131", "1330");

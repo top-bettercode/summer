@@ -24,10 +24,12 @@ object CplexNativeLibLoader {
         }
         val libraryNames = when {
             Os.isFamily(Os.FAMILY_MAC) -> if (Os.OS_ARCH.contains("arm64"))
-                arrayOf("arm64/libcplex2211.dylib") else arrayOf("libcplex2211.dylib")
+                arrayOf("macos_arm64/libcplex2211.dylib")
+            else
+                arrayOf("macos_universal/libcplex2211.dylib")
 
-            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("cplex2211.dll")
-            else -> arrayOf("libcplex2211.so")
+            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("win64/cplex2211.dll")
+            else -> arrayOf("linux64/libcplex2211.so")
         }
 
         for (libraryName in libraryNames) {

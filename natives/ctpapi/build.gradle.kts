@@ -13,6 +13,7 @@ dependencies {
     api(project(":tools:tools"))
     api(fileTree("libs/$ctpVersion"))
 
+    testImplementation("org.slf4j:slf4j-simple")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }
 

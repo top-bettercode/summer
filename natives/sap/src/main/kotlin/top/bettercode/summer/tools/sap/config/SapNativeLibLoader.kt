@@ -24,12 +24,12 @@ object SapNativeLibLoader {
             targetFolder.mkdirs()
         }
         val libraryNames = when {
-            Os.isFamily(Os.FAMILY_MAC) -> arrayOf("libsapjco3.jnilib")
-            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("sapjco3.dll")
-            else -> arrayOf("libsapjco3.so")
+            Os.isFamily(Os.FAMILY_MAC) -> arrayOf("macos_universal/libsapjco3.jnilib")
+            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("win64/sapjco3.dll")
+            else -> arrayOf("linux64/libsapjco3.so")
         }
         for (libraryName in libraryNames) {
-            val targetFile = File(targetFolder, libraryName).absoluteFile
+            val targetFile = File(targetFolder, libraryName.substringAfter("/")).absoluteFile
             if(targetFile.exists()){
                 targetFile.delete()
             }

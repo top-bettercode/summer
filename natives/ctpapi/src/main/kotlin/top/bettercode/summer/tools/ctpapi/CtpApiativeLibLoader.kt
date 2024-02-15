@@ -6,6 +6,11 @@ import java.io.File
 import java.nio.file.Files
 
 /**
+ *
+ * https://github.com/nicai0609/JAVA-CTPAPI
+ *
+ *
+ *
  * native library loader.
  */
 object CtpApiativeLibLoader {
@@ -24,12 +29,12 @@ object CtpApiativeLibLoader {
             targetFolder.mkdirs()
         }
         val libraryNames = when {
-            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("thostmduserapi_se.dll", "thosttraderapi_se.dll", "thostapi_wrap.dll")
-            else -> arrayOf("libthostmduserapi_se.so", "libthosttraderapi_se.so", "libthostapi_wrap.so")
+            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("win64/thostmduserapi_se.dll", "win64/thosttraderapi_se.dll", "win64/thostapi_wrap.dll")
+            else -> arrayOf("linux64/libthostmduserapi_se.so", "linux64/libthosttraderapi_se.so", "linux64/libthostapi_wrap.so")
         }
 
         for (libraryName in libraryNames) {
-            val targetFile = File(targetFolder, libraryName).absoluteFile
+            val targetFile = File(targetFolder, libraryName.substringAfter("/")).absoluteFile
             if (targetFile.exists()) {
                 targetFile.delete()
             }
