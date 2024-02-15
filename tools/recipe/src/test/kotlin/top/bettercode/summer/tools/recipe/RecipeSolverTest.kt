@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.recipe.data.RecipeMaterialView
@@ -28,14 +29,50 @@ internal class RecipeSolverTest {
      */
     @Test
     fun solve() {
-        solve("13-05-07高氯枸磷")
-        solve("24-06-10高氯枸磷")
-        solve("15-15-15喷浆硫基")
-        solve("15-15-15喷浆氯基")
-        solve("15-15-15常规氯基")
+//        val listOf = solveList()
+        val listOf = solveList(20)
+        val file = File("build/excel/time-${System.currentTimeMillis()}.xlsx")
+        FastExcel.of(file).apply {
+            sheet("sheet1")
+            var r = 0
+            var c = 0
+            cell(r++, c).value("产品").headerStyle().width(20.0).setStyle()
+            listOf.forEach { (product, value) ->
+                c = 0
+                cell(r, c).value(product).headerStyle().setStyle()
+                value.forEach { (solverType, time) ->
+                    c++
+                    if (r == 1)
+                        cell(0, c).value(solverType.name).headerStyle().setStyle()
+                    cell(r, c).value(time).setStyle()
+                }
+                r++
+            }
+            finish()
+        }
+        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
     }
 
-    fun solve(productName: String) {
+    fun solveList(times: Int = 1): Map<String, Map<SolverType, Long>> {
+        val products = listOf(
+                "13-05-07高氯枸磷",
+                "24-06-10高氯枸磷",
+                "15-15-15喷浆硫基",
+                "15-15-15喷浆氯基",
+                "15-15-15常规氯基"
+        )
+        return products.associateWith { product ->
+            val solverInfos = mutableMapOf<SolverType, MutableList<Long>>()
+            (0 until times).forEach { _ ->
+                solve(product).forEach { (solverType, value) ->
+                    solverInfos.getOrPut(solverType) { mutableListOf() }.add(value)
+                }
+            }
+            solverInfos.mapValues { it.value.average().toLong() }
+        }
+    }
+
+    fun solve(productName: String): Map<SolverType, Long> {
         System.err.println("======================$productName=====================")
         var requirement = TestPrepareData.readRequirement(productName)
         val file = File("build/requirement.json")
@@ -52,11 +89,9 @@ internal class RecipeSolverTest {
 //        val materialUnchanged = false
         val coptSolve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val cplexSolver = MultiRecipeSolver.solve(solverType = SolverType.CPLEX, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val orSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-
-        System.err.println("copt:" + coptSolve.time)
-        System.err.println("cplex:" + cplexSolver.time)
-        System.err.println("or-tools:" + orSolver.time)
+//        val gurobiSolver = MultiRecipeSolver.solve(solverType = SolverType.GUROBI, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val cbcSolver = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
         System.err.println("============toExcel=============")
 //        toExcel(coptSolve)
@@ -66,22 +101,30 @@ internal class RecipeSolverTest {
         System.err.println("============效验结果=============")
         validateResult(coptSolve)
         validateResult(cplexSolver)
-        validateResult(orSolver)
+        validateResult(scipSolver)
+        validateResult(cbcSolver)
 
         System.err.println("============对比结果=============")
         assert(coptSolve, cplexSolver)
-        assert(coptSolve, orSolver)
-        assert(cplexSolver, orSolver)
+        assert(cplexSolver, scipSolver)
+        assert(scipSolver, cbcSolver)
 
         System.err.println("============对比保存结果=============")
         validatePreResult(coptSolve)
         validatePreResult(cplexSolver)
-        validatePreResult(orSolver)
+        validatePreResult(scipSolver)
 
         System.err.println("============保存结果=============")
         saveRecipe(coptSolve)
         saveRecipe(cplexSolver)
-        saveRecipe(orSolver)
+        saveRecipe(scipSolver)
+        return mapOf(
+                SolverType.COPT to coptSolve.time,
+                SolverType.CPLEX to cplexSolver.time,
+//                SolverType.GUROBI to gurobiSolver.time,
+                SolverType.SCIP to scipSolver.time,
+                SolverType.CBC to cbcSolver.time,
+        )
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
