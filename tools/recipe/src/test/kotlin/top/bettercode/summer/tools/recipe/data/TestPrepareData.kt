@@ -324,8 +324,8 @@ object TestPrepareData {
         )
         // 费用增减
         val changes: List<CostChangeLogic> = listOf(
-                CostChangeLogic(type = ChangeLogicType.WATER_OVER, materialId = "液氨", exceedValue = 50.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.MATERIAL, "煤")), changeValue = 0.01),
-                CostChangeLogic(type = ChangeLogicType.OVER, materialId = "硫酸", exceedValue = 100.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.DICT, "STAFF")), changeValue = 0.01),
+                CostChangeLogic(type = ChangeLogicType.WATER_OVER, materialId = listOf("液氨"), exceedValue = 50.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.MATERIAL, "煤")), changeValue = 0.01),
+                CostChangeLogic(type = ChangeLogicType.OVER, materialId = listOf("硫酸"), exceedValue = 100.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.DICT, "STAFF")), changeValue = 0.01),
                 CostChangeLogic(type = ChangeLogicType.OTHER, changeValue = 0.01)
         )
 

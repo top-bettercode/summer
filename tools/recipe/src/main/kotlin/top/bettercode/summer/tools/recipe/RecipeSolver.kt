@@ -306,8 +306,9 @@ object RecipeSolver {
     }
 
     private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>) {
-        val useMaterial = materials[changeLogic.materialId]
-        if (useMaterial != null) {
+        val iVars = materials.filter { changeLogic.materialId?.contains(it.key) == true }.map { it.value.weight }
+        if (iVars.isNotEmpty()) {
+            val useMaterial = iVars.sum()
             val thens = mutableListOf<Constraint>()
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
@@ -317,7 +318,7 @@ object RecipeSolver {
                         if (material != null) {
                             //change
                             val changeVar = ((value
-                                    ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                                    ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                             thens.add(changeVar.eqConst(0.0))
                             material.value += changeVar
                         }
@@ -329,7 +330,7 @@ object RecipeSolver {
                                 materialItems.forEach {
                                     //change
                                     val changeVar = ((value
-                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                                            ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                                     thens.add(changeVar.eqConst(0.0))
                                     it.value += changeVar
                                 }
@@ -340,7 +341,7 @@ object RecipeSolver {
                                 if (cost != null) {
                                     //change
                                     val changeVar = ((value
-                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                                            ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                                     thens.add(changeVar.eqConst(0.0))
                                     cost.value += changeVar
                                 }
@@ -349,7 +350,7 @@ object RecipeSolver {
                     }
                 }
             }
-            thens.onlyEnforceIf(useMaterial.weight.leConst(0.0))
+            thens.onlyEnforceIf(useMaterial.leConst(0.0))
         }
     }
 

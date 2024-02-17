@@ -446,7 +446,7 @@
       "changeValue" : 0.01,
       "eachValue" : 1.0,
       "exceedValue" : 50.0,
-      "materialId" : "液氨",
+      "materialId" : [ "液氨" ],
       "type" : "WATER_OVER"
     }, {
       "changeItems" : [ {
@@ -456,7 +456,7 @@
       "changeValue" : 0.01,
       "eachValue" : 1.0,
       "exceedValue" : 100.0,
-      "materialId" : "硫酸",
+      "materialId" : [ "硫酸" ],
       "type" : "OVER"
     }, {
       "changeValue" : 0.01,

@@ -149,11 +149,19 @@ object RecipeExport {
             val changes = productionCost.changes
             c = 1
             cell(r, c++).value("制造费用增减逻辑").height(20.0 * (changes.size + 1)).setStyle()
-            val changesStr = changes.joinToString("\n") {
-                when (it.type) {
-                    ChangeLogicType.WATER_OVER -> "当使用${materials.find { m -> m.id == it.materialId }?.name ?: it.materialId}产肥一吨总水分超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，能耗费用增加${it.changeValue * 100}%"
-                    ChangeLogicType.OVER -> "当产肥一吨使用${materials.find { m -> m.id == it.materialId }?.name ?: it.materialId}超过${it.exceedValue}公斤后，每增加${it.eachValue}公斤，${it.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${it.changeValue * 100}%"
-                    ChangeLogicType.OTHER -> "其他额外增加制造费用${it.changeValue * 100}%"
+            val changesStr = changes.joinToString("\n") { logic ->
+                when (logic.type) {
+                    ChangeLogicType.WATER_OVER -> {
+                        val filter = materials.filter { m -> logic.materialId?.contains(m.id) == true }
+                        val name = if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
+                        "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，能耗费用增加${logic.changeValue * 100}%"
+                    }
+
+                    ChangeLogicType.OVER -> {
+                        val filter = materials.filter { m -> logic.materialId?.contains(m.id) == true }
+                        val name = if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
+                        "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${logic.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${logic.changeValue * 100}%"}
+                    ChangeLogicType.OTHER -> "其他额外增加制造费用${logic.changeValue * 100}%"
                 }
             }
             cell(r, c).value(changesStr)

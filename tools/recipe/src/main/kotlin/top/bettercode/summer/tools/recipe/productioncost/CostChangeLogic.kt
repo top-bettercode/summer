@@ -23,7 +23,7 @@ data class CostChangeLogic(
         val changeValue: Double,
         /** 原料ID  */
         @JsonProperty("materialId")
-        val materialId: String? = null,
+        val materialId: List<String>? = null,
         /** 超过条件值（公斤）  */
         @JsonProperty("exceedValue")
         val exceedValue: Double? = null,

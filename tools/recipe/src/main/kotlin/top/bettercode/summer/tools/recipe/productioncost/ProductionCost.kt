@@ -110,8 +110,8 @@ data class ProductionCost(
     }
 
     private fun changeProductionCost(materials: List<RecipeMaterialValue>, changeLogic: CostChangeLogic, value: Double?, materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>, dictItems: Map<DictType, CarrierValue<Cost, Double>>) {
-        val useMaterial = materials.find { it.id == changeLogic.materialId }
-        if (useMaterial != null) {
+        val useMaterial = materials.filter { changeLogic.materialId?.contains(it.id) == true }.sumOf { it.weight }
+        if (useMaterial>0) {
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
                     MATERIAL -> {//能耗费用
@@ -119,7 +119,7 @@ data class ProductionCost(
                         val material = materialItems.find { it.it.id == item.id }
                         if (material != null) {
                             material.value += ((value
-                                    ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                    ?: useMaterial) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
                         }
                     }
 
@@ -128,7 +128,7 @@ data class ProductionCost(
                             ENERGY -> {
                                 materialItems.forEach {
                                     it.value += ((value
-                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                            ?: useMaterial) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
                                 }
                             }
 
@@ -136,7 +136,7 @@ data class ProductionCost(
                                 val cost = dictItems[dictType]
                                 if (cost != null) {
                                     cost.value += ((value
-                                            ?: useMaterial.weight) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                            ?: useMaterial) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
                                 }
                             }
                         }
