@@ -102,6 +102,7 @@ internal class RecipeSolverTest {
         System.err.println("============效验结果=============")
 //        validateResult(coptSolve)
         validateResult(cplexSolver)
+//        validateResult(gurobiSolver)
         validateResult(scipSolver)
         validateResult(cbcSolver)
 
