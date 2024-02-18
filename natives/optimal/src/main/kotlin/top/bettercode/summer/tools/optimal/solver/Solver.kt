@@ -225,7 +225,7 @@ abstract class Solver(
 
     abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
     abstract fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar)
-    open fun Constraint.onlyEnforceIf(condition: Constraint) {
+    open fun Constraint.onlyEnforceIf(condition: Constraint): IVar? {
         val boolVar = boolVar()
         val whenVariable = condition.variable
         val whenValue = condition.value
@@ -264,6 +264,7 @@ abstract class Solver(
             Sense.GE -> thenVar.geIf(thenValue, boolVar)
             Sense.LE -> thenVar.leIf(thenValue, boolVar)
         }
+        return boolVar
     }
 
     open fun Array<Constraint>.onlyEnforceIf(condition: Constraint) {

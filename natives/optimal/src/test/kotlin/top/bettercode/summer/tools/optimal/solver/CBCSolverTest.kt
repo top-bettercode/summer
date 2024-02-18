@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
  * @author Peter Wu
  */
 class CBCSolverTest : COPTSolverTest() {
-    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.SCIP, epsilon = 1e-5)
+    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.CBC, epsilon = 1e-4)
 
     @Test
     override fun lpNumVariables() {

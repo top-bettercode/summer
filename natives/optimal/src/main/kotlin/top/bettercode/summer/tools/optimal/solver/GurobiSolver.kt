@@ -17,16 +17,17 @@ class GurobiSolver @JvmOverloads constructor(
 ) : Solver(name, epsilon) {
 
     private val env = GRBEnv()
-    val model = GRBModel(env)
+    val model: GRBModel = GRBModel(env)
 
     init {
-        env.set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
-        env.set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
-        env.set(GRB.DoubleParam.FeasibilityTol, OptimalUtil.DEFAULT_MIN_EPSILON)
+        model.set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
+        model.set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
+        model.set(GRB.DoubleParam.MIPGap, epsilon)
+        model.set(GRB.DoubleParam.FeasibilityTol, OptimalUtil.DEFAULT_MIN_EPSILON)
     }
 
     override fun setTimeLimit(seconds: Int) {
-        env.set(GRB.DoubleParam.TimeLimit, seconds.toDouble())
+        model.set(GRB.DoubleParam.TimeLimit, seconds.toDouble())
     }
 
     override fun solve() {
@@ -74,18 +75,24 @@ class GurobiSolver @JvmOverloads constructor(
     private fun IVar.expr() = GRBLinExpr().also { it.addTerm(this.coeff, this.getDelegate()) }
 
     override fun boolVar(name: String?): IVar {
-        return GurobiVar(model.addVar(0.0, 1.0, 1.0, GRB.BINARY, name
+        val gurobiVar = GurobiVar(model.addVar(0.0, 1.0, 1.0, GRB.BINARY, name
                 ?: ("b" + (numVariables() + 1))))
+        model.update()
+        return gurobiVar
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        return GurobiVar(model.addVar(lb, ub, 1.0, GRB.INTEGER, name
+        val gurobiVar = GurobiVar(model.addVar(lb, ub, 1.0, GRB.INTEGER, name
                 ?: ("i" + (numVariables() + 1))))
+        model.update()
+        return gurobiVar
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        return GurobiVar(model.addVar(lb, ub, 1.0, GRB.CONTINUOUS, name
+        val gurobiVar = GurobiVar(model.addVar(lb, ub, 1.0, GRB.CONTINUOUS, name
                 ?: ("n" + (numVariables() + 1))))
+        model.update()
+        return gurobiVar
     }
 
     override fun IVar.plus(value: Double): IVar {
@@ -94,15 +101,18 @@ class GurobiSolver @JvmOverloads constructor(
         expr.addConstant(value)
         val sum = numVar()
         model.addConstr(expr, GRB.EQUAL, sum.getDelegate<GRBVar>(), "c" + (numConstraints() + 1))
+        model.update()
         return sum
     }
 
     override fun IVar.ge(lb: Double) {
         model.addConstr(this.expr(), GRB.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.ge(lb: IVar) {
         model.addConstr(this.expr(), GRB.GREATER_EQUAL, lb.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.ge(lb: Double) {
@@ -111,6 +121,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.ge(lb: Double) {
@@ -119,6 +130,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.ge(lb: IVar) {
@@ -127,6 +139,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.GREATER_EQUAL, lb.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.ge(lb: IVar) {
@@ -135,12 +148,14 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.GREATER_EQUAL, lb.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.gt(lb: IVar) {
         val expr = this.expr()
         expr.addConstant(-epsilon)
         model.addConstr(expr, GRB.GREATER_EQUAL, lb.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.gt(lb: IVar) {
@@ -150,6 +165,7 @@ class GurobiSolver @JvmOverloads constructor(
         }
         expr.addConstant(-epsilon)
         model.addConstr(expr, GRB.GREATER_EQUAL, lb.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.gt(lb: IVar) {
@@ -159,15 +175,18 @@ class GurobiSolver @JvmOverloads constructor(
         }
         expr.addConstant(-epsilon)
         model.addConstr(expr, GRB.GREATER_EQUAL, lb.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
 
     override fun IVar.le(ub: Double) {
         model.addConstr(this.expr(), GRB.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.le(ub: IVar) {
         model.addConstr(this.expr(), GRB.LESS_EQUAL, ub.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.le(ub: Double) {
@@ -176,6 +195,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.le(ub: Double) {
@@ -184,6 +204,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.le(ub: IVar) {
@@ -192,6 +213,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.LESS_EQUAL, ub.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.le(ub: IVar) {
@@ -200,12 +222,14 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.LESS_EQUAL, ub.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.lt(ub: IVar) {
         val expr = this.expr()
         expr.addConstant(epsilon)
         model.addConstr(expr, GRB.LESS_EQUAL, ub.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.lt(ub: IVar) {
@@ -215,6 +239,7 @@ class GurobiSolver @JvmOverloads constructor(
         }
         expr.addConstant(epsilon)
         model.addConstr(expr, GRB.LESS_EQUAL, ub.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.lt(ub: IVar) {
@@ -224,15 +249,18 @@ class GurobiSolver @JvmOverloads constructor(
         }
         expr.addConstant(epsilon)
         model.addConstr(expr, GRB.LESS_EQUAL, ub.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
 
     override fun IVar.eq(value: Double) {
         model.addConstr(this.expr(), GRB.EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.eq(value: IVar) {
         model.addConstr(this.expr(), GRB.EQUAL, value.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.eq(value: Double) {
@@ -241,6 +269,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.eq(value: Double) {
@@ -249,6 +278,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.eq(value: IVar) {
@@ -257,6 +287,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.EQUAL, value.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Iterable<IVar>.eq(value: IVar) {
@@ -265,6 +296,7 @@ class GurobiSolver @JvmOverloads constructor(
             expr.addTerm(v.coeff, v.getDelegate())
         }
         model.addConstr(expr, GRB.EQUAL, value.expr(), "c" + (numConstraints() + 1))
+        model.update()
     }
 
 
@@ -272,12 +304,14 @@ class GurobiSolver @JvmOverloads constructor(
         val size = numConstraints()
         model.addConstr(this.expr(), GRB.GREATER_EQUAL, lb, "c" + (size + 1))
         model.addConstr(this.expr(), GRB.LESS_EQUAL, ub, "c" + (size + 2))
+        model.update()
     }
 
     override fun IVar.between(lb: IVar, ub: IVar) {
         val size = numConstraints()
         model.addConstr(this.expr(), GRB.GREATER_EQUAL, lb.expr(), "c" + (size + 1))
         model.addConstr(this.expr(), GRB.LESS_EQUAL, ub.expr(), "c" + (size + 2))
+        model.update()
     }
 
     /**
@@ -291,6 +325,7 @@ class GurobiSolver @JvmOverloads constructor(
         val size = numConstraints()
         model.addConstr(expr, GRB.GREATER_EQUAL, lb, "c" + (size + 1))
         model.addConstr(expr, GRB.LESS_EQUAL, ub, "c" + (size + 2))
+        model.update()
     }
 
     override fun Iterable<IVar>.between(lb: Double, ub: Double) {
@@ -301,6 +336,7 @@ class GurobiSolver @JvmOverloads constructor(
         val size = numConstraints()
         model.addConstr(expr, GRB.GREATER_EQUAL, lb, "c" + (size + 1))
         model.addConstr(expr, GRB.LESS_EQUAL, ub, "c" + (size + 2))
+        model.update()
     }
 
     /**
@@ -314,6 +350,7 @@ class GurobiSolver @JvmOverloads constructor(
         val size = numConstraints()
         model.addConstr(expr, GRB.GREATER_EQUAL, lb.expr(), "c" + (size + 1))
         model.addConstr(expr, GRB.LESS_EQUAL, ub.expr(), "c" + (size + 2))
+        model.update()
     }
 
     override fun Iterable<IVar>.between(lb: IVar, ub: IVar) {
@@ -324,44 +361,53 @@ class GurobiSolver @JvmOverloads constructor(
         val size = numConstraints()
         model.addConstr(expr, GRB.GREATER_EQUAL, lb.expr(), "c" + (size + 1))
         model.addConstr(expr, GRB.LESS_EQUAL, ub.expr(), "c" + (size + 2))
+        model.update()
     }
 
 
     override fun IVar.geIf(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 1, this.expr(), GRB.GREATER_EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.geIfNot(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 0, this.expr(), GRB.GREATER_EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.leIf(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 1, this.expr(), GRB.LESS_EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.leIfNot(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 0, this.expr(), GRB.LESS_EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
 
     override fun IVar.eqIf(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 1, this.expr(), GRB.EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.eqIfNot(value: Double, bool: IVar) {
         model.addGenConstrIndicator(bool.getDelegate(), 0, this.expr(), GRB.EQUAL, value, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
         val expr = this.expr()
         model.addGenConstrIndicator(bool.getDelegate(), 1, expr, GRB.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
         model.addGenConstrIndicator(bool.getDelegate(), 1, expr, GRB.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar) {
         val expr = this.expr()
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr, GRB.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
         model.addGenConstrIndicator(bool.getDelegate(), 0, expr, GRB.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
+        model.update()
     }
 
     override fun Array<out IVar>.sum(): IVar {
@@ -371,6 +417,7 @@ class GurobiSolver @JvmOverloads constructor(
         }
         val sum = numVar()
         model.addConstr(expr, GRB.EQUAL, sum.expr(), "c" + (numConstraints() + 1))
+        model.update()
         return sum
     }
 
@@ -381,6 +428,7 @@ class GurobiSolver @JvmOverloads constructor(
         }
         val sum = numVar()
         model.addConstr(expr, GRB.EQUAL, sum.expr(), "c" + (numConstraints() + 1))
+        model.update()
         return sum
     }
 

@@ -12,7 +12,7 @@ object SolverFactory {
         return when (solverType) {
             SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)
             SolverType.CPLEX -> CplexSolver(epsilon = epsilon, logging = logging)
-            SolverType.GUROBI -> CplexSolver(epsilon = epsilon, logging = logging)
+            SolverType.GUROBI -> GurobiSolver(epsilon = epsilon, logging = logging)
             SolverType.SCIP -> SCIPSolver(epsilon = epsilon)
             SolverType.CBC -> CBCSolver(epsilon = epsilon)
         }

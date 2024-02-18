@@ -29,8 +29,8 @@ internal class RecipeSolverTest {
      */
     @Test
     fun solve() {
-//        val results = solveList()
-        val results = solveList(20)
+        val results = solveList()
+//        val results = solveList(20)
         val file = File("build/excel/time-${System.currentTimeMillis()}.xlsx")
         file.parentFile.mkdirs()
         FastExcel.of(file).apply {
@@ -90,19 +90,20 @@ internal class RecipeSolverTest {
 //        val materialUnchanged = false
         val coptSolve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val cplexSolver = MultiRecipeSolver.solve(solverType = SolverType.CPLEX, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-//        val gurobiSolver = MultiRecipeSolver.solve(solverType = SolverType.GUROBI, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val gurobiSolver = MultiRecipeSolver.solve(solverType = SolverType.GUROBI, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
         val cbcSolver = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
         System.err.println("============toExcel=============")
 //        toExcel(coptSolve)
 //        toExcel(cplexSolver)
-//        toExcel(orSolver)
+//        toExcel(scipSolver)
+//        toExcel(gurobiSolver)
 
         System.err.println("============效验结果=============")
         validateResult(coptSolve)
         validateResult(cplexSolver)
-//        validateResult(gurobiSolver)
+        validateResult(gurobiSolver)
         validateResult(scipSolver)
         validateResult(cbcSolver)
 
@@ -110,7 +111,7 @@ internal class RecipeSolverTest {
         assert(coptSolve, cplexSolver)
         assert(cplexSolver, scipSolver)
         assert(scipSolver, cbcSolver)
-//        assert(cbcSolver, gurobiSolver)
+        assert(cbcSolver, gurobiSolver)
 
         System.err.println("============对比保存结果=============")
         validatePreResult(coptSolve)
@@ -122,13 +123,13 @@ internal class RecipeSolverTest {
         System.err.println("============保存结果=============")
         saveRecipe(coptSolve)
         saveRecipe(cplexSolver)
-//        saveRecipe(gurobiSolver)
+        saveRecipe(gurobiSolver)
         saveRecipe(scipSolver)
         saveRecipe(cbcSolver)
         return mapOf(
                 SolverType.COPT to coptSolve.time,
                 SolverType.CPLEX to cplexSolver.time,
-//                SolverType.GUROBI to gurobiSolver.time,
+                SolverType.GUROBI to gurobiSolver.time,
                 SolverType.SCIP to scipSolver.time,
                 SolverType.CBC to cbcSolver.time,
         )

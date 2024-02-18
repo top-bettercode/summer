@@ -359,7 +359,7 @@ class CplexSolver @JvmOverloads constructor(
         model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.range(lb, expr(this), ub)))
     }
 
-    override fun Constraint.onlyEnforceIf(condition: Constraint) {
+    override fun Constraint.onlyEnforceIf(condition: Constraint): IVar? {
         val whenCon = when (condition.sense) {
             EQ -> model.eq(condition.variable.getDelegate(), condition.value)
             NE -> model.not(model.eq(condition.variable.getDelegate(), condition.value))
@@ -377,6 +377,7 @@ class CplexSolver @JvmOverloads constructor(
             LT -> model.le(this.variable.getDelegate(), this.value - epsilon)
         }
         model.add(model.ifThen(whenCon, thenCon))
+        return null
     }
 
     override fun Array<Constraint>.onlyEnforceIf(condition: Constraint) {

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
  */
 open class COPTSolverTest {
 
-    open val solver: Solver = SolverFactory.createSolver(solverType = SolverType.COPT, logging = true)
+    open val solver: Solver = SolverFactory.createSolver(solverType = SolverType.COPT, logging = true, epsilon = 1e-6)
 
     @Test
     fun operator() {
@@ -586,13 +586,14 @@ open class COPTSolverTest {
 //        OptimalUtil.DEFAULT_EPSILON = 1e-6
                 val numVar1 = numVar(0.0, 100.0)
                 val numVar2 = numVar(0.0, 100.0)
-                numVar2.eqConst(20.0).onlyEnforceIf(numVar1.eqConst(10.0))
+                val onlyEnforceIf = numVar2.eqConst(20.0).onlyEnforceIf(numVar1.eqConst(10.0))
                 numVar1.eq(10.0)
                 arrayOf(numVar1, numVar2).maximize()
                 solve()
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
                 System.err.println(numVar1.value)
                 System.err.println(numVar2.value)
+                System.err.println(onlyEnforceIf?.value)
                 Assertions.assertEquals(numVar1.value, 10.0)
                 Assertions.assertEquals(numVar2.value, 20.0)
             }
@@ -815,10 +816,11 @@ open class COPTSolverTest {
             intVarArray[i].le(i.toDouble())
         }
         val minimize = numVarArray.minimize()
-        System.err.println("变量数量：" + numVariables() + " 约束数量：" + numConstraints())
-        Assertions.assertTrue(numVariables() == num)
-        Assertions.assertTrue(numConstraints() == num)
+        val numVariables = numVariables()
+        System.err.println("变量数量：" + numVariables + " 约束数量：" + numConstraints())
         solve()
+        Assertions.assertTrue(numVariables == num)
+        Assertions.assertTrue(numConstraints() == num)
         System.err.println(minimize.value)
         Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
     }
@@ -831,9 +833,9 @@ open class COPTSolverTest {
         }
         val minimize = numVarArray.minimize()
         System.err.println("变量数量：" + numVariables() + " 约束数量：" + numConstraints())
+        solve()
         Assertions.assertTrue(numVariables() == num)
         Assertions.assertTrue(numConstraints() == num)
-        solve()
         System.err.println(minimize.value)
         Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
     }
