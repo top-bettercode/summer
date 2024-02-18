@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.optimal.solver
 
 import com.google.ortools.Loader
 import com.google.ortools.linearsolver.MPSolver
+import com.google.ortools.linearsolver.MPSolverParameters
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.optimal.solver.`var`.MPObjectiveVar
 import top.bettercode.summer.tools.optimal.solver.`var`.MPVar
@@ -26,16 +27,24 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
+    private val parameters = MPSolverParameters()
     val solver: MPSolver = MPSolver(name, type)
 
     var resultStatus: MPSolver.ResultStatus = MPSolver.ResultStatus.NOT_SOLVED
+
+    init {
+        parameters.setDoubleParam(MPSolverParameters.DoubleParam.PRIMAL_TOLERANCE, 1e-9)
+
+//        parameters.setDoubleParam(MPSolverParameters.DoubleParam.RELATIVE_MIP_GAP, 1e-9)
+//        parameters.setDoubleParam(MPSolverParameters.DoubleParam.DUAL_TOLERANCE, 1e-9)
+    }
 
     override fun setTimeLimit(seconds: Int) {
         solver.setTimeLimit(seconds * 1000L)
     }
 
     override fun solve() {
-        resultStatus = solver.solve()
+        resultStatus = solver.solve(parameters)
     }
 
     override fun close() {

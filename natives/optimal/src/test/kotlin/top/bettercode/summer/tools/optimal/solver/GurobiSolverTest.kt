@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
  * @author Peter Wu
  */
 class GurobiSolverTest : COPTSolverTest() {
-    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.GUROBI, logging = true, epsilon = 1e-4)
+    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.GUROBI, logging = true, epsilon = 1e-5)
 
     @Test
     override fun lpNumVariables() {

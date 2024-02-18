@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
  * @author Peter Wu
  */
 class SCIPSolverTest : COPTSolverTest() {
-    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.SCIP, epsilon = 1e-5)
+    override val solver: Solver = SolverFactory.createSolver(solverType = SolverType.SCIP, epsilon = 1e-6)
 
 
     @Test
