@@ -29,8 +29,8 @@ internal class RecipeSolverTest {
      */
     @Test
     fun solve() {
-        val results = solveList()
-//        val results = solveList(20)
+//        val results = solveList()
+        val results = solveList(20)
         val file = File("build/excel/time-${System.currentTimeMillis()}.xlsx")
         file.parentFile.mkdirs()
         FastExcel.of(file).apply {
@@ -59,7 +59,7 @@ internal class RecipeSolverTest {
                 "13-05-07高氯枸磷",
                 "24-06-10高氯枸磷",
                 "15-15-15喷浆硫基",
-//                "15-15-15喷浆氯基",
+                "15-15-15喷浆氯基",
                 "15-15-15常规氯基"
         )
         return products.associateWith { product ->
