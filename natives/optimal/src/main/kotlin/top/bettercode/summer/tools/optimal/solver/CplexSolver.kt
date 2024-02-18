@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.optimal.solver.`var`.CplexObjectiveVar
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 
 /**
- * https://www.ibm.com/docs/zh/icos/12.9.0?topic=cplex-users-manual
+ * https://www.ibm.com/docs/zh/icos/22.1.1?topic=optimizers-users-manual-cplex
  *
  * without license the size is limited to 1000 variables and 1000 constraints
  *

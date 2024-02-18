@@ -7,7 +7,7 @@ import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 
 /**
  * https://guide.coap.online/copt/zh-doc/
- * https://github.com/COPT-Public/COPT-Release 7.0.6
+ * https://github.com/COPT-Public/COPT-Release 7.1.0
  *
  * without license the size is limited to 2000 variables and 2000 constraints
  * without license LP size is limited to 10000 variables and 10000 constraints
@@ -24,8 +24,7 @@ class COPTSolver @JvmOverloads constructor(
     val model: copt.Model = env.createModel(name)
 
     init {
-        //解决 presolve 异常,但会导致一些问题求解：free(): invalid next size (fast)
-        model.setIntParam(copt.IntParam.Presolve, 0)
+//        model.setIntParam(copt.IntParam.Presolve, 0)
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
         model.setDblParam(copt.DblParam.FeasTol, OptimalUtil.DEFAULT_MIN_EPSILON)
