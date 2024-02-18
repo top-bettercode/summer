@@ -81,6 +81,7 @@ dependencies {
         api("com.github.wechatpay-apiv3:wechatpay-java:0.2.11")
         api("com.jcraft:jsch:0.1.55")
         api("com.google.ortools:ortools-java:9.8.3296")
+        api("com.gurobi:gurobi:11.0.0")
 
         api("io.swagger:swagger-annotations:1.6.12")
 
