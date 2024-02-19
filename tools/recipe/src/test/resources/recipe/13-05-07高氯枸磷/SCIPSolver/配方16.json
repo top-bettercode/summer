@@ -1,8 +1,8 @@
 {
   "cost" : 1299.3162055336,
-  "dryWaterWeight" : 195.4505901691,
+  "dryWaterWeight" : 170.2328137721,
   "includeProductionCost" : false,
-  "materialCost" : 1299.3162055335,
+  "materialCost" : 1299.3162055336,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -10,7 +10,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 474.3083003953
+    "weight" : 538.0843266122
   }, {
     "id" : "低白肥（14%）",
     "index" : 25,
@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.42,
-    "weight" : 525.5767184336
+    "weight" : 452.1484871599
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
@@ -26,7 +26,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 115.5655713402
+    "weight" : 100.0
   }, {
     "id" : "白泥",
     "index" : 53,
@@ -90,6 +90,6 @@
     "taxFee" : 29.04,
     "totalFee" : 338.3904
   },
-  "waterWeight" : 195.4505901691,
-  "weight" : 1195.4505901691
+  "waterWeight" : 170.2328137721,
+  "weight" : 1170.2328137721
 }

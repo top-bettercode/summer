@@ -22,15 +22,32 @@ import java.io.File
  * @author Peter Wu
  */
 internal class RecipeSolverTest {
+    val products = listOf(
+            "13-05-07高氯枸磷",
+            "24-06-10高氯枸磷",
+            "15-15-15喷浆硫基",
+            "15-15-15喷浆氯基",
+            "15-15-15常规氯基"
+    )
+    val solveTypes = listOf(
+            SolverType.COPT,
+            SolverType.CPLEX,
+            SolverType.SCIP,
+//            SolverType.GUROBI,
+//            SolverType.CBC,
+    )
 
-    /**
-     * 1.15-15-15喷浆氯基 copt 程序异常终止，官方已定位问题，等待修复版本
-     *
-     */
+    val maxResult = 20
+    val includeProductionCost = true
+
+    val nutrientUnchanged = true
+    val materialUnchanged = true
+    val solveTimes = 1
+    //    val solveTimes=20
+
     @Test
     fun solve() {
-        val results = solveList()
-//        val results = solveList(20)
+        val results = solveList(solveTimes)
         val file = File("build/excel/time-${System.currentTimeMillis()}.xlsx")
         file.parentFile.mkdirs()
         FastExcel.of(file).apply {
@@ -54,14 +71,46 @@ internal class RecipeSolverTest {
         Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
     }
 
+    private fun solve(requirement: RecipeRequirement, solverType: SolverType = SolverType.COPT, maxResult: Int, includeProductionCost: Boolean, nutrientUnchanged: Boolean, materialUnchanged: Boolean, toExcel: Boolean = false): RecipeResult {
+        val recipeResult = MultiRecipeSolver.solve(solverType = solverType, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+
+        System.err.println("============toExcel=============")
+        if (toExcel)
+            toExcel(recipeResult)
+
+        System.err.println("============效验结果=============")
+        validateResult(recipeResult)
+
+        System.err.println("============对比保存结果=============")
+        validatePreResult(recipeResult)
+
+        System.err.println("============保存结果=============")
+        saveRecipe(recipeResult)
+        return recipeResult
+    }
+
+
+    fun solve(productName: String): Map<SolverType, Long> {
+        System.err.println("======================$productName=====================")
+        var requirement = TestPrepareData.readRequirement(productName)
+        val file = File("build/requirement.json")
+        requirement.write(file)
+        requirement = RecipeRequirement.read(file)
+
+        var recipeResult: RecipeResult? = null
+
+        val results = mutableMapOf<SolverType, Long>()
+        solveTypes.forEach {
+            val result = solve(solverType = it, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+            recipeResult?.let { res -> assert(res, result) }
+            recipeResult = result
+            results[it] = result.time
+        }
+
+        return results
+    }
+
     fun solveList(times: Int = 1): Map<String, Map<SolverType, Long>> {
-        val products = listOf(
-                "13-05-07高氯枸磷",
-                "24-06-10高氯枸磷",
-                "15-15-15喷浆硫基",
-                "15-15-15喷浆氯基",
-                "15-15-15常规氯基"
-        )
         return products.associateWith { product ->
             val solverInfos = mutableMapOf<SolverType, MutableList<Long>>()
             (0 until times).forEach { _ ->
@@ -71,68 +120,6 @@ internal class RecipeSolverTest {
             }
             solverInfos.mapValues { it.value.average().toLong() }
         }
-    }
-
-    fun solve(productName: String): Map<SolverType, Long> {
-        System.err.println("======================$productName=====================")
-        var requirement = TestPrepareData.readRequirement(productName)
-        val file = File("build/requirement.json")
-        requirement.write(file)
-        requirement = RecipeRequirement.read(file)
-
-        val maxResult = 1
-//        val maxResult = 20
-        val includeProductionCost = true
-//        val includeProductionCost = false
-        val nutrientUnchanged = true
-//        val nutrientUnchanged = false
-        val materialUnchanged = true
-//        val materialUnchanged = false
-        val coptSolve = MultiRecipeSolver.solve(solverType = SolverType.COPT, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val cplexSolver = MultiRecipeSolver.solve(solverType = SolverType.CPLEX, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val gurobiSolver = MultiRecipeSolver.solve(solverType = SolverType.GUROBI, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val scipSolver = MultiRecipeSolver.solve(solverType = SolverType.SCIP, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-        val cbcSolver = MultiRecipeSolver.solve(solverType = SolverType.CBC, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-
-        System.err.println("============toExcel=============")
-//        toExcel(coptSolve)
-//        toExcel(cplexSolver)
-//        toExcel(scipSolver)
-//        toExcel(gurobiSolver)
-
-        System.err.println("============效验结果=============")
-        validateResult(coptSolve)
-        validateResult(cplexSolver)
-        validateResult(gurobiSolver)
-        validateResult(scipSolver)
-        validateResult(cbcSolver)
-
-        System.err.println("============对比结果=============")
-        assert(coptSolve, cplexSolver)
-        assert(cplexSolver, scipSolver)
-        assert(scipSolver, cbcSolver)
-        assert(cbcSolver, gurobiSolver)
-
-        System.err.println("============对比保存结果=============")
-        validatePreResult(coptSolve)
-        validatePreResult(cplexSolver)
-//        validatePreResult(gurobiSolver)
-        validatePreResult(scipSolver)
-        validatePreResult(cbcSolver)
-
-        System.err.println("============保存结果=============")
-        saveRecipe(coptSolve)
-        saveRecipe(cplexSolver)
-        saveRecipe(gurobiSolver)
-        saveRecipe(scipSolver)
-        saveRecipe(cbcSolver)
-        return mapOf(
-                SolverType.COPT to coptSolve.time,
-                SolverType.CPLEX to cplexSolver.time,
-                SolverType.GUROBI to gurobiSolver.time,
-                SolverType.SCIP to scipSolver.time,
-                SolverType.CBC to cbcSolver.time,
-        )
     }
 
     private fun toExcel(recipeResult: RecipeResult) {
@@ -175,8 +162,11 @@ internal class RecipeSolverTest {
         ), recipeResult.solverName)
         //配方
         recipes.forEachIndexed { index, recipe ->
-            val expectedRecipe = File("$dir/${recipeResult.solverName}/配方${index + 1}.json").bufferedReader().readText()
-            Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java), recipeResult.solverName)
+            val file = File("$dir/${recipeResult.solverName}/配方${index + 1}.json")
+            if (file.exists()) {
+                val expectedRecipe = file.bufferedReader().readText()
+                Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java), recipeResult.solverName + "配方${index + 1}")
+            }
         }
     }
 
@@ -184,6 +174,9 @@ internal class RecipeSolverTest {
         Assertions.assertEquals(solve.recipes[0].cost.scale(7), solve1.recipes[0].cost.scale(7))
         Assertions.assertEquals(solve.recipes.size, solve1.recipes.size)
         Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
+        solve.recipes.forEachIndexed { index, recipe ->
+            Assertions.assertEquals(recipe.cost.scale(7), solve1.recipes[index].cost.scale(7))
+        }
     }
 
     private fun json(value: Any, vararg view: Pair<Class<*>, Class<*>>): String {

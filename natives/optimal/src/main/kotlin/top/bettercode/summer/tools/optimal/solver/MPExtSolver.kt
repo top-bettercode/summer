@@ -33,9 +33,11 @@ open class MPExtSolver @JvmOverloads constructor(
     var resultStatus: MPSolver.ResultStatus = MPSolver.ResultStatus.NOT_SOLVED
 
     init {
-        parameters.setDoubleParam(MPSolverParameters.DoubleParam.PRIMAL_TOLERANCE, 1e-9)
         parameters.setDoubleParam(MPSolverParameters.DoubleParam.RELATIVE_MIP_GAP, 1e-9)
-        parameters.setDoubleParam(MPSolverParameters.DoubleParam.DUAL_TOLERANCE, 1e-9)
+        if (MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING == type) {
+            parameters.setDoubleParam(MPSolverParameters.DoubleParam.PRIMAL_TOLERANCE, 1e-9)
+            parameters.setDoubleParam(MPSolverParameters.DoubleParam.DUAL_TOLERANCE, 1e-9)
+        }
     }
 
     override fun setTimeLimit(seconds: Int) {

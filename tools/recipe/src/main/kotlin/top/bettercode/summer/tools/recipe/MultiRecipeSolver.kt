@@ -99,6 +99,8 @@ object MultiRecipeSolver {
                         }.ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
                     } else {
                         log.error("Could not find optimal solution:${getResultStatus()}")
+                        e = System.currentTimeMillis()
+                        recipeResult.time = e - s
                         return recipeResult
                     }
                     e = System.currentTimeMillis()
