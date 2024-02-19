@@ -2,11 +2,8 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.tools.optimal.solver.Constraint
+import top.bettercode.summer.tools.optimal.solver.*
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
-import top.bettercode.summer.tools.optimal.solver.Solver
-import top.bettercode.summer.tools.optimal.solver.SolverFactory
-import top.bettercode.summer.tools.optimal.solver.SolverType
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
@@ -18,8 +15,14 @@ object RecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
-    fun solve(solverType: SolverType, requirement: RecipeRequirement, includeProductionCost: Boolean = true): Recipe? {
-        SolverFactory.createSolver(solverType = solverType).use { solver ->
+    fun solve(solverType: SolverType,
+              requirement: RecipeRequirement,
+              epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+              includeProductionCost: Boolean = true): Recipe? {
+        SolverFactory.createSolver(
+                solverType = solverType,
+                epsilon = epsilon
+        ).use { solver ->
             solver.apply {
                 val s = System.currentTimeMillis()
                 val prepareData = prepare(requirement, includeProductionCost)

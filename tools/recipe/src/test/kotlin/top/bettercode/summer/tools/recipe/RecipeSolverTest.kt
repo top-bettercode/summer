@@ -39,11 +39,11 @@ internal class RecipeSolverTest {
 
     val maxResult = 20
     val includeProductionCost = true
-
     val nutrientUnchanged = true
     val materialUnchanged = true
     val solveTimes = 1
-    //    val solveTimes=20
+    val toExcel = false
+    val epsilon = 1e-4
 
     @Test
     fun solve() {
@@ -72,7 +72,7 @@ internal class RecipeSolverTest {
     }
 
     private fun solve(requirement: RecipeRequirement, solverType: SolverType = SolverType.COPT, maxResult: Int, includeProductionCost: Boolean, nutrientUnchanged: Boolean, materialUnchanged: Boolean, toExcel: Boolean = false): RecipeResult {
-        val recipeResult = MultiRecipeSolver.solve(solverType = solverType, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val recipeResult = MultiRecipeSolver.solve(solverType = solverType, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged, epsilon = epsilon)
 
         System.err.println("============toExcel=============")
         if (toExcel)
@@ -101,7 +101,7 @@ internal class RecipeSolverTest {
 
         val results = mutableMapOf<SolverType, Long>()
         solveTypes.forEach {
-            val result = solve(solverType = it, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+            val result = solve(solverType = it, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged, toExcel = toExcel)
             recipeResult?.let { res -> assert(res, result) }
             recipeResult = result
             results[it] = result.time

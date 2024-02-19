@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.SolverFactory
 import top.bettercode.summer.tools.optimal.solver.SolverType
@@ -16,12 +17,16 @@ object MultiRecipeSolver {
 
     fun solve(solverType: SolverType,
               requirement: RecipeRequirement,
+              epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
               maxResult: Int = 1,
               materialUnchanged: Boolean = true,
               nutrientUnchanged: Boolean = true,
               includeProductionCost: Boolean = true
     ): RecipeResult {
-        SolverFactory.createSolver(solverType = solverType, logging = true).use { solver ->
+        SolverFactory.createSolver(
+                solverType = solverType,
+                epsilon = epsilon,
+                logging = true).use { solver ->
             solver.apply {
                 val s = System.currentTimeMillis()
                 val prepareData = prepare(requirement, includeProductionCost)
