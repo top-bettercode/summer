@@ -1,16 +1,16 @@
 {
   "cost" : 2613.3832486084,
-  "dryWaterWeight" : 668.7296876983,
+  "dryWaterWeight" : 668.7296725585,
   "includeProductionCost" : false,
-  "materialCost" : 2613.3832486082,
+  "materialCost" : 2613.3832486083,
   "materials" : [ {
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 120.8427517982,
+    "normalWeight" : 120.8427399154,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
-    "weight" : 120.8427517982
+    "weight" : 120.8427399154
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   }, {
     "id" : "磷酸",
     "index" : 29,
@@ -26,15 +26,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.055,
-    "weight" : 826.2698139567
+    "weight" : 826.2698150187
   }, {
     "id" : "硫酸",
     "index" : 36,
     "name" : "硫酸",
-    "normalWeight" : 285.276907871,
-    "overdoseWeight" : 71.3192269095,
+    "normalWeight" : 285.2768588287,
+    "overdoseWeight" : 71.3192146489,
     "price" : 0.22,
-    "weight" : 356.5961347805
+    "weight" : 356.5960734776
   }, {
     "id" : "防结油（白色）",
     "index" : 61,
@@ -66,7 +66,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 232.9416431239
+    "weight" : 232.9416030786
   }, {
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -74,7 +74,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.8,
-    "weight" : 122.079334039
+    "weight" : 122.0793410682
   } ],
   "productionCost" : {
     "allChange" : 1.01,
@@ -85,7 +85,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.565961347805
+        "value" : 3.565960734776
       },
       "DEPRECIATION" : {
         "it" : {
@@ -104,7 +104,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 465.3648438492,
+    "energyFee" : 465.36483627925,
     "materialItems" : [ {
       "it" : {
         "id" : "煤",
@@ -114,7 +114,7 @@
         "value" : 1.0,
         "cost" : 50.0
       },
-      "value" : 7.307296876984
+      "value" : 7.307296725585001
     }, {
       "it" : {
         "id" : "电费",
@@ -126,10 +126,10 @@
       },
       "value" : 1.0
     } ],
-    "otherFee" : 263.77037660781,
-    "taxFee" : 38.7393338947029,
-    "totalFee" : 775.5532998952301
+    "otherFee" : 263.770350860592,
+    "taxFee" : 38.73933157745328,
+    "totalFee" : 775.5532639044682
   },
-  "waterWeight" : 680.7296876984,
-  "weight" : 1668.7296876983
+  "waterWeight" : 680.7296725585,
+  "weight" : 1668.7296725585
 }

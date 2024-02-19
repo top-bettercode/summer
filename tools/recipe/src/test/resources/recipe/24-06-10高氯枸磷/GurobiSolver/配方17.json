@@ -1,6 +1,6 @@
 {
   "cost" : 2426.3467503007,
-  "dryWaterWeight" : 6.0519891213,
+  "dryWaterWeight" : 6.0520631213,
   "includeProductionCost" : false,
   "materialCost" : 2426.3467503007,
   "materials" : [ {
@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 351.3508921648
+    "weight" : 351.3508761648
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
@@ -50,7 +50,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   }, {
     "id" : "防结油（白色）",
     "index" : 58,
@@ -122,6 +122,6 @@
     "taxFee" : 29.04,
     "totalFee" : 338.3904
   },
-  "waterWeight" : 8.7776394564,
-  "weight" : 1006.0519891213
+  "waterWeight" : 8.7776401964,
+  "weight" : 1006.0520631213
 }

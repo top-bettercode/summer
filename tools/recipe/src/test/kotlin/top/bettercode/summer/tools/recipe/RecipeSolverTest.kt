@@ -33,8 +33,8 @@ internal class RecipeSolverTest {
             SolverType.COPT,
             SolverType.CPLEX,
             SolverType.SCIP,
-//            SolverType.GUROBI,
-//            SolverType.CBC,
+            SolverType.GUROBI,
+            SolverType.CBC,
     )
 
     val maxResult = 20

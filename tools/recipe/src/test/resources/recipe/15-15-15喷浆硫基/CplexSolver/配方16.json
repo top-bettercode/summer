@@ -1,16 +1,16 @@
 {
   "cost" : 2638.3832486084,
-  "dryWaterWeight" : 684.0077312991,
+  "dryWaterWeight" : 684.007635736,
   "includeProductionCost" : false,
-  "materialCost" : 2638.3832486084,
+  "materialCost" : 2638.3832486083,
   "materials" : [ {
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 119.0183910714,
+    "normalWeight" : 119.0183720894,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
-    "weight" : 119.0183910714
+    "weight" : 119.0183720894
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   }, {
     "id" : "磷酸",
     "index" : 29,
@@ -26,15 +26,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.055,
-    "weight" : 848.53310331
+    "weight" : 848.5329447969
   }, {
     "id" : "硫酸",
     "index" : 36,
     "name" : "硫酸",
     "normalWeight" : 284.7360402825,
-    "overdoseWeight" : 62.8575708898,
+    "overdoseWeight" : 62.857539125,
     "price" : 0.22,
-    "weight" : 347.5936111723
+    "weight" : 347.5935794075
   }, {
     "id" : "防结油（白色）",
     "index" : 61,
@@ -74,7 +74,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.8,
-    "weight" : 126.3626157454
+    "weight" : 126.3626394422
   } ],
   "productionCost" : {
     "allChange" : 1.01,
@@ -85,7 +85,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.4759361117229997
+        "value" : 3.4759357940749998
       },
       "DEPRECIATION" : {
         "it" : {
@@ -104,7 +104,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 473.00386564955,
+    "energyFee" : 473.003817868,
     "materialItems" : [ {
       "it" : {
         "id" : "煤",
@@ -114,7 +114,7 @@
         "value" : 1.0,
         "cost" : 50.0
       },
-      "value" : 7.460077312991
+      "value" : 7.46007635736
     }, {
       "it" : {
         "id" : "电费",
@@ -126,10 +126,10 @@
       },
       "value" : 1.0
     } ],
-    "otherFee" : 259.98931669236595,
-    "taxFee" : 38.39903850231293,
-    "totalFee" : 779.1061430526712
+    "otherFee" : 259.98930335115,
+    "taxFee" : 38.3990373016035,
+    "totalFee" : 779.106080105961
   },
-  "waterWeight" : 696.0077312991,
-  "weight" : 1684.0077312991
+  "waterWeight" : 696.007635736,
+  "weight" : 1684.007635736
 }

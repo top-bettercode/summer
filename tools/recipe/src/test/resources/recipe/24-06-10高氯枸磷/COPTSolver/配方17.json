@@ -2,7 +2,7 @@
   "cost" : 2426.3467503007,
   "dryWaterWeight" : 0.0,
   "includeProductionCost" : false,
-  "materialCost" : 2426.3467503006,
+  "materialCost" : 2426.3467503007,
   "materials" : [ {
     "id" : "普通尿素",
     "index" : 0,
@@ -10,7 +10,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.822,
-    "weight" : 385.5503976316
+    "weight" : 385.5504654985
   }, {
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 339.7485054119
+    "weight" : 339.748347545
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
@@ -50,7 +50,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   }, {
     "id" : "防结油（白色）",
     "index" : 58,
@@ -122,6 +122,6 @@
     "taxFee" : 29.04,
     "totalFee" : 338.3904
   },
-  "waterWeight" : 8.6893675771,
+  "waterWeight" : 8.6893672377,
   "weight" : 1000.0
 }

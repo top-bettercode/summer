@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 348.9753451904
+    "weight" : 348.9752097813
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
@@ -42,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 155.1287291311
+    "weight" : 155.1287745402
   }, {
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
@@ -50,7 +50,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   }, {
     "id" : "防结油（白色）",
     "index" : 58,

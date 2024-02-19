@@ -1,8 +1,8 @@
 {
-  "cost" : 2876.9063223413,
-  "dryWaterWeight" : 0.0,
+  "cost" : 2876.9064912914,
+  "dryWaterWeight" : -1.0E-10,
   "includeProductionCost" : true,
-  "materialCost" : 2605.7313168113,
+  "materialCost" : 2605.7314334644,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -10,15 +10,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 448.7849301595
+    "weight" : 448.784722722
   }, {
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 0.0524028674,
+    "normalWeight" : 0.0524345065,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "weight" : 0.0524028674
+    "weight" : 0.0524345065
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -26,7 +26,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 4.9737364525
+    "weight" : 4.9737458709
   }, {
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -34,7 +34,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.85,
-    "weight" : 307.8555771873
+    "weight" : 307.8555635672
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
@@ -50,7 +50,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.295,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   }, {
     "id" : "防结油（白色）",
     "index" : 61,
@@ -74,7 +74,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.8,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   } ],
   "optimalProductionCost" : {
     "allChange" : 1.01,
@@ -85,7 +85,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 1.0E-7
+        "value" : 1.0E-6
       },
       "DEPRECIATION" : {
         "it" : {
@@ -104,7 +104,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 129.230099905,
+    "energyFee" : 129.230110485,
     "materialItems" : [ {
       "it" : {
         "id" : "煤",
@@ -114,7 +114,7 @@
         "value" : 1.0,
         "cost" : 50.0
       },
-      "value" : 0.5846019981
+      "value" : 0.5846022097
     }, {
       "it" : {
         "id" : "电费",
@@ -126,9 +126,9 @@
       },
       "value" : 1.0
     } ],
-    "otherFee" : 114.0000042,
-    "taxFee" : 25.260000378,
-    "totalFee" : 271.17500552782997
+    "otherFee" : 114.00004200000001,
+    "taxFee" : 25.260003779999998,
+    "totalFee" : 271.17505782765
   },
   "productionCost" : {
     "allChange" : 1.01,
@@ -139,7 +139,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 1.0000000005838672E-7
+        "value" : 1.0000000000287557E-6
       },
       "DEPRECIATION" : {
         "it" : {
@@ -158,7 +158,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 129.23009990715,
+    "energyFee" : 129.23011048415,
     "materialItems" : [ {
       "it" : {
         "id" : "煤",
@@ -168,7 +168,7 @@
         "value" : 1.0,
         "cost" : 50.0
       },
-      "value" : 0.584601998143
+      "value" : 0.5846022096829999
     }, {
       "it" : {
         "id" : "电费",
@@ -180,10 +180,10 @@
       },
       "value" : 1.0
     } ],
-    "otherFee" : 114.0000042,
-    "taxFee" : 25.260000378,
-    "totalFee" : 271.17500553000156
+    "otherFee" : 114.00004200000001,
+    "taxFee" : 25.260003779999998,
+    "totalFee" : 271.17505782679154
   },
-  "waterWeight" : 8.4601998143,
-  "weight" : 1000.0
+  "waterWeight" : 8.4602209683,
+  "weight" : 999.9999999999
 }

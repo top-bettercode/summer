@@ -2,7 +2,7 @@
   "cost" : 2436.3467503007,
   "dryWaterWeight" : 0.0,
   "includeProductionCost" : false,
-  "materialCost" : 2436.3467503006,
+  "materialCost" : 2436.3467503008,
   "materials" : [ {
     "id" : "普通尿素",
     "index" : 0,
@@ -10,7 +10,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.822,
-    "weight" : 462.434667617
+    "weight" : 462.4346331294
   }, {
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 1.0E-5
+    "weight" : 1.0E-4
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
@@ -26,7 +26,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.2,
-    "weight" : 111.2242047822
+    "weight" : 111.2241603333
   }, {
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
@@ -34,7 +34,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.95,
-    "weight" : 46.5672999088
+    "weight" : 46.567281299
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 27,
@@ -42,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 178.4822668818
+    "weight" : 178.4823107819
   }, {
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
@@ -50,7 +50,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "weight" : 196.2915508102
+    "weight" : 196.2915144564
   }, {
     "id" : "防结油（白色）",
     "index" : 58,
@@ -122,6 +122,6 @@
     "taxFee" : 29.04,
     "totalFee" : 338.3904
   },
-  "waterWeight" : 8.5172322102,
+  "waterWeight" : 8.5172320312,
   "weight" : 1000.0
 }
