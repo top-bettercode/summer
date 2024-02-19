@@ -25,9 +25,15 @@ class GurobiSolver @JvmOverloads constructor(
         model.set(GRB.DoubleParam.IntFeasTol, 1e-6)
         model.set(GRB.DoubleParam.FeasibilityTol, OptimalUtil.DEFAULT_MIN_EPSILON)
 
-//        model.set(GRB.DoubleParam.MIPGap, 1e-10)
+//        model.set(GRB.DoubleParam.PerturbValue, 0.0)
 
-
+        //Cutoff:1.0E100
+        //IterationLimit:1.0E100
+        //MemLimit:1.0E100
+        //SoftMemLimit:1.0E100
+        //NodeLimit:1.0E100
+        //TimeLimit:1.0E100
+        //WorkLimit:1.0E100
         //FeasibilityTol:1.0E-6
         //IntFeasTol:1.0E-5
         //MarkowitzTol:0.0078125
@@ -37,11 +43,20 @@ class GurobiSolver @JvmOverloads constructor(
         //PerturbValue:2.0E-4
         //Heuristics:0.05
         //ObjScale:0.0
+        //NodefileStart:1.0E100
         //BarConvTol:1.0E-8
+        //BarQCPConvTol:1.0E-6
+        //PSDTol:1.0E-6
         //ImproveStartGap:0.0
+        //ImproveStartNodes:1.0E100
+        //ImproveStartTime:1.0E100
+        //FeasRelaxBigM:1000000.0
+        //TuneTimeLimit:1.0E100
         //TuneCleanup:0.0
         //TuneTargetMIPGap:0.0
         //TuneTargetTime:0.005
+        //PreSOS1BigM:-1.0
+        //PreSOS2BigM:-1.0
         //PoolGap:1.0E100
         //PoolGapAbs:1.0E100
         //BestObjStop:-1.0E100
@@ -54,7 +69,6 @@ class GurobiSolver @JvmOverloads constructor(
         //NoRelHeurTime:0.0
         //NoRelHeurWork:0.0
         //WLSTokenRefresh:0.9
-
     }
 
     override fun setTimeLimit(seconds: Int) {
