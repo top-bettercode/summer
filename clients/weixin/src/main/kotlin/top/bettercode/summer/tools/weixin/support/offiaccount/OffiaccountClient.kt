@@ -49,7 +49,7 @@ open class OffiaccountClient(
 
     init {
         val url =
-                "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
+                "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect"
         val authenticationUrl = String.format(
                 url,
                 properties.appId,
