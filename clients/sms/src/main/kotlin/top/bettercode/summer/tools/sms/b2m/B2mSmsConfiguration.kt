@@ -1,9 +1,11 @@
 package top.bettercode.summer.tools.sms.b2m
 
+import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import top.bettercode.summer.config.EndpointAutoConfiguration
 import top.bettercode.summer.tools.lang.util.WatchdogUtil
 import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 
@@ -14,6 +16,7 @@ import top.bettercode.summer.web.form.IFormkeyService.Companion.log
  */
 @ConditionalOnProperty(prefix = "summer.sms.b2m", value = ["app-id"])
 @Configuration(proxyBeanMethods = false)
+@AutoConfigureAfter(EndpointAutoConfiguration::class)
 @EnableConfigurationProperties(B2mSmsProperties::class)
 class B2mSmsConfiguration {
 
