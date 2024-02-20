@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
  * @author Peter Wu
  */
 class MPObjectiveVar(private val _delegate: MPObjective,
+                     override val isInt: Boolean = false,
                      override val coeff: Double = 1.0
 ) : IVar {
 
@@ -23,7 +24,7 @@ class MPObjectiveVar(private val _delegate: MPObjective,
         set(_) {}
 
     override fun times(coeff: Double): IVar {
-        return MPObjectiveVar(_delegate, coeff)
+        return MPObjectiveVar(_delegate = _delegate, isInt = isInt, coeff = coeff)
     }
 
     override fun <T> getDelegate(): T {

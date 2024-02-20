@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver
 
-import kotlin.math.pow
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  *
@@ -24,15 +25,19 @@ object OptimalUtil {
     /**
      * 将数字转换为指定小数位数的数字
      *
-     * @param number        数字
      * @param scale 小数位数
      * @return 指定小数位数的数字
      */
     @JvmStatic
     fun Double.scale(scale: Int = DEFAULT_SCALE): Double {
         require(scale >= 0) { "小数位数不能为负数" }
-        val scaleFactor: Double = 10.0.pow(scale.toDouble())
-        return Math.round(this * scaleFactor) / scaleFactor
+        return BigDecimal(this).setScale(scale, RoundingMode.HALF_UP).toDouble()
     }
+
+    /**
+     * 是否没有小数位数
+     */
+    @JvmStatic
+    val Double.isInt: Boolean get() = this.toBigDecimal().compareTo(this.toLong().toBigDecimal()) == 0
 
 }

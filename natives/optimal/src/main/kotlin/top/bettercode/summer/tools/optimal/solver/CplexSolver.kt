@@ -5,10 +5,13 @@ import ilog.concert.IloObjective
 import ilog.cplex.IloCplex
 import ilog.cplex.IloCplex.Param
 import ilog.cplex.IloCplex.Status
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.isInt
 import top.bettercode.summer.tools.optimal.solver.Sense.*
 import top.bettercode.summer.tools.optimal.solver.`var`.CplexNumVar
 import top.bettercode.summer.tools.optimal.solver.`var`.CplexObjectiveVar
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * https://www.ibm.com/docs/zh/icos/22.1.1?topic=optimizers-users-manual-cplex
@@ -73,16 +76,18 @@ class CplexSolver @JvmOverloads constructor(
 
 
     override fun boolVar(name: String?): IVar {
-        return CplexNumVar(model.boolVar(name ?: ("b" + (numVariables() + 1))), model)
+        return CplexNumVar(_delegate = model.boolVar(name
+                ?: ("b" + (numVariables() + 1))), model = model, isInt = true)
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        return CplexNumVar(model.intVar(lb.toInt(), ub.toInt(), name
-                ?: ("i" + (numVariables() + 1))), model)
+        return CplexNumVar(_delegate = model.intVar(lb.toInt(), ub.toInt(), name
+                ?: ("i" + (numVariables() + 1))), model = model, isInt = true)
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        return CplexNumVar(model.numVar(lb, ub, name ?: ("n" + (numVariables() + 1))), model)
+        return CplexNumVar(_delegate = model.numVar(lb, ub, name
+                ?: ("n" + (numVariables() + 1))), model = model, isInt = false)
     }
 
     private fun expr(`var`: IVar): IloLinearNumExpr {
@@ -426,20 +431,40 @@ class CplexSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.sum(): IVar {
         val expr = model.linearNumExpr()
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
         for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar()
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addEq(expr, expr(sum), "c" + (numConstraints() + 1))
         return sum
     }
 
     override fun Iterable<IVar>.sum(): IVar {
         val expr = model.linearNumExpr()
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
         for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar()
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addEq(expr, expr(sum), "c" + (numConstraints() + 1))
         return sum
     }

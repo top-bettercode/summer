@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
  */
 class CplexObjectiveVar(
         val model: IloCplex,
+        override val isInt: Boolean = false,
         override val coeff: Double = 1.0
 ) : IVar {
 
@@ -25,7 +26,7 @@ class CplexObjectiveVar(
 
 
     override fun times(coeff: Double): IVar {
-        return CplexObjectiveVar(model, coeff)
+        return CplexObjectiveVar(model = model, isInt = isInt, coeff = coeff)
     }
 
     override fun <T> getDelegate(): T {

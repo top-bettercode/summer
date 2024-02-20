@@ -10,6 +10,8 @@ import top.bettercode.summer.tools.optimal.solver.Sense
  */
 interface IVar {
 
+    val isInt: Boolean
+
     /**
      * 求解系数
      */

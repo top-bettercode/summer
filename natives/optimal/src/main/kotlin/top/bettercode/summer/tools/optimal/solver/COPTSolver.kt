@@ -1,9 +1,12 @@
 package top.bettercode.summer.tools.optimal.solver
 
 import copt.Var
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.isInt
 import top.bettercode.summer.tools.optimal.solver.`var`.COPTExprVar
 import top.bettercode.summer.tools.optimal.solver.`var`.COPTVar
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * https://guide.coap.online/copt/zh-doc/
@@ -85,25 +88,25 @@ class COPTSolver @JvmOverloads constructor(
             if (this is COPTExprVar) this.getDelegate() else copt.Expr(this.getDelegate(), this.coeff)
 
     override fun boolVar(name: String?): IVar {
-        return COPTVar(model.addVar(0.0, 1.0, 1.0, copt.Consts.BINARY, name
-                ?: ("b" + (numVariables() + 1))))
+        return COPTVar(_delegate = model.addVar(0.0, 1.0, 1.0, copt.Consts.BINARY, name
+                ?: ("b" + (numVariables() + 1))), isInt = true)
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        return COPTVar(model.addVar(lb, ub, 1.0, copt.Consts.INTEGER, name
-                ?: ("i" + (numVariables() + 1))))
+        return COPTVar(_delegate = model.addVar(lb, ub, 1.0, copt.Consts.INTEGER, name
+                ?: ("i" + (numVariables() + 1))), isInt = true)
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        return COPTVar(model.addVar(lb, ub, 1.0, copt.Consts.CONTINUOUS, name
-                ?: ("n" + (numVariables() + 1))))
+        return COPTVar(_delegate = model.addVar(lb, ub, 1.0, copt.Consts.CONTINUOUS, name
+                ?: ("n" + (numVariables() + 1))), isInt = false)
     }
 
     override fun IVar.plus(value: Double): IVar {
         val expr = copt.Expr()
         expr.addTerm(this.getDelegate(), this.coeff)
         expr.addConstant(value)
-        val sum = numVar()
+        val sum = if (this.isInt && this.coeff.isInt && value.isInt) intVar() else numVar()
         model.addConstr(expr, copt.Consts.EQUAL, sum.getDelegate<Var>(), "c" + (numConstraints() + 1))
         return sum
     }
@@ -377,20 +380,40 @@ class COPTSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.sum(): IVar {
         val expr = copt.Expr()
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
         for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar()
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addConstr(expr, copt.Consts.EQUAL, sum.expr(), "c" + (numConstraints() + 1))
         return sum
     }
 
     override fun Iterable<IVar>.sum(): IVar {
         val expr = copt.Expr()
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
         for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
             expr.addTerm(it.getDelegate(), it.coeff)
         }
-        val sum = numVar()
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addConstr(expr, copt.Consts.EQUAL, sum.expr(), "c" + (numConstraints() + 1))
         return sum
     }

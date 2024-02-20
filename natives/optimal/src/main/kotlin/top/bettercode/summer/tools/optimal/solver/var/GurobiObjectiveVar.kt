@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
  */
 class GurobiObjectiveVar(
         val model: GRBModel,
+        override val isInt: Boolean = false,
         override val coeff: Double = 1.0
 ) : IVar {
 
@@ -26,7 +27,7 @@ class GurobiObjectiveVar(
 
 
     override fun times(coeff: Double): IVar {
-        return GurobiObjectiveVar(model, coeff)
+        return GurobiObjectiveVar(model = model, isInt = isInt, coeff = coeff)
     }
 
     override fun <T> getDelegate(): T {

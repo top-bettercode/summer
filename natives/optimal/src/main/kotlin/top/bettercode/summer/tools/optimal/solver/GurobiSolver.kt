@@ -1,9 +1,12 @@
 package top.bettercode.summer.tools.optimal.solver
 
 import com.gurobi.gurobi.*
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.isInt
 import top.bettercode.summer.tools.optimal.solver.`var`.GurobiObjectiveVar
 import top.bettercode.summer.tools.optimal.solver.`var`.GurobiVar
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * https://www.gurobi.com/documentation/11.0/refman/java_api_overview.html
@@ -120,22 +123,22 @@ class GurobiSolver @JvmOverloads constructor(
     private fun IVar.expr() = GRBLinExpr().also { it.addTerm(this.coeff, this.getDelegate()) }
 
     override fun boolVar(name: String?): IVar {
-        val gurobiVar = GurobiVar(model.addVar(0.0, 1.0, 1.0, GRB.BINARY, name
-                ?: ("b" + (numVariables() + 1))))
+        val gurobiVar = GurobiVar(_delegate = model.addVar(0.0, 1.0, 1.0, GRB.BINARY, name
+                ?: ("b" + (numVariables() + 1))), isInt = true)
         model.update()
         return gurobiVar
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        val gurobiVar = GurobiVar(model.addVar(lb, ub, 1.0, GRB.INTEGER, name
-                ?: ("i" + (numVariables() + 1))))
+        val gurobiVar = GurobiVar(_delegate = model.addVar(lb, ub, 1.0, GRB.INTEGER, name
+                ?: ("i" + (numVariables() + 1))), isInt = true)
         model.update()
         return gurobiVar
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        val gurobiVar = GurobiVar(model.addVar(lb, ub, 1.0, GRB.CONTINUOUS, name
-                ?: ("n" + (numVariables() + 1))))
+        val gurobiVar = GurobiVar(_delegate = model.addVar(lb, ub, 1.0, GRB.CONTINUOUS, name
+                ?: ("n" + (numVariables() + 1))), isInt = false)
         model.update()
         return gurobiVar
     }
@@ -144,7 +147,7 @@ class GurobiSolver @JvmOverloads constructor(
         val expr = GRBLinExpr()
         expr.addTerm(this.coeff, this.getDelegate())
         expr.addConstant(value)
-        val sum = numVar()
+        val sum = if (this.isInt && this.coeff.isInt && value.isInt) intVar() else numVar()
         model.addConstr(expr, GRB.EQUAL, sum.getDelegate<GRBVar>(), "c" + (numConstraints() + 1))
         model.update()
         return sum
@@ -457,10 +460,20 @@ class GurobiSolver @JvmOverloads constructor(
 
     override fun Array<out IVar>.sum(): IVar {
         val expr = GRBLinExpr()
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
         for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
             expr.addTerm(it.coeff, it.getDelegate())
         }
-        val sum = numVar()
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addConstr(expr, GRB.EQUAL, sum.expr(), "c" + (numConstraints() + 1))
         model.update()
         return sum
@@ -468,10 +481,20 @@ class GurobiSolver @JvmOverloads constructor(
 
     override fun Iterable<IVar>.sum(): IVar {
         val expr = GRBLinExpr()
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
         for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
             expr.addTerm(it.coeff, it.getDelegate())
         }
-        val sum = numVar()
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addConstr(expr, GRB.EQUAL, sum.expr(), "c" + (numConstraints() + 1))
         model.update()
         return sum

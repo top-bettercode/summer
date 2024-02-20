@@ -1,10 +1,7 @@
 package top.bettercode.summer.tools.optimal.solver
 
-import copt.Consts
 import org.slf4j.Logger
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
-import kotlin.math.abs
-import kotlin.math.log10
 
 /**
  *
@@ -21,15 +18,10 @@ abstract class Solver(
 
 
     companion object {
-        const val INFINITY = Consts.INFINITY
+        const val INFINITY = 1.0E30
     }
 
     protected val log: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass)
-
-    /**
-     * 小数点后的位数
-     */
-    val scale get() = abs(log10(epsilon)).toInt()
 
     abstract fun setTimeLimit(seconds: Int)
     abstract fun solve()
@@ -69,7 +61,7 @@ abstract class Solver(
     }
 
     open operator fun IVar.plus(value: Double): IVar {
-        return arrayOf(this, numVar(1.0, 1.0) * value).sum()
+        return arrayOf(this, intVar(1.0, 1.0) * value).sum()
     }
 
     open operator fun IVar.plus(value: IVar): IVar {

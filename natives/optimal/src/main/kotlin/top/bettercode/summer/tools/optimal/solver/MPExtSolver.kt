@@ -3,9 +3,12 @@ package top.bettercode.summer.tools.optimal.solver
 import com.google.ortools.Loader
 import com.google.ortools.linearsolver.MPSolver
 import com.google.ortools.linearsolver.MPSolverParameters
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.isInt
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.optimal.solver.`var`.MPObjectiveVar
 import top.bettercode.summer.tools.optimal.solver.`var`.MPVar
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author Peter Wu
@@ -73,15 +76,18 @@ open class MPExtSolver @JvmOverloads constructor(
     }
 
     override fun boolVar(name: String?): IVar {
-        return MPVar(solver.makeBoolVar(name ?: ("b" + (numVariables() + 1))))
+        return MPVar(_delegate = solver.makeBoolVar(name
+                ?: ("b" + (numVariables() + 1))), isInt = true)
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        return MPVar(solver.makeIntVar(lb, ub, name ?: ("i" + (numVariables() + 1))))
+        return MPVar(_delegate = solver.makeIntVar(lb, ub, name
+                ?: ("i" + (numVariables() + 1))), isInt = true)
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        return MPVar(solver.makeNumVar(lb, ub, name ?: ("n" + (numVariables() + 1))))
+        return MPVar(_delegate = solver.makeNumVar(lb, ub, name
+                ?: ("n" + (numVariables() + 1))), isInt = false)
     }
 
     override fun IVar.ge(lb: Double) {
@@ -325,7 +331,8 @@ open class MPExtSolver @JvmOverloads constructor(
      *
      */
     override fun IVar.geIf(value: Double, bool: IVar) {
-        arrayOf(this, bool * (-(value - this.lb))).ge(this.lb)
+        val lb = this.lb
+        arrayOf(this, bool * (-(value - lb))).ge(lb)
     }
 
     /**
@@ -419,22 +426,6 @@ open class MPExtSolver @JvmOverloads constructor(
         leIf(value, bool2)
     }
 
-    override fun IVar.neIf(value: Double, bool: IVar) {
-        val bool1 = boolVar()
-        val bool2 = boolVar()
-        arrayOf(bool1, bool2).sum().geIf(1.0, bool)
-        gtIf(value, bool1)
-        ltIf(value, bool2)
-    }
-
-    override fun IVar.neIfNot(value: Double, bool: IVar) {
-        val bool1 = boolVar()
-        val bool2 = boolVar()
-        arrayOf(bool1, bool2).sum().geIfNot(1.0, bool)
-        gtIf(value, bool1)
-        ltIf(value, bool2)
-    }
-
     /**
      * <pre>
      * bool为1时：lb <= var <= ub
@@ -469,22 +460,42 @@ open class MPExtSolver @JvmOverloads constructor(
     }
 
     override fun Array<out IVar>.sum(): IVar {
-        val sum = numVar()
         val constraint = solver.makeConstraint(0.0, 0.0)
-        constraint.setCoefficient(sum.getDelegate(), -1.0)
-        for (v in this) {
-            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
+        for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
+            constraint.setCoefficient(it.getDelegate(), it.coeff)
         }
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
+        constraint.setCoefficient(sum.getDelegate(), -1.0)
         return sum
     }
 
     override fun Iterable<IVar>.sum(): IVar {
-        val sum = numVar()
         val constraint = solver.makeConstraint(0.0, 0.0)
-        constraint.setCoefficient(sum.getDelegate(), -1.0)
-        for (v in this) {
-            constraint.setCoefficient(v.getDelegate(), v.coeff)
+        var isInt = true
+        var lb = 0.0
+        var ub = 0.0
+        for (it in this) {
+            lb += it.lb * it.coeff
+            ub += it.ub * it.coeff
+            if (!it.isInt || !it.coeff.isInt) {
+                isInt = false
+            }
+            constraint.setCoefficient(it.getDelegate(), it.coeff)
         }
+        lb = max(lb, -INFINITY)
+        ub = min(ub, INFINITY)
+        val sum = if (isInt) intVar(lb, ub) else numVar(lb, ub)
+        constraint.setCoefficient(sum.getDelegate(), -1.0)
         return sum
     }
 
