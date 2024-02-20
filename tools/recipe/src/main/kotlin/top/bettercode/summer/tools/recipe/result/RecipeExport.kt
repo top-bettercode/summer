@@ -1,9 +1,9 @@
 package top.bettercode.summer.tools.recipe.result
 
 import top.bettercode.summer.tools.excel.FastExcel
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
+import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
@@ -160,7 +160,9 @@ object RecipeExport {
                     ChangeLogicType.OVER -> {
                         val filter = materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name = if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
-                        "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${logic.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${logic.changeValue * 100}%"}
+                        "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${logic.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${logic.changeValue * 100}%"
+                    }
+
                     ChangeLogicType.OTHER -> "其他额外增加制造费用${logic.changeValue * 100}%"
                 }
             }
@@ -308,7 +310,7 @@ object RecipeExport {
                     RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }
-                val valid = value - min >= -OptimalUtil.DEFAULT_MIN_EPSILON && value - max <= OptimalUtil.DEFAULT_MIN_EPSILON
+                val valid = value - min >= -RecipeUtil.DEFAULT_MIN_EPSILON && value - max <= RecipeUtil.DEFAULT_MIN_EPSILON
                 cell(r++, c).value(value).bold().format(if (indicator.unit == "%") "0.0%" else "").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }

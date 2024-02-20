@@ -14,12 +14,6 @@ object OptimalUtil {
     var DEFAULT_EPSILON = 1e-4
 
     /**
-     * 默认最小误差
-     */
-    @JvmStatic
-    var DEFAULT_MIN_EPSILON = 1e-8
-
-    /**
      * 求解结果小数位
      *
      * Math.abs(Math.log10(epsilon)).toInt()

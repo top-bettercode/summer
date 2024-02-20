@@ -3,18 +3,18 @@ package top.bettercode.summer.tools.recipe.result
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil
 import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
-import top.bettercode.summer.tools.recipe.RecipeRequirement
-import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.optimal.solver.Sense
+import top.bettercode.summer.tools.recipe.RecipeRequirement
+import top.bettercode.summer.tools.recipe.RecipeUtil
+import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.criteria.TermThen
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
-import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
@@ -69,13 +69,13 @@ data class Recipe(
         }
 
         //检查烘干水分
-        if (dryWaterWeight < -OptimalUtil.DEFAULT_MIN_EPSILON) {
+        if (dryWaterWeight < -RecipeUtil.DEFAULT_MIN_EPSILON) {
             throw IllegalRecipeException("配方烘干水分异常：${dryWaterWeight}")
         }
-        if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
+        if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight).scale() > RecipeUtil.DEFAULT_MIN_EPSILON) {
             throw IllegalRecipeException("配方烘干水分:${dryWaterWeight} 超过最大可烘干水分：${requirement.maxBakeWeight}")
         }
-        if ((dryWaterWeight - waterWeight).scale() > OptimalUtil.DEFAULT_MIN_EPSILON) {
+        if ((dryWaterWeight - waterWeight).scale() > RecipeUtil.DEFAULT_MIN_EPSILON) {
             throw IllegalRecipeException("配方烘干水分:${dryWaterWeight} 超过总水分：${waterWeight}")
         }
 
@@ -159,7 +159,7 @@ data class Recipe(
             val usedNormalWeight = materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
             val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
-            if ((usedWeight - usedAddWeight).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
+            if ((usedWeight - usedAddWeight).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException("原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}")
             }
             val (normal, overdose) = termThen.relationValue
@@ -169,12 +169,12 @@ data class Recipe(
             val usedMaxOverdoseWeights = overdose.max
 
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
-            if (usedNormalWeight !in (usedMinNormalWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxNormalWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
+            if (usedNormalWeight !in (usedMinNormalWeights - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxNormalWeights + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
                 throw IllegalRecipeException("原料${usedIds}正常使用量：${usedNormalWeight} 不在范围${usedMinNormalWeights}-${usedMaxNormalWeights}内")
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
-            if (usedOverdoseWeight !in (usedMinOverdoseWeights - OptimalUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxOverdoseWeights + OptimalUtil.DEFAULT_MIN_EPSILON).scale()) {
+            if (usedOverdoseWeight !in (usedMinOverdoseWeights - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxOverdoseWeights + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
                 throw IllegalRecipeException("原料${usedIds}过量使用量：${usedOverdoseWeight} 不在范围${usedMinOverdoseWeights}-${usedMaxOverdoseWeights}内")
             }
         }
@@ -253,7 +253,7 @@ data class Recipe(
 
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
-        if ((materialCost + productionCostFee - cost).scale() !in -OptimalUtil.DEFAULT_MIN_EPSILON..OptimalUtil.DEFAULT_MIN_EPSILON) {
+        if ((materialCost + productionCostFee - cost).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
             throw IllegalRecipeException("配方成本不匹配，物料成本：${materialCost}+制造费用：${productionCostFee}=${materialCost + productionCostFee} / ${cost},差：${materialCost + productionCostFee - cost}")
         }
 
