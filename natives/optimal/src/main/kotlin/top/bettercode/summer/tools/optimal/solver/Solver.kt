@@ -198,7 +198,9 @@ abstract class Solver(
     open fun IVar.neIf(value: Double, bool: IVar) {
         val bool1 = boolVar()
         val bool2 = boolVar()
-        arrayOf(bool1, bool2).sum().geIf(1.0, bool)
+        val sum = arrayOf(bool1, bool2).sum()
+        sum.ub = 1.0
+        sum.geIf(1.0, bool)
         gtIf(value, bool1)
         ltIf(value, bool2)
     }
@@ -210,7 +212,9 @@ abstract class Solver(
     open fun IVar.neIfNot(value: Double, bool: IVar) {
         val bool1 = boolVar()
         val bool2 = boolVar()
-        arrayOf(bool1, bool2).sum().geIfNot(1.0, bool)
+        val sum = arrayOf(bool1, bool2).sum()
+        sum.ub = 1.0
+        sum.geIfNot(1.0, bool)
         gtIf(value, bool1)
         ltIf(value, bool2)
     }
