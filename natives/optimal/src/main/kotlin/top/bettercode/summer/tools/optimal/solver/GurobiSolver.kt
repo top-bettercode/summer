@@ -23,7 +23,7 @@ class GurobiSolver @JvmOverloads constructor(
         model.set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
         model.set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
         model.set(GRB.DoubleParam.IntFeasTol, 1e-6)
-        model.set(GRB.DoubleParam.FeasibilityTol, OptimalUtil.DEFAULT_MIN_EPSILON)
+        model.set(GRB.DoubleParam.FeasibilityTol, 1e-9)
 
 //        model.set(GRB.DoubleParam.PerturbValue, 0.0)
 

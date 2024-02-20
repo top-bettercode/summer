@@ -36,7 +36,7 @@ class CplexSolver @JvmOverloads constructor(
     init {
         model.setParam(Param.MIP.Display, if (logging) 2 else 0) // 0表示禁用日志，1表示启用
         model.setParam(Param.MIP.Tolerances.Linearization, epsilon)
-        model.setParam(Param.Simplex.Tolerances.Feasibility, OptimalUtil.DEFAULT_MIN_EPSILON)
+        model.setParam(Param.Simplex.Tolerances.Feasibility, 1e-9)
     }
 
     override fun setTimeLimit(seconds: Int) {
