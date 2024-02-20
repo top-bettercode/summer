@@ -38,7 +38,7 @@ internal class RecipeSolverTest {
     )
 
     val maxResult = 20
-    val includeProductionCost = false
+    val includeProductionCost = true
     val nutrientUnchanged = true
     val materialUnchanged = true
     val solveTimes = 1
