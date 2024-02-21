@@ -464,8 +464,10 @@ class GurobiSolver @JvmOverloads constructor(
         var lb = 0.0
         var ub = 0.0
         for (it in this) {
-            lb += it.lb * it.coeff
-            ub += it.ub * it.coeff
+            if (lb > -INFINITY)
+                lb += it.lb * it.coeff
+            if (ub < INFINITY)
+                ub += it.ub * it.coeff
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }
@@ -485,8 +487,10 @@ class GurobiSolver @JvmOverloads constructor(
         var lb = 0.0
         var ub = 0.0
         for (it in this) {
-            lb += it.lb * it.coeff
-            ub += it.ub * it.coeff
+            if (lb > -INFINITY)
+                lb += it.lb * it.coeff
+            if (ub < INFINITY)
+                ub += it.ub * it.coeff
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }
