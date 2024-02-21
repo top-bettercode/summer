@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.recipe
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.solver.*
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.solver.`var`.IVar
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
@@ -40,23 +39,28 @@ object RecipeSolver {
                 log.info("${requirement.productName}求解耗时：" + (e - s) + "ms")
 
                 if (isOptimal()) {
-                    return Recipe(requirement = requirement,
-                            includeProductionCost = includeProductionCost,
-                            optimalProductionCost = requirement.productionCost.computeFee(prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) }, prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
-                            cost = prepareData.objective.value,
-                            materials = prepareData.recipeMaterials.mapNotNull { (_, u) ->
-                                val value = u.weight.value
-                                if (value != 0.0) {
-                                    u.toMaterialValue()
-                                } else {
-                                    null
-                                }
-                            })
+                    return prepareData.toRecipe(requirement, includeProductionCost)
                 }
                 return null
             }
         }
     }
+
+    fun PrepareData.toRecipe(requirement: RecipeRequirement, includeProductionCost: Boolean) =
+            Recipe(requirement = requirement,
+                    includeProductionCost = includeProductionCost,
+                    optimalProductionCost = requirement.productionCost.computeFee(
+                            this.materialItems?.map { CarrierValue(it.it, it.value.value) },
+                            this.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
+                    cost = this.objective.value,
+                    materials = this.recipeMaterials.mapNotNull { (_, u) ->
+                        val value = u.weight.value
+                        if (value != 0.0) {
+                            u.toMaterialValue()
+                        } else {
+                            null
+                        }
+                    })
 
     fun Solver.prepare(requirement: RecipeRequirement, includeProductionCost: Boolean = true): PrepareData {
 
