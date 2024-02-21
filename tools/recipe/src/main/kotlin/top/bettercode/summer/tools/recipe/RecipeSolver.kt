@@ -42,8 +42,8 @@ object RecipeSolver {
                 if (isOptimal()) {
                     return Recipe(requirement = requirement,
                             includeProductionCost = includeProductionCost,
-                            optimalProductionCost = requirement.productionCost.computeFee(prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) }, prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.it.value) }),
-                            cost = prepareData.objective.value.scale(),
+                            optimalProductionCost = requirement.productionCost.computeFee(prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) }, prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
+                            cost = prepareData.objective.value,
                             materials = prepareData.recipeMaterials.mapNotNull { (_, u) ->
                                 val value = u.weight.value
                                 if (value != 0.0) {

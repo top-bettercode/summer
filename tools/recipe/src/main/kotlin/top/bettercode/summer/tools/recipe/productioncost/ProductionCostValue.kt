@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.recipe.productioncost
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.CarrierValue
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
@@ -50,16 +51,16 @@ data class ProductionCostValue(
     fun validate(productionCost: ProductionCostValue) {
         val otherMaterialItemsMap = productionCost.materialItems.associateBy { it.it.id }
         materialItems.forEach {
-            val thisVal = it.it.price * it.it.value * it.value
+            val thisVal = (it.it.cost * it.value).scale()
             val other = otherMaterialItemsMap[it.it.id]
-            val otherVal = if (other == null) 0.0 else other.it.price * other.it.value * other.value
+            val otherVal = if (other == null) 0.0 else (other.it.cost * other.value).scale()
             Assert.isTrue(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON, "${it.it.name}不一致:${thisVal}!=${otherVal}, 差值：${thisVal - otherVal}")
         }
         Assert.isTrue(this.energyFee - productionCost.energyFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON, "总能耗费用不一致:${this.energyFee}!=${productionCost.energyFee},差值：${this.energyFee - productionCost.energyFee}")
         dictItems.forEach { (key, value) ->
-            val thisVal = value.it.price * value.it.value * value.value
+            val thisVal = (value.it.cost * value.value).scale()
             val other = productionCost.dictItems[key]
-            val otherVal = if (other == null) 0.0 else other.it.price * other.it.value * other.value
+            val otherVal = if (other == null) 0.0 else (other.it.cost * other.value).scale()
             Assert.isTrue(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON, "${key.remark}不一致:${thisVal}!=${otherVal}, 差值：${thisVal - otherVal}")
         }
         Assert.isTrue(this.otherFee - productionCost.otherFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON, "人工+折旧费+其他费用不一致:${this.otherFee}!=${productionCost.otherFee}, 差值：${this.otherFee - productionCost.otherFee}")

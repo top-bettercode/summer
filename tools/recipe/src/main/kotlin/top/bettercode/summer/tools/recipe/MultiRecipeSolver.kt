@@ -58,7 +58,7 @@ object MultiRecipeSolver {
                                 optimalProductionCost = requirement.productionCost.computeFee(
                                         materialItems = prepareData.materialItems?.map { CarrierValue(it.it, it.value.value) },
                                         dictItems = prepareData.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
-                                cost = objective.value.scale(),
+                                cost = objective.value,
                                 materials = recipeMaterials.mapNotNull { (t, u) ->
                                     val value = u.weight.value
                                     if (value != 0.0) {
