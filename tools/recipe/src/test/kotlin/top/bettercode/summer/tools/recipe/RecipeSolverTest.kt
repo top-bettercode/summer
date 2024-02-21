@@ -89,7 +89,6 @@ internal class RecipeSolverTest {
         return recipeResult
     }
 
-
     fun solve(productName: String): Map<SolverType, Long> {
         System.err.println("======================$productName=====================")
         var requirement = TestPrepareData.readRequirement(productName)
@@ -100,11 +99,11 @@ internal class RecipeSolverTest {
         var recipeResult: RecipeResult? = null
 
         val results = mutableMapOf<SolverType, Long>()
-        solveTypes.forEach {
-            val result = solve(solverType = it, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged, toExcel = toExcel)
+        solveTypes.forEachIndexed { index, solverType ->
+            val result = solve(solverType = solverType, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged, toExcel = index == 0 && toExcel)
             recipeResult?.let { res -> assert(res, result) }
             recipeResult = result
-            results[it] = result.time
+            results[solverType] = result.time
         }
 
         return results
