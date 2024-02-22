@@ -36,6 +36,18 @@ enum class Sense(val symbol: String) {
     LT("<");
 
 
+    companion object {
+        @JvmStatic
+        fun validate(symbol: String): Boolean {
+            for (sense in values()) {
+                if (sense.symbol == symbol) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
     override fun toString(): String {
         return symbol
     }
