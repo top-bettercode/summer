@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.BeanProperty
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import org.springframework.util.StringUtils
@@ -15,10 +16,13 @@ import java.math.RoundingMode
 @JacksonStdImpl
 class BigDecimalSerializer @JvmOverloads constructor(private val scale: Int = 2, private val divisor: BigDecimal? = null, private val roundingMode: RoundingMode = RoundingMode.HALF_UP, private val toPlainString: Boolean = false,
                                                      private val reduceFraction: Boolean = false,
-                                                     private val percent: Boolean = false) : StdScalarSerializer<BigDecimal>(BigDecimal::class.java), ContextualSerializer {
-    override fun serialize(value: BigDecimal, gen: JsonGenerator, provider: SerializerProvider?) {
+                                                     private val percent: Boolean = false) : StdScalarSerializer<Number>(Number::class.java), ContextualSerializer {
+    override fun serialize(value: Number, gen: JsonGenerator, provider: SerializerProvider?) {
         var scale = scale
-        var content = value
+        var content = when (value) {
+            is BigDecimal -> value
+            else -> BigDecimal(value.toString())
+        }
         if (divisor != null) {
             content = content.divide(divisor, roundingMode)
         }
@@ -48,6 +52,11 @@ class BigDecimalSerializer @JvmOverloads constructor(private val scale: Int = 2,
             gen.writeStringField(fieldName + "Pct", "$percentPlainSring%")
         }
     }
+
+    override fun serializeWithType(value: Number, gen: JsonGenerator, provider: SerializerProvider, typeSer: TypeSerializer) {
+        serialize(value, gen, provider)
+    }
+
 
     private fun reduceFraction(plainString: String): String {
         return if (plainString.contains(".")) StringUtils
