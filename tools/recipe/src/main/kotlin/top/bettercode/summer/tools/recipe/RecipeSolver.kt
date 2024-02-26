@@ -66,7 +66,7 @@ object RecipeSolver {
 
     fun Solver.prepare(requirement: RecipeRequirement, includeProductionCost: Boolean = true): PrepareData {
 
-        setTimeLimit(requirement.timeout.seconds)
+        setTimeLimit(requirement.timeout)
         // 原料数量
         val materials = requirement.materials
         val numRawMaterials = materials.size

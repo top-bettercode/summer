@@ -22,7 +22,6 @@ import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCost
 import java.io.File
-import java.time.Duration
 import java.util.function.Predicate
 
 /**
@@ -104,8 +103,8 @@ data class RecipeRequirement(
 ) {
 
 
-    /** 超时时间  */
-    var timeout: Duration = Duration.ofSeconds(30)
+    /** 超时时间,单位秒  */
+    var timeout: Long = 30L
 
     init {
         Assert.isTrue(targetWeight > 0, "targetWeight must be greater than 0")
