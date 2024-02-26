@@ -543,6 +543,7 @@
     "ids" : [ ]
   },
   "notMixMaterialConstraints" : [ ],
+  "packagingMaterials" : [ ],
   "productName" : "15-15-15喷浆硫基",
   "productionCost" : {
     "changes" : [ {

@@ -68,6 +68,7 @@
     "price" : 2.0,
     "weight" : 3.0
   } ],
+  "packagingCost" : 0.0,
   "productionCost" : {
     "allChange" : 1.01,
     "dictItems" : {

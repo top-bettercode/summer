@@ -436,6 +436,7 @@
   }, {
     "ids" : [ "硝铵" ]
   } ] ],
+  "packagingMaterials" : [ ],
   "productName" : "24-06-10高氯枸磷",
   "productionCost" : {
     "changes" : [ {
@@ -502,5 +503,5 @@
     "ids" : [ ]
   },
   "yield" : 1.0,
-  "timeout" : 30
+  "timeout" : 30.000000000
 }

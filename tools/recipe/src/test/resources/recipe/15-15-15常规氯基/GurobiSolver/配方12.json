@@ -68,6 +68,7 @@
     "price" : 3.55,
     "weight" : 69.9600216269
   } ],
+  "packagingCost" : 0.0,
   "productionCost" : {
     "allChange" : 1.01,
     "dictItems" : {

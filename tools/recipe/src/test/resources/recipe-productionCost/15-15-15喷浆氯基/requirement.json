@@ -508,6 +508,7 @@
     "ids" : [ "喷浆硫基用95氯化钾" ]
   },
   "notMixMaterialConstraints" : [ ],
+  "packagingMaterials" : [ ],
   "productName" : "15-15-15喷浆氯基",
   "productionCost" : {
     "changes" : [ {

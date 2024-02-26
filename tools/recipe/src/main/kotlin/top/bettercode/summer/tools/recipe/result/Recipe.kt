@@ -40,6 +40,10 @@ data class Recipe(
 
     val productionCost: ProductionCostValue = requirement.productionCost.computeFee(this)
 
+    val packagingCost: Double = requirement.packagingMaterials.sumOf {
+        it.price * it.value
+    }
+
     /** 需要烘干的水分含量  */
     val dryWaterWeight: Double
         get() = (weight - requirement.targetWeight).scale()

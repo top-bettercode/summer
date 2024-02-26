@@ -15,6 +15,7 @@ import top.bettercode.summer.tools.recipe.indicator.RecipeRangeIndicators
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
 import top.bettercode.summer.tools.recipe.material.RecipeMaterial
+import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
@@ -54,6 +55,11 @@ data class RecipeRequirement(
          */
         @JsonProperty("productionCost")
         val productionCost: ProductionCost,
+        /**
+         * 包装耗材
+         */
+        @JsonProperty("packagingMaterials")
+        val packagingMaterials: List<RecipeOtherMaterial>,
         /** 原料  */
         @JsonProperty("materials")
         val materials: List<RecipeMaterial>,
@@ -151,6 +157,7 @@ data class RecipeRequirement(
                maxBakeWeight: Double? = null,
                materials: List<RecipeMaterial>,
                productionCost: ProductionCost,
+               packagingMaterials: List<RecipeOtherMaterial>,
                indicatorRangeConstraints: RecipeRangeIndicators,
                indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
                useMaterialConstraints: MaterialIDs,
@@ -287,6 +294,7 @@ data class RecipeRequirement(
                     maxUseMaterialNum = maxUseMaterialNum,
                     maxBakeWeight = maxBakeWeight,
                     productionCost = productionCost,
+                    packagingMaterials = packagingMaterials,
                     materials = materialList,
                     materialIDConstraints = materialIDConstraints,
                     useMaterialConstraints = useMaterialConstraints,

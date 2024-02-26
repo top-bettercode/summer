@@ -122,6 +122,7 @@
     "taxFee" : 29.04,
     "totalFee" : 330.72170907710006
   },
+  "packagingCost" : 0.0,
   "productionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
