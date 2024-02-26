@@ -313,8 +313,8 @@ object TestPrepareData {
 
         // 能耗费用
         val materialItems: List<RecipeOtherMaterial> = listOf(
-                RecipeOtherMaterial(index = 9001, id = "煤", name = "煤", price = 50.0, value = 1.0),
-                RecipeOtherMaterial(index = 9002, id = "电费", name = "电费", price = 100.0, value = 1.0),
+                RecipeOtherMaterial(index = 9001, id = "籽煤", name = "籽煤", price = 1650.0, value = 0.1),
+                RecipeOtherMaterial(index = 9002, id = "生物质", name = "生物质", price = 1000.0, value = 0.1),
         )
         // 其他固定费用
         val dictItems: Map<DictType, Cost> = mapOf(
@@ -324,7 +324,7 @@ object TestPrepareData {
         )
         // 费用增减
         val changes: List<CostChangeLogic> = listOf(
-                CostChangeLogic(type = ChangeLogicType.WATER_OVER, materialId = listOf("液氨"), exceedValue = 50.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.MATERIAL, "煤")), changeValue = 0.01),
+                CostChangeLogic(type = ChangeLogicType.WATER_OVER, materialId = listOf("液氨"), exceedValue = 50.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.MATERIAL, "籽煤")), changeValue = 0.01),
                 CostChangeLogic(type = ChangeLogicType.OVER, materialId = listOf("硫酸"), exceedValue = 100.0, eachValue = 1.0, changeItems = listOf(ChangeItem(ChangeItemType.DICT, "STAFF")), changeValue = 0.01),
                 CostChangeLogic(type = ChangeLogicType.OTHER, changeValue = 0.01)
         )

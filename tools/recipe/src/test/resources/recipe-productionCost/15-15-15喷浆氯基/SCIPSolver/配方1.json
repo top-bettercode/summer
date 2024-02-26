@@ -1,5 +1,5 @@
 {
-  "cost" : 2602.7314334646,
+  "cost" : 2678.6304762932,
   "dryWaterWeight" : 15.3457105713,
   "includeProductionCost" : true,
   "materialCost" : 2328.0792033881,
@@ -104,31 +104,31 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 132.672855285,
+    "energyFee" : 207.8204224405,
     "materialItems" : [ {
       "it" : {
-        "id" : "煤",
+        "id" : "籽煤",
         "index" : 9001,
-        "name" : "煤",
-        "price" : 50.0,
-        "value" : 1.0,
-        "cost" : 50.0
+        "name" : "籽煤",
+        "price" : 1650.0,
+        "value" : 0.1,
+        "cost" : 165.0
       },
       "value" : 0.6534571057
     }, {
       "it" : {
-        "id" : "电费",
+        "id" : "生物质",
         "index" : 9002,
-        "name" : "电费",
-        "price" : 100.0,
-        "value" : 1.0,
+        "name" : "生物质",
+        "price" : 1000.0,
+        "value" : 0.1,
         "cost" : 100.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 114.00004200000001,
     "taxFee" : 25.260003779999998,
-    "totalFee" : 274.65223007565004
+    "totalFee" : 350.551272902705
   },
   "packagingCost" : 0.0,
   "productionCost" : {
@@ -159,31 +159,31 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 132.6728552857,
+    "energyFee" : 207.82042244281,
     "materialItems" : [ {
       "it" : {
-        "id" : "煤",
+        "id" : "籽煤",
         "index" : 9001,
-        "name" : "煤",
-        "price" : 50.0,
-        "value" : 1.0,
-        "cost" : 50.0
+        "name" : "籽煤",
+        "price" : 1650.0,
+        "value" : 0.1,
+        "cost" : 165.0
       },
       "value" : 0.653457105714
     }, {
       "it" : {
-        "id" : "电费",
+        "id" : "生物质",
         "index" : 9002,
-        "name" : "电费",
-        "price" : 100.0,
-        "value" : 1.0,
+        "name" : "生物质",
+        "price" : 1000.0,
+        "value" : 0.1,
         "cost" : 100.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 114.00004200000001,
     "taxFee" : 25.260003779999998,
-    "totalFee" : 274.652230076357
+    "totalFee" : 350.5512729050381
   },
   "waterWeight" : 15.3457105714,
   "weight" : 1015.3457105713
