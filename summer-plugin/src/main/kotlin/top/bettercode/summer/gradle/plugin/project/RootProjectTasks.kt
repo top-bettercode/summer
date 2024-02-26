@@ -145,8 +145,9 @@ object RootProjectTasks {
                                 val databaseFile = project.rootProject.file("database/database$suffix.sql")
                                 if (databaseFile.exists()) {
                                     +"$commentPrefix ${
-                                        databaseFile.readText()
+                                        databaseFile.readText().trim()
                                     }"
+                                    +""
                                 }
 
                                 when (database.driver) {
@@ -162,20 +163,19 @@ object RootProjectTasks {
 
                                 val schema = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}.sql")
                                 if (schema.exists()) {
-                                    +schema.readText()
+                                    +schema.readText().trim()
                                     +""
                                 } else {
-                                    val listFiles = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}").listFiles()
-                                    if (!listFiles.isNullOrEmpty()) {
-                                        listFiles.filter { it.isFile }.forEach {
-                                            +it.readText()
-                                        }
+                                    project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}").listFiles()?.filter { it.isFile }?.forEach {
+                                        +it.readText().trim()
+                                        +""
                                     }
                                 }
                                 project.rootProject.file("database/init/$suffix").listFiles()
                                         ?.filter { it.isFile }
                                         ?.forEach {
-                                            +it.readText()
+                                            +it.readText().trim()
+                                            +""
                                         }
                             }
                             destFile.writeTo(project.rootDir)
@@ -197,7 +197,8 @@ object RootProjectTasks {
                                 val updateDdl =
                                         project.rootProject.file("database/update/v${project.version}$suffix.sql")
                                 if (updateDdl.exists()) {
-                                    +updateDdl.readText()
+                                    +updateDdl.readText().trim()
+                                    +""
                                 } else {
                                     val listFiles = project.rootProject.file("database/update/v${project.version}$suffix").listFiles()
                                     if (listFiles.isNullOrEmpty()) {
@@ -212,7 +213,8 @@ object RootProjectTasks {
                                         }
                                     } else {
                                         listFiles.filter { it.isFile }.forEach {
-                                            +it.readText()
+                                            +it.readText().trim()
+                                            +""
                                         }
                                     }
                                 }
@@ -220,10 +222,51 @@ object RootProjectTasks {
                                 project.rootProject.file("database/update-data/v${project.version}$suffix").listFiles()
                                         ?.filter { it.isFile }
                                         ?.forEach {
-                                            +it.readText()
+                                            +it.readText().trim()
+                                            +""
                                         }
                             }
                             updateFile.writeTo(project.rootDir)
+
+                            //test.sql
+                            val testFile = FileUnit(
+                                    "database/test$suffix.sql"
+                            )
+                            testFile.apply {
+                                val commentPrefix = when (database.driver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        MysqlToDDL.commentPrefix
+                                    }
+
+                                    else -> {
+                                        "--"
+                                    }
+                                }
+                                val databaseFile = project.rootProject.file("database/database$suffix.sql")
+                                if (databaseFile.exists()) {
+                                    +"$commentPrefix ${
+                                        databaseFile.readText().trim()
+                                    }"
+                                    +""
+                                }
+
+                                when (database.driver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        +"$commentPrefix use ${database.schema};"
+                                        +""
+                                        +"SET NAMES 'utf8';"
+                                        +""
+                                    }
+
+                                    else -> {}
+                                }
+
+                                project.rootProject.file("database/test/v${project.version}$suffix").listFiles()?.filter { it.isFile }?.forEach {
+                                    +it.readText().trim()
+                                    +""
+                                }
+                            }
+                            testFile.writeTo(project.rootDir)
                         }
                     }
                 })
