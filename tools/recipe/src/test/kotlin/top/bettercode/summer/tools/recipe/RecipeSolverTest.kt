@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.excel.FastExcel
@@ -177,7 +178,7 @@ internal class RecipeSolverTest {
         solve.recipes.forEachIndexed { index, recipe ->
             Assertions.assertEquals(recipe.cost.scale(7), solve1.recipes[index].cost.scale(7))
         }
-        Assertions.assertEquals(StringUtil.json(solve.recipes[0]), StringUtil.json(solve1.recipes[0]))
+        Assertions.assertEquals(json(solve.recipes[0]), json(solve1.recipes[0]))
     }
 
     private fun json(value: Any, vararg view: Pair<Class<*>, Class<*>>): String {
@@ -190,6 +191,7 @@ internal class RecipeSolverTest {
             simpleModule.setMixInAnnotation(targetType, mixinClass)
         }
         objectMapper.registerModule(simpleModule)
+        objectMapper.registerModule(JavaTimeModule())
         return objectMapper.writeValueAsString(value)
     }
 

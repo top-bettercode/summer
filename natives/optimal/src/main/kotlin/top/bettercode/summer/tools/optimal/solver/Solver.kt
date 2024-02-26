@@ -23,7 +23,7 @@ abstract class Solver(
 
     protected val log: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass)
 
-    abstract fun setTimeLimit(seconds: Int)
+    abstract fun setTimeLimit(seconds: Long)
     abstract fun solve()
     abstract fun clear()
     abstract fun isOptimal(): Boolean

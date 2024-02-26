@@ -31,7 +31,7 @@ object MultiRecipeSolver {
                 val prepareData = prepare(requirement, includeProductionCost)
                 var e = System.currentTimeMillis()
                 val recipeResult = RecipeResult(name)
-                while ((e - s) / 1000 < requirement.timeout
+                while ((e - s) < requirement.timeout.toMillis()
                         && recipeResult.recipes.size < maxResult) {
                     if (SolverType.COPT == solverType) {
                         val numVariables = numVariables()

@@ -33,7 +33,7 @@ class COPTSolver @JvmOverloads constructor(
         model.setDblParam(copt.DblParam.FeasTol, 1e-9)
     }
 
-    override fun setTimeLimit(seconds: Int) {
+    override fun setTimeLimit(seconds: Long) {
         model.setDblParam("TimeLimit", seconds.toDouble())
     }
 

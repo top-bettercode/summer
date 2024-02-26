@@ -42,7 +42,7 @@ class CplexSolver @JvmOverloads constructor(
         model.setParam(Param.Simplex.Tolerances.Feasibility, 1e-9)
     }
 
-    override fun setTimeLimit(seconds: Int) {
+    override fun setTimeLimit(seconds: Long) {
         model.setParam(Param.TimeLimit, seconds.toDouble())
     }
 

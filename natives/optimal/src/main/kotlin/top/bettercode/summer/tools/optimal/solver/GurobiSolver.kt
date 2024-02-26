@@ -74,7 +74,7 @@ class GurobiSolver @JvmOverloads constructor(
         //WLSTokenRefresh:0.9
     }
 
-    override fun setTimeLimit(seconds: Int) {
+    override fun setTimeLimit(seconds: Long) {
         model.set(GRB.DoubleParam.TimeLimit, seconds.toDouble())
     }
 

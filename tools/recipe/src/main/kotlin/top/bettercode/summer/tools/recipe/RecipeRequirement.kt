@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.recipe
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.optimal.solver.Sense
@@ -20,6 +21,7 @@ import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCost
 import java.io.File
+import java.time.Duration
 import java.util.function.Predicate
 
 /**
@@ -97,7 +99,7 @@ data class RecipeRequirement(
 
 
     /** 超时时间  */
-    var timeout = 30
+    var timeout: Duration = Duration.ofSeconds(30)
 
     init {
         Assert.isTrue(targetWeight > 0, "targetWeight must be greater than 0")
@@ -109,6 +111,7 @@ data class RecipeRequirement(
     //--------------------------------------------
     fun write(file: File) {
         val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+        objectMapper.registerModule(JavaTimeModule())
         objectMapper.writeValue(file, this)
     }
     //--------------------------------------------
@@ -117,6 +120,7 @@ data class RecipeRequirement(
 
         fun read(file: File): RecipeRequirement {
             val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            objectMapper.registerModule(JavaTimeModule())
             return objectMapper.readValue(file, RecipeRequirement::class.java)
         }
 

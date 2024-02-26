@@ -43,7 +43,7 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
-    override fun setTimeLimit(seconds: Int) {
+    override fun setTimeLimit(seconds: Long) {
         solver.setTimeLimit(seconds * 1000L)
     }
 

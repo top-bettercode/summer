@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(project(":natives:optimal"))
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     compileOnly("com.google.ortools:ortools-java")
     compileOnly(project(":tools:excel"))
