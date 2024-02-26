@@ -103,7 +103,7 @@ object RecipeExport {
                         val overdoseMaterial = v.then.overdoseMaterial
                         val overdoseMaterialNormal = overdoseMaterial?.normal
                         val overdoseMaterialOverdose = overdoseMaterial?.overdose
-                        "${v.term.relationIds?.idsString() ?: ""}使用 ${v.term.idsString()} 时，耗${it.term.idsString()}系数：${normal.min}-${normal.max}${
+                        "${v.term.relationIds?.idsString() ?: ""}使用 ${v.term.idsString()} 时${if (normal != null) "，耗${it.term.idsString()}系数：${normal.min}-${normal.max}" else ""}${
                             if (overdose != null) {
                                 "\n${v.term.relationIds?.idsString() ?: ""}使用 ${v.term.idsString()} 时，过量耗${it.term.idsString()}系数：${overdose.min}-${overdose.max}"
                             } else {

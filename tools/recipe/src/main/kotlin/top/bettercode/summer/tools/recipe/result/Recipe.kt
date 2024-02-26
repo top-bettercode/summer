@@ -283,9 +283,10 @@ data class Recipe(
                 if (normalWeight == 0.0) {
                     normalWeight = weight
                 }
-
-                usedMinNormalWeight += normalWeight * normal.min * replaceRate
-                usedMaxNormalWeight += normalWeight * normal.max * replaceRate
+                if (normal != null) {
+                    usedMinNormalWeight += normalWeight * normal.min * replaceRate
+                    usedMaxNormalWeight += normalWeight * normal.max * replaceRate
+                }
                 if (overdose != null) {
                     usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
                     usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
@@ -296,8 +297,10 @@ data class Recipe(
                 if (overdoseMaterial != null && overdoseWeight > 0) {
                     val overdoseMaterialNormal = overdoseMaterial.normal
                     val overdoseMaterialOverdose = overdoseMaterial.overdose
-                    usedMinNormalWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
-                    usedMaxNormalWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
+                    if (overdoseMaterialNormal != null) {
+                        usedMinNormalWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
+                        usedMaxNormalWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
+                    }
                     if (overdoseMaterialOverdose != null) {
                         usedMinOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.min * replaceRate
                         usedMaxOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate

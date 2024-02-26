@@ -10,14 +10,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder(alphabetic = true)
 data class RecipeRelation(
         @JsonProperty("normal")
-        var normal: DoubleRange,
+        var normal: DoubleRange?,
         @JsonProperty("overdose")
         var overdose: DoubleRange? = null,
         @JsonProperty("overdoseMaterial")
         var overdoseMaterial: RecipeRelation? = null,
 ) {
+    constructor() : this(null, null, null)
+    constructor(normal: DoubleRange?) : this(normal, null, null)
+    constructor(normal: DoubleRange?, overdose: DoubleRange?) : this(normal, overdose, null)
+
     fun replaceRate(rate: Double): RecipeRelation {
-        return RecipeRelation(normal.replaceRate(rate), overdose?.replaceRate(rate), overdoseMaterial?.replaceRate(rate))
+        return RecipeRelation(normal?.replaceRate(rate), overdose?.replaceRate(rate), overdoseMaterial?.replaceRate(rate))
     }
 
     override fun toString(): String {

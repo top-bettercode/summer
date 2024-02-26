@@ -14,6 +14,7 @@ object RecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
+    @JvmStatic
     fun solve(solverType: SolverType,
               requirement: RecipeRequirement,
               epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
@@ -212,8 +213,10 @@ object RecipeSolver {
                             }
 
                     //原料消耗
-                    normalMinVars.add(normalWeight * normal.min)
-                    normalMaxVars.add(normalWeight * normal.max)
+                    if (normal != null) {
+                        normalMinVars.add(normalWeight * normal.min)
+                        normalMaxVars.add(normalWeight * normal.max)
+                    }
                     if (overdose != null) {
                         overdoseMinVars.add(normalWeight * overdose.min)
                         overdoseMaxVars.add(normalWeight * overdose.max)
@@ -224,8 +227,10 @@ object RecipeSolver {
                         val overdoseMaterialNormal = overdoseMaterial.normal
                         val overdoseMaterialOverdose = overdoseMaterial.overdose
                         //过量原料消耗
-                        normalMinVars.add(overdoseWeight * overdoseMaterialNormal.min)
-                        normalMaxVars.add(overdoseWeight * overdoseMaterialNormal.max)
+                        if (overdoseMaterialNormal != null) {
+                            normalMinVars.add(overdoseWeight * overdoseMaterialNormal.min)
+                            normalMaxVars.add(overdoseWeight * overdoseMaterialNormal.max)
+                        }
                         //过量原料过量消耗
                         if (overdoseMaterialOverdose != null) {
                             overdoseMinVars.add(overdoseWeight * overdoseMaterialOverdose.min)

@@ -83,8 +83,10 @@ class RecipeExt(private val recipe: Recipe) {
                     normalWeight = weight
                 }
 
-                usedMinNormalWeight += normalWeight * normal.min
-                usedMaxNormalWeight += normalWeight * normal.max
+                if (normal != null) {
+                    usedMinNormalWeight += normalWeight * normal.min
+                    usedMaxNormalWeight += normalWeight * normal.max
+                }
                 if (overdose != null) {
                     usedMinOverdoseWeight += normalWeight * overdose.min
                     usedMaxOverdoseWeight += normalWeight * overdose.max
@@ -97,8 +99,10 @@ class RecipeExt(private val recipe: Recipe) {
                 if (overdoseMaterial != null && overdoseWeight > 0) {
                     val overdoseMaterialNormal = overdoseMaterial.normal
                     val overdoseMaterialOverdose = overdoseMaterial.overdose
-                    usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.min
-                    usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.max
+                    if (overdoseMaterialNormal != null) {
+                        usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.min
+                        usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialNormal.max
+                    }
                     if (overdoseMaterialOverdose != null) {
                         usedMinOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.min
                         usedMaxOverdoseMaterialWeight += overdoseWeight * overdoseMaterialOverdose.max

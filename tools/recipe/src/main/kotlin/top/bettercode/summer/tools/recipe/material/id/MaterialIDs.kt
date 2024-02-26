@@ -39,6 +39,11 @@ open class MaterialIDs(
 
     }
 
+    @JvmOverloads
+    fun relation(relationIds: MaterialIDs? = null): RelationMaterialIDs {
+        return RelationMaterialIDs(ids, relationIds)
+    }
+
     fun replace(replaceRate: Double, replaceId: String): ReplacebleMaterialIDs {
         return ReplacebleMaterialIDs(ids, replaceRate, MaterialIDs(replaceId))
     }
