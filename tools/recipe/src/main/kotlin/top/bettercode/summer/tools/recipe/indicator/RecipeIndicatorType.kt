@@ -29,4 +29,9 @@ enum class RecipeIndicatorType {
      *和另一指标的比率
      */
     RATE_TO_OTHER,
+
+    /**
+     * 特殊指标
+     */
+    SPECIAL
 }
