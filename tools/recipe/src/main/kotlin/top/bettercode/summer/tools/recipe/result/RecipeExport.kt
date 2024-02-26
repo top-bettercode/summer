@@ -224,6 +224,7 @@ object RecipeExport {
             cell(r++, c).value("合计").setStyle()
             cell(r++, c).value("税费").setStyle()
             cell(r++, c).value("制造费用合计(${(allChange * 100).scale(2)}%)").bold().setStyle()
+            cell(r++, c).value("成本合计(不含包装)").bold().setStyle()
             cell(r++, c).value("成本合计").bold().setStyle()
 
             c++
@@ -248,6 +249,8 @@ object RecipeExport {
             cell(r, 1).value(totalFee)
             range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
             cell(r, 1).value(recipe.cost)
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
+            cell(r, 1).value(recipe.cost + recipe.packagingCost)
             range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
         }
     }

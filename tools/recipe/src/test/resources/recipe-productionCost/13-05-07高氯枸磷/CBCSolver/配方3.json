@@ -1,8 +1,8 @@
 {
-  "cost" : 1619.6323055336,
-  "dryWaterWeight" : 125.3391053392,
+  "cost" : 1809.7903555336,
+  "dryWaterWeight" : 106.5301394295,
   "includeProductionCost" : true,
-  "materialCost" : 1432.4742555338,
+  "materialCost" : 1622.6323055335,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -10,7 +10,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 591.0946090222
+    "weight" : 474.3083003953
   }, {
     "id" : "低白肥（14%）",
     "index" : 25,
@@ -26,7 +26,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 132.8159248884
+    "weight" : 230.7932676056
   }, {
     "id" : "白泥",
     "index" : 53,
@@ -145,6 +145,6 @@
     "taxFee" : 29.04,
     "totalFee" : 187.15804999999997
   },
-  "waterWeight" : 125.3391053391,
-  "weight" : 1125.3391053392
+  "waterWeight" : 125.15101568,
+  "weight" : 1106.5301394295
 }
