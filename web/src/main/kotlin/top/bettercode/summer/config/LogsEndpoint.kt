@@ -136,7 +136,6 @@ class LogsEndpoint(
                             showLogFile(logPattern, logMsgs, collapse)
                         } else {
                             val fileName = "$logPattern.log.gz"
-
                             val newFileName: String =
                                     if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains("Edge"))) {
                                         URLEncoder.encode(fileName, "UTF-8")
@@ -181,8 +180,33 @@ class LogsEndpoint(
                     if (!file.exists()) {
                         response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
                     } else {
-                        val logMsgs = readLogMsgs(file.inputStream(), "gz" == file.extension)
-                        showLogFile(file.name, logMsgs, collapse)
+                        val extension = file.extension
+                        if ("json" == extension) {
+                            val fileName = file.name
+                            val newFileName: String =
+                                    if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains("Edge"))) {
+                                        URLEncoder.encode(fileName, "UTF-8")
+                                    } else {
+                                        fileName
+                                    }
+                            response.setHeader(
+                                    "Content-Disposition",
+                                    "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                                            fileName,
+                                            "UTF-8"
+                                    )
+                            )
+                            response.contentType = "application/octet-stream; charset=utf-8"
+                            response.setHeader("Pragma", "No-cache")
+                            response.setHeader("Cache-Control", "no-cache")
+                            response.setDateHeader("Expires", 0)
+                            response.outputStream.bufferedWriter().use { writer ->
+                                writer.write(file.readText())
+                            }
+                        } else {
+                            val logMsgs = readLogMsgs(file.inputStream(), "gz" == extension)
+                            showLogFile(file.name, logMsgs, collapse)
+                        }
                     }
                 } else {
                     index(file.listFiles(), false, requestPath)
