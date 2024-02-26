@@ -15,6 +15,7 @@ object RecipeSolver {
     private val log: Logger = LoggerFactory.getLogger(RecipeSolver::class.java)
 
     @JvmStatic
+    @JvmOverloads
     fun solve(solverType: SolverType,
               requirement: RecipeRequirement,
               epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
