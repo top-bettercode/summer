@@ -84,15 +84,15 @@ data class RecipeRequirement(
         /** 不能混用的原料,value: 原料ID  */
         @JsonProperty("notMixMaterialConstraints")
         val notMixMaterialConstraints: List<Array<MaterialIDs>>,
+
+        /** 条件约束，当条件1满足时，条件2必须满足  */
+        @JsonProperty("materialConditionConstraints")
+        val materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
         /**
          *关联原料约束
          */
         @JsonProperty("materialRelationConstraints")
-        val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
-
-        /** 条件约束，当条件1满足时，条件2必须满足  */
-        @JsonProperty("materialConditionConstraints")
-        val materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>
+        val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>
 ) {
 
 
@@ -276,7 +276,8 @@ data class RecipeRequirement(
                     }.filter { it.isNotEmpty() }.flatten()
                     .toList()
 
-            return RecipeRequirement(productName = productName,
+            return RecipeRequirement(
+                    productName = productName,
                     targetWeight = targetWeight,
                     yield = `yield`,
                     maxUseMaterialNum = maxUseMaterialNum,
@@ -290,8 +291,9 @@ data class RecipeRequirement(
                     indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
                     materialRangeConstraints = materialRangeConstraints,
                     notMixMaterialConstraints = fixNotMixMaterialConstraints,
+                    materialConditionConstraints = fixMaterialConditionConstraints,
                     materialRelationConstraints = materialRelationConstraints,
-                    materialConditionConstraints = fixMaterialConditionConstraints)
+            )
         }
 
         private fun MaterialIDs.minFrom(materials: Map<String, RecipeMaterial>): MaterialIDs {
