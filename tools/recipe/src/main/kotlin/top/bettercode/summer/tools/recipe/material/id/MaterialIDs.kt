@@ -43,6 +43,10 @@ open class MaterialIDs(
         return ReplacebleMaterialIDs(ids, replaceRate, MaterialIDs(replaceId))
     }
 
+    fun replace(): ReplacebleMaterialIDs {
+        return ReplacebleMaterialIDs(ids, null, null)
+    }
+
     open fun contains(element: String): Boolean {
         return ids.contains(element)
     }
