@@ -46,6 +46,16 @@ enum class Sense(val symbol: String) {
             }
             return false
         }
+
+        @JvmStatic
+        fun symbolOf(symbol: String): Sense {
+            for (sense in values()) {
+                if (sense.symbol == symbol) {
+                    return sense
+                }
+            }
+            throw IllegalArgumentException("symbol=$symbol not found")
+        }
     }
 
     override fun toString(): String {
