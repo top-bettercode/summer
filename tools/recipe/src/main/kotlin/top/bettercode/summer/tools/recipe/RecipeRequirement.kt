@@ -206,17 +206,19 @@ data class RecipeRequirement(
             val fixMaterialConditionConstraints = (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
 
             // 必选原料
+            val useMaterialIds = useMaterialConstraints.ids.toMutableList()
             val materialMust = Predicate { material: IRecipeMaterial ->
                 val materialId = material.id
 
                 // 指定用原料ID
-                if (useMaterialConstraints.ids.isNotEmpty()) {
+                if (useMaterialIds.isNotEmpty()) {
                     if (useMaterialConstraints.contains(materialId)) return@Predicate true
                 }
 
                 // 用量>0的原料
                 materialRangeConstraints.forEach { (t, u) ->
                     if (t.contains(materialId) && u.min > 0) {
+                        useMaterialIds.add(materialId)
                         return@Predicate true
                     }
                 }
@@ -224,6 +226,7 @@ data class RecipeRequirement(
                 //关联原料
                 for (materialRelationConstraint in materialRelationConstraints) {
                     if (materialRelationConstraint.term.contains(materialId)) {
+                        useMaterialIds.add(materialId)
                         return@Predicate true
                     }
                 }
@@ -231,6 +234,7 @@ data class RecipeRequirement(
                 //条件约束
                 fixMaterialConditionConstraints.forEach { (_, thenCon) ->
                     if (thenCon.materials.contains(materialId)) {
+                        useMaterialIds.add(materialId)
                         return@Predicate true
                     }
                 }
@@ -294,7 +298,8 @@ data class RecipeRequirement(
                             must + min
                     }.filter { it.isNotEmpty() }.flatten().distinct()
                     .toList()
-
+            val noUseMaterialIds = noUseMaterialConstraints.ids.toMutableList()
+            noUseMaterialIds.removeAll(useMaterialIds)
             return RecipeRequirement(
                     productName = productName,
                     targetWeight = targetWeight,
@@ -305,8 +310,8 @@ data class RecipeRequirement(
                     packagingMaterials = packagingMaterials,
                     materials = materialList,
                     materialIDConstraints = materialIDConstraints,
-                    useMaterialConstraints = useMaterialConstraints,
-                    noUseMaterialConstraints = noUseMaterialConstraints,
+                    useMaterialConstraints = if (useMaterialConstraints.ids.isNotEmpty()) useMaterialIds.distinct().toMaterialIDs() else useMaterialConstraints,
+                    noUseMaterialConstraints = noUseMaterialIds.distinct().toMaterialIDs(),
                     indicatorRangeConstraints = indicatorRangeConstraints,
                     indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
                     materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() },
