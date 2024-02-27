@@ -24,9 +24,9 @@ import java.io.File
  */
 internal class RecipeSolverTest {
     val products = listOf(
-            "13-05-07高氯枸磷",
+//            "13-05-07高氯枸磷",
 //            "24-06-10高氯枸磷",
-//            "15-15-15喷浆硫基",
+            "15-15-15喷浆硫基",
 //            "15-15-15喷浆氯基",
 //            "15-15-15常规氯基"
     )

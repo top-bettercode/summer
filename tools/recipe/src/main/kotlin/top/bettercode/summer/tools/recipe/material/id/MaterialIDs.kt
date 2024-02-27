@@ -7,10 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author Peter Wu
  */
 open class MaterialIDs(
-        @JsonProperty("ids")
-        val ids: MutableList<String>) : Comparable<MaterialIDs>, Iterable<String> {
+         ids: MutableList<String>) : Comparable<MaterialIDs>, Iterable<String> {
     constructor(vararg id: String) : this(id.toMutableList())
     constructor(ids: Iterable<String>) : this(ids.toMutableList())
+
+    @JsonProperty("ids")
+    val ids: MutableList<String> = ids.distinct().toMutableList()
 
     companion object {
         fun Array<String>.toMaterialIDs(): MaterialIDs {

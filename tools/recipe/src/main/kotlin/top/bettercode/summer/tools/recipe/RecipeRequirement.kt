@@ -130,23 +130,24 @@ data class RecipeRequirement(
         }
 
         /**
-         * 生产配方
+         * 生产配方要求
          * @param productName 产品名称
          * @param targetWeight 目标重量，单位KG
          * @param yield 收率
          * @param maxUseMaterialNum 原料进料口最大数，null不限
-         * @param maxBakeWeight 最大烘干量，单位KG，null允许烘干全部水份
-         * @param materials 原料
+         * @param maxBakeWeight 最大烘干量，单位KG，null 允许烘干全部水份
          * @param productionCost 制造费用
-         * @param indicatorRangeConstraints 指标范围约束,key：指标ID,value:指标值范围
-         * @param indicatorMaterialIDConstraints 指标指定用原料约束,key:指标ID,value:原料ID
+         * @param packagingMaterials 包装耗材
+         * @param materials 原料
+         * @param materialIDConstraints 指定原料约束
          * @param useMaterialConstraints 指定用原料ID
          * @param noUseMaterialConstraints 不能用原料ID
-         * @param notMixMaterialConstraints 不能混用的原料,value: 原料ID
+         * @param indicatorRangeConstraints 指标范围约束,key：指标ID,value:指标值范围
+         * @param indicatorMaterialIDConstraints 指标指定用原料约束,key:指标ID,value:原料ID
          * @param materialRangeConstraints 原料约束,key:原料ID, value: 原料使用范围约束
-         * @param materialIDConstraints 指定原料约束
-         * @param materialRelationConstraints 关联原料约束
+         * @param notMixMaterialConstraints 不能混用的原料,value: 原料ID
          * @param materialConditionConstraints 条件约束，当条件1满足时，条件2必须满足
+         * @param materialRelationConstraints 关联原料约束
          * @return 配方要求
          */
         @JvmStatic
@@ -156,16 +157,16 @@ data class RecipeRequirement(
                 yield: Double = 1.0,
                 maxUseMaterialNum: Int? = null,
                 maxBakeWeight: Double? = null,
-                materials: List<RecipeMaterial>,
                 productionCost: ProductionCost,
                 packagingMaterials: List<RecipeOtherMaterial>,
-                indicatorRangeConstraints: RecipeRangeIndicators,
-                indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
+                materials: List<RecipeMaterial>,
+                materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>>,
                 useMaterialConstraints: MaterialIDs,
                 noUseMaterialConstraints: MaterialIDs,
-                notMixMaterialConstraints: List<Array<MaterialIDs>>,
+                indicatorRangeConstraints: RecipeRangeIndicators,
+                indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
                 materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-                materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>>,
+                notMixMaterialConstraints: List<Array<MaterialIDs>>,
                 materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
                 materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
         ): RecipeRequirement {
@@ -207,6 +208,11 @@ data class RecipeRequirement(
             // 必选原料
             val materialMust = Predicate { material: IRecipeMaterial ->
                 val materialId = material.id
+
+                // 指定用原料ID
+                if (useMaterialConstraints.ids.isNotEmpty()) {
+                    if (useMaterialConstraints.contains(materialId)) return@Predicate true
+                }
 
                 // 用量>0的原料
                 materialRangeConstraints.forEach { (t, u) ->
@@ -286,7 +292,7 @@ data class RecipeRequirement(
                             must
                         else
                             must + min
-                    }.filter { it.isNotEmpty() }.flatten()
+                    }.filter { it.isNotEmpty() }.flatten().distinct()
                     .toList()
 
             return RecipeRequirement(
