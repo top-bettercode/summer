@@ -17,8 +17,8 @@ object COPTNativeLibLoader {
      */
     @Synchronized
     fun loadNativeLib() {
-        val targetFolder = File(
-                System.getProperty("user.dir") + File.separator + "build" + File.separator + "native")
+        val tmpPath = System.getProperty("java.io.tmpdir")
+        val targetFolder = File(tmpPath + File.separator + "summer" + File.separator + "native")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }
@@ -32,7 +32,7 @@ object COPTNativeLibLoader {
 
         for (libraryName in libraryNames) {
             val targetFile = File(targetFolder, libraryName.substringAfter("/")).absoluteFile
-            if(targetFile.exists()){
+            if (targetFile.exists()) {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
@@ -40,15 +40,17 @@ object COPTNativeLibLoader {
                     targetFile.toPath())
         }
         when {
-            Os.isFamily(Os.FAMILY_MAC) ->{
+            Os.isFamily(Os.FAMILY_MAC) -> {
                 System.load("${targetFolder.absolutePath}/libcopt_cpp.dylib")
                 System.load("${targetFolder.absolutePath}/libcoptjniwrap.dylib")
             }
-            Os.isFamily(Os.FAMILY_WINDOWS) ->{
+
+            Os.isFamily(Os.FAMILY_WINDOWS) -> {
                 System.load("${targetFolder.absolutePath}/copt_cpp.dll")
                 System.load("${targetFolder.absolutePath}/coptjniwrap.dll")
             }
-            else ->{
+
+            else -> {
                 System.load("${targetFolder.absolutePath}/libcopt_cpp.so")
                 System.load("${targetFolder.absolutePath}/libcoptjniwrap.so")
             }

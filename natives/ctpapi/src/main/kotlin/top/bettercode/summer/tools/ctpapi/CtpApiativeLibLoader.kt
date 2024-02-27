@@ -23,8 +23,8 @@ object CtpApiativeLibLoader {
     @Synchronized
     @JvmStatic
     fun loadNativeLib() {
-        val targetFolder = File(
-                System.getProperty("user.dir") + File.separator + "build" + File.separator + "native")
+        val tmpPath = System.getProperty("java.io.tmpdir")
+        val targetFolder = File(tmpPath + File.separator + "summer" + File.separator + "native")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }

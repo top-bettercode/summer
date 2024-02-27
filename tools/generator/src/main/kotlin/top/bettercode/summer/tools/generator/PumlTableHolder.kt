@@ -10,7 +10,7 @@ import java.io.File
  */
 class PumlTableHolder(database: DatabaseConfiguration,
                       files: List<File>,
-                      securityFile: File = File("${System.getProperty("java.io.tmpdir")}/summer/security.puml")
+                      securityFile: File = File("${System.getProperty("java.io.tmpdir")}${File.separator}summer${File.separator}security.puml")
 ) : FileTableHolder(database, if (database.storeToken) (files + listOf(securityFile)) else files) {
 
     init {
