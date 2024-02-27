@@ -575,6 +575,9 @@ object TestPrepareData {
             "磷酸" -> {
                 materialName == materialNameFragment
             }
+            "磷铵" -> {
+                materialName?.matches(Regex(".*磷.*铵.*"))==true
+            }
 
             else -> {
                 materialName!!.contains(materialNameFragment!!)

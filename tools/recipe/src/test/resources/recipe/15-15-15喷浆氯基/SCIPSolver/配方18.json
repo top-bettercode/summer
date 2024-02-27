@@ -1,8 +1,8 @@
 {
-  "cost" : 2392.0511237291,
-  "dryWaterWeight" : 427.0145501134,
+  "cost" : 2382.4244417908,
+  "dryWaterWeight" : 15.9607131923,
   "includeProductionCost" : false,
-  "materialCost" : 2392.051123729,
+  "materialCost" : 2382.4244417909,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -10,15 +10,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 382.186075403
+    "weight" : 323.0954976523
   }, {
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 37.4844398779,
+    "normalWeight" : 5.7525790042,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "weight" : 37.4844398779
+    "weight" : 5.7525790042
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -26,7 +26,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 97.1190827743
+    "weight" : 296.5800647585
+  }, {
+    "id" : "64磷酸二铵（颗粒）",
+    "index" : 18,
+    "name" : "64磷酸二铵（颗粒）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.85,
+    "weight" : 137.199138444
   }, {
     "id" : "磷酸",
     "index" : 29,
@@ -34,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.05,
-    "weight" : 656.8916187249
+    "weight" : 1.0E-4
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
@@ -97,7 +105,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 9.0687400769,
+    "energyFee" : 2.0883517677,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -107,7 +115,7 @@
         "value" : 0.001,
         "cost" : 1.65
       },
-      "value" : 4.8901455011340005
+      "value" : 0.6596071319229999
     }, {
       "it" : {
         "id" : "生物质",
@@ -121,8 +129,8 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 196.0498274776
+    "totalFee" : 188.9996352853
   },
-  "waterWeight" : 439.0145501134,
-  "weight" : 1427.0145501134
+  "waterWeight" : 15.9607131923,
+  "weight" : 1015.9607131923
 }

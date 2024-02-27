@@ -1,8 +1,8 @@
 {
-  "cost" : 2314.506214331,
-  "dryWaterWeight" : 21.045606863,
+  "cost" : 2314.9234792907,
+  "dryWaterWeight" : 16.4065533199,
   "includeProductionCost" : false,
-  "materialCost" : 2314.5062143309,
+  "materialCost" : 2314.9234792906,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -10,15 +10,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 366.0300937365
+    "weight" : 359.2838937905
   }, {
     "id" : "液氨",
     "index" : 10,
     "name" : "液氨",
-    "normalWeight" : 2.5164189236,
+    "normalWeight" : 4.6235653265,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "weight" : 2.5164189236
+    "weight" : 4.6235653265
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
@@ -42,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 182.6032275411
+    "weight" : 192.457264693
   }, {
     "id" : "防结油（白色）",
     "index" : 64,
@@ -66,7 +66,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 50.7301057922
+    "weight" : 40.8760686403
   } ],
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -97,7 +97,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 2.4197525132,
+    "energyFee" : 2.3432081298,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -107,7 +107,7 @@
         "value" : 0.001,
         "cost" : 1.65
       },
-      "value" : 0.86045606863
+      "value" : 0.8140655332
     }, {
       "it" : {
         "id" : "生物质",
@@ -121,8 +121,8 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 189.3343500384
+    "totalFee" : 189.2570402111
   },
-  "waterWeight" : 36.045606863,
-  "weight" : 1021.045606863
+  "waterWeight" : 31.40655332,
+  "weight" : 1016.4065533199
 }

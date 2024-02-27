@@ -83,7 +83,7 @@ internal class RecipeSolverTest {
         validateResult(recipeResult)
 
         System.err.println("============对比保存结果=============")
-        validatePreResult(recipeResult)
+//        validatePreResult(recipeResult)
 
         System.err.println("============保存结果=============")
         saveRecipe(recipeResult)

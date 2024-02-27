@@ -1,8 +1,8 @@
 {
-  "cost" : 2386.506214331,
+  "cost" : 2386.9234792907,
   "dryWaterWeight" : 0.0,
   "includeProductionCost" : false,
-  "materialCost" : 2386.5062143309,
+  "materialCost" : 2386.9234792906,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -10,15 +10,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 347.5724716201
+    "weight" : 337.3780811398
   }, {
     "id" : "液氨",
     "index" : 10,
     "name" : "液氨",
-    "normalWeight" : 2.5358659512,
+    "normalWeight" : 5.8262802483,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "weight" : 2.5358659512
+    "weight" : 5.8262802483
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
@@ -26,7 +26,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 240.7038597755
+    "weight" : 253.9915647965
   }, {
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
@@ -34,7 +34,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.85,
-    "weight" : 170.8544693199
+    "weight" : 164.4707404821
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
@@ -42,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 225.7851331643
+    "weight" : 226.1041517082
   }, {
     "id" : "防结油（白色）",
     "index" : 64,
@@ -66,7 +66,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 7.548200169
+    "weight" : 7.2291816251
   } ],
   "packagingCost" : 52.13,
   "productionCost" : {

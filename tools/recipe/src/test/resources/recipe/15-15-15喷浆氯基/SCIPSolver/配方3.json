@@ -1,8 +1,8 @@
 {
-  "cost" : 2331.0511237291,
-  "dryWaterWeight" : 342.2652920436,
+  "cost" : 2321.4244417908,
+  "dryWaterWeight" : 51.9904981528,
   "includeProductionCost" : false,
-  "materialCost" : 2331.0511237291,
+  "materialCost" : 2321.4244417906,
   "materials" : [ {
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -10,15 +10,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.25,
-    "weight" : 384.6177224227
+    "weight" : 344.7023889672
   }, {
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 29.9979803912,
+    "normalWeight" : 8.2398508484,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
-    "weight" : 29.9979803912
+    "weight" : 8.2398508484
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -26,7 +26,15 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.8,
-    "weight" : 165.2294013776
+    "weight" : 285.6846291437
+  }, {
+    "id" : "64磷酸二铵（颗粒）",
+    "index" : 18,
+    "name" : "64磷酸二铵（颗粒）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 3.85,
+    "weight" : 100.4791448476
   }, {
     "id" : "磷酸",
     "index" : 29,
@@ -34,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.05,
-    "weight" : 509.0868545188
+    "weight" : 59.5511510126
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
@@ -97,7 +105,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 7.5057939748,
+    "energyFee" : 2.7241822336,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -107,7 +115,7 @@
         "value" : 0.001,
         "cost" : 1.65
       },
-      "value" : 3.942905439243
+      "value" : 1.044958929425
     }, {
       "it" : {
         "id" : "生物质",
@@ -121,8 +129,8 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 194.4712519145
+    "totalFee" : 189.6418240559
   },
-  "waterWeight" : 344.2905439243,
-  "weight" : 1342.2652920436
+  "waterWeight" : 54.4958929425,
+  "weight" : 1051.9904981528
 }
