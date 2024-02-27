@@ -1,8 +1,8 @@
 {
-  "cost" : 3502.2950503007,
-  "dryWaterWeight" : 7.0774422423,
+  "cost" : 3516.7481503007,
+  "dryWaterWeight" : 7.0225029357,
   "includeProductionCost" : true,
-  "materialCost" : 3315.1370003007,
+  "materialCost" : 3327.1812503006,
   "materials" : [ {
     "id" : "普通尿素",
     "index" : 0,
@@ -10,7 +10,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.822,
-    "weight" : 442.9999007704
+    "weight" : 436.0069118899
   }, {
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -34,7 +34,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.95,
-    "weight" : 145.6667352534
+    "weight" : 163.5377068369
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 27,
@@ -42,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 413.4105062185
+    "weight" : 402.4775842089
   }, {
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
@@ -96,15 +96,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 0.265,
+    "energyFee" : 2.6500000000000004,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1.65,
-        "value" : 0.1,
-        "cost" : 0.165
+        "price" : 1650.0,
+        "value" : 0.001,
+        "cost" : 1.6500000000000001
       },
       "value" : 1.0
     }, {
@@ -112,15 +112,15 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1.0,
-        "value" : 0.1,
-        "cost" : 0.1
+        "price" : 1000.0,
+        "value" : 0.001,
+        "cost" : 1.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 187.15804999999997
+    "totalFee" : 189.5669
   },
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -151,15 +151,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 0.265,
+    "energyFee" : 2.6500000000000004,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1.65,
-        "value" : 0.1,
-        "cost" : 0.165
+        "price" : 1650.0,
+        "value" : 0.001,
+        "cost" : 1.6500000000000001
       },
       "value" : 1.0
     }, {
@@ -167,16 +167,16 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1.0,
-        "value" : 0.1,
-        "cost" : 0.1
+        "price" : 1000.0,
+        "value" : 0.001,
+        "cost" : 1.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 187.15804999999997
+    "totalFee" : 189.5669
   },
-  "waterWeight" : 7.0774422423,
-  "weight" : 1007.0774422423
+  "waterWeight" : 7.0225029357,
+  "weight" : 1007.0225029357
 }

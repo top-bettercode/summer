@@ -1,5 +1,5 @@
 {
-  "cost" : 2867.8750673637,
+  "cost" : 2877.0367960032,
   "dryWaterWeight" : 488.2369329968,
   "includeProductionCost" : true,
   "materialCost" : 2581.3832486082,
@@ -104,15 +104,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 1.00789093945,
+    "energyFee" : 10.078909394499998,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1.65,
-        "value" : 0.1,
-        "cost" : 0.165
+        "price" : 1650.0,
+        "value" : 0.001,
+        "cost" : 1.6500000000000001
       },
       "value" : 5.50236933
     }, {
@@ -120,15 +120,15 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1.0,
-        "value" : 0.1,
-        "cost" : 0.1
+        "price" : 1000.0,
+        "value" : 0.001,
+        "cost" : 1.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 245.5480506018,
     "taxFee" : 37.099324554161996,
-    "totalFee" : 286.4918187563661
+    "totalFee" : 295.6535473959666
   },
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -159,15 +159,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 1.0078909394448852,
+    "energyFee" : 10.07890939444885,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1.65,
-        "value" : 0.1,
-        "cost" : 0.165
+        "price" : 1650.0,
+        "value" : 0.001,
+        "cost" : 1.6500000000000001
       },
       "value" : 5.502369329969
     }, {
@@ -175,15 +175,15 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1.0,
-        "value" : 0.1,
-        "cost" : 0.1
+        "price" : 1000.0,
+        "value" : 0.001,
+        "cost" : 1.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 245.54805060075,
     "taxFee" : 37.0993245540675,
-    "totalFee" : 286.49181875520503
+    "totalFee" : 295.6535473947591
   },
   "waterWeight" : 500.2369329969,
   "weight" : 1488.2369329968

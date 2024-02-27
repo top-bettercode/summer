@@ -1,8 +1,8 @@
 {
-  "cost" : 2741.6628503007,
-  "dryWaterWeight" : -1.0E-10,
+  "cost" : 2746.4805503007,
+  "dryWaterWeight" : 0.0,
   "includeProductionCost" : true,
-  "materialCost" : 2554.5048003006,
+  "materialCost" : 2556.9136503008,
   "materials" : [ {
     "id" : "普通尿素",
     "index" : 0,
@@ -18,7 +18,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
-    "weight" : 93.733096291
+    "weight" : 93.2107097404
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
@@ -26,7 +26,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.2,
-    "weight" : 202.6587069074
+    "weight" : 203.5093880654
   }, {
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
@@ -34,7 +34,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.95,
-    "weight" : 84.8490560321
+    "weight" : 85.2052188358
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 27,
@@ -50,7 +50,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "weight" : 83.7591407694
+    "weight" : 83.0746833584
   }, {
     "id" : "防结油（白色）",
     "index" : 58,
@@ -96,15 +96,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 0.265,
+    "energyFee" : 2.6500000000000004,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1.65,
-        "value" : 0.1,
-        "cost" : 0.165
+        "price" : 1650.0,
+        "value" : 0.001,
+        "cost" : 1.6500000000000001
       },
       "value" : 1.0
     }, {
@@ -112,15 +112,15 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1.0,
-        "value" : 0.1,
-        "cost" : 0.1
+        "price" : 1000.0,
+        "value" : 0.001,
+        "cost" : 1.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 187.15804999999997
+    "totalFee" : 189.5669
   },
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -151,15 +151,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 0.265,
+    "energyFee" : 2.6500000000000004,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1.65,
-        "value" : 0.1,
-        "cost" : 0.165
+        "price" : 1650.0,
+        "value" : 0.001,
+        "cost" : 1.6500000000000001
       },
       "value" : 1.0
     }, {
@@ -167,16 +167,16 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1.0,
-        "value" : 0.1,
-        "cost" : 0.1
+        "price" : 1000.0,
+        "value" : 0.001,
+        "cost" : 1.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 187.15804999999997
+    "totalFee" : 189.5669
   },
-  "waterWeight" : 9.6523417889,
-  "weight" : 999.9999999999
+  "waterWeight" : 9.6590677865,
+  "weight" : 1000.0
 }

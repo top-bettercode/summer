@@ -25,10 +25,10 @@ import java.io.File
 internal class RecipeSolverTest {
     val products = listOf(
             "13-05-07高氯枸磷",
-            "24-06-10高氯枸磷",
-            "15-15-15喷浆硫基",
-            "15-15-15喷浆氯基",
-            "15-15-15常规氯基"
+//            "24-06-10高氯枸磷",
+//            "15-15-15喷浆硫基",
+//            "15-15-15喷浆氯基",
+//            "15-15-15常规氯基"
     )
     val solveTypes = listOf(
             SolverType.COPT,
@@ -43,7 +43,7 @@ internal class RecipeSolverTest {
     val nutrientUnchanged = true
     val materialUnchanged = true
     val solveTimes = 1
-    val toExcel = false
+    val toExcel = true
     val epsilon = 1e-4
 
     @Test
@@ -69,7 +69,7 @@ internal class RecipeSolverTest {
             }
             finish()
         }
-        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
+//        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
     }
 
     private fun solve(requirement: RecipeRequirement, solverType: SolverType = SolverType.COPT, maxResult: Int, includeProductionCost: Boolean, nutrientUnchanged: Boolean, materialUnchanged: Boolean, toExcel: Boolean = false): RecipeResult {
