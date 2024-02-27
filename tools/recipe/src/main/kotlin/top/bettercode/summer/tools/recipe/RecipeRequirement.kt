@@ -197,7 +197,7 @@ data class RecipeRequirement(
                 val value = it.term.condition.value
                 val otherOp = it.then.condition.sense
                 val otherValue = it.then.condition.value
-                op == Sense.GT && value == 0.0 && (otherOp == Sense.LE || otherOp == Sense.EQ) && otherValue == 0.0
+                op == Sense.GT && value == 0.0 && (otherOp == Sense.LT || otherOp == Sense.LE || otherOp == Sense.EQ) && otherValue == 0.0
             }
             val noMixMaterials = noMixConditions.map {
                 arrayOf(it.term.materials, it.then.materials)
