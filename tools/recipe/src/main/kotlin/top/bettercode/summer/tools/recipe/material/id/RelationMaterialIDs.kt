@@ -8,15 +8,15 @@ import com.fasterxml.jackson.annotation.JsonProperty
  */
 class RelationMaterialIDs(
         @JsonProperty("ids")
-        ids: MutableList<String>,
+        ids: List<String>,
         /**
          * 关联原料
          */
         @JsonProperty("relationIds")
         val relationIds: MaterialIDs? = null
 ) : MaterialIDs(ids) {
-    constructor(vararg id: String, relationIds: MaterialIDs? = null) : this(id.toMutableList(), relationIds)
-    constructor(ids: Iterable<String>, relationIds: MaterialIDs? = null) : this(ids.toMutableList(), relationIds)
+    constructor(vararg id: String, relationIds: MaterialIDs? = null) : this(id.toList(), relationIds)
+    constructor(ids: Iterable<String>, relationIds: MaterialIDs? = null) : this(ids.toList(), relationIds)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

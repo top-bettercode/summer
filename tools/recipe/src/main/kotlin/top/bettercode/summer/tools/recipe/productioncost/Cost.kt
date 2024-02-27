@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe.productioncost
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 
 /**
  *
@@ -20,5 +21,5 @@ data class Cost(
         @JsonProperty("price")
         val price: Double,
 ) {
-    val cost = price * value
+    val cost = (price * value).scale()
 }

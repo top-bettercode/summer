@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  */
 class ReplacebleMaterialIDs(
         @JsonProperty("ids")
-        ids: MutableList<String>,
+        ids: List<String>,
         /**
          * 对可替换原料使用量比例,1单位ids使用replaceRate单位replaceIds
          */
@@ -22,8 +22,8 @@ class ReplacebleMaterialIDs(
         val replaceIds: MaterialIDs? = null,
 
         ) : MaterialIDs(ids) {
-    constructor(vararg id: String, replaceRate: Double? = null, replaceIds: MaterialIDs? = null) : this(id.toMutableList(), replaceRate, replaceIds)
-    constructor(ids: Iterable<String>, replaceRate: Double? = null, replaceIds: MaterialIDs? = null) : this(ids.toMutableList(), replaceRate, replaceIds)
+    constructor(vararg id: String, replaceRate: Double? = null, replaceIds: MaterialIDs? = null) : this(id.toList(), replaceRate, replaceIds)
+    constructor(ids: Iterable<String>, replaceRate: Double? = null, replaceIds: MaterialIDs? = null) : this(ids.toList(), replaceRate, replaceIds)
 
     override fun contains(element: String): Boolean {
         return if (replaceIds?.contains(element) == true) {

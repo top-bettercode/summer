@@ -7,12 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author Peter Wu
  */
 open class MaterialIDs(
-         ids: MutableList<String>) : Comparable<MaterialIDs>, Iterable<String> {
-    constructor(vararg id: String) : this(id.toMutableList())
-    constructor(ids: Iterable<String>) : this(ids.toMutableList())
+        ids: List<String> = emptyList()) : Comparable<MaterialIDs>, Iterable<String> {
+    constructor(vararg id: String) : this(id.toList())
+    constructor(ids: Iterable<String>) : this(ids.toList())
 
     @JsonProperty("ids")
-    val ids: MutableList<String> = ids.distinct().toMutableList()
+    val ids: List<String> = ids.distinct()
 
     companion object {
         fun Array<String>.toMaterialIDs(): MaterialIDs {
@@ -85,5 +85,5 @@ open class MaterialIDs(
         return toString().compareTo(other.toString())
     }
 
-    override operator fun iterator(): MutableIterator<String> = ids.iterator()
+    override operator fun iterator(): Iterator<String> = ids.iterator()
 }

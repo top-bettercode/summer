@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.recipe.material
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
 /**
@@ -31,5 +32,5 @@ data class RecipeOtherMaterial(
      */
     override val indicators: RecipeValueIndicators = RecipeValueIndicators.EMPTY
 
-    val cost = price * value
+    val cost = (price * value).scale()
 }
