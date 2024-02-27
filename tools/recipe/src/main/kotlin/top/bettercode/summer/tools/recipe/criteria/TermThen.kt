@@ -12,5 +12,5 @@ data class TermThen<T, E>(
         @JsonProperty("term")
         var term: T,
         @JsonProperty("then")
-        val then: E
+        var then: E
 )

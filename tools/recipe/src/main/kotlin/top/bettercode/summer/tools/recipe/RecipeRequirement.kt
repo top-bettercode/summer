@@ -149,23 +149,25 @@ data class RecipeRequirement(
          * @param materialConditionConstraints 条件约束，当条件1满足时，条件2必须满足
          * @return 配方要求
          */
-        fun of(productName: String,
-               targetWeight: Double,
-               yield: Double = 1.0,
-               maxUseMaterialNum: Int? = null,
-               maxBakeWeight: Double? = null,
-               materials: List<RecipeMaterial>,
-               productionCost: ProductionCost,
-               packagingMaterials: List<RecipeOtherMaterial>,
-               indicatorRangeConstraints: RecipeRangeIndicators,
-               indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
-               useMaterialConstraints: MaterialIDs,
-               noUseMaterialConstraints: MaterialIDs,
-               notMixMaterialConstraints: List<Array<MaterialIDs>>,
-               materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-               materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>>,
-               materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
-               materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>
+        @JvmStatic
+        fun of(
+                productName: String,
+                targetWeight: Double,
+                yield: Double = 1.0,
+                maxUseMaterialNum: Int? = null,
+                maxBakeWeight: Double? = null,
+                materials: List<RecipeMaterial>,
+                productionCost: ProductionCost,
+                packagingMaterials: List<RecipeOtherMaterial>,
+                indicatorRangeConstraints: RecipeRangeIndicators,
+                indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
+                useMaterialConstraints: MaterialIDs,
+                noUseMaterialConstraints: MaterialIDs,
+                notMixMaterialConstraints: List<Array<MaterialIDs>>,
+                materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
+                materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>>,
+                materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
+                materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
         ): RecipeRequirement {
             val tmpMaterial = materials.associateBy { it.id }
             //约束原料
@@ -181,6 +183,7 @@ data class RecipeRequirement(
                 it.then.forEach { then ->
                     then.term = then.term.minFrom(tmpMaterial)
                 }
+                it.then = it.then.filter { t -> t.term.ids.isNotEmpty() }
             }
 
             materialConditionConstraints.forEach { (first, second) ->
@@ -199,7 +202,7 @@ data class RecipeRequirement(
                 arrayOf(it.term.materials, it.then.materials)
             }
             val fixNotMixMaterialConstraints = notMixMaterialConstraints + noMixMaterials
-            val fixMaterialConditionConstraints = materialConditionConstraints - noMixConditions.toSet()
+            val fixMaterialConditionConstraints = (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
 
             // 必选原料
             val materialMust = Predicate { material: IRecipeMaterial ->
@@ -300,10 +303,10 @@ data class RecipeRequirement(
                     noUseMaterialConstraints = noUseMaterialConstraints,
                     indicatorRangeConstraints = indicatorRangeConstraints,
                     indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
-                    materialRangeConstraints = materialRangeConstraints,
+                    materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() },
                     notMixMaterialConstraints = fixNotMixMaterialConstraints,
                     materialConditionConstraints = fixMaterialConditionConstraints,
-                    materialRelationConstraints = materialRelationConstraints,
+                    materialRelationConstraints = materialRelationConstraints.filter { it.term.ids.isNotEmpty() && it.then.isNotEmpty() },
             )
         }
 
