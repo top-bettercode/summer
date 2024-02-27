@@ -1,8 +1,8 @@
 {
-  "cost" : 3276.4275503007,
+  "cost" : 2741.6628503007,
   "dryWaterWeight" : 0.0,
   "includeProductionCost" : true,
-  "materialCost" : 2821.8871503008,
+  "materialCost" : 2554.5048003006,
   "materials" : [ {
     "id" : "普通尿素",
     "index" : 0,
@@ -42,7 +42,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "weight" : 295.0594596016
+    "weight" : 214.2792934384
   }, {
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
@@ -50,7 +50,7 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "weight" : 133.7778948313
+    "weight" : 214.5580609945
   }, {
     "id" : "防结油（白色）",
     "index" : 58,
@@ -96,15 +96,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 265.0,
+    "energyFee" : 0.265,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1650.0,
+        "price" : 1.65,
         "value" : 0.1,
-        "cost" : 165.0
+        "cost" : 0.165
       },
       "value" : 1.0
     }, {
@@ -112,17 +112,17 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1000.0,
+        "price" : 1.0,
         "value" : 0.1,
-        "cost" : 100.0
+        "cost" : 0.1
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 454.54040000000003
+    "totalFee" : 187.15804999999997
   },
-  "packagingCost" : 0.0,
+  "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -151,15 +151,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 265.0,
+    "energyFee" : 0.265,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1650.0,
+        "price" : 1.65,
         "value" : 0.1,
-        "cost" : 165.0
+        "cost" : 0.165
       },
       "value" : 1.0
     }, {
@@ -167,15 +167,15 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1000.0,
+        "price" : 1.0,
         "value" : 0.1,
-        "cost" : 100.0
+        "cost" : 0.1
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 454.54040000000003
+    "totalFee" : 187.15804999999997
   },
   "waterWeight" : 7.1191887722,
   "weight" : 1000.0

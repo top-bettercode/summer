@@ -76,7 +76,7 @@
     "price" : 2.8,
     "weight" : 140.6738403527
   } ],
-  "packagingCost" : 0.0,
+  "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -105,15 +105,15 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 1139.44053024823,
+    "energyFee" : 1.13944053024823,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
         "index" : 9001,
         "name" : "籽煤",
-        "price" : 1650.0,
+        "price" : 1.65,
         "value" : 0.1,
-        "cost" : 165.0
+        "cost" : 0.165
       },
       "value" : 6.299639577262
     }, {
@@ -121,15 +121,15 @@
         "id" : "生物质",
         "index" : 9002,
         "name" : "生物质",
-        "price" : 1000.0,
+        "price" : 1.0,
         "value" : 0.1,
-        "cost" : 100.0
+        "cost" : 0.1
       },
       "value" : 1.0
     } ],
     "otherFee" : 253.964854569414,
     "taxFee" : 37.85683691124726,
-    "totalFee" : 1445.5748439461802
+    "totalFee" : 295.8907433310186
   },
   "waterWeight" : 579.9639577262,
   "weight" : 1567.9639577261
