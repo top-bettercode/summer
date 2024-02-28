@@ -62,11 +62,7 @@ data class RecipeRequirement(
         /** 原料  */
         @JsonProperty("materials")
         val materials: List<RecipeMaterial>,
-        /**
-         * 指定原料约束
-         */
-        @JsonProperty("materialIDConstraints")
-        val materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>>,
+
         /** 指定用原料ID  */
         @JsonProperty("useMaterialConstraints")
         val useMaterialConstraints: MaterialIDs,
@@ -78,20 +74,10 @@ data class RecipeRequirement(
          */
         @JsonProperty("indicatorRangeConstraints")
         val indicatorRangeConstraints: RecipeRangeIndicators,
-        /**
-         * 指标指定用原料约束,key:指标ID,value:原料ID
-         */
-        @JsonProperty("indicatorMaterialIDConstraints")
-        val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
 
         /** 原料约束,key:原料ID, value: 原料使用范围约束  */
         @JsonProperty("materialRangeConstraints")
         val materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-
-        /** 不能混用的原料,value: 原料ID  */
-        @JsonProperty("notMixMaterialConstraints")
-        val notMixMaterialConstraints: List<Array<MaterialIDs>>,
-
         /** 条件约束，当条件1满足时，条件2必须满足  */
         @JsonProperty("materialConditionConstraints")
         val materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
@@ -99,7 +85,21 @@ data class RecipeRequirement(
          *关联原料约束
          */
         @JsonProperty("materialRelationConstraints")
-        val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>
+        val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
+        /**
+         * 指定原料约束
+         */
+        @JsonProperty("materialIDConstraints")
+        val materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
+        /**
+         * 指标指定用原料约束,key:指标ID,value:原料ID
+         */
+        @JsonProperty("indicatorMaterialIDConstraints")
+        val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
+
+        /** 不能混用的原料,value: 原料ID  */
+        @JsonProperty("notMixMaterialConstraints")
+        val notMixMaterialConstraints: List<Array<MaterialIDs>>,
 ) {
 
 
@@ -139,18 +139,19 @@ data class RecipeRequirement(
          * @param productionCost 制造费用
          * @param packagingMaterials 包装耗材
          * @param materials 原料
-         * @param materialIDConstraints 指定原料约束
          * @param useMaterialConstraints 指定用原料ID
          * @param noUseMaterialConstraints 不能用原料ID
          * @param indicatorRangeConstraints 指标范围约束,key：指标ID,value:指标值范围
-         * @param indicatorMaterialIDConstraints 指标指定用原料约束,key:指标ID,value:原料ID
          * @param materialRangeConstraints 原料约束,key:原料ID, value: 原料使用范围约束
-         * @param notMixMaterialConstraints 不能混用的原料,value: 原料ID
          * @param materialConditionConstraints 条件约束，当条件1满足时，条件2必须满足
          * @param materialRelationConstraints 关联原料约束
+         * @param materialIDConstraints 指定原料约束
+         * @param indicatorMaterialIDConstraints 指标指定用原料约束,key:指标ID,value:原料ID
+         * @param notMixMaterialConstraints 不能混用的原料,value: 原料ID
          * @return 配方要求
          */
         @JvmStatic
+        @JvmOverloads
         fun of(
                 productName: String,
                 targetWeight: Double,
@@ -160,15 +161,15 @@ data class RecipeRequirement(
                 productionCost: ProductionCost,
                 packagingMaterials: List<RecipeOtherMaterial>,
                 materials: List<RecipeMaterial>,
-                materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>>,
                 useMaterialConstraints: MaterialIDs,
                 noUseMaterialConstraints: MaterialIDs,
                 indicatorRangeConstraints: RecipeRangeIndicators,
-                indicatorMaterialIDConstraints: RecipeMaterialIDIndicators,
                 materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-                notMixMaterialConstraints: List<Array<MaterialIDs>>,
                 materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
                 materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
+                materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
+                indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
+                notMixMaterialConstraints: List<Array<MaterialIDs>> = emptyList(),
         ): RecipeRequirement {
             val tmpMaterial = materials.associateBy { it.id }
             //约束原料
@@ -298,8 +299,6 @@ data class RecipeRequirement(
                             must + min
                     }.filter { it.isNotEmpty() }.flatten().distinct()
                     .toList()
-            val noUseMaterialIds = noUseMaterialConstraints.ids.toMutableList()
-            noUseMaterialIds.removeAll(useMaterialIds)
             return RecipeRequirement(
                     productName = productName,
                     targetWeight = targetWeight,
@@ -311,7 +310,7 @@ data class RecipeRequirement(
                     materials = materialList,
                     materialIDConstraints = materialIDConstraints,
                     useMaterialConstraints = if (useMaterialConstraints.ids.isNotEmpty()) useMaterialIds.distinct().toMaterialIDs() else useMaterialConstraints,
-                    noUseMaterialConstraints = noUseMaterialIds.distinct().toMaterialIDs(),
+                    noUseMaterialConstraints = noUseMaterialConstraints,
                     indicatorRangeConstraints = indicatorRangeConstraints,
                     indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
                     materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() },
