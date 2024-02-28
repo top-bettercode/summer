@@ -114,6 +114,10 @@ dependencies {
 
         api(project(":natives:sap"))
         api(project(":natives:optimal"))
+        api(project(":natives:optimal-copt"))
+        api(project(":natives:optimal-cplex"))
+        api(project(":natives:optimal-gurobi"))
+        api(project(":natives:optimal-ortools"))
 //        api(project(":natives:ctpapi"))
 
     }
