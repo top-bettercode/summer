@@ -7,10 +7,11 @@ dependencies {
 
     compileOnly(project(":tools:excel"))
 
-    api(project(":natives:optimal-copt"))
-    api(project(":natives:optimal-cplex"))
-    api(project(":natives:optimal-gurobi"))
-    api(project(":natives:optimal-ortools"))
+    testImplementation(project(":natives:optimal-copt"))
+    testImplementation(project(":natives:optimal-cplex"))
+    testImplementation(project(":natives:optimal-gurobi"))
+    testImplementation(project(":natives:optimal-ortools"))
+
     testImplementation(project(":tools:excel"))
     testImplementation("org.dhatim:fastexcel-reader")
 
