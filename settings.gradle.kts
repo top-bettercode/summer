@@ -44,6 +44,6 @@ include(":natives:optimal-copt")
 include(":natives:optimal-cplex")
 include(":natives:optimal-gurobi")
 include(":natives:optimal-ortools")
-//include(":natives:ctpapi")
+include(":natives:ctpapi")
 
 

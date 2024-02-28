@@ -5,7 +5,7 @@ plugins {
 //val ctpVersion = "6.3.13_20181119"
 //val ctpVersion = "6.3.15_20190220"
 //val ctpVersion = "v6.6.1_P1_20210406"
-val ctpVersion = ext.get("V") ?: "v6.6.1_P1_CP_20210406"
+val ctpVersion = findProperty("V") ?: "v6.6.1_P1_CP_20210406"
 version = "$ctpVersion-SNAPSHOT"
 
 dependencies {
