@@ -2,8 +2,10 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.tools.optimal.solver.*
-import top.bettercode.summer.tools.optimal.solver.`var`.IVar
+import top.bettercode.summer.tools.optimal.Constraint
+import top.bettercode.summer.tools.optimal.IVar
+import top.bettercode.summer.tools.optimal.Solver
+import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
@@ -16,18 +18,14 @@ object RecipeSolver {
 
     @JvmStatic
     @JvmOverloads
-    fun solve(solverType: SolverType,
+    fun solve(solver: Solver,
               requirement: RecipeRequirement,
-              epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
               includeProductionCost: Boolean = true): Recipe? {
-        SolverFactory.createSolver(
-                solverType = solverType,
-                epsilon = epsilon
-        ).use { solver ->
-            solver.apply {
+        solver.use { so ->
+            so.apply {
                 val s = System.currentTimeMillis()
                 val prepareData = prepare(requirement, includeProductionCost)
-                if (SolverType.COPT == solverType) {
+                if (SolverType.COPT == so.type) {
                     val numVariables = numVariables()
                     val numConstraints = numConstraints()
                     log.info("变量数量：{},约束数量：{}", numConstraints, numConstraints)

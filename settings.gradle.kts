@@ -40,6 +40,10 @@ include(":clients:pay")
 
 include(":natives:sap")
 include(":natives:optimal")
+include(":natives:optimal-copt")
+include(":natives:optimal-cplex")
+include(":natives:optimal-gurobi")
+include(":natives:optimal-ortools")
 //include(":natives:ctpapi")
 
 

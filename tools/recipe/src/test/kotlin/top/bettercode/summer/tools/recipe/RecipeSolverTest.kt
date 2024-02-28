@@ -4,12 +4,18 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.excel.FastExcel
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
-import top.bettercode.summer.tools.optimal.solver.SolverType
+import top.bettercode.summer.tools.optimal.OptimalUtil
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.Solver
+import top.bettercode.summer.tools.optimal.SolverType
+import top.bettercode.summer.tools.optimal.copt.COPTSolver
+import top.bettercode.summer.tools.optimal.cplex.CplexSolver
+import top.bettercode.summer.tools.optimal.gurobi.GurobiSolver
+import top.bettercode.summer.tools.optimal.ortools.CBCSolver
+import top.bettercode.summer.tools.optimal.ortools.SCIPSolver
 import top.bettercode.summer.tools.recipe.data.RecipeMaterialView
 import top.bettercode.summer.tools.recipe.data.RecipeView
 import top.bettercode.summer.tools.recipe.data.TestPrepareData
@@ -73,7 +79,8 @@ internal class RecipeSolverTest {
     }
 
     private fun solve(requirement: RecipeRequirement, solverType: SolverType = SolverType.COPT, maxResult: Int, includeProductionCost: Boolean, nutrientUnchanged: Boolean, materialUnchanged: Boolean, toExcel: Boolean = false): RecipeResult {
-        val recipeResult = MultiRecipeSolver.solve(solverType = solverType, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged, epsilon = epsilon)
+        val solver = createSolver(solverType, epsilon = epsilon)
+        val recipeResult = MultiRecipeSolver.solve(solver = solver, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
 
         System.err.println("============toExcel=============")
         if (toExcel)
@@ -190,7 +197,6 @@ internal class RecipeSolverTest {
             simpleModule.setMixInAnnotation(targetType, mixinClass)
         }
         objectMapper.registerModule(simpleModule)
-        objectMapper.registerModule(JavaTimeModule())
         return objectMapper.writeValueAsString(value)
     }
 
@@ -213,4 +219,19 @@ internal class RecipeSolverTest {
             file.writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
         }
     }
+
+    fun createSolver(
+            solverType: SolverType,
+            epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+            logging: Boolean = false,
+    ): Solver {
+        return when (solverType) {
+            SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)
+            SolverType.CPLEX -> CplexSolver(epsilon = epsilon, logging = logging)
+            SolverType.GUROBI -> GurobiSolver(epsilon = epsilon, logging = logging)
+            SolverType.SCIP -> SCIPSolver(epsilon = epsilon)
+            SolverType.CBC -> CBCSolver(epsilon = epsilon)
+        }
+    }
+
 }

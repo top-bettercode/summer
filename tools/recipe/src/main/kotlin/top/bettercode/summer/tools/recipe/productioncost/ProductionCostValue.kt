@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.recipe.productioncost
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.CarrierValue
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial

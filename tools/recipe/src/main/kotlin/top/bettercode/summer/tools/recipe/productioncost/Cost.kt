@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.recipe.productioncost
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 
 /**
  *

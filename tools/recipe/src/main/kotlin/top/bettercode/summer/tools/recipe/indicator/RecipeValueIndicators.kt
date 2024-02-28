@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.recipe.indicator
 
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 
 /**
  *

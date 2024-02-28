@@ -16,6 +16,7 @@ import java.nio.file.Files
 object CtpApiativeLibLoader {
     private val log = LoggerFactory.getLogger(CtpApiativeLibLoader::class.java)
     private const val LIB_NAME = "CTP"
+    private val version = CtpApiativeLibLoader::class.java.`package`.implementationVersion
 
     /**
      * Load native library in the user.dir folder.
@@ -24,7 +25,7 @@ object CtpApiativeLibLoader {
     @JvmStatic
     fun loadNativeLib() {
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File(tmpPath + File.separator + "summer" + File.separator + "native")
+        val targetFolder = File("$tmpPath${File.separator}summer${File.separator}native${File.separator}ctp${File.separator}$version")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }
@@ -55,7 +56,7 @@ object CtpApiativeLibLoader {
                 System.load("${targetFolder.absolutePath}/libthostapi_wrap.so")
             }
         }
-        log.info("$LIB_NAME library is already loaded.")
+        log.info("$LIB_NAME $version library is already loaded.")
     }
 
 }

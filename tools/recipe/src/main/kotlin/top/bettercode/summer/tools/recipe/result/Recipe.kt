@@ -3,8 +3,8 @@ package top.bettercode.summer.tools.recipe.result
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
-import top.bettercode.summer.tools.optimal.solver.Sense
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.Sense
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange

@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.recipe
 
-import top.bettercode.summer.tools.optimal.solver.`var`.IVar
+import top.bettercode.summer.tools.optimal.IVar
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.productioncost.Cost

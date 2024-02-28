@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.recipe.material
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
 /**

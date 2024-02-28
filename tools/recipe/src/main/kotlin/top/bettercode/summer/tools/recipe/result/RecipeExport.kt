@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.recipe.result
 
 import top.bettercode.summer.tools.excel.FastExcel
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange

@@ -3,10 +3,8 @@ package top.bettercode.summer.tools.recipe
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
-import top.bettercode.summer.tools.optimal.solver.Sense
+import top.bettercode.summer.tools.optimal.Sense
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.criteria.TermThen
@@ -107,16 +105,20 @@ data class RecipeRequirement(
     var timeout: Long = 30L
 
     init {
-        Assert.isTrue(targetWeight > 0, "targetWeight must be greater than 0")
-        Assert.isTrue(maxUseMaterialNum == null || maxUseMaterialNum > 0, "maxUseMaterialNum must be greater than 0")
-
-        Assert.isTrue(maxBakeWeight == null || maxBakeWeight > 0, "maxBakeWeight must be greater than 0")
+        if (targetWeight <= 0) {
+            throw IllegalArgumentException("targetWeight must be greater than 0")
+        }
+        if (maxUseMaterialNum != null && maxUseMaterialNum <= 0) {
+            throw IllegalArgumentException("maxUseMaterialNum must be greater than 0")
+        }
+        if (maxBakeWeight != null && maxBakeWeight <= 0) {
+            throw IllegalArgumentException("maxBakeWeight must be greater than 0")
+        }
     }
 
     //--------------------------------------------
     fun write(file: File) {
         val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
-        objectMapper.registerModule(JavaTimeModule())
         objectMapper.writeValue(file, this)
     }
     //--------------------------------------------
@@ -125,7 +127,6 @@ data class RecipeRequirement(
 
         fun read(file: File): RecipeRequirement {
             val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
-            objectMapper.registerModule(JavaTimeModule())
             return objectMapper.readValue(file, RecipeRequirement::class.java)
         }
 

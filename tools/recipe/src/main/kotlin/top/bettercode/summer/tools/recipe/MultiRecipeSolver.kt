@@ -2,9 +2,8 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil
-import top.bettercode.summer.tools.optimal.solver.SolverFactory
-import top.bettercode.summer.tools.optimal.solver.SolverType
+import top.bettercode.summer.tools.optimal.Solver
+import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.recipe.RecipeSolver.prepare
 import top.bettercode.summer.tools.recipe.RecipeSolver.toRecipe
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
@@ -14,33 +13,28 @@ object MultiRecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(MultiRecipeSolver::class.java)
 
-    fun solve(solverType: SolverType,
+    fun solve(solver: Solver,
               requirement: RecipeRequirement,
-              epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
               maxResult: Int = 1,
               materialUnchanged: Boolean = true,
               nutrientUnchanged: Boolean = true,
               includeProductionCost: Boolean = true
     ): RecipeResult {
-        SolverFactory.createSolver(
-                solverType = solverType,
-                epsilon = epsilon,
-                logging = true).use { solver ->
-            solver.apply {
+        solver.use { so ->
+            so.apply {
                 val s = System.currentTimeMillis()
                 val prepareData = prepare(requirement, includeProductionCost)
                 var e = System.currentTimeMillis()
                 val recipeResult = RecipeResult(name)
                 while ((e - s) / 1000 < requirement.timeout
                         && recipeResult.recipes.size < maxResult) {
-                    if (SolverType.COPT == solverType) {
+                    if (SolverType.COPT == so.type) {
                         val numVariables = numVariables()
                         val numConstraints = numConstraints()
                         log.info("=========变量数量：{},约束数量：{}", numConstraints, numConstraints)
                         if (numVariables > 2000 || numConstraints > 2000) {
                             log.error("变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
                         }
-                        (this as top.bettercode.summer.tools.optimal.solver.COPTSolver).model.writeMps("build/test.mps")
                     }
                     // 求解
                     solve()

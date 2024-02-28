@@ -5,8 +5,8 @@ import org.dhatim.fastexcel.reader.Row
 import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
-import top.bettercode.summer.tools.optimal.solver.OptimalUtil.scale
-import top.bettercode.summer.tools.optimal.solver.Sense
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.Sense
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition

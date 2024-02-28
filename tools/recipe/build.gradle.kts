@@ -5,12 +5,12 @@ plugins {
 dependencies {
     api(project(":natives:optimal"))
 
-    compileOnly("com.google.ortools:ortools-java")
     compileOnly(project(":tools:excel"))
 
-    testImplementation("com.google.ortools:ortools-java")
-    testImplementation("com.gurobi:gurobi")
-
+    api(project(":natives:optimal-copt"))
+    api(project(":natives:optimal-cplex"))
+    api(project(":natives:optimal-gurobi"))
+    api(project(":natives:optimal-ortools"))
     testImplementation(project(":tools:excel"))
     testImplementation("org.dhatim:fastexcel-reader")
 

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.lang.util.Os
 import java.io.File
 import java.nio.file.Files
+import java.util.*
 
 /**
  * native library loader.
@@ -12,14 +13,16 @@ import java.nio.file.Files
 object SapNativeLibLoader {
     private val log = LoggerFactory.getLogger(SapNativeLibLoader::class.java)
     private const val LIB_NAME = "Jco"
+    private val bundle = ResourceBundle.getBundle("sap_version")
 
     /**
      * Load native library in the user.dir folder.
      */
     @Synchronized
     fun loadNativeLib() {
+        val version = bundle.getString("version")
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File(tmpPath + File.separator + "summer" + File.separator + "native")
+        val targetFolder = File("$tmpPath${File.separator}summer${File.separator}native${File.separator}sap${File.separator}$version")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }
@@ -53,7 +56,7 @@ object SapNativeLibLoader {
         }
         log.info(LIB_NAME + " system native path: " + System.getProperty(nativeSystemProperty))
         if (isAlreadyLoaded) {
-            log.info("$LIB_NAME library is already loaded.")
+            log.info("$LIB_NAME $version library is already loaded.")
         }
     }
 

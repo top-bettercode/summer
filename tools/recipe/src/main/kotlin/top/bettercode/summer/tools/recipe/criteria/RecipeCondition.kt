@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.recipe.criteria
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.summer.tools.optimal.solver.Sense
+import top.bettercode.summer.tools.optimal.Sense
 
 /**
  * 数学约束
