@@ -40,8 +40,10 @@ object RecipeSolver {
 
                 if (isOptimal()) {
                     return prepareData.toRecipe(requirement, includeProductionCost)
+                } else {
+                    log.warn("Could not find optimal solution:${getResultStatus()}")
+                    return null
                 }
-                return null
             }
         }
     }
