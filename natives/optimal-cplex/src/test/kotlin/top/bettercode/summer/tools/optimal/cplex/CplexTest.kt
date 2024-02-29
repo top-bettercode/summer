@@ -6,6 +6,11 @@ import org.junit.jupiter.api.Test
 class CplexTest {
 
     @Test
+    fun native() {
+        CplexNativeLibLoader.loadNativeLib()
+    }
+
+    @Test
     fun test() {
         CplexNativeLibLoader.loadNativeLib()
         // 创建一个 MILP 模型
