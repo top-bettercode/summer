@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Sense
@@ -188,7 +189,7 @@ data class Recipe(
             if ((usedWeight - usedAddWeight).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException("原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}")
             }
-            val (normal, overdose) = termThen.relationValue
+            val (normal, overdose) = termThen.relationValue(true)
             val usedMinNormalWeights = normal.min
             val usedMaxNormalWeights = normal.max
             val usedMinOverdoseWeights = overdose.min
@@ -289,51 +290,92 @@ data class Recipe(
     /**
      * 消耗原料汇总相关值
      */
-    val TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>.relationValue: Pair<DoubleRange, DoubleRange>
-        get() {
-            val ids = this.term
-            val materials = materials
-            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
-            val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
+    fun TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>.relationValue(check: Boolean = false): Pair<DoubleRange, DoubleRange> {
+        val ids = this.term
+        val materials = materials
+        val consumeMaterials = materials.filter { ids.contains(it.id) }
+        val usedIds = consumeMaterials.map { it.id }.toMaterialIDs()
+        val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
 
-            var usedMinNormalWeight = 0.0
-            var usedMaxNormalWeight = 0.0
-            var usedMinOverdoseWeight = 0.0
-            var usedMaxOverdoseWeight = 0.0
-            this.then.forEach { (materialIDs, recipeRelation) ->
-                val normal = recipeRelation.normal
-                val overdose = recipeRelation.overdose
-                val relationIds = materialIDs.relationIds
-                val weight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.weight }
-                var normalWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.normalWeight(relationIds) }
-                if (normalWeight == 0.0) {
-                    normalWeight = weight
-                }
+        var usedMinNormalWeight = 0.0
+        var usedMaxNormalWeight = 0.0
+        var usedMinOverdoseWeight = 0.0
+        var usedMaxOverdoseWeight = 0.0
+
+        this.then.forEach { (materialIDs, recipeRelation) ->
+            val normal = recipeRelation.normal
+            val overdose = recipeRelation.overdose
+            val relationIds = materialIDs.relationIds
+
+            materials.filter { materialIDs.contains(it.id) }.forEach { m ->
+
+                var mMinNormalWeight = 0.0
+                var mMaxNormalWeight = 0.0
+                var mMinOverdoseWeight = 0.0
+                var mMaxOverdoseWeight = 0.0
+
+                //m 对应原料的用量变量
+                val normalWeight =
+                        if (relationIds == null) {//当无其他消耗m原料时，取本身用量
+                            m.weight
+                        } else {//当有其他消耗m原料时，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
+                            Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
+                            m.normalWeight(relationIds)
+                        }
+                //过量消耗原料用量变量
+                val overdoseWeight =
+                        if (relationIds == null) {//当无其他消耗m原料时，不存在过量消耗
+                            0.0
+                        } else {//当有其他消耗m原料时，如：氯化钾反应需过量硫酸耗液氨,取关联原料消耗汇总
+                            Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
+                            m.overdoseWeight(relationIds)
+                        }
                 if (normal != null) {
-                    usedMinNormalWeight += normalWeight * normal.min * replaceRate
-                    usedMaxNormalWeight += normalWeight * normal.max * replaceRate
+                    mMinNormalWeight += normalWeight * normal.min * replaceRate
+                    mMaxNormalWeight += normalWeight * normal.max * replaceRate
                 }
                 if (overdose != null) {
-                    usedMinOverdoseWeight += normalWeight * overdose.min * replaceRate
-                    usedMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
+                    mMinOverdoseWeight += normalWeight * overdose.min * replaceRate
+                    mMaxOverdoseWeight += normalWeight * overdose.max * replaceRate
                 }
 
                 val overdoseMaterial = recipeRelation.overdoseMaterial
-                val overdoseWeight = materials.filter { materialIDs.contains(it.id) }.sumOf { it.overdoseWeight(relationIds) }
                 if (overdoseMaterial != null && overdoseWeight > 0) {
                     val overdoseMaterialNormal = overdoseMaterial.normal
                     val overdoseMaterialOverdose = overdoseMaterial.overdose
                     if (overdoseMaterialNormal != null) {
-                        usedMinNormalWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
-                        usedMaxNormalWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
+                        mMinNormalWeight += overdoseWeight * overdoseMaterialNormal.min * replaceRate
+                        mMaxNormalWeight += overdoseWeight * overdoseMaterialNormal.max * replaceRate
                     }
                     if (overdoseMaterialOverdose != null) {
-                        usedMinOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.min * replaceRate
-                        usedMaxOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate
+                        mMinOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.min * replaceRate
+                        mMaxOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate
                     }
                 }
-            }
+                if (check) {
+                    val consumeNormalWeight = consumeMaterials.sumOf {
+                        it.consumes[m.id]!!.normal
+                    }
+                    val consumeOverdoseWeight = consumeMaterials.sumOf {
+                        it.consumes[m.id]!!.overdose
+                    }
+                    // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
+                    if (consumeNormalWeight !in (mMinNormalWeight - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(mMaxNormalWeight + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
+                        throw IllegalRecipeException("原料${m.name}消耗${usedIds}正常使用量：${consumeNormalWeight} 不在范围${mMinNormalWeight}-${mMaxNormalWeight}内")
+                    }
 
-            return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(usedMinOverdoseWeight, usedMaxOverdoseWeight)
+                    // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
+                    if (consumeOverdoseWeight !in (mMinOverdoseWeight - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(mMaxOverdoseWeight + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
+                        throw IllegalRecipeException("原料${m.name}消耗${usedIds}过量使用量：${consumeOverdoseWeight} 不在范围${mMinOverdoseWeight}-${mMaxOverdoseWeight}内")
+                    }
+                }
+                usedMinNormalWeight += mMinNormalWeight
+                usedMaxNormalWeight += mMaxNormalWeight
+                usedMinOverdoseWeight += mMinOverdoseWeight
+                usedMaxOverdoseWeight += mMaxOverdoseWeight
+            }
         }
+
+        return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(usedMinOverdoseWeight, usedMaxOverdoseWeight)
+    }
 }

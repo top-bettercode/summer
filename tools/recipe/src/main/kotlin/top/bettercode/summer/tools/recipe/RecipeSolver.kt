@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.util.Assert
 import top.bettercode.summer.tools.optimal.Constraint
 import top.bettercode.summer.tools.optimal.IVar
 import top.bettercode.summer.tools.optimal.Solver
@@ -167,11 +168,10 @@ object RecipeSolver {
                 val overdose = u.overdose
                 val overdoseMaterial = u.overdoseMaterial
                 val relationIds = t.relationIds
-                t.mapNotNull { recipeMaterials[it] }.forEach { m ->
 
+                t.mapNotNull { recipeMaterials[it] }.forEach { m ->
                     val normalVars = mutableListOf<IVar>()
                     val overdoseVars = mutableListOf<IVar>()
-
                     //关联原料
                     val normalMinVars = mutableListOf<IVar>()
                     val normalMaxVars = mutableListOf<IVar>()
@@ -200,19 +200,18 @@ object RecipeSolver {
 
                     //m 对应原料的用量变量
                     val normalWeight =
-                            if (m.consumes.isEmpty()) {//当无其他消耗m原料时，取本身用量
+                            if (relationIds == null) {//当无其他消耗m原料时，取本身用量
                                 m.weight
-                            } else if (relationIds == null) {//当有其他消耗原料时且关联原料不存在，如：硫酸量耗液氨，取所有消耗汇总
-                                m.consumes.values.map { it.normal }.sum()
-                            } else {//当有其他消耗原料时且关联原料存在，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
+                            } else {//当有其他消耗m原料时，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
+                                Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
                                 m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.normal }.sum()
                             }
+                    //过量消耗原料用量变量
                     val overdoseWeight =
-                            if (m.consumes.isEmpty()) {//当无其他消耗m原料时，不存在过量消耗
+                            if (relationIds == null) {//当无其他消耗m原料时，不存在过量消耗
                                 null
-                            } else if (relationIds == null) {//当有其他消耗原料时且关联原料不存在，如：硫酸量耗液氨，取所有消耗汇总
-                                m.consumes.values.map { it.overdose }.sum()
-                            } else {//当有其他消耗原料时且关联原料存在，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
+                            } else {//当有其他消耗m原料时，如：氯化钾反应需过量硫酸耗液氨,取关联原料消耗汇总
+                                Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
                                 m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.overdose }.sum()
                             }
 

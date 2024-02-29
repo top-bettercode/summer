@@ -67,7 +67,7 @@ class RecipeExt(private val recipe: Recipe) {
                 val materialRelationConstraint = recipe.requirement.materialRelationConstraints.firstOrNull { it.term.contains(this.id) }
                         ?: return null
                 recipe.apply {
-                    return materialRelationConstraint.relationValue
+                    return materialRelationConstraint.relationValue(false)
                 }
             } else {
                 var usedMinNormalWeight = 0.0
