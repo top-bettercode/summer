@@ -270,7 +270,11 @@ object RecipeExport {
             cell(r, 1).value(recipe.packagingCost)
             range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
             //成本合计
-            cell(r, 1).value(recipe.cost + recipe.packagingCost)
+            if (recipe.includeProductionCost) {
+                cell(r, 1).value(recipe.cost + recipe.packagingCost)
+            } else {
+                cell(r, 1).value(totalFee + recipe.cost + recipe.packagingCost)
+            }
             range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
         }
     }
