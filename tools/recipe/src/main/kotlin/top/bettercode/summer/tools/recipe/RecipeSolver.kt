@@ -90,7 +90,7 @@ object RecipeSolver {
         val notMixMaterials = requirement.notMixMaterialConstraints
 
         // 不选取不能同时使用的原料对
-        for (notMixedMaterial in notMixMaterials) {
+        notMixMaterials.forEach { notMixedMaterial ->
             //一组变量至多有一个变量可取非零值
             val noMixedVars = notMixedMaterial
                     .map { materialIDs: MaterialIDs ->
@@ -103,7 +103,11 @@ object RecipeSolver {
 
 
         // 定义产品净重 >=1000kg，含水，最大烘干量
-        materialVars.between(targetWeight, if (requirement.maxBakeWeight == null) Double.POSITIVE_INFINITY else targetWeight + requirement.maxBakeWeight)
+        materialVars.between(targetWeight,
+                if (requirement.maxBakeWeight == null)
+                    Double.POSITIVE_INFINITY
+                else
+                    (targetWeight + requirement.maxBakeWeight))
 
         val rangeIndicators = requirement.indicatorRangeConstraints
         // 产品水分指标
