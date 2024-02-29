@@ -1,8 +1,12 @@
 package top.bettercode.summer.tools.recipe.result
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Sense
 import top.bettercode.summer.tools.recipe.RecipeRequirement
@@ -18,22 +22,29 @@ import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMa
 import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
+import java.io.File
 
 /**
  * 配方
  *
  * @author Peter Wu
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder(alphabetic = true)
 data class Recipe(
         /**
          * 配方要求
          */
+        @JsonProperty("requirement")
         val requirement: RecipeRequirement,
+        @JsonProperty("includeProductionCost")
         val includeProductionCost: Boolean,
+        @JsonProperty("optimalProductionCost")
         val optimalProductionCost: ProductionCostValue?,
+        @JsonProperty("cost")
         val cost: Double,
         /** 选用的原料  */
+        @JsonProperty("materials")
         val materials: List<RecipeMaterialValue>
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
@@ -64,6 +75,17 @@ data class Recipe(
     val materialCost: Double
         get() = materials.sumOf { it.weight * it.price }.scale()
 
+    companion object {
+        fun read(file: File): Recipe {
+            val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            return objectMapper.readValue(file, Recipe::class.java)
+        }
+    }
+
+    fun write(file: File) {
+        val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+        objectMapper.writeValue(file, this)
+    }
 
     //检查结果
     fun validate(): Boolean {

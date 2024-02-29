@@ -1,73 +1,170 @@
 {
   "cost" : 2361.9234792907,
-  "dryWaterWeight" : 28.3340221569,
   "includeProductionCost" : false,
-  "materialCost" : 2361.9234792908,
   "materials" : [ {
+    "consumes" : { },
+    "material" : {
+      "id" : "氯化铵（干）",
+      "index" : 6,
+      "name" : "氯化铵（干）",
+      "price" : 1.25
+    },
+    "weight" : 344.8300293729,
     "id" : "氯化铵（干）",
     "index" : 6,
     "name" : "氯化铵（干）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.25,
-    "weight" : 395.6693121869
+    "price" : 1.25
   }, {
+    "consumes" : {
+      "55磷酸一铵（粉）" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "57磷酸二铵（颗粒）" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "58磷酸一铵（粉）" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "60磷酸一铵（粉）" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "64全水溶磷酸一铵" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "64磷酸二铵（颗粒）" : {
+        "normal" : 2.4831435074,
+        "overdose" : 0.0
+      },
+      "67全水溶磷酸一铵" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "67聚磷酸铵" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "8-40-0再浆肥（粉）" : {
+        "normal" : 3.2619908643,
+        "overdose" : 0.0
+      },
+      "8-40-0再浆肥（颗料）" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      }
+    },
+    "material" : {
+      "id" : "液氨",
+      "index" : 10,
+      "name" : "液氨",
+      "price" : 4.2
+    },
+    "weight" : 5.7451343717,
     "id" : "液氨",
     "index" : 10,
     "name" : "液氨",
-    "normalWeight" : 3.756737172,
+    "normalWeight" : 5.7451343717,
     "overdoseWeight" : 0.0,
-    "price" : 4.2,
-    "weight" : 3.756737172
+    "price" : 4.2
   }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "8-40-0再浆肥（粉）",
+      "index" : 20,
+      "name" : "8-40-0再浆肥（粉）",
+      "price" : 1.8
+    },
+    "weight" : 309.6274829482,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.8,
-    "weight" : 237.2049231914
+    "price" : 1.8
   }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "64磷酸二铵（颗粒）",
+      "index" : 23,
+      "name" : "64磷酸二铵（颗粒）",
+      "price" : 3.85
+    },
+    "weight" : 129.6346949542,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "name" : "64磷酸二铵（颗粒）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.85,
-    "weight" : 99.3128502895
+    "price" : 3.85
   }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "95%氯化钾烘干粉（国产）",
+      "index" : 36,
+      "name" : "95%氯化钾烘干粉（国产）",
+      "price" : 3.55
+    },
+    "weight" : 167.699800973,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.55,
-    "weight" : 220.1988431006
+    "price" : 3.55
   }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "防结油（白色）",
+      "index" : 64,
+      "name" : "防结油（白色）",
+      "price" : 8.0
+    },
+    "weight" : 2.0,
     "id" : "防结油（白色）",
     "index" : 64,
     "name" : "防结油（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 8.0,
-    "weight" : 2.0
+    "price" : 8.0
   }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "防结粉（白色）",
+      "index" : 65,
+      "name" : "防结粉（白色）",
+      "price" : 2.0
+    },
+    "weight" : 3.0,
     "id" : "防结粉（白色）",
     "index" : 65,
     "name" : "防结粉（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 2.0,
-    "weight" : 3.0
+    "price" : 2.0
   }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "喷浆硫基用95氯化钾",
+      "index" : 102,
+      "name" : "喷浆硫基用95氯化钾",
+      "price" : 3.55
+    },
+    "weight" : 65.6335323604,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "name" : "喷浆硫基用95氯化钾",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.55,
-    "weight" : 67.1913562165
+    "price" : 3.55
   } ],
+  "dryWaterWeight" : 28.1706749804,
+  "materialCost" : 2361.9234792913,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -97,7 +194,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 2.5400113656,
+    "energyFee" : 2.5373161372,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -107,7 +204,7 @@
         "value" : 0.001,
         "cost" : 1.65
       },
-      "value" : 0.933340221568
+      "value" : 0.931706749802
     }, {
       "it" : {
         "id" : "生物质",
@@ -121,8 +218,8 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 189.4558114792
+    "totalFee" : 189.4530892985
   },
-  "waterWeight" : 43.3340221568,
-  "weight" : 1028.3340221569
+  "waterWeight" : 43.1706749802,
+  "weight" : 1028.1706749804
 }

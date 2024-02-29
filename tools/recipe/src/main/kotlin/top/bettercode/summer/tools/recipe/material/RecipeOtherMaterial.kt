@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.recipe.material
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
@@ -8,6 +9,7 @@ import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
  * 其他原料
  * @author Peter Wu
  */
+@JsonPropertyOrder(alphabetic = true)
 data class RecipeOtherMaterial(
         /**
          * 序号，从0开始

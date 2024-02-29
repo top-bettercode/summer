@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe.result
 
 import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportMaterial
+import top.bettercode.summer.tools.recipe.result.RecipeExport.exportProductionCost
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportRecipe
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportRequirement
 import java.io.File
@@ -33,14 +34,15 @@ class RecipeResult(val solverName: String) {
             exportMaterial(requirement)
             sheet("配方要求")
             exportRequirement(requirement)
-//            keepInActiveTab()
+
             for ((index, recipe) in recipes.withIndex()) {
                 val sheetname = "配方" + (index + 1)
                 sheet(sheetname)
                 if (index == 0) {
                     keepInActiveTab()
                 }
-                exportRecipe(recipe, true)
+                val row = exportRecipe(recipe, true)
+                exportProductionCost(recipe = recipe, row + 1)
             }
 
             finish()

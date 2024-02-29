@@ -19,7 +19,7 @@ class RecipeExt(private val recipe: Recipe) {
         get() {
             val relationMap = recipe.requirement.materialRelationConstraints.find { it.then.any { m -> m.term.contains(this.id) } }
                     ?: return false
-            val recipeRelation = relationMap.then.first().then
+            val recipeRelation = relationMap.then.first { it.term.contains(this.id) }.then
             return recipeRelation.overdose != null || recipeRelation.overdoseMaterial != null
         }
 

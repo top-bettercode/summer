@@ -6,6 +6,7 @@ import top.bettercode.summer.tools.optimal.Constraint
 import top.bettercode.summer.tools.optimal.IVar
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.SolverType
+import top.bettercode.summer.tools.recipe.criteria.UsageVar
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
@@ -159,15 +160,7 @@ object RecipeSolver {
         materialRelationConstraints.forEach { (ids, relation) ->
             val consumeMaterialVars = ids.mapNotNull { recipeMaterials[it] }
             val replaceConsumeMaterialVars = ids.replaceIds?.mapNotNull { recipeMaterials[it] }
-            val normalVars = mutableListOf<IVar>()
-            val overdoseVars = mutableListOf<IVar>()
             val useReplace = boolVar()
-
-            //关联原料
-            val normalMinVars = mutableListOf<IVar>()
-            val normalMaxVars = mutableListOf<IVar>()
-            val overdoseMinVars = mutableListOf<IVar>()
-            val overdoseMaxVars = mutableListOf<IVar>()
 
             relation.forEach { (t, u) ->
                 val normal = u.normal
@@ -175,6 +168,16 @@ object RecipeSolver {
                 val overdoseMaterial = u.overdoseMaterial
                 val relationIds = t.relationIds
                 t.mapNotNull { recipeMaterials[it] }.forEach { m ->
+
+                    val normalVars = mutableListOf<IVar>()
+                    val overdoseVars = mutableListOf<IVar>()
+
+                    //关联原料
+                    val normalMinVars = mutableListOf<IVar>()
+                    val normalMaxVars = mutableListOf<IVar>()
+                    val overdoseMinVars = mutableListOf<IVar>()
+                    val overdoseMaxVars = mutableListOf<IVar>()
+
                     //原料消耗变量初始化
                     consumeMaterialVars.forEach {
                         it.weight.leIf(0.0, useReplace)
@@ -182,7 +185,7 @@ object RecipeSolver {
                         normalVars.add(normalVar)
                         val overdoseVar = numVar(0.0, targetWeight)
                         overdoseVars.add(overdoseVar)
-                        it.consumes[m.id] = normalVar to overdoseVar
+                        it.consumes[m.id] = UsageVar(normal = normalVar, overdose = overdoseVar)
                     }
                     //替换原料消耗变量初始化
                     replaceConsumeMaterialVars?.forEach {
@@ -192,7 +195,7 @@ object RecipeSolver {
                         normalVars.add(normalVar / replaceRate)
                         val overdoseVar = numVar(0.0, targetWeight)
                         overdoseVars.add(overdoseVar / replaceRate)
-                        it.consumes[m.id] = normalVar to overdoseVar
+                        it.consumes[m.id] = UsageVar(normal = normalVar, overdose = overdoseVar)
                     }
 
                     //m 对应原料的用量变量
@@ -200,17 +203,17 @@ object RecipeSolver {
                             if (m.consumes.isEmpty()) {//当无其他消耗m原料时，取本身用量
                                 m.weight
                             } else if (relationIds == null) {//当有其他消耗原料时且关联原料不存在，如：硫酸量耗液氨，取所有消耗汇总
-                                m.consumes.values.map { it.first }.sum()
+                                m.consumes.values.map { it.normal }.sum()
                             } else {//当有其他消耗原料时且关联原料存在，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
-                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.first }.sum()
+                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.normal }.sum()
                             }
                     val overdoseWeight =
                             if (m.consumes.isEmpty()) {//当无其他消耗m原料时，不存在过量消耗
                                 null
                             } else if (relationIds == null) {//当有其他消耗原料时且关联原料不存在，如：硫酸量耗液氨，取所有消耗汇总
-                                m.consumes.values.map { it.second }.sum()
+                                m.consumes.values.map { it.overdose }.sum()
                             } else {//当有其他消耗原料时且关联原料存在，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
-                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.second }.sum()
+                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.overdose }.sum()
                             }
 
                     //原料消耗
@@ -238,16 +241,18 @@ object RecipeSolver {
                             overdoseMaxVars.add(overdoseWeight * overdoseMaterialOverdose.max)
                         }
                     }
+
+                    normalVars.between(normalMinVars.sum(), normalMaxVars.sum())
+                    overdoseVars.between(overdoseMinVars.sum(), overdoseMaxVars.sum())
                 }
             }
             consumeMaterialVars.forEach {
-                it.consumes.values.flatMap { c -> listOf(c.first, c.second) }.sum().eq(it.weight)
+                it.consumes.values.flatMap { c -> listOf(c.normal, c.overdose) }.sum().eq(it.weight)
             }
             replaceConsumeMaterialVars?.forEach {
-                it.consumes.values.flatMap { c -> listOf(c.first, c.second) }.sum().eq(it.weight)
+                it.consumes.values.flatMap { c -> listOf(c.normal, c.overdose) }.sum().eq(it.weight)
             }
-            normalVars.between(normalMinVars.sum(), normalMaxVars.sum())
-            overdoseVars.between(overdoseMinVars.sum(), overdoseMaxVars.sum())
+
         }
 
         // 条件约束

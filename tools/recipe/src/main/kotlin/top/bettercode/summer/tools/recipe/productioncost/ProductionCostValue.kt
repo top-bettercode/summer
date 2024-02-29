@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.productioncost
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
@@ -17,33 +18,40 @@ data class ProductionCostValue(
         /**
          * 能耗费用
          */
+        @JsonProperty("materialItems")
         val materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>,
         /**
          * 其他固定费用
          */
+        @JsonProperty("dictItems")
         val dictItems: Map<DictType, CarrierValue<Cost, Double>>,
         /**
          * 人工+折旧费+其他费用
          *
          */
+        @JsonProperty("otherFee")
         val otherFee: Double,
         /**
          * 能耗费用
          */
+        @JsonProperty("energyFee")
         val energyFee: Double,
         /**
          *  税费 =（人工+折旧费+其他费用）*0.09+15
          *
          */
+        @JsonProperty("taxFee")
         val taxFee: Double,
         /**
          *  制造费用合计=人工费+折旧费+其他费用+能耗费+税费
          *
          */
+        @JsonProperty("totalFee")
         val totalFee: Double,
         /**
          * 制造费用增减
          */
+        @JsonProperty("allChange")
         val allChange: Double
 ) {
     private val log = LoggerFactory.getLogger(ProductionCostValue::class.java)
@@ -61,7 +69,7 @@ data class ProductionCostValue(
             val thisVal = (value.it.cost * value.value).scale()
             val other = productionCost.dictItems[key]
             val otherVal = if (other == null) 0.0 else (other.it.cost * other.value).scale()
-            Assert.isTrue(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON, "${key.remark}不一致:${thisVal}!=${otherVal}, 差值：${thisVal - otherVal}")
+            Assert.isTrue(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON, "${key.dictName}不一致:${thisVal}!=${otherVal}, 差值：${thisVal - otherVal}")
         }
         Assert.isTrue(this.otherFee - productionCost.otherFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON, "人工+折旧费+其他费用不一致:${this.otherFee}!=${productionCost.otherFee}, 差值：${this.otherFee - productionCost.otherFee}")
 

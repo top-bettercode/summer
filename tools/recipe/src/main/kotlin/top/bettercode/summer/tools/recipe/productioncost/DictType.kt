@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.productioncost
  * 制造费用项标识
  * @author Peter Wu
  */
-enum class DictType( val remark: String) {
+enum class DictType(val dictName: String) {
     /**
      * 能耗费用
      */

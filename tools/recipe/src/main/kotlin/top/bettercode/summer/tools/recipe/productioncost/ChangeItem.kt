@@ -20,7 +20,7 @@ data class ChangeItem(
         return when (type) {
             ChangeItemType.MATERIAL -> materials.find { it.id == id }?.name ?: ""
             ChangeItemType.DICT -> {
-                DictType.valueOf(id).remark
+                DictType.valueOf(id).dictName
             }
         }
     }
