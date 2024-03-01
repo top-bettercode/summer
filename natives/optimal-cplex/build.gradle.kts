@@ -12,7 +12,7 @@ dependencies {
 
 tasks {
     "jar"(Jar::class) {
-        from(fileTree(mapOf("dir" to "libs")).files.map { zipTree(it) })
+        from(fileTree(mapOf("dir" to "libs")).files.map { zipTree(it) }).exclude("ilog/cplex/CplexInitializer.class")
     }
 }
 

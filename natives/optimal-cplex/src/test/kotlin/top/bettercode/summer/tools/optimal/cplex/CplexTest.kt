@@ -16,7 +16,7 @@ class CplexTest {
         // 创建一个 MILP 模型
         IloCplex().use { model ->
             model.setParam(IloCplex.Param.MIP.Display, 0) // 0表示禁用日志，1表示启用
-
+            model.setOut(null)
             // 添加变量
             val x1 = model.numVar(0.0, 100.0, "x1")
             val x2 = model.numVar(0.0, 100.0, "x2")

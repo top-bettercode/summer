@@ -36,6 +36,9 @@ class CplexSolver @JvmOverloads constructor(
 
     init {
         model.setParam(Param.MIP.Display, if (logging) 2 else 0) // 0表示禁用日志，1表示启用
+        if (!logging) {
+            model.setOut(null)
+        }
         model.setParam(Param.MIP.Tolerances.Linearization, epsilon)
         model.setParam(Param.Simplex.Tolerances.Feasibility, 1e-9)
     }
