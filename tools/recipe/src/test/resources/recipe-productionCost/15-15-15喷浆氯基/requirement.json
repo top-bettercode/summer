@@ -202,307 +202,368 @@
     "id" : "氯化铵（湿）",
     "index" : 5,
     "name" : "氯化铵（湿）",
-    "price" : 1.19
+    "price" : 1.19,
+    "unit" : "吨"
   }, {
     "id" : "氯化铵（干）",
     "index" : 6,
     "name" : "氯化铵（干）",
-    "price" : 1.25
+    "price" : 1.25,
+    "unit" : "吨"
   }, {
     "id" : "焦化硫铵",
     "index" : 7,
     "name" : "焦化硫铵",
-    "price" : 1.25
+    "price" : 1.25,
+    "unit" : "吨"
   }, {
     "id" : "己内级硫铵",
     "index" : 8,
     "name" : "己内级硫铵",
-    "price" : 1.3
+    "price" : 1.3,
+    "unit" : "吨"
   }, {
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "price" : 4.2
+    "price" : 4.2,
+    "unit" : "吨"
   }, {
     "id" : "碳铵",
     "index" : 10,
     "name" : "碳铵",
-    "price" : 1.2
+    "price" : 1.2,
+    "unit" : "吨"
   }, {
     "id" : "32-4-0硝磷",
     "index" : 11,
     "name" : "32-4-0硝磷",
-    "price" : 2.75
+    "price" : 2.75,
+    "unit" : "吨"
   }, {
     "id" : "55磷酸一铵（粉）",
     "index" : 12,
     "name" : "55磷酸一铵（粉）",
-    "price" : 3.28
+    "price" : 3.28,
+    "unit" : "吨"
   }, {
     "id" : "58磷酸一铵（粉）",
     "index" : 13,
     "name" : "58磷酸一铵（粉）",
-    "price" : 3.48
+    "price" : 3.48,
+    "unit" : "吨"
   }, {
     "id" : "60磷酸一铵（粉）",
     "index" : 14,
     "name" : "60磷酸一铵（粉）",
-    "price" : 3.68
+    "price" : 3.68,
+    "unit" : "吨"
   }, {
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "name" : "8-40-0再浆肥（粉）",
-    "price" : 1.8
+    "price" : 1.8,
+    "unit" : "吨"
   }, {
     "id" : "8-40-0再浆肥（颗料）",
     "index" : 17,
     "name" : "8-40-0再浆肥（颗料）",
-    "price" : 2.25
+    "price" : 2.25,
+    "unit" : "吨"
   }, {
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "name" : "64磷酸二铵（颗粒）",
-    "price" : 3.85
+    "price" : 3.85,
+    "unit" : "吨"
   }, {
     "id" : "64全水溶磷酸一铵",
     "index" : 19,
     "name" : "64全水溶磷酸一铵",
-    "price" : 4.75
+    "price" : 4.75,
+    "unit" : "吨"
   }, {
     "id" : "67全水溶磷酸一铵",
     "index" : 20,
     "name" : "67全水溶磷酸一铵",
-    "price" : 4.97
+    "price" : 4.97,
+    "unit" : "吨"
   }, {
     "id" : "工业一铵73%",
     "index" : 21,
     "name" : "工业一铵73%",
-    "price" : 6.15
+    "price" : 6.15,
+    "unit" : "吨"
   }, {
     "id" : "锌工铵",
     "index" : 22,
     "name" : "锌工铵",
-    "price" : 5.17
+    "price" : 5.17,
+    "unit" : "吨"
   }, {
     "id" : "磷酸二氢钾",
     "index" : 23,
     "name" : "磷酸二氢钾",
-    "price" : 10.5
+    "price" : 10.5,
+    "unit" : "吨"
   }, {
     "id" : "硝酸钾",
     "index" : 25,
     "name" : "硝酸钾",
-    "price" : 6.15
+    "price" : 6.15,
+    "unit" : "吨"
   }, {
     "id" : "中白肥（24%)",
     "index" : 26,
     "name" : "中白肥（24%)",
-    "price" : 0.8
+    "price" : 0.8,
+    "unit" : "吨"
   }, {
     "id" : "低白肥（14%）",
     "index" : 27,
     "name" : "低白肥（14%）",
-    "price" : 0.5
+    "price" : 0.5,
+    "unit" : "吨"
   }, {
     "id" : "磷矿粉",
     "index" : 28,
     "name" : "磷矿粉",
-    "price" : 1.45
+    "price" : 1.45,
+    "unit" : "吨"
   }, {
     "id" : "磷酸",
     "index" : 29,
     "name" : "磷酸",
-    "price" : 1.05
+    "price" : 1.05,
+    "unit" : "吨"
   }, {
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
     "name" : "95%氯化钾烘干粉（国产）",
-    "price" : 3.55
+    "price" : 3.55,
+    "unit" : "吨"
   }, {
     "id" : "95%进口红钾（粉）",
     "index" : 32,
     "name" : "95%进口红钾（粉）",
-    "price" : 3.7
+    "price" : 3.7,
+    "unit" : "吨"
   }, {
     "id" : "52%罗布泊硫酸钾（粉）",
     "index" : 34,
     "name" : "52%罗布泊硫酸钾（粉）",
-    "price" : 3.85
+    "price" : 3.85,
+    "unit" : "吨"
   }, {
     "id" : "52%曼海姆硫酸钾（粉）",
     "index" : 35,
     "name" : "52%曼海姆硫酸钾（粉）",
-    "price" : 4.25
+    "price" : 4.25,
+    "unit" : "吨"
   }, {
     "id" : "硫酸",
     "index" : 36,
     "name" : "硫酸",
-    "price" : 0.295
+    "price" : 0.295,
+    "unit" : "吨"
   }, {
     "id" : "EDTA-镁",
     "index" : 37,
     "name" : "EDTA-镁",
-    "price" : 29.3
+    "price" : 29.3,
+    "unit" : "吨"
   }, {
     "id" : "一水硫酸镁",
     "index" : 38,
     "name" : "一水硫酸镁",
-    "price" : 3.0
+    "price" : 3.0,
+    "unit" : "吨"
   }, {
     "id" : "无水硫酸镁",
     "index" : 39,
     "name" : "无水硫酸镁",
-    "price" : 3.15
+    "price" : 3.15,
+    "unit" : "吨"
   }, {
     "id" : "七水硫酸镁",
     "index" : 40,
     "name" : "七水硫酸镁",
-    "price" : 0.8
+    "price" : 0.8,
+    "unit" : "吨"
   }, {
     "id" : "七水黄镁",
     "index" : 41,
     "name" : "七水黄镁",
-    "price" : 0.8
+    "price" : 0.8,
+    "unit" : "吨"
   }, {
     "id" : "80氧化镁",
     "index" : 42,
     "name" : "80氧化镁",
-    "price" : 1.23
+    "price" : 1.23,
+    "unit" : "吨"
   }, {
     "id" : "85氧化镁",
     "index" : 43,
     "name" : "85氧化镁",
-    "price" : 1.3
+    "price" : 1.3,
+    "unit" : "吨"
   }, {
     "id" : "EDTA-钙",
     "index" : 44,
     "name" : "EDTA-钙",
-    "price" : 29.0
+    "price" : 29.0,
+    "unit" : "吨"
   }, {
     "id" : "EDTA-锌",
     "index" : 45,
     "name" : "EDTA-锌",
-    "price" : 29.5
+    "price" : 29.5,
+    "unit" : "吨"
   }, {
     "id" : "EDTA-锰",
     "index" : 46,
     "name" : "EDTA-锰",
-    "price" : 29.0
+    "price" : 29.0,
+    "unit" : "吨"
   }, {
     "id" : "EDTA-铁",
     "index" : 47,
     "name" : "EDTA-铁",
-    "price" : 29.0
+    "price" : 29.0,
+    "unit" : "吨"
   }, {
     "id" : "EDTA-铜",
     "index" : 48,
     "name" : "EDTA-铜",
-    "price" : 39.5
+    "price" : 39.5,
+    "unit" : "吨"
   }, {
     "id" : "七钼酸铵",
     "index" : 49,
     "name" : "七钼酸铵",
-    "price" : 160.0
+    "price" : 160.0,
+    "unit" : "吨"
   }, {
     "id" : "一水硫酸锌",
     "index" : 50,
     "name" : "一水硫酸锌",
-    "price" : 6.7
+    "price" : 6.7,
+    "unit" : "吨"
   }, {
     "id" : "七水硫酸锌",
     "index" : 51,
     "name" : "七水硫酸锌",
-    "price" : 4.6
+    "price" : 4.6,
+    "unit" : "吨"
   }, {
     "id" : "硼砂",
     "index" : 52,
     "name" : "硼砂",
-    "price" : 5.4
+    "price" : 5.4,
+    "unit" : "吨"
   }, {
     "id" : "硼酸",
     "index" : 53,
     "name" : "硼酸",
-    "price" : 8.4
+    "price" : 8.4,
+    "unit" : "吨"
   }, {
     "id" : "四水八硼酸钠",
     "index" : 54,
     "name" : "四水八硼酸钠",
-    "price" : 13.5
+    "price" : 13.5,
+    "unit" : "吨"
   }, {
     "id" : "五水硫酸铜",
     "index" : 55,
     "name" : "五水硫酸铜",
-    "price" : 21.0
+    "price" : 21.0,
+    "unit" : "吨"
   }, {
     "id" : "一水硫酸锰",
     "index" : 56,
     "name" : "一水硫酸锰",
-    "price" : 4.7
+    "price" : 4.7,
+    "unit" : "吨"
   }, {
     "id" : "白泥",
     "index" : 57,
     "name" : "白泥",
-    "price" : 0.24
+    "price" : 0.24,
+    "unit" : "吨"
   }, {
     "id" : "元明粉",
     "index" : 58,
     "name" : "元明粉",
-    "price" : 0.42
+    "price" : 0.42,
+    "unit" : "吨"
   }, {
     "id" : "盐酸",
     "index" : 59,
     "name" : "盐酸",
-    "price" : -0.1
+    "price" : -0.1,
+    "unit" : "吨"
   }, {
     "id" : "磷石膏",
     "index" : 60,
     "name" : "磷石膏",
-    "price" : 0.05
+    "price" : 0.05,
+    "unit" : "吨"
   }, {
     "id" : "防结油（白色）",
     "index" : 61,
     "name" : "防结油（白色）",
-    "price" : 8.0
+    "price" : 8.0,
+    "unit" : "吨"
   }, {
     "id" : "防结粉（白色）",
     "index" : 62,
     "name" : "防结粉（白色）",
-    "price" : 2.0
+    "price" : 2.0,
+    "unit" : "吨"
   }, {
     "id" : "籽煤",
     "index" : 81,
     "name" : "籽煤",
-    "price" : 1.65
+    "price" : 1.65,
+    "unit" : "吨"
   }, {
     "id" : "有机质（褐煤）",
     "index" : 66,
     "name" : "有机质（褐煤）",
-    "price" : 0.6
+    "price" : 0.6,
+    "unit" : "吨"
   }, {
     "id" : "生化黄腐酸钾",
     "index" : 67,
     "name" : "生化黄腐酸钾",
-    "price" : 2.65
+    "price" : 2.65,
+    "unit" : "吨"
   }, {
     "id" : "心连心矿源黄腐酸钾",
     "index" : 68,
     "name" : "心连心矿源黄腐酸钾",
-    "price" : 8.5
+    "price" : 8.5,
+    "unit" : "吨"
   }, {
     "id" : "植物氨基酸",
     "index" : 69,
     "name" : "植物氨基酸",
-    "price" : 2.3
+    "price" : 2.3,
+    "unit" : "吨"
   }, {
     "id" : "1000亿微生物菌",
     "index" : 70,
     "name" : "1000亿微生物菌",
-    "price" : 24.0
+    "price" : 24.0,
+    "unit" : "吨"
   }, {
     "id" : "喷浆专用尿素",
     "index" : 90,
     "name" : "喷浆专用尿素",
-    "price" : 2.8
+    "price" : 2.8,
+    "unit" : "吨"
   } ],
   "noUseMaterialConstraints" : {
     "ids" : [ "喷浆硫基用95氯化钾" ]
@@ -513,6 +574,7 @@
     "index" : 0,
     "name" : "高塔彩袋50公斤",
     "price" : 2.6,
+    "unit" : "个",
     "value" : 20.05,
     "cost" : 52.13
   } ],
@@ -564,6 +626,7 @@
       "index" : 9001,
       "name" : "籽煤",
       "price" : 1650.0,
+      "unit" : "吨",
       "value" : 0.001,
       "cost" : 1.65
     }, {
@@ -571,6 +634,7 @@
       "index" : 9002,
       "name" : "生物质",
       "price" : 1000.0,
+      "unit" : "吨",
       "value" : 0.001,
       "cost" : 1.0
     } ],

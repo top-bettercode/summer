@@ -22,6 +22,9 @@ data class RecipeOtherMaterial(
         /** 原料名称  */
         @JsonProperty("name")
         override val name: String,
+        /** 单位  */
+        @JsonProperty("unit")
+        override val unit: String = "吨",
         /** 原料价格  */
         @JsonProperty("price")
         override val price: Double,

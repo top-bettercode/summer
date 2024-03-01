@@ -7,7 +7,8 @@
       "id" : "氯化铵（干）",
       "index" : 6,
       "name" : "氯化铵（干）",
-      "price" : 1.25
+      "price" : 1.25,
+      "unit" : "吨"
     },
     "weight" : 412.9689925727,
     "id" : "氯化铵（干）",
@@ -15,7 +16,8 @@
     "name" : "氯化铵（干）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.25
+    "price" : 1.25,
+    "unit" : "吨"
   }, {
     "consumes" : {
       "55磷酸一铵（粉）" : {
@@ -63,7 +65,8 @@
       "id" : "液氨",
       "index" : 9,
       "name" : "液氨",
-      "price" : 4.2
+      "price" : 4.2,
+      "unit" : "吨"
     },
     "weight" : 34.9920326075,
     "id" : "液氨",
@@ -71,14 +74,16 @@
     "name" : "液氨",
     "normalWeight" : 34.9920326075,
     "overdoseWeight" : 0.0,
-    "price" : 4.2
+    "price" : 4.2,
+    "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
       "id" : "8-40-0再浆肥（粉）",
       "index" : 16,
       "name" : "8-40-0再浆肥（粉）",
-      "price" : 1.8
+      "price" : 1.8,
+      "unit" : "吨"
     },
     "weight" : 96.8137109085,
     "id" : "8-40-0再浆肥（粉）",
@@ -86,14 +91,16 @@
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.8
+    "price" : 1.8,
+    "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
       "id" : "64磷酸二铵（颗粒）",
       "index" : 18,
       "name" : "64磷酸二铵（颗粒）",
-      "price" : 3.85
+      "price" : 3.85,
+      "unit" : "吨"
     },
     "weight" : 1.0E-4,
     "id" : "64磷酸二铵（颗粒）",
@@ -101,14 +108,16 @@
     "name" : "64磷酸二铵（颗粒）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.85
+    "price" : 3.85,
+    "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
       "id" : "磷酸",
       "index" : 29,
       "name" : "磷酸",
-      "price" : 1.05
+      "price" : 1.05,
+      "unit" : "吨"
     },
     "weight" : 612.0459677665,
     "id" : "磷酸",
@@ -116,14 +125,16 @@
     "name" : "磷酸",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.05
+    "price" : 1.05,
+    "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
       "id" : "95%氯化钾烘干粉（国产）",
       "index" : 30,
       "name" : "95%氯化钾烘干粉（国产）",
-      "price" : 3.55
+      "price" : 3.55,
+      "unit" : "吨"
     },
     "weight" : 233.3333333333,
     "id" : "95%氯化钾烘干粉（国产）",
@@ -131,14 +142,16 @@
     "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.55
+    "price" : 3.55,
+    "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
       "id" : "防结油（白色）",
       "index" : 61,
       "name" : "防结油（白色）",
-      "price" : 8.0
+      "price" : 8.0,
+      "unit" : "吨"
     },
     "weight" : 2.0,
     "id" : "防结油（白色）",
@@ -146,14 +159,16 @@
     "name" : "防结油（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 8.0
+    "price" : 8.0,
+    "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
       "id" : "防结粉（白色）",
       "index" : 62,
       "name" : "防结粉（白色）",
-      "price" : 2.0
+      "price" : 2.0,
+      "unit" : "吨"
     },
     "weight" : 3.0,
     "id" : "防结粉（白色）",
@@ -161,14 +176,16 @@
     "name" : "防结粉（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 2.0
+    "price" : 2.0,
+    "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
       "id" : "喷浆专用尿素",
       "index" : 90,
       "name" : "喷浆专用尿素",
-      "price" : 2.8
+      "price" : 2.8,
+      "unit" : "吨"
     },
     "weight" : 15.0,
     "id" : "喷浆专用尿素",
@@ -176,7 +193,8 @@
     "name" : "喷浆专用尿素",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 2.8
+    "price" : 2.8,
+    "unit" : "吨"
   } ],
   "dryWaterWeight" : 410.1541371885,
   "materialCost" : 2372.4244417907,
@@ -216,6 +234,7 @@
         "index" : 9001,
         "name" : "籽煤",
         "price" : 1650.0,
+        "unit" : "吨",
         "value" : 0.001,
         "cost" : 1.65
       },
@@ -226,6 +245,7 @@
         "index" : 9002,
         "name" : "生物质",
         "price" : 1000.0,
+        "unit" : "吨",
         "value" : 0.001,
         "cost" : 1.0
       },

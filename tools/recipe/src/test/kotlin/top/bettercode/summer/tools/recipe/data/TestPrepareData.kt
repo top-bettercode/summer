@@ -338,7 +338,7 @@ object TestPrepareData {
                 targetWeight = 1000.0,
                 materials = materials,
                 productionCost = productionCost,
-                packagingMaterials = listOf(RecipeOtherMaterial(0, "高塔彩袋50公斤", "高塔彩袋50公斤", 2.6, 20.05)),
+                packagingMaterials = listOf(RecipeOtherMaterial(index = 0, id = "高塔彩袋50公斤", name = "高塔彩袋50公斤", unit = "个", price = 2.6, value = 20.05)),
                 indicatorRangeConstraints = RecipeRangeIndicators(rangeIndicators),
                 indicatorMaterialIDConstraints = RecipeMaterialIDIndicators(materialIDIndicators),
                 useMaterialConstraints = useMaterials.toMaterialIDs(),
@@ -575,8 +575,9 @@ object TestPrepareData {
             "磷酸" -> {
                 materialName == materialNameFragment
             }
+
             "磷铵" -> {
-                materialName?.matches(Regex(".*磷.*铵.*"))==true
+                materialName?.matches(Regex(".*磷.*铵.*")) == true
             }
 
             else -> {

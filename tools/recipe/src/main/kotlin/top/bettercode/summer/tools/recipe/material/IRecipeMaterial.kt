@@ -21,6 +21,11 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
     /** 原料名称  */
     val name: String
 
+    /**
+     * 单位
+     */
+    val unit: String
+
     /** 原料价格  */
     val price: Double
 

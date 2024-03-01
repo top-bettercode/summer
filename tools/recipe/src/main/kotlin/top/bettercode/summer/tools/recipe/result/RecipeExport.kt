@@ -141,7 +141,7 @@ object RecipeExport {
             cell(r++, c++).value("合计").setStyle()
             productionCost.materialItems.forEach {
                 r = pr
-                cell(r++, c).value(it.name).headerStyle().setStyle()
+                cell(r++, c).value("${it.name}(${it.unit})").headerStyle().setStyle()
                 cell(r++, c).value(it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.value).format("0.00").setStyle()
                 cell(r++, c++).value(it.cost).format("0.00").setStyle()
@@ -243,7 +243,7 @@ object RecipeExport {
             c++
             materialItems.forEach {
                 r = row
-                cell(r++, c).value(it.it.name).headerStyle().width(15.0).setStyle()
+                cell(r++, c).value("${it.it.name}(${it.it.unit})").headerStyle().width(15.0).setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.it.value).format("0.00").setStyle()
                 cell(r++, c).value(it.value).format("0.00%").setStyle()
@@ -282,7 +282,7 @@ object RecipeExport {
     fun FastExcel.exportRecipe(recipe: Recipe, showRate: Boolean = false): Int {
         val requirement = recipe.requirement
         RecipeExt(recipe).apply {
-            val titles = "项目${if (showRate) "\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量" else ""}\t投料量".split("\t")
+            val titles = "项目${if (showRate) "\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量" else ""}\t投料量(公斤)".split("\t")
             val materials = recipe.materials.toSortedSet()
             val rangeIndicators = requirement.indicatorRangeConstraints.values.sortedBy { it.index }
             val columnSize = titles.size + rangeIndicators.size + 1
