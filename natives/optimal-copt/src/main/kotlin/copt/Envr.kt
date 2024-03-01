@@ -2,7 +2,7 @@ package copt
 
 import top.bettercode.summer.tools.optimal.copt.COPTNativeLibLoader
 
-class COPTEnvr {
+class Envr {
     private var _self: IEnvr
 
     constructor() {
@@ -15,7 +15,7 @@ class COPTEnvr {
         CoptException.checkError(_self.GetLastError(), _self.GetErrorMessage())
     }
 
-    constructor(var1: COPTEnvrConfig) {
+    constructor(var1: EnvrConfig) {
         this._self = CoptJniWrapper.CreateEnvrWithConfig(var1.get(), null as ILogCallback?)
         CoptException.checkError(_self.GetLastError(), _self.GetErrorMessage())
     }

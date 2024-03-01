@@ -37,11 +37,11 @@ internal class RecipeSolverTest {
             "15-15-15常规氯基"
     )
     val solveTypes = listOf(
-//            SolverType.COPT,
+            SolverType.COPT,
             SolverType.CPLEX,
-//            SolverType.SCIP,
-//            SolverType.GUROBI,
-//            SolverType.CBC,
+            SolverType.SCIP,
+            SolverType.GUROBI,
+            SolverType.CBC,
     )
 
     val maxResult = 20

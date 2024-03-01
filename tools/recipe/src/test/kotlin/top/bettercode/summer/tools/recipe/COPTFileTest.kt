@@ -12,7 +12,7 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 class COPTFileTest {
     @Test
     fun read() {
-        val env = copt.COPTEnvr()
+        val env = copt.Envr()
         val model = env.createModel("")
 //        model.setIntParam(copt.IntParam.Presolve, 0)
         model.readMps("build/test.mps")

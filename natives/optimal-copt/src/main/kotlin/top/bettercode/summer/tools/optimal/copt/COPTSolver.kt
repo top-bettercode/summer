@@ -25,11 +25,10 @@ class COPTSolver @JvmOverloads constructor(
         name: String = "COPTSolver"
 ) : Solver(name = name, type = SolverType.COPT, epsilon = epsilon) {
 
-    private val env: copt.COPTEnvr = copt.COPTEnvr()
+    private val env: copt.Envr = copt.Envr()
     val model: copt.Model = env.createModel(name)
 
     init {
-//        model.setIntParam(copt.IntParam.Presolve, 0)
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
         model.setDblParam(copt.DblParam.FeasTol, 1e-9)

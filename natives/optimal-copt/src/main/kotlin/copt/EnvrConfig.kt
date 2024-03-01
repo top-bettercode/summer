@@ -2,7 +2,7 @@ package copt
 
 import top.bettercode.summer.tools.optimal.copt.COPTNativeLibLoader
 
-class COPTEnvrConfig {
+class EnvrConfig {
     private var _self: IEnvrConfig
 
     constructor() {

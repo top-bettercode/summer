@@ -12,7 +12,11 @@ dependencies {
 
 tasks {
     "jar"(Jar::class) {
-        from(fileTree(mapOf("dir" to "libs")).files.map { zipTree(it) })
+        from(fileTree(mapOf("dir" to "libs")).files.map {
+            zipTree(it).matching {
+                exclude("copt/Envr.class", "copt/EnvrConfig.class")
+            }
+        })
     }
 }
 
