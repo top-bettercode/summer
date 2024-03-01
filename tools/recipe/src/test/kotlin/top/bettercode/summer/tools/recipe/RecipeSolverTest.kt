@@ -178,12 +178,11 @@ internal class RecipeSolverTest {
     }
 
     private fun assert(solve: RecipeResult, solve1: RecipeResult) {
-        Assertions.assertEquals(solve.recipes[0].cost.scale(7), solve1.recipes[0].cost.scale(7))
         Assertions.assertEquals(solve.recipes.size, solve1.recipes.size)
-        Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
         solve.recipes.forEachIndexed { index, recipe ->
             Assertions.assertEquals(recipe.cost.scale(7), solve1.recipes[index].cost.scale(7))
         }
+        Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
         Assertions.assertEquals(json(solve.recipes[0]), json(solve1.recipes[0]))
     }
 
