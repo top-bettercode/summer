@@ -83,7 +83,7 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                         responseDecrypt
                 )
 
-                val marker = MarkerFactory.getMarker(logMarker)
+                val marker = MarkerFactory.getDetachedMarker(logMarker)
                 if (operation.duration > 5 * 1000) {
                     val initialComment = "${operation.name}(${operation.request.restUri})：请求响应速度慢"
                     val timeoutMsg = "(${operation.duration / 1000}秒)"
