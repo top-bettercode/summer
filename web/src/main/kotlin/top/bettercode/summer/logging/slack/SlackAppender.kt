@@ -1,5 +1,7 @@
 package top.bettercode.summer.logging.slack
 
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder
+import ch.qos.logback.core.util.OptionHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
@@ -15,11 +17,13 @@ open class SlackAppender(
         cacheMap: ConcurrentMap<String, Int>,
         timeoutCacheMap: ConcurrentMap<String, Int>
 ) : AlarmAppender(
-        properties.cyclicBufferSize,
-        properties.ignoredWarnLogger,
-        logPattern,
-        cacheMap,
-        timeoutCacheMap
+        cyclicBufferSize = properties.cyclicBufferSize,
+        ignoredWarnLogger = properties.ignoredWarnLogger,
+        encoder = PatternLayoutEncoder().apply {
+            pattern = OptionHelper.substVars(logPattern, context)
+        },
+        cacheMap = cacheMap,
+        timeoutCacheMap = timeoutCacheMap
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)

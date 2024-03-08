@@ -12,7 +12,6 @@ import ch.qos.logback.core.boolex.EventEvaluatorBase
 import ch.qos.logback.core.helpers.CyclicBuffer
 import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
-import ch.qos.logback.core.util.OptionHelper
 import org.slf4j.Marker
 import java.util.concurrent.ConcurrentMap
 
@@ -20,7 +19,8 @@ import java.util.concurrent.ConcurrentMap
 abstract class AlarmAppender(
         private val cyclicBufferSize: Int,
         private val ignoredWarnLogger: Array<String>,
-        private val logPattern: String,
+        var encoder: PatternLayoutEncoder? = null,
+        private val startedMsg: String = "^Started .*? in .*? seconds \\(.*?\\)$",
         private val cacheMap: ConcurrentMap<String, Int>,
         private val timeoutCacheMap: ConcurrentMap<String, Int>
 ) : AppenderBase<ILoggingEvent>() {
@@ -35,7 +35,6 @@ abstract class AlarmAppender(
     private var eventEvaluator: EventEvaluator<ILoggingEvent>? = null
     private val discriminator = DefaultDiscriminator<ILoggingEvent>()
     private var cbTracker: CyclicBufferTracker<ILoggingEvent>? = null
-    private val encoder: PatternLayoutEncoder = PatternLayoutEncoder()
     private var sendErrorCount = 0
 
     private var lastTrackerStatusPrint: Long = 0
@@ -54,7 +53,7 @@ abstract class AlarmAppender(
                 }
                 return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
                         ALARM_LOG_MARKER
-                ) == true || event.formattedMessage.matches(Regex("^Started .*? in .*? seconds \\(.*?\\)$"))) && (event.marker == null || !event.marker.contains(
+                ) == true || event.formattedMessage.matches(Regex(startedMsg))) && (event.marker == null || !event.marker.contains(
                         NO_ALARM_LOG_MARKER
                 ))
             }
@@ -63,9 +62,10 @@ abstract class AlarmAppender(
         alarmEvaluator.name = "onAlarm"
         alarmEvaluator.start()
         eventEvaluator = alarmEvaluator
-        encoder.pattern = OptionHelper.substVars(logPattern, context)
-        encoder.context = context
-        encoder.start()
+        if (encoder != null) {
+            encoder!!.context = context
+            encoder!!.start()
+        }
         if (cbTracker == null) {
             cbTracker = CyclicBufferTracker()
             cbTracker!!.bufferSize = if (cyclicBufferSize > 0) cyclicBufferSize else 1
@@ -137,7 +137,7 @@ abstract class AlarmAppender(
         val alarmMarker: AlarmMarker? = findAlarmMarker(event.marker)
         for (i in 0 until len) {
             val e = cbClone.get()
-            message.add(String(encoder.encode(e)))
+            message.add(String(encoder!!.encode(e)))
             if (i == len - 1) {
                 val tp = e.throwableProxy
                 initialComment = alarmMarker?.initialComment
