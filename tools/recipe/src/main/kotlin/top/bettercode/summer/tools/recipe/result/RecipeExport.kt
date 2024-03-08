@@ -27,7 +27,7 @@ object RecipeExport {
         var i = 2
         for (indicator in indicators) {
             val column = i++
-            cell(0, column).value(indicator.name).headerStyle().setStyle()
+            cell(0, column).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0).setStyle()
         }
         //原料
         var r = 0
@@ -41,7 +41,7 @@ object RecipeExport {
             // 原料成份
             matrial.indicators.values.sortedBy { it.index }.forEachIndexed { index, indicator ->
                 val column = c + index
-                cell(r, column).value(indicator.value.scale()).width(8.0).format(if (indicator.unit == "%") "0.0%" else "").setStyle()
+                cell(r, column).value(indicator.value.scale()).format(if (indicator.unit == "%") "0.0%" else "").setStyle()
             }
         }
     }
@@ -59,7 +59,7 @@ object RecipeExport {
             val rangeIndicators = indicatorRangeConstraints.values.sortedBy { it.index }
             rangeIndicators.forEach {
                 r = startCol
-                cell(r++, c).value(it.name).headerStyle().width(10.0).setStyle()
+                cell(r++, c).value("${it.name}(${it.unit})").headerStyle().width(11.0).setStyle()
                 cell(r++, c).value(it.value.max).format(if (it.unit == "%") "0.0%" else "").setStyle()
                 cell(r++, c++).value(it.value.min).format(if (it.unit == "%") "0.0%" else "").setStyle()
             }
@@ -294,11 +294,11 @@ object RecipeExport {
                 cell(r, c++).value(s).headerStyle().width(if (c in 1..5) 18.0 else 8.0).setStyle()
             }
             if (materials.isEmpty()) {
-                return r
+                return 0
             }
             c++
             rangeIndicators.forEach { indicator ->
-                cell(r, c++).value(indicator.name).headerStyle().width(8.0).setStyle()
+                cell(r, c++).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0).setStyle()
             }
 
             r++
