@@ -51,7 +51,8 @@ object RequestConverter {
      * @throws ConversionException if the conversion fails
      */
     fun convert(request: HttpServletRequest): OperationRequest {
-        val dateTime = request.getAttribute(HttpOperation.REQUEST_DATE_TIME) as LocalDateTime
+        val dateTime = (request.getAttribute(HttpOperation.REQUEST_DATE_TIME) as LocalDateTime?)
+                ?: LocalDateTime.now()
         val headers = extractHeaders(request)
         val parameters = extractParameters(request)
         val parts = extractParts(request)
