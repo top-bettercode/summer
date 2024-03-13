@@ -301,7 +301,11 @@ class RequestLoggingFilter(
     ): Boolean {
         return if (log.isTraceEnabled || properties.isForceRecord || handler != null ||
                 include(properties.includePath, uri)
-                || includeError(error) || !HttpStatus.valueOf(httpStatusCode).is2xxSuccessful
+                || includeError(error) || !try {
+                    HttpStatus.valueOf(httpStatusCode)
+                } catch (e: Exception) {
+                    HttpStatus.OK
+                }.is2xxSuccessful
         ) {
             if (handler != null) {
                 handler::class.java.simpleName != "WebMvcEndpointHandlerMethod" && (!AnnotatedUtils.hasAnnotation(

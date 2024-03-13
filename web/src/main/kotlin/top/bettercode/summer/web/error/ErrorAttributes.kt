@@ -141,7 +141,13 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
     private fun getStatus(requestAttributes: RequestAttributes): HttpStatus {
         val statusCode = getAttribute<Int>(requestAttributes, WebUtils.ERROR_STATUS_CODE_ATTRIBUTE)
         try {
-            return statusCode?.let { HttpStatus.valueOf(it) } ?: HttpStatus.INTERNAL_SERVER_ERROR
+            return statusCode?.let {
+                try {
+                    HttpStatus.valueOf(it)
+                } catch (e: Exception) {
+                    null
+                }
+            } ?: HttpStatus.INTERNAL_SERVER_ERROR
         } catch (ignored: Exception) {
         }
         return HttpStatus.INTERNAL_SERVER_ERROR

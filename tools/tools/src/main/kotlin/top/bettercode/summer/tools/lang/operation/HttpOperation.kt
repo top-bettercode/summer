@@ -83,7 +83,13 @@ object HttpOperation {
             decrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
-        stringBuilder.appendLine("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
+        stringBuilder.appendLine("$protocol ${response.statusCode} ${
+            try {
+                HttpStatus.valueOf(response.statusCode).reasonPhrase
+            } catch (e: Exception) {
+                ""
+            }
+        }")
         response.headers.forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
         val decryptedContent = "---- decrypted content ----"
         if (decrypt != null) {

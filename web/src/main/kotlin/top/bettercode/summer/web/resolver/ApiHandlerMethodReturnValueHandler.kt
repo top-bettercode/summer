@@ -53,9 +53,16 @@ class ApiHandlerMethodReturnValueHandler(
                 var statusCode = if (isResponseEntity) (returnVal as ResponseEntity<*>).statusCode else null
                 val httpStatusCode = respEntity.httpStatusCode
                 if (httpStatusCode != null) {
-                    statusCode = HttpStatus.valueOf(httpStatusCode)
+                    statusCode = try {
+                        HttpStatus.valueOf(httpStatusCode)
+                    } catch (e: Exception) {
+                        statusCode
+                    }
                 }
-                nativeResponse!!.status = statusCode!!.value()
+                if (statusCode == null) {
+                    statusCode = HttpStatus.OK
+                }
+                nativeResponse!!.status = statusCode.value()
                 returnVal = if (isResponseEntity) {
                     ResponseEntity
                             .status(statusCode)

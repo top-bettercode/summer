@@ -120,14 +120,18 @@ object PostmanGenerator {
 
         val contentType = response.contentType
         return Response(
-                name,
-                request,
-                response.statusCode,
-                HttpStatus.valueOf(response.statusCode).reasonPhrase,
-                httpHeaders.checkBlank("$operationPath:response.headersExt").map {
+                name = name,
+                originalRequest = request,
+                code = response.statusCode,
+                status = try {
+                    HttpStatus.valueOf(response.statusCode).reasonPhrase
+                } catch (e: Exception) {
+                    HttpStatus.OK.reasonPhrase
+                },
+                header = httpHeaders.checkBlank("$operationPath:response.headersExt").map {
                     HeaderItem(it.name, it.name, it.value)
                 },
-                response.prettyContentAsString,
+                body = response.prettyContentAsString,
                 postmanPreviewlanguage = when {
                     MediaType.APPLICATION_JSON
                             .isCompatibleWith(contentType) -> "json"
