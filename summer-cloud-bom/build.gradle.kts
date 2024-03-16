@@ -12,8 +12,8 @@ javaPlatform {
 dependencies {
 
 //https://github.com/alibaba/spring-cloud-alibaba/releases
-    //https://repo1.maven.org/maven2/com/alibaba/cloud/spring-cloud-alibaba-dependencies/2021.0.5.0/spring-cloud-alibaba-dependencies-2021.0.5.0.pom
-    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.5.0"))
+    //https://repo1.maven.org/maven2/com/alibaba/cloud/spring-cloud-alibaba-dependencies/2021.0.6.0/spring-cloud-alibaba-dependencies-2021.0.6.0.pom
+    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.6.0"))
     //https://repo1.maven.org/maven2/org/springframework/cloud/spring-cloud-dependencies/2021.0.5/spring-cloud-dependencies-2021.0.5.pom
     api(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.5"))
     api(platform(project(":summer-bom")))
