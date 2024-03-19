@@ -19,6 +19,7 @@ open class ApiTemplate @JvmOverloads constructor(
         private val collectionName: String,
         private val name: String,
         protected val logMarker: String,
+        timeoutAlarmSeconds: Int,
         connectTimeout: Int,
         readTimeout: Int,
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
@@ -32,6 +33,7 @@ open class ApiTemplate @JvmOverloads constructor(
             name = name,
             logMarker = logMarker,
             logClazz = this::class.java,
+            timeoutAlarmSeconds = timeoutAlarmSeconds,
             requestDecrypt = requestDecrypt,
             responseDecrypt = responseDecrypt)
 
@@ -41,8 +43,9 @@ open class ApiTemplate @JvmOverloads constructor(
             .connectTimeout(connectTimeout.toLong(), TimeUnit.SECONDS)
             .readTimeout(readTimeout.toLong(), TimeUnit.SECONDS)
 
-    constructor(connectTimeout: Int, readTimeout: Int) : this(collectionName = "", name = "", connectTimeout = connectTimeout, readTimeout = readTimeout)
-    constructor(collectionName: String, name: String, connectTimeout: Int, readTimeout: Int) : this(collectionName = collectionName, name = name, logMarker = "third-party", connectTimeout = connectTimeout, readTimeout = readTimeout)
+    constructor(timeoutAlarmSeconds: Int, connectTimeout: Int, readTimeout: Int) : this(collectionName = "", name = "", timeoutAlarmSeconds = timeoutAlarmSeconds, connectTimeout = connectTimeout, readTimeout = readTimeout)
+
+    constructor(collectionName: String, name: String, timeoutAlarmSeconds: Int, connectTimeout: Int, readTimeout: Int) : this(collectionName = collectionName, name = name, logMarker = "third-party", timeoutAlarmSeconds = timeoutAlarmSeconds, connectTimeout = connectTimeout, readTimeout = readTimeout)
 
     init {
         this.restTemplate.requestFactory = OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())

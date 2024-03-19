@@ -43,12 +43,16 @@ data class WeixinV3PayProperties @JvmOverloads constructor(
          */
         var keepAliveDuration: Long = 7L,
         /**
-         * 请求连接超时时间毫秒数
+         * 请求超时超过多少秒报警，-1表示不报警，默认-1.
          */
-        var connectTimeout: Long = 10000L,
+        var timeoutAlarmSeconds: Int = -1,
+        /**
+         * 请求连接超时时间秒数
+         */
+        var connectTimeout:Int = 10,
 
         /**
-         * 请求读取超时时间毫秒数
+         * 请求读取超时时间秒数
          */
-        var readTimeout: Long = 10000L
+        var readTimeout: Int = 10
 )

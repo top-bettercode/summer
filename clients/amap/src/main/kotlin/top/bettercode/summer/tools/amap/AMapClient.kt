@@ -22,8 +22,12 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
  */
 @LogMarker(LOG_MARKER)
 open class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
-        "第三方平台", "高德地图", "amap", amapProperties.connectTimeout,
-        amapProperties.readTimeout
+        collectionName = "第三方平台",
+        name = "高德地图",
+        logMarker = "amap",
+        timeoutAlarmSeconds = amapProperties.timeoutAlarmSeconds,
+        connectTimeout = amapProperties.connectTimeout,
+        readTimeout = amapProperties.readTimeout
 ) {
     companion object {
         const val LOG_MARKER = "amap"

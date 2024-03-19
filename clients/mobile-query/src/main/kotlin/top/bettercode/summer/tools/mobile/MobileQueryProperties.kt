@@ -23,13 +23,18 @@ open class MobileQueryProperties {
     var appKey: String = ""
 
     /**
-     * 请求连接超时时间毫秒数
+     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
      */
-    var connectTimeout = 10000
+    var timeoutAlarmSeconds = -1
 
     /**
-     * 请求读取超时时间毫秒数
+     * 请求连接超时时间秒数
      */
-    var readTimeout = 10000
+    var connectTimeout = 10
+
+    /**
+     * 请求读取超时时间秒数
+     */
+    var readTimeout = 10
 
 }

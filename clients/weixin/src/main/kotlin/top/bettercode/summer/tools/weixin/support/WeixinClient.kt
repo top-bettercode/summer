@@ -29,11 +29,12 @@ open class WeixinClient<T : IWeixinProperties>(
         name: String,
         logMarker: String
 ) : ApiTemplate(
-        collectionName,
-        name,
-        logMarker,
-        properties.connectTimeout,
-        properties.readTimeout
+        collectionName = collectionName,
+        name = name,
+        logMarker = logMarker,
+        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+        connectTimeout = properties.connectTimeout,
+        readTimeout = properties.readTimeout
 ) {
 
     private var lastAppId = properties.appId

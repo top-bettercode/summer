@@ -22,6 +22,7 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                                      private val name: String,
                                      private val logMarker: String,
                                      private val logClazz: Class<*> = OkHttpClientLoggingInterceptor::class.java,
+                                     private val timeoutAlarmSeconds: Int = -1,
                                      private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
                                      private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : Interceptor {
@@ -84,7 +85,7 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                 )
 
                 val marker = MarkerFactory.getDetachedMarker(logMarker)
-                if (operation.duration > 5 * 1000) {
+                if (timeoutAlarmSeconds > 0 && operation.duration > timeoutAlarmSeconds * 1000) {
                     val initialComment = "${operation.name}(${operation.request.restUri})：请求响应速度慢"
                     val timeoutMsg = "(${operation.duration / 1000}秒)"
                     marker.add(AlarmMarker(initialComment + timeoutMsg, true))

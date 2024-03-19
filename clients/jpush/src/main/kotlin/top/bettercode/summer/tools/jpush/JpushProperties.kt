@@ -35,14 +35,19 @@ open class JpushProperties {
     var timeToLive = 60 * 60 * 24 * 3L
 
     /**
-     * 请求连接超时时间毫秒数
+     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
      */
-    var connectTimeout = 10000
+    var timeoutAlarmSeconds = -1
+
+    /**
+     * 请求连接超时时间秒数
+     */
+    var connectTimeout = 10
 
 
     /**
-     * 请求读取超时时间毫秒数
+     * 请求读取超时时间秒数
      */
-    var readTimeout = 10000
+    var readTimeout = 10
 
 }

@@ -6,10 +6,10 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.util.Base64Utils
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.mobile.MobileQueryClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.mobile.entity.QueryResponse
-import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.security.Key
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -26,11 +26,12 @@ import javax.crypto.spec.SecretKeySpec
 open class MobileQueryClient(
         private val properties: MobileQueryProperties
 ) : ApiTemplate(
-        "第三方平台",
-        "获取本机手机号码",
-        LOG_MARKER,
-        properties.connectTimeout,
-        properties.readTimeout
+        collectionName = "第三方平台",
+        name = "获取本机手机号码",
+        logMarker = LOG_MARKER,
+        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+        connectTimeout = properties.connectTimeout,
+        readTimeout = properties.readTimeout
 ) {
 
     companion object {

@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.weather.WeatherClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weather.entity.WeatherResponse
 import top.bettercode.summer.tools.weather.entity.WeatherResult
 import top.bettercode.summer.tools.weather.entity.WeatherType
-import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.time.LocalTime
 
 /**
@@ -25,7 +25,12 @@ import java.time.LocalTime
 open class WeatherClient(
         private val properties: WeatherProperties
 ) : ApiTemplate(
-        "第三方平台", "天气数据", LOG_MARKER, properties.connectTimeout, properties.readTimeout
+        collectionName = "第三方平台",
+        name = "天气数据",
+        logMarker = LOG_MARKER,
+        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+        connectTimeout = properties.connectTimeout,
+        readTimeout = properties.readTimeout
 ) {
     companion object {
         const val LOG_MARKER = "weather"

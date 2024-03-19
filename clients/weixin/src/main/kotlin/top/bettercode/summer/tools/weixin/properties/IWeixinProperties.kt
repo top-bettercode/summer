@@ -10,6 +10,10 @@ interface IWeixinProperties {
     val secret: String
     val token: String
     val aesKey: String
+    /**
+     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
+     */
+    var timeoutAlarmSeconds: Int
     val connectTimeout: Int
     val readTimeout: Int
     val cacheSeconds: Long

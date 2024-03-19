@@ -10,14 +10,19 @@ open class WeixinProperties : IWeixinProperties {
     override var aesKey: String = ""
 
     /**
-     * 请求连接超时时间毫秒数
+     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
      */
-    override var connectTimeout = 10000
+    override var timeoutAlarmSeconds: Int = -1
 
     /**
-     * 请求读取超时时间毫秒数
+     * 请求连接超时时间秒数
      */
-    override var readTimeout = 10000
+    override var connectTimeout = 10
+
+    /**
+     * 请求读取超时时间秒数
+     */
+    override var readTimeout = 10
 
     /**
      * access_token 及 jsapi_ticket 有效期7200秒

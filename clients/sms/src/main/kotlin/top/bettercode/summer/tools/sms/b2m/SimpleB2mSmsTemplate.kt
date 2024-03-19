@@ -26,13 +26,14 @@ import java.util.*
  * 亿美软通短信平台 接口请求
  */
 open class SimpleB2mSmsTemplate(
-        private val b2mProperties: B2mSmsProperties
+        private val properties: B2mSmsProperties
 ) : SmsTemplate(
-        "第三方平台",
-        "亿美软通短信平台",
-        LOG_MARKER_STR,
-        b2mProperties.connectTimeout,
-        b2mProperties.readTimeout
+        collectionName = "第三方平台",
+        name = "亿美软通短信平台",
+        logMarker = LOG_MARKER_STR,
+        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+        connectTimeout = properties.connectTimeout,
+        readTimeout = properties.readTimeout
 ) {
 
     init {
@@ -72,7 +73,7 @@ open class SimpleB2mSmsTemplate(
     open fun simpleSendSms(
             cell: String,
             content: String,
-            mock: Boolean = b2mProperties.isMock
+            mock: Boolean = properties.isMock
     ): B2mResponse<B2mRespData> {
         return simpleSendSms(Collections.singletonMap(cell, content), mock)
     }
@@ -92,18 +93,18 @@ open class SimpleB2mSmsTemplate(
     @JvmOverloads
     open fun simpleSendSms(
             content: Map<String, String>,
-            mock: Boolean = b2mProperties.isMock
+            mock: Boolean = properties.isMock
     ): B2mResponse<B2mRespData> {
         if (mock)
             return B2mResponse()
         //    格式：yyyyMMddHHmmss 14位
         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
-        params["appId"] = b2mProperties.appId
+        params["appId"] = properties.appId
         params["timestamp"] = timestamp
         //    格式：md5(appId+ secretKey + timestamp) 32位
         params["sign"] = DigestUtils.md5DigestAsHex(
-                (b2mProperties.appId + b2mProperties.secretKey + timestamp).toByteArray(
+                (properties.appId + properties.secretKey + timestamp).toByteArray(
                         StandardCharsets.UTF_8
                 )
         )
@@ -125,7 +126,7 @@ open class SimpleB2mSmsTemplate(
         val responseEntityExtractor = this.restTemplate.responseEntityExtractor<B2mResponse<B2mRespData>>(javaType)
         val entity: ResponseEntity<B2mResponse<B2mRespData>> = try {
             execute(
-                    b2mProperties.url + "/simpleinter/sendPersonalitySMS", HttpMethod.POST,
+                    properties.url + "/simpleinter/sendPersonalitySMS", HttpMethod.POST,
                     requestCallback,
                     responseEntityExtractor
             )
@@ -162,11 +163,11 @@ open class SimpleB2mSmsTemplate(
         val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
         val timestamp = LocalDateTime.now().format(timeFormatter)
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
-        params["appId"] = b2mProperties.appId
+        params["appId"] = properties.appId
         params["timestamp"] = timestamp
         //    格式：md5(appId+ secretKey + timestamp) 32位
         params["sign"] = DigestUtils.md5DigestAsHex(
-                (b2mProperties.appId + b2mProperties.secretKey + timestamp).toByteArray(
+                (properties.appId + properties.secretKey + timestamp).toByteArray(
                         StandardCharsets.UTF_8
                 )
         )
@@ -181,7 +182,7 @@ open class SimpleB2mSmsTemplate(
         val responseEntityExtractor = this.restTemplate.responseEntityExtractor<B2mResponse<B2mSendReport>>(javaType)
         val entity: ResponseEntity<B2mResponse<B2mSendReport>> = try {
             execute(
-                    b2mProperties.url + "/simpleinter/getReport", HttpMethod.POST,
+                    properties.url + "/simpleinter/getReport", HttpMethod.POST,
                     requestCallback,
                     responseEntityExtractor
             )
@@ -225,11 +226,11 @@ open class SimpleB2mSmsTemplate(
         val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
         val timestamp = LocalDateTime.now().format(timeFormatter)
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
-        params["appId"] = b2mProperties.appId
+        params["appId"] = properties.appId
         params["timestamp"] = timestamp
         //    格式：md5(appId+ secretKey + timestamp) 32位
         params["sign"] = DigestUtils.md5DigestAsHex(
-                (b2mProperties.appId + b2mProperties.secretKey + timestamp).toByteArray(
+                (properties.appId + properties.secretKey + timestamp).toByteArray(
                         StandardCharsets.UTF_8
                 )
         )
@@ -242,7 +243,7 @@ open class SimpleB2mSmsTemplate(
         )
         val entity: ResponseEntity<String> = try {
             execute(
-                    b2mProperties.url + "/report/retrieveReport", HttpMethod.POST,
+                    properties.url + "/report/retrieveReport", HttpMethod.POST,
                     requestCallback,
                     this.restTemplate.responseEntityExtractor(String::class.java)
             )

@@ -38,7 +38,10 @@ data class WeixinPayProperties @JvmOverloads constructor(
          * 证书Key密码
          */
         var certKeyPassword: String? = null,
-
+        /**
+         * 请求超时超过多少秒报警，-1表示不报警，默认-1.
+         */
+        var timeoutAlarmSeconds: Int = -1,
         /**
          * 请求连接超时时间秒数
          */

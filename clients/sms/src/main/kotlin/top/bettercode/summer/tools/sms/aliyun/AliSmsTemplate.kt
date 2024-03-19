@@ -37,8 +37,12 @@ import javax.crypto.spec.SecretKeySpec
 open class AliSmsTemplate(
         private val aliSmsProperties: AliSmsProperties
 ) : SmsTemplate(
-        "第三方平台", "阿里短信平台", LOG_MARKER_STR, aliSmsProperties.connectTimeout,
-        aliSmsProperties.readTimeout
+        collectionName = "第三方平台",
+        name = "阿里短信平台",
+        logMarker = LOG_MARKER_STR,
+        timeoutAlarmSeconds = aliSmsProperties.timeoutAlarmSeconds,
+        connectTimeout = aliSmsProperties.connectTimeout,
+        readTimeout = aliSmsProperties.readTimeout
 ) {
 
     init {

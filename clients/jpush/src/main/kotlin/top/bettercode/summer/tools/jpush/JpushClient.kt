@@ -24,7 +24,12 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
 open class JpushClient(
         private val properties: JpushProperties
 ) : ApiTemplate(
-        "第三方平台", "极光推送", LOG_MARKER, properties.connectTimeout, properties.readTimeout
+        collectionName = "第三方平台",
+        name = "极光推送",
+        logMarker = LOG_MARKER,
+        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+        connectTimeout = properties.connectTimeout,
+        readTimeout = properties.readTimeout
 ) {
 
     companion object {

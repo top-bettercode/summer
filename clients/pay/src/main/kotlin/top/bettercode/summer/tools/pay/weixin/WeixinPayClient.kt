@@ -10,11 +10,11 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.lang.Nullable
 import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.pay.weixin.entity.*
 import top.bettercode.summer.web.form.IFormkeyService
-import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.io.InputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate
@@ -38,6 +38,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         "第三方平台",
         "微信支付",
         LOG_MARKER,
+        properties.timeoutAlarmSeconds,
         properties.connectTimeout,
         properties.readTimeout
 ) {

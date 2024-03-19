@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.Sha256DigestUtils
 import top.bettercode.summer.tools.rapidauth.RapidauthClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthRequest
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthResponse
-import top.bettercode.summer.tools.lang.client.ApiTemplate
 
 /**
  * 手机号查询接口
@@ -24,11 +24,12 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
 open class RapidauthClient(
         private val properties: RapidauthProperties
 ) : ApiTemplate(
-        "第三方平台",
-        "腾讯云号码认证",
-        LOG_MARKER,
-        properties.connectTimeout,
-        properties.readTimeout
+        collectionName = "第三方平台",
+        name = "腾讯云号码认证",
+        logMarker = LOG_MARKER,
+        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+        connectTimeout = properties.connectTimeout,
+        readTimeout = properties.readTimeout
 ) {
 
     companion object {

@@ -44,13 +44,16 @@ open class QvodClient(
         val cred = Credential(properties.secretId, properties.secretKey)
         val httpProfile = HttpProfile()
         httpProfile.endpoint = "vod.tencentcloudapi.com"
+        httpProfile.connTimeout = properties.connectTimeout
+        httpProfile.readTimeout = properties.readTimeout
+        httpProfile.writeTimeout = properties.readTimeout
         val clientProfile = ClientProfile()
         clientProfile.httpProfile = httpProfile
         vodClient = VodClient(cred, properties.region, clientProfile)
         val field = VodClient::class.java.superclass.getDeclaredField("httpConnection")
         field.isAccessible = true
         val httpConnection = field.get(vodClient) as HttpConnection
-        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "腾讯云", logMarker = LOG_MARKER, logClazz = QvodClient::class.java))
+        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "腾讯云", logMarker = LOG_MARKER, logClazz = QvodClient::class.java, timeoutAlarmSeconds = properties.timeoutAlarmSeconds))
     }
 
     /**

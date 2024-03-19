@@ -26,13 +26,14 @@ import java.util.*
 open class B2mSmsTemplate(
         private val b2mProperties: B2mSmsProperties
 ) : SmsTemplate(
-        "第三方平台",
-        "亿美软通短信平台",
-        LOG_MARKER_STR,
-        b2mProperties.connectTimeout,
-        b2mProperties.readTimeout,
-        { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) },
-        { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) }
+        collectionName = "第三方平台",
+        name = "亿美软通短信平台",
+        logMarker = LOG_MARKER_STR,
+        timeoutAlarmSeconds = b2mProperties.timeoutAlarmSeconds,
+        connectTimeout = b2mProperties.connectTimeout,
+        readTimeout = b2mProperties.readTimeout,
+        requestDecrypt = { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) },
+        responseDecrypt = { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) }
 ) {
 
     init {
