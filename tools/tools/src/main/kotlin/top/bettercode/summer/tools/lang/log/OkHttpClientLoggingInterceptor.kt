@@ -93,7 +93,7 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                     log.warn(marker, msg)
                 } else {
                     val hasException = stackTrace.isNotBlank()
-                    if (hasException) {
+                    if (hasException || operation.duration > 2 * 1000) {
                         log.warn(marker, msg)
                     } else
                         log.info(marker, msg)

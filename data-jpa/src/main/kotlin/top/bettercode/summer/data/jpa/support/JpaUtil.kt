@@ -54,7 +54,11 @@ object JpaUtil {
                         log.warn("cost:{}ms", duration)
                     }
                 } else {
-                    log.debug("cost:{}ms", duration)
+                    if (duration > 2 * 1000) {
+                        log.warn("cost:{}ms", duration)
+                    } else {
+                        log.debug("cost:{}ms", duration)
+                    }
                 }
                 result
             } else {
