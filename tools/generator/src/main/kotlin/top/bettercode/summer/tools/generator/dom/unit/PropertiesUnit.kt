@@ -31,6 +31,10 @@ open class PropertiesUnit(
         return properties[key] as String?
     }
 
+    fun contains(key: String): Boolean {
+        return properties.containsKey(key)
+    }
+
     /**
      * @param directory 基础目录
      */
