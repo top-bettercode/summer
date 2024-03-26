@@ -119,12 +119,12 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
             //42001 access_token过期
             clearStableTokenCache()
             sendUniformMsg(request, retries)
-        } else if (retries < properties.maxRetries) {
-            sendUniformMsg(request, retries + 1)
         } else if (43004 == result.errcode) {
             //43004 需要接收者关注
             log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
+        } else if (retries < properties.maxRetries) {
+            sendUniformMsg(request, retries + 1)
         } else {
             throw WeixinException("发送统一服务消息失败：${result.errmsg}", result)
         }

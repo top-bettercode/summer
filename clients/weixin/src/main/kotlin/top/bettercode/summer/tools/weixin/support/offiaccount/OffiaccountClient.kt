@@ -213,6 +213,10 @@ open class OffiaccountClient(
             //42001 access_token过期
             clearStableTokenCache()
             sendCustomMessage(request, retries)
+        } else if (40241 == result.errcode) {
+            //40241 The message is duplicate in 60 seconds
+            log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+            result
         } else if (retries < properties.maxRetries) {
             sendCustomMessage(request, retries + 1)
         } else {
