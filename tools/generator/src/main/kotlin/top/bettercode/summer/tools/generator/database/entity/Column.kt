@@ -72,6 +72,8 @@ data class Column(
     init {
         if ("null".equals(columnDef, true)) {
             columnDef = null
+        } else if (columnDef != null && columnDef!!.startsWith("'") && columnDef!!.endsWith("'") && JavaTypeResolver.calculateJavaType(this) == JavaType.stringInstance) {
+            columnDef = columnDef!!.trim('\'')
         }
     }
 

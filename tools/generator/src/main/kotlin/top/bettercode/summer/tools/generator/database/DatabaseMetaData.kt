@@ -364,8 +364,7 @@ class DatabaseMetaData(
         val decimalDigits = getInt("DECIMAL_DIGITS")
         val def = getString("COLUMN_DEF")
         val columnDef =
-                if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim('\'')?.trim()
-                        ?.trim()
+                if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim()
         val columnSize = getInt("COLUMN_SIZE")
         val remarks = getString("REMARKS")?.replace("[\t\n\r]".toRegex(), "")?.trim()
                 ?: ""
