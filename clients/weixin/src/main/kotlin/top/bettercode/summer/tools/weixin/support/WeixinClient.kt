@@ -33,8 +33,8 @@ open class WeixinClient<T : IWeixinProperties>(
         name = name,
         logMarker = logMarker,
         timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeout = properties.connectTimeout,
-        readTimeout = properties.readTimeout
+        connectTimeoutInSeconds = properties.connectTimeout,
+        readTimeoutInSeconds = properties.readTimeout
 ) {
 
     private var lastAppId = properties.appId

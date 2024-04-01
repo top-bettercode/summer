@@ -28,8 +28,8 @@ open class RapidauthClient(
         name = "腾讯云号码认证",
         logMarker = LOG_MARKER,
         timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeout = properties.connectTimeout,
-        readTimeout = properties.readTimeout
+        connectTimeoutInSeconds = properties.connectTimeout,
+        readTimeoutInSeconds = properties.readTimeout
 ) {
 
     companion object {

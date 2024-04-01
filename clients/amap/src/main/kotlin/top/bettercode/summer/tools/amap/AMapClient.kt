@@ -26,8 +26,8 @@ open class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
         name = "高德地图",
         logMarker = "amap",
         timeoutAlarmSeconds = amapProperties.timeoutAlarmSeconds,
-        connectTimeout = amapProperties.connectTimeout,
-        readTimeout = amapProperties.readTimeout
+        connectTimeoutInSeconds = amapProperties.connectTimeout,
+        readTimeoutInSeconds = amapProperties.readTimeout
 ) {
     companion object {
         const val LOG_MARKER = "amap"

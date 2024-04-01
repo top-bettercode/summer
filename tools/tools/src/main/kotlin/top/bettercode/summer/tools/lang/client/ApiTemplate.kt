@@ -20,8 +20,8 @@ open class ApiTemplate @JvmOverloads constructor(
         private val name: String,
         protected val logMarker: String,
         timeoutAlarmSeconds: Int,
-        connectTimeout: Int,
-        readTimeout: Int,
+        connectTimeoutInSeconds: Int,
+        readTimeoutInSeconds: Int,
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
         private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,
         @JvmField
@@ -40,12 +40,12 @@ open class ApiTemplate @JvmOverloads constructor(
     @JvmField
     protected val okHttpClientBuilder = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .connectTimeout(connectTimeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(readTimeout.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(connectTimeoutInSeconds.toLong(), TimeUnit.SECONDS)
+            .readTimeout(readTimeoutInSeconds.toLong(), TimeUnit.SECONDS)
 
-    constructor(timeoutAlarmSeconds: Int, connectTimeout: Int, readTimeout: Int) : this(collectionName = "", name = "", timeoutAlarmSeconds = timeoutAlarmSeconds, connectTimeout = connectTimeout, readTimeout = readTimeout)
+    constructor(timeoutAlarmSeconds: Int, connectTimeoutInSeconds: Int, readTimeoutInseconds: Int) : this(collectionName = "", name = "", timeoutAlarmSeconds = timeoutAlarmSeconds, connectTimeoutInseconds = connectTimeoutInSeconds, readTimeoutInseconds = readTimeoutInseconds)
 
-    constructor(collectionName: String, name: String, timeoutAlarmSeconds: Int, connectTimeout: Int, readTimeout: Int) : this(collectionName = collectionName, name = name, logMarker = "third-party", timeoutAlarmSeconds = timeoutAlarmSeconds, connectTimeout = connectTimeout, readTimeout = readTimeout)
+    constructor(collectionName: String, name: String, timeoutAlarmSeconds: Int, connectTimeoutInseconds: Int, readTimeoutInseconds: Int) : this(collectionName = collectionName, name = name, logMarker = "third-party", timeoutAlarmSeconds = timeoutAlarmSeconds, connectTimeoutInSeconds = connectTimeoutInseconds, readTimeoutInSeconds = readTimeoutInseconds)
 
     init {
         this.restTemplate.requestFactory = OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())

@@ -29,8 +29,8 @@ open class WeatherClient(
         name = "天气数据",
         logMarker = LOG_MARKER,
         timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeout = properties.connectTimeout,
-        readTimeout = properties.readTimeout
+        connectTimeoutInSeconds = properties.connectTimeout,
+        readTimeoutInSeconds = properties.readTimeout
 ) {
     companion object {
         const val LOG_MARKER = "weather"

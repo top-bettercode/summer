@@ -30,8 +30,8 @@ open class MobileQueryClient(
         name = "获取本机手机号码",
         logMarker = LOG_MARKER,
         timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeout = properties.connectTimeout,
-        readTimeout = properties.readTimeout
+        connectTimeoutInSeconds = properties.connectTimeout,
+        readTimeoutInSeconds = properties.readTimeout
 ) {
 
     companion object {
