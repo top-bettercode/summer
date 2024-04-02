@@ -1,11 +1,11 @@
 package top.bettercode.summer.tools.excel
 
 import org.dhatim.fastexcel.Color
+import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -426,6 +426,8 @@ class ExcelExport(val excel: IExcel) {
     }
 
     companion object {
+        private val log = LoggerFactory.getLogger(ExcelExport::class.java)
+
         /**
          * @param filename filename eventually holding the serialized workbook .
          * @return ExcelExport

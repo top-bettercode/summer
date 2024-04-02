@@ -14,7 +14,6 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.pay.weixin.entity.*
-import top.bettercode.summer.web.form.IFormkeyService
 import java.io.InputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate
@@ -121,8 +120,8 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
             }
         }.joinToString("&")
         val stringSignTemp = "$preStr&key=${this.properties.apiKey}"
-        if (IFormkeyService.log.isDebugEnabled)
-            IFormkeyService.log.debug("等处理的字符中：$stringSignTemp")
+        if (log.isDebugEnabled)
+            log.debug("等处理的字符中：$stringSignTemp")
         val sign = DigestUtils.md5DigestAsHex(stringSignTemp.toByteArray()).uppercase()
         map.sign = sign
         return map

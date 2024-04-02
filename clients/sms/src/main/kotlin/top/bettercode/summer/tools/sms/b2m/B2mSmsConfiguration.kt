@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.sms.b2m
 
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -7,7 +8,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.config.EndpointAutoConfiguration
 import top.bettercode.summer.tools.lang.util.WatchdogUtil
-import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 
 /**
  * 亿美软通短信平台 配置
@@ -19,6 +19,8 @@ import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 @AutoConfigureAfter(EndpointAutoConfiguration::class)
 @EnableConfigurationProperties(B2mSmsProperties::class)
 class B2mSmsConfiguration {
+
+    private val log = LoggerFactory.getLogger(B2mSmsConfiguration::class.java)
 
     @Bean
     fun simpleB2mSmsTemplate(b2mProperties: B2mSmsProperties): SimpleB2mSmsTemplate {

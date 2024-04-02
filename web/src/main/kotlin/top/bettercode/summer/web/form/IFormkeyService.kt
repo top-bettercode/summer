@@ -163,6 +163,6 @@ interface IFormkeyService {
     fun remove(formkey: String)
 
     companion object {
-        val log: Logger = LoggerFactory.getLogger(IFormkeyService::class.java)
+        private val log: Logger = LoggerFactory.getLogger(IFormkeyService::class.java)
     }
 }

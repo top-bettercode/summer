@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.tools.lang.log.AlarmMarker
-import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
 /**
@@ -49,15 +48,15 @@ object JpaUtil {
                 if (timeoutAlarmSeconds > 0 && duration > timeoutAlarmSeconds * 1000) {
                     if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
                         val initialComment = "$id：执行速度慢(${duration / 1000}秒)"
-                        log.warn(AlarmMarker(initialComment, true), initialComment + "cost:{}ms", duration)
+                        sqlLog.warn(AlarmMarker(initialComment, true), initialComment + "cost:{}ms", duration)
                     } else {
-                        log.warn("cost:{}ms", duration)
+                        sqlLog.warn("cost:{}ms", duration)
                     }
                 } else {
                     if (duration > 2 * 1000) {
-                        log.warn("cost:{}ms", duration)
+                        sqlLog.warn("cost:{}ms", duration)
                     } else {
-                        log.debug("cost:{}ms", duration)
+                        sqlLog.debug("cost:{}ms", duration)
                     }
                 }
                 result
