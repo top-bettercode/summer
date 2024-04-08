@@ -20,15 +20,15 @@ import java.util.*
 object PumlConverter {
 
     fun toTables(
-            puml: File,
-            call: (Table) -> Unit = {}
+        puml: File,
+        call: (Table) -> Unit = {}
     ): List<Table> {
         return toTableOrAnys(puml, call).filterIsInstance<Table>()
     }
 
     private fun toTableOrAnys(
-            pumlFile: File,
-            call: (Table) -> Unit = {}
+        pumlFile: File,
+        call: (Table) -> Unit = {}
     ): List<Any> {
         val tables = mutableListOf<Any>()
         var remarks = ""
@@ -58,25 +58,29 @@ object PumlConverter {
                     val uniqueMult = line.startsWith("'UNIQUE")
                     if (uniqueMult || line.startsWith("'INDEX")) {
                         val columnNames =
-                                line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
-                        indexes.add(Indexed(unique = uniqueMult, columnName = columnNames.split(",").toMutableList())
+                            line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
+                        indexes.add(
+                            Indexed(
+                                unique = uniqueMult,
+                                columnName = columnNames.split(",").toMutableList()
+                            )
                         )
                     } else if (line.startsWith("'ENGINE")) {
                         engine = line.substringAfter("=").trim()
                     } else if ("}" == line) {
                         val table = Table(
-                                productName = top.bettercode.summer.tools.generator.DataType.PUML.name,
-                                catalog = null,
-                                schema = null,
-                                tableName = tableName,
-                                tableType = "",
-                                remarks = remarks,
-                                primaryKeyNames = primaryKeyNames,
-                                indexes = indexes,
-                                pumlColumns = pumlColumns,
-                                subModule = pumlFile.nameWithoutExtension,
-                                subModuleName = subModuleName ?: "database",
-                                engine = engine ?: "InnoDB"
+                            productName = top.bettercode.summer.tools.generator.DataType.PUML.name,
+                            catalog = null,
+                            schema = null,
+                            tableName = tableName,
+                            tableType = "",
+                            remarks = remarks,
+                            primaryKeyNames = primaryKeyNames,
+                            indexes = indexes,
+                            pumlColumns = pumlColumns,
+                            subModule = pumlFile.nameWithoutExtension,
+                            subModuleName = subModuleName ?: "database",
+                            engine = engine ?: "InnoDB"
                         )
                         call(table)
                         tables.add(table)
@@ -98,7 +102,10 @@ object PumlConverter {
                         val unsigned = columnDef.contains(" UNSIGNED ", true)
                         val unique = columnDef.contains(" UNIQUE ", true)
                         val indexed = columnDef.contains(" INDEX ", true)
-                        val autoIncrement = columnDef.contains(" AUTO_INCREMENT ", true) || columnDef.contains(" AUTOINCREMENT ", true)
+                        val autoIncrement = columnDef.contains(
+                            " AUTO_INCREMENT ",
+                            true
+                        ) || columnDef.contains(" AUTOINCREMENT ", true)
                         val version = columnDef.contains(" VERSION ", true)
                         var createdDate = columnDef.contains(" CREATEDDATE ", true)
                         val createdBy = columnDef.contains(" CREATEDBY ", true)
@@ -110,7 +117,11 @@ object PumlConverter {
                             logicalDelete = true
                         }
                         val pk = columnDef.contains(" PK ", true)
-                        val nullable = if (pk || version || logicalDelete) false else !columnDef.contains(" NOT NULL ", true)
+                        val nullable =
+                            if (pk || version || logicalDelete) false else !columnDef.contains(
+                                " NOT NULL ",
+                                true
+                            )
                         val asBoolean = columnDef.contains(" ASBOOLEAN ", true)
 
                         val type = columnDef.split(" ")[0].trim()
@@ -139,9 +150,10 @@ object PumlConverter {
                         //DEFAULT
                         var defaultVal: String? = null
                         if (extra.contains(" DEFAULT ", true)) {
-                            val defaultRawVal = extra.substringAfter(" DEFAULT ").substringBefore(" ")
+                            val defaultRawVal =
+                                extra.uppercase().substringAfter(" DEFAULT ").substringBefore(" ")
                             defaultVal = defaultRawVal.trim()
-                            extra = extra.replace(" DEFAULT $defaultRawVal ", " ")
+                            extra = extra.replace(" DEFAULT $defaultRawVal ", " ", true)
                         }
 
                         //FK
@@ -149,8 +161,9 @@ object PumlConverter {
                         var refTable: String? = null
                         var refColumn: String? = null
                         if (extra.contains(" FK > ", true)) {//FK > docs.id
-                            val ref = extra.substringAfter(" FK > ").trim().substringBefore(" ").trim()
-                            extra = extra.replace(Regex(" FK > +$ref"), " ")
+                            val ref = extra.uppercase().substringAfter(" FK > ").trim()
+                                .substringBefore(" ").trim()
+                            extra = extra.replace(" FK > $ref", " ", true)
                             val refs = ref.split(".")
                             fk = true
                             refTable = refs[0]
@@ -162,10 +175,12 @@ object PumlConverter {
                         var sequenceStartWith = 1L
                         val sequenceRegex = " SEQUENCE +(.+)(\\(\\d+\\))? "
                         if (extra.matches(sequenceRegex.toRegex())) {
-                            sequence = extra.replace(sequenceRegex, "$0").substringAfter(" SEQUENCE ")
+                            sequence =
+                                extra.replace(sequenceRegex, "$0").substringAfter(" SEQUENCE ")
                             extra = extra.replace(sequenceRegex.toRegex(), " ")
                             if (sequence.contains("(")) {
-                                sequenceStartWith = sequence.substringAfter("(").substringBefore(")").toLong()
+                                sequenceStartWith =
+                                    sequence.substringAfter("(").substringBefore(")").toLong()
                                 sequence = sequence.substringBefore("(")
                             }
                         }
@@ -178,53 +193,72 @@ object PumlConverter {
                             idgenerator = extra.replace(idRegex, "$0")
                             extra = extra.replace(idRegex.toRegex(), " ")
                             if (idgenerator.contains("(")) {
-                                idgeneratorParam = idgenerator.substringAfter("(").substringBefore(")")
+                                idgeneratorParam =
+                                    idgenerator.substringAfter("(").substringBefore(")")
                                 idgenerator = idgenerator.substringBefore("(")
                             }
                         }
                         //兼容
-                        if (!createdDate && columnName.equals("created_date", true) && defaultVal.isNullOrBlank()) {
+                        if (!createdDate && columnName.equals(
+                                "created_date",
+                                true
+                            ) && defaultVal.isNullOrBlank()
+                        ) {
                             createdDate = true
                         }
-                        if (!lastModifiedDate && columnName.equals("last_modified_date", true) && !extra.contains("ON UPDATE CURRENT_TIMESTAMP", true)) {
+                        if (!lastModifiedDate && columnName.equals(
+                                "last_modified_date",
+                                true
+                            ) && !extra.contains("ON UPDATE CURRENT_TIMESTAMP", true)
+                        ) {
                             lastModifiedDate = true
                         }
 
                         val column = Column(
-                                tableCat = null,
-                                columnName = columnName,
-                                remarks = lineDef.last().trim(),
-                                typeName = typeName,
-                                dataType = JavaTypeResolver.calculateDataType(typeName),
-                                columnSize = columnSize,
-                                decimalDigits = decimalDigits,
-                                nullable = nullable,
-                                unique = unique,
-                                indexed = indexed,
-                                columnDef = defaultVal,
-                                extra = extra.trim(),
-                                tableSchem = null,
-                                isForeignKey = fk,
-                                unsigned = unsigned,
-                                pktableName = refTable,
-                                pkcolumnName = refColumn,
-                                autoIncrement = autoIncrement,
-                                idgenerator = idgenerator.trim(),
-                                idgeneratorParam = idgeneratorParam.trim(),
-                                version = version,
-                                createdDate = createdDate,
-                                createdBy = createdBy,
-                                lastModifiedDate = lastModifiedDate,
-                                lastModifiedBy = lastModifiedBy,
-                                logicalDelete = logicalDelete,
-                                asBoolean = asBoolean,
-                                sequence = sequence.trim(),
-                                sequenceStartWith = sequenceStartWith
+                            tableCat = null,
+                            columnName = columnName,
+                            remarks = lineDef.last().trim(),
+                            typeName = typeName,
+                            dataType = JavaTypeResolver.calculateDataType(typeName),
+                            columnSize = columnSize,
+                            decimalDigits = decimalDigits,
+                            nullable = nullable,
+                            unique = unique,
+                            indexed = indexed,
+                            columnDef = defaultVal,
+                            extra = extra.trim(),
+                            tableSchem = null,
+                            isForeignKey = fk,
+                            unsigned = unsigned,
+                            pktableName = refTable,
+                            pkcolumnName = refColumn,
+                            autoIncrement = autoIncrement,
+                            idgenerator = idgenerator.trim(),
+                            idgeneratorParam = idgeneratorParam.trim(),
+                            version = version,
+                            createdDate = createdDate,
+                            createdBy = createdBy,
+                            lastModifiedDate = lastModifiedDate,
+                            lastModifiedBy = lastModifiedBy,
+                            logicalDelete = logicalDelete,
+                            asBoolean = asBoolean,
+                            sequence = sequence.trim(),
+                            sequenceStartWith = sequenceStartWith
                         )
                         if (unique)
-                            indexes.add(Indexed(unique = true, columnName = mutableListOf(columnName)))
+                            indexes.add(
+                                Indexed(
+                                    unique = true,
+                                    columnName = mutableListOf(columnName)
+                                )
+                            )
                         if (indexed)
-                            indexes.add(Indexed(unique = false, columnName = mutableListOf(columnName)))
+                            indexes.add(
+                                Indexed(
+                                    unique = false,
+                                    columnName = mutableListOf(columnName)
+                                )
+                            )
                         if (pk) {
                             primaryKeyNames.add(column.columnName)
                         }
@@ -260,17 +294,17 @@ object PumlConverter {
     }
 
     fun compile(
-            database: DatabaseConfiguration,
-            tables: List<Any>,
-            out: File,
-            remarksProperties: Properties? = null
+        database: DatabaseConfiguration,
+        tables: List<Any>,
+        out: File,
+        remarksProperties: Properties? = null
     ) {
         if (tables.isNotEmpty()) {
             val any = tables[0]
             val plantUML = PlantUML(
-                    if (any is Table) any.subModuleName else null,
-                    out,
-                    if ("database" == out.parent) remarksProperties else null
+                if (any is Table) any.subModuleName else null,
+                out,
+                if ("database" == out.parent) remarksProperties else null
             )
             plantUML.setUp(database.extension)
             tables.distinctBy { if (it is Table) it.tableName else it }.forEach {
@@ -295,17 +329,17 @@ object PumlConverter {
                 val database = extension.database(module)
                 when (database.driver) {
                     DatabaseDriver.MYSQL -> toMysql(
-                            database,
-                            file,
-                            file,
-                            remarksProperties
+                        database,
+                        file,
+                        file,
+                        remarksProperties
                     )
 
                     DatabaseDriver.ORACLE -> toOracle(
-                            database,
-                            file,
-                            file,
-                            remarksProperties
+                        database,
+                        file,
+                        file,
+                        remarksProperties
                     )
 
                     else -> compile(database, file, file, remarksProperties)
@@ -324,30 +358,35 @@ object PumlConverter {
         (extension.pumlSources + extension.pumlDatabaseSources).forEach { (module, files) ->
             val database = extension.database(module)
             val tables = PumlTableHolder(database, files).tables(false)
-            compile(database, tables, extension.file(extension.pumlSrc + "/database/$module.puml"), remarksProperties)
+            compile(
+                database,
+                tables,
+                extension.file(extension.pumlSrc + "/database/$module.puml"),
+                remarksProperties
+            )
         }
     }
 
     fun compile(
-            database: DatabaseConfiguration,
-            src: File,
-            out: File,
-            remarksProperties: Properties? = null
+        database: DatabaseConfiguration,
+        src: File,
+        out: File,
+        remarksProperties: Properties? = null
     ) {
         compile(
-                database,
-                toTableOrAnys(src) {
-                    it.database = database
-                },
-                out,
-                remarksProperties
+            database,
+            toTableOrAnys(src) {
+                it.database = database
+            },
+            out,
+            remarksProperties
         )
     }
 
     fun toMysql(
-            database: DatabaseConfiguration,
-            src: File, out: File,
-            remarksProperties: Properties? = null
+        database: DatabaseConfiguration,
+        src: File, out: File,
+        remarksProperties: Properties? = null
     ) {
         val tables = toTableOrAnys(src) {
             it.database = database
@@ -398,9 +437,9 @@ object PumlConverter {
     }
 
     fun toOracle(
-            database: DatabaseConfiguration,
-            src: File, out: File,
-            remarksProperties: Properties? = null
+        database: DatabaseConfiguration,
+        src: File, out: File,
+        remarksProperties: Properties? = null
     ) {
         val tables = toTableOrAnys(src) {
             it.database = database
