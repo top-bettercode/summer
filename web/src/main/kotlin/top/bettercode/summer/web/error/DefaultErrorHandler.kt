@@ -25,10 +25,14 @@ import javax.validation.ConstraintViolationException
 /**
  * @author Peter Wu
  */
-class DefaultErrorHandler(messageSource: MessageSource,
-                          request: HttpServletRequest?) : AbstractErrorHandler(messageSource, request) {
-    override fun handlerException(error: Throwable, respEntity: RespEntity<*>,
-                                  errors: MutableMap<String?, String?>, separator: String) {
+class DefaultErrorHandler(
+    messageSource: MessageSource,
+    request: HttpServletRequest?
+) : AbstractErrorHandler(messageSource, request) {
+    override fun handlerException(
+        error: Throwable, respEntity: RespEntity<*>,
+        errors: MutableMap<String?, String?>, separator: String
+    ) {
         if (error is IllegalArgumentException) {
             val regex = "Parameter specified as non-null is null: .*parameter (.*)"
             if (error.message?.matches(regex.toRegex()) == true) {
@@ -57,7 +61,8 @@ class DefaultErrorHandler(messageSource: MessageSource,
             } else {
                 message = getText("typeMismatch")
             }
-            respEntity.message = getText(argumentName) + separator + invalidValue(error.value) + message
+            respEntity.message =
+                getText(argumentName) + separator + invalidValue(error.value) + message
             errors[argumentName] = message
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
@@ -67,8 +72,10 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 message = getText("typeMismatch.type", targetType)
             respEntity.message = invalidValue(error.value) + message
         } else if (error is ConstraintViolationException) { //数据验证
-            constraintViolationException(error, respEntity, errors,
-                    separator)
+            constraintViolationException(
+                error, respEntity, errors,
+                separator
+            )
         } else if (error is HttpMessageNotReadableException) {
             val cause = error.cause
             if (cause is InvalidFormatException) {
@@ -78,16 +85,20 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 if (message == code)
                     message = getText("typeMismatch.type", targetType)
                 val path = cause.path
-                val desc = path.joinToString("") { if (it.fieldName == null) "[${it.index}]" else ".${it.fieldName}" }.trimStart('.')
-                errors[desc] = getText(path.last().fieldName
-                        ?: desc) + separator + invalidValue(cause.value) + message
+                val desc =
+                    path.joinToString("") { if (it.fieldName == null) "[${it.index}]" else ".${it.fieldName}" }
+                        .trimStart('.')
+                errors[desc] = getText(
+                    path.last().fieldName
+                        ?: desc
+                ) + separator + invalidValue(cause.value) + message
                 respEntity.message = errors.values.first()
             } else {
                 respEntity.message = "paramMismatch"
             }
         } else if (error is HttpMediaTypeNotAcceptableException) {
             respEntity.message = "MediaType not Acceptable!Must ACCEPT:" + error
-                    .supportedMediaTypes
+                .supportedMediaTypes
         } else if (error is HttpMessageNotWritableException) {
             if (error.message != null && error.message!!.contains("Session is closed")) {
                 respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value())
@@ -95,14 +106,27 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
         } else if (error is UnsatisfiedServletRequestParameterException) {
             val paramConditionGroups = error.paramConditionGroups
-            val sb = StringBuilder("${getText("UnsatisfiedParam")}:")
+            val sb = StringBuilder("${getText("UnsatisfiedParam")}，需要参数：")
+            val paramNames = mutableListOf<String>()
             for ((i, conditions) in paramConditionGroups.withIndex()) {
                 if (i > 0) {
                     sb.append(" OR ")
                 }
-                sb.append('"')
+                conditions.forEach { c ->
+                    paramNames.add(c.substringBefore("="))
+                }
                 sb.append(conditions.joinToString())
-                sb.append('"')
+            }
+            sb.append("，实际参数：")
+            var i = 0
+            for (v in error.actualParams.entries) {
+                if (paramNames.contains(v.key)) {
+                    if (i > 0) {
+                        sb.append("&")
+                    }
+                    sb.append("${v.key}=${v.value.joinToString()}")
+                    i++
+                }
             }
             respEntity.message = sb.toString()
         } else if (error is NullPointerException) {
@@ -119,8 +143,10 @@ class DefaultErrorHandler(messageSource: MessageSource,
         }
     }
 
-    private fun handleFieldError(errors: MutableMap<String?, String?>,
-                                 fieldErrors: List<FieldError>, separator: String): String {
+    private fun handleFieldError(
+        errors: MutableMap<String?, String?>,
+        fieldErrors: List<FieldError>, separator: String
+    ): String {
         for (fieldError in fieldErrors) {
             var defaultMessage = fieldError.defaultMessage
             if (defaultMessage?.contains("required type") == true && fieldError.codes != null) {
@@ -148,7 +174,8 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 }
             }
             if (msg == null) {
-                msg = getText(field.substringAfter(".")) + separator + rejectedValuedesc + defaultMessage
+                msg =
+                    getText(field.substringAfter(".")) + separator + rejectedValuedesc + defaultMessage
             }
             errors[field] = msg
         }
