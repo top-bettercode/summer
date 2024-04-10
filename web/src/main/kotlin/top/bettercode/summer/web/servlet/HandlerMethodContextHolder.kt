@@ -2,6 +2,7 @@ package top.bettercode.summer.web.servlet
 
 import org.slf4j.LoggerFactory
 import org.springframework.boot.web.servlet.error.ErrorController
+import org.springframework.http.HttpMethod
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
@@ -56,10 +57,12 @@ object HandlerMethodContextHolder {
                 }
             }
         } catch (e: Exception) {
-            val requestString = HttpOperation.toString(
-                request = RequestConverter.convert(request)
-            )
-            log.warn(requestString, e)
+            if (HttpMethod.OPTIONS.name != request.method) {
+                val requestString = HttpOperation.toString(
+                    request = RequestConverter.convert(request)
+                )
+                log.warn("\n$requestString", e)
+            }
         }
         return null
     }
