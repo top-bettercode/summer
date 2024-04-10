@@ -6,6 +6,8 @@ import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import org.springframework.web.util.ServletRequestPathUtils
+import top.bettercode.summer.tools.lang.operation.HttpOperation
+import top.bettercode.summer.tools.lang.operation.RequestConverter
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
 import javax.servlet.http.HttpServletRequest
@@ -18,7 +20,8 @@ object HandlerMethodContextHolder {
     private val HANDLER_METHOD = HandlerMethodContextHolder::class.java.name + ".handlerMethod"
     private var handlerMapping: RequestMappingHandlerMapping? = null
     fun setHandlerMapping(
-            handlerMapping: RequestMappingHandlerMapping?) {
+        handlerMapping: RequestMappingHandlerMapping?
+    ) {
         HandlerMethodContextHolder.handlerMapping = handlerMapping
     }
 
@@ -27,7 +30,9 @@ object HandlerMethodContextHolder {
         try {
             var handler = request.getAttribute(HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE)
             if (handler is HandlerMethod && !ErrorController::class.java.isAssignableFrom(
-                            handler.beanType)) {
+                    handler.beanType
+                )
+            ) {
                 return handler
             }
             var handlerMethod: HandlerMethod?
@@ -42,26 +47,35 @@ object HandlerMethodContextHolder {
             if (handlerExecutionChain != null) {
                 handler = handlerExecutionChain.handler
                 if (handler is HandlerMethod && !ErrorController::class.java.isAssignableFrom(
-                                handler.beanType)) {
+                        handler.beanType
+                    )
+                ) {
                     handlerMethod = handler
                     request.setAttribute(HANDLER_METHOD, handlerMethod)
                     return handlerMethod
                 }
             }
         } catch (e: Exception) {
-            log.warn(e.message, e)
+            val requestString = HttpOperation.toString(
+                request = RequestConverter.convert(request)
+            )
+            log.warn(requestString, e)
         }
         return null
     }
 
-    fun <A : Annotation?> hasAnnotation(request: HttpServletRequest,
-                                        annotationType: Class<A>): Boolean {
+    fun <A : Annotation?> hasAnnotation(
+        request: HttpServletRequest,
+        annotationType: Class<A>
+    ): Boolean {
         val handler = getHandler(request)
         return handler != null && hasAnnotation(handler, annotationType)
     }
 
-    fun <A : Annotation?> getAnnotation(request: HttpServletRequest,
-                                        annotationType: Class<A>): A? {
+    fun <A : Annotation?> getAnnotation(
+        request: HttpServletRequest,
+        annotationType: Class<A>
+    ): A? {
         val handler = getHandler(request)
         return if (handler == null) null else getAnnotation(handler, annotationType)
     }
