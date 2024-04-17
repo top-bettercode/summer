@@ -20,9 +20,11 @@ object RecipeSolver {
 
     @JvmStatic
     @JvmOverloads
-    fun solve(solver: Solver,
-              requirement: RecipeRequirement,
-              includeProductionCost: Boolean = true): Recipe? {
+    fun solve(
+        solver: Solver,
+        requirement: RecipeRequirement,
+        includeProductionCost: Boolean = true
+    ): Recipe? {
         solver.use { so ->
             so.apply {
                 val s = System.currentTimeMillis()
@@ -51,22 +53,25 @@ object RecipeSolver {
     }
 
     fun PrepareData.toRecipe(requirement: RecipeRequirement, includeProductionCost: Boolean) =
-            Recipe(requirement = requirement,
-                    includeProductionCost = includeProductionCost,
-                    optimalProductionCost = requirement.productionCost.computeFee(
-                            this.materialItems?.map { CarrierValue(it.it, it.value.value) },
-                            this.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
-                    cost = this.objective.value,
-                    materials = this.recipeMaterials.mapNotNull { (_, u) ->
-                        val value = u.weight.value
-                        if (value != 0.0) {
-                            u.toMaterialValue()
-                        } else {
-                            null
-                        }
-                    })
+        Recipe(requirement = requirement,
+            includeProductionCost = includeProductionCost,
+            optimalProductionCost = requirement.productionCost.computeFee(
+                this.materialItems?.map { CarrierValue(it.it, it.value.value) },
+                this.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
+            cost = this.objective.value,
+            materials = this.recipeMaterials.mapNotNull { (_, u) ->
+                val value = u.weight.value
+                if (value != 0.0) {
+                    u.toMaterialValue()
+                } else {
+                    null
+                }
+            })
 
-    fun Solver.prepare(requirement: RecipeRequirement, includeProductionCost: Boolean = true): PrepareData {
+    fun Solver.prepare(
+        requirement: RecipeRequirement,
+        includeProductionCost: Boolean = true
+    ): PrepareData {
 
         setTimeLimit(requirement.timeout)
         // 原料数量
@@ -93,21 +98,23 @@ object RecipeSolver {
         notMixMaterials.forEach { notMixedMaterial ->
             //一组变量至多有一个变量可取非零值
             val noMixedVars = notMixedMaterial
-                    .map { materialIDs: MaterialIDs ->
-                        val vars = materialIDs.mapNotNull { recipeMaterials[it]?.weight }
-                        if (vars.isEmpty()) return@map null
-                        vars.sum()
-                    }.filterNotNull()
+                .map { materialIDs: MaterialIDs ->
+                    val vars = materialIDs.mapNotNull { recipeMaterials[it]?.weight }
+                    if (vars.isEmpty()) return@map null
+                    vars.sum()
+                }.filterNotNull()
             noMixedVars.atMostOne()
         }
 
 
         // 定义产品净重 >=1000kg，含水，最大烘干量
-        materialVars.between(targetWeight,
-                if (requirement.maxBakeWeight == null)
-                    Double.POSITIVE_INFINITY
-                else
-                    (targetWeight + requirement.maxBakeWeight))
+        materialVars.between(
+            targetWeight,
+            if (requirement.maxBakeWeight == null)
+                Double.POSITIVE_INFINITY
+            else
+                (targetWeight + requirement.maxBakeWeight)
+        )
 
         val rangeIndicators = requirement.indicatorRangeConstraints
         // 产品水分指标
@@ -157,7 +164,7 @@ object RecipeSolver {
         val materialRangeConstraints = requirement.materialRangeConstraints
         materialRangeConstraints.forEach { (t, u) ->
             t.mapNotNull { recipeMaterials[it]?.weight }
-                    .between(u.min, u.max)
+                .between(u.min, u.max)
         }
 
         // 关联原料比率约束
@@ -204,20 +211,28 @@ object RecipeSolver {
 
                     //m 对应原料的用量变量
                     val normalWeight =
-                            if (relationIds == null) {//当无其他消耗m原料时，取本身用量
-                                m.weight
-                            } else {//当有其他消耗m原料时，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
-                                Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
-                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.normal }.sum()
-                            }
+                        if (relationIds == null) {//当无其他消耗m原料时，取本身用量
+                            m.weight
+                        } else {//当有其他消耗m原料时，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
+                            Assert.notEmpty(
+                                m.consumes,
+                                "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
+                            )
+                            m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.normal }
+                                .sum()
+                        }
                     //过量消耗原料用量变量
                     val overdoseWeight =
-                            if (relationIds == null) {//当无其他消耗m原料时，不存在过量消耗
-                                null
-                            } else {//当有其他消耗m原料时，如：氯化钾反应需过量硫酸耗液氨,取关联原料消耗汇总
-                                Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
-                                m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.overdose }.sum()
-                            }
+                        if (relationIds == null) {//当无其他消耗m原料时，不存在过量消耗
+                            null
+                        } else {//当有其他消耗m原料时，如：氯化钾反应需过量硫酸耗液氨,取关联原料消耗汇总
+                            Assert.notEmpty(
+                                m.consumes,
+                                "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
+                            )
+                            m.consumes.filterKeys { relationIds.contains(it) }.values.map { it.overdose }
+                                .sum()
+                        }
 
                     //原料消耗
                     if (normal != null) {
@@ -264,7 +279,8 @@ object RecipeSolver {
             val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
             val whenCon = whenCondition.condition
             val thenCon = thenCondition.condition
-            thenVar.const(thenCon.sense, thenCon.value).onlyEnforceIf(whenVar.const(whenCon.sense, whenCon.value))
+            thenVar.const(thenCon.sense, thenCon.value)
+                .onlyEnforceIf(whenVar.const(whenCon.sense, whenCon.value))
         }
         //制造费用
         val materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>?
@@ -272,7 +288,8 @@ object RecipeSolver {
         val objectiveVarList = if (includeProductionCost) {
             val productionCost = requirement.productionCost
             materialItems = productionCost.materialItems.map { CarrierValue(it, numVar(1.0, 1.0)) }
-            dictItems = productionCost.dictItems.mapValues { CarrierValue(it.value, numVar(1.0, 1.0)) }
+            dictItems =
+                productionCost.dictItems.mapValues { CarrierValue(it.value, numVar(1.0, 1.0)) }
             //费用增减
             var allChange = 1.0
             productionCost.changes.forEach { changeLogic ->
@@ -284,7 +301,13 @@ object RecipeSolver {
                     }
 
                     ChangeLogicType.OVER -> {
-                        changeProductionCost(recipeMaterials, changeLogic, null, materialItems, dictItems)
+                        changeProductionCost(
+                            recipeMaterials,
+                            changeLogic,
+                            null,
+                            materialItems,
+                            dictItems
+                        )
                     }
 
                     ChangeLogicType.OTHER -> allChange += changeLogic.changeValue
@@ -323,11 +346,23 @@ object RecipeSolver {
         // 定义目标函数：最小化成本
         val objective = objectiveVarList.minimize()
 
-        return PrepareData(recipeMaterials = recipeMaterials, objective = objective, materialItems = materialItems, dictItems = dictItems)
+        return PrepareData(
+            recipeMaterials = recipeMaterials,
+            objective = objective,
+            materialItems = materialItems,
+            dictItems = dictItems
+        )
     }
 
-    private fun Solver.changeProductionCost(materials: Map<String, RecipeMaterialVar>, changeLogic: CostChangeLogic, value: IVar?, materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>, dictItems: Map<DictType, CarrierValue<Cost, IVar>>) {
-        val iVars = materials.filter { changeLogic.materialId?.contains(it.key) == true }.map { it.value.weight }
+    private fun Solver.changeProductionCost(
+        materials: Map<String, RecipeMaterialVar>,
+        changeLogic: CostChangeLogic,
+        value: IVar?,
+        materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>,
+        dictItems: Map<DictType, CarrierValue<Cost, IVar>>
+    ) {
+        val iVars = materials.filter { changeLogic.materialId?.contains(it.key) == true }
+            .map { it.value.weight }
         if (iVars.isNotEmpty()) {
             val useMaterial = iVars.sum()
             val thens = mutableListOf<Constraint>()
@@ -339,7 +374,7 @@ object RecipeSolver {
                         if (material != null) {
                             //change
                             val changeVar = ((value
-                                    ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                                ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                             thens.add(changeVar.eqConst(0.0))
                             material.value += changeVar
                         }
@@ -351,7 +386,7 @@ object RecipeSolver {
                                 materialItems.forEach {
                                     //change
                                     val changeVar = ((value
-                                            ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                                        ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                                     thens.add(changeVar.eqConst(0.0))
                                     it.value += changeVar
                                 }
@@ -362,7 +397,7 @@ object RecipeSolver {
                                 if (cost != null) {
                                     //change
                                     val changeVar = ((value
-                                            ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
+                                        ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
                                     thens.add(changeVar.eqConst(0.0))
                                     cost.value += changeVar
                                 }
