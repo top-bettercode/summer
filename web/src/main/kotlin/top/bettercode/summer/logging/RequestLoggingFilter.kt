@@ -310,33 +310,28 @@ class RequestLoggingFilter(
         httpStatusCode: Int,
         uri: String
     ): Boolean {
-        return if (
-            (error == null || !isClientAbortException(error))
-            && (log.isTraceEnabled
+        return if (handler != null) {
+            handler::class.java.simpleName != "WebMvcEndpointHandlerMethod" && (!AnnotatedUtils.hasAnnotation(
+                handler,
+                NoRequestLogging::class.java
+            )) && useAnnotationMethodHandler(
+                request
+            ) && (properties.handlerTypePrefix.isEmpty() || properties.handlerTypePrefix.any {
+                handler.beanType.name.packageMatches(
+                    it
+                )
+            })
+        } else {
+            include(properties.includePath, uri)
+                    || log.isTraceEnabled
                     || properties.isForceRecord
-                    || handler != null
-                    || include(properties.includePath, uri)
-                    || error != null
-                    || !try {
+                    || (error != null && !isClientAbortException(error))
+                    || (!try {
                 HttpStatus.valueOf(httpStatusCode)
             } catch (e: Exception) {
                 HttpStatus.OK
-            }.is2xxSuccessful)
-        ) {
-            if (handler != null) {
-                handler::class.java.simpleName != "WebMvcEndpointHandlerMethod" && (!AnnotatedUtils.hasAnnotation(
-                    handler,
-                    NoRequestLogging::class.java
-                )) && useAnnotationMethodHandler(
-                    request
-                ) && (properties.handlerTypePrefix.isEmpty() || properties.handlerTypePrefix.any {
-                    handler.beanType.name.packageMatches(
-                        it
-                    )
-                })
-            } else true
-        } else {
-            false
+            }.isError && (error == null || !isClientAbortException(error)))
+
         }
     }
 
