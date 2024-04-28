@@ -310,13 +310,17 @@ class RequestLoggingFilter(
         httpStatusCode: Int,
         uri: String
     ): Boolean {
-        return if (log.isTraceEnabled || properties.isForceRecord || handler != null ||
-            include(properties.includePath, uri)
-            || includeError(error) || !try {
+        return if (notClientAbortException(error)
+            && (log.isTraceEnabled
+                    || properties.isForceRecord
+                    || handler != null
+                    || include(properties.includePath, uri)
+                    || error != null
+                    || !try {
                 HttpStatus.valueOf(httpStatusCode)
             } catch (e: Exception) {
                 HttpStatus.OK
-            }.is2xxSuccessful
+            }.is2xxSuccessful)
         ) {
             if (handler != null) {
                 handler::class.java.simpleName != "WebMvcEndpointHandlerMethod" && (!AnnotatedUtils.hasAnnotation(
@@ -346,9 +350,8 @@ class RequestLoggingFilter(
     private fun String.packageMatches(regex: String) =
         matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
 
-
-    private fun includeError(error: Throwable?): Boolean {
-        return error != null && error !is ClientAbortException
+    private fun notClientAbortException(error: Throwable?): Boolean {
+        return error == null || error !is ClientAbortException
     }
 
     private fun include(paths: Array<String>, servletPath: String): Boolean {
