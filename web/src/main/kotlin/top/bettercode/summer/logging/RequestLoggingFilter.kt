@@ -100,7 +100,7 @@ class RequestLoggingFilter(
                 response
             }
         } catch (e: Exception) {
-            if (e is ClientAbortException || e.cause is ClientAbortException) {
+            if (isClientAbortException(e)) {
                 log.warn(e.message, e)
             } else {
                 log.error(e.message, e)
@@ -205,7 +205,7 @@ class RequestLoggingFilter(
                     )
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
-                if ((error == null || error is ClientAbortException || error.cause is ClientAbortException) && !requestTimeout) {
+                if ((error == null || isClientAbortException(error)) && !requestTimeout) {
                     log.info(marker, msg)
                 } else {
                     if (hasError) {
@@ -310,7 +310,8 @@ class RequestLoggingFilter(
         httpStatusCode: Int,
         uri: String
     ): Boolean {
-        return if (notClientAbortException(error)
+        return if (
+            (error == null || isClientAbortException(error))
             && (log.isTraceEnabled
                     || properties.isForceRecord
                     || handler != null
@@ -350,8 +351,8 @@ class RequestLoggingFilter(
     private fun String.packageMatches(regex: String) =
         matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
 
-    private fun notClientAbortException(error: Throwable?): Boolean {
-        return error == null || (error !is ClientAbortException && error.cause !is ClientAbortException)
+    private fun isClientAbortException(error: Throwable): Boolean {
+        return error is ClientAbortException || error.cause is ClientAbortException
     }
 
     private fun include(paths: Array<String>, servletPath: String): Boolean {
