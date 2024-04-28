@@ -351,7 +351,7 @@ class RequestLoggingFilter(
         matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
 
     private fun notClientAbortException(error: Throwable?): Boolean {
-        return error == null || error !is ClientAbortException
+        return error == null || (error !is ClientAbortException && error.cause !is ClientAbortException)
     }
 
     private fun include(paths: Array<String>, servletPath: String): Boolean {
