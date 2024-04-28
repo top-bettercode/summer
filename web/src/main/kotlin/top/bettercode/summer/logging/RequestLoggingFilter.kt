@@ -311,7 +311,7 @@ class RequestLoggingFilter(
         uri: String
     ): Boolean {
         return if (
-            (error == null || isClientAbortException(error))
+            (error == null || !isClientAbortException(error))
             && (log.isTraceEnabled
                     || properties.isForceRecord
                     || handler != null
