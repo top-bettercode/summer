@@ -20,8 +20,10 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-class DicCodeGen(private val project: Project) {
-
+class DicCodeGen(
+    private val project: Project,
+    private val packageName: String
+) {
 
     private fun codeTypes(): Map<String, DicCodes> {
         val properties = Properties()
@@ -35,7 +37,7 @@ class DicCodeGen(private val project: Project) {
             val props = Properties()
             props.load(dicCodeFile.inputStream())
             val collectionType = TypeFactory.defaultInstance()
-                    .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
+                .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
             addFields("doc/request.parameters.yml", props, collectionType)
             addFields("doc/response.content.yml", props, collectionType)
         }
@@ -49,7 +51,7 @@ class DicCodeGen(private val project: Project) {
             val field = Field()
             field.name = t.type
             field.description =
-                    "${t.name}(${t.codes.entries.joinToString { "${it.key}:${it.value}" }})"
+                "${t.name}(${t.codes.entries.joinToString { "${it.key}:${it.value}" }})"
             field.type = t.javaType.shortNameWithoutTypeArguments
             fields.add(field)
         }
@@ -79,14 +81,14 @@ class DicCodeGen(private val project: Project) {
                 }
                 val dicCode = map.computeIfAbsent(codeType) {
                     DicCodes(
-                            codeType,
-                            properties.getProperty(codeType),
-                            JavaType(javaType)
+                        codeType,
+                        properties.getProperty(codeType),
+                        JavaType(javaType)
                     )
                 }
                 val codeKey: Serializable =
-                        if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
-                                ?: code)
+                    if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
+                        ?: code)
                 dicCode.codes[codeKey] = properties.getProperty(key)
             }
         }
@@ -96,13 +98,9 @@ class DicCodeGen(private val project: Project) {
     private lateinit var docFile: FileUnit
     private val docText = StringBuilder()
 
-    private lateinit var packageName: String
-
 
     fun run() {
         docFile = FileUnit("doc/v1.0/编码类型.adoc")
-
-        packageName = project.rootProject.property("app.packageName") as String
 
         docFile.apply {
             +"== 编码类型"
@@ -116,7 +114,7 @@ class DicCodeGen(private val project: Project) {
                 +"|$codeType|$codeTypeName\n"
                 docText.appendLine(".$codeTypeName($codeType)")
                 docText.appendLine(
-                        """|===
+                    """|===
             | 编码 | 说明
             """
                 )
@@ -141,27 +139,28 @@ class DicCodeGen(private val project: Project) {
 
                         val codeFieldName = (
                                 if (code is Int || code.toString()
-                                                .startsWith("0") && code.toString().length > 1
+                                        .startsWith("0") && code.toString().length > 1
                                 ) {
                                     "CODE_${code.toString().replace("-", "MINUS_")}"
                                 } else if (code.toString().isBlank()) {
                                     "BLANK"
                                 } else {
-                                    (code as String).replace("-", "_").replace(".", "_").toUnderscore()
+                                    (code as String).replace("-", "_").replace(".", "_")
+                                        .toUnderscore()
                                 }
                                 ).replace(Regex("_+"), "_")
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
                             val initializationString =
-                                    when (fieldType) {
-                                        JavaType.stringInstance -> "\"$code\""
-                                        JavaType.char -> "(char) $code"
-                                        else -> code.toString()
-                                    }
+                                when (fieldType) {
+                                    JavaType.stringInstance -> "\"$code\""
+                                    JavaType.char -> "(char) $code"
+                                    else -> code.toString()
+                                }
                             field(
-                                    codeFieldName,
-                                    fieldType,
-                                    initializationString
+                                codeFieldName,
+                                fieldType,
+                                initializationString
                             ) {
                                 visibility = JavaVisibility.DEFAULT
                                 javadoc {
@@ -188,8 +187,8 @@ class DicCodeGen(private val project: Project) {
                             val codeTypeClassName = codeType.capitalized()
                             val authClassName = "Auth${authName}"
                             Interface(
-                                    type = JavaType("$packageName.security.auth.$authClassName"),
-                                    overwrite = true
+                                type = JavaType("$packageName.security.auth.$authClassName"),
+                                overwrite = true
                             ).apply {
                                 isAnnotation = true
                                 javadoc {
@@ -215,11 +214,11 @@ class DicCodeGen(private val project: Project) {
                     }
 
                     field(
-                            "ENUM_NAME",
-                            JavaType.stringInstance,
-                            "\"$codeType\"",
-                            true,
-                            JavaVisibility.PUBLIC
+                        "ENUM_NAME",
+                        JavaType.stringInstance,
+                        "\"$codeType\"",
+                        true,
+                        JavaVisibility.PUBLIC
                     ) {
                         isStatic = true
                         javadoc {
@@ -251,9 +250,9 @@ class DicCodeGen(private val project: Project) {
                         +"return nameOf(code);"
                     }
                     method(
-                            "equals",
-                            JavaType.boolean,
-                            Parameter("code", fieldType.primitiveTypeWrapper ?: fieldType)
+                        "equals",
+                        JavaType.boolean,
+                        Parameter("code", fieldType.primitiveTypeWrapper ?: fieldType)
                     ) {
                         javadoc {
                             +"/**"
@@ -266,8 +265,12 @@ class DicCodeGen(private val project: Project) {
                         else
                             +"return this.code.equals(code);"
                     }
-                    method("enumOf", enumType, Parameter("code", fieldType.primitiveTypeWrapper
-                            ?: fieldType)) {
+                    method(
+                        "enumOf", enumType, Parameter(
+                            "code", fieldType.primitiveTypeWrapper
+                                ?: fieldType
+                        )
+                    ) {
                         javadoc {
                             +"/**"
                             +" * 根据标识码查询对应枚举"
@@ -290,8 +293,12 @@ class DicCodeGen(private val project: Project) {
                         +"}"
                         +"return null;"
                     }
-                    method("nameOf", JavaType.stringInstance, Parameter("code", fieldType.primitiveTypeWrapper
-                            ?: fieldType)) {
+                    method(
+                        "nameOf", JavaType.stringInstance, Parameter(
+                            "code", fieldType.primitiveTypeWrapper
+                                ?: fieldType
+                        )
+                    ) {
                         javadoc {
                             +"/**"
                             +" * 根据标识码查询对应名称"
@@ -306,8 +313,10 @@ class DicCodeGen(private val project: Project) {
                         +"}"
                         +"return CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getName(code);"
                     }
-                    method("codeOf", fieldType.primitiveTypeWrapper
-                            ?: fieldType, Parameter("name", JavaType.stringInstance)) {
+                    method(
+                        "codeOf", fieldType.primitiveTypeWrapper
+                            ?: fieldType, Parameter("name", JavaType.stringInstance)
+                    ) {
                         javadoc {
                             +"/**"
                             +" * 根据标识码名称查询对应标识码"
@@ -322,7 +331,7 @@ class DicCodeGen(private val project: Project) {
                         +"}"
                         +"return (${
                             (fieldType.primitiveTypeWrapper
-                                    ?: fieldType).shortNameWithoutTypeArguments
+                                ?: fieldType).shortNameWithoutTypeArguments
                         }) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                     }
                 }

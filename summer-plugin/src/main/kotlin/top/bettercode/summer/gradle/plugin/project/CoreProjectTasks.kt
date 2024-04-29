@@ -136,7 +136,10 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(task: Task) {
-                        project.rootDir.walkTopDown().filter { file -> file.isFile && file.name.endsWith(".java") && file.readText().contains("@ExcelField") }.forEach { file ->
+                        project.rootDir.walkTopDown().filter { file ->
+                            file.isFile && file.name.endsWith(".java") && file.readText()
+                                .contains("@ExcelField")
+                        }.forEach { file ->
                             val className = file.nameWithoutExtension
                             val codes = mutableMapOf<Int, String>()
                             val readLines = file.readLines()
@@ -145,9 +148,12 @@ object CoreProjectTasks {
                                 //如果是以@ExcelField开头
                                 if (line.startsWith("@ExcelField")) {
                                     //提取@ExcelField(title = "商品分类名称", sort = 1)中的"商品分类名称"字符
-                                    val title = line.substringAfter("title = \"").substringBefore("\"")
+                                    val title =
+                                        line.substringAfter("title = \"").substringBefore("\"")
                                     //sort = 1
-                                    val sort = line.substringAfter("sort = ", "0").substringBefore(")").substringBefore(",").trim().toInt()
+                                    val sort =
+                                        line.substringAfter("sort = ", "0").substringBefore(")")
+                                            .substringBefore(",").trim().toInt()
                                     // 是否  YuanConverter
                                     val isYuanConverter = line.contains("YuanConverter")
                                     // 是否  MoneyToConverter
@@ -158,11 +164,14 @@ object CoreProjectTasks {
                                     val isWeightToConverter = line.contains("WeightToConverter")
                                     //DateConverter.class, pattern = "yyyy-MM-dd HH:mm:ss"
                                     val isDateConverter = line.contains("DateConverter")
-                                    val format = line.substringAfter("pattern = \"").substringBefore("\"").trim().lowercase(Locale.getDefault())
+                                    val format =
+                                        line.substringAfter("pattern = \"").substringBefore("\"")
+                                            .trim().lowercase(Locale.getDefault())
                                     // 是否  Converter
                                     val isConverter = line.contains("converter")
                                     // converter = WeightToConverter.class
-                                    val converter = line.substringAfter("converter = ").substringBefore(")")
+                                    val converter =
+                                        line.substringAfter("converter = ").substringBefore(")")
                                     //comment = "（根据设置的属性数量来增加内容，规格按照顺序来）"
                                     val comment = if (line.contains("comment = \"")) {
                                         line.substringAfter("comment = \"").substringBefore("\"")
@@ -195,7 +204,8 @@ object CoreProjectTasks {
 
                             if (codes.isNotEmpty()) {
                                 project.logger.lifecycle("======================================")
-                                var code = "private final ExcelField<$className, ?>[] excelFields = ArrayUtil.of(\n"
+                                var code =
+                                    "private final ExcelField<$className, ?>[] excelFields = ArrayUtil.of(\n"
                                 codes.keys.sorted().forEach { c ->
                                     code += codes[c] + "\n"
                                 }
@@ -229,7 +239,8 @@ object CoreProjectTasks {
                         gen.generators = arrayOf(DicCodeProperties())
                         Generators.callInAllModule(gen)
                         //生成
-                        DicCodeGen(project).run()
+                        val packageName = gen.packageName
+                        DicCodeGen(project, packageName).run()
                     }
                 })
             }
@@ -241,9 +252,11 @@ object CoreProjectTasks {
                         val file = project.rootProject.file("conf/auth.json")
                         val map = StringUtil.readJsonTree(file.readText())
                         project.logger.lifecycle("======================================")
-                        project.logger.lifecycle("#auth\n" +
-                                "auth=权限\n" +
-                                "auth|TYPE=String")
+                        project.logger.lifecycle(
+                            "#auth\n" +
+                                    "auth=权限\n" +
+                                    "auth|TYPE=String"
+                        )
                         map.forEach { node ->
                             printNode(project, node)
                         }
@@ -263,8 +276,8 @@ object CoreProjectTasks {
                         if (file.exists()) {
                             val gen = project.extensions.getByType(GeneratorExtension::class.java)
                             val clazz = TopLevelClass(
-                                    type = JavaType("${gen.packageName}.support.ErrorCode"),
-                                    overwrite = true
+                                type = JavaType("${gen.packageName}.support.ErrorCode"),
+                                overwrite = true
                             )
 
                             val properties = Properties()
@@ -279,11 +292,11 @@ object CoreProjectTasks {
                                 }
                                 properties.forEach { k, v ->
                                     field(
-                                            "CODE_$k",
-                                            JavaType.stringInstance,
-                                            "\"$k\"",
-                                            true,
-                                            JavaVisibility.PUBLIC
+                                        "CODE_$k",
+                                        JavaType.stringInstance,
+                                        "\"$k\"",
+                                        true,
+                                        JavaVisibility.PUBLIC
                                     ) {
                                         isStatic = true
                                         javadoc {
@@ -338,8 +351,10 @@ object CoreProjectTasks {
 
     private fun genCode(project: Project, code: String, name: String) {
         val directory = try {
-            project.rootProject.project(project.findProperty("app.authProject")?.toString()
-                    ?: "admin").projectDir
+            project.rootProject.project(
+                project.findProperty("app.authProject")?.toString()
+                    ?: "admin"
+            ).projectDir
         } catch (e: UnknownProjectException) {
             try {
                 project.rootProject.project("app").projectDir
@@ -348,19 +363,19 @@ object CoreProjectTasks {
             }
         }
         val authName =
-                PinyinHelper.convertToPinyinString(
-                        name,
-                        "_",
-                        PinyinFormat.WITHOUT_TONE
-                ).split('_').joinToString("") {
-                    it.capitalized()
-                }
+            PinyinHelper.convertToPinyinString(
+                name,
+                "_",
+                PinyinFormat.WITHOUT_TONE
+            ).split('_').joinToString("") {
+                it.capitalized()
+            }
 
         val authClassName = "Auth${authName}"
         val packageName = project.rootProject.property("app.packageName") as String
         Interface(
-                type = JavaType("$packageName.security.auth.$authClassName"),
-                overwrite = true
+            type = JavaType("$packageName.security.auth.$authClassName"),
+            overwrite = true
         ).apply {
             isAnnotation = true
             javadoc {
@@ -378,15 +393,16 @@ object CoreProjectTasks {
             annotation("@java.lang.annotation.Inherited")
             annotation("@java.lang.annotation.Documented")
 
-            val codeFieldName = (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
-            ) {
-                "CODE_${code.replace("-", "MINUS_")}"
-            } else if (code.isBlank()) {
-                "BLANK"
-            } else {
-                code.replace("-", "_").replace(".", "_").toUnderscore()
-            }
-                    ).replace(Regex("_+"), "_")
+            val codeFieldName =
+                (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
+                ) {
+                    "CODE_${code.replace("-", "MINUS_")}"
+                } else if (code.isBlank()) {
+                    "BLANK"
+                } else {
+                    code.replace("-", "_").replace(".", "_").toUnderscore()
+                }
+                        ).replace(Regex("_+"), "_")
 
             import("$packageName.support.dic.AuthEnum.AuthConst")
             annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(AuthConst.$codeFieldName)")
@@ -400,7 +416,9 @@ object CoreProjectTasks {
             val readName = lines[i + 1].trim()
             //如果符合private String commoTyName;返回，如果不符合继续查找
             if (readName.startsWith("private ")) {
-                "get${readName.replace("private \\S* (.*?);.*".toRegex(), "$1").trim().capitalized()}"
+                "get${
+                    readName.replace("private \\S* (.*?);.*".toRegex(), "$1").trim().capitalized()
+                }"
             } else if (readName.startsWith("public ")) {
                 //public String getBrandName()
                 readName.replace("public \\S*? (.*?)\\(.*".toRegex(), "$1").trim()
