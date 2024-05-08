@@ -326,7 +326,7 @@ class RequestLoggingFilter(
                     || log.isTraceEnabled
                     || properties.isForceRecord
                     || (error != null && !isClientAbortException(error))
-                    || (!try {
+                    || (try {
                 HttpStatus.valueOf(httpStatusCode)
             } catch (e: Exception) {
                 HttpStatus.OK
