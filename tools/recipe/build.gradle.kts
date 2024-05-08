@@ -20,6 +20,7 @@ dependencies {
 
 tasks{
     test {
+        file("build/native").mkdirs()
         environment("LD_LIBRARY_PATH", file("build/native").absolutePath)
     }
 }
