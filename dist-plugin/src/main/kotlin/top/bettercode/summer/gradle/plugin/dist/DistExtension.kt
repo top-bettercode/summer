@@ -57,13 +57,10 @@ open class DistExtension(
 
     val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
 
-    fun defaultNativePath(project: Project): String =
-        project.file("build" + File.separator + "native").absolutePath
-
     private val isWindows: Boolean = Os.isFamily(Os.FAMILY_WINDOWS)
 
     fun nativePath(project: Project): String {
-        var libArgs = defaultNativePath(project)
+        var libArgs = project.file("build${File.separator}native").absolutePath
 
         if (project.file(nativePath).exists()) {
             val pathSeparator: String = if (isWindows) {
@@ -82,16 +79,12 @@ open class DistExtension(
     }
 
     fun startScriptNativeLibArgs(project: Project, windows: Boolean): String {
-        var libArgs = "-Djava.library.path=${defaultNativePath(project)}"
+        var libArgs =
+            "-Djava.library.path=${if (windows) "%APP_HOME%\\build\\native" else "\$APP_HOME/build/native"}"
 
         if (project.file(nativePath).exists()) {
-            val pathSeparator: String = if (windows) {
-                ";"
-            } else {
-                ":"
-            }
-            libArgs += pathSeparator + if (windows)
-                "%APP_HOME%\\native"
+            libArgs += if (windows)
+                ";%APP_HOME%\\native"
             else
                 ":\$APP_HOME/native"
         }
@@ -99,8 +92,8 @@ open class DistExtension(
         return libArgs
     }
 
-    fun ldLibraryPath(project: Project): String {
-        var ldLibraryPath = defaultNativePath(project)
+    fun linuxLDLibraryPath(project: Project): String {
+        var ldLibraryPath = "\\\$APP_HOME/build/native"
 
         if (project.file(nativePath).exists()) {
             val pathSeparator = ":"

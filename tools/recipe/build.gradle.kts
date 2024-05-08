@@ -18,3 +18,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }
 
+tasks{
+    test {
+        environment("LD_LIBRARY_PATH", file("build/native").absolutePath)
+    }
+}

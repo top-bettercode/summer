@@ -138,7 +138,7 @@ class TemplateBasedStartScriptGenerator(
             if (includeNative) {
                 text = StringBuilder(text).insert(
                         text.indexOf("# Use the maximum available") - 1,
-                        "\nexport LD_LIBRARY_PATH=\\\$LD_LIBRARY_PATH:${dist.ldLibraryPath(project)}\n"
+                        "\nexport LD_LIBRARY_PATH=\\\$LD_LIBRARY_PATH:${dist.linuxLDLibraryPath(project)}\n"
                 ).toString()
             }
         }
