@@ -10,28 +10,28 @@ import java.io.File
  * @author Peter Wu
  */
 open class DistExtension(
-        var windows: Boolean = false,
-        var unwrapResources: Boolean = true,
-        var autoStart: Boolean = true,
-        var urandom: Boolean = false,
-        /**
-         * 运行用户
-         */
-        var runUser: String = "",
-        var jvmArgs: List<String> = listOf(),
-        var excludeUnWrapResources: List<String> = emptyList(),
-        /**
-         * 是否打包jdk
-         */
-        var includeJdk: Boolean = false,
-        /**
-         * 相对当前项目的路径
-         */
-        var nativePath: String = "native",
-        /**
-         * 老版本路径 用于生成更新包
-         */
-        var prevArchiveSrc: String = ""
+    var windows: Boolean = false,
+    var unwrapResources: Boolean = true,
+    var autoStart: Boolean = true,
+    var urandom: Boolean = false,
+    /**
+     * 运行用户
+     */
+    var runUser: String = "",
+    var jvmArgs: List<String> = listOf(),
+    var excludeUnWrapResources: List<String> = emptyList(),
+    /**
+     * 是否打包jdk
+     */
+    var includeJdk: Boolean = false,
+    /**
+     * 相对当前项目的路径
+     */
+    var nativePath: String = "native",
+    /**
+     * 老版本路径 用于生成更新包
+     */
+    var prevArchiveSrc: String = ""
 ) {
 
     var jdkArchiveSrc: String = ""
@@ -57,15 +57,13 @@ open class DistExtension(
 
     val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
 
-    fun includeNative(project: Project): Boolean {
-        return project.file(nativePath).exists()
-    }
+    fun defaultNativePath(project: Project): String =
+        project.file("build" + File.separator + "native").absolutePath
 
     private val isWindows: Boolean = Os.isFamily(Os.FAMILY_WINDOWS)
 
-
     fun nativePath(project: Project): String {
-        var libArgs = ""
+        var libArgs = defaultNativePath(project)
 
         if (project.file(nativePath).exists()) {
             val pathSeparator: String = if (isWindows) {
@@ -84,7 +82,7 @@ open class DistExtension(
     }
 
     fun startScriptNativeLibArgs(project: Project, windows: Boolean): String {
-        var libArgs = "-Djava.library.path="
+        var libArgs = "-Djava.library.path=${defaultNativePath(project)}"
 
         if (project.file(nativePath).exists()) {
             val pathSeparator: String = if (windows) {
@@ -102,7 +100,7 @@ open class DistExtension(
     }
 
     fun ldLibraryPath(project: Project): String {
-        var ldLibraryPath = ""
+        var ldLibraryPath = defaultNativePath(project)
 
         if (project.file(nativePath).exists()) {
             val pathSeparator = ":"
@@ -122,15 +120,14 @@ open class DistExtension(
         if (project.extensions.findByName("profile") != null) {
             jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
         }
-        if (includeNative(project))
-            jvmArgs += nativeLibArgs(project)
+        jvmArgs += nativeLibArgs(project)
         return jvmArgs
     }
 
     companion object {
         fun Project.findDistProperty(key: String) =
-                (findProperty("dist.${name}.$key") as String?
-                        ?: findProperty("dist.$key") as String?)
+            (findProperty("dist.${name}.$key") as String?
+                ?: findProperty("dist.$key") as String?)
 
 
     }

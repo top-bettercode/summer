@@ -20,8 +20,9 @@ object COPTNativeLibLoader {
     @Synchronized
     fun loadNativeLib() {
         val version = bundle.getString("version")
-        val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File("$tmpPath${File.separator}summer-copt-$version")
+        val tmpPath =
+            System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
+        val targetFolder = File(tmpPath)
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }

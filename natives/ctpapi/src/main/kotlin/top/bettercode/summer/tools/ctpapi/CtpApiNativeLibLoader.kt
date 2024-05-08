@@ -24,14 +24,25 @@ object CtpApiNativeLibLoader {
     @Synchronized
     @JvmStatic
     fun loadNativeLib() {
-        val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File("$tmpPath${File.separator}summer-ctp-$version")
+        val tmpPath =
+            System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
+        val targetFolder = File(tmpPath)
+
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }
         val libraryNames = when {
-            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("win64/thostmduserapi_se.dll", "win64/thosttraderapi_se.dll", "win64/thostapi_wrap.dll")
-            else -> arrayOf("linux64/libthostmduserapi_se.so", "linux64/libthosttraderapi_se.so", "linux64/libthostapi_wrap.so")
+            Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf(
+                "win64/thostmduserapi_se.dll",
+                "win64/thosttraderapi_se.dll",
+                "win64/thostapi_wrap.dll"
+            )
+
+            else -> arrayOf(
+                "linux64/libthostmduserapi_se.so",
+                "linux64/libthosttraderapi_se.so",
+                "linux64/libthostapi_wrap.so"
+            )
         }
 
         for (libraryName in libraryNames) {
@@ -40,8 +51,10 @@ object CtpApiNativeLibLoader {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
-            Files.copy(CtpApiNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                    targetFile.toPath())
+            Files.copy(
+                CtpApiNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+                targetFile.toPath()
+            )
         }
         when {
             Os.isFamily(Os.FAMILY_WINDOWS) -> {
