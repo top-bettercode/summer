@@ -22,7 +22,7 @@ object SapNativeLibLoader {
     fun loadNativeLib() {
         val version = bundle.getString("version")
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File("$tmpPath${File.separator}summer${File.separator}native${File.separator}sap${File.separator}$version")
+        val targetFolder = File("$tmpPath${File.separator}summer-sap-$version")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }

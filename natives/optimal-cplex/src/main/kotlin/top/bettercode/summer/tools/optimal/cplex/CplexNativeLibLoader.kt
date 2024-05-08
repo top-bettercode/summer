@@ -21,7 +21,7 @@ object CplexNativeLibLoader {
     fun loadNativeLib() {
         val version = bundle.getString("version")
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File("$tmpPath${File.separator}summer${File.separator}native${File.separator}optimal${File.separator}cplex${File.separator}$version")
+        val targetFolder = File("$tmpPath${File.separator}summer-cplex-$version")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }

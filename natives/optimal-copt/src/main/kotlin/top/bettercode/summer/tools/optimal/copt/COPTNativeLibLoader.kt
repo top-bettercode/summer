@@ -21,15 +21,23 @@ object COPTNativeLibLoader {
     fun loadNativeLib() {
         val version = bundle.getString("version")
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File("$tmpPath${File.separator}summer${File.separator}native${File.separator}optimal${File.separator}copt${File.separator}$version")
+        val targetFolder = File("$tmpPath${File.separator}summer-copt-$version")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }
         val libraryNames = when {
-            Os.isFamily(Os.FAMILY_MAC) -> arrayOf("macos_universal2/libcopt_cpp.dylib", "macos_universal2/libcoptjniwrap.dylib")
+            Os.isFamily(Os.FAMILY_MAC) -> arrayOf(
+                "macos_universal2/libcopt_cpp.dylib",
+                "macos_universal2/libcoptjniwrap.dylib"
+            )
+
             Os.isFamily(Os.FAMILY_WINDOWS) -> arrayOf("win64/copt_cpp.dll", "win64/coptjniwrap.dll")
             //判断是否是 arm64 架构
-            Os.OS_ARCH.contains("arm64") -> arrayOf("armlinux64/libcopt_cpp.so", "armlinux64/libcoptjniwrap.so")
+            Os.OS_ARCH.contains("arm64") -> arrayOf(
+                "armlinux64/libcopt_cpp.so",
+                "armlinux64/libcoptjniwrap.so"
+            )
+
             else -> arrayOf("linux64/libcopt_cpp.so", "linux64/libcoptjniwrap.so")
         }
 
@@ -39,8 +47,10 @@ object COPTNativeLibLoader {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
-            Files.copy(COPTNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                    targetFile.toPath())
+            Files.copy(
+                COPTNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+                targetFile.toPath()
+            )
         }
         when {
             Os.isFamily(Os.FAMILY_MAC) -> {

@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test
  *
  * @author Peter Wu
  */
-class CtpApiativeLibLoaderTest {
+class CtpApiNativeLibLoaderTest {
 
     @Test
     fun loadNativeLib() {
-        CtpApiativeLibLoader.loadNativeLib()
+        CtpApiNativeLibLoader.loadNativeLib()
     }
 }

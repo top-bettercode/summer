@@ -13,10 +13,10 @@ import java.nio.file.Files
  *
  * native library loader.
  */
-object CtpApiativeLibLoader {
-    private val log = LoggerFactory.getLogger(CtpApiativeLibLoader::class.java)
+object CtpApiNativeLibLoader {
+    private val log = LoggerFactory.getLogger(CtpApiNativeLibLoader::class.java)
     private const val LIB_NAME = "CTP"
-    private val version = CtpApiativeLibLoader::class.java.`package`.implementationVersion
+    private val version = CtpApiNativeLibLoader::class.java.`package`.implementationVersion
 
     /**
      * Load native library in the user.dir folder.
@@ -25,7 +25,7 @@ object CtpApiativeLibLoader {
     @JvmStatic
     fun loadNativeLib() {
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val targetFolder = File("$tmpPath${File.separator}summer${File.separator}native${File.separator}ctp${File.separator}$version")
+        val targetFolder = File("$tmpPath${File.separator}summer-ctp-$version")
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }
@@ -40,7 +40,7 @@ object CtpApiativeLibLoader {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
-            Files.copy(CtpApiativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+            Files.copy(CtpApiNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
                     targetFile.toPath())
         }
         when {
