@@ -40,7 +40,7 @@ object RecipeSolver {
                 // 求解
                 solve()
                 val e = System.currentTimeMillis()
-                log.info("${requirement.productName}求解耗时：" + (e - s) + "ms")
+                log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
 
                 if (isOptimal()) {
                     return prepareData.toRecipe(requirement, includeProductionCost)

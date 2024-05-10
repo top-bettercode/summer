@@ -13,12 +13,13 @@ object MultiRecipeSolver {
 
     private val log: Logger = LoggerFactory.getLogger(MultiRecipeSolver::class.java)
 
-    fun solve(solver: Solver,
-              requirement: RecipeRequirement,
-              maxResult: Int = 1,
-              materialUnchanged: Boolean = true,
-              nutrientUnchanged: Boolean = true,
-              includeProductionCost: Boolean = true
+    fun solve(
+        solver: Solver,
+        requirement: RecipeRequirement,
+        maxResult: Int = 1,
+        materialUnchanged: Boolean = true,
+        nutrientUnchanged: Boolean = true,
+        includeProductionCost: Boolean = true
     ): RecipeResult {
         solver.use { so ->
             so.apply {
@@ -27,7 +28,8 @@ object MultiRecipeSolver {
                 var e = System.currentTimeMillis()
                 val recipeResult = RecipeResult(name)
                 while ((e - s) / 1000 < requirement.timeout
-                        && recipeResult.recipes.size < maxResult) {
+                    && recipeResult.recipes.size < maxResult
+                ) {
                     if (SolverType.COPT == so.type) {
                         val numVariables = numVariables()
                         val numConstraints = numConstraints()
@@ -45,7 +47,8 @@ object MultiRecipeSolver {
                         val first = recipeResult.recipes.isEmpty()
                         recipeResult.addRecipe(recipe)
                         if (first) {
-                            val useMaterials: Map<String, RecipeMaterialValue> = recipe.materials.associateBy { it.id }
+                            val useMaterials: Map<String, RecipeMaterialValue> =
+                                recipe.materials.associateBy { it.id }
                             // 后续配方原料不变
                             if (materialUnchanged) {
                                 recipeMaterials.forEach { (id, material) ->
@@ -76,12 +79,14 @@ object MultiRecipeSolver {
                         log.warn("Could not find optimal solution:${getResultStatus()}")
                         e = System.currentTimeMillis()
                         recipeResult.time = e - s
+                        log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
                         return recipeResult
                     }
                     e = System.currentTimeMillis()
                 }
                 e = System.currentTimeMillis()
                 recipeResult.time = e - s
+                log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
                 return recipeResult
             }
         }
