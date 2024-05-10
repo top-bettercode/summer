@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":natives:optimal"))
+    api(project(":tools:optimal"))
     api("com.google.ortools:ortools-java")
 
     testImplementation("org.slf4j:slf4j-simple")

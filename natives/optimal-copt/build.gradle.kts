@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":natives:optimal"))
+    api(project(":tools:optimal"))
     api(fileTree("libs"))
 
     testImplementation("org.slf4j:slf4j-simple")

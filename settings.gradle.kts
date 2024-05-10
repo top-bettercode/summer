@@ -26,6 +26,9 @@ include(":tools:tools")
 include(":tools:excel")
 include(":tools:ueditor")
 include(":tools:configuration-processor")
+include(":tools:optimal")
+include(":tools:optimal-gurobi")
+include(":tools:optimal-ortools")
 include(":tools:recipe")
 
 include(":clients:weixin")
@@ -39,11 +42,8 @@ include(":clients:amap")
 include(":clients:pay")
 
 include(":natives:sap")
-include(":natives:optimal")
 include(":natives:optimal-copt")
 include(":natives:optimal-cplex")
-include(":natives:optimal-gurobi")
-include(":natives:optimal-ortools")
 include(":natives:ctpapi")
 
 

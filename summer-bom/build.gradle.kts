@@ -100,6 +100,9 @@ dependencies {
         api(project(":tools:excel"))
         api(project(":tools:ueditor"))
         api(project(":tools:configuration-processor"))
+        api(project(":tools:optimal"))
+        api(project(":tools:optimal-gurobi"))
+        api(project(":tools:optimal-ortools"))
         api(project(":tools:recipe"))
 
         api(project(":clients:weixin"))
@@ -113,11 +116,8 @@ dependencies {
         api(project(":clients:pay"))
 
         api(project(":natives:sap"))
-        api(project(":natives:optimal"))
         api(project(":natives:optimal-copt"))
         api(project(":natives:optimal-cplex"))
-        api(project(":natives:optimal-gurobi"))
-        api(project(":natives:optimal-ortools"))
 //        api(project(":natives:ctpapi"))
 
     }

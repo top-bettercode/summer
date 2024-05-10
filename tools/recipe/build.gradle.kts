@@ -3,14 +3,14 @@ plugins {
 }
 
 dependencies {
-    api(project(":natives:optimal"))
+    api(project(":tools:optimal"))
 
     compileOnly(project(":tools:excel"))
 
     testImplementation(project(":natives:optimal-copt"))
     testImplementation(project(":natives:optimal-cplex"))
-    testImplementation(project(":natives:optimal-gurobi"))
-    testImplementation(project(":natives:optimal-ortools"))
+    testImplementation(project(":tools:optimal-gurobi"))
+    testImplementation(project(":tools:optimal-ortools"))
 
     testImplementation(project(":tools:excel"))
     testImplementation("org.dhatim:fastexcel-reader")
