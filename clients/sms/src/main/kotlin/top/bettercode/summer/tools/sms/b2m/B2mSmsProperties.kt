@@ -19,6 +19,11 @@ open class B2mSmsProperties {
     var isMock = false
 
     /**
+     * 系统启动检查余额
+     */
+    var checkBalance = true
+
+    /**
      * 请求超时超过多少秒报警，-1表示不报警，默认-1.
      */
     var timeoutAlarmSeconds = -1

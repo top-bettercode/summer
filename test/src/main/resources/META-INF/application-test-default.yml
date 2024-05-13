@@ -13,6 +13,9 @@ summer:
     enabled: false
   async:
     enabled: false
+  sms:
+    b2m:
+      check-balance: false
 
 
 

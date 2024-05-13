@@ -31,9 +31,11 @@ class B2mSmsConfiguration {
     fun b2mTemplate(b2mProperties: B2mSmsProperties): B2mSmsTemplate {
         val b2mSmsTemplate = B2mSmsTemplate(b2mProperties)
         try {
-            b2mSmsTemplate.checkBalance()
-            WatchdogUtil.schedule {
+            if (b2mProperties.checkBalance) {
                 b2mSmsTemplate.checkBalance()
+                WatchdogUtil.schedule {
+                    b2mSmsTemplate.checkBalance()
+                }
             }
         } catch (e: Exception) {
             log.error("check b2m sms balance error", e)
