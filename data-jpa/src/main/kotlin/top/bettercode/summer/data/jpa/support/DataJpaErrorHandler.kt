@@ -37,12 +37,12 @@ class DataJpaErrorHandler(
                     if (message.matches(regex.toRegex())) {
                         val field = message.replace(regex.toRegex(), "$1")
                         val maxLeng = message.replace(regex.toRegex(), "$2")
-                        respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
+                        respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
                         respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                     } else if (message.matches(regex1.toRegex())) {
                         val field = message.replace(regex1.toRegex(), "$1")
                         val maxLeng = message.replace(regex1.toRegex(), "$2")
-                        respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
+                        respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
                         respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                     } else if (message.contains("ORA-01461:")) {
                         respEntity.message = getText("data.too.long", "数据")

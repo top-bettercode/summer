@@ -11,21 +11,21 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 class ApiSecurityErrorHandler(
-        messageSource: MessageSource,
-        request: HttpServletRequest?
+    messageSource: MessageSource,
+    request: HttpServletRequest?
 ) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(
-            error: Throwable, respEntity: RespEntity<*>,
-            errors: MutableMap<String?, String?>, separator: String
+        error: Throwable, respEntity: RespEntity<*>,
+        errors: MutableMap<String?, String?>, separator: String
     ) {
         if (error is IllegalUserException) {
-            respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
+            respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
             val userErrors = error.errors
             if (!userErrors.isNullOrEmpty()) {
                 errors.putAll(userErrors)
             }
         } else if (error is BadCredentialsException) {
-            respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value())
+            respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
         }
     }
 }

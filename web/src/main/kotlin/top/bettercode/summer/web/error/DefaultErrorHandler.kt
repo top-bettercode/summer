@@ -101,7 +101,7 @@ class DefaultErrorHandler(
                 .supportedMediaTypes
         } else if (error is HttpMessageNotWritableException) {
             if (error.message != null && error.message!!.contains("Session is closed")) {
-                respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value())
+                respEntity.httpStatusCode = HttpStatus.REQUEST_TIMEOUT.value()
                 respEntity.message = "request.timeout"
             }
         } else if (error is UnsatisfiedServletRequestParameterException) {

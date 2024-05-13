@@ -45,11 +45,6 @@ class RespEntity<T> : IRespEntity, Serializable {
         this.data = data
     }
 
-    fun setHttpStatusCode(httpStatusCode: Int) {
-        this.httpStatusCode = httpStatusCode
-        status = httpStatusCode.toString()
-    }
-
     @get:JsonIgnore
     val isOk: Boolean
         //--------------------------------------------

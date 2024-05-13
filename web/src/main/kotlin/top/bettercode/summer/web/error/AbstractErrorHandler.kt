@@ -14,12 +14,16 @@ import javax.validation.ConstraintViolationException
 /**
  * @author Peter Wu
  */
-abstract class AbstractErrorHandler(private val messageSource: MessageSource,
-                                    private val request: HttpServletRequest?) : IErrorHandler {
+abstract class AbstractErrorHandler(
+    private val messageSource: MessageSource,
+    private val request: HttpServletRequest?
+) : IErrorHandler {
     override fun getText(code: Any, vararg args: Any?): String {
         val codeString = code.toString()
-        return messageSource.getMessage(codeString, args, codeString,
-                if (request == null) Locale.CHINA else request.locale) ?: ""
+        return messageSource.getMessage(
+            codeString, args, codeString,
+            if (request == null) Locale.CHINA else request.locale
+        ) ?: ""
     }
 
     fun getProperty(constraintViolation: ConstraintViolation<*>): String {
@@ -34,17 +38,20 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
         return property
     }
 
-    protected fun constraintViolationException(error: ConstraintViolationException,
-                                               respEntity: RespEntity<*>, errors: MutableMap<String?, String?>,
-                                               separator: String) {
-        respEntity.setHttpStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
+    protected fun constraintViolationException(
+        error: ConstraintViolationException,
+        respEntity: RespEntity<*>, errors: MutableMap<String?, String?>,
+        separator: String
+    ) {
+        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
         val constraintViolations = error.constraintViolations
         for (constraintViolation in constraintViolations) {
             val property = getProperty(constraintViolation)
             val invalidValue = constraintViolation.invalidValue
             val invalidValueDesc = invalidValue(invalidValue)
             val msg: String = if (constraintViolation.constraintDescriptor.payload
-                            .contains(NoPropertyPath::class.java)) {
+                    .contains(NoPropertyPath::class.java)
+            ) {
                 invalidValueDesc + getText((constraintViolation.message ?: "data.valid.failed"))
             } else {
                 getText(property) + separator + invalidValueDesc + getText(constraintViolation.message)
@@ -60,9 +67,10 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
 
     protected fun invalidValue(invalidValue: Any?): String {
         return if (invalidValue == null
-                || (invalidValue is String && invalidValue.isBlank())
-                || (invalidValue is Array<*> && invalidValue.isEmpty())
-                || (invalidValue is Collection<*> && invalidValue.isEmpty())) {
+            || (invalidValue is String && invalidValue.isBlank())
+            || (invalidValue is Array<*> && invalidValue.isEmpty())
+            || (invalidValue is Collection<*> && invalidValue.isEmpty())
+        ) {
             ""
         } else "[${StringUtil.subStringWithEllipsis("$invalidValue", 20)}]"
     }
