@@ -45,47 +45,46 @@ class DataErrorHandler(
             val incorrectRegex =
                 "^Data truncation: Incorrect .* value: '(.*?)' for column '(.*?)' at.*"
             if (specificCauseMessage.matches(notNullRegex.toRegex())) {
-                val columnName = getText(
-                    specificCauseMessage.replace(notNullRegex.toRegex(), "$1")
-                )
+                val columnName = specificCauseMessage.replace(notNullRegex.toRegex(), "$1")
                 respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = getText("notnull", columnName)
+                respEntity.message = getText("notnull", getText(columnName))
+                errors[columnName] = respEntity.message
             } else if (specificCauseMessage.matches(notNullRegex1.toRegex())) {
-                val columnName = getText(
-                    specificCauseMessage.replace(notNullRegex1.toRegex(), "$1")
-                )
+                val columnName = specificCauseMessage.replace(notNullRegex1.toRegex(), "$1")
                 respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = getText("notnull", columnName)
+                respEntity.message = getText("notnull", getText(columnName))
+                errors[columnName] = respEntity.message
             } else if (specificCauseMessage.matches(duplicateRegex.toRegex())) {
-                val columnName = getText(
+                val columnName =
                     specificCauseMessage.replace(duplicateRegex.toRegex(), "$1")
-                )
-                var message = getText("duplicate.entry", columnName)
+
+                var message = getText("duplicate.entry", getText(columnName))
                 if (message.isBlank()) {
                     message = "data.valid.failed"
                 }
                 respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
                 respEntity.message = message
+                errors[columnName] = respEntity.message
             } else if (specificCauseMessage.matches(dataTooLongRegex.toRegex())) {
-                val columnName = getText(
+                val columnName =
                     specificCauseMessage.replace(dataTooLongRegex.toRegex(), "$1")
-                )
-                var message = getText("data.too.long", columnName)
+
+                var message = getText("data.too.long", getText(columnName))
                 if (message.isBlank()) {
                     message = "data.valid.failed"
                 }
                 respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
                 respEntity.message = message
+                errors[columnName] = respEntity.message
             } else if (specificCauseMessage.matches(outOfRangeRegex.toRegex())) {
-                val columnName = getText(
-                    specificCauseMessage.replace(outOfRangeRegex.toRegex(), "$1")
-                )
-                var message = getText("data Out of range", columnName)
+                val columnName = specificCauseMessage.replace(outOfRangeRegex.toRegex(), "$1")
+                var message = getText("data Out of range", getText(columnName))
                 if (message.isBlank()) {
                     message = "data.valid.failed"
                 }
                 respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
                 respEntity.message = message
+                errors[columnName] = respEntity.message
             } else if (specificCauseMessage.startsWith(constraintSubfix)) {
                 var message = "cannot.delete.update.parent"
                 if (message.isBlank()) {
@@ -94,10 +93,10 @@ class DataErrorHandler(
                 respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
                 respEntity.message = message
             } else if (specificCauseMessage.matches(incorrectRegex.toRegex())) {
-                val columnName =
-                    getText(specificCauseMessage.replace(incorrectRegex.toRegex(), "$2"))
+                val columnName = specificCauseMessage.replace(incorrectRegex.toRegex(), "$2")
                 respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = columnName + getText("incorrectFormatting")
+                respEntity.message = getText(columnName) + getText("incorrectFormatting")
+                errors[columnName] = respEntity.message
             } else {
                 respEntity.message = "Data Integrity Violation Exception"
             }
@@ -119,12 +118,14 @@ class DataErrorHandler(
                 respEntity.message =
                     getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                 respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
+                errors[field] = respEntity.message
             } else if (detailMessage.matches(regex1.toRegex())) {
                 val field = detailMessage.replace(regex1.toRegex(), "$1")
                 val maxLeng = detailMessage.replace(regex1.toRegex(), "$2")
                 respEntity.message =
                     getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
                 respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
+                errors[field] = respEntity.message
             } else {
                 respEntity.message = "UncategorizedSQL"
             }

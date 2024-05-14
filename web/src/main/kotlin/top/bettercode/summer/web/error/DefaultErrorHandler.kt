@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.multipart.MultipartException
@@ -37,7 +38,16 @@ class DefaultErrorHandler(
             val regex = "Parameter specified as non-null is null: .*parameter (.*)"
             if (error.message?.matches(regex.toRegex()) == true) {
                 val paramName = error.message!!.replace(regex.toRegex(), "$1")
-                respEntity.message = getText(paramName) + getText("canTBeEmpty")
+                respEntity.message = "${getText(paramName)}${getText("canTBeEmpty")}"
+                errors[paramName] = respEntity.message
+            }
+        } else if (error is MissingServletRequestParameterException) {
+            val regex =
+                "Required request parameter '(.*)' for method parameter type .* is not present"
+            if (error.message?.matches(regex.toRegex()) == true) {
+                val paramName = error.message!!.replace(regex.toRegex(), "$1")
+                respEntity.message = "${getText(paramName)}${getText("canTBeEmpty")}"
+                errors[paramName] = respEntity.message
             }
         } else if (error is HttpRequestMethodNotSupportedException) {
             respEntity.message = "method.not.allowed"

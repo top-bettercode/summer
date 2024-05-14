@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 class DataJpaErrorHandler(
-        messageSource: MessageSource,
-        request: HttpServletRequest
+    messageSource: MessageSource,
+    request: HttpServletRequest
 ) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(
-            error: Throwable, respEntity: RespEntity<*>,
-            errors: MutableMap<String?, String?>, separator: String
+        error: Throwable, respEntity: RespEntity<*>,
+        errors: MutableMap<String?, String?>, separator: String
     ) {
         if (error is JpaSystemException) {
             var cause = error.cause
@@ -31,19 +31,25 @@ class DataJpaErrorHandler(
                 if (causeMessage != null) {
                     val message = causeMessage.trim { it <= ' ' }
                     //ORA-12899: 列 "YUNTUDEV"."PU_ASK_SEND_TMS"."FROM_ADDRESS" 的值太大 (实际值: 1421, 最大值: 600)
-                    val regex = ".*ORA-12899: .*\\..*\\.\"(.*?)\" 的值太大 \\(实际值: \\d+, 最大值: (\\d+)\\)"
+                    val regex =
+                        ".*ORA-12899: .*\\..*\\.\"(.*?)\" 的值太大 \\(实际值: \\d+, 最大值: (\\d+)\\)"
                     //ORA-12899: value too large for column "YUNTUDEV"."PU_DELIVERY_ORDER"."LICENSE" (actual: 47, maximum: 30)
-                    val regex1 = ".*ORA-12899: value too large for column .*\\..*\\.\"(.*?)\" \\(actual: \\d+, maximum: (\\d+)\\)"
+                    val regex1 =
+                        ".*ORA-12899: value too large for column .*\\..*\\.\"(.*?)\" \\(actual: \\d+, maximum: (\\d+)\\)"
                     if (message.matches(regex.toRegex())) {
                         val field = message.replace(regex.toRegex(), "$1")
                         val maxLeng = message.replace(regex.toRegex(), "$2")
                         respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
-                        respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
+                        respEntity.message =
+                            getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
+                        errors[field] = respEntity.message
                     } else if (message.matches(regex1.toRegex())) {
                         val field = message.replace(regex1.toRegex(), "$1")
                         val maxLeng = message.replace(regex1.toRegex(), "$2")
                         respEntity.httpStatusCode = HttpStatus.BAD_REQUEST.value()
-                        respEntity.message = getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
+                        respEntity.message =
+                            getText(field) + getText("theLengthCannotBeGreaterThan") + maxLeng
+                        errors[field] = respEntity.message
                     } else if (message.contains("ORA-01461:")) {
                         respEntity.message = getText("data.too.long", "数据")
                     } else {
