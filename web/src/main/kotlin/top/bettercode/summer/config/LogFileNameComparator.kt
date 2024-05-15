@@ -19,7 +19,7 @@ class LogFileNameComparator : Comparator<File> {
                         val name1 = o1.nameWithoutExtension.substringBefore("-")
                         val name2 = o2.nameWithoutExtension.substringBefore("-")
                         val compareTo1 = name1.compareTo(name2)
-                        if (compareTo1 != 0) {
+                        if (compareTo1 != 0 && (name1.toIntOrNull() == null || name2.toIntOrNull() == null)) {
                             compareTo1
                         } else {
                             val compareTo2 = o2.lastModified().compareTo(o1.lastModified())

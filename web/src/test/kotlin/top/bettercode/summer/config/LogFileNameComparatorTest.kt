@@ -13,9 +13,9 @@ class LogFileNameComparatorTest {
     fun comparator() {
         val listFiles =
                 arrayOf(
-                        "/alarm/2022-03-02-10:20:54.673-error-24760.log#last",
-                        "/alarm/2022-03-02-10:21:54.673-error-24760.log#last",
-                        "/alarm/2021-12-31-15:31:51.539-ERROR-21572.log#last",
+                        "2021-12-31-15:31:51.539-ERROR-21572.log#last",
+                        "2022-03-02-10:21:54.673-error-24760.log#last",
+                        "2022-03-02-10:20:54.673-error-24760.log#last",
                         "all.log-2022-03-02-2.gz",
                         "all.log-2022-03-02-3.gz",
                         "all.log-2022-03-02-4.gz",
