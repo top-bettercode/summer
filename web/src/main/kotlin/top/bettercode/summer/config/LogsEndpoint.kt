@@ -36,35 +36,35 @@ import kotlin.math.max
  */
 @Endpoint(id = "logs")
 class LogsEndpoint(
-        private val loggingFilesPath: String,
-        environment: Environment,
-        private val websocketProperties: WebsocketProperties,
-        private val response: HttpServletResponse,
-        webEndpointProperties: WebEndpointProperties,
-        managementServerProperties: ManagementServerProperties
+    private val loggingFilesPath: String,
+    environment: Environment,
+    private val websocketProperties: WebsocketProperties,
+    private val response: HttpServletResponse,
+    webEndpointProperties: WebEndpointProperties,
+    managementServerProperties: ManagementServerProperties
 ) {
 
     private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
-            "org.springframework.web.socket.server.standard.ServerEndpointExporter",
-            LogsEndpoint::class.java.classLoader
+        "org.springframework.web.socket.server.standard.ServerEndpointExporter",
+        LogsEndpoint::class.java.classLoader
     ) && ("true" == environment.getProperty("summer.logging.websocket.enabled") || environment.getProperty(
-            "summer.logging.websocket.enabled"
+        "summer.logging.websocket.enabled"
     ).isNullOrBlank())
     private val loggerContext: LoggerContext by lazy {
         val factory = LoggerFactory.getILoggerFactory()
         Assert.isInstanceOf(
-                LoggerContext::class.java, factory,
-                String.format(
-                        "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                                + "the classpath. Either remove Logback or the competing "
-                                + "implementation (%s loaded from %s). If you are using "
-                                + "WebLogic you will need to add 'org.slf4j' to "
-                                + "prefer-application-packages in WEB-INF/weblogic.xml",
-                        factory.javaClass, getLocation(factory)
-                )
+            LoggerContext::class.java, factory,
+            String.format(
+                "LoggerFactory is not a Logback LoggerContext but Logback is on "
+                        + "the classpath. Either remove Logback or the competing "
+                        + "implementation (%s loaded from %s). If you are using "
+                        + "WebLogic you will need to add 'org.slf4j' to "
+                        + "prefer-application-packages in WEB-INF/weblogic.xml",
+                factory.javaClass, getLocation(factory)
+            )
         )
         factory as LoggerContext
     }
@@ -85,11 +85,15 @@ class LogsEndpoint(
 
     @ReadOperation
     fun root() {
-        index(File(loggingFilesPath).listFiles(), true, "")
+        index(File(loggingFilesPath).listFiles(), true, "", true)
     }
 
     @ReadOperation
-    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String, @Nullable collapse: Boolean?, @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String?) {
+    fun path(
+        @Selector(match = Selector.Match.ALL_REMAINING) path: String,
+        @Nullable collapse: Boolean?,
+        @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String?
+    ) {
         val requestPath = path.replace(",", "/")
 
         if ("real-time" != path) {
@@ -101,24 +105,31 @@ class LogsEndpoint(
                 val dailyPath = paths.drop(index)
                 if (dailyPath.size == 1) {
                     val filenames =
-                            dir.listFiles()?.filter { file -> file.name.startsWith("all-") }
-                                    ?.map { it.nameWithoutExtension.replace(Regex("all-(\\d{4}-\\d{2}-\\d{2})-\\d+"), "$1") }?.toMutableSet()
-                                    ?: mutableSetOf()
+                        dir.listFiles()?.filter { file -> file.name.startsWith("all-") }
+                            ?.map {
+                                it.nameWithoutExtension.replace(
+                                    Regex("all-(\\d{4}-\\d{2}-\\d{2})-\\d+"),
+                                    "$1"
+                                )
+                            }?.toMutableSet()
+                            ?: mutableSetOf()
                     if (!filenames.contains(today)) {
                         filenames.add(today)
                     }
-                    index(filenames.map { File(it) }.toTypedArray(), false, requestPath)
+                    index(filenames.map { File(it) }.toTypedArray(), false, requestPath, false)
                 } else if (dailyPath.size == 2) {
                     var logPattern = dailyPath[1]
                     val html =
-                            if (logPattern.endsWith(".html")) {
-                                logPattern = logPattern.substringBeforeLast(".html")
-                                true
-                            } else false
+                        if (logPattern.endsWith(".html")) {
+                            logPattern = logPattern.substringBeforeLast(".html")
+                            true
+                        } else false
 
                     val matchCurrent = today.startsWith(logPattern)
                     val files =
-                            dir.listFiles()?.filter { file -> file.name.startsWith("all-$logPattern") || matchCurrent && file.name == "all.log" }?.toList()
+                        dir.listFiles()
+                            ?.filter { file -> file.name.startsWith("all-$logPattern") || matchCurrent && file.name == "all.log" }
+                            ?.toList()
 
                     if (!files.isNullOrEmpty()) {
                         files.sortedWith(compareBy { it.lastModified() })
@@ -127,27 +138,30 @@ class LogsEndpoint(
                             val logMsgs = mutableListOf<LogMsg>()
                             files.forEach { file ->
                                 logMsgs.addAll(
-                                        readLogMsgs(
-                                                file.inputStream(),
-                                                "gz" == file.extension
-                                        )
+                                    readLogMsgs(
+                                        file.inputStream(),
+                                        "gz" == file.extension
+                                    )
                                 )
                             }
                             showLogFile(logPattern, logMsgs, collapse)
                         } else {
                             val fileName = "$logPattern.log.gz"
                             val newFileName: String =
-                                    if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains("Edge"))) {
-                                        URLEncoder.encode(fileName, "UTF-8")
-                                    } else {
-                                        fileName
-                                    }
+                                if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
+                                        "Edge"
+                                    ))
+                                ) {
+                                    URLEncoder.encode(fileName, "UTF-8")
+                                } else {
+                                    fileName
+                                }
                             response.setHeader(
-                                    "Content-Disposition",
-                                    "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
-                                            fileName,
-                                            "UTF-8"
-                                    )
+                                "Content-Disposition",
+                                "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                                    fileName,
+                                    "UTF-8"
+                                )
                             )
                             response.contentType = "application/octet-stream; charset=utf-8"
                             response.setHeader("Pragma", "No-cache")
@@ -157,12 +171,12 @@ class LogsEndpoint(
                             GZIPOutputStream(response.outputStream).buffered().use { bos ->
                                 files.forEach { file ->
                                     bos.write(
-                                            if ("gz".equals(
-                                                            file.extension,
-                                                            true
-                                                    )
-                                            ) GZIPInputStream(file.inputStream()).readBytes() else file.inputStream()
-                                                    .readBytes()
+                                        if ("gz".equals(
+                                                file.extension,
+                                                true
+                                            )
+                                        ) GZIPInputStream(file.inputStream()).readBytes() else file.inputStream()
+                                            .readBytes()
                                     )
                                 }
                             }
@@ -184,17 +198,20 @@ class LogsEndpoint(
                         if ("json" == extension) {
                             val fileName = file.name
                             val newFileName: String =
-                                    if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains("Edge"))) {
-                                        URLEncoder.encode(fileName, "UTF-8")
-                                    } else {
-                                        fileName
-                                    }
+                                if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
+                                        "Edge"
+                                    ))
+                                ) {
+                                    URLEncoder.encode(fileName, "UTF-8")
+                                } else {
+                                    fileName
+                                }
                             response.setHeader(
-                                    "Content-Disposition",
-                                    "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
-                                            fileName,
-                                            "UTF-8"
-                                    )
+                                "Content-Disposition",
+                                "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                                    fileName,
+                                    "UTF-8"
+                                )
                             )
                             response.contentType = "application/octet-stream; charset=utf-8"
                             response.setHeader("Pragma", "No-cache")
@@ -209,7 +226,7 @@ class LogsEndpoint(
                         }
                     }
                 } else {
-                    index(file.listFiles(), false, requestPath)
+                    index(file.listFiles(), false, requestPath, true)
                 }
             }
         } else {
@@ -227,7 +244,7 @@ class LogsEndpoint(
                     writer.println(prettyMessageHTMLLayout.getLogsHeader())
                     writer.println(prettyMessageHTMLLayout.presentationFooter)
                     writer.println(
-                            """
+                        """
 <script type="text/javascript">
   
 
@@ -346,14 +363,19 @@ class LogsEndpoint(
                 val size = logMsgs.size
                 logMsgs.forEachIndexed { index, it ->
                     writer.appendLine(
-                            prettyMessageHTMLLayout.doLayout(it.msg, it.level, collapse, index == size - 1)
+                        prettyMessageHTMLLayout.doLayout(
+                            it.msg,
+                            it.level,
+                            collapse,
+                            index == size - 1
+                        )
                     )
                 }
             }
 
             writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
             writer.appendLine(
-                    """
+                """
 <script type="text/javascript">
     if(!location.hash){
         window.location.href = '#last';
@@ -367,9 +389,10 @@ class LogsEndpoint(
 
 
     private fun index(
-            files: Array<File>?,
-            root: Boolean,
-            requestPath: String
+        files: Array<File>?,
+        root: Boolean,
+        requestPath: String,
+        filterEmpty: Boolean
     ) {
         if (!files.isNullOrEmpty()) {
             val path = if (root) basePath else "$basePath/$requestPath"
@@ -381,7 +404,7 @@ class LogsEndpoint(
                 var dir = requestPath
                 dir = if (dir.startsWith("/")) dir else "/$dir"
                 writer.println(
-                        """
+                    """
 <html>
 <head><title>Index of $dir</title></head>
 <body>"""
@@ -391,40 +414,47 @@ class LogsEndpoint(
                 val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
                 if (!root)
-                    writer.println("<a href=\"$basePath/${requestPath.substringBeforeLast("/", "")}\">../</a>")
+                    writer.println(
+                        "<a href=\"$basePath/${
+                            requestPath.substringBeforeLast(
+                                "/",
+                                ""
+                            )
+                        }\">../</a>"
+                    )
                 else {
                     if (useWebSocket) {
                         writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$basePath/real-time\">实时日志/</a>                                        ${
-                                    TimeUtil.now().format(dateTimeFormatter)
-                                }       -"
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$basePath/real-time\">实时日志/</a>                                        ${
+                                TimeUtil.now().format(dateTimeFormatter)
+                            }       -"
                         )
                     }
                 }
                 val hasAll = files.any { it.name.startsWith("all-") || it.name == "all.log" }
                 if (hasAll)
                     writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
-                                TimeUtil.now().format(dateTimeFormatter)
-                            }       -"
+                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
+                            TimeUtil.now().format(dateTimeFormatter)
+                        }       -"
                     )
 
                 files.sortWith(comparator)
-                files.filter { it.length() > 0 }.forEach {
+                files.filter { if (filterEmpty) it.length() > 0 else true }.forEach {
                     val millis = it.lastModified()
                     val lastModify =
-                            if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
+                        if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
                     if (it.isDirectory) {
                         writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
                         )
                     } else {
                         writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
-                                    prettyValue(
-                                            it.length()
-                                    )
-                                }"
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
+                                prettyValue(
+                                    it.length()
+                                )
+                            }"
                         )
                     }
                 }
@@ -462,10 +492,10 @@ class LogsEndpoint(
             var newScale = index - 2
             newScale = max(newScale, 0)
             val result =
-                    if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
-                            BigDecimal(1024), RoundingMode.UP
-                    )
-                            .setScale(newScale, RoundingMode.UP).toString()
+                if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
+                    BigDecimal(1024), RoundingMode.UP
+                )
+                    .setScale(newScale, RoundingMode.UP).toString()
             return result.trimFractionTrailing() + units[index]
         }
     }
@@ -477,7 +507,7 @@ class LogsEndpoint(
             inputStream.bufferedReader().lines()
         }
         val regrex =
-                Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +.*")
+            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +.*")
 
         val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
