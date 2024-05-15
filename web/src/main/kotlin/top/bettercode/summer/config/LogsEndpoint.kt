@@ -100,7 +100,7 @@ class LogsEndpoint(
             val paths = path.split(",")
             if (paths.contains("daily")) {
                 val today = TimeUtil.now().format("yyyy-MM-dd")
-                val dir = File(loggingFilesPath, requestPath.substringBeforeLast("/daily"))
+                val dir = File(loggingFilesPath, requestPath.substringBeforeLast("daily"))
                 val index = paths.indexOf("daily")
                 val dailyPath = paths.drop(index)
                 if (dailyPath.size == 1) {
