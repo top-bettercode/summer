@@ -9,6 +9,7 @@ import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.bind.annotation.RequestMapping
@@ -310,6 +311,9 @@ class RequestLoggingFilter(
         httpStatusCode: Int,
         uri: String
     ): Boolean {
+        if (HttpMethod.OPTIONS.name == request.method) {
+            return false
+        }
         return if (handler != null) {
             handler::class.java.simpleName != "WebMvcEndpointHandlerMethod" && (!AnnotatedUtils.hasAnnotation(
                 handler,
@@ -331,7 +335,6 @@ class RequestLoggingFilter(
             } catch (e: Exception) {
                 HttpStatus.OK
             }.isError && (error == null || !isClientAbortException(error)))
-
         }
     }
 
