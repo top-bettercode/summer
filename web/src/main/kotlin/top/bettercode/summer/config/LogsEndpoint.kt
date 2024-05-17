@@ -37,7 +37,7 @@ import kotlin.math.max
 @Endpoint(id = "logs")
 class LogsEndpoint(
     private val loggingFilesPath: String,
-    environment: Environment,
+    env: Environment,
     private val websocketProperties: WebsocketProperties,
     private val response: HttpServletResponse,
     webEndpointProperties: WebEndpointProperties,
@@ -46,15 +46,12 @@ class LogsEndpoint(
 
     private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
-    private val appName: String =
-        "${environment.getProperty("spring.application.name") ?: "系统日志"} ${
-            environment.getProperty("summer.web.project-name") ?: ""
-        }"
+    private val appName: String = LoggingUtil.warnSubject(env)
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
         "org.springframework.web.socket.server.standard.ServerEndpointExporter",
         LogsEndpoint::class.java.classLoader
-    ) && ("true" == environment.getProperty("summer.logging.websocket.enabled") || environment.getProperty(
+    ) && ("true" == env.getProperty("summer.logging.websocket.enabled") || env.getProperty(
         "summer.logging.websocket.enabled"
     ).isNullOrBlank())
     private val loggerContext: LoggerContext by lazy {
