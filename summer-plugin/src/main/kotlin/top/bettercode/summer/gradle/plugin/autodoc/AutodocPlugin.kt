@@ -37,7 +37,7 @@ class AutodocPlugin : Plugin<Project> {
                 File(project.projectDir, path)
             autodocExtension.projectName = (findProperty(project, "project-name")
                 ?: project.findProperty("application.name") as String?
-                ?: "") + " ${project.name}接口文档"
+                ?: "") + "-${project.name}接口文档"
             autodocExtension.author = project.findProperty("autodoc.author") as String? ?: "autodoc"
             var version = project.findProperty("autodoc.version") as String?
             if (version.isNullOrBlank()) {
