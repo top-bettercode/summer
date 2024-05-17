@@ -46,6 +46,7 @@ class LogsEndpoint(
 
     private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
+    private val appName: String = environment.getProperty("spring.application.name") ?: "系统日志"
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
         "org.springframework.web.socket.server.standard.ServerEndpointExporter",
@@ -350,7 +351,7 @@ class LogsEndpoint(
         response.setHeader("Content-Encoding", "gzip")
         response.setDateHeader("Expires", 0)
         val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
-        prettyMessageHTMLLayout.title = name
+        prettyMessageHTMLLayout.title = "$appName $name"
         prettyMessageHTMLLayout.context = loggerContext
         prettyMessageHTMLLayout.start()
         val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()
@@ -406,7 +407,7 @@ class LogsEndpoint(
                 writer.println(
                     """
 <html>
-<head><title>Index of $dir</title></head>
+<head><title>$appName Index of $dir</title></head>
 <body>"""
                 )
                 writer.print("<h1>Index of $dir</h1><hr><pre>")
