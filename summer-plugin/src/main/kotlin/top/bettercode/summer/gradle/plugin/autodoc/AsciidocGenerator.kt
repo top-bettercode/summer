@@ -186,7 +186,7 @@ object AsciidocGenerator {
             adocFile.printWriter().use { out ->
                 val pynames = mutableMapOf<String, Int>()
                 autodoc.apply {
-                    out.println("= $projectName")
+                    out.println("= $projectName ${module.name}")
                     if (author.isNotBlank())
                         out.println(author)
                     out.println(module.name)
