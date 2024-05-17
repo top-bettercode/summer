@@ -46,7 +46,10 @@ class LogsEndpoint(
 
     private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
-    private val appName: String = environment.getProperty("spring.application.name") ?: "系统日志"
+    private val appName: String =
+        "${environment.getProperty("spring.application.name") ?: "系统日志"} ${
+            environment.getProperty("summer.web.project-name") ?: ""
+        }"
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
         "org.springframework.web.socket.server.standard.ServerEndpointExporter",
