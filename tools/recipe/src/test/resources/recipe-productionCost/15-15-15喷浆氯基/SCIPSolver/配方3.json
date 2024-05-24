@@ -1,5 +1,5 @@
 {
-  "cost" : 2750.5148557217,
+  "cost" : 2807.7756157294,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -10,7 +10,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 451.977059817,
+    "weight" : 437.4500000345,
     "id" : "氯化铵（干）",
     "index" : 6,
     "name" : "氯化铵（干）",
@@ -37,7 +37,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 5.2353413858,
+        "normal" : 5.4945834821,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -45,7 +45,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 0.0065797252,
+        "normal" : 8.62E-7,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -57,7 +57,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 4.9338E-6,
+        "normal" : 0.0,
         "overdose" : 0.0
       }
     },
@@ -68,11 +68,11 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 5.2419610892,
+    "weight" : 5.4946193884,
     "id" : "液氨",
     "index" : 9,
     "name" : "液氨",
-    "normalWeight" : 5.2419610891,
+    "normalWeight" : 5.4946193884,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -85,7 +85,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 0.763334163,
+    "weight" : 1.0E-4,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "name" : "8-40-0再浆肥（粉）",
@@ -102,30 +102,13 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 303.6840115974,
+    "weight" : 318.7217472437,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "name" : "64磷酸二铵（颗粒）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.85,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "material" : {
-      "id" : "磷酸",
-      "index" : 29,
-      "name" : "磷酸",
-      "price" : 1.05,
-      "unit" : "吨"
-    },
-    "weight" : 1.0E-4,
-    "id" : "磷酸",
-    "index" : 29,
-    "name" : "磷酸",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 1.05,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -241,7 +224,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 1.9638160012,
+    "energyFee" : 19.6242755405,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -249,10 +232,10 @@
         "name" : "籽煤",
         "price" : 1650.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.65
+        "value" : 0.01,
+        "cost" : 16.5
       },
-      "value" : 0.5841309098
+      "value" : 0.5832894267
     }, {
       "it" : {
         "id" : "生物质",
@@ -260,17 +243,17 @@
         "name" : "生物质",
         "price" : 1000.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.0
+        "value" : 0.01,
+        "cost" : 10.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 114.000042,
     "taxFee" : 25.26000378,
-    "totalFee" : 142.636100399
+    "totalFee" : 160.4731645338
   },
   "dryWaterWeight" : -1.0E-10,
-  "materialCost" : 2607.8787553225,
+  "materialCost" : 2647.3024511959,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -300,7 +283,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 1.9638160011,
+    "energyFee" : 19.62427554,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -308,10 +291,10 @@
         "name" : "籽煤",
         "price" : 1650.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.65
+        "value" : 0.01,
+        "cost" : 16.5
       },
-      "value" : 0.584130909782
+      "value" : 0.583289426668
     }, {
       "it" : {
         "id" : "生物质",
@@ -319,15 +302,15 @@
         "name" : "生物质",
         "price" : 1000.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.0
+        "value" : 0.01,
+        "cost" : 10.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 114.000042,
     "taxFee" : 25.26000378,
-    "totalFee" : 142.636100399
+    "totalFee" : 160.4731645332
   },
-  "waterWeight" : 8.4130909782,
+  "waterWeight" : 8.3289426668,
   "weight" : 999.9999999999
 }

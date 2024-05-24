@@ -313,8 +313,8 @@ object TestPrepareData {
 
         // 能耗费用
         val materialItems: List<RecipeOtherMaterial> = listOf(
-                RecipeOtherMaterial(index = 9001, id = "籽煤", name = "籽煤", price = 1650.0, value = 0.001),
-                RecipeOtherMaterial(index = 9002, id = "生物质", name = "生物质", price = 1000.0, value = 0.001),
+                RecipeOtherMaterial(index = 9001, id = "籽煤", name = "籽煤", price = 1650.0, value = 0.01),
+                RecipeOtherMaterial(index = 9002, id = "生物质", name = "生物质", price = 1000.0, value = 0.01),
         )
         // 其他固定费用
         val dictItems: Map<DictType, Cost> = mapOf(

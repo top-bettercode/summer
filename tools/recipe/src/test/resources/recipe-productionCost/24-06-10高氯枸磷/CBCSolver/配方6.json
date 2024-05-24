@@ -1,5 +1,5 @@
 {
-  "cost" : 3516.7481503007,
+  "cost" : 3661.2791503007,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -44,7 +44,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 77.958924971,
+    "weight" : 9.1346392567,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "name" : "8-40-0再浆肥（粉）",
@@ -61,7 +61,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 387.040875029,
+    "weight" : 455.8651607433,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "name" : "64磷酸二铵（颗粒）",
@@ -166,7 +166,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 2.65,
+    "energyFee" : 26.5,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -174,8 +174,8 @@
         "name" : "籽煤",
         "price" : 1650.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.65
+        "value" : 0.01,
+        "cost" : 16.5
       },
       "value" : 1.0
     }, {
@@ -185,17 +185,17 @@
         "name" : "生物质",
         "price" : 1000.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.0
+        "value" : 0.01,
+        "cost" : 10.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 189.5669
+    "totalFee" : 213.6554
   },
   "dryWaterWeight" : 0.0,
-  "materialCost" : 3327.1812503008,
+  "materialCost" : 3447.6237503008,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -225,7 +225,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 2.65,
+    "energyFee" : 26.5,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -233,8 +233,8 @@
         "name" : "籽煤",
         "price" : 1650.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.65
+        "value" : 0.01,
+        "cost" : 16.5
       },
       "value" : 1.0
     }, {
@@ -244,15 +244,15 @@
         "name" : "生物质",
         "price" : 1000.0,
         "unit" : "吨",
-        "value" : 0.001,
-        "cost" : 1.0
+        "value" : 0.01,
+        "cost" : 10.0
       },
       "value" : 1.0
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 189.5669
+    "totalFee" : 213.6554
   },
-  "waterWeight" : 6.8943848746,
+  "waterWeight" : 5.8620205889,
   "weight" : 1000.0
 }
