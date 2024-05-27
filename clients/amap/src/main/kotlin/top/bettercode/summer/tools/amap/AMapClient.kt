@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.amap
 
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -13,6 +12,7 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.amap.AMapClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.amap.entity.AMapGeo
 import top.bettercode.summer.tools.amap.entity.AMapRegeo
+import top.bettercode.summer.tools.amap.entity.Distance
 import top.bettercode.summer.tools.amap.entity.Location
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 
@@ -51,10 +51,6 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
     }
 
     open fun regeo(location: Location): AMapRegeo {
-        val requestCallback = this.httpEntityCallback<AMapRegeo>(
-            HttpEntity(null, null),
-            AMapRegeo::class.java
-        )
         //restapi.amap.com/v3/geocode/regeo?key=您的key&location=116.481488,39.990464&poitype=&radius=&extensions=base&batch=false&roadlevel=0
         val expanded = uriTemplateHandler.expand(
             properties.url + "/geocode/regeo?key={0}&location={1}",
@@ -65,17 +61,13 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
             execute(
                 expanded,
                 HttpMethod.GET,
-                requestCallback,
+                null,
                 this.responseEntityExtractor(AMapRegeo::class.java)
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }
 
     open fun geo(address: String): AMapGeo {
-        val requestCallback = this.httpEntityCallback<AMapGeo>(
-            HttpEntity(null, null),
-            AMapGeo::class.java
-        )
         //https://restapi.amap.com/v3/geocode/geo?address=北京市朝阳区阜通东大街6号&output=JSON&key=您的key
         val expanded = uriTemplateHandler.expand(
             properties.url + "/geocode/geo?key={0}&address={1}&output=JSON",
@@ -86,10 +78,29 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
             execute(
                 expanded,
                 HttpMethod.GET,
-                requestCallback,
+                null,
                 this.responseEntityExtractor(AMapGeo::class.java)
             ) ?: throw clientException("请求失败")
 
         return entity.body ?: throw clientException()
     }
+
+    open fun distance(origins: String, destination: String): Distance {
+        val expanded = uriTemplateHandler.expand(
+            properties.url + "/distance?key={0}&origins={1}&destination={2}&output=JSON",
+            properties.key,
+            origins,
+            destination
+        )
+        val entity: ResponseEntity<Distance> =
+            execute(
+                expanded,
+                HttpMethod.GET,
+                null,
+                this.responseEntityExtractor(Distance::class.java)
+            ) ?: throw clientException("请求失败")
+
+        return entity.body ?: throw clientException()
+    }
+
 }

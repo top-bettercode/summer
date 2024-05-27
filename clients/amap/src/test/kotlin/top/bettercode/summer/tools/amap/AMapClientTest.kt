@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.amap.entity.Location
  *
  * @author Peter Wu
  */
-@Disabled
+//@Disabled
 internal class AMapClientTest : BaseTest() {
 
     @Autowired
@@ -18,15 +18,20 @@ internal class AMapClientTest : BaseTest() {
 
     @Test
     fun regeo() {
-        val regeo = amapClient.regeo(
-                Location("104.1762947", "30.8170838")
+        amapClient.regeo(
+            Location("104.1762947", "30.8170838")
         )
-        System.err.println(regeo)
     }
 
     @Test
     fun geo() {
-        val geo = amapClient.geo("河南省洛阳市偃师区")
-        System.err.println(geo)
+        amapClient.geo("河南省洛阳市偃师区")
     }
+
+    @Test
+    fun distance() {
+        amapClient.distance("113.571864,30.928592", "112.429277,33.489804")
+    }
+
+
 }
