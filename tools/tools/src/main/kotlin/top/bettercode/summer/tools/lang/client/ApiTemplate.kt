@@ -137,6 +137,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     ): ClientException {
         return ClientException(
             platformName = properties.platformName,
+            marker = logMarker,
             originalMessage = if (cause is ClientException) cause.originalMessage else cause?.message,
             cause = cause,
             response = response
@@ -151,6 +152,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     ): ClientException {
         return ClientException(
             platformName = properties.platformName,
+            marker = logMarker,
             originalMessage = message,
             cause = null,
             response = response
@@ -165,6 +167,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     ): ClientSysException {
         return ClientSysException(
             platformName = properties.platformName,
+            marker = logMarker,
             originalMessage = if (cause is ClientException) cause.originalMessage else cause?.message,
             cause = cause,
             response = response
@@ -178,6 +181,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     ): ClientSysException {
         return ClientSysException(
             platformName = properties.platformName,
+            marker = logMarker,
             originalMessage = message,
             cause = null,
             response = response

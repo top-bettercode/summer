@@ -9,6 +9,10 @@ open class ClientException @JvmOverloads constructor(
      */
     val platformName: String,
     /**
+     * 标记
+     */
+    val marker:String,
+    /**
      * The original message.
      */
     val originalMessage: String? = "请求失败",
