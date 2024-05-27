@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.amap.entity.Location
  *
  * @author Peter Wu
  */
-//@Disabled
+@Disabled
 internal class AMapClientTest : BaseTest() {
 
     @Autowired

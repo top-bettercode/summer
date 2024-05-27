@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit
  */
 open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     protected val logMarker: String,
+    @JvmField
     val properties: P,
     private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
     private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,
@@ -130,48 +131,56 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     //--------------------------------------------
 
     @JvmOverloads
-    protected fun clientException(
-        message: String?,
-        cause: Throwable? = null,
+    fun clientException(
+        cause: Throwable?,
         response: Any? = null
     ): ClientException {
-        return ClientException(properties.platformName, message, cause, response)
-    }
+        return ClientException(
+            platformName = properties.platformName,
+            originalMessage = if (cause is ClientException) cause.originalMessage else cause?.message,
+            cause = cause,
+            response = response
+        )
 
-    protected fun clientException(
-        cause: Throwable? = null,
-        response: Any? = null
-    ): ClientException {
-        return clientException(null, cause, response)
-    }
-
-    protected fun clientException(
-        message: String?,
-        response: Any? = null
-    ): ClientException {
-        return clientException(message, null, response)
     }
 
     @JvmOverloads
-    protected fun clientSysException(
-        message: String?,
-        cause: Throwable? = null,
+    fun clientException(
+        message: String? = null,
         response: Any? = null
-    ): ClientSysException {
-        return ClientSysException(properties.platformName, message, cause, response)
+    ): ClientException {
+        return ClientException(
+            platformName = properties.platformName,
+            originalMessage = message,
+            cause = null,
+            response = response
+        )
+
     }
 
-    protected fun clientSysException(
-        cause: Throwable? = null,
+    @JvmOverloads
+    fun clientSysException(
+        cause: Throwable?,
         response: Any? = null
     ): ClientSysException {
-        return clientSysException(null, cause, response)
+        return ClientSysException(
+            platformName = properties.platformName,
+            originalMessage = if (cause is ClientException) cause.originalMessage else cause?.message,
+            cause = cause,
+            response = response
+        )
     }
 
-    protected fun clientSysException(
-        message: String?,
+    @JvmOverloads
+    fun clientSysException(
+        message: String? = null,
         response: Any? = null
     ): ClientSysException {
-        return clientSysException(message, null, response)
+        return ClientSysException(
+            platformName = properties.platformName,
+            originalMessage = message,
+            cause = null,
+            response = response
+        )
     }
 }
