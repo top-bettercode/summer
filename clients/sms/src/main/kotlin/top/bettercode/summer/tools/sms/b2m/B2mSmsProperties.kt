@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.sms.b2m
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import top.bettercode.summer.tools.lang.client.ClientProperties
 
 /**
  * 亿美软通短信平台 配置信息
@@ -8,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.sms.b2m")
-open class B2mSmsProperties {
+open class B2mSmsProperties : ClientProperties("亿美软通短信平台") {
     var url = "http://www.btom.cn:8080"
     var appId: String = ""
     var secretKey: String = ""
@@ -22,21 +23,6 @@ open class B2mSmsProperties {
      * 系统启动检查余额
      */
     var checkBalance = true
-
-    /**
-     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
-     */
-    var timeoutAlarmSeconds = -1
-
-    /**
-     * 请求连接超时时间秒数
-     */
-    var connectTimeout = 10
-
-    /**
-     * 请求读取超时时间秒数
-     */
-    var readTimeout = 10
 
     /**
      * 请求有效时间(必填)[单位:秒]

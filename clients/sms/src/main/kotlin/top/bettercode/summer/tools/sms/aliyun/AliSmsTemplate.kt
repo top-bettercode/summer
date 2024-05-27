@@ -13,10 +13,10 @@ import org.springframework.util.Base64Utils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.DefaultResponseErrorHandler
+import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.StringUtil.json
-import top.bettercode.summer.tools.sms.SmsException
-import top.bettercode.summer.tools.sms.SmsSysException
-import top.bettercode.summer.tools.sms.SmsTemplate
+import top.bettercode.summer.tools.sms.b2m.B2mSmsTemplate.Companion.LOG_MARKER
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -34,36 +34,36 @@ import javax.crypto.spec.SecretKeySpec
 /**
  * 阿里短信平台 接口请求
  */
+@LogMarker(LOG_MARKER)
 open class AliSmsTemplate(
-        private val aliSmsProperties: AliSmsProperties
-) : SmsTemplate(
-        collectionName = "第三方平台",
-        name = "阿里短信平台",
-        logMarker = LOG_MARKER_STR,
-        timeoutAlarmSeconds = aliSmsProperties.timeoutAlarmSeconds,
-        connectTimeout = aliSmsProperties.connectTimeout,
-        readTimeout = aliSmsProperties.readTimeout
+    properties: AliSmsProperties
+) : ApiTemplate<AliSmsProperties>(
+    logMarker = LOG_MARKER,
+    properties = properties,
 ) {
+    companion object {
+        const val LOG_MARKER = "sms"
+    }
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
 
-        this.restTemplate.errorHandler = object : DefaultResponseErrorHandler() {
+        this.errorHandler = object : DefaultResponseErrorHandler() {
             override fun handleError(response: ClientHttpResponse) {}
         }
     }
@@ -79,9 +79,9 @@ open class AliSmsTemplate(
      */
     @JvmOverloads
     open fun sendSms(
-            templateCode: String, phoneNumber: String, signName: String,
-            templateParam: Map<String, String>,
-            mock: Boolean = aliSmsProperties.isMock
+        templateCode: String, phoneNumber: String, signName: String,
+        templateParam: Map<String, String>,
+        mock: Boolean = properties.isMock
     ): AliSmsResponse {
         return sendSms(templateCode, listOf(AliSmsReq(phoneNumber, signName, templateParam)), mock)
     }
@@ -95,9 +95,9 @@ open class AliSmsTemplate(
      */
     @JvmOverloads
     open fun sendSms(
-            templateCode: String,
-            aliSmsReq: AliSmsReq,
-            mock: Boolean = aliSmsProperties.isMock
+        templateCode: String,
+        aliSmsReq: AliSmsReq,
+        mock: Boolean = properties.isMock
     ): AliSmsResponse {
         return sendSms(templateCode, listOf(aliSmsReq), mock)
     }
@@ -120,9 +120,9 @@ open class AliSmsTemplate(
      */
     @JvmOverloads
     open fun sendSms(
-            templateCode: String,
-            aliSmsReqs: List<AliSmsReq>,
-            mock: Boolean = aliSmsProperties.isMock
+        templateCode: String,
+        aliSmsReqs: List<AliSmsReq>,
+        mock: Boolean = properties.isMock
     ): AliSmsResponse {
         if (mock)
             return AliSmsResponse()
@@ -165,10 +165,10 @@ open class AliSmsTemplate(
      */
     @JvmOverloads
     open fun querySendReport(
-            phoneNumber: String, bizId: String = "", sendDate: String = LocalDate.now().format(
-                    DateTimeFormatter.ofPattern("yyyyMMdd")
-            ),
-            currentPage: Long = 1L, pageSize: Long = 10L
+        phoneNumber: String, bizId: String = "", sendDate: String = LocalDate.now().format(
+            DateTimeFormatter.ofPattern("yyyyMMdd")
+        ),
+        currentPage: Long = 1L, pageSize: Long = 10L
     ): AliSendReportResponse {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
@@ -238,56 +238,42 @@ open class AliSmsTemplate(
     }
 
     private fun <T : AliSmsResponse> request(
-            params: MultiValueMap<String, String>,
-            responseType: Class<T>
+        params: MultiValueMap<String, String>,
+        responseType: Class<T>
     ): T {
         //签名
         sign(params)
-        val requestCallback = this.restTemplate.httpEntityCallback<T>(
-                HttpEntity(params, null),
-                responseType
+        val requestCallback = this.httpEntityCallback<T>(
+            HttpEntity(params, null),
+            responseType
         )
-        val entity: ResponseEntity<T> = try {
+        val entity: ResponseEntity<T> =
             execute(
-                    aliSmsProperties.url,
-                    HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(
-                            responseType
-                    )
-            )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
-        val body = entity.body
-        return if (body?.isOk == true) {
-            body
-        } else {
-            var message = body?.message
-            val regex = "触发号码天级流控Permits:(\\d+)"
-            if (message?.matches(Regex(regex)) == true) {
-                message =
-                        "每个手机号一天只能获取" + message.replace(regex.toRegex(), "$1") + "条短信"
-            }
-            throw SmsSysException(message ?: "请求失败")
-        }
+                properties.url,
+                HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(
+                    responseType
+                )
+            ) ?: throw clientException()
+        return entity.body ?: throw clientException()
     }
 
     private fun commonParams(
-            params: MultiValueMap<String, String>,
-            action: String
+        params: MultiValueMap<String, String>,
+        action: String
     ) {
-        params.add("AccessKeyId", aliSmsProperties.accessKeyId)
+        params.add("AccessKeyId", properties.accessKeyId)
         params.add("Action", action)
         params.add("Format", "json")
-        params.add("RegionId", aliSmsProperties.regionId)
+        params.add("RegionId", properties.regionId)
         params.add("SignatureMethod", "HMAC-SHA1")
         params.add("SignatureNonce", UUID.randomUUID().toString())
         params.add("SignatureVersion", "1.0")
         params.add(
-                "Timestamp",
-                LocalDateTime.now(ZoneId.from(ZoneOffset.UTC))
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+            "Timestamp",
+            LocalDateTime.now(ZoneId.from(ZoneOffset.UTC))
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
         )
         params.add("Version", "2017-05-25")
     }
@@ -299,23 +285,23 @@ open class AliSmsTemplate(
         while (it.hasNext()) {
             val key = it.next()
             sortQueryStringTmp.append("&").append(specialUrlEncode(key)).append("=")
-                    .append(specialUrlEncode(params.getFirst(key) ?: ""))
+                .append(specialUrlEncode(params.getFirst(key) ?: ""))
         }
         val sortedQueryString = sortQueryStringTmp.substring(1) // 去除第一个多余的&符号
         val stringToSign =
-                HttpMethod.POST.name + "&" + specialUrlEncode("/") + "&" + specialUrlEncode(
-                        sortedQueryString
-                )
-        val sign = sign(aliSmsProperties.accessKeySecret + "&", stringToSign)
+            HttpMethod.POST.name + "&" + specialUrlEncode("/") + "&" + specialUrlEncode(
+                sortedQueryString
+            )
+        val sign = sign(properties.accessKeySecret + "&", stringToSign)
         params.add("Signature", sign)
     }
 
     private fun specialUrlEncode(value: String): String {
         return try {
             URLEncoder.encode(value, "UTF-8").replace("+", "%20").replace("*", "%2A")
-                    .replace("%7E", "~")
+                .replace("%7E", "~")
         } catch (e: UnsupportedEncodingException) {
-            throw SmsException(e)
+            throw clientException(e)
         }
     }
 
@@ -323,17 +309,17 @@ open class AliSmsTemplate(
         return try {
             val mac = Mac.getInstance("HmacSHA1")
             mac.init(
-                    SecretKeySpec(
-                            accessSecret.toByteArray(StandardCharsets.UTF_8),
-                            "HmacSHA1"
-                    )
+                SecretKeySpec(
+                    accessSecret.toByteArray(StandardCharsets.UTF_8),
+                    "HmacSHA1"
+                )
             )
             val signData = mac.doFinal(stringToSign.toByteArray(StandardCharsets.UTF_8))
             String(Base64Utils.encode(signData))
         } catch (e: NoSuchAlgorithmException) {
-            throw SmsException(e)
+            throw clientException(e)
         } catch (e: InvalidKeyException) {
-            throw SmsException(e)
+            throw clientException(e)
         }
     }
 

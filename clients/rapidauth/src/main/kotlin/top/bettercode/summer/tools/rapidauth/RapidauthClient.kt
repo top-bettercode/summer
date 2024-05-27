@@ -22,14 +22,10 @@ import top.bettercode.summer.tools.rapidauth.entity.RapidauthResponse
  */
 @LogMarker(LOG_MARKER)
 open class RapidauthClient(
-        private val properties: RapidauthProperties
-) : ApiTemplate(
-        collectionName = "第三方平台",
-        name = "腾讯云号码认证",
-        logMarker = LOG_MARKER,
-        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeoutInSeconds = properties.connectTimeout,
-        readTimeoutInSeconds = properties.readTimeout
+    properties: RapidauthProperties
+) : ApiTemplate<RapidauthProperties>(
+    logMarker = LOG_MARKER,
+    properties = properties
 ) {
 
     companion object {
@@ -38,20 +34,20 @@ open class RapidauthClient(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
     }
 
     /**
@@ -68,33 +64,20 @@ open class RapidauthClient(
         val request = RapidauthRequest(sig, time, carrier, token)
 
 
-        val requestCallback = this.restTemplate.httpEntityCallback<RapidauthResponse>(
-                HttpEntity(request),
-                RapidauthResponse::class.java
+        val requestCallback = this.httpEntityCallback<RapidauthResponse>(
+            HttpEntity(request),
+            RapidauthResponse::class.java
         )
-        val entity: ResponseEntity<RapidauthResponse> = try {
+        val entity: ResponseEntity<RapidauthResponse> =
             execute(
-                    properties.url, HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(RapidauthResponse::class.java),
-                    properties.sdkappid,
-                    random
-            )
-        } catch (e: Exception) {
-            throw RapidauthException(e)
-        } ?: throw RapidauthException()
+                properties.url, HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(RapidauthResponse::class.java),
+                properties.sdkappid,
+                random
+            ) ?: throw clientException()
 
-        return if (entity.statusCode.is2xxSuccessful) {
-            val body = entity.body
-            if (body?.isOk() == true) {
-                body
-            } else {
-                val message = body?.errmsg
-                throw RapidauthSysException(message ?: "请求失败")
-            }
-        } else {
-            throw RapidauthException()
-        }
+        return entity.body ?: throw clientException()
     }
 
 }

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
 import top.bettercode.summer.tools.weixin.controller.OffiaccountCallbackController
-import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
+import top.bettercode.summer.tools.weixin.properties.OffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.DefaultDuplicatedMessageChecker
 import top.bettercode.summer.tools.weixin.support.IDuplicatedMessageChecker
 import top.bettercode.summer.tools.weixin.support.IWeixinService
@@ -17,23 +17,34 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient
 
 @ConditionalOnClass(RedisConnectionFactory::class)
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnBean(IOffiaccountProperties::class, RedisConnectionFactory::class)
-class WeixinRedisConfiguration(private val properties: IOffiaccountProperties) {
+@ConditionalOnBean(OffiaccountProperties::class, RedisConnectionFactory::class)
+class WeixinRedisConfiguration(private val properties: OffiaccountProperties) {
 
     @Bean
     fun offiaccountClient(redisConnectionFactory: RedisConnectionFactory): OffiaccountClient {
-        return OffiaccountClient(properties, RedisWeixinCache(properties.cacheSeconds, OffiaccountClient.LOG_MARKER, redisConnectionFactory))
+        return OffiaccountClient(
+            properties,
+            RedisWeixinCache(
+                properties.cacheSeconds,
+                OffiaccountClient.LOG_MARKER,
+                redisConnectionFactory
+            )
+        )
     }
 
     @ConditionalOnBean(IWeixinService::class)
     @ConditionalOnWebApplication
     @Bean
     fun offiaccountCallbackController(
-            wechatService: IWeixinService,
-            offiaccountClient: OffiaccountClient,
-            duplicatedMessageChecker: IDuplicatedMessageChecker
+        wechatService: IWeixinService,
+        offiaccountClient: OffiaccountClient,
+        duplicatedMessageChecker: IDuplicatedMessageChecker
     ): OffiaccountCallbackController {
-        return OffiaccountCallbackController(wechatService, offiaccountClient, duplicatedMessageChecker)
+        return OffiaccountCallbackController(
+            wechatService,
+            offiaccountClient,
+            duplicatedMessageChecker
+        )
     }
 
     @ConditionalOnMissingBean(IDuplicatedMessageChecker::class)

@@ -1,9 +1,10 @@
 package top.bettercode.summer.tools.sms.aliyun
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import top.bettercode.summer.tools.lang.client.ClientProperties
 
 @ConfigurationProperties(prefix = "summer.sms.aliyun")
-open class AliSmsProperties {
+open class AliSmsProperties : ClientProperties("短信平台") {
     //--------------------------------------------
     var url = "https://dysmsapi.aliyuncs.com"
     var accessKeyId: String? = null
@@ -14,19 +15,4 @@ open class AliSmsProperties {
      * 模拟发送
      */
     var isMock = false
-
-    /**
-     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
-     */
-    var timeoutAlarmSeconds = -1
-
-    /**
-     * 请求连接超时时间秒数
-     */
-    var connectTimeout = 10
-
-    /**
-     * 请求读取超时时间秒数
-     */
-    var readTimeout = 10
 }

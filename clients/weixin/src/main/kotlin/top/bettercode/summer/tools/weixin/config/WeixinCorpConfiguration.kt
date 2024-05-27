@@ -5,15 +5,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClas
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import top.bettercode.summer.tools.weixin.properties.ICorpProperties
+import top.bettercode.summer.tools.weixin.properties.CorpProperties
 import top.bettercode.summer.tools.weixin.support.DefaultWeixinCache
 import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.corp.CorpClient
 
 @ConditionalOnMissingClass("org.springframework.data.redis.connection.RedisConnectionFactory")
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnBean(ICorpProperties::class)
-class WeixinCorpConfiguration(private val properties: ICorpProperties) {
+@ConditionalOnBean(CorpProperties::class)
+class WeixinCorpConfiguration(private val properties: CorpProperties) {
 
     @Bean
     fun corpClient(): CorpClient {
@@ -24,12 +24,12 @@ class WeixinCorpConfiguration(private val properties: ICorpProperties) {
     @ConditionalOnWebApplication
     @Bean
     fun corpCallbackController(
-            wechatService: IWeixinService,
-            corpClient: CorpClient
+        wechatService: IWeixinService,
+        corpClient: CorpClient
     ): top.bettercode.summer.tools.weixin.controller.CorpCallbackController {
         return top.bettercode.summer.tools.weixin.controller.CorpCallbackController(
-                wechatService,
-                corpClient
+            wechatService,
+            corpClient
         )
     }
 

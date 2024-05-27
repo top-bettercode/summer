@@ -1,13 +1,16 @@
 package top.bettercode.summer.tools.weather
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import top.bettercode.summer.tools.lang.client.ClientProperties
 import java.time.LocalTime
 
 /**
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.weather")
-open class WeatherProperties {
+open class WeatherProperties : ClientProperties(
+    "天气数据平台",
+) {
     /**
      * 接口地址
      */
@@ -32,20 +35,5 @@ open class WeatherProperties {
      * 晚上结束时间
      */
     var nightEndTime: LocalTime = LocalTime.of(6, 0)
-
-    /**
-     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
-     */
-    var timeoutAlarmSeconds = -1
-
-    /**
-     * 请求连接超时时间秒数
-     */
-    var connectTimeout = 10
-
-    /**
-     * 请求读取超时时间秒数
-     */
-    var readTimeout = 10
 
 }

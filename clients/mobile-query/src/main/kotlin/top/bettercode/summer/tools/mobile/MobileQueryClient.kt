@@ -24,14 +24,10 @@ import javax.crypto.spec.SecretKeySpec
  */
 @LogMarker(LOG_MARKER)
 open class MobileQueryClient(
-        private val properties: MobileQueryProperties
-) : ApiTemplate(
-        collectionName = "第三方平台",
-        name = "获取本机手机号码",
-        logMarker = LOG_MARKER,
-        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeoutInSeconds = properties.connectTimeout,
-        readTimeoutInSeconds = properties.readTimeout
+    properties: MobileQueryProperties
+) : ApiTemplate<MobileQueryProperties>(
+    logMarker = LOG_MARKER,
+    properties = properties,
 ) {
 
     companion object {
@@ -40,20 +36,20 @@ open class MobileQueryClient(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
     }
 
 
@@ -62,7 +58,7 @@ open class MobileQueryClient(
         val secretId = properties.appId
         val secretKey = properties.appKey
         val datetime = TimeUtil.now(ZoneId.of("GMT"))
-                .format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US))
+            .format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US))
         val headers = HttpHeaders()
         headers["X-Source"] = source
         headers["X-Date"] = datetime
@@ -73,38 +69,24 @@ open class MobileQueryClient(
         bodyParams["appKey"] = secretKey
         bodyParams["token"] = token
 
-        val requestCallback = this.restTemplate.httpEntityCallback<QueryResponse>(
-                HttpEntity(bodyParams, headers),
-                QueryResponse::class.java
+        val requestCallback = this.httpEntityCallback<QueryResponse>(
+            HttpEntity(bodyParams, headers),
+            QueryResponse::class.java
         )
-        val entity: ResponseEntity<QueryResponse> = try {
+        val entity: ResponseEntity<QueryResponse> =
             execute(
-                    properties.url, HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(QueryResponse::class.java)
-            )
-        } catch (e: Exception) {
-            throw QueryException(e)
-        } ?: throw QueryException()
-
-        return if (entity.statusCode.is2xxSuccessful) {
-            val body = entity.body
-            if (body?.isOk() == true) {
-                body
-            } else {
-                val message = body?.message
-                throw QuerySysException(message ?: "请求失败")
-            }
-        } else {
-            throw QueryException()
-        }
+                properties.url, HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(QueryResponse::class.java)
+            ) ?: throw clientException()
+        return entity.body ?: throw clientException()
     }
 
     private fun calcAuthorization(
-            source: String,
-            secretId: String,
-            secretKey: String,
-            datetime: String
+        source: String,
+        secretId: String,
+        secretKey: String,
+        datetime: String
     ): String {
         val signStr = "x-date: $datetime\nx-source: $source"
         val mac: Mac = Mac.getInstance("HmacSHA1")

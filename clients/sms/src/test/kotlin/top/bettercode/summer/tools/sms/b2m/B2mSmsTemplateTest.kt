@@ -11,7 +11,7 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-@Disabled
+//@Disabled
 internal class B2mSmsTemplateTest : BaseTest() {
     @Autowired
     lateinit var b2mTemplate: B2mSmsTemplate

@@ -21,89 +21,75 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-open class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
-        collectionName = "第三方平台",
-        name = "高德地图",
-        logMarker = "amap",
-        timeoutAlarmSeconds = amapProperties.timeoutAlarmSeconds,
-        connectTimeoutInSeconds = amapProperties.connectTimeout,
-        readTimeoutInSeconds = amapProperties.readTimeout
+open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
+    logMarker = LOG_MARKER,
+    properties = properties
 ) {
     companion object {
         const val LOG_MARKER = "amap"
     }
 
-
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
 
-        this.restTemplate.errorHandler = object : DefaultResponseErrorHandler() {
+        this.errorHandler = object : DefaultResponseErrorHandler() {
             override fun handleError(response: ClientHttpResponse) {}
         }
     }
 
     open fun regeo(location: Location): AMapRegeo {
-        val requestCallback = this.restTemplate.httpEntityCallback<AMapRegeo>(
-                HttpEntity(null, null),
-                AMapRegeo::class.java
+        val requestCallback = this.httpEntityCallback<AMapRegeo>(
+            HttpEntity(null, null),
+            AMapRegeo::class.java
         )
         //restapi.amap.com/v3/geocode/regeo?key=您的key&location=116.481488,39.990464&poitype=&radius=&extensions=base&batch=false&roadlevel=0
-        val expanded = restTemplate.uriTemplateHandler.expand(
-                amapProperties.url + "/geocode/regeo?key={0}&location={1}",
-                amapProperties.key,
-                location.toString()
+        val expanded = uriTemplateHandler.expand(
+            properties.url + "/geocode/regeo?key={0}&location={1}",
+            properties.key,
+            location.toString()
         )
         val entity: ResponseEntity<AMapRegeo> =
-                execute(
-                        expanded,
-                        HttpMethod.GET,
-                        requestCallback,
-                        this.restTemplate.responseEntityExtractor(AMapRegeo::class.java)
-                ) ?: throw AMapException("请求失败")
-        val body = entity.body
-        return if (body?.isOk == true) {
-            body
-        } else {
-            throw AMapSysException(body?.info ?: "请求失败")
-        }
+            execute(
+                expanded,
+                HttpMethod.GET,
+                requestCallback,
+                this.responseEntityExtractor(AMapRegeo::class.java)
+            ) ?: throw clientException()
+        return entity.body ?: throw clientException()
     }
 
     open fun geo(address: String): AMapGeo {
-        val requestCallback = this.restTemplate.httpEntityCallback<AMapGeo>(
-                HttpEntity(null, null),
-                AMapGeo::class.java
+        val requestCallback = this.httpEntityCallback<AMapGeo>(
+            HttpEntity(null, null),
+            AMapGeo::class.java
         )
         //https://restapi.amap.com/v3/geocode/geo?address=北京市朝阳区阜通东大街6号&output=JSON&key=您的key
-        val expanded = restTemplate.uriTemplateHandler.expand(
-                amapProperties.url + "/geocode/geo?key={0}&address={1}&output=JSON",
-                amapProperties.key,
-                address
+        val expanded = uriTemplateHandler.expand(
+            properties.url + "/geocode/geo?key={0}&address={1}&output=JSON",
+            properties.key,
+            address
         )
         val entity: ResponseEntity<AMapGeo> =
-                execute(
-                        expanded,
-                        HttpMethod.GET,
-                        requestCallback,
-                        this.restTemplate.responseEntityExtractor(AMapGeo::class.java)
-                ) ?: throw AMapException("请求失败")
-        val body = entity.body
-        return if (body?.isOk == true) {
-            body
-        } else {
-            throw AMapSysException(body?.info ?: "请求失败")
-        }
+            execute(
+                expanded,
+                HttpMethod.GET,
+                requestCallback,
+                this.responseEntityExtractor(AMapGeo::class.java)
+            ) ?: throw clientException("请求失败")
+
+        return entity.body ?: throw clientException()
     }
 }

@@ -1,42 +1,37 @@
 package top.bettercode.summer.tools.weixin.properties
 
+import top.bettercode.summer.tools.lang.client.ClientProperties
+
 /**
  * @author Peter Wu
  */
-open class WeixinProperties : IWeixinProperties {
-    override var appId: String = ""
-    override var secret: String = ""
-    override var token: String = ""
-    override var aesKey: String = ""
-
+open class WeixinProperties(
     /**
-     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
+     * 平台名称
      */
-    override var timeoutAlarmSeconds: Int = -1
+    platformName: String
+) : ClientProperties(platformName) {
+    companion object {
+        const val OPEN_ID_NAME = "openId"
+    }
 
-    /**
-     * 请求连接超时时间秒数
-     */
-    override var connectTimeout = 10
+    open var basicAccessTokenUrl: String =
+        "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}"
 
-    /**
-     * 请求读取超时时间秒数
-     */
-    override var readTimeout = 10
+    var appId: String = ""
+    var secret: String = ""
+    var token: String = ""
+    var aesKey: String = ""
+
 
     /**
      * access_token 及 jsapi_ticket 有效期7200秒
      */
-    override var cacheSeconds = 7200L
+    var cacheSeconds = 7200L
 
     /**
      * 微信接口请求最大重试次数
      */
-    override var maxRetries = 2
-
-    /**
-     * 授权请求路径
-     */
-    var oauthMappingPath: String = ""
+    var maxRetries = 2
 
 }

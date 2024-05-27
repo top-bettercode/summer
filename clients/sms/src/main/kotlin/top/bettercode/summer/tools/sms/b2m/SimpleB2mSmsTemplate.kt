@@ -14,9 +14,9 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.util.DigestUtils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import top.bettercode.summer.tools.sms.SmsException
-import top.bettercode.summer.tools.sms.SmsSysException
-import top.bettercode.summer.tools.sms.SmsTemplate
+import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiTemplate
+import top.bettercode.summer.tools.sms.b2m.B2mSmsTemplate.Companion.LOG_MARKER
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -25,28 +25,25 @@ import java.util.*
 /**
  * 亿美软通短信平台 接口请求
  */
+@LogMarker(LOG_MARKER)
 open class SimpleB2mSmsTemplate(
-        private val properties: B2mSmsProperties
-) : SmsTemplate(
-        collectionName = "第三方平台",
-        name = "亿美软通短信平台",
-        logMarker = LOG_MARKER_STR,
-        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeout = properties.connectTimeout,
-        readTimeout = properties.readTimeout
+    properties: B2mSmsProperties
+) : ApiTemplate<B2mSmsProperties>(
+    logMarker = LOG_MARKER,
+    properties = properties
 ) {
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
@@ -54,7 +51,7 @@ open class SimpleB2mSmsTemplate(
         messageConverters.add(StringHttpMessageConverter())
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
     }
 
     /**
@@ -71,9 +68,9 @@ open class SimpleB2mSmsTemplate(
      * @return 结果
      */
     open fun simpleSendSms(
-            cell: String,
-            content: String,
-            mock: Boolean = properties.isMock
+        cell: String,
+        content: String,
+        mock: Boolean = properties.isMock
     ): B2mResponse<B2mRespData> {
         return simpleSendSms(Collections.singletonMap(cell, content), mock)
     }
@@ -92,8 +89,8 @@ open class SimpleB2mSmsTemplate(
      */
     @JvmOverloads
     open fun simpleSendSms(
-            content: Map<String, String>,
-            mock: Boolean = properties.isMock
+        content: Map<String, String>,
+        mock: Boolean = properties.isMock
     ): B2mResponse<B2mRespData> {
         if (mock)
             return B2mResponse()
@@ -104,9 +101,9 @@ open class SimpleB2mSmsTemplate(
         params["timestamp"] = timestamp
         //    格式：md5(appId+ secretKey + timestamp) 32位
         params["sign"] = DigestUtils.md5DigestAsHex(
-                (properties.appId + properties.secretKey + timestamp).toByteArray(
-                        StandardCharsets.UTF_8
-                )
+            (properties.appId + properties.secretKey + timestamp).toByteArray(
+                StandardCharsets.UTF_8
+            )
         )
         content.forEach { (key: String, value: String) ->
             if (key.isNotBlank() && value.isNotBlank()) {
@@ -117,34 +114,21 @@ open class SimpleB2mSmsTemplate(
 //    params.put("customSmsId", "");
 //    params.put("extendedCode", "");
         val javaType = TypeFactory.defaultInstance().constructParametricType(
-                B2mResponse::class.java, B2mRespData::class.java
+            B2mResponse::class.java, B2mRespData::class.java
         )
-        val requestCallback = this.restTemplate.httpEntityCallback<B2mResponse<B2mRespData>>(
-                HttpEntity(params, null),
-                javaType
+        val requestCallback = this.httpEntityCallback<B2mResponse<B2mRespData>>(
+            HttpEntity(params, null),
+            javaType
         )
-        val responseEntityExtractor = this.restTemplate.responseEntityExtractor<B2mResponse<B2mRespData>>(javaType)
-        val entity: ResponseEntity<B2mResponse<B2mRespData>> = try {
+        val responseEntityExtractor =
+            this.responseEntityExtractor<B2mResponse<B2mRespData>>(javaType)
+        val entity: ResponseEntity<B2mResponse<B2mRespData>> =
             execute(
-                    properties.url + "/simpleinter/sendPersonalitySMS", HttpMethod.POST,
-                    requestCallback,
-                    responseEntityExtractor
-            )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
-
-        return if (entity.statusCode.is2xxSuccessful) {
-            val body = entity.body
-            if (body?.isOk == true) {
-                body
-            } else {
-                val message = body?.message
-                throw SmsSysException(message ?: "请求失败")
-            }
-        } else {
-            throw SmsException()
-        }
+                properties.url + "/simpleinter/sendPersonalitySMS", HttpMethod.POST,
+                requestCallback,
+                responseEntityExtractor
+            ) ?: throw clientException()
+        return entity.body ?: throw clientException()
     }
 
     /**
@@ -167,40 +151,27 @@ open class SimpleB2mSmsTemplate(
         params["timestamp"] = timestamp
         //    格式：md5(appId+ secretKey + timestamp) 32位
         params["sign"] = DigestUtils.md5DigestAsHex(
-                (properties.appId + properties.secretKey + timestamp).toByteArray(
-                        StandardCharsets.UTF_8
-                )
+            (properties.appId + properties.secretKey + timestamp).toByteArray(
+                StandardCharsets.UTF_8
+            )
         )
         params["number"] = number.toString()
         val javaType = TypeFactory.defaultInstance().constructParametricType(
-                B2mResponse::class.java, B2mSendReport::class.java
+            B2mResponse::class.java, B2mSendReport::class.java
         )
-        val requestCallback = this.restTemplate.httpEntityCallback<B2mResponse<B2mSendReport>>(
-                HttpEntity(params, null),
-                javaType
+        val requestCallback = this.httpEntityCallback<B2mResponse<B2mSendReport>>(
+            HttpEntity(params, null),
+            javaType
         )
-        val responseEntityExtractor = this.restTemplate.responseEntityExtractor<B2mResponse<B2mSendReport>>(javaType)
-        val entity: ResponseEntity<B2mResponse<B2mSendReport>> = try {
+        val responseEntityExtractor =
+            this.responseEntityExtractor<B2mResponse<B2mSendReport>>(javaType)
+        val entity: ResponseEntity<B2mResponse<B2mSendReport>> =
             execute(
-                    properties.url + "/simpleinter/getReport", HttpMethod.POST,
-                    requestCallback,
-                    responseEntityExtractor
-            )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
-
-        return if (entity.statusCode.is2xxSuccessful) {
-            val body = entity.body
-            if (body?.isOk == true) {
-                body
-            } else {
-                val message = body?.message
-                throw SmsSysException(message ?: "请求失败")
-            }
-        } else {
-            throw SmsException()
-        }
+                properties.url + "/simpleinter/getReport", HttpMethod.POST,
+                requestCallback,
+                responseEntityExtractor
+            ) ?: throw clientException()
+        return entity.body ?: throw clientException()
 
     }
 
@@ -218,9 +189,9 @@ open class SimpleB2mSmsTemplate(
      */
     @JvmOverloads
     open fun retrieveReport(
-            startTime: LocalDateTime,
-            endTime: LocalDateTime = startTime.plusMinutes(10),
-            smsId: String = ""
+        startTime: LocalDateTime,
+        endTime: LocalDateTime = startTime.plusMinutes(10),
+        smsId: String = ""
     ): Boolean {
         //    格式：yyyyMMddHHmmss 14位
         val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
@@ -230,35 +201,31 @@ open class SimpleB2mSmsTemplate(
         params["timestamp"] = timestamp
         //    格式：md5(appId+ secretKey + timestamp) 32位
         params["sign"] = DigestUtils.md5DigestAsHex(
-                (properties.appId + properties.secretKey + timestamp).toByteArray(
-                        StandardCharsets.UTF_8
-                )
+            (properties.appId + properties.secretKey + timestamp).toByteArray(
+                StandardCharsets.UTF_8
+            )
         )
         params["startTime"] = startTime.format(timeFormatter)
         params["endTime"] = endTime.format(timeFormatter)
         params["smsId"] = smsId
-        val requestCallback = this.restTemplate.httpEntityCallback<String>(
-                HttpEntity(params, null),
-                String::class.java
+        val requestCallback = this.httpEntityCallback<String>(
+            HttpEntity(params, null),
+            String::class.java
         )
         val entity: ResponseEntity<String> = try {
             execute(
-                    properties.url + "/report/retrieveReport", HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(String::class.java)
+                properties.url + "/report/retrieveReport", HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(String::class.java)
             )
         } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
-        return if (entity.statusCode.is2xxSuccessful) {
-            if (B2mResponse.SUCCESS == entity.body) {
-                true
-            } else {
-                val message = B2mResponse.getMessage(entity.body)
-                throw SmsSysException(message ?: "请求失败")
-            }
+            throw clientException(e)
+        } ?: throw clientException()
+        return if (B2mResponse.SUCCESS == entity.body) {
+            true
         } else {
-            throw SmsException()
+            val message = B2mResponse.getMessage(entity.body)
+            throw clientSysException(message)
         }
 
     }

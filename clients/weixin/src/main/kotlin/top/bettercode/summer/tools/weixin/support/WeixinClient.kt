@@ -7,12 +7,12 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
-import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
+import top.bettercode.summer.tools.lang.client.ApiTemplate
+import top.bettercode.summer.tools.weixin.properties.WeixinProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.ApiQuota
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.StableTokenRequest
-import top.bettercode.summer.tools.lang.client.ApiTemplate
 import java.time.Duration
 import java.util.concurrent.Callable
 
@@ -22,19 +22,13 @@ import java.util.concurrent.Callable
  *
  * @author Peter Wu
  */
-open class WeixinClient<T : IWeixinProperties>(
-        val properties: T,
-        val cache: IWeixinCache,
-        collectionName: String,
-        name: String,
-        logMarker: String
-) : ApiTemplate(
-        collectionName = collectionName,
-        name = name,
-        logMarker = logMarker,
-        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeoutInSeconds = properties.connectTimeout,
-        readTimeoutInSeconds = properties.readTimeout
+open class WeixinClient<T : WeixinProperties>(
+    properties: T,
+    val cache: IWeixinCache,
+    logMarker: String
+) : ApiTemplate<T>(
+    logMarker = logMarker,
+    properties = properties
 ) {
 
     private var lastAppId = properties.appId
@@ -46,20 +40,20 @@ open class WeixinClient<T : IWeixinProperties>(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
     }
 
     fun writeToXml(obj: Any): String {
@@ -103,7 +97,10 @@ open class WeixinClient<T : IWeixinProperties>(
      *https://developers.weixin.qq.com/doc/offiaccount/openApi/get_api_quota.html
      */
     open fun getApiQuota(cgiPath: String): ApiQuota {
-        return postForObject<ApiQuota>("https://api.weixin.qq.com/cgi-bin/openapi/quota/get?access_token=${getStableAccessToken()}", mapOf("cgi_path" to cgiPath))
+        return postForObject<ApiQuota>(
+            "https://api.weixin.qq.com/cgi-bin/openapi/quota/get?access_token=${getStableAccessToken()}",
+            mapOf("cgi_path" to cgiPath)
+        )
     }
 
     /**
@@ -116,14 +113,14 @@ open class WeixinClient<T : IWeixinProperties>(
 
     private fun getToken(retries: Int = 1): CachedValue {
         val accessToken = getForObject<BasicAccessToken>(
-                properties.basicAccessTokenUrl,
-                properties.appId,
-                properties.secret
+            properties.basicAccessTokenUrl,
+            properties.appId,
+            properties.secret
         )
         return if (accessToken.isOk) {
             CachedValue(
-                    accessToken.accessToken!!,
-                    Duration.ofSeconds(accessToken.expiresIn!!.toLong())
+                accessToken.accessToken!!,
+                Duration.ofSeconds(accessToken.expiresIn!!.toLong())
             )
         } else if (retries < properties.maxRetries && accessToken.errcode != 40164) {
             //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。
@@ -145,16 +142,17 @@ open class WeixinClient<T : IWeixinProperties>(
      */
     private fun getStableToken(forceRefresh: Boolean, retries: Int = 1): CachedValue {
         val accessToken = postForObject<BasicAccessToken>(
-                "https://api.weixin.qq.com/cgi-bin/stable_token",
-                StableTokenRequest(
-                        properties.appId,
-                        properties.secret,
-                        forceRefresh)
+            "https://api.weixin.qq.com/cgi-bin/stable_token",
+            StableTokenRequest(
+                properties.appId,
+                properties.secret,
+                forceRefresh
+            )
         )
         return if (accessToken.isOk) {
             CachedValue(
-                    accessToken.accessToken!!,
-                    Duration.ofSeconds(accessToken.expiresIn!!.toLong())
+                accessToken.accessToken!!,
+                Duration.ofSeconds(accessToken.expiresIn!!.toLong())
             )
         } else if (retries < properties.maxRetries && accessToken.errcode != 40164 && accessToken.errcode != 45009 && accessToken.errcode != 45011) {
             //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。

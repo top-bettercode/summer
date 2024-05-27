@@ -5,10 +5,9 @@ import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
-import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
+import top.bettercode.summer.tools.weixin.properties.OffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
-import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.WXBizMsgCrypt
@@ -25,16 +24,14 @@ import java.util.*
  */
 @LogMarker(LOG_MARKER)
 open class OffiaccountClient(
-        properties: IOffiaccountProperties,
-        cache: IWeixinCache
+    properties: OffiaccountProperties,
+    cache: IWeixinCache
 ) :
-        WeixinClient<IOffiaccountProperties>(
-                properties,
-                cache,
-                "第三方平台",
-                "微信公众号",
-                LOG_MARKER
-        ) {
+    WeixinClient<OffiaccountProperties>(
+        properties,
+        cache,
+        LOG_MARKER
+    ) {
 
     val wxBizMsgCrypt: WXBizMsgCrypt by lazy {
         WXBizMsgCrypt(properties.token, properties.aesKey, properties.appId)
@@ -49,12 +46,12 @@ open class OffiaccountClient(
 
     init {
         val url =
-                "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect"
+            "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect"
         val authenticationUrl = String.format(
-                url,
-                properties.appId,
-                URLEncoder.encode(properties.oauthUrl, "UTF-8"),
-                "snsapi_userinfo"
+            url,
+            properties.appId,
+            URLEncoder.encode(properties.oauthUrl, "UTF-8"),
+            "snsapi_userinfo"
         )
         log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
     }
@@ -68,13 +65,13 @@ open class OffiaccountClient(
 
     private fun getTicket(retries: Int): CachedValue {
         val result = getForObject<JsapiTicket>(
-                "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
-                getStableAccessToken()
+            "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
+            getStableAccessToken()
         )
         return if (result.isOk) {
             CachedValue(
-                    result.ticket!!,
-                    Duration.ofSeconds(result.expiresIn!!.toLong())
+                result.ticket!!,
+                Duration.ofSeconds(result.expiresIn!!.toLong())
             )
         } else if (40001 == result.errcode || 42001 == result.errcode) {
             //40001 access_token无效
@@ -84,16 +81,16 @@ open class OffiaccountClient(
         } else if (retries < properties.maxRetries) {
             getTicket(retries + 1)
         } else {
-            throw WeixinException("获取jsapiTicket失败：${result.errmsg}", result)
+            throw clientException("获取jsapiTicket失败：${result.errmsg}", result)
         }
     }
 
     open fun getWebPageAccessToken(code: String): WebPageAccessToken {
         return getForObject(
-                "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
-                properties.appId,
-                properties.secret,
-                code
+            "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
+            properties.appId,
+            properties.secret,
+            code
         )
     }
 
@@ -105,23 +102,23 @@ open class OffiaccountClient(
      * https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
      */
     open fun getSnsapiUserinfo(
-            accessToken: String,
-            openid: String,
-            lang: String,
-            retries: Int = 2
+        accessToken: String,
+        openid: String,
+        lang: String,
+        retries: Int = 2
     ): SnsapiUserinfo {
         val result = getForObject<SnsapiUserinfo>(
-                "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}&lang={2}",
-                accessToken,
-                openid,
-                lang
+            "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}&lang={2}",
+            accessToken,
+            openid,
+            lang
         )
         return if (result.isOk) {
             result
         } else if (retries < properties.maxRetries) {
             getSnsapiUserinfo(accessToken, openid, lang, retries + 1)
         } else {
-            throw WeixinException("${result.errmsg}", result)
+            throw clientException("${result.errmsg}", result)
         }
 
     }
@@ -134,7 +131,12 @@ open class OffiaccountClient(
     }
 
     open fun getUserInfo(openid: String, lang: String, retries: Int = 1): UserInfo {
-        val result = getForObject<UserInfo>("https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}", getStableAccessToken(), openid, lang)
+        val result = getForObject<UserInfo>(
+            "https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}",
+            getStableAccessToken(),
+            openid,
+            lang
+        )
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode || 42001 == result.errcode) {
@@ -145,7 +147,7 @@ open class OffiaccountClient(
         } else if (retries < properties.maxRetries) {
             getUserInfo(openid, lang, retries + 1)
         } else {
-            throw WeixinException("${result.errmsg}", result)
+            throw clientException("${result.errmsg}", result)
         }
     }
 
@@ -155,9 +157,9 @@ open class OffiaccountClient(
     @JvmOverloads
     open fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int = 1): MsgResult {
         val result = postForObject<MsgResult>(
-                "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
-                request,
-                getStableAccessToken()
+            "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
+            request,
+            getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -174,7 +176,7 @@ open class OffiaccountClient(
             log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw WeixinException("发送模板消息失败：${result.errmsg}", result)
+            throw clientException("发送模板消息失败：${result.errmsg}", result)
         }
     }
 
@@ -186,10 +188,10 @@ open class OffiaccountClient(
         val jsapiTicket = getJsapiTicket()
         //注意这里参数名必须全部小写，且必须有序
         val signature = Sha1DigestUtil.shaHex(
-                "jsapi_ticket=" + jsapiTicket +
-                        "&noncestr=" + nonceStr +
-                        "&timestamp=" + timestamp +
-                        "&url=" + url
+            "jsapi_ticket=" + jsapiTicket +
+                    "&noncestr=" + nonceStr +
+                    "&timestamp=" + timestamp +
+                    "&url=" + url
         )
 
         return JsapiSignature(signature, properties.appId, nonceStr, timestamp)
@@ -202,9 +204,9 @@ open class OffiaccountClient(
     @JvmOverloads
     open fun sendCustomMessage(request: CustMsg, retries: Int = 1): WeixinResponse {
         val result = postForObject<WeixinResponse>(
-                "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}",
-                request,
-                getStableAccessToken()
+            "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}",
+            request,
+            getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -220,7 +222,7 @@ open class OffiaccountClient(
         } else if (retries < properties.maxRetries) {
             sendCustomMessage(request, retries + 1)
         } else {
-            throw WeixinException("发送客服消息失败：${result.errmsg}", result)
+            throw clientException("发送客服消息失败：${result.errmsg}", result)
         }
     }
 }

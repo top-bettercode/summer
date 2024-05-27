@@ -1,9 +1,11 @@
-package top.bettercode.summer.tools.sms
+package top.bettercode.summer.tools.lang.client
 
 /**
+ *
  * @author Peter Wu
  */
-interface SmsResponse {
+interface ClientResponse {
+
     /**
      * @return 是否成功
      */
@@ -13,4 +15,5 @@ interface SmsResponse {
      * @return 响应消息
      */
     val message: String?
+
 }

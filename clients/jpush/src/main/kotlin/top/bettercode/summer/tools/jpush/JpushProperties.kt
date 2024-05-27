@@ -1,12 +1,13 @@
 package top.bettercode.summer.tools.jpush
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import top.bettercode.summer.tools.lang.client.ClientProperties
 
 /**
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.jpush")
-open class JpushProperties {
+open class JpushProperties : ClientProperties("极光推送平台") {
     /**
      * 接口地址
      */
@@ -33,21 +34,4 @@ open class JpushProperties {
      * 天。设置为 0 表示不保留离线消息，只有推送当前在线的用户可以收到。 该字段对 iOS 的 Notification 消息无效。
      */
     var timeToLive = 60 * 60 * 24 * 3L
-
-    /**
-     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
-     */
-    var timeoutAlarmSeconds = -1
-
-    /**
-     * 请求连接超时时间秒数
-     */
-    var connectTimeout = 10
-
-
-    /**
-     * 请求读取超时时间秒数
-     */
-    var readTimeout = 10
-
 }

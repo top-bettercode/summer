@@ -1,12 +1,13 @@
 package top.bettercode.summer.tools.qvod
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import top.bettercode.summer.tools.lang.client.ClientProperties
 
 /**
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.qvod")
-open class QvodProperties {
+open class QvodProperties : ClientProperties("腾讯云点播") {
     /**
      * 点播帐号APP ID
      */
@@ -55,21 +56,6 @@ open class QvodProperties {
      * 上传签名有效时长，单位：秒 有效时长最大取值为7776000，即90天。默认2小时.
      */
     var uploadValidSeconds = 2 * 60 * 60L
-
-    /**
-     * 请求超时超过多少秒报警，-1表示不报警，默认-1.
-     */
-    var timeoutAlarmSeconds = -1
-
-    /**
-     * 请求连接超时时间秒数
-     */
-    var connectTimeout = 10
-
-    /**
-     * 请求读取超时时间秒数
-     */
-    var readTimeout = 10
 
     /**
      * 文件分类，默认为0

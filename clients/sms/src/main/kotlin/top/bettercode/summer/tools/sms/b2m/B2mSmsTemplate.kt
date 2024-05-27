@@ -8,45 +8,46 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
+import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.AESUtil.decrypt
 import top.bettercode.summer.tools.lang.util.AESUtil.encrypt
 import top.bettercode.summer.tools.lang.util.StringUtil.gzip
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.tools.lang.util.StringUtil.readJson
 import top.bettercode.summer.tools.lang.util.StringUtil.ungzip
-import top.bettercode.summer.tools.sms.SmsException
-import top.bettercode.summer.tools.sms.SmsSysException
-import top.bettercode.summer.tools.sms.SmsTemplate
+import top.bettercode.summer.tools.sms.b2m.B2mSmsTemplate.Companion.LOG_MARKER
 import java.nio.charset.StandardCharsets
 import java.util.*
 
 /**
  * 亿美软通短信平台 接口请求
  */
+@LogMarker(LOG_MARKER)
 open class B2mSmsTemplate(
-        private val b2mProperties: B2mSmsProperties
-) : SmsTemplate(
-        collectionName = "第三方平台",
-        name = "亿美软通短信平台",
-        logMarker = LOG_MARKER_STR,
-        timeoutAlarmSeconds = b2mProperties.timeoutAlarmSeconds,
-        connectTimeout = b2mProperties.connectTimeout,
-        readTimeout = b2mProperties.readTimeout,
-        requestDecrypt = { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) },
-        responseDecrypt = { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) }
+    properties: B2mSmsProperties
+) : ApiTemplate<B2mSmsProperties>(
+    logMarker = LOG_MARKER,
+    properties = properties,
+    requestDecrypt = { bytes -> ungzip(decrypt(bytes, properties.secretKey)) },
+    responseDecrypt = { bytes -> ungzip(decrypt(bytes, properties.secretKey)) }
 ) {
+
+    companion object {
+        const val LOG_MARKER = "sms"
+    }
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
@@ -54,7 +55,7 @@ open class B2mSmsTemplate(
         messageConverters.add(StringHttpMessageConverter())
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
     }
 
     /**
@@ -69,9 +70,9 @@ open class B2mSmsTemplate(
      */
     @JvmOverloads
     open fun sendSms(
-            cell: String,
-            content: String,
-            mock: Boolean = b2mProperties.isMock
+        cell: String,
+        content: String,
+        mock: Boolean = properties.isMock
     ): B2mResponse<B2mRespData> {
         return sendSms(Collections.singletonMap(cell, content), mock)
     }
@@ -87,67 +88,61 @@ open class B2mSmsTemplate(
      */
     @JvmOverloads
     open fun sendSms(
-            content: Map<String, String>,
-            mock: Boolean = b2mProperties.isMock
+        content: Map<String, String>,
+        mock: Boolean = properties.isMock
     ): B2mResponse<B2mRespData> {
         if (mock)
             return B2mResponse()
         val headers = HttpHeaders()
-        headers.add("appId", b2mProperties.appId)
+        headers.add("appId", properties.appId)
         headers.add("gzip", "on")
         val params: MutableMap<String, Any> = mutableMapOf()
         val smses: MutableList<Map<String, Any>> = mutableListOf()
         content.forEach { (key: String, value: String) ->
             smses.add(
-                    mapOf<String, Any>(
-                            //          "customSmsId" to "",
-                            //          "timerTime" to "",
-                            //          "extendedCode" to "",
-                            "mobile" to key,
-                            "content" to value
-                    )
+                mapOf<String, Any>(
+                    //          "customSmsId" to "",
+                    //          "timerTime" to "",
+                    //          "extendedCode" to "",
+                    "mobile" to key,
+                    "content" to value
+                )
             )
         }
         params["smses"] = smses
         params["requestTime"] = System.currentTimeMillis()
-        params["requestValidPeriod"] = b2mProperties.requestValidPeriod
+        params["requestValidPeriod"] = properties.requestValidPeriod
         val json = json(params)
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
-        data = encrypt(data, b2mProperties.secretKey)
-        val requestCallback = this.restTemplate.httpEntityCallback<ByteArray>(
-                HttpEntity(data, headers),
-                ByteArray::class.java
+        data = encrypt(data, properties.secretKey)
+        val requestCallback = this.httpEntityCallback<ByteArray>(
+            HttpEntity(data, headers),
+            ByteArray::class.java
         )
-        val entity: ResponseEntity<ByteArray> = try {
+        val entity: ResponseEntity<ByteArray> =
             execute(
-                    b2mProperties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(ByteArray::class.java)
+                properties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(ByteArray::class.java)
             )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
+                ?: throw clientException()
 
-        return if (entity.statusCode.is2xxSuccessful) {
-            val code = entity.headers.getFirst("result")
-            if (B2mResponse.SUCCESS == code) {
-                var respData = entity.body
-                respData = decrypt(respData!!, b2mProperties.secretKey)
-                respData = ungzip(respData)
-                val datas: List<B2mRespData> = readJson<MutableList<B2mRespData>>(
-                        respData,
-                        TypeFactory.defaultInstance().constructCollectionType(
-                                MutableList::class.java, B2mRespData::class.java
-                        )
+        val code = entity.headers.getFirst("result")
+        return if (B2mResponse.SUCCESS == code) {
+            var respData = entity.body
+            respData = decrypt(respData!!, properties.secretKey)
+            respData = ungzip(respData)
+            val datas: List<B2mRespData> = readJson<MutableList<B2mRespData>>(
+                respData,
+                TypeFactory.defaultInstance().constructCollectionType(
+                    MutableList::class.java, B2mRespData::class.java
                 )
-                B2mResponse(datas)
-            } else {
-                val message = B2mResponse.getMessage(code)
-                throw SmsSysException(message ?: "请求失败")
-            }
+            )
+            B2mResponse(datas)
         } else {
-            throw SmsException()
+            val message = B2mResponse.getMessage(code)
+            throw clientSysException(message)
         }
     }
 
@@ -164,48 +159,41 @@ open class B2mSmsTemplate(
     @JvmOverloads
     open fun querySendReport(number: Int = 500): List<B2mSendReport> {
         val headers = HttpHeaders()
-        headers.add("appId", b2mProperties.appId)
+        headers.add("appId", properties.appId)
         headers.add("gzip", "on")
         val params: MutableMap<String, Any> = mutableMapOf()
         params["number"] = number
         params["requestTime"] = System.currentTimeMillis()
-        params["requestValidPeriod"] = b2mProperties.requestValidPeriod
+        params["requestValidPeriod"] = properties.requestValidPeriod
         val json = json(params)
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
-        data = encrypt(data, b2mProperties.secretKey)
-        val requestCallback = this.restTemplate.httpEntityCallback<ByteArray>(
-                HttpEntity(data, headers),
-                ByteArray::class.java
+        data = encrypt(data, properties.secretKey)
+        val requestCallback = this.httpEntityCallback<ByteArray>(
+            HttpEntity(data, headers),
+            ByteArray::class.java
         )
-        val entity: ResponseEntity<ByteArray> = try {
+        val entity: ResponseEntity<ByteArray> =
             execute(
-                    b2mProperties.url + "/inter/getReport", HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(ByteArray::class.java)
-            )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
+                properties.url + "/inter/getReport", HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(ByteArray::class.java)
+            ) ?: throw clientException()
 
-        return if (entity.statusCode.is2xxSuccessful) {
-            val code = entity.headers.getFirst("result")
-            if (B2mResponse.SUCCESS == code) {
-                var respData = entity.body
-                respData = decrypt(respData!!, b2mProperties.secretKey)
-                respData = ungzip(respData)
-                readJson<List<B2mSendReport>>(
-                        respData,
-                        TypeFactory.defaultInstance().constructCollectionType(
-                                MutableList::class.java, B2mSendReport::class.java
-                        )
+        val code = entity.headers.getFirst("result")
+        return if (B2mResponse.SUCCESS == code) {
+            var respData = entity.body
+            respData = decrypt(respData!!, properties.secretKey)
+            respData = ungzip(respData)
+            readJson(
+                respData,
+                TypeFactory.defaultInstance().constructCollectionType(
+                    MutableList::class.java, B2mSendReport::class.java
                 )
-            } else {
-                val message = B2mResponse.getMessage(code)
-                throw SmsSysException(message ?: "请求失败")
-            }
+            )
         } else {
-            throw SmsException()
+            val message = B2mResponse.getMessage(code)
+            throw clientSysException(message)
         }
     }
 
@@ -219,46 +207,40 @@ open class B2mSmsTemplate(
      */
     open fun getBalance(): B2mBalance {
         val headers = HttpHeaders()
-        headers.add("appId", b2mProperties.appId)
+        headers.add("appId", properties.appId)
         headers.add("gzip", "on")
         headers.add("encode", "UTF-8")
         val params: MutableMap<String, Any> = mutableMapOf()
         params["requestTime"] = System.currentTimeMillis()
-        params["requestValidPeriod"] = b2mProperties.requestValidPeriod
+        params["requestValidPeriod"] = properties.requestValidPeriod
         val json = json(params)
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
-        data = encrypt(data, b2mProperties.secretKey)
-        val requestCallback = this.restTemplate.httpEntityCallback<ByteArray>(
-                HttpEntity(data, headers),
-                ByteArray::class.java
+        data = encrypt(data, properties.secretKey)
+        val requestCallback = this.httpEntityCallback<ByteArray>(
+            HttpEntity(data, headers),
+            ByteArray::class.java
         )
-        val entity: ResponseEntity<ByteArray> = try {
+        val entity: ResponseEntity<ByteArray> =
             execute(
-                    b2mProperties.url + "/inter/getBalance", HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(ByteArray::class.java)
+                properties.url + "/inter/getBalance", HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(ByteArray::class.java)
             )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
+                ?: throw clientException()
 
-        return if (entity.statusCode.is2xxSuccessful) {
-            val code = entity.headers.getFirst("result")
-            if (B2mResponse.SUCCESS == code) {
-                var respData = entity.body
-                respData = decrypt(respData!!, b2mProperties.secretKey)
-                respData = ungzip(respData)
-                readJson(
-                        respData,
-                        B2mBalance::class.java
-                )
-            } else {
-                val message = B2mResponse.getMessage(code)
-                throw SmsSysException(message ?: "请求失败")
-            }
+        val code = entity.headers.getFirst("result")
+        return if (B2mResponse.SUCCESS == code) {
+            var respData = entity.body
+            respData = decrypt(respData!!, properties.secretKey)
+            respData = ungzip(respData)
+            readJson(
+                respData,
+                B2mBalance::class.java
+            )
         } else {
-            throw SmsException()
+            val message = B2mResponse.getMessage(code)
+            throw clientSysException(message)
         }
     }
 

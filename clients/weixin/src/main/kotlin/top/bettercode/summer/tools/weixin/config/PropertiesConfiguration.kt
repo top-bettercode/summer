@@ -15,21 +15,21 @@ class PropertiesConfiguration {
     @ConditionalOnProperty(prefix = "summer.wechat.corp", name = ["app-id"])
     @ConditionalOnMissingBean
     @Bean
-    fun corpProperties(): ICorpProperties {
+    fun corpProperties(): CorpProperties {
         return CorpProperties()
     }
 
     @ConditionalOnProperty(prefix = "summer.wechat.mini", name = ["app-id"])
     @ConditionalOnMissingBean
     @Bean
-    fun miniprogramProperties(): IMiniprogramProperties {
+    fun miniprogramProperties(): MiniprogramProperties {
         return MiniprogramProperties()
     }
 
     @ConditionalOnProperty(prefix = "summer.wechat", name = ["app-id"])
     @ConditionalOnMissingBean
     @Bean
-    fun offiaccountProperties(): IOffiaccountProperties {
+    fun offiaccountProperties(): OffiaccountProperties {
         return OffiaccountProperties()
     }
 

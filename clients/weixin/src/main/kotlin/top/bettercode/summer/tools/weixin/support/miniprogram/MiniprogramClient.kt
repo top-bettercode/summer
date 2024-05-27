@@ -3,10 +3,9 @@ package top.bettercode.summer.tools.weixin.support.miniprogram
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.weixin.properties.IMiniprogramProperties
+import top.bettercode.summer.tools.weixin.properties.MiniprogramProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
-import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
@@ -19,15 +18,15 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.entity.UniformMsgR
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-open class MiniprogramClient(properties: IMiniprogramProperties,
-                             cache: IWeixinCache) :
-        WeixinClient<IMiniprogramProperties>(
-                properties,
-                cache,
-                "第三方平台",
-                "微信小程序",
-                LOG_MARKER
-        ) {
+open class MiniprogramClient(
+    properties: MiniprogramProperties,
+    cache: IWeixinCache
+) :
+    WeixinClient<MiniprogramProperties>(
+        properties,
+        cache,
+        LOG_MARKER
+    ) {
 
     companion object {
         const val LOG_MARKER = "wxmini"
@@ -35,24 +34,24 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
 
     open fun jscode2session(code: String): JsSession {
         val session = getForObject<JsSession>(
-                "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
-                properties.appId,
-                properties.secret,
-                code
+            "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
+            properties.appId,
+            properties.secret,
+            code
         )
         return if (session.isOk) {
             session
         } else {
-            throw WeixinException("获取session失败：${session.errmsg}", session)
+            throw clientException("获取session失败：${session.errmsg}", session)
         }
     }
 
     @JvmOverloads
     open fun getuserphonenumber(code: String, retries: Int = 1): PhoneInfoResp {
         val result = postForObject<PhoneInfoResp>(
-                "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
-                mapOf("code" to code),
-                getStableAccessToken()
+            "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
+            mapOf("code" to code),
+            getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -64,7 +63,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
         } else {
-            throw WeixinException("手机号授权失败：${result.errmsg}", result)
+            throw clientException("手机号授权失败：${result.errmsg}", result)
         }
     }
 
@@ -77,9 +76,9 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
             request.miniprogramState = properties.miniprogramState
         }
         val result = postForObject<WeixinResponse>(
-                "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
-                request,
-                getStableAccessToken()
+            "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
+            request,
+            getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -95,7 +94,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
             log.warn("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw WeixinException("发送订阅消息失败：${result.errmsg}", result)
+            throw clientException("发送订阅消息失败：${result.errmsg}", result)
         }
     }
 
@@ -104,13 +103,20 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
      * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/uniform-message/sendUniformMessage.html
      */
     @Suppress("DEPRECATION")
-    @Deprecated("自 2023 年 9 月 20 日起（以下简称 “生效期”），下发统一消息接口将被收回。", replaceWith = ReplaceWith("offiaccountClient.sendTemplateMsg(TemplateMsgRequest(), 1)", "top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient", "top.bettercode.summer.tools.weixin.support.offiaccount.entity.TemplateMsgRequest"))
+    @Deprecated(
+        "自 2023 年 9 月 20 日起（以下简称 “生效期”），下发统一消息接口将被收回。",
+        replaceWith = ReplaceWith(
+            "offiaccountClient.sendTemplateMsg(TemplateMsgRequest(), 1)",
+            "top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient",
+            "top.bettercode.summer.tools.weixin.support.offiaccount.entity.TemplateMsgRequest"
+        )
+    )
     @JvmOverloads
     open fun sendUniformMsg(request: UniformMsgRequest, retries: Int = 1): WeixinResponse {
         val result = postForObject<WeixinResponse>(
-                "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={0}",
-                request,
-                getStableAccessToken()
+            "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={0}",
+            request,
+            getStableAccessToken()
         )
         return if (result.isOk) {
             result
@@ -126,7 +132,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties,
         } else if (retries < properties.maxRetries) {
             sendUniformMsg(request, retries + 1)
         } else {
-            throw WeixinException("发送统一服务消息失败：${result.errmsg}", result)
+            throw clientException("发送统一服务消息失败：${result.errmsg}", result)
         }
     }
 

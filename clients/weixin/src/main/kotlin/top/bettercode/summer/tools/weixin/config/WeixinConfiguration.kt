@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.tools.weixin.controller.OffiaccountCallbackController
-import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
+import top.bettercode.summer.tools.weixin.properties.OffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.DefaultDuplicatedMessageChecker
 import top.bettercode.summer.tools.weixin.support.DefaultWeixinCache
 import top.bettercode.summer.tools.weixin.support.IDuplicatedMessageChecker
@@ -16,8 +16,8 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient
 
 @ConditionalOnMissingClass("org.springframework.data.redis.connection.RedisConnectionFactory")
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnBean(IOffiaccountProperties::class)
-class WeixinConfiguration(private val properties: IOffiaccountProperties) {
+@ConditionalOnBean(OffiaccountProperties::class)
+class WeixinConfiguration(private val properties: OffiaccountProperties) {
 
     @Bean
     fun offiaccountClient(): OffiaccountClient {
@@ -28,11 +28,15 @@ class WeixinConfiguration(private val properties: IOffiaccountProperties) {
     @ConditionalOnWebApplication
     @Bean
     fun offiaccountCallbackController(
-            wechatService: IWeixinService,
-            offiaccountClient: OffiaccountClient,
-            duplicatedMessageChecker: IDuplicatedMessageChecker
+        wechatService: IWeixinService,
+        offiaccountClient: OffiaccountClient,
+        duplicatedMessageChecker: IDuplicatedMessageChecker
     ): OffiaccountCallbackController {
-        return OffiaccountCallbackController(wechatService, offiaccountClient, duplicatedMessageChecker)
+        return OffiaccountCallbackController(
+            wechatService,
+            offiaccountClient,
+            duplicatedMessageChecker
+        )
     }
 
     @ConditionalOnMissingBean(IDuplicatedMessageChecker::class)

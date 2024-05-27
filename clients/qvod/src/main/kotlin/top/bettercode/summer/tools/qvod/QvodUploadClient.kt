@@ -19,7 +19,7 @@ import java.io.File
  */
 @LogMarker(LOG_MARKER)
 open class QvodUploadClient(
-        val properties: QvodProperties
+    val properties: QvodProperties
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(QvodUploadClient::class.java)
@@ -58,11 +58,11 @@ open class QvodUploadClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(throwable) else StringUtil.json(resp, true)
+                MarkerFactory.getMarker(LOG_MARKER),
+                "DURATION MILLIS : {}\n{}\n\n{}",
+                durationMillis,
+                StringUtil.json(req, true),
+                if (resp == null) StringUtil.valueOf(throwable) else StringUtil.json(resp, true)
             )
         }
     }

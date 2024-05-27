@@ -22,14 +22,10 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
  */
 @LogMarker(LOG_MARKER)
 open class JpushClient(
-        private val properties: JpushProperties
-) : ApiTemplate(
-        collectionName = "第三方平台",
-        name = "极光推送",
-        logMarker = LOG_MARKER,
-        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        connectTimeoutInSeconds = properties.connectTimeout,
-        readTimeoutInSeconds = properties.readTimeout
+    properties: JpushProperties
+) : ApiTemplate<JpushProperties>(
+    logMarker = LOG_MARKER,
+    properties = properties
 ) {
 
     companion object {
@@ -40,64 +36,60 @@ open class JpushClient(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-                object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(mediaType: MediaType?): Boolean {
-                        return true
-                    }
-
-                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-                        return true
-                    }
+            object : MappingJackson2HttpMessageConverter() {
+                override fun canRead(mediaType: MediaType?): Boolean {
+                    return true
                 }
+
+                override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                    return true
+                }
+            }
         objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        this.restTemplate.messageConverters = messageConverters
+        this.messageConverters = messageConverters
     }
 
 
     open fun send(request: JpushRequest): JpushResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = this.restTemplate.httpEntityCallback<JpushResponse>(
-                HttpEntity(request, headers),
-                JpushResponse::class.java
+        val requestCallback = this.httpEntityCallback<JpushResponse>(
+            HttpEntity(request, headers),
+            JpushResponse::class.java
         )
         if (request.cid == null) {
             val cidlist = cid(1).cidlist
             if (cidlist?.isNotEmpty() == true) {
                 request.cid = cidlist[0]
             } else {
-                throw JpushException("获取cid失败")
+                throw clientException("获取cid失败")
             }
         }
         request.options = Options(properties.timeToLive, properties.apnsProduction)
         val entity: ResponseEntity<JpushResponse> = try {
             execute(
-                    properties.url + "/push", HttpMethod.POST,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(JpushResponse::class.java)
+                properties.url + "/push", HttpMethod.POST,
+                requestCallback,
+                this.responseEntityExtractor(JpushResponse::class.java)
             )
         } catch (e: Exception) {
             if (e is HttpClientErrorException) {
                 val errorResponse = objectMapper.readValue(
-                        e.responseBodyAsByteArray,
-                        JpushErrorResponse::class.java
+                    e.responseBodyAsByteArray,
+                    JpushErrorResponse::class.java
                 )
                 val error = errorResponse.error
                 if (error != null) {
-                    throw JpushSysException(error)
+                    throw clientSysException(error.message, error)
                 }
             }
-            throw JpushException(e)
-        } ?: throw JpushException()
+            throw clientException(e)
+        } ?: throw clientException()
 
-        return if (entity.statusCode.is2xxSuccessful) {
-            entity.body ?: throw JpushException("请求失败")
-        } else {
-            throw JpushException("请求失败")
-        }
+        return entity.body ?: throw clientException()
     }
 
     /**
@@ -106,36 +98,32 @@ open class JpushClient(
     open fun cid(count: Int): JpushCidResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = this.restTemplate.httpEntityCallback<JpushCidResponse>(
-                HttpEntity(null, headers),
-                JpushCidResponse::class.java
+        val requestCallback = this.httpEntityCallback<JpushCidResponse>(
+            HttpEntity(null, headers),
+            JpushCidResponse::class.java
         )
         val entity: ResponseEntity<JpushCidResponse> = try {
             execute(
-                    properties.url + "/push/cid?count={0}", HttpMethod.GET,
-                    requestCallback,
-                    this.restTemplate.responseEntityExtractor(JpushCidResponse::class.java),
-                    count
+                properties.url + "/push/cid?count={0}", HttpMethod.GET,
+                requestCallback,
+                this.responseEntityExtractor(JpushCidResponse::class.java),
+                count
             )
         } catch (e: Exception) {
             if (e is HttpClientErrorException) {
                 val errorResponse = objectMapper.readValue(
-                        e.responseBodyAsByteArray,
-                        JpushErrorResponse::class.java
+                    e.responseBodyAsByteArray,
+                    JpushErrorResponse::class.java
                 )
                 val error = errorResponse.error
                 if (error != null) {
-                    throw JpushSysException(error)
+                    throw clientSysException(error.message, error)
                 }
             }
-            throw JpushException(e)
-        } ?: throw JpushException()
+            throw clientException(e)
+        } ?: throw clientException()
 
-        return if (entity.statusCode.is2xxSuccessful) {
-            entity.body ?: throw JpushException("请求失败")
-        } else {
-            throw JpushException("请求失败")
-        }
+        return entity.body ?: throw clientException()
     }
 
 

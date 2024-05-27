@@ -13,27 +13,29 @@ import org.springframework.http.HttpStatus
 import top.bettercode.summer.tools.lang.operation.*
 import top.bettercode.summer.tools.lang.util.StringUtil
 import java.time.LocalDateTime
+import java.util.*
 
 /**
  *
  * @author Peter Wu
  */
-class OkHttpClientLoggingInterceptor(private val collectionName: String,
-                                     private val name: String,
-                                     private val logMarker: String,
-                                     private val logClazz: Class<*> = OkHttpClientLoggingInterceptor::class.java,
-                                     private val timeoutAlarmSeconds: Int = -1,
-                                     private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
-                                     private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
+class OkHttpClientLoggingInterceptor(
+    private val collectionName: String,
+    private val name: String,
+    private val logMarker: String,
+    private val logClazz: Class<*> = OkHttpClientLoggingInterceptor::class.java,
+    private val timeoutAlarmSeconds: Int = -1,
+    private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
+    private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : Interceptor {
     private val log: Logger = LoggerFactory.getLogger(logClazz)
 
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val dateTime =
-                if (log.isInfoEnabled) {
-                    LocalDateTime.now()
-                } else null
+            if (log.isInfoEnabled) {
+                LocalDateTime.now()
+            } else null
         val request = chain.request()
         var response: Response? = null
         var stackTrace = ""
@@ -47,8 +49,8 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
             if (log.isInfoEnabled) {
                 var exception: Exception? = null
                 val operationResponse = if (response == null) OperationResponse(
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        HttpHeaders.EMPTY, ByteArray(0)
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    HttpHeaders.EMPTY, ByteArray(0)
                 ) else try {
                     convert(response)
                 } catch (e: Exception) {
@@ -56,37 +58,44 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
                         stackTrace = StringUtil.valueOf(e)
                     exception = e
                     OperationResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            HttpHeaders.EMPTY, ByteArray(0)
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpHeaders.EMPTY, ByteArray(0)
                     )
                 }
                 operationResponse.stackTrace = stackTrace
                 val operation = Operation(
-                        collectionName = collectionName,
-                        name = name,
-                        protocol = chain.connection()?.protocol()?.toString()
-                                ?: RequestConverter.DEFAULT_PROTOCOL,
-                        request = convert(request, dateTime!!),
-                        response = operationResponse
+                    collectionName = collectionName,
+                    name = name,
+                    protocol = chain.connection()?.protocol()?.toString()
+                        ?: RequestConverter.DEFAULT_PROTOCOL,
+                    request = convert(request, dateTime!!),
+                    response = operationResponse
                 )
+                val isMultipart =
+                    request.headers[HttpHeaders.CONTENT_TYPE]?.lowercase(Locale.getDefault())
+                        ?.startsWith("multipart/") == true
+                val isFile =
+                    !response?.headers?.get(HttpHeaders.CONTENT_DISPOSITION).isNullOrBlank()
+
                 var msg = operation.toString(
-                        RequestLoggingConfig(
-                                includeRequestBody = true,
-                                includeResponseBody = true,
-                                includeTrace = true,
-                                encryptHeaders = arrayOf(),
-                                encryptParameters = arrayOf(),
-                                format = true,
-                                ignoredTimeout = true,
-                                timeoutAlarmSeconds = -1
-                        ),
-                        requestDecrypt,
-                        responseDecrypt
+                    RequestLoggingConfig(
+                        includeRequestBody = !isMultipart,
+                        includeResponseBody = !isFile,
+                        includeTrace = true,
+                        encryptHeaders = arrayOf(),
+                        encryptParameters = arrayOf(),
+                        format = true,
+                        ignoredTimeout = true,
+                        timeoutAlarmSeconds = -1
+                    ),
+                    requestDecrypt,
+                    responseDecrypt
                 )
 
                 val marker = MarkerFactory.getDetachedMarker(logMarker)
                 if (timeoutAlarmSeconds > 0 && operation.duration > timeoutAlarmSeconds * 1000) {
-                    val initialComment = "${operation.name}(${operation.request.restUri})：请求响应速度慢"
+                    val initialComment =
+                        "${operation.name}(${operation.request.restUri})：请求响应速度慢"
                     val timeoutMsg = "(${operation.duration / 1000}秒)"
                     marker.add(AlarmMarker(initialComment + timeoutMsg, true))
                     msg = "$initialComment${timeoutMsg}\n$msg"
@@ -132,10 +141,11 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
         val url = request.url
         if (headers.host == null) {
             val port = url.port
-            headers["Host"] = if (RequestConverter.SCHEME_HTTP == url.scheme && port == RequestConverter.STANDARD_PORT_HTTP)
-                url.host
-            else
-                "${url.host}:$port"
+            headers["Host"] =
+                if (RequestConverter.SCHEME_HTTP == url.scheme && port == RequestConverter.STANDARD_PORT_HTTP)
+                    url.host
+                else
+                    "${url.host}:$port"
         }
         val parameters = Parameters()
         for (parameterName in url.queryParameterNames) {
@@ -145,17 +155,17 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
         val restUri = uri.toString()
         val remoteUser = "NonSpecificUser"
         return OperationRequest(
-                uri = uri,
-                restUri = restUri,
-                uriVariables = emptyMap(),
-                method = request.method,
-                headers = headers,
-                cookies = emptyList(),
-                remoteUser = remoteUser,
-                parameters = parameters,
-                parts = emptyList(),
-                content = content,
-                dateTime = dateTime
+            uri = uri,
+            restUri = restUri,
+            uriVariables = emptyMap(),
+            method = request.method,
+            headers = headers,
+            cookies = emptyList(),
+            remoteUser = remoteUser,
+            parameters = parameters,
+            parts = emptyList(),
+            content = content,
+            dateTime = dateTime
         )
     }
 
@@ -182,8 +192,8 @@ class OkHttpClientLoggingInterceptor(private val collectionName: String,
             ByteArray(0)
         }
         return OperationResponse(
-                response.code,
-                headers, content
+            response.code,
+            headers, content
         )
     }
 }

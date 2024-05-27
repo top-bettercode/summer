@@ -1,12 +1,12 @@
 package top.bettercode.summer.tools.sms.b2m
 
+import top.bettercode.summer.tools.lang.client.ClientResponse
 import top.bettercode.summer.tools.lang.property.PropertiesSource.Companion.of
-import top.bettercode.summer.tools.sms.SmsResponse
 
 /**
  * @author Peter Wu
  */
-class B2mResponse<T> : SmsResponse {
+class B2mResponse<T> : ClientResponse {
     //--------------------------------------------
     var code: String? = null
     var data: List<T>? = null

@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.pay.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import top.bettercode.summer.tools.lang.client.ClientProperties
 
 /**
  * 微售支付配置
@@ -38,18 +39,4 @@ data class WeixinPayProperties @JvmOverloads constructor(
          * 证书Key密码
          */
         var certKeyPassword: String? = null,
-        /**
-         * 请求超时超过多少秒报警，-1表示不报警，默认-1.
-         */
-        var timeoutAlarmSeconds: Int = -1,
-        /**
-         * 请求连接超时时间秒数
-         */
-        var connectTimeout: Int = 10,
-
-        /**
-         * 请求读取超时时间秒数
-         */
-        var readTimeout: Int = 10
-
-)
+):ClientProperties("微信支付")
