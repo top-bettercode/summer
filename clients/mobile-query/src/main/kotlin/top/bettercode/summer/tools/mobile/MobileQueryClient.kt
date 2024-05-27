@@ -8,7 +8,6 @@ import org.springframework.util.Base64Utils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.TimeUtil
-import top.bettercode.summer.tools.mobile.MobileQueryClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.mobile.entity.QueryResponse
 import java.security.Key
 import java.time.ZoneId
@@ -22,16 +21,16 @@ import javax.crypto.spec.SecretKeySpec
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(MobileQueryClient.MARKER)
 open class MobileQueryClient(
     properties: MobileQueryProperties
 ) : ApiTemplate<MobileQueryProperties>(
-    logMarker = LOG_MARKER,
+    marker = MARKER,
     properties = properties,
 ) {
 
     companion object {
-        const val LOG_MARKER = "mobile-query"
+        const val MARKER = "mobile-query"
     }
 
     init {

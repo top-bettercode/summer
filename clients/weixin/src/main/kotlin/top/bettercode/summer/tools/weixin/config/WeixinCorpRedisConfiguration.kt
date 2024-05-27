@@ -20,7 +20,7 @@ class WeixinCorpRedisConfiguration(private val properties: CorpProperties) {
     fun corpClient(redisConnectionFactory: RedisConnectionFactory): CorpClient {
         return CorpClient(
             properties,
-            RedisWeixinCache(properties.cacheSeconds, CorpClient.LOG_MARKER, redisConnectionFactory)
+            RedisWeixinCache(properties.cacheSeconds, CorpClient.MARKER, redisConnectionFactory)
         )
     }
 

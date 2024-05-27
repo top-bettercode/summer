@@ -11,7 +11,6 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.Sha256DigestUtils
-import top.bettercode.summer.tools.rapidauth.RapidauthClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthRequest
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthResponse
 
@@ -20,16 +19,16 @@ import top.bettercode.summer.tools.rapidauth.entity.RapidauthResponse
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(RapidauthClient.MARKER)
 open class RapidauthClient(
     properties: RapidauthProperties
 ) : ApiTemplate<RapidauthProperties>(
-    logMarker = LOG_MARKER,
+    marker = MARKER,
     properties = properties
 ) {
 
     companion object {
-        const val LOG_MARKER = "rapidauth"
+        const val MARKER = "rapidauth"
     }
 
     init {

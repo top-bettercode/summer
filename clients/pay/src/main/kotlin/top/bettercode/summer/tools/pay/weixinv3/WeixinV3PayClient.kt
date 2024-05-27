@@ -25,7 +25,6 @@ import org.springframework.util.Base64Utils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
 import top.bettercode.summer.tools.pay.properties.WeixinV3PayProperties
-import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
 import java.nio.charset.StandardCharsets
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
@@ -47,13 +46,13 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 @Suppress("JoinDeclarationAndAssignment")
-@LogMarker(LOG_MARKER)
+@LogMarker(WeixinV3PayClient.MARKER)
 open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
 
     private val log: Logger = LoggerFactory.getLogger(WeixinV3PayClient::class.java)
 
     companion object {
-        const val LOG_MARKER = "weixinv3_pay"
+        const val MARKER = "weixinv3_pay"
     }
 
     val config: RSAAutoCertificateConfig
@@ -64,26 +63,42 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
 
     init {
         this.config = RSAAutoCertificateConfig.Builder()
-                .merchantId(properties.merchantId)
-                .privateKeyFromPath(properties.privateKeyPath)
-                .merchantSerialNumber(properties.merchantSerialNumber)
-                .apiV3Key(properties.apiV3Key)
-                .build()
+            .merchantId(properties.merchantId)
+            .privateKeyFromPath(properties.privateKeyPath)
+            .merchantSerialNumber(properties.merchantSerialNumber)
+            .apiV3Key(properties.apiV3Key)
+            .build()
 
         this.privacyDecryptor = this.config.createDecryptor()
 
         // 解析公钥
-        this.publicKey = PemUtil.loadX509FromStream(ClassPathResource(properties.certificatePath!!).inputStream).publicKey
+        this.publicKey =
+            PemUtil.loadX509FromStream(ClassPathResource(properties.certificatePath!!).inputStream).publicKey
 
         this.notificationParser = NotificationParser(config)
 
         val okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "微信支付V3", logMarker = LOG_MARKER, logClazz = WeixinV3PayClient::class.java, timeoutAlarmSeconds = properties.timeoutAlarmSeconds))
-                .connectionPool(ConnectionPool(properties.maxIdleConnections, properties.keepAliveDuration, TimeUnit.MINUTES))
-                .connectTimeout(properties.connectTimeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(properties.readTimeout.toLong(), TimeUnit.SECONDS)
-                .build()
-        this.httpClient = DefaultHttpClientBuilder().okHttpClient(okHttpClient).config(config).build()
+            .addInterceptor(
+                OkHttpClientLoggingInterceptor(
+                    collectionName = "第三方平台",
+                    name = "微信支付V3",
+                    logMarker = MARKER,
+                    logClazz = WeixinV3PayClient::class.java,
+                    timeoutAlarmSeconds = properties.timeoutAlarmSeconds
+                )
+            )
+            .connectionPool(
+                ConnectionPool(
+                    properties.maxIdleConnections,
+                    properties.keepAliveDuration,
+                    TimeUnit.MINUTES
+                )
+            )
+            .connectTimeout(properties.connectTimeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(properties.readTimeout.toLong(), TimeUnit.SECONDS)
+            .build()
+        this.httpClient =
+            DefaultHttpClientBuilder().okHttpClient(okHttpClient).config(config).build()
     }
 
     /**
@@ -99,7 +114,8 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
      * https://pay.weixin.qq.com/docs/merchant/apis/batch-transfer-to-balance/transfer-batch/initiate-batch-transfer.html
      */
     val transferBatchService: TransferBatchService by lazy {
-        TransferBatchService.Builder().httpClient(httpClient).encryptor(config.createEncryptor()).decryptor(config.createDecryptor()).build()
+        TransferBatchService.Builder().httpClient(httpClient).encryptor(config.createEncryptor())
+            .decryptor(config.createDecryptor()).build()
     }
 
     /**
@@ -143,7 +159,17 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
     }
 
     @JvmOverloads
-    fun <T> handleNotify(request: HttpServletRequest, clazz: Class<T>, consumer: Consumer<T>, error: Consumer<Exception> = Consumer<Exception> { log.error("handle notify failed", it) }): Any {
+    fun <T> handleNotify(
+        request: HttpServletRequest,
+        clazz: Class<T>,
+        consumer: Consumer<T>,
+        error: Consumer<Exception> = Consumer<Exception> {
+            log.error(
+                "handle notify failed",
+                it
+            )
+        }
+    ): Any {
         val requestBody = request.reader.readText()
         val wechatpayNonce = request.getHeader("Wechatpay-Nonce")
         val wechatpayTimestamp = request.getHeader("Wechatpay-Timestamp")
@@ -151,12 +177,12 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
         val wechatSignature = request.getHeader("Wechatpay-Signature")
         // 构造 RequestParam
         val requestParam = RequestParam.Builder()
-                .serialNumber(wechatpaySerial)
-                .nonce(wechatpayNonce)
-                .signature(wechatSignature)
-                .timestamp(wechatpayTimestamp)
-                .body(requestBody)
-                .build()
+            .serialNumber(wechatpaySerial)
+            .nonce(wechatpayNonce)
+            .signature(wechatSignature)
+            .timestamp(wechatpayTimestamp)
+            .body(requestBody)
+            .build()
         return try {
             val response: T = notificationParser.parse(requestParam, clazz)
             consumer.accept(response)
@@ -165,16 +191,24 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
             // 签名验证失败，返回 401 UNAUTHORIZED 状态码
             log.error("sign verification failed", e)
             ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(mapOf("code" to "FAIL",
-                            "message" to "sign verification failed"))
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                    mapOf(
+                        "code" to "FAIL",
+                        "message" to "sign verification failed"
+                    )
+                )
         } catch (e: Exception) {
             // 如果处理失败，应返回 4xx/5xx 的状态码，例如 500 INTERNAL_SERVER_ERROR
             error.accept(e)
             ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(mapOf("code" to "FAIL",
-                            "message" to e.message))
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                    mapOf(
+                        "code" to "FAIL",
+                        "message" to e.message
+                    )
+                )
         }
     }
 

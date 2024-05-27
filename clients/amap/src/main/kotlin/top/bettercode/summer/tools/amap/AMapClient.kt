@@ -9,7 +9,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.web.client.DefaultResponseErrorHandler
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.amap.AMapClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.amap.entity.AMapGeo
 import top.bettercode.summer.tools.amap.entity.AMapRegeo
 import top.bettercode.summer.tools.amap.entity.Distance
@@ -20,13 +19,13 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(AMapClient.MARKER)
 open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
-    logMarker = LOG_MARKER,
+    marker = MARKER,
     properties = properties
 ) {
     companion object {
-        const val LOG_MARKER = "amap"
+        const val MARKER = "amap"
     }
 
     init {

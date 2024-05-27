@@ -25,9 +25,9 @@ import java.util.concurrent.Callable
 open class WeixinClient<T : WeixinProperties>(
     properties: T,
     val cache: IWeixinCache,
-    logMarker: String
+    marker: String
 ) : ApiTemplate<T>(
-    logMarker = logMarker,
+    marker = marker,
     properties = properties
 ) {
 

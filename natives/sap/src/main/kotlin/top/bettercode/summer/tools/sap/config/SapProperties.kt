@@ -7,6 +7,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  */
 @ConfigurationProperties("summer.sap")
 open class SapProperties {
+    /**
+     * 平台名称
+     */
+    var platformName: String = "SAP系统"
+
     var ashost: String? = null
     var sysnr: String? = null
     var client: String? = null

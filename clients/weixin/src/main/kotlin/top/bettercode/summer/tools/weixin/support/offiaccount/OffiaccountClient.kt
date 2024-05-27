@@ -9,7 +9,6 @@ import top.bettercode.summer.tools.weixin.properties.OffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
-import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.WXBizMsgCrypt
 import top.bettercode.summer.tools.weixin.support.offiaccount.custmsg.CustMsg
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
@@ -22,7 +21,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(OffiaccountClient.MARKER)
 open class OffiaccountClient(
     properties: OffiaccountProperties,
     cache: IWeixinCache
@@ -30,7 +29,7 @@ open class OffiaccountClient(
     WeixinClient<OffiaccountProperties>(
         properties,
         cache,
-        LOG_MARKER
+        MARKER
     ) {
 
     val wxBizMsgCrypt: WXBizMsgCrypt by lazy {
@@ -39,8 +38,7 @@ open class OffiaccountClient(
 
     companion object {
         const val JSAPI_TICKET_KEY: String = "jsapi_ticket:"
-        const val LOG_MARKER = "weixin"
-
+        const val MARKER = "weixin"
 
     }
 
@@ -53,7 +51,7 @@ open class OffiaccountClient(
             URLEncoder.encode(properties.oauthUrl, "UTF-8"),
             "snsapi_userinfo"
         )
-        log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
+        log.info(MarkerFactory.getMarker(marker), "authenticationUrl:{}", authenticationUrl)
     }
 
     @JvmOverloads

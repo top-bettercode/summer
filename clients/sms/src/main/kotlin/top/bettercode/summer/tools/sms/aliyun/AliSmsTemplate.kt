@@ -16,7 +16,6 @@ import org.springframework.web.client.DefaultResponseErrorHandler
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.StringUtil.json
-import top.bettercode.summer.tools.sms.b2m.B2mSmsTemplate.Companion.LOG_MARKER
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -34,15 +33,15 @@ import javax.crypto.spec.SecretKeySpec
 /**
  * 阿里短信平台 接口请求
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(AliSmsTemplate.MARKER)
 open class AliSmsTemplate(
     properties: AliSmsProperties
 ) : ApiTemplate<AliSmsProperties>(
-    logMarker = LOG_MARKER,
+    marker = MARKER,
     properties = properties,
 ) {
     companion object {
-        const val LOG_MARKER = "sms"
+        const val MARKER = "sms"
     }
 
     init {

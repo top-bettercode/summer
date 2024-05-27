@@ -1,8 +1,8 @@
 package top.bettercode.summer.tools.sap.stock
 
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.lang.client.ClientSysException
 import top.bettercode.summer.tools.sap.connection.SapService
-import top.bettercode.summer.tools.sap.connection.SapSysException
 import top.bettercode.summer.tools.sap.connection.pojo.SapHead
 import java.math.BigDecimal
 import java.util.concurrent.*
@@ -34,7 +34,7 @@ class SapStockService {
             sapQueryStock.head = head
             val stockResp = sapService.invoke("ZRFC_STOCK_001", sapQueryStock, StockResp::class.java)
             stockResp.lsReturn
-        } catch (e: SapSysException) {
+        } catch (e: ClientSysException) {
             val lsReturn = StockLsReturn()
             lsReturn.meins = "TO"
             lsReturn

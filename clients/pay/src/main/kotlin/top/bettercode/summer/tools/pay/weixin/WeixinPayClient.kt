@@ -12,7 +12,6 @@ import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
-import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.pay.weixin.entity.*
 import java.io.InputStream
 import java.security.KeyStore
@@ -32,13 +31,13 @@ import javax.servlet.http.HttpServletRequest
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(WeixinPayClient.MARKER)
 open class WeixinPayClient(properties: WeixinPayProperties) : ApiTemplate<WeixinPayProperties>(
-    LOG_MARKER,
+    MARKER,
     properties,
 ) {
     companion object {
-        const val LOG_MARKER = "weixin_pay"
+        const val MARKER = "weixin_pay"
     }
 
     private val objectMapper: ObjectMapper

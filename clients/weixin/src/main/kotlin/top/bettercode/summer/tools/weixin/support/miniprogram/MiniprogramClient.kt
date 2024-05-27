@@ -7,7 +7,6 @@ import top.bettercode.summer.tools.weixin.properties.MiniprogramProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
-import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.PhoneInfoResp
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMsgRequest
@@ -17,7 +16,7 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.entity.UniformMsgR
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(MiniprogramClient.MARKER)
 open class MiniprogramClient(
     properties: MiniprogramProperties,
     cache: IWeixinCache
@@ -25,11 +24,11 @@ open class MiniprogramClient(
     WeixinClient<MiniprogramProperties>(
         properties,
         cache,
-        LOG_MARKER
+        MARKER
     ) {
 
     companion object {
-        const val LOG_MARKER = "wxmini"
+        const val MARKER = "wxmini"
     }
 
     open fun jscode2session(code: String): JsSession {

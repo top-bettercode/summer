@@ -16,7 +16,6 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.client.ApiTemplate
-import top.bettercode.summer.tools.sms.b2m.B2mSmsTemplate.Companion.LOG_MARKER
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -25,11 +24,11 @@ import java.util.*
 /**
  * 亿美软通短信平台 接口请求
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(B2mSmsTemplate.MARKER)
 open class SimpleB2mSmsTemplate(
     properties: B2mSmsProperties
 ) : ApiTemplate<B2mSmsProperties>(
-    logMarker = LOG_MARKER,
+    marker = B2mSmsTemplate.MARKER,
     properties = properties
 ) {
 

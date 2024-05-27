@@ -16,25 +16,24 @@ import top.bettercode.summer.tools.lang.util.StringUtil.gzip
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.tools.lang.util.StringUtil.readJson
 import top.bettercode.summer.tools.lang.util.StringUtil.ungzip
-import top.bettercode.summer.tools.sms.b2m.B2mSmsTemplate.Companion.LOG_MARKER
 import java.nio.charset.StandardCharsets
 import java.util.*
 
 /**
  * 亿美软通短信平台 接口请求
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(B2mSmsTemplate.MARKER)
 open class B2mSmsTemplate(
     properties: B2mSmsProperties
 ) : ApiTemplate<B2mSmsProperties>(
-    logMarker = LOG_MARKER,
+    marker = MARKER,
     properties = properties,
     requestDecrypt = { bytes -> ungzip(decrypt(bytes, properties.secretKey)) },
     responseDecrypt = { bytes -> ungzip(decrypt(bytes, properties.secretKey)) }
 ) {
 
     companion object {
-        const val LOG_MARKER = "sms"
+        const val MARKER = "sms"
     }
 
     init {

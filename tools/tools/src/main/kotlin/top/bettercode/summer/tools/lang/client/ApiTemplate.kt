@@ -22,20 +22,21 @@ import java.util.concurrent.TimeUnit
  * @author Peter Wu
  */
 open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
-    protected val logMarker: String,
+    final override val marker: String,
     @JvmField
     val properties: P,
     private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
     private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,
     private val collectionName: String = "第三方平台",
-) : RestTemplate() {
+    override val platformName: String = properties.platformName,
+) : RestTemplate(), ApiExceptions {
 
     protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     private val loggingInterceptor: Interceptor = OkHttpClientLoggingInterceptor(
         collectionName = collectionName,
         name = properties.platformName,
-        logMarker = logMarker,
+        logMarker = marker,
         logClazz = this::class.java,
         timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
         requestDecrypt = requestDecrypt,
@@ -130,61 +131,4 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
 
     //--------------------------------------------
 
-    @JvmOverloads
-    fun clientException(
-        cause: Throwable?,
-        response: Any? = null
-    ): ClientException {
-        return ClientException(
-            platformName = properties.platformName,
-            marker = logMarker,
-            originalMessage = if (cause is ClientException) cause.originalMessage else cause?.message,
-            cause = cause,
-            response = response
-        )
-
-    }
-
-    @JvmOverloads
-    fun clientException(
-        message: String? = null,
-        response: Any? = null
-    ): ClientException {
-        return ClientException(
-            platformName = properties.platformName,
-            marker = logMarker,
-            originalMessage = message,
-            cause = null,
-            response = response
-        )
-
-    }
-
-    @JvmOverloads
-    fun clientSysException(
-        cause: Throwable?,
-        response: Any? = null
-    ): ClientSysException {
-        return ClientSysException(
-            platformName = properties.platformName,
-            marker = logMarker,
-            originalMessage = if (cause is ClientException) cause.originalMessage else cause?.message,
-            cause = cause,
-            response = response
-        )
-    }
-
-    @JvmOverloads
-    fun clientSysException(
-        message: String? = null,
-        response: Any? = null
-    ): ClientSysException {
-        return ClientSysException(
-            platformName = properties.platformName,
-            marker = logMarker,
-            originalMessage = message,
-            cause = null,
-            response = response
-        )
-    }
 }

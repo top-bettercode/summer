@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
-import top.bettercode.summer.tools.qvod.QvodUploadClient.Companion.LOG_MARKER
 import java.io.File
 
 
@@ -17,7 +16,7 @@ import java.io.File
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(QvodUploadClient.MARKER)
 open class QvodUploadClient(
     val properties: QvodProperties
 ) {
@@ -25,7 +24,7 @@ open class QvodUploadClient(
     private val log: Logger = LoggerFactory.getLogger(QvodUploadClient::class.java)
 
     companion object {
-        const val LOG_MARKER = "qvod"
+        const val MARKER = "qvod"
     }
 
     val vodUploadClient = VodUploadClient(properties.secretId, properties.secretKey)
@@ -58,7 +57,7 @@ open class QvodUploadClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                MarkerFactory.getMarker(LOG_MARKER),
+                MarkerFactory.getMarker(MARKER),
                 "DURATION MILLIS : {}\n{}\n\n{}",
                 durationMillis,
                 StringUtil.json(req, true),

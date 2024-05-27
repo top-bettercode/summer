@@ -17,7 +17,6 @@ import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
 import top.bettercode.summer.tools.lang.util.RandomUtil
-import top.bettercode.summer.tools.qvod.QvodClient.Companion.LOG_MARKER
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -28,14 +27,14 @@ import javax.crypto.spec.SecretKeySpec
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(QvodClient.MARKER)
 open class QvodClient(
         val properties: QvodProperties
 ) {
     private val log: Logger = LoggerFactory.getLogger(QvodClient::class.java)
 
     companion object {
-        const val LOG_MARKER = "qvod"
+        const val MARKER = "qvod"
     }
 
     val vodClient: VodClient
@@ -53,7 +52,7 @@ open class QvodClient(
         val field = VodClient::class.java.superclass.getDeclaredField("httpConnection")
         field.isAccessible = true
         val httpConnection = field.get(vodClient) as HttpConnection
-        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "腾讯云", logMarker = LOG_MARKER, logClazz = QvodClient::class.java, timeoutAlarmSeconds = properties.timeoutAlarmSeconds))
+        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "腾讯云", logMarker = MARKER, logClazz = QvodClient::class.java, timeoutAlarmSeconds = properties.timeoutAlarmSeconds))
     }
 
     /**
@@ -67,7 +66,7 @@ open class QvodClient(
                     RandomUtil.nextInt(9)
                 }&classId=${properties.classId}&procedure=${properties.procedure}&vodSubAppId=${properties.appId}"
         if (log.isDebugEnabled) {
-            log.debug(MarkerFactory.getMarker(LOG_MARKER), "original signature:{}", original)
+            log.debug(MarkerFactory.getMarker(MARKER), "original signature:{}", original)
         }
         val mac: Mac = Mac.getInstance("HmacSHA1")
         val secretKey = SecretKeySpec(properties.secretKey.toByteArray(), mac.algorithm)
@@ -81,7 +80,7 @@ open class QvodClient(
         ).replace(" ", "")
                 .replace("\n", "")
                 .replace("\r", "")
-        log.info(MarkerFactory.getMarker(LOG_MARKER), "signature: $signature")
+        log.info(MarkerFactory.getMarker(MARKER), "signature: $signature")
         return signature
     }
 

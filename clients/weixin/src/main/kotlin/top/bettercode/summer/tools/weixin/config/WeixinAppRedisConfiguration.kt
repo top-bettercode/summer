@@ -23,7 +23,7 @@ class WeixinAppRedisConfiguration(private val properties: MiniprogramProperties)
             properties,
             RedisWeixinCache(
                 properties.cacheSeconds,
-                MiniprogramClient.LOG_MARKER,
+                MiniprogramClient.MARKER,
                 redisConnectionFactory
             )
         )

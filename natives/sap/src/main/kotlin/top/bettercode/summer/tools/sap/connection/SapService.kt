@@ -9,6 +9,8 @@ import org.springframework.beans.BeanWrapperImpl
 import org.springframework.util.Assert
 import org.springframework.util.ReflectionUtils
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.client.ApiExceptions
+import top.bettercode.summer.tools.lang.client.ClientException
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
 import top.bettercode.summer.tools.sap.annotation.SapField
@@ -23,8 +25,12 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.util.*
 
-@LogMarker(SapService.LOG_MARKER_STRING)
-class SapService(properties: SapProperties) {
+@LogMarker(SapService.MARKER)
+class SapService(
+    val properties: SapProperties,
+    override val platformName: String = properties.platformName,
+    override val marker: String = MARKER
+) : ApiExceptions {
     private val log = LoggerFactory.getLogger(SapService::class.java)
     private var filterNonAnnField = true
     private var filterNullFiled = false
@@ -65,14 +71,18 @@ class SapService(properties: SapProperties) {
         return this
     }
 
-    operator fun <T : ISapReturn> invoke(functionName: String, data: Any?,
-                                         returnClass: Class<T>): T {
+    operator fun <T : ISapReturn> invoke(
+        functionName: String, data: Any?,
+        returnClass: Class<T>
+    ): T {
         return invoke(functionName, data, returnClass, true)
     }
 
-    operator fun <T : ISapReturn> invoke(functionName: String, data: Any?,
-                                         returnClass: Class<T>,
-                                         checkError: Boolean): T {
+    operator fun <T : ISapReturn> invoke(
+        functionName: String, data: Any?,
+        returnClass: Class<T>,
+        checkError: Boolean
+    ): T {
         var function: JCoFunction? = null
         val result: T
         var throwable: Throwable? = null
@@ -100,16 +110,12 @@ class SapService(properties: SapProperties) {
                 result
             } else {
                 val msgText = result.message
-                throw SapSysException(if (!msgText.isNullOrBlank()) msgText else "RFC请求失败")
+                throw clientSysException(if (!msgText.isNullOrBlank()) msgText else "RFC请求失败")
             }
         } catch (e: Exception) {
             throwable = e
             when (e) {
-                is SapException -> {
-                    throw e
-                }
-
-                is SapSysException -> {
+                is ClientException -> {
                     throw e
                 }
 
@@ -119,18 +125,22 @@ class SapService(properties: SapProperties) {
                     if (message!!.matches(msgRegex.toRegex())) {
                         val fieldValue = message.replace(msgRegex.toRegex(), "$1")
                         var fieldName = message.replace(msgRegex.toRegex(), "$2")
-                        val jCoField = getField(function!!.importParameterList,
-                                fieldName)
+                        val jCoField = getField(
+                            function!!.importParameterList,
+                            fieldName
+                        )
                         if (jCoField != null) {
                             fieldName = jCoField.description
                             val length = jCoField.length
-                            message = String.format("%s的长度为%d，\"%s\"超出长度限制", fieldName, length,
-                                    fieldValue)
+                            message = String.format(
+                                "%s的长度为%d，\"%s\"超出长度限制", fieldName, length,
+                                fieldValue
+                            )
                         } else {
                             message = String.format("%s超出长度限制", fieldValue)
                         }
                     }
-                    throw SapException(message, e)
+                    throw clientException(message = message, response = e)
                 }
             }
         } finally {
@@ -143,14 +153,18 @@ class SapService(properties: SapProperties) {
             }
             if (throwable != null || !isSuccess) {
                 if (log.isWarnEnabled) {
-                    log.warn(LOG_MARKER, "\nDURATION MILLIS : {}\n{}\n{}", durationMillis,
-                            printFunctionList(function),
-                            exception)
+                    log.warn(
+                        LOG_MARKER, "\nDURATION MILLIS : {}\n{}\n{}", durationMillis,
+                        printFunctionList(function),
+                        exception
+                    )
                 }
             } else if (log.isInfoEnabled) {
-                log.info(LOG_MARKER, "\nDURATION MILLIS : {}\n{}\n{}", durationMillis,
-                        printFunctionList(function),
-                        exception)
+                log.info(
+                    LOG_MARKER, "\nDURATION MILLIS : {}\n{}\n{}", durationMillis,
+                    printFunctionList(function),
+                    exception
+                )
             }
         }
     }
@@ -222,8 +236,10 @@ class SapService(properties: SapProperties) {
             } else if (field.isAnnotationPresent(SapTable::class.java)) {
                 val sapTable = field.getAnnotation(SapTable::class.java)
                 val tableParameterList = function.tableParameterList
-                Assert.notNull(tableParameterList,
-                        function.name + " function Table Parameter List not found")
+                Assert.notNull(
+                    tableParameterList,
+                    function.name + " function Table Parameter List not found"
+                )
                 val table = tableParameterList.getTable(sapTable.value)
                 if (fv is List<*>) {
                     val objList = fv as List<Any>
@@ -253,7 +269,11 @@ class SapService(properties: SapProperties) {
         }
     }
 
-    private fun <T : Any> toBean(function: JCoFunction?, out: JCoRecord?, returnClass: Class<T>): T {
+    private fun <T : Any> toBean(
+        function: JCoFunction?,
+        out: JCoRecord?,
+        returnClass: Class<T>
+    ): T {
         val result = returnClass.getDeclaredConstructor().newInstance()
         val beanWrapper = BeanWrapperImpl(result)
         ReflectionUtils.doWithFields(returnClass) { field: Field ->
@@ -278,13 +298,13 @@ class SapService(properties: SapProperties) {
                     beanWrapper.setPropertyValue(fieldName, out?.getValue(fieldName))
                 }
             } catch (e: IntrospectionException) {
-                throw SapException(e)
+                throw clientException(cause = e)
             } catch (e: InstantiationException) {
-                throw SapException(e)
+                throw clientException(cause = e)
             } catch (e: InvocationTargetException) {
-                throw SapException(e)
+                throw clientException(cause = e)
             } catch (e: NoSuchMethodException) {
-                throw SapException(e)
+                throw clientException(cause = e)
             }
         }
         return result
@@ -361,8 +381,8 @@ class SapService(properties: SapProperties) {
     }
 
     companion object {
-        const val LOG_MARKER_STRING = "sap"
-        private val LOG_MARKER = MarkerFactory.getMarker(LOG_MARKER_STRING)
+        const val MARKER = "sap"
+        private val LOG_MARKER = MarkerFactory.getMarker(MARKER)
         private const val ABAP_AS_POOLED = "ABAP_AS_WITH_POOL"
     }
 }

@@ -6,7 +6,6 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.weixin.properties.CorpProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinCache
 import top.bettercode.summer.tools.weixin.support.WeixinClient
-import top.bettercode.summer.tools.weixin.support.corp.CorpClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
 import java.net.URLEncoder
 
@@ -15,7 +14,7 @@ import java.net.URLEncoder
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(CorpClient.MARKER)
 open class CorpClient(
     properties: CorpProperties,
     cache: IWeixinCache
@@ -23,11 +22,11 @@ open class CorpClient(
     WeixinClient<CorpProperties>(
         properties,
         cache,
-        LOG_MARKER
+        MARKER
     ) {
 
     companion object {
-        const val LOG_MARKER = "wxcorp"
+        const val MARKER = "wxcorp"
     }
 
     init {
@@ -39,7 +38,7 @@ open class CorpClient(
             URLEncoder.encode(properties.oauthUrl, "UTF-8"),
             "snsapi_base"
         )
-        log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
+        log.info(MarkerFactory.getMarker(marker), "authenticationUrl:{}", authenticationUrl)
     }
 
     @JvmOverloads

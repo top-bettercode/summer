@@ -10,7 +10,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.TimeUtil
-import top.bettercode.summer.tools.weather.WeatherClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weather.entity.WeatherResponse
 import top.bettercode.summer.tools.weather.entity.WeatherResult
 import top.bettercode.summer.tools.weather.entity.WeatherType
@@ -21,15 +20,15 @@ import java.time.LocalTime
  *
  * @author Peter Wu
  */
-@LogMarker(LOG_MARKER)
+@LogMarker(WeatherClient.MARKER)
 open class WeatherClient(
     properties: WeatherProperties
 ) : ApiTemplate<WeatherProperties>(
-    logMarker = LOG_MARKER,
+    marker = MARKER,
     properties = properties
 ) {
     companion object {
-        const val LOG_MARKER = "weather"
+        const val MARKER = "weather"
     }
 
     init {

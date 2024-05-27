@@ -26,7 +26,7 @@ class WeixinRedisConfiguration(private val properties: OffiaccountProperties) {
             properties,
             RedisWeixinCache(
                 properties.cacheSeconds,
-                OffiaccountClient.LOG_MARKER,
+                OffiaccountClient.MARKER,
                 redisConnectionFactory
             )
         )
