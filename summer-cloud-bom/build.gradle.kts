@@ -10,7 +10,7 @@ javaPlatform {
 }
 
 dependencies {
-
+//https://sca.aliyun.com/docs/2021/overview/version-explain/
 //https://github.com/alibaba/spring-cloud-alibaba/releases
     //https://repo1.maven.org/maven2/com/alibaba/cloud/spring-cloud-alibaba-dependencies/2021.0.6.0/spring-cloud-alibaba-dependencies-2021.0.6.0.pom
     api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.6.0"))
