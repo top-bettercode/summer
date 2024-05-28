@@ -63,12 +63,16 @@ class SecurityConfiguration(
         http: HttpSecurity,
         access: AuthorizationManager<RequestAuthorizationContext>,
     ): SecurityFilterChain {
-        http.headers {
+        http.headers { headersConfigurer ->
             if (securityProperties.isSupportClientCache) {
-                it.cacheControl().disable()
+                headersConfigurer.cacheControl {
+                    it.disable()
+                }
             }
             if (securityProperties.isFrameOptionsDisable) {
-                it.frameOptions().disable()
+                headersConfigurer.frameOptions {
+                    it.disable()
+                }
             }
         }
         if (corsProperties.isEnable) {
