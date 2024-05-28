@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.*
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.util.Base64Utils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.util.TimeUtil
@@ -92,7 +91,7 @@ open class MobileQueryClient(
         val sKey: Key = SecretKeySpec(secretKey.toByteArray(charset("UTF-8")), mac.algorithm)
         mac.init(sKey)
         val hash: ByteArray = mac.doFinal(signStr.toByteArray(charset("UTF-8")))
-        val sig: String = Base64Utils.encodeToString(hash)
+        val sig: String = Base64.getEncoder().encodeToString(hash)
         return "hmac id=\"$secretId\", algorithm=\"hmac-sha1\", headers=\"x-date x-source\", signature=\"$sig\""
     }
 

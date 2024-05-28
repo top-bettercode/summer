@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.weixin.support.offiaccount.aes
 
-import org.springframework.util.Base64Utils
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.AesException
 import top.bettercode.summer.tools.weixin.support.offiaccount.aes.PKCS7Encoder.decode
@@ -44,7 +43,7 @@ class WXBizMsgCrypt(token: String, encodingAesKey: String, appId: String) {
         }
         this.token = token
         this.appId = appId
-        aesKey = Base64Utils.decodeFromString("$encodingAesKey=")
+        aesKey = Base64.getDecoder().decode("$encodingAesKey=")
     }
 
     // 生成4个字节的网络字节序
@@ -118,7 +117,7 @@ class WXBizMsgCrypt(token: String, encodingAesKey: String, appId: String) {
             val encrypted = cipher.doFinal(unencrypted)
 
             // 使用BASE64对加密后的字符串进行编码
-            Base64Utils.encodeToString(encrypted)
+            Base64.getEncoder().encodeToString(encrypted)
         } catch (e: Exception) {
             throw AesException(AesException.ENCRYPT_AES_ERROR, e)
         }
@@ -141,7 +140,7 @@ class WXBizMsgCrypt(token: String, encodingAesKey: String, appId: String) {
             cipher.init(Cipher.DECRYPT_MODE, keySpec, iv)
 
             // 使用BASE64对密文进行解码
-            val encrypted = Base64Utils.decodeFromString(text)
+            val encrypted = Base64.getDecoder().decode(text)
             // 解密
             cipher.doFinal(encrypted)
         } catch (e: Exception) {
@@ -157,8 +156,10 @@ class WXBizMsgCrypt(token: String, encodingAesKey: String, appId: String) {
             val networkOrder = Arrays.copyOfRange(bytes, 16, 20)
             val xmlLength = recoverNetworkBytesOrder(networkOrder)
             xmlContent = String(Arrays.copyOfRange(bytes, 20, 20 + xmlLength), CHARSET)
-            fromAppid = String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.size),
-                    CHARSET)
+            fromAppid = String(
+                Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.size),
+                CHARSET
+            )
         } catch (e: Exception) {
             throw AesException(AesException.ILLEGAL_BUFFER, e)
         }

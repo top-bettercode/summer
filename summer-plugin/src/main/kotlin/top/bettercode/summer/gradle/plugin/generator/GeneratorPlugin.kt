@@ -309,7 +309,7 @@ class GeneratorPlugin : Plugin<Project> {
             val src = extension.file(extension.pumlSrc)
             if (src.exists())
                 task.inputs.dir(src)
-            val out = File(project.rootProject.buildDir, extension.pumlSrc)
+            val out = File(project.rootProject.layout.buildDirectory.get().asFile, extension.pumlSrc)
             if (out.exists())
                 task.outputs.dir(out)
             task.doLast(object : Action<Task> {

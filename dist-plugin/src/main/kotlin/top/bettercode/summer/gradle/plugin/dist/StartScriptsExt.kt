@@ -13,7 +13,7 @@ object StartScriptsExt {
         val appName = (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name
         if (dist.windows) {
             //WinSW
-            val winSWFile = File(project.buildDir, "service/${project.name}.exe")
+            val winSWFile = File(project.layout.buildDirectory.get().asFile, "service/${project.name}.exe")
             DistPlugin::class.java.getResourceAsStream("/WinSW.NET461.exe")?.copyTo(winSWFile.apply { parentFile.mkdirs() }.outputStream())
 
             writeServiceFile(
@@ -321,7 +321,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
             text: String,
             executable: Boolean = true
     ) {
-        val serviceScript = File(project.buildDir, "service/$fileName")
+        val serviceScript = File(project.layout.buildDirectory.get().asFile, "service/$fileName")
         if (!serviceScript.parentFile.exists()) {
             serviceScript.parentFile.mkdirs()
         }

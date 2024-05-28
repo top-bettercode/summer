@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.util.Base64Utils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
 import top.bettercode.summer.tools.pay.properties.WeixinV3PayProperties
@@ -217,7 +216,7 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
             val cipher: Cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding")
             cipher.init(Cipher.ENCRYPT_MODE, this.publicKey)
             val cipherdata: ByteArray = cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
-            Base64Utils.encodeToString(cipherdata)
+            java.util.Base64.getEncoder().encodeToString(cipherdata)
         } catch (e: NoSuchAlgorithmException) {
             throw RuntimeException("当前Java环境不支持RSA v1.5/OAEP", e)
         } catch (e: NoSuchPaddingException) {

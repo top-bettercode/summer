@@ -155,7 +155,7 @@ class DistPlugin : Plugin<Project> {
                                             }
                                             spec.into(
                                                 File(
-                                                    distributionTask.project.buildDir,
+                                                    distributionTask.project.layout.buildDirectory.get().asFile,
                                                     "conf"
                                                 ).absolutePath
                                             )
@@ -183,7 +183,7 @@ class DistPlugin : Plugin<Project> {
                 distribution.contents { copySpec ->
 
                     if (dist.unwrapResources)
-                        copySpec.from(File(project.buildDir, "conf").absolutePath) {
+                        copySpec.from(File(project.layout.buildDirectory.get().asFile, "conf").absolutePath) {
                             it.into("conf")
                         }
 
@@ -199,7 +199,7 @@ class DistPlugin : Plugin<Project> {
                         distribution.distributionBaseName.set(project.name)
                     }
 
-                    copySpec.from(File(project.buildDir, "service").absolutePath)
+                    copySpec.from(File(project.layout.buildDirectory.get().asFile, "service").absolutePath)
                 }
 
                 if (dist.prevArchiveSrc.isNotBlank()) {
@@ -209,7 +209,7 @@ class DistPlugin : Plugin<Project> {
                         it.group = createTask.group
                         it.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                val dest = project.file("" + project.buildDir + "/install")
+                                val dest = project.file("" + project.layout.buildDirectory.get().asFile + "/install")
                                 val updateDir = File(dest, "update")
                                 compareUpdate(
                                     project,
@@ -226,7 +226,7 @@ class DistPlugin : Plugin<Project> {
                         it.dependsOn("installDistUpdate")
                         val createTask = project.tasks.getByName("installDistUpdate")
                         it.group = createTask.group
-                        val dest = project.file("" + project.buildDir + "/install")
+                        val dest = project.file("" + project.layout.buildDirectory.get().asFile + "/install")
                         val updateDir = File(dest, "update")
                         it.from(updateDir)
                         it.archiveFileName.set("${project.name}-${project.version}-dist-update.zip")

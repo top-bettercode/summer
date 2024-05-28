@@ -11,9 +11,9 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
-import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask

@@ -9,7 +9,6 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
-import org.springframework.util.Base64Utils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.DefaultResponseErrorHandler
@@ -314,7 +313,7 @@ open class AliSmsTemplate(
                 )
             )
             val signData = mac.doFinal(stringToSign.toByteArray(StandardCharsets.UTF_8))
-            String(Base64Utils.encode(signData))
+            Base64.getEncoder().encodeToString(signData)
         } catch (e: NoSuchAlgorithmException) {
             throw clientException(e)
         } catch (e: InvalidKeyException) {

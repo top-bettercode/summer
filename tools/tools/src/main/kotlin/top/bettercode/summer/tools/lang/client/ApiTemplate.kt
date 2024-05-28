@@ -100,10 +100,10 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
             val responseEntity = try {
                 if (this.delegate != null) {
                     val body = delegate!!.extractData(response)
-                    (ResponseEntity.status(response.rawStatusCode)
+                    (ResponseEntity.status(response.statusCode)
                         .headers(response.headers) as ResponseEntity.BodyBuilder).body(body)
                 } else {
-                    (ResponseEntity.status(response.rawStatusCode)
+                    (ResponseEntity.status(response.statusCode)
                         .headers(response.headers) as ResponseEntity.BodyBuilder).build()
                 }
             } catch (e: Exception) {

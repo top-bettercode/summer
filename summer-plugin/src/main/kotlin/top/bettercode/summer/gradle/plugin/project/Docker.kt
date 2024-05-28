@@ -27,7 +27,7 @@ class Docker : Plugin<Project> {
                         project.copy { copySpec ->
                             copySpec.from(project.file("docker"))
                             copySpec.exclude { ft -> ft.file == project.file("docker/README.md") }
-                            copySpec.into(File(project.buildDir, "docker"))
+                            copySpec.into(File(project.layout.buildDirectory.get().asFile, "docker"))
 
                             val hashtable = Hashtable<String, String>()
                             project.rootProject.profileProperties.forEach { (t, u) ->
@@ -42,7 +42,7 @@ class Docker : Plugin<Project> {
                                         project.file("database/doc")
                                 ) || ft.file == project.file("database/README.md")
                             }
-                            copySpec.into(File(project.buildDir, "docker/database"))
+                            copySpec.into(File(project.layout.buildDirectory.get().asFile, "docker/database"))
                         }
                     }
                 })
@@ -58,9 +58,9 @@ class Docker : Plugin<Project> {
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         mainProjects.forEach { p ->
-                            File(p.buildDir, "install/${p.name}").renameTo(
+                            File(p.layout.buildDirectory.get().asFile, "install/${p.name}").renameTo(
                                     File(
-                                            project.buildDir,
+                                            project.layout.buildDirectory.get().asFile,
                                             "docker/${p.name}"
                                     )
                             )

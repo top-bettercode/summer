@@ -91,14 +91,10 @@ class TemplateBasedStartScriptGenerator(
 
     private fun generateStartScriptContentFromTemplate(binding: Map<String, String>): String {
         return IoUtils.get(getTemplate().asReader(), Transformer { reader ->
-            try {
-                val engine = SimpleTemplateEngine()
-                val template = engine.createTemplate(reader)
-                val output = template.make(binding).toString()
-                return@Transformer TextUtil.convertLineSeparators(output, lineSeparator)!!
-            } catch (e: IOException) {
-                throw UncheckedIOException(e)
-            }
+            val engine = SimpleTemplateEngine()
+            val template = engine.createTemplate(reader)
+            val output = template.make(binding).toString()
+            return@Transformer TextUtil.convertLineSeparators(output, lineSeparator) ?: ""
         })
     }
 

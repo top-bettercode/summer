@@ -12,7 +12,6 @@ import com.tencentcloudapi.vod.v20180717.models.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
-import org.springframework.util.Base64Utils
 import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
@@ -29,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec
  */
 @LogMarker(QvodClient.MARKER)
 open class QvodClient(
-        val properties: QvodProperties
+    val properties: QvodProperties
 ) {
     private val log: Logger = LoggerFactory.getLogger(QvodClient::class.java)
 
@@ -52,7 +51,14 @@ open class QvodClient(
         val field = VodClient::class.java.superclass.getDeclaredField("httpConnection")
         field.isAccessible = true
         val httpConnection = field.get(vodClient) as HttpConnection
-        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(collectionName = "第三方平台", name = "腾讯云", logMarker = MARKER, logClazz = QvodClient::class.java, timeoutAlarmSeconds = properties.timeoutAlarmSeconds))
+        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(
+            collectionName = "第三方平台",
+            name = "腾讯云",
+            logMarker = MARKER,
+            logClazz = QvodClient::class.java,
+            timeoutAlarmSeconds = properties.timeoutAlarmSeconds
+        )
+        )
     }
 
     /**
@@ -62,9 +68,9 @@ open class QvodClient(
     fun signature(): String {
         val currentTimeStamp = System.currentTimeMillis() / 1000
         val original =
-                "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.uploadValidSeconds}&random=${
-                    RandomUtil.nextInt(9)
-                }&classId=${properties.classId}&procedure=${properties.procedure}&vodSubAppId=${properties.appId}"
+            "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.uploadValidSeconds}&random=${
+                RandomUtil.nextInt(9)
+            }&classId=${properties.classId}&procedure=${properties.procedure}&vodSubAppId=${properties.appId}"
         if (log.isDebugEnabled) {
             log.debug(MarkerFactory.getMarker(MARKER), "original signature:{}", original)
         }
@@ -72,14 +78,14 @@ open class QvodClient(
         val secretKey = SecretKeySpec(properties.secretKey.toByteArray(), mac.algorithm)
         mac.init(secretKey)
         val signatureTmp: ByteArray = mac.doFinal(original.toByteArray())
-        val signature = Base64Utils.encodeToString(
-                byteMerger(
-                        signatureTmp,
-                        original.toByteArray(charset("utf8"))
-                )
+        val signature = Base64.getEncoder().encodeToString(
+            byteMerger(
+                signatureTmp,
+                original.toByteArray(charset("utf8"))
+            )
         ).replace(" ", "")
-                .replace("\n", "")
-                .replace("\r", "")
+            .replace("\n", "")
+            .replace("\r", "")
         log.info(MarkerFactory.getMarker(MARKER), "signature: $signature")
         return signature
     }
@@ -91,26 +97,26 @@ open class QvodClient(
      * https://cloud.tencent.com/document/product/266/42437
      */
     fun playSignature(
-            fileId: String,
-            currentTimeStamp: Long = System.currentTimeMillis() / 1000,
-            //派发签名到期 Unix 时间戳，不填表示不过期,默认一天有效时间
-            expireTimeStamp: Long = currentTimeStamp + properties.accessValidSeconds,
-            //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
-            //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间
-            //建议过期时间戳不要过短，确保视频有足够时间完整播放
-            //默认一天有效时间
-            urlTimeExpire: String = java.lang.Long.toHexString(currentTimeStamp + properties.accessValidSeconds)
+        fileId: String,
+        currentTimeStamp: Long = System.currentTimeMillis() / 1000,
+        //派发签名到期 Unix 时间戳，不填表示不过期,默认一天有效时间
+        expireTimeStamp: Long = currentTimeStamp + properties.accessValidSeconds,
+        //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
+        //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间
+        //建议过期时间戳不要过短，确保视频有足够时间完整播放
+        //默认一天有效时间
+        urlTimeExpire: String = java.lang.Long.toHexString(currentTimeStamp + properties.accessValidSeconds)
     ): String {
         val urlAccessInfo = HashMap<String, String>()
         urlAccessInfo["t"] = urlTimeExpire
 
         val algorithm: Algorithm = Algorithm.HMAC256(properties.securityChainKey)
         return JWT.create().withClaim("appId", properties.appId)
-                .withClaim("fileId", fileId)
-                .withClaim("currentTimeStamp", currentTimeStamp)
-                .withClaim("expireTimeStamp", expireTimeStamp)
-                .withClaim("urlAccessInfo", urlAccessInfo)
-                .sign(algorithm)
+            .withClaim("fileId", fileId)
+            .withClaim("currentTimeStamp", currentTimeStamp)
+            .withClaim("expireTimeStamp", expireTimeStamp)
+            .withClaim("urlAccessInfo", urlAccessInfo)
+            .sign(algorithm)
     }
 
     /**
@@ -119,21 +125,21 @@ open class QvodClient(
      * https://cloud.tencent.com/document/product/266/14047
      */
     fun antiLeechUrl(
-            url: String,
-            //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
-            //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间
-            //建议过期时间戳不要过短，确保视频有足够时间完整播放
-            t: String = java.lang.Long.toHexString(System.currentTimeMillis() / 1000 + properties.accessValidSeconds),
-            //最多允许多少个不同 IP 的终端播放，以十进制表示，最大值为9，不填表示不做限制
-            //当限制 URL 只能被1个人播放时，建议 rlimit 不要严格限制成1（例如可设置为3），因为移动端断网后重连 IP 可能改变
-            rlimit: Int = properties.rlimit
+        url: String,
+        //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
+        //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间
+        //建议过期时间戳不要过短，确保视频有足够时间完整播放
+        t: String = java.lang.Long.toHexString(System.currentTimeMillis() / 1000 + properties.accessValidSeconds),
+        //最多允许多少个不同 IP 的终端播放，以十进制表示，最大值为9，不填表示不做限制
+        //当限制 URL 只能被1个人播放时，建议 rlimit 不要严格限制成1（例如可设置为3），因为移动端断网后重连 IP 可能改变
+        rlimit: Int = properties.rlimit
     ): String {
         val trueUrl = url.substringBefore("?")
         val dir = trueUrl.substringAfter("vod2.myqcloud.com").substringBeforeLast("/") + "/"
         val us = RandomUtil.nextString(10)
 //        sign = md5(KEY + Dir + t + exper + rlimit + us + uv)
         val sign =
-                DigestUtils.md5DigestAsHex("${properties.securityChainKey}${dir}${t}${rlimit}${us}".toByteArray())
+            DigestUtils.md5DigestAsHex("${properties.securityChainKey}${dir}${t}${rlimit}${us}".toByteArray())
         return "$trueUrl?t=$t&rlimit=$rlimit&us=$us&sign=$sign"
     }
 
@@ -156,8 +162,8 @@ open class QvodClient(
     miniProgramReviewInfo（小程序审核信息）。
      */
     open fun describeMediaInfo(
-            fileId: String,
-            filter: String
+        fileId: String,
+        filter: String
     ): DescribeMediaInfosResponse {
         return describeMediaInfos(arrayOf(fileId), arrayOf(filter))
     }
@@ -181,8 +187,8 @@ open class QvodClient(
     miniProgramReviewInfo（小程序审核信息）。
      */
     open fun describeMediaInfos(
-            fileIds: Array<String>,
-            filters: Array<String>
+        fileIds: Array<String>,
+        filters: Array<String>
     ): DescribeMediaInfosResponse {
         val req = DescribeMediaInfosRequest()
         req.fileIds = fileIds
@@ -223,8 +229,8 @@ open class QvodClient(
      * https://cloud.tencent.com/document/product/266/34782
      */
     open fun processMediaByProcedure(
-            fileId: String,
-            procedureName: String
+        fileId: String,
+        procedureName: String
     ): ProcessMediaByProcedureResponse {
         val req = ProcessMediaByProcedureRequest()
         req.fileId = fileId
@@ -246,7 +252,7 @@ open class QvodClient(
 
         req.mediaProcessTask = MediaProcessTaskInput()
         val templateIds =
-                if (templateId.isNotEmpty()) templateId.toTypedArray() else properties.templateIds
+            if (templateId.isNotEmpty()) templateId.toTypedArray() else properties.templateIds
 
         req.mediaProcessTask.transcodeTaskSet = templateIds.map {
             val transcodeTaskInput = TranscodeTaskInput()
