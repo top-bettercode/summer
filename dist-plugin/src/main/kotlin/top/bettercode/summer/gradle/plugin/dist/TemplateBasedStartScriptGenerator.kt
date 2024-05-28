@@ -3,7 +3,6 @@ package top.bettercode.summer.gradle.plugin.dist
 import groovy.text.SimpleTemplateEngine
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
-import org.gradle.api.Transformer
 import org.gradle.api.internal.file.temp.GradleUserHomeTemporaryFileProvider
 import org.gradle.api.internal.plugins.DefaultJavaAppStartScriptGenerationDetails
 import org.gradle.api.internal.plugins.StartScriptTemplateBindingFactory
@@ -90,12 +89,12 @@ class TemplateBasedStartScriptGenerator(
     }
 
     private fun generateStartScriptContentFromTemplate(binding: Map<String, String>): String {
-        return IoUtils.get(getTemplate().asReader(), Transformer { reader ->
+        return IoUtils.get(getTemplate().asReader()) { reader: Reader? ->
             val engine = SimpleTemplateEngine()
             val template = engine.createTemplate(reader)
             val output = template.make(binding).toString()
-            return@Transformer TextUtil.convertLineSeparators(output, lineSeparator) ?: ""
-        })
+            return@get TextUtil.convertLineSeparators(output, lineSeparator) ?: ""
+        }
     }
 
     private fun template(): StringBackedTextResource {
