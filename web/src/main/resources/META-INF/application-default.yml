@@ -96,6 +96,7 @@ logging:
     org.mybatis.spring.mapper.ClassPathMapperScanner: error
     org.hibernate: warn
     org.hibernate.SQL: ${logging.level.root:warn}
+    org.hibernate.SQL_SLOW: info
     org.hibernate.engine.jdbc.spi.SqlExceptionHelper: off
     org.redisson.connection.ClientConnectionsEntry: info
     org.redisson.command.RedisExecutor: info
