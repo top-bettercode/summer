@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authorization.AuthorizationManager
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -38,50 +38,64 @@ import javax.servlet.http.HttpServletResponse
 @ConditionalOnProperty(prefix = "summer.security", name = ["enabled"], matchIfMissing = true)
 @EnableConfigurationProperties(CorsProperties::class)
 class SecurityConfiguration(
-        private val corsProperties: CorsProperties,
-        private val securityProperties: ApiSecurityProperties,
-        private val apiTokenService: ApiTokenService,
-        @param:Autowired(required = false) private val revokeTokenService: IRevokeTokenService?,
-        private val summerWebProperties: SummerWebProperties,
-        private val objectMapper: ObjectMapper,
-        private val passwordEncoder: PasswordEncoder,
-        private val formkeyService: IFormkeyService,
+    private val corsProperties: CorsProperties,
+    private val securityProperties: ApiSecurityProperties,
+    private val apiTokenService: ApiTokenService,
+    @param:Autowired(required = false) private val revokeTokenService: IRevokeTokenService?,
+    private val summerWebProperties: SummerWebProperties,
+    private val objectMapper: ObjectMapper,
+    private val passwordEncoder: PasswordEncoder,
+    private val formkeyService: IFormkeyService,
 ) {
     @Bean
     fun authorizationManager(
-            resourceService: IResourceService,
-            requestMappingHandlerMapping: RequestMappingHandlerMapping,
+        resourceService: IResourceService,
+        requestMappingHandlerMapping: RequestMappingHandlerMapping,
     ): RequestMappingAuthorizationManager {
-        return RequestMappingAuthorizationManager(resourceService, requestMappingHandlerMapping,
-                securityProperties)
+        return RequestMappingAuthorizationManager(
+            resourceService, requestMappingHandlerMapping,
+            securityProperties
+        )
     }
 
     @Bean
     fun configure(
-            http: HttpSecurity,
-            access: AuthorizationManager<RequestAuthorizationContext>,
+        http: HttpSecurity,
+        access: AuthorizationManager<RequestAuthorizationContext>,
     ): SecurityFilterChain {
-        if (securityProperties.isSupportClientCache) {
-            http.headers().cacheControl().disable()
-        }
-        if (securityProperties.isFrameOptionsDisable) {
-            http.headers().frameOptions().disable()
+        http.headers {
+            if (securityProperties.isSupportClientCache) {
+                it.cacheControl().disable()
+            }
+            if (securityProperties.isFrameOptionsDisable) {
+                it.frameOptions().disable()
+            }
         }
         if (corsProperties.isEnable) {
-            http.cors()
+            http.cors(Customizer.withDefaults())
         }
-        http.csrf().disable()
-        val apiTokenEndpointFilter = ApiTokenEndpointFilter(apiTokenService,
-                passwordEncoder, summerWebProperties, revokeTokenService, objectMapper, formkeyService)
+        http.csrf {
+            it.disable()
+        }
+        val apiTokenEndpointFilter = ApiTokenEndpointFilter(
+            apiTokenService,
+            passwordEncoder, summerWebProperties, revokeTokenService, objectMapper, formkeyService
+        )
         http.addFilterBefore(apiTokenEndpointFilter, LogoutFilter::class.java)
-        http
-                .sessionManagement().sessionCreationPolicy(securityProperties.sessionCreationPolicy)
-                .and().exceptionHandling { config: ExceptionHandlingConfigurer<HttpSecurity> ->
-                    config.accessDeniedHandler { _: HttpServletRequest, _: HttpServletResponse, accessDeniedException: AccessDeniedException -> throw accessDeniedException }
-                    config.authenticationEntryPoint { _: HttpServletRequest, _: HttpServletResponse, authException: AuthenticationException -> throw authException }
+        http.sessionManagement {
+            it.sessionCreationPolicy(securityProperties.sessionCreationPolicy)
+        }
+            .exceptionHandling {
+                it.accessDeniedHandler { _: HttpServletRequest, _: HttpServletResponse, accessDeniedException: AccessDeniedException ->
+                    throw accessDeniedException
                 }
-                .authorizeHttpRequests()
-                .anyRequest().access(access)
+                it.authenticationEntryPoint { _: HttpServletRequest, _: HttpServletResponse, authException: AuthenticationException ->
+                    throw authException
+                }
+            }
+            .authorizeHttpRequests {
+                it.anyRequest().access(access)
+            }
         return http.build()
     }
 }
