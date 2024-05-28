@@ -66,32 +66,41 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findByFirstName() {
         var users = repository
-                .findByFirstName("Carter", PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "lastName")))
+            .findByFirstName(
+                "Carter",
+                PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "lastName"))
+            )
         System.err.println(users)
         Assertions.assertEquals(2, users!!.totalElements)
         Assertions.assertEquals(1, users.content.size)
         Assertions
-                .assertEquals("Beauford1", users.content[0]?.lastName)
+            .assertEquals("Beauford1", users.content[0]?.lastName)
         users = repository
-                .findByFirstName("Carter", PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "lastName")))
+            .findByFirstName(
+                "Carter",
+                PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "lastName"))
+            )
         System.err.println(users)
         Assertions.assertEquals(2, users!!.totalElements)
         Assertions.assertEquals(1, users.content.size)
         Assertions
-                .assertEquals("Beauford2", users.content[0]?.lastName)
+            .assertEquals("Beauford2", users.content[0]?.lastName)
         users = repository
-                .findByFirstName("Carter", PageRequest.of(1, 1, Sort.by(Sort.Direction.DESC, "lastName")))
+            .findByFirstName(
+                "Carter",
+                PageRequest.of(1, 1, Sort.by(Sort.Direction.DESC, "lastName"))
+            )
         System.err.println(users)
         Assertions.assertEquals(2, users!!.totalElements)
         Assertions.assertEquals(1, users.content.size)
         Assertions
-                .assertEquals("Beauford1", users.content[0]?.lastName)
+            .assertEquals("Beauford1", users.content[0]?.lastName)
     }
 
     @Test
     fun selectNativeSql() {
         repository.selectNativeSql("Carter", PageRequest.of(0, 2)).content
-                .forEach(Consumer { x: User? -> println(x) })
+            .forEach(Consumer { x: User? -> println(x) })
     }
 
     @Test
@@ -99,7 +108,7 @@ class SimpleJpaExtRepositoryTest {
         val update = User()
         update.lastName = "newName"
         val spec = DefaultSpecMatcher.matching<User>()
-                .equal("firstName", "Carter")
+            .equal("firstName", "Carter")
         var all = repository.findAll(spec)
         System.err.println(json(all, true))
         repository.update(update, spec)
@@ -113,7 +122,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun saveSpec2() {
         val spec = DefaultSpecMatcher.matching<User>()
-                .equal("firstName", "Carter")
+            .equal("firstName", "Carter")
 //                .equal("id", 4)
 //                .equal("version", 1)
         spec.criteriaUpdate("lastName", "newName")
@@ -135,6 +144,7 @@ class SimpleJpaExtRepositoryTest {
         val update = User()
         update.id = id
         update.firstName = "Dave22"
+        update.version = dave.version
         repository.save(update)
         val optionalUser = repository.findById(id)
         optionalUser.ifPresent { x: User? -> System.err.println(x) }
@@ -281,7 +291,8 @@ class SimpleJpaExtRepositoryTest {
         val optionalUser = repository.getById(carterId)
         Assertions.assertNotNull(optionalUser)
 
-        Assertions.assertThrows(JpaObjectRetrievalFailureException::class.java
+        Assertions.assertThrows(
+            JpaObjectRetrievalFailureException::class.java
         ) {
             repository.getById(daveId)
         }
@@ -296,9 +307,9 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll1() {
         Assertions
-                .assertEquals("Dave", repository.findAll(Sort.by("id"))[0]?.firstName)
+            .assertEquals("Dave", repository.findAll(Sort.by("id"))[0]?.firstName)
         Assertions
-                .assertEquals("Carter", repository.findAll(Sort.by("firstName"))[0]?.firstName)
+            .assertEquals("Carter", repository.findAll(Sort.by("firstName"))[0]?.firstName)
     }
 
     @Test
@@ -315,7 +326,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll33() {
         val spec = DefaultSpecMatcher.matching<User?>()
-                .desc("firstName").asc("lastName")
+            .desc("firstName").asc("lastName")
         val all = repository.findAll(spec)
         System.err.println(json(all, true))
     }
@@ -323,19 +334,20 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll34() {
         val spec = DefaultSpecMatcher.matching<User?>().equal("id", carterId)
-                .containing("firstName", " Cart ").path<String>("firstName").trim()
-                .desc("firstName").asc("lastName")
+            .containing("firstName", " Cart ").path<String>("firstName").trim()
+            .desc("firstName").asc("lastName")
         val all = repository.findAll(spec)
         System.err.println(json(all, true))
     }
 
     @Test
     fun findAll35() {
-        val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> = DefaultSpecMatcher.matching<User?>()
+        val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> =
+            DefaultSpecMatcher.matching<User?>()
                 .path<String>("lastName").containing("Beauford")
                 .any { specMatcher: DefaultSpecMatcher<User?> ->
                     specMatcher.equal("id", carterId)
-                            .containing("firstName", " Cart ").path<String>("firstName").trim()
+                        .containing("firstName", " Cart ").path<String>("firstName").trim()
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)
@@ -344,11 +356,12 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun findAll351() {
-        val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> = DefaultSpecMatcher.matching<User?>()
+        val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> =
+            DefaultSpecMatcher.matching<User?>()
                 .path<String>("lastName").containing("Beauford")
                 .all { specMatcher: DefaultSpecMatcher<User?> ->
                     specMatcher.equal("id", carterId)
-                            .containing("firstName", " Cart ").path<String>("firstName").trim()
+                        .containing("firstName", " Cart ").path<String>("firstName").trim()
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)
@@ -358,14 +371,14 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll36() {
         val matcher: UserMatcher =
-                UserMatcher.matching().lastName().containing("Beauford")
-                        .any { matcher: UserMatcher ->
-                            matcher.id().equal(carterId).firstName()
-                                    .containing(" Cart ")
-                                    .firstName().trim()
-                        }.firstName().desc().lastName().asc()
-                        .id().between(1, 6)
-                        .id().`in`(1, 2, 3, 4, 5, 6)
+            UserMatcher.matching().lastName().containing("Beauford")
+                .any { matcher: UserMatcher ->
+                    matcher.id().equal(carterId).firstName()
+                        .containing(" Cart ")
+                        .firstName().trim()
+                }.firstName().desc().lastName().asc()
+                .id().between(1, 6)
+                .id().`in`(1, 2, 3, 4, 5, 6)
 
         val all = repository.findAll(matcher)
         System.err.println(json(all, true))
@@ -374,11 +387,11 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll361() {
         val matcher: UserMatcher =
-                UserMatcher.matching().lastName().containing("Beauford")
-                        .all { matcher: UserMatcher ->
-                            matcher.id().equal(carterId).firstName()
-                                    .containing(" Cart ").firstName().trim()
-                        }.firstName().desc().lastName().asc()
+            UserMatcher.matching().lastName().containing("Beauford")
+                .all { matcher: UserMatcher ->
+                    matcher.id().equal(carterId).firstName()
+                        .containing(" Cart ").firstName().trim()
+                }.firstName().desc().lastName().asc()
         val all = repository.findAll(matcher)
         System.err.println(json(all, true))
     }
@@ -392,13 +405,13 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll3() {
         Assertions
-                .assertEquals(1, repository.findAll(Example.of(User("Dave", null))).size)
+            .assertEquals(1, repository.findAll(Example.of(User("Dave", null))).size)
     }
 
     @Test
     fun count1() {
         Assertions
-                .assertEquals(1, repository.count(Example.of(User("Dave", null))))
+            .assertEquals(1, repository.count(Example.of(User("Dave", null))))
     }
 
     @Test
@@ -414,8 +427,11 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun countRecycle2() {
         Assertions
-                .assertEquals(1, repository.countRecycleBin(
-                        DefaultSpecMatcher.matching<User>().equal("firstName", "Dave")))
+            .assertEquals(
+                1, repository.countRecycleBin(
+                    DefaultSpecMatcher.matching<User>().equal("firstName", "Dave")
+                )
+            )
     }
 
     @Test
@@ -426,39 +442,43 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findRecycleById() {
         Assertions
-                .assertTrue(repository.findByIdFromRecycleBin(daveId).isPresent)
+            .assertTrue(repository.findByIdFromRecycleBin(daveId).isPresent)
     }
 
     @Test
     fun findRecycleOne() {
         Assertions.assertTrue(
-                repository.findOneFromRecycleBin(
-                        DefaultSpecMatcher.matching<User>().equal("firstName", "Dave")).isPresent)
+            repository.findOneFromRecycleBin(
+                DefaultSpecMatcher.matching<User>().equal("firstName", "Dave")
+            ).isPresent
+        )
     }
 
     @Test
     fun findRecycleAll1() {
         Assertions.assertTrue(
-                repository.findAllFromRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder
-                            .equal(root.get<Any>("firstName"), "Dave")
-                }.iterator().hasNext())
+            repository.findAllFromRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                builder
+                    .equal(root.get<Any>("firstName"), "Dave")
+            }.iterator().hasNext()
+        )
     }
 
     @Test
     fun existsRecycle() {
         Assertions
-                .assertTrue(repository.existsInRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder
-                            .equal(root.get<Any>("firstName"), "Dave")
-                })
+            .assertTrue(repository.existsInRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                builder
+                    .equal(root.get<Any>("firstName"), "Dave")
+            })
     }
 
     @Test
     fun nativeQuery() {
         val query = repository.entityManager.createNativeQuery(
-                "select first_name,last_name, '2022-03-23 16:45:37' as date from t_user where first_name = ? AND first_name = ? and last_name = ?",
-                Tuple::class.java)
+            "select first_name,last_name, '2022-03-23 16:45:37' as date from t_user where first_name = ? AND first_name = ? and last_name = ?",
+            Tuple::class.java
+        )
         query.setParameter(1, "Carter")
         query.setParameter(2, "Carter")
         query.setParameter(3, "Beauford1")
