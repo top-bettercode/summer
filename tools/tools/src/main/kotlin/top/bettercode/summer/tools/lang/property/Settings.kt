@@ -15,7 +15,7 @@ object Settings : HashMap<String, PropertiesSource>() {
     val jdbcTypeName = PropertiesSource.of("defaultJdbcTypeName", "jdbcTypeName")
 
     @JvmStatic
-    val areaCode = PropertiesSource.of("areaCode")
+    val division = PropertiesSource.of("division")
 
     @JvmStatic
     val dicCode = PropertiesSource("default-dic-code", "dic-code", "app-dic-code")
@@ -26,7 +26,7 @@ object Settings : HashMap<String, PropertiesSource>() {
     init {
         put("cell-regex", cellRegex)
         put("jdbcTypeName", jdbcTypeName)
-        put("areaCode", areaCode)
+        put("areaCode", division)
         put("dic-code", dicCode)
         put("exception-handle", exceptionHandle)
     }

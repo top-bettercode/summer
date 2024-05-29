@@ -14,24 +14,24 @@ object DivisionData {
      * 虚拟层级
      */
     @JvmStatic
-    fun isVnode(prefectureName: String?): Boolean {
-        return VNODE_NAME == prefectureName
+    fun isVnode(cityName: String?): Boolean {
+        return VNODE_NAME == cityName
     }
 
     @JvmStatic
     val provinces: List<Division> by lazy {
-        val codes = Settings.areaCode.all()
+        val codes = Settings.division.all()
         codes.filter { it.key.endsWith("0000") }.map { (provinceCode, provinceName) ->
-            var prefectures = codes.filter { it.key.startsWith(provinceCode.substring(0, 2)) && it.key.endsWith("00") && it.key != provinceCode }
-            val municipality = if (prefectures.isEmpty() && codes.any { it.key.startsWith(provinceCode.trimEnd('0')) && it.key != provinceCode }) {
-                prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to VNODE_NAME)
+            var citys = codes.filter { it.key.startsWith(provinceCode.substring(0, 2)) && it.key.endsWith("00") && it.key != provinceCode }
+            val municipality = if (citys.isEmpty() && codes.any { it.key.startsWith(provinceCode.trimEnd('0')) && it.key != provinceCode }) {
+                citys = mapOf(provinceCode.substring(0, 2) + "0100" to VNODE_NAME)
                 true
             } else false
 
-            val prefectureDivisions = prefectures.map { (prefectureCode, prefectureName) ->
-                val vnode = isVnode(prefectureName)
+            val cityDivisions = citys.map { (cityCode, cityName) ->
+                val vnode = isVnode(cityName)
                 val counties = codes
-                        .filter { it.key.startsWith(prefectureCode.subSequence(0, 4)) && it.key != prefectureCode }
+                        .filter { it.key.startsWith(cityCode.subSequence(0, 4)) && it.key != cityCode }
                         .map { (countyCode, countyName) ->
                             val division =
                                     Division(
@@ -42,13 +42,13 @@ object DivisionData {
                                             vnode = false,
                                             parentNames = if (vnode) listOf(provinceName) else listOf(
                                                     provinceName,
-                                                    prefectureName
+                                                    cityName
                                             ),
                                             children = emptyList()
                                     )
                             divisions[countyCode] = division
                             if (!vnode)
-                                divisionNames[listOf(provinceName, prefectureName, countyName)] =
+                                divisionNames[listOf(provinceName, cityName, countyName)] =
                                         division
                             else {
                                 divisionNames[listOf(provinceName, countyName)] = division
@@ -57,17 +57,17 @@ object DivisionData {
                         }.sortedBy { it.code }
                 val division =
                         Division(
-                                code = prefectureCode,
-                                name = prefectureName,
+                                code = cityCode,
+                                name = cityName,
                                 level = 2,
                                 municipality = false,
                                 vnode = vnode,
                                 parentNames = listOf(provinceName),
                                 children = counties
                         )
-                divisions[prefectureCode] = division
+                divisions[cityCode] = division
                 if (!vnode)
-                    divisionNames[listOf(provinceName, prefectureName)] = division
+                    divisionNames[listOf(provinceName, cityName)] = division
                 division
             }.sortedBy { it.code }
             val division = Division(
@@ -77,7 +77,7 @@ object DivisionData {
                     municipality = municipality,
                     vnode = false,
                     parentNames = emptyList(),
-                    children = prefectureDivisions
+                    children = cityDivisions
             )
             divisions[provinceCode] = division
             divisionNames[listOf(provinceName)] = division

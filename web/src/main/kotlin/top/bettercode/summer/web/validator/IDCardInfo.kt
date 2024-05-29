@@ -1,6 +1,6 @@
 package top.bettercode.summer.web.validator
 
-import top.bettercode.summer.tools.lang.property.Settings.areaCode
+import top.bettercode.summer.tools.lang.property.Settings.division
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -83,6 +83,6 @@ class IDCardInfo(var idcard: String) {
     }
 
     companion object {
-        private val areaCodes = areaCode
+        private val areaCodes = division
     }
 }
