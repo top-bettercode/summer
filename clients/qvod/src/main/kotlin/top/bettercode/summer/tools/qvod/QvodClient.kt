@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
+import top.bettercode.summer.tools.lang.client.OkHttpLoggingInterceptor
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import java.util.*
 import javax.crypto.Mac
@@ -51,7 +51,7 @@ open class QvodClient(
         val field = VodClient::class.java.superclass.getDeclaredField("httpConnection")
         field.isAccessible = true
         val httpConnection = field.get(vodClient) as HttpConnection
-        httpConnection.addInterceptors(/* interceptor = */ OkHttpClientLoggingInterceptor(
+        httpConnection.addInterceptors(/* interceptor = */ OkHttpLoggingInterceptor(
             collectionName = "第三方平台",
             name = "腾讯云",
             logMarker = MARKER,

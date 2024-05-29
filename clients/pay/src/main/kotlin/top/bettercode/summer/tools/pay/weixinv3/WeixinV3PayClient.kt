@@ -22,7 +22,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
+import top.bettercode.summer.tools.lang.client.OkHttpLoggingInterceptor
 import top.bettercode.summer.tools.pay.properties.WeixinV3PayProperties
 import java.nio.charset.StandardCharsets
 import java.security.InvalidKeyException
@@ -78,7 +78,7 @@ open class WeixinV3PayClient(val properties: WeixinV3PayProperties) {
 
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(
-                OkHttpClientLoggingInterceptor(
+                OkHttpLoggingInterceptor(
                     collectionName = "第三方平台",
                     name = "微信支付V3",
                     logMarker = MARKER,

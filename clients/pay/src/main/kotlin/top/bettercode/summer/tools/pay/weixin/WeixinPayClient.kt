@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
-import org.springframework.http.client.OkHttp3ClientHttpRequestFactory
+import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter
 import org.springframework.lang.Nullable
@@ -14,15 +14,14 @@ import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.entity.*
 import java.io.InputStream
+import java.net.HttpURLConnection
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 import java.util.*
 import java.util.function.Consumer
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
-import javax.net.ssl.KeyManagerFactory
-import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
+import javax.net.ssl.*
 import javax.servlet.http.HttpServletRequest
 
 
@@ -33,8 +32,62 @@ import javax.servlet.http.HttpServletRequest
  */
 @LogMarker(WeixinPayClient.MARKER)
 open class WeixinPayClient(properties: WeixinPayProperties) : ApiTemplate<WeixinPayProperties>(
-    MARKER,
-    properties,
+    marker = MARKER,
+    properties = properties,
+    requestFactory = if (properties.certLocation == null) SimpleClientHttpRequestFactory().apply {
+        setConnectTimeout(properties.connectTimeout * 1000)
+        setReadTimeout(properties.readTimeout * 1000)
+    } else object : SimpleClientHttpRequestFactory() {
+        override fun prepareConnection(connection: HttpURLConnection, httpMethod: String) {
+            //指定读取证书格式为PKCS12
+            val keyStore = KeyStore.getInstance("PKCS12")
+            val certFileResource = ClassPathResource(properties.certLocation!!)
+            val certInputStream: InputStream = certFileResource.inputStream
+            val certStorePassword = (properties.certStorePassword
+                ?: throw IllegalArgumentException("certStorePassword is null"))
+            keyStore.load(certInputStream, certStorePassword.toCharArray())
+
+            val keyManagerFactory =
+                KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+            val certKeyPassword = (properties.certKeyPassword
+                ?: throw IllegalArgumentException("certKeyPassword is null"))
+            keyManagerFactory.init(keyStore, certKeyPassword.toCharArray())
+
+            val sslContext = SSLContext.getInstance("TLS")
+
+            val trustManager = object : X509TrustManager {
+                override fun checkClientTrusted(
+                    chain: Array<out X509Certificate>?,
+                    authType: String?
+                ) {
+                }
+
+                override fun checkServerTrusted(
+                    chain: Array<out X509Certificate>?,
+                    authType: String?
+                ) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return emptyArray()
+                }
+            }
+            sslContext.init(
+                keyManagerFactory.keyManagers,
+                arrayOf(trustManager),
+                java.security.SecureRandom()
+            )
+            val httpsConnection = connection as HttpsURLConnection
+            httpsConnection.setSSLSocketFactory(sslContext.socketFactory)
+
+            httpsConnection.setHostnameVerifier { _: String?, _: SSLSession? -> true }
+
+            super.prepareConnection(connection, httpMethod)
+        }
+    }.apply {
+        setConnectTimeout(properties.connectTimeout * 1000)
+        setReadTimeout(properties.readTimeout * 1000)
+    }
 ) {
     companion object {
         const val MARKER = "weixin_pay"
@@ -57,49 +110,6 @@ open class WeixinPayClient(properties: WeixinPayProperties) : ApiTemplate<Weixin
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
         this.messageConverters = messageConverters
-
-        //添加证书
-        val certLocation = properties.certLocation
-        if (certLocation != null) {
-            //指定读取证书格式为PKCS12
-            val keyStore = KeyStore.getInstance("PKCS12")
-            val certFileResource = ClassPathResource(certLocation)
-            val certInputStream: InputStream = certFileResource.inputStream
-            val certStorePassword = (properties.certStorePassword
-                ?: throw IllegalArgumentException("certStorePassword is null"))
-            keyStore.load(certInputStream, certStorePassword.toCharArray())
-
-            val keyManagerFactory =
-                KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
-            val certKeyPassword = (properties.certKeyPassword
-                ?: throw IllegalArgumentException("certKeyPassword is null"))
-            keyManagerFactory.init(keyStore, certKeyPassword.toCharArray())
-
-            val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(keyManagerFactory.keyManagers, null, null)
-            sslContext.socketFactory
-
-            okHttpClientBuilder
-                .sslSocketFactory(sslContext.socketFactory, object : X509TrustManager {
-                    override fun checkClientTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate> {
-                        return emptyArray()
-                    }
-                })
-
-            this.requestFactory = OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())
-        }
     }
 
     /**

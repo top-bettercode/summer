@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.lang.log
+package top.bettercode.summer.tools.lang.client
 
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.operation.*
+import top.bettercode.summer.tools.lang.operation.RequestConverter.extractHost
 import top.bettercode.summer.tools.lang.util.StringUtil
 import java.time.LocalDateTime
 import java.util.*
@@ -19,11 +21,11 @@ import java.util.*
  *
  * @author Peter Wu
  */
-class OkHttpClientLoggingInterceptor(
+class OkHttpLoggingInterceptor(
     private val collectionName: String,
     private val name: String,
     private val logMarker: String,
-    private val logClazz: Class<*> = OkHttpClientLoggingInterceptor::class.java,
+    private val logClazz: Class<*> = OkHttpLoggingInterceptor::class.java,
     private val timeoutAlarmSeconds: Int = -1,
     private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
     private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
@@ -139,14 +141,8 @@ class OkHttpClientLoggingInterceptor(
             ByteArray(0)
         }
         val url = request.url
-        if (headers.host == null) {
-            val port = url.port
-            headers["Host"] =
-                if (RequestConverter.SCHEME_HTTP == url.scheme && port == RequestConverter.STANDARD_PORT_HTTP)
-                    url.host
-                else
-                    "${url.host}:$port"
-        }
+        headers["Host"] = extractHost(url.toUri())
+
         val parameters = Parameters()
         for (parameterName in url.queryParameterNames) {
             parameters.add(parameterName, url.queryParameter(parameterName))

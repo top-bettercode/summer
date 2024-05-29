@@ -8,7 +8,6 @@ import org.springframework.util.StreamUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.servlet.HandlerMapping
-import top.bettercode.summer.tools.lang.client.ClientHttpRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TracePart
 import java.io.PrintWriter
@@ -31,7 +30,7 @@ import javax.servlet.http.Part
 object RequestConverter {
 
     const val FAILBACK_CONTENT =
-            "---- failback content ----\n\nCan't record the original inputStream data.\n\n---- failback content ----"
+        "---- failback content ----\n\nCan't record the original inputStream data.\n\n---- failback content ----"
 
     const val SCHEME_HTTP = "http"
 
@@ -52,48 +51,48 @@ object RequestConverter {
      */
     fun convert(request: HttpServletRequest): OperationRequest {
         val dateTime = (request.getAttribute(HttpOperation.REQUEST_DATE_TIME) as LocalDateTime?)
-                ?: LocalDateTime.now()
-        val headers = extractHeaders(request)
+            ?: LocalDateTime.now()
+        val uri = URI.create(getRequestUri(request))
+        val headers = extractHeaders(request, uri)
         val parameters = extractParameters(request)
         val parts = extractParts(request)
         val cookies = extractCookies(request, headers)
-        val uri = URI.create(getRequestUri(request))
         val restUri =
-                (request.getAttribute(HttpOperation.BEST_MATCHING_PATTERN_ATTRIBUTE) as String?)
-                        ?: request.servletPath
+            (request.getAttribute(HttpOperation.BEST_MATCHING_PATTERN_ATTRIBUTE) as String?)
+                ?: request.servletPath
 
         @Suppress("UNCHECKED_CAST")
         val uriTemplateVariables =
-                request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as Map<String, String>?
-                        ?: mapOf()
+            request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as Map<String, String>?
+                ?: mapOf()
         val remoteUser =
-                (request.getAttribute(HttpOperation.REQUEST_LOGGING_USERNAME) as String?)
-                        ?: request.remoteUser ?: "anonymous"
+            (request.getAttribute(HttpOperation.REQUEST_LOGGING_USERNAME) as String?)
+                ?: request.remoteUser ?: "anonymous"
 
         val traceHttpServletRequestWrapper =
-                getRequestWrapper(request, TraceHttpServletRequestWrapper::class.java)
+            getRequestWrapper(request, TraceHttpServletRequestWrapper::class.java)
         val content = traceHttpServletRequestWrapper?.contentAsByteArray
-                ?: try {
-                    val inputStream = request.inputStream
-                    if (!inputStream.isFinished)
-                        StreamUtils.copyToByteArray(inputStream)
-                    else ByteArray(0)
-                } catch (e: Exception) {
-                    FAILBACK_CONTENT.toByteArray()
-                }
+            ?: try {
+                val inputStream = request.inputStream
+                if (!inputStream.isFinished)
+                    StreamUtils.copyToByteArray(inputStream)
+                else ByteArray(0)
+            } catch (e: Exception) {
+                FAILBACK_CONTENT.toByteArray()
+            }
 
         return OperationRequest(
-                uri = uri,
-                restUri = restUri,
-                uriVariables = uriTemplateVariables,
-                method = request.method,
-                headers = headers,
-                cookies = cookies,
-                remoteUser = remoteUser,
-                parameters = parameters,
-                parts = parts,
-                content = content,
-                dateTime = dateTime
+            uri = uri,
+            restUri = restUri,
+            uriVariables = uriTemplateVariables,
+            method = request.method,
+            headers = headers,
+            cookies = cookies,
+            remoteUser = remoteUser,
+            parameters = parameters,
+            parts = parts,
+            content = content,
+            dateTime = dateTime
         )
     }
 
@@ -109,7 +108,7 @@ object RequestConverter {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : HttpServletRequestWrapper> getRequestWrapper(
-            request: ServletRequest, requestType: Class<T>
+        request: ServletRequest, requestType: Class<T>
     ): T? {
         return if (requestType.isInstance(request)) {
             request as T
@@ -120,40 +119,28 @@ object RequestConverter {
         }
     }
 
-
-    fun convert(request: ClientHttpRequestWrapper, dateTime: LocalDateTime): OperationRequest {
-        val headers = HttpHeaders()
-        val cookies = request.headers[HttpHeaders.COOKIE]?.map {
-            RequestCookie(it.substringBefore("="), it.substringAfter("="))
-        } ?: listOf()
-
-        val uri = request.uri
-
-        headers.add(HttpHeaders.HOST, uri.authority)
-        headers.putAll(request.headers)
-        headers.remove(HttpHeaders.COOKIE)
-
-        val restUri = uri.toString()
-        val content = request.record.toByteArray()
-        val parameters = QueryStringParser.parse(uri)
-        return OperationRequest(
-                uri = uri,
-                restUri = restUri,
-                uriVariables = emptyMap(),
-                method = request.method.name,
-                headers = headers,
-                cookies = cookies,
-                remoteUser = "NonSpecificUser",
-                parameters = parameters,
-                parts = listOf(),
-                content = content,
-                dateTime = dateTime
-        )
+    fun extractHost(uri: URI): String {
+        val scheme = uri.scheme
+        var port = uri.port
+        if (port == -1) {
+            if (SCHEME_HTTP == scheme)
+                port = STANDARD_PORT_HTTP
+            else if (SCHEME_HTTPS == scheme)
+                port = STANDARD_PORT_HTTPS
+        }
+        val host = uri.host
+        return if (port != -1) {
+            if (SCHEME_HTTP == scheme && port == STANDARD_PORT_HTTP)
+                host
+            else
+                "$host:$port"
+        } else
+            host
     }
 
     private fun extractCookies(
-            request: HttpServletRequest,
-            headers: HttpHeaders
+        request: HttpServletRequest,
+        headers: HttpHeaders
     ): Collection<RequestCookie> {
         if (request.cookies == null || request.cookies!!.isEmpty()) {
             return emptyList()
@@ -169,7 +156,7 @@ object RequestConverter {
     private fun extractParts(request: HttpServletRequest): List<OperationRequestPart> {
         val parts = ArrayList<OperationRequestPart>()
         if (request.contentType?.lowercase(Locale.getDefault())
-                        ?.startsWith("multipart/") == true
+                ?.startsWith("multipart/") == true
         ) {
             parts.addAll(extractServletRequestParts(request))
         }
@@ -197,7 +184,7 @@ object RequestConverter {
     }
 
     private fun extractServletRequestParts(
-            servletRequest: HttpServletRequest
+        servletRequest: HttpServletRequest
     ): List<OperationRequestPart> {
         val parts = ArrayList<OperationRequestPart>()
         for (part in servletRequest.parts) {
@@ -219,12 +206,12 @@ object RequestConverter {
             "Request part has been read.Can't record the original data.".toByteArray()
         }
         return OperationRequestPart(
-                part.name,
-                if (!part.submittedFileName.isNullOrBlank())
-                    part.submittedFileName
-                else
-                    null, partHeaders,
-                content
+            part.name,
+            if (!part.submittedFileName.isNullOrBlank())
+                part.submittedFileName
+            else
+                null, partHeaders,
+            content
         )
     }
 
@@ -249,13 +236,13 @@ object RequestConverter {
             "Request part has been read.Can't record the original data.".toByteArray()
         }
         return OperationRequestPart(
-                file.name,
-                if (!file.originalFilename.isNullOrBlank())
-                    file.originalFilename
-                else
-                    null,
-                partHeaders,
-                content
+            file.name,
+            if (!file.originalFilename.isNullOrBlank())
+                file.originalFilename
+            else
+                null,
+            partHeaders,
+            content
         )
     }
 
@@ -279,19 +266,21 @@ object RequestConverter {
         return parameters
     }
 
-    private fun extractHeaders(servletRequest: HttpServletRequest): HttpHeaders {
+    private fun extractHeaders(servletRequest: HttpServletRequest, uri: URI): HttpHeaders {
         val headers = HttpHeaders()
         for (headerName in servletRequest.headerNames) {
             for (value in servletRequest.getHeaders(headerName)) {
                 headers.add(headerName, value)
             }
         }
+        headers["Host"] = extractHost(uri)
+
         return headers
     }
 
     private fun isNonStandardPort(
-            request: HttpServletRequest,
-            serverPort: Int = request.serverPort
+        request: HttpServletRequest,
+        serverPort: Int = request.serverPort
     ): Boolean {
         return (SCHEME_HTTP == request.scheme && serverPort != STANDARD_PORT_HTTP) || (SCHEME_HTTPS == request.scheme && serverPort != STANDARD_PORT_HTTPS)
     }

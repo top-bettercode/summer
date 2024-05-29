@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.lang.operation
 
 import org.springframework.http.HttpHeaders
-import top.bettercode.summer.tools.lang.client.ClientHttpResponseWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
 import javax.servlet.ServletResponse
 import javax.servlet.http.Cookie
@@ -33,13 +32,6 @@ object ResponseConverter {
         )
     }
 
-
-    fun convert(response: ClientHttpResponseWrapper): OperationResponse {
-        return OperationResponse(
-                response.statusCode.value(),
-                response.headers, response.content
-        )
-    }
 
     fun unwrapHttpServletResponse(response: ServletResponse): ServletResponse {
         return when (response) {

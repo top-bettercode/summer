@@ -1,20 +1,18 @@
 package top.bettercode.summer.tools.lang.client
 
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
+import org.springframework.http.client.ClientHttpRequestFactory
 import org.springframework.http.client.ClientHttpResponse
-import org.springframework.http.client.OkHttp3ClientHttpRequestFactory
+import org.springframework.http.client.InterceptingClientHttpRequestFactory
+import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.lang.Nullable
 import org.springframework.web.client.*
-import top.bettercode.summer.tools.lang.log.OkHttpClientLoggingInterceptor
 import java.io.IOException
 import java.lang.reflect.Type
 import java.net.URI
-import java.util.concurrent.TimeUnit
 
 /**
  * 请求模板
@@ -29,30 +27,28 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,
     private val collectionName: String = "第三方平台",
     override val platformName: String = properties.platformName,
+    requestFactory: ClientHttpRequestFactory = SimpleClientHttpRequestFactory().apply {
+        setConnectTimeout(properties.connectTimeout * 1000)
+        setReadTimeout(properties.readTimeout * 1000)
+    }
 ) : RestTemplate(), ApiExceptions {
 
     protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    private val loggingInterceptor: Interceptor = OkHttpClientLoggingInterceptor(
-        collectionName = collectionName,
-        name = properties.platformName,
-        logMarker = marker,
-        logClazz = this::class.java,
-        timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-        requestDecrypt = requestDecrypt,
-        responseDecrypt = responseDecrypt
-    )
-
-    @JvmField
-    protected val okHttpClientBuilder = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .connectTimeout(properties.connectTimeout.toLong(), TimeUnit.SECONDS)
-        .readTimeout(properties.readTimeout.toLong(), TimeUnit.SECONDS)
-
-
     init {
-        this.requestFactory =
-            OkHttp3ClientHttpRequestFactory(okHttpClientBuilder.build())
+        val loggingInterceptor = ClientHttpRequestLoggingInterceptor(
+            collectionName = collectionName,
+            name = properties.platformName,
+            logMarker = marker,
+            logClazz = this::class.java,
+            timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+            requestDecrypt = requestDecrypt,
+            responseDecrypt = responseDecrypt
+        )
+
+        this.requestFactory = InterceptingClientHttpRequestFactory(
+            requestFactory, listOf(loggingInterceptor)
+        )
     }
 
     //--------------------------------------------

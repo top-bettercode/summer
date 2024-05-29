@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Request.Builder
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.lang.client.OkHttpLoggingInterceptor
 
 
 class OkHttpClientTest {
@@ -12,7 +13,7 @@ class OkHttpClientTest {
     fun log() {
         // 创建 OkHttpClient 实例
         val client = OkHttpClient.Builder()
-                .addInterceptor(OkHttpClientLoggingInterceptor("第三方服务", "测试", "test")) // 添加日志拦截器
+                .addInterceptor(OkHttpLoggingInterceptor("第三方服务", "测试", "test")) // 添加日志拦截器
                 .build()
 
         // 创建一个 Request 对象，表示要发送的请求
