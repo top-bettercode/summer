@@ -1,4 +1,4 @@
-package top.bettercode.summer.web.support.gb2260
+package top.bettercode.summer.web.support.division
 
 import top.bettercode.summer.tools.lang.property.Settings
 
@@ -6,10 +6,13 @@ import top.bettercode.summer.tools.lang.property.Settings
  *
  * @author Peter Wu
  */
-object GB2260 {
+object DivisionData {
 
     const val VNODE_NAME = "市辖区"
 
+    /**
+     * 虚拟层级
+     */
     @JvmStatic
     fun isVnode(prefectureName: String?): Boolean {
         return VNODE_NAME == prefectureName

@@ -1,4 +1,4 @@
-package top.bettercode.summer.web.support.gb2260
+package top.bettercode.summer.web.support.division
 
 import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -12,16 +12,16 @@ import top.bettercode.summer.web.BaseController
 @ConditionalOnWebApplication
 @Anonymous
 @RequestMapping(value = ["/divisions"], name = "行政区划")
-class GB2260Controller : BaseController() {
+class DivisionDataController : BaseController() {
 
     @RequestLogging(includeResponseBody = false)
     @JsonView(AllDivisionView::class)
     @GetMapping(value = ["/list"], name = "列表（全）")
     fun list(@RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
         val divisions = if (vnode)
-            GB2260.provinces
+            DivisionData.provinces
         else {
-            val provinces = GB2260.provinces.map {
+            val provinces = DivisionData.provinces.map {
                 if (it.municipality) {
                     Division(
                             code = it.code,
@@ -47,10 +47,10 @@ class GB2260Controller : BaseController() {
     fun select(code: String?, @RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
 
         val divisions = if (code.isNullOrBlank()) {
-            GB2260.provinces
+            DivisionData.provinces
         } else {
             val code1 = String.format("%-6s", code).replace(" ", "0")
-            val division = GB2260.getDivision(code1)
+            val division = DivisionData.getDivision(code1)
             val children = division.children
             if (!vnode && division.municipality) {
                 children[0].children

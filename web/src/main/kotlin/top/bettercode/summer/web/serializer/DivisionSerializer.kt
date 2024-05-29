@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.web.serializer.annotation.JsonDivision
-import top.bettercode.summer.web.support.gb2260.GB2260.getDivision
-import top.bettercode.summer.web.support.gb2260.InvalidCodeException
+import top.bettercode.summer.web.support.division.DivisionData.getDivision
+import top.bettercode.summer.web.support.division.InvalidCodeException
 
 /**
  * @author Peter Wu

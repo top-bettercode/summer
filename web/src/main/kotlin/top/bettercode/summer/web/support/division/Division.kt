@@ -1,4 +1,4 @@
-package top.bettercode.summer.web.support.gb2260
+package top.bettercode.summer.web.support.division
 
 import com.fasterxml.jackson.annotation.JsonView
 

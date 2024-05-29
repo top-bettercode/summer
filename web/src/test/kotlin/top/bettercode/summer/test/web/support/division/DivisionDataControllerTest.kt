@@ -1,4 +1,4 @@
-package top.bettercode.summer.test.web.support.gb2260
+package top.bettercode.summer.test.web.support.division
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -9,7 +9,7 @@ import top.bettercode.summer.test.TestApplication
  * @author Peter Wu
  */
 @SpringBootTest(classes = [TestApplication::class])
-class GB2260ControllerTest : BaseWebNoAuthTest() {
+class DivisionDataControllerTest : BaseWebNoAuthTest() {
     @Test
     fun list() {
         perform(get("/divisions/list")

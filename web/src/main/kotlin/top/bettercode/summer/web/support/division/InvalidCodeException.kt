@@ -1,4 +1,4 @@
-package top.bettercode.summer.web.support.gb2260
+package top.bettercode.summer.web.support.division
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
