@@ -26,6 +26,7 @@ dependencies {
         api("com.gradle.publish:plugin-publish-plugin:1.2.1")
         api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
+        api("org.xerial:sqlite-jdbc:3.46.0.0")
         api("mysql:mysql-connector-java:8.0.32")
         api("com.oracle.database.jdbc:ojdbc8:21.9.0.0")
         api("com.oracle.database.jdbc:ucp:21.9.0.0")

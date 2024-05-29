@@ -33,6 +33,8 @@ dependencies {
 
     testImplementation("com.github.axet:kaptcha")
     testImplementation(project(":test"))
+    testImplementation("org.jsoup:jsoup")
+    testImplementation("org.xerial:sqlite-jdbc")
 //    testImplementation(project(":natives:sap"))
 //    testImplementation(project(":tools:weixin"))
 }
