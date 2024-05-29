@@ -15,7 +15,7 @@ data class Distance(
     val infocode: String? = null,
 
     @field:JsonProperty("results")
-    val results: List<ResultsItem>? = null,
+    val results: Any? = null,
 
     @field:JsonProperty("status")
     val status: String? = null,

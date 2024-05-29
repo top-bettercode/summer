@@ -11,7 +11,7 @@ data class AMapRegeo(
     val status: String? = null,
 
     @field:JsonProperty("regeocode")
-    val regeocode: Regeocode? = null,
+    val regeocode: Any? = null,
 
     @field:JsonProperty("info")
     val info: String? = null,

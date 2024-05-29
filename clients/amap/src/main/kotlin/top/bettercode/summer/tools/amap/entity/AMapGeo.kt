@@ -21,7 +21,7 @@ data class AMapGeo(
     val count: String? = null,
 
     @field:JsonProperty("geocodes")
-    val geocodes: List<GeocodesItem>? = null
+    val geocodes: Any? = null
 ) : ClientResponse {
 
     @get:JsonIgnore

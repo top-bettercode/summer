@@ -12,7 +12,6 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.amap.entity.AMapGeo
 import top.bettercode.summer.tools.amap.entity.AMapRegeo
 import top.bettercode.summer.tools.amap.entity.Distance
-import top.bettercode.summer.tools.amap.entity.Location
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 
 /**
@@ -49,12 +48,12 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
         }
     }
 
-    open fun regeo(location: Location): AMapRegeo {
+    open fun regeo(location: String): AMapRegeo {
         //restapi.amap.com/v3/geocode/regeo?key=您的key&location=116.481488,39.990464&poitype=&radius=&extensions=base&batch=false&roadlevel=0
         val expanded = uriTemplateHandler.expand(
             properties.url + "/geocode/regeo?key={0}&location={1}",
             properties.key,
-            location.toString()
+            location
         )
         val entity: ResponseEntity<AMapRegeo> =
             execute(
