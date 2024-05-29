@@ -35,6 +35,7 @@ dependencies {
     testImplementation(project(":test"))
     testImplementation("org.jsoup:jsoup")
     testImplementation("org.xerial:sqlite-jdbc")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.21.0")
 //    testImplementation(project(":natives:sap"))
 //    testImplementation(project(":tools:weixin"))
 }
