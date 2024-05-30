@@ -17,7 +17,6 @@ import java.sql.DriverManager
  */
 class DivisionDataUpdateTest {
 
-    val connection: java.sql.Connection
     val driver: WebDriver
 
     init {
@@ -28,24 +27,6 @@ class DivisionDataUpdateTest {
         options.addArguments("--headless") // 无头模式
         // 创建 WebDriver 实例
         driver = ChromeDriver(options)
-
-        Class.forName("org.sqlite.JDBC")
-        File("division.sqlite").delete()
-        connection = DriverManager.getConnection("jdbc:sqlite:division.sqlite")
-        println("数据库连接成功！")
-        val stmt = connection.createStatement()
-        //统计用区划代码	城乡分类代码	名称
-        val sql =
-            """CREATE TABLE IF NOT EXISTS division (
-                |CODE INT PRIMARY KEY  NOT NULL,
-                |PARENT_CODE   INT    NULL,
-                |NAME          CHAR(200)   NOT NULL,
-                |FULL_NAME     CHAR(500)   NOT NULL,
-                |LEVEL         INT         NOT NULL,
-                |TYPE_CODE     CHAR(3)     NULL
-                |)""".trimMargin()
-        stmt.executeUpdate(sql)
-        stmt.close()
     }
 
     @AfterEach
@@ -65,6 +46,7 @@ class DivisionDataUpdateTest {
      */
     @Test
     fun get() {
+        System.err.println("开始获取数据")
         val indexUrl = "https://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/2023/index.html"
         //province
         val datas = mutableListOf<DivisionData>()
@@ -75,133 +57,157 @@ class DivisionDataUpdateTest {
         }
         elements.forEach { el1 ->
             val provinceHref: String? = el1.attr("href")
+            val hasProvince = !provinceHref.isNullOrBlank()
             val provinceCode = provinceHref!!.substringBefore(".html").padEnd(12, '0').toLong()
             val provinceName = el1.text().trim()
             datas.add(
                 DivisionData(
                     code = provinceCode,
-                    parentCode = null,
                     name = provinceName,
-                    fullName = provinceName,
-                    level = 1
+                    level = 1,
+                    leaf = if (hasProvince) 0 else 1,
+                    parentCode = null,
+                    codePath = provinceCode.toString(),
+                    namePath = provinceName,
                 )
             )
             System.err.print(".")
-            //city
-            val provinceUrl = indexUrl.substringBeforeLast("/") + "/" + provinceHref
-            elements = document(provinceUrl).select("tr.citytr")
-            if (elements.isEmpty()) {
-                file(provinceUrl).delete()
-                throw RuntimeException("fail ${provinceUrl.substringAfterLast("/")}")
-            }
-            elements.forEach { el2 ->
-                var es = el2.select("td")
-                var codetd = es[0]
-                val cityCode = codetd.text().padEnd(12, '0').toLong()
-                val cityHref = codetd.selectFirst("a")?.attr("href")
-                val cityName = es[1].text().trim()
-//                if (cityName == "县" && provinceCode == 500000000000L) {
-//                    cityName = "重庆县"
-//                }
-                datas.add(
-                    DivisionData(
-                        code = cityCode,
-                        parentCode = provinceCode,
-                        name = cityName,
-                        fullName = provinceName + cityName,
-                        level = 2
-                    )
-                )
-                System.err.print(".")
-                //county
-                if (!cityHref.isNullOrBlank()) {
-                    val cityUrl = provinceUrl.substringBeforeLast("/") + "/" + cityHref
-                    val cityDoc = document(cityUrl)
-                    elements = cityDoc.select("tr.countytr")
-                    var countyLevel = 3
-                    //兼容
-                    if (elements.isEmpty()) {
-                        countyLevel = 4
-                        elements = cityDoc.select("tr.towntr")
-                    }
-                    if (elements.isEmpty()) {
-                        file(cityUrl).delete()
-                        throw RuntimeException("fail ${cityUrl.substringAfterLast("/")}")
-                    }
-                    elements.forEach { el3 ->
-                        es = el3.select("td")
-                        codetd = es[0]
-                        val countyCode = codetd.text().padEnd(12, '0').toLong()
-                        val countyHref = codetd.selectFirst("a")?.attr("href")
-                        val countyName = es[1].text().trim()
-                        datas.add(
-                            DivisionData(
-                                code = countyCode,
-                                parentCode = cityCode,
-                                name = countyName,
-                                fullName = provinceName + cityName + countyName,
-                                level = countyLevel
-                            )
+            System.err.flush()
+            if (hasProvince) {
+                //city
+                val provinceUrl = indexUrl.substringBeforeLast("/") + "/" + provinceHref
+                elements = document(provinceUrl).select("tr.citytr")
+                if (elements.isEmpty()) {
+                    file(provinceUrl).delete()
+                    throw RuntimeException("fail ${provinceUrl.substringAfterLast("/")}")
+                }
+                elements.forEach { el2 ->
+                    var es = el2.select("td")
+                    var codetd = es[0]
+                    val cityCode = codetd.text().padEnd(12, '0').toLong()
+                    val cityHref = codetd.selectFirst("a")?.attr("href")
+                    val cityName = es[1].text().trim()
+                    val hasCounty = !cityHref.isNullOrBlank()
+                    datas.add(
+                        DivisionData(
+                            code = cityCode,
+                            name = cityName,
+                            level = 2,
+                            leaf = if (hasCounty) 0 else 1,
+                            parentCode = provinceCode,
+                            codePath = "$provinceCode>$cityCode",
+                            namePath = "$provinceName>$cityName"
                         )
-                        System.err.print(".")
-                        //town
-                        if (!countyHref.isNullOrBlank()) {
-                            val countyUrl =
-                                cityUrl.substringBeforeLast("/") + "/" + countyHref
-                            elements = document(countyUrl).select("tr.towntr")
-                            var townLevel = 4
-                            if (elements.isEmpty()) {
-                                townLevel = 5
-                                elements = document(countyUrl).select("tr.villagetr")
-                            }
-                            if (elements.isEmpty()) {
-                                file(countyUrl).delete()
-                                throw RuntimeException("fail ${countyUrl.substringAfterLast("/")}")
-                            }
-                            elements.forEach { el4 ->
-                                es = el4.select("td")
-                                codetd = es[0]
-                                val townCode = codetd.text().padEnd(12, '0').toLong()
-                                val townHref = codetd.selectFirst("a")?.attr("href")
-                                val townName = es[1].text().trim()
-                                datas.add(
-                                    DivisionData(
-                                        code = townCode,
-                                        parentCode = countyCode,
-                                        name = townName,
-                                        fullName = provinceName + cityName + countyName + townName,
-                                        level = townLevel
-                                    )
+                    )
+                    System.err.print(".")
+                    System.err.flush()
+                    //county
+                    if (hasCounty) {
+                        val cityUrl = provinceUrl.substringBeforeLast("/") + "/" + cityHref
+                        val cityDoc = document(cityUrl)
+                        elements = cityDoc.select("tr.countytr")
+                        var countyLevel = 3
+                        //兼容
+                        if (elements.isEmpty()) {
+                            countyLevel = 4
+                            elements = cityDoc.select("tr.towntr")
+                        }
+                        if (elements.isEmpty()) {
+                            file(cityUrl).delete()
+                            throw RuntimeException("fail ${cityUrl.substringAfterLast("/")}")
+                        }
+                        elements.forEach { el3 ->
+                            es = el3.select("td")
+                            codetd = es[0]
+                            val countyCode = codetd.text().padEnd(12, '0').toLong()
+                            val countyHref = codetd.selectFirst("a")?.attr("href")
+                            val countyName = es[1].text().trim()
+                            val hasTown = !countyHref.isNullOrBlank()
+                            datas.add(
+                                DivisionData(
+                                    code = countyCode,
+                                    name = countyName,
+                                    level = countyLevel,
+                                    leaf = if (hasTown) 0 else 1,
+                                    parentCode = cityCode,
+                                    codePath = "$provinceCode>$cityCode>$countyCode",
+                                    namePath = "$provinceName>$cityName>$countyName"
                                 )
-                                System.err.print(".")
-
-                                //village
-                                if (!townHref.isNullOrBlank()) {
-                                    val townUrl =
-                                        countyUrl.substringBeforeLast("/") + "/" + townHref
-                                    elements = document(townUrl).select("tr.villagetr")
-                                    if (elements.isEmpty()) {
-                                        file(townUrl).delete()
-                                        throw RuntimeException("fail ${townUrl.substringAfterLast("/")}")
-                                    }
-                                    elements.forEach { el5 ->
-                                        es = el5.select("td")
-                                        codetd = es[0]
-                                        val villageCode = codetd.text().padEnd(12, '0').toLong()
-                                        val villageName = es[2].text().trim()
-                                        val typeCode = es[1].text().trim()
-
-                                        datas.add(
-                                            DivisionData(
-                                                code = villageCode,
-                                                parentCode = townCode,
-                                                name = villageName,
-                                                fullName = provinceName + cityName + countyName + townName + villageName,
-                                                level = 5,
-                                                typeCode = typeCode
-                                            )
+                            )
+                            System.err.print(".")
+                            System.err.flush()
+                            //town
+                            if (hasTown) {
+                                val countyUrl =
+                                    cityUrl.substringBeforeLast("/") + "/" + countyHref
+                                elements = document(countyUrl).select("tr.towntr")
+                                var townLevel = 4
+                                if (elements.isEmpty()) {
+                                    townLevel = 5
+                                    elements = document(countyUrl).select("tr.villagetr")
+                                }
+                                if (elements.isEmpty()) {
+                                    file(countyUrl).delete()
+                                    throw RuntimeException("fail ${countyUrl.substringAfterLast("/")}")
+                                }
+                                elements.forEach { el4 ->
+                                    es = el4.select("td")
+                                    codetd = es[0]
+                                    val townCode = codetd.text().padEnd(12, '0').toLong()
+                                    val townHref = codetd.selectFirst("a")?.attr("href")
+                                    val townName = es[1].text().trim()
+                                    val hasVillage = !townHref.isNullOrBlank()
+                                    datas.add(
+                                        DivisionData(
+                                            code = townCode,
+                                            name = townName,
+                                            level = townLevel,
+                                            leaf = if (hasVillage) 0 else 1,
+                                            parentCode = countyCode,
+                                            codePath = "$provinceCode>$cityCode>$countyCode>$townCode",
+                                            namePath = "$provinceName>$cityName>$countyName>$townName"
                                         )
-                                        System.err.print(".")
+                                    )
+                                    System.err.print(".")
+                                    System.err.flush()
+
+                                    //village
+                                    if (hasVillage) {
+                                        val townUrl =
+                                            countyUrl.substringBeforeLast("/") + "/" + townHref
+                                        elements = document(townUrl).select("tr.villagetr")
+                                        if (elements.isEmpty()) {
+                                            file(townUrl).delete()
+                                            throw RuntimeException(
+                                                "fail ${
+                                                    townUrl.substringAfterLast(
+                                                        "/"
+                                                    )
+                                                }"
+                                            )
+                                        }
+                                        elements.forEach { el5 ->
+                                            es = el5.select("td")
+                                            codetd = es[0]
+                                            val villageCode = codetd.text().padEnd(12, '0').toLong()
+                                            val villageName = es[2].text().trim()
+                                            val typeCode = es[1].text().trim().toInt()
+
+                                            datas.add(
+                                                DivisionData(
+                                                    code = villageCode,
+                                                    name = villageName,
+                                                    level = 5,
+                                                    leaf = 1,
+                                                    parentCode = townCode,
+                                                    codePath = "$provinceCode>$cityCode>$countyCode>$townCode>$villageCode",
+                                                    namePath = "$provinceName>$cityName>$countyName>$townName>$villageName",
+                                                    typeCode = typeCode
+                                                )
+                                            )
+                                            System.err.print(".")
+                                            System.err.flush()
+                                        }
                                     }
                                 }
                             }
@@ -210,37 +216,79 @@ class DivisionDataUpdateTest {
                 }
             }
         }
+        System.err.println()
         System.err.println("====数据获取完成====")
+
         """710000=台湾省
 810000=香港特别行政区
 820000=澳门特别行政区
 """.trimIndent().split("\n").forEach {
             it.split("=").let { ss ->
+                val name = ss[1]
+                val code = ss[0].padEnd(12, '0').toLong()
                 datas.add(
                     DivisionData(
-                        code = ss[0].padEnd(12, '0').toLong(),
+                        code = code,
+                        name = name,
+                        level = 1,
+                        leaf = 0,
                         parentCode = null,
-                        name = ss[1],
-                        fullName = ss[1],
-                        level = 1
+                        codePath = code.toString(),
+                        namePath = name
                     )
                 )
             }
         }
-        val statement = connection.createStatement()
-        datas.forEach {
-            val sql =
-                "INSERT INTO division (CODE, PARENT_CODE, NAME, FULL_NAME, LEVEL, TYPE_CODE) VALUES ('${it.code}', ${if (it.parentCode == null) null else "'${it.parentCode}'"}, '${it.name}', '${it.fullName}', ${it.level}, ${if (it.typeCode == null) null else "'${it.typeCode}'"})"
-            statement.executeUpdate(sql)
-            System.err.print("-")
-        }
-        statement.close()
-        System.err.println("====完成====")
-    }
 
-    @Test
-    fun getDoc() {
-        document("https://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/2023/33/11/23/331123204.html")
+        Class.forName("org.sqlite.JDBC")
+        val dbFile = File("division.sqlite")
+        dbFile.delete()
+        val url = "jdbc:sqlite:$dbFile"
+        DriverManager.getConnection(url).use { conn ->
+            conn.autoCommit = false // 关闭自动提交
+            conn.createStatement().use {
+                it.executeUpdate(
+                    """CREATE TABLE IF NOT EXISTS DIVISION (
+                |CODE INT PRIMARY KEY      NOT NULL,
+                |NAME          CHAR(50)    NOT NULL,
+                |LEVEL         INT         NOT NULL,
+                |LEAF          INT         NOT NULL,
+                |PARENT_CODE   INT         NULL,
+                |CODE_PATH     CHAR(100)   NOT NULL,
+                |NAME_PATH     CHAR(200)   NOT NULL,
+                |TYPE_CODE     INT     NULL
+                |)""".trimMargin()
+                )
+            }
+            conn.commit()
+
+            val sql =
+                "INSERT INTO DIVISION (CODE,NAME,LEVEL,LEAF,PARENT_CODE,CODE_PATH,NAME_PATH,TYPE_CODE) VALUES (?,?,?,?,?,?,?,?)"
+            conn.prepareStatement(sql).use { pstmt ->
+                datas.forEachIndexed { i, it ->
+                    pstmt.setLong(1, it.code)
+                    pstmt.setString(2, it.name)
+                    pstmt.setInt(3, it.level)
+                    pstmt.setInt(4, it.leaf)
+                    pstmt.setObject(5, it.parentCode)
+                    pstmt.setString(6, it.codePath)
+                    pstmt.setString(7, it.namePath)
+                    pstmt.setObject(8, it.typeCode)
+                    pstmt.addBatch() // 添加到批处理
+                    System.err.print("-")
+                    System.err.flush()
+
+                    if (i % 100 == 0) { // 每100条提交一次
+                        pstmt.executeBatch()
+                        conn.commit()
+                    }
+                }
+                pstmt.executeBatch() // 提交剩余的记录
+                conn.commit()
+            }
+        }
+        System.err.println()
+        System.err.println("====完成====")
     }
 
     private fun document(url: String): Document {
@@ -280,10 +328,12 @@ class DivisionDataUpdateTest {
 
     data class DivisionData(
         val code: Long,
-        val parentCode: Long?,
         val name: String,
-        val fullName: String,
         val level: Int,
-        val typeCode: String? = null
+        val leaf: Int,
+        val parentCode: Long?,
+        val codePath: String,
+        val namePath: String,
+        val typeCode: Int? = null
     )
 }
