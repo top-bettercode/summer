@@ -21,7 +21,6 @@ import java.net.URI
  */
 open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     final override val marker: String,
-    @JvmField
     val properties: P,
     private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
     private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,

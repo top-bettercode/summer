@@ -3,10 +3,7 @@ package top.bettercode.summer.tools.lang.client
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpRequest
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.http.*
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.http.client.ClientHttpResponse
@@ -52,65 +49,75 @@ class ClientHttpRequestLoggingInterceptor(
             throw e
         } finally {
             if (log.isInfoEnabled) {
-                var exception: Exception? = null
-                val operationResponse = if (response == null) OperationResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    HttpHeaders.EMPTY, ByteArray(0)
-                ) else try {
-                    convert(response as ClientHttpResponseWrapper)
-                } catch (e: Exception) {
-                    if (stackTrace.isBlank())
-                        stackTrace = StringUtil.valueOf(e)
-                    exception = e
-                    OperationResponse(
+                try {
+                    var exception: Exception? = null
+                    val operationResponse = if (response == null) OperationResponse(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        HttpHeaders.EMPTY, ByteArray(0)
+                        HttpHeaders(), ByteArray(0)
+                    ) else try {
+                        convert(response as ClientHttpResponseWrapper)
+                    } catch (e: Exception) {
+                        if (stackTrace.isBlank())
+                            stackTrace = StringUtil.valueOf(e)
+                        exception = e
+                        OperationResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            HttpHeaders(), ByteArray(0)
+                        )
+                    }
+                    operationResponse.stackTrace = stackTrace
+                    val operation = Operation(
+                        collectionName = collectionName,
+                        name = name,
+                        protocol = RequestConverter.DEFAULT_PROTOCOL,
+                        request = convert(request, body, dateTime!!),
+                        response = operationResponse
                     )
-                }
-                operationResponse.stackTrace = stackTrace
-                val operation = Operation(
-                    collectionName = collectionName,
-                    name = name,
-                    protocol = RequestConverter.DEFAULT_PROTOCOL,
-                    request = convert(request, body, dateTime!!),
-                    response = operationResponse
-                )
-                val isMultipart =
-                    MediaType.MULTIPART_FORM_DATA.isCompatibleWith(request.headers.contentType)
-                val isFile = response?.headers?.contentDisposition?.isAttachment == true
+                    val isMultipart =
+                        MediaType.MULTIPART_FORM_DATA.isCompatibleWith(request.headers.contentType)
+                    val contentDisposition =
+                        response?.headers?.getFirst(HttpHeaders.CONTENT_DISPOSITION)
+                            ?.let { ContentDisposition.parse(it) }
+                    val isFile = contentDisposition?.type != null && contentDisposition.type.equals(
+                        "attachment",
+                        ignoreCase = true
+                    )
 
-                var msg = operation.toString(
-                    RequestLoggingConfig(
-                        includeRequestBody = !isMultipart,
-                        includeResponseBody = !isFile,
-                        includeTrace = true,
-                        encryptHeaders = arrayOf(),
-                        encryptParameters = arrayOf(),
-                        format = true,
-                        ignoredTimeout = true,
-                        timeoutAlarmSeconds = -1
-                    ),
-                    requestDecrypt,
-                    responseDecrypt
-                )
+                    var msg = operation.toString(
+                        RequestLoggingConfig(
+                            includeRequestBody = !isMultipart,
+                            includeResponseBody = !isFile,
+                            includeTrace = true,
+                            encryptHeaders = arrayOf(),
+                            encryptParameters = arrayOf(),
+                            format = true,
+                            ignoredTimeout = true,
+                            timeoutAlarmSeconds = -1
+                        ),
+                        requestDecrypt,
+                        responseDecrypt
+                    )
 
-                val marker = MarkerFactory.getDetachedMarker(logMarker)
-                if (timeoutAlarmSeconds > 0 && operation.duration > timeoutAlarmSeconds * 1000) {
-                    val initialComment =
-                        "${operation.name}(${operation.request.restUri})：请求响应速度慢"
-                    val timeoutMsg = "(${operation.duration / 1000}秒)"
-                    marker.add(AlarmMarker(initialComment + timeoutMsg, true))
-                    msg = "$initialComment${timeoutMsg}\n$msg"
-                    log.warn(marker, msg)
-                } else {
-                    val hasException = stackTrace.isNotBlank()
-                    if (hasException || operation.duration > 2 * 1000) {
+                    val marker = MarkerFactory.getDetachedMarker(logMarker)
+                    if (timeoutAlarmSeconds > 0 && operation.duration > timeoutAlarmSeconds * 1000) {
+                        val initialComment =
+                            "${operation.name}(${operation.request.restUri})：请求响应速度慢"
+                        val timeoutMsg = "(${operation.duration / 1000}秒)"
+                        marker.add(AlarmMarker(initialComment + timeoutMsg, true))
+                        msg = "$initialComment${timeoutMsg}\n$msg"
                         log.warn(marker, msg)
-                    } else
-                        log.info(marker, msg)
-                }
-                if (exception != null) {
-                    throw exception
+                    } else {
+                        val hasException = stackTrace.isNotBlank()
+                        if (hasException || operation.duration > 2 * 1000) {
+                            log.warn(marker, msg)
+                        } else
+                            log.info(marker, msg)
+                    }
+                    if (exception != null) {
+                        throw exception
+                    }
+                } catch (e: Exception) {
+                    log.error("日志记录异常", e)
                 }
             }
         }
@@ -135,7 +142,7 @@ class ClientHttpRequestLoggingInterceptor(
             uri = uri,
             restUri = restUri,
             uriVariables = emptyMap(),
-            method = request.methodValue,
+            method = request.method!!.name,
             headers = headers,
             cookies = cookies,
             remoteUser = "NonSpecificUser",

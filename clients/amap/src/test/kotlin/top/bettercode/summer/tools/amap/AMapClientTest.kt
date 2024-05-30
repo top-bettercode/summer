@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
-import top.bettercode.summer.tools.amap.entity.Location
 
 /**
  *
@@ -18,9 +17,7 @@ internal class AMapClientTest : BaseTest() {
 
     @Test
     fun regeo() {
-        amapClient.regeo(
-            Location("104.1762947", "30.8170838")
-        )
+        amapClient.regeo("104.1762947,30.8170838")
     }
 
     @Test
