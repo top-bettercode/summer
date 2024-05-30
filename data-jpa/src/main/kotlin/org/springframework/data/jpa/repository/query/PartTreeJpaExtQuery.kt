@@ -1,5 +1,6 @@
 package org.springframework.data.jpa.repository.query
 
+import org.springframework.data.domain.AuditorAware
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.DeleteExecution
@@ -22,8 +23,9 @@ import javax.persistence.criteria.CriteriaQuery
  * @author Peter Wu
  */
 internal class PartTreeJpaExtQuery internal constructor(
-        method: JpaExtQueryMethod, private val em: EntityManager, private val escape: EscapeCharacter,
-        jpaExtProperties: JpaExtProperties
+    method: JpaExtQueryMethod, em: EntityManager, private val escape: EscapeCharacter,
+    jpaExtProperties: JpaExtProperties,
+    auditorAware: AuditorAware<*>
 ) : AbstractJpaQuery(method, em) {
     private var tree: PartTree
     private val parameters: JpaParameters
@@ -34,16 +36,23 @@ internal class PartTreeJpaExtQuery internal constructor(
 
     init {
         val domainClass: Class<out Any> = method.entityInformation.javaType
-        extJpaSupport = DefaultExtJpaSupport(jpaExtProperties, em, null, domainClass)
+        extJpaSupport = DefaultExtJpaSupport(jpaExtProperties, em, auditorAware, domainClass)
         parameters = method.parameters
-        val recreationRequired = parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically()
+        val recreationRequired =
+            parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically()
         try {
             tree = PartTree(method.name, domainClass)
             validate(tree, parameters, method.toString())
             countQuery = CountQueryPreparer(recreationRequired)
             query = if (tree.isCountProjection) countQuery else QueryPreparer(recreationRequired)
         } catch (e: Exception) {
-            throw IllegalArgumentException(String.format("Failed to create query for method %s! %s", method, e.message), e)
+            throw IllegalArgumentException(
+                String.format(
+                    "Failed to create query for method %s! %s",
+                    method,
+                    e.message
+                ), e
+            )
         }
     }
 
@@ -70,10 +79,10 @@ internal class PartTreeJpaExtQuery internal constructor(
    */
     override fun getExecution(): JpaQueryExecution {
         if (tree.isDelete) {
-            return object : DeleteExecution(em) {
+            return object : DeleteExecution(entityManager) {
                 override fun doExecute(
-                        jpaQuery: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    jpaQuery: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(statementId) {
                         val query = jpaQuery.createQuery(accessor)
@@ -82,11 +91,11 @@ internal class PartTreeJpaExtQuery internal constructor(
                         if (logicalDeletedAttribute != null) {
                             for (o in resultList) {
                                 logicalDeletedAttribute.delete(o!!)
-                                em.merge(o)
+                                entityManager.merge(o)
                             }
                         } else {
                             for (o in resultList) {
-                                em.remove(o)
+                                entityManager.remove(o)
                             }
                         }
                         if (jpaQuery.queryMethod.isCollectionQuery) resultList else resultList.size
@@ -96,8 +105,8 @@ internal class PartTreeJpaExtQuery internal constructor(
         } else if (tree.isExistsProjection) {
             return object : ExistsExecution() {
                 override fun doExecute(
-                        query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(statementId) {
                         super.doExecute(query, accessor)
@@ -146,7 +155,8 @@ internal class PartTreeJpaExtQuery internal constructor(
             checkNotNull(parameterBinder) { "ParameterBinder is null!" }
             val query = createQuery(criteriaQuery)
             return restrictMaxResultsIfNecessary(
-                    invokeBinding(parameterBinder, query, accessor, metadataCache))
+                invokeBinding(parameterBinder, query, accessor, metadataCache)
+            )
         }
 
         /**
@@ -165,7 +175,8 @@ internal class PartTreeJpaExtQuery internal constructor(
            */
                     if (query.maxResults > maxResults && query.firstResult > 0) {
                         query.setFirstResult(
-                                query.firstResult - (query.maxResults - maxResults))
+                            query.firstResult - (query.maxResults - maxResults)
+                        )
                     }
                 }
                 query.setMaxResults(maxResults)
@@ -211,9 +222,9 @@ internal class PartTreeJpaExtQuery internal constructor(
          * Invokes parameter binding on the given [TypedQuery].
          */
         protected open fun invokeBinding(
-                binder: ParameterBinder, query: TypedQuery<*>,
-                accessor: JpaParametersParameterAccessor,
-                metadataCache: QueryMetadataCache
+            binder: ParameterBinder, query: TypedQuery<*>,
+            accessor: JpaParametersParameterAccessor,
+            metadataCache: QueryMetadataCache
         ): Query {
             val metadata = metadataCache.getMetadata("query", query)
             return binder.bindAndPrepare(query, metadata, accessor)
@@ -236,24 +247,28 @@ internal class PartTreeJpaExtQuery internal constructor(
      * @author Oliver Gierke
      * @author Thomas Darimont
      */
-    private inner class CountQueryPreparer(recreateQueries: Boolean) : QueryPreparer(recreateQueries) {
+    private inner class CountQueryPreparer(recreateQueries: Boolean) :
+        QueryPreparer(recreateQueries) {
         override fun createCreator(accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
             val entityManager = entityManager
             val builder = entityManager.criteriaBuilder
-            val provider: ParameterMetadataProvider = accessor?.let { ParameterMetadataProvider(builder, it, escape) }
+            val provider: ParameterMetadataProvider =
+                accessor?.let { ParameterMetadataProvider(builder, it, escape) }
                     ?: ParameterMetadataProvider(builder, parameters, escape)
-            return JpaExtCountQueryCreator(tree,
-                    queryMethod.resultProcessor.returnedType, builder, provider,
-                    extJpaSupport)
+            return JpaExtCountQueryCreator(
+                tree,
+                queryMethod.resultProcessor.returnedType, builder, provider,
+                extJpaSupport
+            )
         }
 
         /**
          * Customizes binding by skipping the pagination.
          */
         override fun invokeBinding(
-                binder: ParameterBinder, query: TypedQuery<*>,
-                accessor: JpaParametersParameterAccessor,
-                metadataCache: QueryMetadataCache
+            binder: ParameterBinder, query: TypedQuery<*>,
+            accessor: JpaParametersParameterAccessor,
+            metadataCache: QueryMetadataCache
         ): Query {
             val metadata = metadataCache.getMetadata("countquery", query)
             return binder.bind(query, metadata, accessor)
@@ -274,30 +289,49 @@ internal class PartTreeJpaExtQuery internal constructor(
         }
 
         private fun throwExceptionOnArgumentMismatch(
-                methodName: String, part: Part,
-                parameters: JpaParameters,
-                index: Int
+            methodName: String, part: Part,
+            parameters: JpaParameters,
+            index: Int
         ) {
             val type = part.type
             val property = part.property.toDotPath()
             check(parameters.bindableParameters.hasParameterAt(index)) {
                 String.format(
-                        "Method %s expects at least %d arguments but only found %d. This leaves an operator of type %s for property %s unbound.",
-                        methodName, index + 1, index, type.name, property)
+                    "Method %s expects at least %d arguments but only found %d. This leaves an operator of type %s for property %s unbound.",
+                    methodName, index + 1, index, type.name, property
+                )
             }
             val parameter = parameters.getBindableParameter(index)
-            check(!(expectsCollection(type) && !parameterIsCollectionLike(parameter))) { wrongParameterTypeMessage(methodName, property, type, "Collection", parameter) }
-            check(!(!expectsCollection(type) && !parameterIsScalarLike(parameter))) { wrongParameterTypeMessage(methodName, property, type, "scalar", parameter) }
+            check(!(expectsCollection(type) && !parameterIsCollectionLike(parameter))) {
+                wrongParameterTypeMessage(
+                    methodName,
+                    property,
+                    type,
+                    "Collection",
+                    parameter
+                )
+            }
+            check(!(!expectsCollection(type) && !parameterIsScalarLike(parameter))) {
+                wrongParameterTypeMessage(
+                    methodName,
+                    property,
+                    type,
+                    "scalar",
+                    parameter
+                )
+            }
         }
 
         private fun wrongParameterTypeMessage(
-                methodName: String, property: String,
-                operatorType: Part.Type,
-                expectedArgumentType: String, parameter: JpaParameter
+            methodName: String, property: String,
+            operatorType: Part.Type,
+            expectedArgumentType: String, parameter: JpaParameter
         ): String {
-            return String.format("Operator %s on %s requires a %s argument, found %s in method %s.",
-                    operatorType.name,
-                    property, expectedArgumentType, parameter.type, methodName)
+            return String.format(
+                "Operator %s on %s requires a %s argument, found %s in method %s.",
+                operatorType.name,
+                property, expectedArgumentType, parameter.type, methodName
+            )
         }
 
         private fun parameterIsCollectionLike(parameter: JpaParameter): Boolean {

@@ -46,9 +46,10 @@ class DynamicSaveTest {
         val id = dave.id!!
         var optionalUser = repository.findById(id)
         Assertions.assertTrue(optionalUser.isPresent)
-        optionalUser.ifPresent { user: User? ->
+        optionalUser.ifPresent { user: User ->
             System.err.println(user)
-            Assertions.assertNotNull(user?.firstName)
+            Assertions.assertNotNull(user.firstName)
+            Assertions.assertNotNull(user.lastModifiedBy)
         }
         dave = User()
         dave.id = id

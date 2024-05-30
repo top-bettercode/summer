@@ -30,7 +30,7 @@ import kotlin.math.min
  */
 class SimpleJpaExtRepository<T : Any, ID>(
         jpaExtProperties: JpaExtProperties,
-        auditorAware: AuditorAware<*>?,
+        auditorAware: AuditorAware<*>,
         private val entityInformation: JpaEntityInformation<T, ID>,
         @Suppress("RedundantModalityModifier") final override val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {

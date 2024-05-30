@@ -19,7 +19,7 @@ import javax.persistence.EntityManager
 class JpaExtRepositoryFactoryBean<T : JpaExtRepository<Any?, Serializable?>?>(repositoryInterface: Class<out T>) :
     JpaRepositoryFactoryBean<T, Any?, Serializable?>(repositoryInterface) {
     lateinit var jpaExtProperties: JpaExtProperties
-    var auditorAware: AuditorAware<*>? = null
+    lateinit var auditorAware: AuditorAware<*>
     lateinit var mybatisConfiguration: Configuration
 
     /*
@@ -31,6 +31,7 @@ class JpaExtRepositoryFactoryBean<T : JpaExtRepository<Any?, Serializable?>?>(re
     override fun createRepositoryFactory(em: EntityManager): RepositoryFactorySupport {
         Assert.notNull(mybatisConfiguration, "mybatisConfiguration must not be null")
         Assert.notNull(jpaExtProperties, "jpaExtProperties must not be null")
+        Assert.notNull(auditorAware, "auditorAware must not be null")
         return JpaExtRepositoryFactory(em, mybatisConfiguration, jpaExtProperties, auditorAware)
     }
 }

@@ -4,6 +4,7 @@ import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.SimplePath
+import org.springframework.data.domain.AuditorAware
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -22,22 +23,31 @@ import javax.persistence.EntityManager
  * @author Peter Wu
  */
 class QuerydslJpaExtPredicateExecutor<T : Any>(
-        jpaExtProperties: JpaExtProperties,
-        entityInformation: JpaEntityInformation<T, Any>,
-        entityManager: EntityManager,
-        resolver: EntityPathResolver,
-        metadata: CrudMethodMetadata
-) : QuerydslJpaPredicateExecutor<T>(entityInformation, entityManager, resolver, metadata), QuerydslPredicateExecutor<T>, RecycleQuerydslPredicateExecutor<T> {
+    jpaExtProperties: JpaExtProperties,
+    entityInformation: JpaEntityInformation<T, Any>,
+    entityManager: EntityManager,
+    resolver: EntityPathResolver,
+    metadata: CrudMethodMetadata,
+    auditorAware: AuditorAware<*>
+) : QuerydslJpaPredicateExecutor<T>(entityInformation, entityManager, resolver, metadata),
+    QuerydslPredicateExecutor<T>, RecycleQuerydslPredicateExecutor<T> {
     private val logicalDeletedAttribute: LogicalDeletedAttribute<T, *>?
     private var path: SimplePath<Any>? = null
 
     init {
-        val extJpaSupport = DefaultExtJpaSupport<T>(jpaExtProperties, entityManager, null, entityInformation.javaType)
+        val extJpaSupport = DefaultExtJpaSupport<T>(
+            jpaExtProperties,
+            entityManager,
+            auditorAware,
+            entityInformation.javaType
+        )
         logicalDeletedAttribute = extJpaSupport.logicalDeletedAttribute
         if (logicalDeletedAttribute != null) {
             val entityPath = resolver.createPath(entityInformation.javaType)
-            path = Expressions.path(logicalDeletedAttribute.javaType, entityPath,
-                    logicalDeletedAttribute.name)
+            path = Expressions.path(
+                logicalDeletedAttribute.javaType, entityPath,
+                logicalDeletedAttribute.name
+            )
         }
     }
 
@@ -121,7 +131,10 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
         }
     }
 
-    override fun findAllFromRecycleBin(predicate: Predicate, vararg orders: OrderSpecifier<*>?): Iterable<T> {
+    override fun findAllFromRecycleBin(
+        predicate: Predicate,
+        vararg orders: OrderSpecifier<*>?
+    ): Iterable<T> {
         return if (logicalDeletedSupported) {
             super.findAll(andDeleted(predicate), *orders)
         } else {

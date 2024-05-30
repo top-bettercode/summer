@@ -10,14 +10,14 @@ import javax.persistence.metamodel.SingularAttribute
  * @author Peter Wu
  */
 class LastModifiedByAttribute<X, T>(
-        singularAttribute: SingularAttribute<X, T>, private val auditorAware: AuditorAware<*>?,
+        singularAttribute: SingularAttribute<X, T>, private val auditorAware: AuditorAware<*>,
 ) : SingularAttributeExt<X, T>(singularAttribute, isLastModifiedBy = true) {
 
     /**
      * 设置LastModifiedBy
      */
     fun setLastModifiedBy(criteriaUpdate: CriteriaUpdate<X>) {
-        val auditor = auditorAware?.currentAuditor?.orElse(null)
+        val auditor = auditorAware.currentAuditor.orElse(null)
         if (auditor != null) {
             criteriaUpdate.set(this.singularAttribute, ApplicationContextHolder.conversionService.convert(auditor, this.javaType))
         }

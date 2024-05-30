@@ -40,11 +40,11 @@ import javax.persistence.EntityManager
  * @author Peter Wu
  */
 class JpaExtRepositoryFactory(
-        entityManager: EntityManager,
-        configuration: Configuration, jpaExtProperties: JpaExtProperties, auditorAware: AuditorAware<*>?,
+    entityManager: EntityManager,
+    configuration: Configuration, jpaExtProperties: JpaExtProperties, auditorAware: AuditorAware<*>,
 ) : RepositoryFactorySupport() {
     private val jpaExtProperties: JpaExtProperties
-    private val auditorAware: AuditorAware<*>?
+    private val auditorAware: AuditorAware<*>
     private val configuration: Configuration
     private val entityManager: EntityManager
     private val extractor: QueryExtractor
@@ -94,7 +94,7 @@ class JpaExtRepositoryFactory(
     }
 
     override fun getTargetRepository(
-            information: RepositoryInformation
+        information: RepositoryInformation
     ): JpaRepositoryImplementation<*, *> {
         val repository = getTargetRepository(information, entityManager)
         repository.setRepositoryMethodMetadata(crudMethodMetadataPostProcessor.crudMethodMetadata)
@@ -103,12 +103,19 @@ class JpaExtRepositoryFactory(
     }
 
     private fun getTargetRepository(
-            information: RepositoryInformation,
-            entityManager: EntityManager?
+        information: RepositoryInformation,
+        entityManager: EntityManager?
     ): JpaRepositoryImplementation<*, *> {
         val entityInformation: JpaEntityInformation<*, Serializable> = getEntityInformation(
-                information.domainType)
-        val repository = getTargetRepositoryViaReflection<Any>(information, jpaExtProperties, auditorAware, entityInformation, entityManager)
+            information.domainType
+        )
+        val repository = getTargetRepositoryViaReflection<Any>(
+            information,
+            jpaExtProperties,
+            auditorAware,
+            entityInformation,
+            entityManager
+        )
         Assert.isInstanceOf(SimpleJpaExtRepository::class.java, repository)
         return repository as JpaRepositoryImplementation<*, *>
     }
@@ -118,8 +125,8 @@ class JpaExtRepositoryFactory(
     }
 
     override fun getProjectionFactory(
-            classLoader: ClassLoader,
-            beanFactory: BeanFactory
+        classLoader: ClassLoader,
+        beanFactory: BeanFactory
     ): ProjectionFactory {
         val factory = CollectionAwareProjectionFactory()
         factory.setBeanClassLoader(classLoader)
@@ -127,45 +134,61 @@ class JpaExtRepositoryFactory(
         return factory
     }
 
-    override fun getQueryLookupStrategy(key: QueryLookupStrategy.Key?, evaluationContextProvider: QueryMethodEvaluationContextProvider): Optional<QueryLookupStrategy> {
+    override fun getQueryLookupStrategy(
+        key: QueryLookupStrategy.Key?,
+        evaluationContextProvider: QueryMethodEvaluationContextProvider
+    ): Optional<QueryLookupStrategy> {
         return Optional.of(
-                JpaExtQueryLookupStrategy.create(entityManager, configuration, key, extractor, evaluationContextProvider,
-                        escapeCharacter,
-                        jpaExtProperties))
+            JpaExtQueryLookupStrategy.create(
+                entityManager, configuration, key, extractor, evaluationContextProvider,
+                escapeCharacter,
+                jpaExtProperties, auditorAware
+            )
+        )
     }
 
     override fun <T, ID> getEntityInformation(domainClass: Class<T>): JpaEntityInformation<T, ID> {
         @Suppress("UNCHECKED_CAST")
         return JpaEntityInformationSupport.getEntityInformation(
-                domainClass, entityManager) as JpaEntityInformation<T, ID>
+            domainClass, entityManager
+        ) as JpaEntityInformation<T, ID>
     }
 
     override fun getRepositoryFragments(metadata: RepositoryMetadata): RepositoryFragments {
-        return getRepositoryFragments(metadata, entityManager, entityPathResolver,
-                crudMethodMetadataPostProcessor.crudMethodMetadata)
+        return getRepositoryFragments(
+            metadata, entityManager, entityPathResolver,
+            crudMethodMetadataPostProcessor.crudMethodMetadata
+        )
     }
 
     private fun getRepositoryFragments(
-            metadata: RepositoryMetadata,
-            entityManager: EntityManager,
-            resolver: EntityPathResolver, crudMethodMetadata: CrudMethodMetadata
+        metadata: RepositoryMetadata,
+        entityManager: EntityManager,
+        resolver: EntityPathResolver, crudMethodMetadata: CrudMethodMetadata
     ): RepositoryFragments {
         val isQueryDslRepository = (QuerydslUtils.QUERY_DSL_PRESENT
                 && QuerydslPredicateExecutor::class.java.isAssignableFrom(metadata.repositoryInterface))
         if (isQueryDslRepository) {
             if (metadata.isReactiveRepository) {
                 throw InvalidDataAccessApiUsageException(
-                        "Cannot combine Querydsl and reactive repository support in a single interface")
+                    "Cannot combine Querydsl and reactive repository support in a single interface"
+                )
             }
-            @Suppress("UNCHECKED_CAST") val entityInformation: JpaEntityInformation<Any, Any> = getEntityInformation(metadata.domainType as Class<Any>)
-            return RepositoryFragments.just(QuerydslJpaExtPredicateExecutor(jpaExtProperties,
+            @Suppress("UNCHECKED_CAST") val entityInformation: JpaEntityInformation<Any, Any> =
+                getEntityInformation(metadata.domainType as Class<Any>)
+            return RepositoryFragments.just(
+                QuerydslJpaExtPredicateExecutor(
+                    jpaExtProperties,
                     entityInformation,
-                    entityManager, resolver, crudMethodMetadata))
+                    entityManager, resolver, crudMethodMetadata, auditorAware
+                )
+            )
         }
         return RepositoryFragments.empty()
     }
 
-    private class EclipseLinkProjectionQueryCreationListener(em: EntityManager) : QueryCreationListener<AbstractJpaQuery> {
+    private class EclipseLinkProjectionQueryCreationListener(em: EntityManager) :
+        QueryCreationListener<AbstractJpaQuery> {
         private val metamodel: JpaMetamodel
         private var warningLogged = false
 
@@ -187,9 +210,10 @@ class JpaExtRepositoryFactory(
         }
 
         companion object {
-            private const val ECLIPSELINK_PROJECTIONS = "Usage of Spring Data projections detected on persistence provider EclipseLink. Make sure the following query methods declare result columns in exactly the order the accessors are declared in the projecting interface or the order of parameters for DTOs:"
+            private const val ECLIPSELINK_PROJECTIONS =
+                "Usage of Spring Data projections detected on persistence provider EclipseLink. Make sure the following query methods declare result columns in exactly the order the accessors are declared in the projecting interface or the order of parameters for DTOs:"
             private val log = LoggerFactory
-                    .getLogger(EclipseLinkProjectionQueryCreationListener::class.java)
+                .getLogger(EclipseLinkProjectionQueryCreationListener::class.java)
         }
     }
 
@@ -198,7 +222,9 @@ class JpaExtRepositoryFactory(
             val methods = ReflectionUtils.getAllDeclaredMethods(repositoryClass)
             for (method in methods) {
                 if (Stream::class.java.isAssignableFrom(method.returnType) || method.isAnnotationPresent(
-                                Procedure::class.java)) {
+                        Procedure::class.java
+                    )
+                ) {
                     return true
                 }
             }

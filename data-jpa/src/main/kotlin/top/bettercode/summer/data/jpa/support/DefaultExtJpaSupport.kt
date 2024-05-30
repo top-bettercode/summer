@@ -17,7 +17,7 @@ import javax.persistence.metamodel.SingularAttribute
 /**
  * @author Peter Wu
  */
-open class DefaultExtJpaSupport<T>(jpaExtProperties: JpaExtProperties, entityManager: EntityManager, auditorAware: AuditorAware<*>?, domainClass: Class<*>) : ExtJpaSupport<T> {
+open class DefaultExtJpaSupport<T>(jpaExtProperties: JpaExtProperties, entityManager: EntityManager, auditorAware: AuditorAware<*>, domainClass: Class<*>) : ExtJpaSupport<T> {
 
     final override val idAttribute: SingularAttribute<T, *>?
     final override val logicalDeletedSupported: Boolean

@@ -7,7 +7,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.AuditorAware
 import top.bettercode.summer.data.jpa.support.DataJpaErrorHandler
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -18,6 +20,12 @@ import javax.servlet.http.HttpServletRequest
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(MybatisProperties::class, SpringDataWebProperties::class)
 class DataJpaAutoConfiguration {
+
+    @Bean("auditorAware")
+    @ConditionalOnMissingBean
+    fun auditorAware(): AuditorAware<Any> {
+        return AuditorAware<Any> { Optional.empty() }
+    }
 
     @Bean
     fun datasourcesBeanDefinitionRegistryPostProcessor(): DatasourcesBeanDefinitionRegistryPostProcessor {
@@ -33,8 +41,8 @@ class DataJpaAutoConfiguration {
     @ConditionalOnWebApplication
     @Bean
     fun ibatisErrorHandler(
-            messageSource: MessageSource,
-            request: HttpServletRequest
+        messageSource: MessageSource,
+        request: HttpServletRequest
     ): DataJpaErrorHandler {
         return DataJpaErrorHandler(messageSource, request)
     }
