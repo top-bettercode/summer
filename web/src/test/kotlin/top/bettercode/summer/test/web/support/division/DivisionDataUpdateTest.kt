@@ -30,15 +30,15 @@ class DivisionDataUpdateTest {
         driver = ChromeDriver(options)
 
         Class.forName("org.sqlite.JDBC")
-        File("build/division.sqlite").delete()
-        connection = DriverManager.getConnection("jdbc:sqlite:build/division.sqlite")
+        File("division.sqlite").delete()
+        connection = DriverManager.getConnection("jdbc:sqlite:division.sqlite")
         println("数据库连接成功！")
         val stmt = connection.createStatement()
         //统计用区划代码	城乡分类代码	名称
         val sql =
             """CREATE TABLE IF NOT EXISTS division (
-                |CODE CHAR(12) PRIMARY KEY  NOT NULL,
-                |PARENT_CODE   CHAR(12)    NULL,
+                |CODE INT PRIMARY KEY  NOT NULL,
+                |PARENT_CODE   INT    NULL,
                 |NAME          CHAR(200)   NOT NULL,
                 |FULL_NAME     CHAR(500)   NOT NULL,
                 |LEVEL         INT         NOT NULL,
@@ -54,6 +54,13 @@ class DivisionDataUpdateTest {
     }
 
     /**
+     *
+     * 市辖区
+     * 省直辖县级行政区划
+     * 自治区直辖县级行政区划
+     * 县
+     * 县直辖村级区划
+     * 区直辖村级区划
      * https://www.stats.gov.cn/sj/tjbz/qhdm/ 2023年6月30日
      */
     @Test
@@ -64,10 +71,11 @@ class DivisionDataUpdateTest {
         var elements = document(indexUrl).select(".provincetr td a")
         if (elements.isEmpty()) {
             file(indexUrl).delete()
+            throw RuntimeException("fail ${indexUrl.substringAfterLast("/")}")
         }
         elements.forEach { el1 ->
             val provinceHref: String? = el1.attr("href")
-            val provinceCode = provinceHref!!.substringBefore(".html").padEnd(12, '0')
+            val provinceCode = provinceHref!!.substringBefore(".html").padEnd(12, '0').toLong()
             val provinceName = el1.text().trim()
             datas.add(
                 DivisionData(
@@ -78,19 +86,23 @@ class DivisionDataUpdateTest {
                     level = 1
                 )
             )
-            System.err.println("$provinceCode:$provinceName:$provinceHref")
+            System.err.print(".")
             //city
             val provinceUrl = indexUrl.substringBeforeLast("/") + "/" + provinceHref
             elements = document(provinceUrl).select("tr.citytr")
             if (elements.isEmpty()) {
                 file(provinceUrl).delete()
+                throw RuntimeException("fail ${provinceUrl.substringAfterLast("/")}")
             }
             elements.forEach { el2 ->
                 var es = el2.select("td")
                 var codetd = es[0]
-                val cityCode = codetd.text().padEnd(12, '0')
+                val cityCode = codetd.text().padEnd(12, '0').toLong()
                 val cityHref = codetd.selectFirst("a")?.attr("href")
                 val cityName = es[1].text().trim()
+//                if (cityName == "县" && provinceCode == 500000000000L) {
+//                    cityName = "重庆县"
+//                }
                 datas.add(
                     DivisionData(
                         code = cityCode,
@@ -100,18 +112,26 @@ class DivisionDataUpdateTest {
                         level = 2
                     )
                 )
-                System.err.println("$cityCode:$cityName:$cityHref")
+                System.err.print(".")
                 //county
                 if (!cityHref.isNullOrBlank()) {
                     val cityUrl = provinceUrl.substringBeforeLast("/") + "/" + cityHref
-                    elements = document(cityUrl).select("tr.countytr")
+                    val cityDoc = document(cityUrl)
+                    elements = cityDoc.select("tr.countytr")
+                    var countyLevel = 3
+                    //兼容
+                    if (elements.isEmpty()) {
+                        countyLevel = 4
+                        elements = cityDoc.select("tr.towntr")
+                    }
                     if (elements.isEmpty()) {
                         file(cityUrl).delete()
+                        throw RuntimeException("fail ${cityUrl.substringAfterLast("/")}")
                     }
                     elements.forEach { el3 ->
                         es = el3.select("td")
                         codetd = es[0]
-                        val countyCode = codetd.text().padEnd(12, '0')
+                        val countyCode = codetd.text().padEnd(12, '0').toLong()
                         val countyHref = codetd.selectFirst("a")?.attr("href")
                         val countyName = es[1].text().trim()
                         datas.add(
@@ -120,22 +140,28 @@ class DivisionDataUpdateTest {
                                 parentCode = cityCode,
                                 name = countyName,
                                 fullName = provinceName + cityName + countyName,
-                                level = 3
+                                level = countyLevel
                             )
                         )
-                        System.err.println("$countyCode:$countyName:$countyHref")
+                        System.err.print(".")
                         //town
                         if (!countyHref.isNullOrBlank()) {
                             val countyUrl =
                                 cityUrl.substringBeforeLast("/") + "/" + countyHref
                             elements = document(countyUrl).select("tr.towntr")
+                            var townLevel = 4
+                            if (elements.isEmpty()) {
+                                townLevel = 5
+                                elements = document(countyUrl).select("tr.villagetr")
+                            }
                             if (elements.isEmpty()) {
                                 file(countyUrl).delete()
+                                throw RuntimeException("fail ${countyUrl.substringAfterLast("/")}")
                             }
                             elements.forEach { el4 ->
                                 es = el4.select("td")
                                 codetd = es[0]
-                                val townCode = codetd.text().padEnd(12, '0')
+                                val townCode = codetd.text().padEnd(12, '0').toLong()
                                 val townHref = codetd.selectFirst("a")?.attr("href")
                                 val townName = es[1].text().trim()
                                 datas.add(
@@ -144,11 +170,11 @@ class DivisionDataUpdateTest {
                                         parentCode = countyCode,
                                         name = townName,
                                         fullName = provinceName + cityName + countyName + townName,
-                                        level = 4
+                                        level = townLevel
                                     )
                                 )
+                                System.err.print(".")
 
-                                System.err.println("$townCode:$townName:$townHref")
                                 //village
                                 if (!townHref.isNullOrBlank()) {
                                     val townUrl =
@@ -156,11 +182,12 @@ class DivisionDataUpdateTest {
                                     elements = document(townUrl).select("tr.villagetr")
                                     if (elements.isEmpty()) {
                                         file(townUrl).delete()
+                                        throw RuntimeException("fail ${townUrl.substringAfterLast("/")}")
                                     }
                                     elements.forEach { el5 ->
                                         es = el5.select("td")
                                         codetd = es[0]
-                                        val villageCode = codetd.text().padEnd(12, '0')
+                                        val villageCode = codetd.text().padEnd(12, '0').toLong()
                                         val villageName = es[2].text().trim()
                                         val typeCode = es[1].text().trim()
 
@@ -174,12 +201,7 @@ class DivisionDataUpdateTest {
                                                 typeCode = typeCode
                                             )
                                         )
-
-                                        System.err.println(
-                                            "$villageCode:${
-                                                villageName + " #" + es[1].text().trim()
-                                            }"
-                                        )
+                                        System.err.print(".")
                                     }
                                 }
                             }
@@ -188,7 +210,7 @@ class DivisionDataUpdateTest {
                 }
             }
         }
-
+        System.err.println("====数据获取完成====")
         """710000=台湾省
 810000=香港特别行政区
 820000=澳门特别行政区
@@ -196,7 +218,7 @@ class DivisionDataUpdateTest {
             it.split("=").let { ss ->
                 datas.add(
                     DivisionData(
-                        code = ss[0],
+                        code = ss[0].padEnd(12, '0').toLong(),
                         parentCode = null,
                         name = ss[1],
                         fullName = ss[1],
@@ -210,8 +232,10 @@ class DivisionDataUpdateTest {
             val sql =
                 "INSERT INTO division (CODE, PARENT_CODE, NAME, FULL_NAME, LEVEL, TYPE_CODE) VALUES ('${it.code}', ${if (it.parentCode == null) null else "'${it.parentCode}'"}, '${it.name}', '${it.fullName}', ${it.level}, ${if (it.typeCode == null) null else "'${it.typeCode}'"})"
             statement.executeUpdate(sql)
+            System.err.print("-")
         }
         statement.close()
+        System.err.println("====完成====")
     }
 
     @Test
@@ -236,7 +260,8 @@ class DivisionDataUpdateTest {
         File(System.getProperty("user.home") + "/.cache/division/" + url.substringAfterLast("/"))
 
     private fun jsoupDoc(url: String): String {
-        System.err.println("jsoupDoc:$url")
+        System.err.println()
+        System.err.println("download:$url")
         val doc = Jsoup.connect(url)
             .userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0")
             .get()
@@ -245,7 +270,8 @@ class DivisionDataUpdateTest {
     }
 
     private fun downWebPage(url: String): String {
-        System.err.println("downWebPage:$url")
+        System.err.println()
+        System.err.println("download:$url")
         // 访问目标网页
         driver[url]
         // 获取页面源代码
@@ -253,8 +279,8 @@ class DivisionDataUpdateTest {
     }
 
     data class DivisionData(
-        val code: String,
-        val parentCode: String?,
+        val code: Long,
+        val parentCode: Long?,
         val name: String,
         val fullName: String,
         val level: Int,

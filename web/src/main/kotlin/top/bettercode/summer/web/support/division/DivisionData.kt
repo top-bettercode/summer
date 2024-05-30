@@ -22,62 +22,66 @@ object DivisionData {
     val provinces: List<Division> by lazy {
         val codes = Settings.division.all()
         codes.filter { it.key.endsWith("0000") }.map { (provinceCode, provinceName) ->
-            var citys = codes.filter { it.key.startsWith(provinceCode.substring(0, 2)) && it.key.endsWith("00") && it.key != provinceCode }
-            val municipality = if (citys.isEmpty() && codes.any { it.key.startsWith(provinceCode.trimEnd('0')) && it.key != provinceCode }) {
-                citys = mapOf(provinceCode.substring(0, 2) + "0100" to VNODE_NAME)
-                true
-            } else false
+            val citys = codes.filter {
+                it.key.startsWith(
+                    provinceCode.substring(
+                        0,
+                        2
+                    )
+                ) && it.key.endsWith("00") && it.key != provinceCode
+            }
+            val municipality = citys.size == 1 && citys.any { isVnode(it.value) }
 
             val cityDivisions = citys.map { (cityCode, cityName) ->
                 val vnode = isVnode(cityName)
                 val counties = codes
-                        .filter { it.key.startsWith(cityCode.subSequence(0, 4)) && it.key != cityCode }
-                        .map { (countyCode, countyName) ->
-                            val division =
-                                    Division(
-                                            code = countyCode,
-                                            name = countyName,
-                                            level = 3,
-                                            municipality = false,
-                                            vnode = false,
-                                            parentNames = if (vnode) listOf(provinceName) else listOf(
-                                                    provinceName,
-                                                    cityName
-                                            ),
-                                            children = emptyList()
-                                    )
-                            divisions[countyCode] = division
-                            if (!vnode)
-                                divisionNames[listOf(provinceName, cityName, countyName)] =
-                                        division
-                            else {
-                                divisionNames[listOf(provinceName, countyName)] = division
-                            }
-                            division
-                        }.sortedBy { it.code }
-                val division =
-                        Division(
-                                code = cityCode,
-                                name = cityName,
-                                level = 2,
+                    .filter { it.key.startsWith(cityCode.subSequence(0, 4)) && it.key != cityCode }
+                    .map { (countyCode, countyName) ->
+                        val division =
+                            Division(
+                                code = countyCode,
+                                name = countyName,
+                                level = 3,
                                 municipality = false,
-                                vnode = vnode,
-                                parentNames = listOf(provinceName),
-                                children = counties
-                        )
+                                vnode = false,
+                                parentNames = if (vnode) listOf(provinceName) else listOf(
+                                    provinceName,
+                                    cityName
+                                ),
+                                children = emptyList()
+                            )
+                        divisions[countyCode] = division
+                        if (!vnode)
+                            divisionNames[listOf(provinceName, cityName, countyName)] =
+                                division
+                        else {
+                            divisionNames[listOf(provinceName, countyName)] = division
+                        }
+                        division
+                    }.sortedBy { it.code }
+                val division =
+                    Division(
+                        code = cityCode,
+                        name = cityName,
+                        level = 2,
+                        municipality = false,
+                        vnode = vnode,
+                        parentNames = listOf(provinceName),
+                        children = counties
+                    )
                 divisions[cityCode] = division
                 if (!vnode)
                     divisionNames[listOf(provinceName, cityName)] = division
                 division
             }.sortedBy { it.code }
             val division = Division(
-                    code = provinceCode,
-                    name = provinceName,
-                    level = 1,
-                    municipality = municipality,
-                    vnode = false,
-                    parentNames = emptyList(),
-                    children = cityDivisions
+                code = provinceCode,
+                name = provinceName,
+                level = 1,
+                municipality = municipality,
+                vnode = false,
+                parentNames = emptyList(),
+                children = cityDivisions
             )
             divisions[provinceCode] = division
             divisionNames[listOf(provinceName)] = division
@@ -98,7 +102,7 @@ object DivisionData {
     fun getDivisionByName(name: List<String>): Division {
         if (divisions.isEmpty()) provinces
         return divisionNames[name]
-                ?: throw InvalidCodeException("无${name.joinToString()}对应行政区划")
+            ?: throw InvalidCodeException("无${name.joinToString()}对应行政区划")
     }
 
 }

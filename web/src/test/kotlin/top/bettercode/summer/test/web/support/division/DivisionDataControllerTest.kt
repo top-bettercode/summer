@@ -10,10 +10,11 @@ import top.bettercode.summer.test.TestApplication
  */
 @SpringBootTest(classes = [TestApplication::class])
 class DivisionDataControllerTest : BaseWebNoAuthTest() {
+
     @Test
     fun list() {
         perform(get("/divisions/list")
-                .param("vnode", "false")
+                .param("vnode", "true")
         )
     }
 

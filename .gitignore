@@ -1,11 +1,10 @@
-
-/.gradletasknamecache
-
-.~*
+/web/division.sqlite
 
 /logs
 /*/logs
 
+/.gradletasknamecache
+.~*
 bin
 .vscode
 .gradle
