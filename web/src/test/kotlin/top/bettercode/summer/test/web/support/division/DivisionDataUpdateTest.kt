@@ -18,6 +18,7 @@ import java.sql.DriverManager
 class DivisionDataUpdateTest {
 
     val driver: WebDriver
+    var fetchLevel: Int = 5
 
     init {
         // 设置 ChromeDriver 的路径
@@ -122,18 +123,19 @@ class DivisionDataUpdateTest {
                             val countyCode = codetd.text().padEnd(12, '0').toLong()
                             val countyHref = codetd.selectFirst("a")?.attr("href")
                             val countyName = es[1].text().trim()
-                            val hasTown = !countyHref.isNullOrBlank()
-                            datas.add(
-                                DivisionData(
-                                    code = countyCode,
-                                    name = countyName,
-                                    level = countyLevel,
-                                    leaf = if (hasTown) 0 else 1,
-                                    parentCode = cityCode,
-                                    codePath = "$provinceCode>$cityCode>$countyCode",
-                                    namePath = "$provinceName>$cityName>$countyName"
+                            val hasTown = fetchLevel >= 4 && !countyHref.isNullOrBlank()
+                            if (countyLevel != 4 || fetchLevel >= 4)
+                                datas.add(
+                                    DivisionData(
+                                        code = countyCode,
+                                        name = countyName,
+                                        level = countyLevel,
+                                        leaf = if (hasTown) 0 else 1,
+                                        parentCode = cityCode,
+                                        codePath = "$provinceCode>$cityCode>$countyCode",
+                                        namePath = "$provinceName>$cityName>$countyName"
+                                    )
                                 )
-                            )
                             System.err.print(".")
                             System.err.flush()
                             //town
@@ -156,18 +158,19 @@ class DivisionDataUpdateTest {
                                     val townCode = codetd.text().padEnd(12, '0').toLong()
                                     val townHref = codetd.selectFirst("a")?.attr("href")
                                     val townName = es[1].text().trim()
-                                    val hasVillage = !townHref.isNullOrBlank()
-                                    datas.add(
-                                        DivisionData(
-                                            code = townCode,
-                                            name = townName,
-                                            level = townLevel,
-                                            leaf = if (hasVillage) 0 else 1,
-                                            parentCode = countyCode,
-                                            codePath = "$provinceCode>$cityCode>$countyCode>$townCode",
-                                            namePath = "$provinceName>$cityName>$countyName>$townName"
+                                    val hasVillage = fetchLevel >= 5 && !townHref.isNullOrBlank()
+                                    if (townLevel != 5 || fetchLevel >= 5)
+                                        datas.add(
+                                            DivisionData(
+                                                code = townCode,
+                                                name = townName,
+                                                level = townLevel,
+                                                leaf = if (hasVillage) 0 else 1,
+                                                parentCode = countyCode,
+                                                codePath = "$provinceCode>$cityCode>$countyCode>$townCode",
+                                                namePath = "$provinceName>$cityName>$countyName>$townName"
+                                            )
                                         )
-                                    )
                                     System.err.print(".")
                                     System.err.flush()
 
