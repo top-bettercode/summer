@@ -6,6 +6,7 @@ import org.springframework.http.*
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.RestClientResponseException
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.jpush.entity.JpushRequest
 import top.bettercode.summer.tools.jpush.entity.Options
@@ -75,7 +76,7 @@ open class JpushClient(
                 this.responseEntityExtractor(JpushResponse::class.java)
             )
         } catch (e: Exception) {
-            if (e is HttpClientErrorException) {
+            if (e is RestClientResponseException) {
                 val errorResponse = objectMapper.readValue(
                     e.responseBodyAsByteArray,
                     JpushErrorResponse::class.java
@@ -109,7 +110,7 @@ open class JpushClient(
                 count
             )
         } catch (e: Exception) {
-            if (e is HttpClientErrorException) {
+            if (e is RestClientResponseException) {
                 val errorResponse = objectMapper.readValue(
                     e.responseBodyAsByteArray,
                     JpushErrorResponse::class.java

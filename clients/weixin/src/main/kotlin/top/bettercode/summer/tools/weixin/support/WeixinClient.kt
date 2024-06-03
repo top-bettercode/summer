@@ -126,7 +126,7 @@ open class WeixinClient<T : WeixinProperties>(
             //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。
             getToken(retries + 1)
         } else {
-            throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
+            throw clientException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
         }
     }
 
@@ -160,7 +160,7 @@ open class WeixinClient<T : WeixinProperties>(
             //45011 api minute-quota reach limit  mustslower  retry next minute 	API 调用太频繁，请稍候再试
             getStableToken(forceRefresh = forceRefresh, retries = retries + 1)
         } else {
-            throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
+            throw clientException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
         }
     }
 }

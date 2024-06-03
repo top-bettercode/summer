@@ -78,7 +78,7 @@ open class WeatherClient(
                 properties.appKey,
                 properties.sign
             ) ?: throw clientException()
-        return entity.body?.result ?: throw clientSysException(entity.body?.msg)
+        return entity.body?.result ?: throw clientException(entity.body?.msg)
     }
 
     /**
@@ -88,7 +88,7 @@ open class WeatherClient(
         val javaType = TypeFactory.defaultInstance().constructParametricType(
             WeatherResponse::class.java, WeatherResult::class.java
         )
-        val entity: ResponseEntity<WeatherResponse<WeatherResult>> = try {
+        val entity: ResponseEntity<WeatherResponse<WeatherResult>> =
             execute(
                 properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&cityIp={2}",
                 HttpMethod.GET,
@@ -98,16 +98,9 @@ open class WeatherClient(
                 properties.sign,
                 ip
             )
-        } catch (e: Exception) {
-            throw clientException(e)
-        } ?: throw clientException()
+                ?: throw clientException()
 
-        val body = entity.body
-        return if (entity.statusCode.is2xxSuccessful && body?.isOk == true && body.result != null) {
-            body.result
-        } else {
-            throw clientSysException(body?.msg)
-        }
+        return entity.body?.result ?: throw clientException(entity.body?.msg)
     }
 
     /**
@@ -128,7 +121,7 @@ open class WeatherClient(
                 longitude,
                 latitude
             ) ?: throw clientException()
-        return entity.body?.result ?: throw clientSysException(entity.body?.msg)
+        return entity.body?.result ?: throw clientException(entity.body?.msg)
     }
 
 }

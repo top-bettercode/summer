@@ -63,7 +63,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
         try {
             return super.doExecute(url, method, requestCallback, responseExtractor)
         } catch (e: Exception) {
-            if (e is ClientException)
+            if (e is ClientException || e is RestClientResponseException)
                 throw e
             else {
                 if (e.cause is SocketTimeoutException || e.cause is UnknownHostException) {
