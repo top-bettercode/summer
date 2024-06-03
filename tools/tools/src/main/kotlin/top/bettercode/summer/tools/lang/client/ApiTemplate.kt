@@ -12,6 +12,7 @@ import org.springframework.lang.Nullable
 import org.springframework.web.client.*
 import java.io.IOException
 import java.lang.reflect.Type
+import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.URI
 import java.net.UnknownHostException
@@ -66,7 +67,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
             if (e is ClientException || e is RestClientResponseException)
                 throw e
             else {
-                if (e.cause is SocketTimeoutException || e.cause is UnknownHostException) {
+                if (e.cause is SocketTimeoutException || e.cause is ConnectException || e.cause is UnknownHostException) {
                     throw clientException(message = "连接超时", cause = e)
                 } else
                     throw clientException(e)
