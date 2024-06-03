@@ -40,6 +40,8 @@ open class MiniprogramClient(
         )
         return if (session.isOk) {
             session
+        } else if (40163 == session.errcode) {
+            throw clientSysException("获取session失败：${session.errmsg}", session)
         } else {
             throw clientException("获取session失败：${session.errmsg}", session)
         }
