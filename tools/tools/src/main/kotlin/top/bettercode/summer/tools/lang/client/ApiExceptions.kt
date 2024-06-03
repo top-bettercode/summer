@@ -40,6 +40,19 @@ interface ApiExceptions {
     }
 
     fun clientException(
+        message: String?, cause: Throwable?
+    ): ClientException {
+        return ClientException(
+            platformName = platformName,
+            marker = marker,
+            originalMessage = message,
+            cause = cause,
+            response = null
+        )
+
+    }
+
+    fun clientException(
         message: String?, response: Any?
     ): ClientException {
         return ClientException(
@@ -61,6 +74,19 @@ interface ApiExceptions {
         cause: Throwable?
     ): ClientException {
         return clientSysException(cause = cause, response = null)
+    }
+
+    fun clientSysException(
+        message: String?, cause: Throwable?
+    ): ClientException {
+        return ClientSysException(
+            platformName = platformName,
+            marker = marker,
+            originalMessage = message,
+            cause = cause,
+            response = null
+        )
+
     }
 
     fun clientSysException(
