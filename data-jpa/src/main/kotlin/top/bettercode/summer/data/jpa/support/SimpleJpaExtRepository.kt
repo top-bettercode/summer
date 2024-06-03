@@ -239,8 +239,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 criteriaUpdate.where(predicate)
             }
             val affected = entityManager.createQuery(criteriaUpdate).executeUpdate()
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} row affected", affected)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} row affected", affected)
             }
             val idAttribute = spec.idAttribute
             val versionAttribute = spec.versionAttribute
@@ -293,8 +293,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
         logicalDeletedAttribute.setLogicalDeleted(criteriaUpdate, true)
         val affected = entityManager.createQuery(criteriaUpdate).executeUpdate()
-        if (sqlLog.isDebugEnabled) {
-            sqlLog.debug("{} row affected", affected)
+        if (sqlLog.isInfoEnabled) {
+            sqlLog.info("{} row affected", affected)
         }
         return affected.toLong()
     }
@@ -311,8 +311,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             }
         }
         val affected = entityManager.createQuery(criteriaDelete).executeUpdate()
-        if (sqlLog.isDebugEnabled) {
-            sqlLog.debug("{} row affected", affected)
+        if (sqlLog.isInfoEnabled) {
+            sqlLog.info("{} row affected", affected)
         }
         return affected.toLong()
     }
@@ -344,8 +344,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
                     val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(ids) }
 
                     val affected = doLogicalDelete(spec)
-                    if (sqlLog.isDebugEnabled) {
-                        sqlLog.debug("{} row affected", affected)
+                    if (sqlLog.isInfoEnabled) {
+                        sqlLog.info("{} row affected", affected)
                     }
                 }
             } else {
@@ -359,8 +359,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
         mdcId(".deleteAllInBatch") {
             if (extJpaSupport.logicalDeletedSupported) {
                 val affected = doLogicalDelete(null)
-                if (sqlLog.isDebugEnabled) {
-                    sqlLog.debug("{} row affected", affected)
+                if (sqlLog.isInfoEnabled) {
+                    sqlLog.info("{} row affected", affected)
                 }
             } else {
                 super.deleteAllInBatch()
@@ -433,8 +433,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 super.findAll()
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", result.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", result.size)
             }
             result
         }
@@ -445,8 +445,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
             val all = super.findAll(extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec)
                     ?: spec)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", all.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", all.size)
             }
             all
         }
@@ -459,8 +459,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 super.findAll(sort)
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", result.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", result.size)
             }
             result
         }
@@ -473,9 +473,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 super.findAll(pageable)
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", result.totalElements)
-                sqlLog.debug("{} rows retrieved", result.content.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", result.totalElements)
+                sqlLog.info("{} rows retrieved", result.content.size)
             }
             result
         }
@@ -501,8 +501,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                     ?: spec1
             val count = super.count(spec1)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", count)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", count)
             }
             count
         }
@@ -511,8 +511,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun countPhysical(spec: Specification<T>?): Long {
         return mdcId(".count") {
             val count = super.count(spec)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", count)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", count)
             }
             count
         }
@@ -561,8 +561,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                     ?: spec1
             val all = super.findAll(spec1)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", all.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", all.size)
             }
             all
         }
@@ -591,8 +591,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
         query.setFirstResult(pageable.offset.toInt())
         query.setMaxResults(pageable.pageSize)
         val content = query.resultList
-        if (sqlLog.isDebugEnabled) {
-            sqlLog.debug("{} rows retrieved", content.size)
+        if (sqlLog.isInfoEnabled) {
+            sqlLog.info("{} rows retrieved", content.size)
         }
         return PageableList(content, pageable,
                 min(pageable.pageSize, content.size).toLong())
@@ -601,9 +601,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun findPhysicalAll(spec: Specification<T>?, pageable: Pageable): Page<T> {
         return mdcId(".findPhysicalAll") {
             val all = super.findAll(spec, pageable)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", all.totalElements)
-                sqlLog.debug("{} rows retrieved", all.content.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", all.totalElements)
+                sqlLog.info("{} rows retrieved", all.content.size)
             }
             all
         }
@@ -612,8 +612,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun findPhysicalAllById(ids: Iterable<ID>): List<T> {
         return mdcId(".findPhysicalAllById") {
             val all = super.findAllById(ids)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", all.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", all.size)
             }
             all
         }
@@ -625,9 +625,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                     ?: spec1
             val all = super.findAll(spec1, pageable)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", all.totalElements)
-                sqlLog.debug("{} rows retrieved", all.content.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", all.totalElements)
+                sqlLog.info("{} rows retrieved", all.content.size)
             }
             all
         }
@@ -639,8 +639,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                     ?: spec1
             val all = super.findAll(spec1, sort)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", all.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", all.size)
             }
             all
         }
@@ -670,8 +670,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".count") {
             extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
             val count = super.count(example)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", count)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", count)
             }
             count
         }
@@ -687,8 +687,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
             val all = super.findAll(example)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", all.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", all.size)
             }
             all
         }
@@ -716,8 +716,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             query.setMaxResults(pageable.pageSize)
         }
         val content = query.resultList
-        if (sqlLog.isDebugEnabled) {
-            sqlLog.debug("{} rows retrieved", content.size)
+        if (sqlLog.isInfoEnabled) {
+            sqlLog.info("{} rows retrieved", content.size)
         }
         return PageableList(content, pageable, min(pageable.pageSize, content.size).toLong())
     }
@@ -726,8 +726,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
             val all = super.findAll(example, sort)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", all.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", all.size)
             }
             all
         }
@@ -737,9 +737,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
             val all = super.findAll(example, pageable)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", all.totalElements)
-                sqlLog.debug("{} rows retrieved", all.content.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", all.totalElements)
+                sqlLog.info("{} rows retrieved", all.content.size)
             }
             all
         }
@@ -752,8 +752,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 super.count()
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", count)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", count)
             }
             count
         }
@@ -766,8 +766,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (extJpaSupport.logicalDeletedSupported) {
                 reslut = doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification)
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows affected", reslut)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows affected", reslut)
             }
             reslut.toInt()
         }
@@ -794,8 +794,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
                 doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
             } else {
-                if (sqlLog.isDebugEnabled) {
-                    sqlLog.debug("{} rows affected", 0)
+                if (sqlLog.isInfoEnabled) {
+                    sqlLog.info("{} rows affected", 0)
                 } else {
                 }
             }
@@ -808,8 +808,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (extJpaSupport.logicalDeletedSupported) {
                 doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
             } else {
-                if (sqlLog.isDebugEnabled) {
-                    sqlLog.debug("{} rows affected", 0)
+                if (sqlLog.isInfoEnabled) {
+                    sqlLog.info("{} rows affected", 0)
                 } else {
                 }
             }
@@ -823,8 +823,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 0
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", count)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", count)
             }
             count
         }
@@ -837,8 +837,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 spec1 = extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec1)
             }
             val count = super.count(spec1)
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", count)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", count)
             }
             count
         }
@@ -874,8 +874,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 result = emptyList()
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", result.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", result.size)
             }
             result
         }
@@ -906,8 +906,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 emptyList()
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", result.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", result.size)
             }
             result
         }
@@ -932,9 +932,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 Page.empty(pageable)
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", result.totalElements)
-                sqlLog.debug("{} rows retrieved", result.content.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", result.totalElements)
+                sqlLog.info("{} rows retrieved", result.content.size)
             }
             result
         }
@@ -947,8 +947,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 emptyList()
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", result.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", result.size)
             }
             result
         }
@@ -964,8 +964,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 result = emptyList()
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", result.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", result.size)
             }
             result
         }
@@ -989,8 +989,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             spec1 = extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec1)
             findUnpaged(spec1, pageable)
         } else {
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", 0)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", 0)
             }
             PageableList(pageable)
         }
@@ -1006,9 +1006,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 result = Page.empty(pageable)
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("total: {} rows", result.totalElements)
-                sqlLog.debug("{} rows retrieved", result.content.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("total: {} rows", result.totalElements)
+                sqlLog.info("{} rows retrieved", result.content.size)
             }
             result
         }
@@ -1024,8 +1024,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 result = emptyList()
             }
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} rows retrieved", result.size)
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows retrieved", result.size)
             }
             result
         }

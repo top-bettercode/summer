@@ -101,21 +101,21 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                             val totals = countQuery.resultList
                             total = if (totals.size == 1) CONVERSION_SERVICE.convert(totals[0], Long::class.java)
                                     ?: 0 else totals.size.toLong()
-                            if (sqlLog.isDebugEnabled) {
-                                sqlLog.debug("total: {} rows", total)
+                            if (sqlLog.isInfoEnabled) {
+                                sqlLog.info("total: {} rows", total)
                             }
                             if (total > 0 && total > accessor.pageable.offset) {
                                 resultList = mybatisQuery.resultList
-                                if (sqlLog.isDebugEnabled) {
-                                    sqlLog.debug("{} rows retrieved", resultList.size)
+                                if (sqlLog.isInfoEnabled) {
+                                    sqlLog.info("{} rows retrieved", resultList.size)
                                 }
                             } else {
                                 resultList = emptyList<Any>()
                             }
                         } else {
                             resultList = mybatisQuery.resultList
-                            if (sqlLog.isDebugEnabled) {
-                                sqlLog.debug("{} rows retrieved", resultList.size)
+                            if (sqlLog.isInfoEnabled) {
+                                sqlLog.info("{} rows retrieved", resultList.size)
                             }
                             total = resultList.size.toLong()
                         }
@@ -131,8 +131,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor) as List<*>
-                        if (sqlLog.isDebugEnabled) {
-                            sqlLog.debug("{} rows retrieved", result.size)
+                        if (sqlLog.isInfoEnabled) {
+                            sqlLog.info("{} rows retrieved", result.size)
                         }
                         result
                     }
@@ -146,8 +146,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor)
-                        if (sqlLog.isDebugEnabled) {
-                            sqlLog.debug("{} row affected", result)
+                        if (sqlLog.isInfoEnabled) {
+                            sqlLog.info("{} row affected", result)
                         }
                         result
                     }
@@ -195,9 +195,9 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                             }
                         }
                         val result = super.doExecute(query, accessor) as SliceImpl<*>
-                        if (sqlLog.isDebugEnabled) {
-                            sqlLog.debug("total: {} rows", result.numberOfElements)
-                            sqlLog.debug("{} rows retrieved", result.size)
+                        if (sqlLog.isInfoEnabled) {
+                            sqlLog.info("total: {} rows", result.numberOfElements)
+                            sqlLog.info("{} rows retrieved", result.size)
                         }
                         result
                     }
@@ -209,8 +209,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                 override fun doExecute(query: AbstractJpaQuery, accessor: JpaParametersParameterAccessor): Any? {
                     return JpaUtil.mdcId(sqlLogId) {
                         val result: Any? = super.doExecute(query, accessor)
-                        if (sqlLog.isDebugEnabled) {
-                            sqlLog.debug("{} rows retrieved", if (result == null) 0 else 1)
+                        if (sqlLog.isInfoEnabled) {
+                            sqlLog.info("{} rows retrieved", if (result == null) 0 else 1)
                         }
                         result
                     }

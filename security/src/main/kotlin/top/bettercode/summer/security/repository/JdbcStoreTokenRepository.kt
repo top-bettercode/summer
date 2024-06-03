@@ -49,8 +49,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
             val refreshToken = storeToken.refreshToken.tokenValue
             val auth = jdkSerializationSerializer.serialize(storeToken)
             val update = jdbcTemplate.update(defaultInsertStatement, arrayOf(id, accessToken, refreshToken, SqlLobValue(auth)), intArrayOf(Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB))
-            if (log.isDebugEnabled) {
-                log.debug("JdbcApiAuthorizationService.save\n{}\n{},{},{}\naffected:{}",
+            if (log.isInfoEnabled) {
+                log.info("JdbcApiAuthorizationService.save\n{}\n{},{},{}\naffected:{}",
                         defaultInsertStatement, id,
                         accessToken, refreshToken, update)
             }
@@ -68,8 +68,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
     override fun remove(tokenId: TokenId) {
         val id = tokenId.toString()
         val update = jdbcTemplate.update(defaultDeleteStatement, id)
-        if (log.isDebugEnabled) {
-            log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", defaultDeleteStatement,
+        if (log.isInfoEnabled) {
+            log.info("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", defaultDeleteStatement,
                     id, update)
         }
     }
@@ -80,8 +80,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
         val ids = tokenIds.map { it.toString() }.toTypedArray()
         val sql = defaultBatchDeleteStatement + "(${ids.joinToString(",") { "?" }})"
         @Suppress("SqlSourceToSinkFlow") val update = jdbcTemplate.update(sql, *ids)
-        if (log.isDebugEnabled) {
-            log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", sql,
+        if (log.isInfoEnabled) {
+            log.info("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", sql,
                     ids, update)
         }
     }
@@ -117,8 +117,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
                             log.warn("apiToken反序列化失败", e)
                             try {
                                 val update = jdbcTemplate.update(defaultDeleteStatement, rs.getString(2))
-                                if (log.isDebugEnabled) {
-                                    log.debug(
+                                if (log.isInfoEnabled) {
+                                    log.info(
                                             "JdbcApiAuthorizationService.getApiAuthenticationToken delete\n{}\n{}\naffected:{}",
                                             defaultDeleteStatement, rs.getString(2), update)
                                 }
@@ -128,8 +128,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
                             return@RowMapper null
                         }
                     }, param)
-            if (log.isDebugEnabled) {
-                log.debug("JdbcApiAuthorizationService.getApiAuthenticationToken\n{}\n{}\nresult:{}",
+            if (log.isInfoEnabled) {
+                log.info("JdbcApiAuthorizationService.getApiAuthenticationToken\n{}\n{}\nresult:{}",
                         selectStatement, param, storeToken?.userDetails)
             }
             storeToken
