@@ -57,7 +57,7 @@ open class CorpClient(
         } else if (retries < properties.maxRetries) {
             getWebPageAccessToken(code, retries + 1)
         } else {
-            throw clientException("网页授权失败：${result.errmsg}", result)
+            throw clientSysException("网页授权失败：${result.errmsg}", result)
         }
     }
 

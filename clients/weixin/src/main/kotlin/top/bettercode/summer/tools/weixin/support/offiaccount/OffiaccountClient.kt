@@ -79,7 +79,7 @@ open class OffiaccountClient(
         } else if (retries < properties.maxRetries) {
             getTicket(retries + 1)
         } else {
-            throw clientException("获取jsapiTicket失败：${result.errmsg}", result)
+            throw clientSysException("获取jsapiTicket失败：${result.errmsg}", result)
         }
     }
 
@@ -116,7 +116,7 @@ open class OffiaccountClient(
         } else if (retries < properties.maxRetries) {
             getSnsapiUserinfo(accessToken, openid, lang, retries + 1)
         } else {
-            throw clientException("${result.errmsg}", result)
+            throw clientSysException("${result.errmsg}", result)
         }
 
     }
@@ -145,7 +145,7 @@ open class OffiaccountClient(
         } else if (retries < properties.maxRetries) {
             getUserInfo(openid, lang, retries + 1)
         } else {
-            throw clientException("${result.errmsg}", result)
+            throw clientSysException("${result.errmsg}", result)
         }
     }
 
@@ -174,7 +174,7 @@ open class OffiaccountClient(
             log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw clientException("发送模板消息失败：${result.errmsg}", result)
+            throw clientSysException("发送模板消息失败：${result.errmsg}", result)
         }
     }
 
@@ -220,7 +220,7 @@ open class OffiaccountClient(
         } else if (retries < properties.maxRetries) {
             sendCustomMessage(request, retries + 1)
         } else {
-            throw clientException("发送客服消息失败：${result.errmsg}", result)
+            throw clientSysException("发送客服消息失败：${result.errmsg}", result)
         }
     }
 }

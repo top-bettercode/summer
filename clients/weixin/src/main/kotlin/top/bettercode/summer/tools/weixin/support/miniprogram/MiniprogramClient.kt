@@ -40,10 +40,8 @@ open class MiniprogramClient(
         )
         return if (session.isOk) {
             session
-        } else if (40163 == session.errcode) {
-            throw clientSysException("获取session失败：${session.errmsg}", session)
         } else {
-            throw clientException("获取session失败：${session.errmsg}", session)
+            throw clientSysException("获取session失败：${session.errmsg}", session)
         }
     }
 
@@ -64,7 +62,7 @@ open class MiniprogramClient(
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
         } else {
-            throw clientException("手机号授权失败：${result.errmsg}", result)
+            throw clientSysException("手机号授权失败：${result.errmsg}", result)
         }
     }
 
@@ -95,7 +93,7 @@ open class MiniprogramClient(
             log.warn("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw clientException("发送订阅消息失败：${result.errmsg}", result)
+            throw clientSysException("发送订阅消息失败：${result.errmsg}", result)
         }
     }
 
@@ -133,7 +131,7 @@ open class MiniprogramClient(
         } else if (retries < properties.maxRetries) {
             sendUniformMsg(request, retries + 1)
         } else {
-            throw clientException("发送统一服务消息失败：${result.errmsg}", result)
+            throw clientSysException("发送统一服务消息失败：${result.errmsg}", result)
         }
     }
 
