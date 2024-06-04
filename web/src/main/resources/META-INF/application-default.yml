@@ -50,7 +50,7 @@ spring:
     open-in-view: false
     properties:
       hibernate.format_sql: true
-      hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 5000
+      hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 2000
   datasource:
     hikari:
       data-source-properties:
