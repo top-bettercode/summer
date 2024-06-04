@@ -29,13 +29,14 @@ import kotlin.math.min
  * @author Peter Wu
  */
 class SimpleJpaExtRepository<T : Any, ID>(
-        jpaExtProperties: JpaExtProperties,
-        auditorAware: AuditorAware<*>,
-        private val entityInformation: JpaEntityInformation<T, ID>,
-        @Suppress("RedundantModalityModifier") final override val entityManager: EntityManager
+    jpaExtProperties: JpaExtProperties,
+    auditorAware: AuditorAware<*>,
+    private val entityInformation: JpaEntityInformation<T, ID>,
+    @Suppress("RedundantModalityModifier") final override val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
-    private val extJpaSupport: ExtJpaSupport<T> = DefaultExtJpaSupport(jpaExtProperties, entityManager, auditorAware, domainClass)
+    private val extJpaSupport: ExtJpaSupport<T> =
+        DefaultExtJpaSupport(jpaExtProperties, entityManager, auditorAware, domainClass)
     private val escapeCharacter = EscapeCharacter.DEFAULT
 
     private fun <S : T> isNew(entity: S, dynamicSave: Boolean): Boolean {
@@ -44,7 +45,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             val id = entityInformation.getId(entity)
             if ("" == id) {
                 DirectFieldAccessFallbackBeanWrapper(entity).setPropertyValue(
-                        entityInformation.idAttribute!!.name, null)
+                    entityInformation.idAttribute!!.name, null
+                )
                 true
             } else {
                 entityIsNew(entity, dynamicSave)
@@ -64,7 +66,12 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (id is Number) {
                 return (id as Number).toLong() == 0L
             }
-            throw IllegalArgumentException(String.format("Unsupported primitive id type %s!", idType))
+            throw IllegalArgumentException(
+                String.format(
+                    "Unsupported primitive id type %s!",
+                    idType
+                )
+            )
         } else {
             entityInformation.isNew(entity)
         }
@@ -74,6 +81,11 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return JpaUtil.mdcId(entityInformation.entityName + id, run)
     }
 
+    private fun logflush() {
+        if (sqlLog.isDebugEnabled) {
+            super.flush()
+        }
+    }
     //--------------------------------------------
 
     override fun detach(entity: Any) {
@@ -89,6 +101,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         mdcId(".deleteById") {
             Assert.notNull(id, "The given id must not be null!")
             findById(id).ifPresent { entity: T -> this.delete(entity) }
+            logflush()
         }
     }
 
@@ -134,12 +147,14 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun <S : T> save(entity: S): S {
         return mdcId(".save") {
             extJpaSupport.logicalDeletedAttribute?.setFalseIf(entity)
-            if (isNew(entity, false)) {
+            val result = if (isNew(entity, false)) {
                 entityManager.persist(entity)
                 entity
             } else {
                 entityManager.merge(entity)
             }
+            logflush()
+            result
         }
     }
 
@@ -172,18 +187,31 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (form) {
                 BeanUtils.copyProperties(entity, s)
             }
+            logflush()
             s
         }
     }
 
     @Transactional
     override fun lowLevelUpdate(spec: UpdateSpecification<T>): Long {
-        return update(s = null, spec = spec, lowLevel = true, physical = true, mdcId = ".lowLevelUpdate")
+        return update(
+            s = null,
+            spec = spec,
+            lowLevel = true,
+            physical = true,
+            mdcId = ".lowLevelUpdate"
+        )
     }
 
     @Transactional
     override fun physicalUpdate(spec: UpdateSpecification<T>): Long {
-        return update(s = null, spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
+        return update(
+            s = null,
+            spec = spec,
+            lowLevel = false,
+            physical = true,
+            mdcId = ".physicalUpdate"
+        )
     }
 
     @Transactional
@@ -193,12 +221,24 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
     @Transactional
     override fun <S : T> lowLevelUpdate(s: S?, spec: UpdateSpecification<T>): Long {
-        return update(s = s, spec = spec, lowLevel = true, physical = true, mdcId = ".lowLevelUpdate")
+        return update(
+            s = s,
+            spec = spec,
+            lowLevel = true,
+            physical = true,
+            mdcId = ".lowLevelUpdate"
+        )
     }
 
     @Transactional
     override fun <S : T> physicalUpdate(s: S?, spec: UpdateSpecification<T>): Long {
-        return update(s = s, spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
+        return update(
+            s = s,
+            spec = spec,
+            lowLevel = false,
+            physical = true,
+            mdcId = ".physicalUpdate"
+        )
     }
 
     @Transactional
@@ -206,12 +246,18 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return update(s = s, spec = spec, lowLevel = false, physical = false, mdcId = ".update")
     }
 
-    private fun <S : T> update(s: S?, spec: UpdateSpecification<T>, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
+    private fun <S : T> update(
+        s: S?,
+        spec: UpdateSpecification<T>,
+        lowLevel: Boolean,
+        physical: Boolean,
+        mdcId: String
+    ): Long {
         return mdcId(mdcId) {
             var spec1: Specification<T> = spec
             if (!physical) {
                 spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                        ?: spec1
+                    ?: spec1
             }
             val builder = entityManager.criteriaBuilder
             val criteriaUpdate = spec.createCriteriaUpdate(domainClass, builder, extJpaSupport)
@@ -222,7 +268,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 for (attribute in root.model.singularAttributes) {
                     val attributeName = attribute.name
                     val attributeValue = beanWrapper.getPropertyValue(attributeName)
-                            ?: continue
+                        ?: continue
                     criteriaUpdate[attributeName] = attributeValue
                 }
             }
@@ -247,6 +293,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (idAttribute != null && versionAttribute != null && affected == 0) {
                 throw ObjectOptimisticLockingFailureException(domainClass, idAttribute.value)
             }
+            logflush()
             affected.toLong()
         }
     }
@@ -258,24 +305,29 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 delete(entity)
                 entityManager.merge(entity)
             } ?: super.delete(entity)
+            logflush()
         }
     }
 
     @Transactional
     override fun delete(spec: Specification<T>): Long {
         return mdcId(".delete") {
-            if (extJpaSupport.logicalDeletedSupported) {
+            val result = if (extJpaSupport.logicalDeletedSupported) {
                 doLogicalDelete(spec)
             } else {
                 doPhysicalDelete(spec)
             }
+            logflush()
+            result
         }
     }
 
     @Transactional
     override fun physicalDelete(spec: Specification<T>): Long {
         return mdcId(".physicalDelete") {
-            doPhysicalDelete(spec)
+            val result = doPhysicalDelete(spec)
+            logflush()
+            result
         }
     }
 
@@ -320,17 +372,27 @@ class SimpleJpaExtRepository<T : Any, ID>(
     @Transactional
     override fun deleteAllById(ids: Iterable<ID>) {
         mdcId(".deleteAllById") {
-            delete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
+            delete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
+                root[entityInformation.idAttribute].`in`(
+                    toCollection(ids)
+                )
+            }
+            logflush()
         }
     }
 
     override fun deleteAllByIdInBatch(ids: Iterable<ID>) {
         mdcId(".deleteAllByIdInBatch") {
             if (extJpaSupport.logicalDeletedSupported) {
-                doLogicalDelete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
+                doLogicalDelete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
+                    root[entityInformation.idAttribute].`in`(
+                        toCollection(ids)
+                    )
+                }
             } else {
                 super.deleteAllByIdInBatch(ids)
             }
+            logflush()
         }
     }
 
@@ -341,7 +403,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 Assert.notNull(entities, "The given Iterable of entities not be null!")
                 if (entities.iterator().hasNext()) {
                     val ids: List<ID?> = entities.map { entityInformation.getId(it) }
-                    val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(ids) }
+                    val spec =
+                        Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
+                            root[entityInformation.idAttribute].`in`(ids)
+                        }
 
                     val affected = doLogicalDelete(spec)
                     if (sqlLog.isInfoEnabled) {
@@ -351,6 +416,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 super.deleteAllInBatch(entities)
             }
+            logflush()
         }
     }
 
@@ -365,16 +431,19 @@ class SimpleJpaExtRepository<T : Any, ID>(
             } else {
                 super.deleteAllInBatch()
             }
+            logflush()
         }
     }
 
     override fun findById(id: ID): Optional<T> {
         return mdcId(".findById") {
             if (extJpaSupport.logicalDeletedSupported) {
-                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder.equal(
-                            root[entityInformation.idAttribute], id)
-                }
+                var spec =
+                    Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                        builder.equal(
+                            root[entityInformation.idAttribute], id
+                        )
+                    }
                 spec = extJpaSupport.logicalDeletedAttribute!!.andNotDeleted(spec)
                 super.findOne(spec)
             } else {
@@ -399,12 +468,15 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun getById(id: ID): T {
         return mdcId(".getById") {
             if (extJpaSupport.logicalDeletedSupported) {
-                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder.equal(
-                            root[entityInformation.idAttribute], id)
-                }
+                var spec =
+                    Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                        builder.equal(
+                            root[entityInformation.idAttribute], id
+                        )
+                    }
                 spec = extJpaSupport.logicalDeletedAttribute!!.andNotDeleted(spec)
-                super.findOne(spec).orElseThrow { EntityNotFoundException("Unable to find $domainClass with id $id") }
+                super.findOne(spec)
+                    .orElseThrow { EntityNotFoundException("Unable to find $domainClass with id $id") }
             } else {
                 super.getById(id)
             }
@@ -414,10 +486,12 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun existsById(id: ID): Boolean {
         return mdcId(".existsById") {
             if (extJpaSupport.logicalDeletedSupported) {
-                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder.equal(
-                            root[entityInformation.idAttribute], id)
-                }
+                var spec =
+                    Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                        builder.equal(
+                            root[entityInformation.idAttribute], id
+                        )
+                    }
                 spec = extJpaSupport.logicalDeletedAttribute!!.andNotDeleted(spec)
                 super.count(spec) > 0
             } else {
@@ -442,9 +516,13 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
     override fun findAllById(ids: Iterable<ID>): List<T> {
         return mdcId(".findAllById") {
-            val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
-            val all = super.findAll(extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec)
-                    ?: spec)
+            val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
+                root[entityInformation.idAttribute].`in`(toCollection(ids))
+            }
+            val all = super.findAll(
+                extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec)
+                    ?: spec
+            )
             if (sqlLog.isInfoEnabled) {
                 sqlLog.info("{} rows retrieved", all.size)
             }
@@ -469,7 +547,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun findAll(pageable: Pageable): Page<T> {
         return mdcId(".findAll") {
             val result: Page<T> = if (extJpaSupport.logicalDeletedSupported) {
-                super.findAll(extJpaSupport.logicalDeletedAttribute!!.notDeletedSpecification, pageable)
+                super.findAll(
+                    extJpaSupport.logicalDeletedAttribute!!.notDeletedSpecification,
+                    pageable
+                )
             } else {
                 super.findAll(pageable)
             }
@@ -483,14 +564,16 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
     override fun findAll(size: Int): List<T> {
         return mdcId(".findAll") {
-            val spec: Specification<T>? = extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
+            val spec: Specification<T>? =
+                extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
             findUnpaged(spec, PageRequest.of(0, size))
         }
     }
 
     override fun findAll(size: Int, sort: Sort): List<T> {
         return mdcId(".findAll") {
-            val spec: Specification<T>? = extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
+            val spec: Specification<T>? =
+                extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
             findUnpaged(spec, PageRequest.of(0, size, sort))
         }
     }
@@ -499,7 +582,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".count") {
             var spec1: Specification<T>? = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             val count = super.count(spec1)
             if (sqlLog.isInfoEnabled) {
                 sqlLog.info("total: {} rows", count)
@@ -541,7 +624,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findFirst") {
             var spec1 = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             findUnpaged(spec1, PageRequest.of(0, 1)).stream().findFirst()
         }
     }
@@ -550,7 +633,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findOne") {
             var spec1: Specification<T>? = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             super.findOne(spec1)
         }
     }
@@ -559,7 +642,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             var spec1: Specification<T>? = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             val all = super.findAll(spec1)
             if (sqlLog.isInfoEnabled) {
                 sqlLog.info("{} rows retrieved", all.size)
@@ -572,7 +655,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             var spec1 = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             findUnpaged(spec1, PageRequest.of(0, size))
         }
     }
@@ -581,7 +664,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             var spec1 = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             findUnpaged(spec1, PageRequest.of(0, size, sort))
         }
     }
@@ -594,8 +677,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
         if (sqlLog.isInfoEnabled) {
             sqlLog.info("{} rows retrieved", content.size)
         }
-        return PageableList(content, pageable,
-                min(pageable.pageSize, content.size).toLong())
+        return PageableList(
+            content, pageable,
+            min(pageable.pageSize, content.size).toLong()
+        )
     }
 
     override fun findPhysicalAll(spec: Specification<T>?, pageable: Pageable): Page<T> {
@@ -623,7 +708,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             var spec1: Specification<T>? = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             val all = super.findAll(spec1, pageable)
             if (sqlLog.isInfoEnabled) {
                 sqlLog.info("total: {} rows", all.totalElements)
@@ -637,7 +722,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAll") {
             var spec1: Specification<T>? = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
-                    ?: spec1
+                ?: spec1
             val all = super.findAll(spec1, sort)
             if (sqlLog.isInfoEnabled) {
                 sqlLog.info("{} rows retrieved", all.size)
@@ -659,7 +744,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    override fun <S : T, R> findBy(example: Example<S>, queryFunction: Function<FetchableFluentQuery<S>, R>): R {
+    override fun <S : T, R> findBy(
+        example: Example<S>,
+        queryFunction: Function<FetchableFluentQuery<S>, R>
+    ): R {
         return mdcId(".findBy") {
             extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
             super.findBy(example, queryFunction)
@@ -709,8 +797,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
     private fun <S : T> findUnpaged(example: Example<S>, pageable: PageRequest): List<S> {
         extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
         val probeType = example.probeType
-        val query = getQuery(ExampleSpecification(example, escapeCharacter), probeType,
-                pageable)
+        val query = getQuery(
+            ExampleSpecification(example, escapeCharacter), probeType,
+            pageable
+        )
         if (pageable.isPaged) {
             query.setFirstResult(pageable.offset.toInt())
             query.setMaxResults(pageable.pageSize)
@@ -764,11 +854,13 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".cleanRecycleBin") {
             var reslut = 0L
             if (extJpaSupport.logicalDeletedSupported) {
-                reslut = doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification)
+                reslut =
+                    doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification)
             }
             if (sqlLog.isInfoEnabled) {
                 sqlLog.info("{} rows affected", reslut)
             }
+            logflush()
             reslut.toInt()
         }
     }
@@ -777,13 +869,16 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun deleteFromRecycleBin(id: ID) {
         mdcId(".deleteFromRecycleBin") {
             if (extJpaSupport.logicalDeletedSupported) {
-                val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder.equal(
-                            root[entityInformation.idAttribute], id)
-                }
+                val spec =
+                    Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                        builder.equal(
+                            root[entityInformation.idAttribute], id
+                        )
+                    }
                 doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
                 val entity = findByIdFromRecycleBin(id)
                 entity.ifPresent { t: T -> super.delete(t) }
+                logflush()
             }
         }
     }
@@ -791,7 +886,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun deleteAllByIdFromRecycleBin(ids: Iterable<ID>) {
         mdcId(".deleteAllByIdFromRecycleBin") {
             if (extJpaSupport.logicalDeletedSupported) {
-                val spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
+                val spec =
+                    Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
+                        root[entityInformation.idAttribute].`in`(toCollection(ids))
+                    }
                 doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
             } else {
                 if (sqlLog.isInfoEnabled) {
@@ -805,14 +903,15 @@ class SimpleJpaExtRepository<T : Any, ID>(
     @Transactional
     override fun deleteFromRecycleBin(spec: Specification<T>?) {
         mdcId(".deleteFromRecycleBin") {
-            if (extJpaSupport.logicalDeletedSupported) {
+            val result = if (extJpaSupport.logicalDeletedSupported) {
                 doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
             } else {
-                if (sqlLog.isInfoEnabled) {
-                    sqlLog.info("{} rows affected", 0)
-                } else {
-                }
+                0
             }
+            if (sqlLog.isInfoEnabled) {
+                sqlLog.info("{} rows affected", result)
+            }
+            logflush()
         }
     }
 
@@ -853,9 +952,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun findByIdFromRecycleBin(id: ID): Optional<T> {
         return mdcId(".findByIdFromRecycleBin") {
             if (extJpaSupport.logicalDeletedSupported) {
-                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder.equal(root[entityInformation.idAttribute], id)
-                }
+                var spec =
+                    Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                        builder.equal(root[entityInformation.idAttribute], id)
+                    }
                 spec = extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec)
                 super.findOne(spec)
             } else {
@@ -868,7 +968,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return mdcId(".findAllByIdFromRecycleBin") {
             val result: List<T>
             if (extJpaSupport.logicalDeletedSupported) {
-                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) }
+                var spec =
+                    Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
+                        root[entityInformation.idAttribute].`in`(toCollection(ids))
+                    }
                 spec = extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec)
                 result = super.findAll(spec)
             } else {
@@ -928,7 +1031,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
     override fun findAllFromRecycleBin(pageable: Pageable): Page<T> {
         return mdcId(".findAllFromRecycleBin") {
             val result: Page<T> = if (extJpaSupport.logicalDeletedSupported) {
-                super.findAll(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification, pageable)
+                super.findAll(
+                    extJpaSupport.logicalDeletedAttribute!!.deletedSpecification,
+                    pageable
+                )
             } else {
                 Page.empty(pageable)
             }
