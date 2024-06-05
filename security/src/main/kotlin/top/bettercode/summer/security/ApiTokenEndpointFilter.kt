@@ -37,13 +37,13 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class ApiTokenEndpointFilter @JvmOverloads constructor(
-        private val apiTokenService: ApiTokenService,
-        private val passwordEncoder: PasswordEncoder,
-        private val summerWebProperties: SummerWebProperties,
-        private val revokeTokenService: IRevokeTokenService?,
-        private val objectMapper: ObjectMapper,
-        private val formkeyService: IFormkeyService,
-        tokenEndpointUri: String? = DEFAULT_TOKEN_ENDPOINT_URI
+    private val apiTokenService: ApiTokenService,
+    private val passwordEncoder: PasswordEncoder,
+    private val summerWebProperties: SummerWebProperties,
+    private val revokeTokenService: IRevokeTokenService?,
+    private val objectMapper: ObjectMapper,
+    private val formkeyService: IFormkeyService,
+    tokenEndpointUri: String? = DEFAULT_TOKEN_ENDPOINT_URI
 ) : OncePerRequestFilter() {
     private val tokenEndpointMatcher: RequestMatcher
     private val revokeTokenEndpointMatcher: RequestMatcher
@@ -58,63 +58,34 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
     }
 
     override fun doFilterInternal(
-            request: HttpServletRequest,
-            response: HttpServletResponse,
-            filterChain: FilterChain
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
     ) {
         val storeTokenRepository = apiTokenService.storeTokenRepository
         //token相关接口
         if (tokenEndpointMatcher.matches(request)) {
-            formkeyService.checkRequest(request = request, formKeyName = summerWebProperties.formKeyName, autoFormKey = true, ttl = null, message = null)
             try {
-                val clientId = authenticateBasic(request)
-                val grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE)
-                Assert.hasText(grantType, "grantType 不能为空")
+                formkeyService.duplicateCheck(
+                    request = request,
+                    formKeyName = summerWebProperties.formKeyName,
+                ) {
+                    val clientId = authenticateBasic(request)
+                    val grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE)
+                    Assert.hasText(grantType, "grantType 不能为空")
 
-                val clientDetails = apiTokenService.clientDetailsService.getClientDetails(clientId)
-                        ?: throw BadCredentialsException("客户端信息不存在")
+                    val clientDetails =
+                        apiTokenService.clientDetailsService.getClientDetails(clientId)
+                            ?: throw BadCredentialsException("客户端信息不存在")
 
-                val storeToken: StoreToken?
-                if (SecurityParameterNames.REVOKE_TOKEN == grantType) {
-                    val revokeToken = request.getParameter(SecurityParameterNames.REVOKE_TOKEN)
-                    Assert.hasText(revokeToken, SecurityParameterNames.REVOKE_TOKEN + "不能为空")
-                    storeToken = storeTokenRepository.findByAccessToken(revokeToken)
-                    if (storeToken == null || storeToken.refreshToken.isExpired) {
-                        if (storeToken != null) {
-                            storeTokenRepository.remove(storeToken)
-                        }
-                        throw UnauthorizedException("请重新登录")
-                    }
-                    try {
-                        val userDetails = apiTokenService.getUserDetails(storeToken.clientId, storeToken.scope, storeToken.username)
-                        revokeToken(userDetails, storeTokenRepository, storeToken, response, request)
-                        return
-                    } catch (e: Exception) {
-                        throw UnauthorizedException(e.message, e)
-                    }
-                } else {
-                    val scope = request.getParameterValues(SecurityParameterNames.SCOPE)
-                            ?.toSet() ?: emptySet()
-//                    Assert.isTrue(scope.isNotEmpty(), "scope 不能为空")
-                    Assert.isTrue(clientDetails.supportScope(scope), "不支持的scope:$scope")
-
-                    if (SecurityParameterNames.PWDNAME == grantType) {
-                        apiTokenService.beforeLogin(request, grantType, clientId, scope)
-                        val username = request.getParameter(SecurityParameterNames.USERNAME)
-                        Assert.hasText(username, "用户名不能为空")
-                        val password = request.getParameter(SecurityParameterNames.PWDNAME)
-                        Assert.hasText(password, "密码不能为空")
-                        val userDetails = apiTokenService.getUserDetails(clientId, scope, username)
-                        Assert.isTrue(passwordEncoder.matches(password, userDetails.password),
-                                "用户名或密码错误")
-
-                        storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
-                        apiTokenService.afterLogin(storeToken, request)
-                    } else if (SecurityParameterNames.REFRESH_TOKEN == grantType) {
-                        val refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN)
-                        Assert.hasText(refreshToken, SecurityParameterNames.REFRESH_TOKEN + "不能为空")
-                        storeToken = storeTokenRepository.findByRefreshToken(
-                                refreshToken)
+                    val storeToken: StoreToken?
+                    if (SecurityParameterNames.REVOKE_TOKEN == grantType) {
+                        val revokeToken = request.getParameter(SecurityParameterNames.REVOKE_TOKEN)
+                        Assert.hasText(
+                            revokeToken,
+                            SecurityParameterNames.REVOKE_TOKEN + "不能为空"
+                        )
+                        storeToken = storeTokenRepository.findByAccessToken(revokeToken)
                         if (storeToken == null || storeToken.refreshToken.isExpired) {
                             if (storeToken != null) {
                                 storeTokenRepository.remove(storeToken)
@@ -122,33 +93,99 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                             throw UnauthorizedException("请重新登录")
                         }
                         try {
-                            val userDetails = apiTokenService.getUserDetails(clientId, scope, storeToken.username)
-                            storeToken.accessToken = apiTokenService.createAccessToken(clientDetails)
-                            storeToken.userDetails = userDetails
+                            val userDetails = apiTokenService.getUserDetails(
+                                storeToken.clientId,
+                                storeToken.scope,
+                                storeToken.username
+                            )
+                            revokeToken(
+                                userDetails,
+                                storeTokenRepository,
+                                storeToken,
+                                response,
+                                request
+                            )
                         } catch (e: Exception) {
                             throw UnauthorizedException(e.message, e)
                         }
-                    } else if (apiTokenService.securityProperties.authorizedGrantTypes.contains(grantType)) {
-                        val userDetails = apiTokenService.getUserDetails(grantType, request)
-                        storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
                     } else {
-                        throw IllegalArgumentException("grantType 不支持:$grantType")
+                        val scope = request.getParameterValues(SecurityParameterNames.SCOPE)
+                            ?.toSet() ?: emptySet()
+//                    Assert.isTrue(scope.isNotEmpty(), "scope 不能为空")
+                        Assert.isTrue(clientDetails.supportScope(scope), "不支持的scope:$scope")
+
+                        if (SecurityParameterNames.PWDNAME == grantType) {
+                            apiTokenService.beforeLogin(request, grantType, clientId, scope)
+                            val username = request.getParameter(SecurityParameterNames.USERNAME)
+                            Assert.hasText(username, "用户名不能为空")
+                            val password = request.getParameter(SecurityParameterNames.PWDNAME)
+                            Assert.hasText(password, "密码不能为空")
+                            val userDetails =
+                                apiTokenService.getUserDetails(clientId, scope, username)
+                            Assert.isTrue(
+                                passwordEncoder.matches(password, userDetails.password),
+                                "用户名或密码错误"
+                            )
+
+                            storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
+                            apiTokenService.afterLogin(storeToken, request)
+                        } else if (SecurityParameterNames.REFRESH_TOKEN == grantType) {
+                            val refreshToken =
+                                request.getParameter(SecurityParameterNames.REFRESH_TOKEN)
+                            Assert.hasText(
+                                refreshToken,
+                                SecurityParameterNames.REFRESH_TOKEN + "不能为空"
+                            )
+                            storeToken = storeTokenRepository.findByRefreshToken(
+                                refreshToken
+                            )
+                            if (storeToken == null || storeToken.refreshToken.isExpired) {
+                                if (storeToken != null) {
+                                    storeTokenRepository.remove(storeToken)
+                                }
+                                throw UnauthorizedException("请重新登录")
+                            }
+                            try {
+                                val userDetails = apiTokenService.getUserDetails(
+                                    clientId,
+                                    scope,
+                                    storeToken.username
+                                )
+                                storeToken.accessToken =
+                                    apiTokenService.createAccessToken(clientDetails)
+                                storeToken.userDetails = userDetails
+                            } catch (e: Exception) {
+                                throw UnauthorizedException(e.message, e)
+                            }
+                        } else if (apiTokenService.securityProperties.authorizedGrantTypes.contains(
+                                grantType
+                            )
+                        ) {
+                            val userDetails = apiTokenService.getUserDetails(grantType, request)
+                            storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
+                        } else {
+                            throw IllegalArgumentException("grantType 不支持:$grantType")
+                        }
+                        val userDetails = storeToken.userDetails
+                        val authenticationResult: Authentication =
+                            UserDetailsAuthenticationToken(userDetails)
+                        storeTokenRepository.save(storeToken)
+                        val context = SecurityContextHolder.createEmptyContext()
+                        context.authentication = authenticationResult
+                        SecurityContextHolder.setContext(context)
+                        response.setHeader(
+                            HttpHeaders.CONTENT_TYPE,
+                            MediaType.APPLICATION_JSON_VALUE
+                        )
+                        var apiTokenResponse: Any =
+                            apiTokenService.accessTokenConverter.convert(storeToken)
+                        if (summerWebProperties.wrapEnable(request)) {
+                            apiTokenResponse = ok(apiTokenResponse)
+                        }
+                        objectMapper.writeValue(response.outputStream, apiTokenResponse)
                     }
-                    val userDetails = storeToken.userDetails
-                    val authenticationResult: Authentication = UserDetailsAuthenticationToken(userDetails)
-                    storeTokenRepository.save(storeToken)
-                    val context = SecurityContextHolder.createEmptyContext()
-                    context.authentication = authenticationResult
-                    SecurityContextHolder.setContext(context)
-                    response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    var apiTokenResponse: Any = apiTokenService.accessTokenConverter.convert(storeToken)
-                    if (summerWebProperties.wrapEnable(request)) {
-                        apiTokenResponse = ok(apiTokenResponse)
-                    }
-                    objectMapper.writeValue(response.outputStream, apiTokenResponse)
                 }
             } catch (ex: Exception) {
-                formkeyService.cleanKey(request)
                 SecurityContextHolder.clearContext()
                 throw ex
             }
@@ -171,13 +208,23 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                         try {
                             val userDetails = storeToken.userDetails
                             apiTokenService.validate(userDetails)
-                            val authenticationResult: Authentication = UserDetailsAuthenticationToken(userDetails)
+                            val authenticationResult: Authentication =
+                                UserDetailsAuthenticationToken(userDetails)
                             val context = SecurityContextHolder.createEmptyContext()
                             context.authentication = authenticationResult
-                            request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, storeToken.id.toString())
+                            request.setAttribute(
+                                HttpOperation.REQUEST_LOGGING_USERNAME,
+                                storeToken.id.toString()
+                            )
                             SecurityContextHolder.setContext(context)
                             if (revokeTokenEndpointMatcher.matches(request)) { //撤消token
-                                revokeToken(userDetails, storeTokenRepository, storeToken, response, request)
+                                revokeToken(
+                                    userDetails,
+                                    storeTokenRepository,
+                                    storeToken,
+                                    response,
+                                    request
+                                )
                                 return
                             }
                         } catch (failed: Exception) {
@@ -205,7 +252,13 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         }
     }
 
-    private fun revokeToken(userDetails: UserDetails, storeTokenRepository: StoreTokenRepository, storeToken: StoreToken, response: HttpServletResponse, request: HttpServletRequest) {
+    private fun revokeToken(
+        userDetails: UserDetails,
+        storeTokenRepository: StoreTokenRepository,
+        storeToken: StoreToken,
+        response: HttpServletResponse,
+        request: HttpServletRequest
+    ) {
         revokeTokenService?.revokeToken(userDetails)
         storeTokenRepository.remove(storeToken)
         SecurityContextHolder.clearContext()
@@ -226,9 +279,11 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
 
     private fun authenticateBasic(request: HttpServletRequest): String {
         val (clientId, clientSecret) = AuthenticationHelper.getClientInfo(request)
-        apiTokenService.clientDetailsService.authenticate(clientId
+        apiTokenService.clientDetailsService.authenticate(
+            clientId
                 ?: throw BadCredentialsException("Unauthorized"), clientSecret
-                ?: throw BadCredentialsException("Unauthorized"))
+                ?: throw BadCredentialsException("Unauthorized")
+        )
         return clientId
     }
 

@@ -12,8 +12,15 @@ import javax.servlet.http.HttpServletResponse
  *
  * @author Peter Wu
  */
-class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService, private val formKeyName: String) : NotErrorHandlerInterceptor {
-    override fun preHandlerMethod(request: HttpServletRequest, response: HttpServletResponse, handler: HandlerMethod): Boolean {
+class FormDuplicateCheckInterceptor(
+    private val formkeyService: IFormkeyService,
+    private val formKeyName: String
+) : NotErrorHandlerInterceptor {
+    override fun preHandlerMethod(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: HandlerMethod
+    ): Boolean {
         val annotation = getAnnotation(handler, FormDuplicateCheck::class.java)
         val expireSeconds = annotation?.expireSeconds
         val ttl = if (expireSeconds != null && expireSeconds > 0) {
@@ -21,11 +28,24 @@ class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService,
         } else {
             null
         }
-        return formkeyService.checkRequest(request = request, formKeyName = formKeyName, autoFormKey = annotation != null, ttl = ttl, message = annotation?.message
+        formkeyService.duplicateCheck<Any>(
+            request = request,
+            formKeyName = formKeyName,
+            autoFormKey = annotation != null,
+            ttl = ttl,
+            message = annotation?.message,
+            ignoreHeaders = annotation?.ignoreHeaders,
+            ignoreParams = annotation?.ignoreParams
         )
+        return true
     }
 
-    override fun afterCompletionMethod(request: HttpServletRequest, response: HttpServletResponse, handler: HandlerMethod, ex: Throwable?) {
+    override fun afterCompletionMethod(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: HandlerMethod,
+        ex: Throwable?
+    ) {
         var e = ex
         if (e == null) {
             e = NotErrorHandlerInterceptor.getError(request)

@@ -18,24 +18,52 @@ import javax.servlet.http.HttpServletRequest
  */
 interface IFormkeyService {
 
-    fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?): Boolean {
-        val formkey = getFormkey(request, formKeyName, autoFormKey)
-        return checkRequest(request = request, formkey = formkey, ttl = ttl, message = message)
-    }
-
-    fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?, ignoreHeaders: Array<String>? = null, ignoreParams: Array<String>? = null): Boolean {
+    fun <T> duplicateCheck(
+        request: HttpServletRequest,
+        formKeyName: String,
+        autoFormKey: Boolean = true,
+        ttl: Duration? = null,
+        message: String? = null,
+        ignoreHeaders: Array<String>? = null,
+        ignoreParams: Array<String>? = null,
+        runnable: (() -> T?)? = null
+    ): T? {
         val formkey = getFormkey(request, formKeyName, autoFormKey, ignoreHeaders, ignoreParams)
-        return checkRequest(request = request, formkey = formkey, ttl = ttl, message = message)
+        if (formkey != null && runnable == null) {
+            request.setAttribute(FormDuplicateCheckInterceptor.FORM_KEY, formkey)
+        }
+        return duplicateCheck(formkey, ttl, message, runnable ?: { null })
     }
 
-    fun checkRequest(request: HttpServletRequest?, formkey: String?, ttl: Duration?, message: String?): Boolean {
-        return if (formkey == null) {
-            true
-        } else if (exist(formkey, ttl)) {
+    fun <T> duplicateCheck(
+        formkey: String?,
+        ttl: Duration? = null,
+        message: String? = null,
+        runnable: Runnable
+    ) {
+        duplicateCheck(formkey, ttl, message) {
+            runnable.run()
+            null
+        }
+    }
+
+    fun <T> duplicateCheck(
+        formkey: String?,
+        ttl: Duration? = null,
+        message: String? = null,
+        runnable: () -> T?
+    ): T? {
+        if (formkey != null && exist(formkey, ttl)) {
             throw FormDuplicateException(message ?: FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
         } else {
-            request!!.setAttribute(FormDuplicateCheckInterceptor.FORM_KEY, formkey)
-            true
+            return try {
+                runnable()
+            } catch (ex: Exception) {
+                if (formkey != null) {
+                    remove(formkey)
+                }
+                throw ex
+            }
         }
     }
 
@@ -49,13 +77,15 @@ interface IFormkeyService {
         }
     }
 
-    fun getFormkey(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean): String? {
-        return getFormkey(request, formKeyName, autoFormKey, null, null)
-    }
-
-    fun getFormkey(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ignoreHeaders: Array<String>?, ignoreParams: Array<String>?): String? {
+    fun getFormkey(
+        request: HttpServletRequest,
+        formKeyName: String,
+        autoFormKey: Boolean,
+        ignoreHeaders: Array<String>? = null,
+        ignoreParams: Array<String>? = null
+    ): String? {
         var digestFormkey: String? = null
-        var formkey = request!!.getHeader(formKeyName)
+        var formkey = request.getHeader(formKeyName)
         val hasFormKey = !formkey.isNullOrBlank()
         if (hasFormKey || autoFormKey) {
             if (log.isTraceEnabled) {
@@ -63,16 +93,18 @@ interface IFormkeyService {
             }
             if (!hasFormKey) {
                 val servletServerHttpRequest = ServletServerHttpRequest(
-                        request)
-                val httpHeaders: MultiValueMap<String, String> = LinkedMultiValueMap(servletServerHttpRequest.headers)
-                if (ignoreHeaders != null) {
+                    request
+                )
+                val httpHeaders: MultiValueMap<String, String> =
+                    LinkedMultiValueMap(servletServerHttpRequest.headers)
+                if (!ignoreHeaders.isNullOrEmpty()) {
                     for (ignoreHeader in ignoreHeaders) {
                         httpHeaders.remove(ignoreHeader)
                     }
                 }
                 formkey = valueOf(httpHeaders)
                 val parameterMap: MutableMap<String, Array<String>> = HashMap(request.parameterMap)
-                if (ignoreParams != null) {
+                if (!ignoreParams.isNullOrEmpty()) {
                     for (ignoreParam in ignoreParams) {
                         parameterMap.remove(ignoreParam)
                     }
@@ -80,61 +112,45 @@ interface IFormkeyService {
                 val params = valueOf(parameterMap)
                 formkey += "::$params"
                 val contentType = request.contentType
-                val formPost = (contentType != null && contentType.contains("application/x-www-form-urlencoded")
-                        && HttpMethod.POST.matches(request.method))
+                val formPost =
+                    (contentType != null && contentType.contains("application/x-www-form-urlencoded")
+                            && HttpMethod.POST.matches(request.method))
                 if (!formPost) {
                     val traceHttpServletRequestWrapper = getRequestWrapper(
-                            request, TraceHttpServletRequestWrapper::class.java)
+                        request, TraceHttpServletRequestWrapper::class.java
+                    )
                     formkey += if (traceHttpServletRequestWrapper != null) {
                         try {
                             "::" + traceHttpServletRequestWrapper.content
                         } catch (e: Exception) {
-                            log.info(
-                                    request.servletPath + e.message + " ignore formDuplicateCheck")
-                            return null
+                            log.info(request.servletPath + e.message + " ignore formDuplicateCheck")
+                            null
                         }
                     } else {
-                        log.info(request.servletPath
-                                + " not traceHttpServletRequestWrapper ignore formDuplicateCheck")
-                        return null
+                        log.info(request.servletPath + " not traceHttpServletRequestWrapper ignore formDuplicateCheck")
+                        null
                     }
                 }
             }
             formkey = formkey + request.method + request.requestURI
             digestFormkey = shaHex(formkey)
             if (log.isTraceEnabled) {
-                log.trace("{} formkey:{},digestFormkey:{}", request.requestURI, formkey,
-                        digestFormkey)
+                log.trace(
+                    "{} formkey:{},digestFormkey:{}", request.requestURI, formkey,
+                    digestFormkey
+                )
             }
         }
         return digestFormkey
     }
 
-    fun runIfAbsent(formkey: String, ttl: Duration, runnable: Runnable) {
-        if (!exist(formkey, ttl)) {
-            try {
-                runnable.run()
-            } finally {
-                remove(formkey)
-            }
-        } else {
-            log.info("formkey:{} exist", formkey)
+    fun runIfAbsent(formkey: String, ttl: Duration?, runnable: Runnable) {
+        runIfAbsent(formkey, ttl) {
+            runnable.run()
         }
     }
 
-    fun runIfAbsentOrElseThrow(formkey: String, ttl: Duration, expMsg: String, runnable: Runnable) {
-        if (!exist(formkey, ttl)) {
-            try {
-                runnable.run()
-            } finally {
-                remove(formkey)
-            }
-        } else {
-            throw IllegalStateException(expMsg)
-        }
-    }
-
-    fun <T> runIfAbsent(formkey: String, ttl: Duration, runnable: () -> T): T? {
+    fun <T> runIfAbsent(formkey: String, ttl: Duration?, runnable: () -> T?): T? {
         return if (!exist(formkey, ttl)) {
             try {
                 runnable()
@@ -147,7 +163,23 @@ interface IFormkeyService {
         }
     }
 
-    fun <T> runIfAbsentOrElseThrow(formkey: String, ttl: Duration, expMsg: String, runnable: () -> T): T {
+    fun runIfAbsentOrElseThrow(
+        formkey: String,
+        ttl: Duration? = null,
+        expMsg: String? = null,
+        runnable: Runnable
+    ) {
+        runIfAbsentOrElseThrow(formkey, ttl, expMsg) {
+            runnable.run()
+        }
+    }
+
+    fun <T> runIfAbsentOrElseThrow(
+        formkey: String,
+        ttl: Duration? = null,
+        expMsg: String? = null,
+        runnable: () -> T?
+    ): T? {
         return if (!exist(formkey, ttl)) {
             try {
                 runnable()
@@ -155,7 +187,7 @@ interface IFormkeyService {
                 remove(formkey)
             }
         } else {
-            throw IllegalStateException(expMsg)
+            throw IllegalStateException(expMsg ?: FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
         }
     }
 
