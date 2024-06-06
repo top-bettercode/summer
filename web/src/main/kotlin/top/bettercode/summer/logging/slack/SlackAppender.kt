@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
 import java.util.concurrent.ConcurrentMap
+import javax.net.ssl.SSLHandshakeException
 
 open class SlackAppender(
     private val properties: top.bettercode.summer.logging.SlackProperties,
@@ -41,6 +42,9 @@ open class SlackAppender(
                     "slack 查询频道信息失败",
                     e
                 )
+                if (e.cause is SSLHandshakeException) {
+                    channelExist = false
+                }
             }
         }
         return channelExist ?: false
