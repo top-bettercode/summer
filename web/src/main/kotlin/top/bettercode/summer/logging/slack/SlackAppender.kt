@@ -9,40 +9,52 @@ import top.bettercode.summer.tools.lang.log.AlarmAppender
 import java.util.concurrent.ConcurrentMap
 
 open class SlackAppender(
-        private val properties: top.bettercode.summer.logging.SlackProperties,
-        private val warnSubject: String,
-        logsPath: String,
-        managementLogPath: String,
-        logPattern: String,
-        cacheMap: ConcurrentMap<String, Int>,
-        timeoutCacheMap: ConcurrentMap<String, Int>
+    private val properties: top.bettercode.summer.logging.SlackProperties,
+    private val warnSubject: String,
+    logsPath: String,
+    managementLogPath: String,
+    logPattern: String,
+    cacheMap: ConcurrentMap<String, Int>,
+    timeoutCacheMap: ConcurrentMap<String, Int>
 ) : AlarmAppender(
-        cyclicBufferSize = properties.cyclicBufferSize,
-        ignoredWarnLogger = properties.ignoredWarnLogger,
-        encoder = PatternLayoutEncoder().apply {
-            pattern = OptionHelper.substVars(logPattern, context)
-        },
-        cacheMap = cacheMap,
-        timeoutCacheMap = timeoutCacheMap
+    cyclicBufferSize = properties.cyclicBufferSize,
+    ignoredWarnLogger = properties.ignoredWarnLogger,
+    encoder = PatternLayoutEncoder().apply {
+        pattern = OptionHelper.substVars(logPattern, context)
+    },
+    cacheMap = cacheMap,
+    timeoutCacheMap = timeoutCacheMap
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val slackClient: SlackClient = SlackClient(properties.authToken, logsPath, managementLogPath)
+    private val slackClient: SlackClient =
+        SlackClient(properties.authToken, logsPath, managementLogPath)
+    private var channelExist: Boolean? = null
 
-    override fun start() {
-        if (slackClient.channelExist(properties.channel)) {
-            super.start()
+    private fun channelExist(): Boolean {
+        if (channelExist == null) {
+            try {
+                channelExist = slackClient.channelExist(properties.channel)
+            } catch (e: Exception) {
+                log.error(
+                    MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                    "slack 查询频道信息失败",
+                    e
+                )
+            }
         }
+        return channelExist ?: false
     }
 
     override fun sendMessage(
-            timeStamp: Long,
-            initialComment: String,
-            message: List<String>,
-            timeout: Boolean
+        timeStamp: Long,
+        initialComment: String,
+        message: List<String>,
+        timeout: Boolean
     ): Boolean {
-        return try {
-            val title =
+        return if (channelExist()) {
+            try {
+                val title =
                     "$warnSubject${
                         try {
                             "(${top.bettercode.summer.logging.LoggingUtil.apiAddress})"
@@ -50,19 +62,22 @@ open class SlackAppender(
                             ""
                         }
                     }"
-            slackClient.postMessage(
+                slackClient.postMessage(
                     if (timeout) properties.timeoutChannel else properties.channel,
                     timeStamp,
                     title,
                     initialComment,
                     message
-            )
-        } catch (e: Exception) {
-            log.error(
+                )
+            } catch (e: Exception) {
+                log.error(
                     MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
                     "slack 发送信息失败",
                     e
-            )
+                )
+                false
+            }
+        } else {
             false
         }
     }
