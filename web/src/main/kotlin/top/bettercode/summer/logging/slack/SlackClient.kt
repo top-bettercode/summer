@@ -18,12 +18,30 @@ import java.io.File
 
 /**
  *
+ * <pre>
+ * 请求ssl异常：sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+ * 处理方法：
+ * 获取证书：
+ *
+ * bash
+ *
+ * echo | openssl s_client -connect slack.com:443 | openssl x509 > slack-com.crt
+ *
+ * 导入证书到 Java 信任库：
+ *
+ * bash
+ *
+ * keytool -import -alias slack-com -keystore $JAVA_HOME/jre/lib/security/cacerts -file slack-com.crt
+ *
+ * 默认密码是 changeit。
+ *
+ * </pre>
  * @author Peter Wu
  */
 class SlackClient(
-        private val authToken: String,
-        private val logsPath: String,
-        private val managementLogPath: String
+    private val authToken: String,
+    private val logsPath: String,
+    private val managementLogPath: String
 ) {
 
     private val api = "https://slack.com/api/"
@@ -47,10 +65,10 @@ class SlackClient(
     }
 
     private fun <T> request(
-            url: String,
-            responseType: Class<T>,
-            request: Any? = null,
-            method: HttpMethod = HttpMethod.POST
+        url: String,
+        responseType: Class<T>,
+        request: Any? = null,
+        method: HttpMethod = HttpMethod.POST
     ): T? {
         val headers = HttpHeaders()
         headers.add("Authorization", "Bearer $authToken")
@@ -63,9 +81,9 @@ class SlackClient(
         val headers = HttpHeaders()
         headers.setBearerAuth(authToken)
         val result = request(
-                url = "conversations.list?types=public_channel,private_channel&exclude_archived=true",
-                responseType = ChannelsResult::class.java,
-                method = HttpMethod.GET
+            url = "conversations.list?types=public_channel,private_channel&exclude_archived=true",
+            responseType = ChannelsResult::class.java,
+            method = HttpMethod.GET
         )
         if (result?.ok != true) {
             log.error("slack api request fail:{}", result?.error)
@@ -94,11 +112,11 @@ class SlackClient(
      * @param channel channel id or channel name
      */
     fun postMessage(
-            channel: String,
-            timeStamp: Long,
-            title: String,
-            initialComment: String,
-            message: List<String>
+        channel: String,
+        timeStamp: Long,
+        title: String,
+        initialComment: String,
+        message: List<String>
     ): Boolean {
         val params = LinkedMultiValueMap<String, Any>()
         params.add("token", authToken)
@@ -118,7 +136,7 @@ class SlackClient(
             val path = File(logsPath)
             val namePattern = "all-${TimeUtil.now().format("yyyy-MM-dd")}-"
             val files =
-                    path.listFiles { file -> file.name.startsWith(namePattern) && file.extension == "gz" }
+                path.listFiles { file -> file.name.startsWith(namePattern) && file.extension == "gz" }
             files?.sortBy { -it.lastModified() }
             val existFilename = files?.firstOrNull()?.nameWithoutExtension
 
@@ -134,10 +152,10 @@ class SlackClient(
 
             val logUrl = actuatorAddress + managementLogPath
             params["attachments"] = arrayOf(
-                    mapOf(
-                            "title" to linkTitle,
-                            "title_link" to "$logUrl/${linkTitle}"
-                    )
+                mapOf(
+                    "title" to linkTitle,
+                    "title_link" to "$logUrl/${linkTitle}"
+                )
             )
 
             if (log.isTraceEnabled) {
@@ -145,9 +163,9 @@ class SlackClient(
             }
 
             val result = request(
-                    url = "chat.postMessage",
-                    responseType = Result::class.java,
-                    request = params
+                url = "chat.postMessage",
+                responseType = Result::class.java,
+                request = params
             )
             if (log.isTraceEnabled) {
                 log.trace("slack result:{}", result)
@@ -157,11 +175,11 @@ class SlackClient(
     }
 
     fun filesUpload(
-            channel: String,
-            timeStamp: Long,
-            title: String,
-            initialComment: String,
-            message: List<String>
+        channel: String,
+        timeStamp: Long,
+        title: String,
+        initialComment: String,
+        message: List<String>
     ): Boolean {
         val params = LinkedMultiValueMap<String, Any>()
         params.add("token", authToken)
@@ -174,9 +192,9 @@ class SlackClient(
         }
         params.add("initial_comment", "$title:\n$initialComment")
         val result = request(
-                url = "files.upload",
-                responseType = Result::class.java,
-                request = params
+            url = "files.upload",
+            responseType = Result::class.java,
+            request = params
         )
         if (log.isTraceEnabled) {
             log.trace("slack result:{}", result)
