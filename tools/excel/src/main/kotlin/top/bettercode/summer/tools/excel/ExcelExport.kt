@@ -64,12 +64,22 @@ class ExcelExport(val excel: IExcel) {
     }
 
     @JvmOverloads
-    fun cell(row: Int = this.row, column: Int = this.column, style: CellStyle = this.cellStyle.clone()): ExcelCell {
+    fun cell(
+        row: Int = this.row,
+        column: Int = this.column,
+        style: CellStyle = this.cellStyle.clone()
+    ): ExcelCell {
         return this.excel.cell(row, column, style)
     }
 
     @JvmOverloads
-    fun range(top: Int, left: Int, bottom: Int = top, right: Int = left, style: CellStyle = this.cellStyle.clone()): ExcelRange {
+    fun range(
+        top: Int,
+        left: Int,
+        bottom: Int = top,
+        right: Int = left,
+        style: CellStyle = this.cellStyle.clone()
+    ): ExcelRange {
         return this.excel.range(top, left, bottom, right, style)
     }
 
@@ -153,13 +163,20 @@ class ExcelExport(val excel: IExcel) {
     }
 
     @JvmOverloads
-    fun createTitle(title: String, cells: Int, headerStyle: CellStyle = this.headerStyle): ExcelExport {
+    fun createTitle(
+        title: String,
+        cells: Int,
+        headerStyle: CellStyle = this.headerStyle
+    ): ExcelExport {
         this.excel.value(row, column, title)
         excel.setStyle(row, column, row, column + cells - 1, headerStyle)
         return this
     }
 
-    fun <T : Any> createHeader(excelFields: Iterable<ExcelField<T, out Any?>>, template: Boolean = false) {
+    fun <T : Any> createHeader(
+        excelFields: Iterable<ExcelField<T, out Any?>>,
+        template: Boolean = false
+    ) {
         if (!includeHeader)
             return
         // Create header
@@ -207,8 +224,10 @@ class ExcelExport(val excel: IExcel) {
     }
 
     @JvmOverloads
-    fun <T : Any> setData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>,
-                          converter: (T) -> T = { o: T -> o }): ExcelExport {
+    fun <T : Any> setData(
+        list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>,
+        converter: (T) -> T = { o: T -> o }
+    ): ExcelExport {
         return setData(list, excelFields.asIterable(), converter)
     }
 
@@ -220,8 +239,10 @@ class ExcelExport(val excel: IExcel) {
      * @return list 数据列表
     </T> */
     @JvmOverloads
-    fun <T : Any> setData(list: Iterable<T>, excelFields: Iterable<ExcelField<T, out Any?>>,
-                          converter: (T) -> T = { o: T -> o }): ExcelExport {
+    fun <T : Any> setData(
+        list: Iterable<T>, excelFields: Iterable<ExcelField<T, out Any?>>,
+        converter: (T) -> T = { o: T -> o }
+    ): ExcelExport {
         val iterator = list.iterator()
         createHeader(excelFields, !iterator.hasNext())
         val firstRow = row
@@ -243,7 +264,11 @@ class ExcelExport(val excel: IExcel) {
     }
 
     @JvmOverloads
-    fun <T : Any> setMergeData(list: Iterable<T>, excelFields: Array<ExcelField<T, out Any?>>, converter: (T) -> T = { o: T -> o }): ExcelExport {
+    fun <T : Any> setMergeData(
+        list: Iterable<T>,
+        excelFields: Array<ExcelField<T, out Any?>>,
+        converter: (T) -> T = { o: T -> o }
+    ): ExcelExport {
         return setMergeData(list, excelFields.asIterable(), converter)
     }
 
@@ -256,7 +281,11 @@ class ExcelExport(val excel: IExcel) {
      * @param converter   转换器
      * @return list 数据列表
     </T> */
-    fun <T : Any> setMergeData(list: Iterable<T>, excelFields: Iterable<ExcelField<T, out Any?>>, converter: (T) -> T): ExcelExport {
+    fun <T : Any> setMergeData(
+        list: Iterable<T>,
+        excelFields: Iterable<ExcelField<T, out Any?>>,
+        converter: (T) -> T
+    ): ExcelExport {
         createHeader(excelFields)
         val iterator = list.iterator()
         val firstRow = row
@@ -264,7 +293,7 @@ class ExcelExport(val excel: IExcel) {
         var index = 0
         val firstField: ExcelField<T, *> = if (this.excel !is PoiExcel) {
             excelFields.find { o: ExcelField<T, *> -> o.cellSetter == null }
-                    ?: throw ExcelException("无可导出项目")
+                ?: throw ExcelException("无可导出项目")
         } else {
             excelFields.first()
         }
@@ -276,7 +305,8 @@ class ExcelExport(val excel: IExcel) {
             val e = converter(iterator.next())
             val lastRow = !iterator.hasNext()
             var mergeIndex = 0
-            val indexCells: MutableList<ExcelFieldRange<T>>? = if (mergeFirstColumn) null else ArrayList()
+            val indexCells: MutableList<ExcelFieldRange<T>>? =
+                if (mergeFirstColumn) null else ArrayList()
             var merge: Boolean
             for (excelField in excelFields) {
                 if (this.excel !is PoiExcel && excelField.cellSetter != null) {
@@ -300,13 +330,17 @@ class ExcelExport(val excel: IExcel) {
                     if (newRange) {
                         lastRangeTops[mergeIndex] = row
                     }
-                    val rangeCell = ExcelFieldRange(row, column, index, firstRow, lastRow,
-                            newRange, lastRangeTop, excelField, preEntity, e)
+                    val rangeCell = ExcelFieldRange(
+                        row, column, index, firstRow, lastRow,
+                        newRange, lastRangeTop, excelField, preEntity, e
+                    )
                     setRange(rangeCell)
                     mergeIndex++
                 } else {
-                    val rangeCell = ExcelFieldRange(row, column, index, firstRow, lastRow,
-                            false, row, excelField, preEntity, e)
+                    val rangeCell = ExcelFieldRange(
+                        row, column, index, firstRow, lastRow,
+                        false, row, excelField, preEntity, e
+                    )
                     if (!mergeFirstColumn && excelField.isIndexColumn) {
                         indexCells!!.add(rangeCell)
                     } else {
@@ -332,16 +366,22 @@ class ExcelExport(val excel: IExcel) {
         val column = excelCell.column
         val row = excelCell.row
         val excelField = excelCell.excelField
+
         val style = this.cellStyle.clone()
-        style.style(excelField.cellStyle)
         if (excelCell.isFillColor) {
             style.fillColor(fillColor)
         }
+
+        val fieldStyle = excelField.cellStyle
+        excelField.styleSetter?.accept(fieldStyle, excelCell.entity)
+
+        style.style(fieldStyle)
         this.excel.setStyle(row, column, row, column, style)
 
         if (excelField.height != -1.0) {
             this.excel.height(row, excelField.height)
         }
+
         if (excelCell.needSetValue()) {
             val cellValue = excelCell.cellValue
             if (cellValue == null) {
@@ -374,7 +414,10 @@ class ExcelExport(val excel: IExcel) {
         val width = excelField.width
         if (width == -1.0) {
             val cellValue = excelCell.cellValue
-            columnWidths.put(column, if (excelField.isDateField) excelField.cellStyle.valueFormatting else cellValue)
+            columnWidths.put(
+                column,
+                if (excelField.isDateField) fieldStyle.valueFormatting else cellValue
+            )
             if (excelCell.isLastRow) {
                 this.excel.width(column, columnWidths.width(column))
             }
@@ -449,17 +492,24 @@ class ExcelExport(val excel: IExcel) {
          */
         @JvmOverloads
         @JvmStatic
-        fun export(fileName: String, poi: Boolean = false, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
+        fun export(
+            fileName: String,
+            poi: Boolean = false,
+            cacheKey: String? = null,
+            consumer: Consumer<ExcelExport>
+        ) {
             val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
+                .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
             val request = requestAttributes.request
             val response = requestAttributes.response!!
             excelDisposition(request, response, fileName)
             if (cacheKey != null) {
                 val tmpPath = System.getProperty("java.io.tmpdir")
-                val file = File(tmpPath,
-                        """summer${File.separator}excel-export${File.separator}$fileName${File.separator}$cacheKey.xlsx""")
+                val file = File(
+                    tmpPath,
+                    """summer${File.separator}excel-export${File.separator}$fileName${File.separator}$cacheKey.xlsx"""
+                )
                 if (!file.exists()) {
                     val dir = file.parentFile
                     if (!dir.exists()) {
@@ -467,7 +517,8 @@ class ExcelExport(val excel: IExcel) {
                     }
                     val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
                     Files.newOutputStream(tmpFile.toPath()).use { outputStream ->
-                        val excelExport = ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
+                        val excelExport =
+                            ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
                         consumer.accept(excelExport)
                         excelExport.finish()
                     }
@@ -479,7 +530,8 @@ class ExcelExport(val excel: IExcel) {
                 StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)
             } else {
                 val outputStream = response.outputStream
-                val excelExport = ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
+                val excelExport =
+                    ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
                 consumer.accept(excelExport)
                 excelExport.finish()
             }
@@ -494,14 +546,23 @@ class ExcelExport(val excel: IExcel) {
          */
         @JvmOverloads
         @JvmStatic
-        fun sheet(fileName: String, poi: Boolean = false, cacheKey: String? = null, consumer: Consumer<ExcelExport>) {
+        fun sheet(
+            fileName: String,
+            poi: Boolean = false,
+            cacheKey: String? = null,
+            consumer: Consumer<ExcelExport>
+        ) {
             export(fileName = fileName, poi = poi, cacheKey = cacheKey) {
                 it.sheet("sheet1")
                 consumer.accept(it)
             }
         }
 
-        private fun excelDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String) {
+        private fun excelDisposition(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            fileName: String
+        ) {
             response.reset()
             attachmentDisposition(request, response, "$fileName.xlsx")
         }
@@ -516,15 +577,24 @@ class ExcelExport(val excel: IExcel) {
          */
         @JvmStatic
         @JvmOverloads
-        fun attachmentDisposition(request: HttpServletRequest, response: HttpServletResponse, fileName: String, contentType: String = "application/vnd.ms-excel; charset=utf-8") {
+        fun attachmentDisposition(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            fileName: String,
+            contentType: String = "application/vnd.ms-excel; charset=utf-8"
+        ) {
             val agent = request.getHeader("USER-AGENT")
             val encodeFileName = URLEncoder.encode(fileName, "UTF-8")
-            val newFileName: String = if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
-                encodeFileName
-            } else {
-                fileName
-            }
-            response.setHeader("Content-Disposition", "attachment;filename=$newFileName;filename*=UTF-8''$encodeFileName")
+            val newFileName: String =
+                if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
+                    encodeFileName
+                } else {
+                    fileName
+                }
+            response.setHeader(
+                "Content-Disposition",
+                "attachment;filename=$newFileName;filename*=UTF-8''$encodeFileName"
+            )
             response.contentType = contentType
             response.setHeader("Pragma", "No-cache")
             response.setHeader("Cache-Control", "no-cache")

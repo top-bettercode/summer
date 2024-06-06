@@ -17,6 +17,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 import javax.validation.ConstraintViolationException
 import javax.validation.Validator
@@ -99,6 +100,11 @@ class ExcelField<T, P : Any?> {
      * cell 样式
      */
     val cellStyle: CellStyle = CellStyle()
+
+    /**
+     * cell 样式自定义
+     */
+    var styleSetter: BiConsumer<CellStyle, T>? = null
 
     /**
      * 列宽度，-1表示自动计算
@@ -379,12 +385,18 @@ class ExcelField<T, P : Any?> {
     @JvmOverloads
     fun unit(value: Int, scale: Int = log10(value.toDouble()).toInt()): ExcelField<T, P> {
         return cell { property: P ->
-            val result = UnitConverter.larger(number = property as Number, value = value, scale = scale)
+            val result =
+                UnitConverter.larger(number = property as Number, value = value, scale = scale)
             result.toDouble()
         }
-                .property { cell: Any ->
-                    UnitConverter.smaller(number = BigDecimal(cell.toString()), propertyType!!, value = value, scale = scale)
-                }
+            .property { cell: Any ->
+                UnitConverter.smaller(
+                    number = BigDecimal(cell.toString()),
+                    propertyType!!,
+                    value = value,
+                    scale = scale
+                )
+            }
     }
 
     /**
@@ -419,8 +431,13 @@ class ExcelField<T, P : Any?> {
             if (property is String) {
                 val separator = ","
                 if (property.contains(separator)) {
-                    val split = property.split(separator).filter { it.isNotBlank() }.map { it.trim() }
-                    return@cell split.joinToString(separator) { s: String -> codeService.getDicCodes(codeType)!!.getName(s) }
+                    val split =
+                        property.split(separator).filter { it.isNotBlank() }.map { it.trim() }
+                    return@cell split.joinToString(separator) { s: String ->
+                        codeService.getDicCodes(
+                            codeType
+                        )!!.getName(s)
+                    }
                 } else {
                     return@cell codeService.getDicCodes(codeType)!!.getName(property)
                 }
@@ -437,11 +454,11 @@ class ExcelField<T, P : Any?> {
 
                 split.joinToString(separator) { s: String ->
                     codeService.getDicCodes(codeType)!!.getCode(s)?.toString()
-                            ?: throw IllegalArgumentException("无\"$s\"对应的类型")
+                        ?: throw IllegalArgumentException("无\"$s\"对应的类型")
                 }
             } else {
                 codeService.getDicCodes(codeType)!!.getCode(value)
-                        ?: throw IllegalArgumentException("无\"$cellValue\"对应的类型")
+                    ?: throw IllegalArgumentException("无\"$cellValue\"对应的类型")
             } as P?
         }
     }
@@ -517,10 +534,15 @@ class ExcelField<T, P : Any?> {
                 writeReplace.isAccessible = true
                 val serializedLambda = writeReplace.invoke(propertyGetter) as SerializedLambda
                 val implMethodName = serializedLambda.implMethodName
-                val methodSignature = SignatureAttribute.toMethodSignature(serializedLambda.instantiatedMethodType)
-                propertyType = ClassUtils.forName(methodSignature.returnType.jvmTypeName(), null) as Class<P>
+                val methodSignature =
+                    SignatureAttribute.toMethodSignature(serializedLambda.instantiatedMethodType)
+                propertyType =
+                    ClassUtils.forName(methodSignature.returnType.jvmTypeName(), null) as Class<P>
                 propertyName = resolvePropertyName(implMethodName)
-                entityType = ClassUtils.forName(methodSignature.parameterTypes[0].jvmTypeName(), null) as Class<T>
+                entityType = ClassUtils.forName(
+                    methodSignature.parameterTypes[0].jvmTypeName(),
+                    null
+                ) as Class<T>
                 //$lamda-0
                 if (!propertyName!!.contains("lambda\$new$") && !propertyName!!.contains("\$lambda")) {
                     propertySetter = ExcelCellSetter { entity, property ->
@@ -538,7 +560,8 @@ class ExcelField<T, P : Any?> {
 
         Assert.notNull(propertyType, "propertyType 不能为空")
 
-        isDateField = propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
+        isDateField =
+            propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
 
         this.cellStyle.defaultValueFormatting = defaultFormat
     }
@@ -551,7 +574,13 @@ class ExcelField<T, P : Any?> {
     }
 
     @JvmOverloads
-    constructor(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, isIndexColumn: Boolean = false, isFormula: Boolean = false) {
+    constructor(
+        title: String,
+        propertyType: Class<P>,
+        propertyGetter: ExcelConverter<T, P?>,
+        isIndexColumn: Boolean = false,
+        isFormula: Boolean = false
+    ) {
         this.title = title
         this.propertyType = propertyType
         this.propertyGetter = propertyGetter
@@ -560,7 +589,8 @@ class ExcelField<T, P : Any?> {
 
         Assert.notNull(propertyType, "propertyType 不能为空")
 
-        isDateField = propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
+        isDateField =
+            propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
 
         this.cellStyle.defaultValueFormatting = defaultFormat
     }
@@ -583,6 +613,11 @@ class ExcelField<T, P : Any?> {
 
     fun defaultValue(defaultValue: P): ExcelField<T, P> {
         this.defaultValue = defaultValue
+        return this
+    }
+
+    fun style(styleSetter: BiConsumer<CellStyle, T>?): ExcelField<T, P> {
+        this.styleSetter = styleSetter
         return this
     }
 
@@ -667,7 +702,12 @@ class ExcelField<T, P : Any?> {
      * @param validator      参数验证
      * @param validateGroups 参数验证组
      */
-    fun setProperty(obj: T, cellValue: Any?, validator: Validator, validateGroups: Array<Class<*>>) {
+    fun setProperty(
+        obj: T,
+        cellValue: Any?,
+        validator: Validator,
+        validateGroups: Array<Class<*>>
+    ) {
         val property: P? = if (isEmptyCell(cellValue)) {
             defaultValue
         } else {
@@ -675,7 +715,8 @@ class ExcelField<T, P : Any?> {
         }
         propertySetter?.let { it[obj] = property }
         if (propertyName != null) {
-            val constraintViolations = validator.validateProperty<Any>(obj, propertyName, *validateGroups)
+            val constraintViolations =
+                validator.validateProperty<Any>(obj, propertyName, *validateGroups)
             if (constraintViolations.isNotEmpty()) {
                 throw ConstraintViolationException(constraintViolations)
             }
@@ -729,12 +770,22 @@ class ExcelField<T, P : Any?> {
 
         @JvmStatic
         @JvmOverloads
-        fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, isIndexColumn: Boolean = false, isFormula: Boolean = false): ExcelField<T, P> {
+        fun <T, P> of(
+            title: String,
+            propertyType: Class<P>,
+            propertyGetter: ExcelConverter<T, P?>,
+            isIndexColumn: Boolean = false,
+            isFormula: Boolean = false
+        ): ExcelField<T, P> {
             return ExcelField(title, propertyType, propertyGetter, isIndexColumn, isFormula)
         }
 
         @JvmStatic
-        fun <T, P> poi(title: String, propertyGetter: ExcelConverter<T, P?>, cellSetter: (PoiExcel, ExcelFieldCell<T>) -> Unit): ExcelField<T, P> {
+        fun <T, P> poi(
+            title: String,
+            propertyGetter: ExcelConverter<T, P?>,
+            cellSetter: (PoiExcel, ExcelFieldCell<T>) -> Unit
+        ): ExcelField<T, P> {
             return ExcelField(title, propertyGetter).cellSetter(cellSetter)
         }
 
