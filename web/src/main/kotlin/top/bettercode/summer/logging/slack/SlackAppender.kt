@@ -62,7 +62,7 @@ echo | openssl s_client -connect slack.com:443 | openssl x509 > slack-com.crt
 
 bash
 
-keytool -import -alias slack-com -keystore ${'$'}JAVA_HOME/lib/security/cacerts -file slack-com.crt
+keytool -import -alias slack-com -keystore ${'$'}JAVA_HOME/jre/lib/security/cacerts -file slack-com.crt
 
 默认密码是 changeit。
 """
