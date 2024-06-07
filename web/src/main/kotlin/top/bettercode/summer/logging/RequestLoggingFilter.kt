@@ -180,11 +180,11 @@ class RequestLoggingFilter(
                     "${operation.collectionName}${if (operation.collectionName.isNotBlank() && operation.name.isNotBlank()) "/" else ""}${operation.name}"
                 val restUri = requestToUse.servletPath
 
-                val hasError = (error != null
-                        && (httpStatusCode >= 400
+                val hasError = error != null
+                        && !isClientAbortException(error)
+                        && httpStatusCode >= 400
                         && !properties.ignoredErrorStatusCode.contains(httpStatusCode)
-                        && (isDebugEnabled || httpStatusCode >= 500))
-                        )
+                        && (isDebugEnabled || httpStatusCode >= 500)
 
                 if (!hasError && requestTimeout) {
                     val initialComment = "$uriName($restUri)：请求响应速度慢"
@@ -206,7 +206,7 @@ class RequestLoggingFilter(
                     )
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
-                if ((error == null || isClientAbortException(error)) && !requestTimeout) {
+                if (error == null && !requestTimeout) {
                     log.info(marker, msg)
                 } else {
                     if (hasError) {
