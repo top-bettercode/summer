@@ -61,25 +61,29 @@ class DefaultErrorHandler(
         } else if (error is MethodArgumentTypeMismatchException) {
             val argumentName = error.name
             val targetType = error.requiredType?.name
+            val errorType =
+                if (error.message?.contains("out of range of") == true) "outOfRange" else "typeMismatch"
             var message: String?
             if (targetType != null) {
-                val code = "typeMismatch.$targetType"
-                message = getText("typeMismatch.$targetType")
+                val code = "$errorType.$targetType"
+                message = getText("$errorType.$targetType")
                 if (message == code) {
-                    message = getText("typeMismatch.type", targetType)
+                    message = getText("$errorType.type", targetType)
                 }
             } else {
-                message = getText("typeMismatch")
+                message = getText(errorType)
             }
             respEntity.message =
                 getText(argumentName) + separator + invalidValue(error.value) + message
             errors[argumentName] = message
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
-            val code = "typeMismatch.$targetType"
+            val errorType =
+                if (error.message?.contains("out of range of") == true) "outOfRange" else "typeMismatch"
+            val code = "$errorType.$targetType"
             var message = getText(code)
             if (message == code)
-                message = getText("typeMismatch.type", targetType)
+                message = getText("$errorType.type", targetType)
             respEntity.message = invalidValue(error.value) + message
         } else if (error is ConstraintViolationException) { //数据验证
             constraintViolationException(
@@ -90,10 +94,12 @@ class DefaultErrorHandler(
             val cause = error.cause
             if (cause is InvalidFormatException) {
                 val targetType = cause.targetType.name
-                val code = "typeMismatch.$targetType"
+                val errorType =
+                    if (cause.message?.contains("out of range of") == true) "outOfRange" else "typeMismatch"
+                val code = "$errorType.$targetType"
                 var message = getText(code)
                 if (message == code)
-                    message = getText("typeMismatch.type", targetType)
+                    message = getText("$errorType.type", targetType)
                 val path = cause.path
                 val desc =
                     path.joinToString("") { if (it.fieldName == null) "[${it.index}]" else ".${it.fieldName}" }
