@@ -39,13 +39,24 @@ open class SlackAppender(
             } catch (e: Exception) {
                 if (e.cause is SSLHandshakeException) {
                     slackClient.useCustomKeyStore = true
-                    channelExist = slackClient.channelExist(properties.channel)
-                } else
+                    try {
+                        channelExist = slackClient.channelExist(properties.channel)
+                    } catch (e: Exception) {
+                        channelExist = false
+                        log.error(
+                            MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                            "slack 查询频道信息失败",
+                            e
+                        )
+                    }
+                } else {
+                    channelExist = false
                     log.error(
                         MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
                         "slack 查询频道信息失败",
                         e
                     )
+                }
             }
         }
         return channelExist ?: false
