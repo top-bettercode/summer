@@ -3,6 +3,7 @@ package top.bettercode.summer.logging.slack
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.lang.util.StringUtil
+import javax.net.ssl.SSLHandshakeException
 
 /**
  * @author Peter Wu
@@ -10,16 +11,28 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 @Disabled
 class SlackClientTest {
 
-    private val slackClient = SlackClient("", "./build","/actuator")
+    private val slackClient = SlackClient(
+        "",
+        "./build",
+        "/actuator"
+    )
 
     @Test
     fun errorToken() {
-        println(StringUtil.json(SlackClient("xoxb-", "./build","/actuator").channelsList(), true))
+        println(StringUtil.json(SlackClient("xoxb-", "./build", "/actuator").channelsList(), true))
     }
 
     @Test
     fun channelsList() {
-        println(StringUtil.json(slackClient.channelsList(), true))
+        val channelsList = try {
+            slackClient.channelsList()
+        } catch (e: Exception) {
+            if (e.cause is SSLHandshakeException) {
+                slackClient.useCustomKeyStore = true
+                slackClient.channelsList()
+            } else throw e
+        }
+        println(StringUtil.json(channelsList, true))
     }
 
     @Test
@@ -43,30 +56,30 @@ class SlackClientTest {
     @Test
     fun postMessage() {
         println(
-                StringUtil.json(
-                        slackClient.postMessage(
-                                "dev",
-                                System.currentTimeMillis(),
-                                "test",
-                                "test",
-                                listOf("123testtest")
-                        ), true
-                )
+            StringUtil.json(
+                slackClient.postMessage(
+                    "dev",
+                    System.currentTimeMillis(),
+                    "test",
+                    "test",
+                    listOf("123testtest")
+                ), true
+            )
         )
     }
 
     @Test
     fun filesUpload() {
         println(
-                StringUtil.json(
-                        slackClient.filesUpload(
-                                "dev",
-                                System.currentTimeMillis(),
-                                "title",
-                                "initialComment",
-                                listOf("message")
-                        ), true
-                )
+            StringUtil.json(
+                slackClient.filesUpload(
+                    "dev",
+                    System.currentTimeMillis(),
+                    "title",
+                    "initialComment",
+                    listOf("message")
+                ), true
+            )
         )
     }
 }

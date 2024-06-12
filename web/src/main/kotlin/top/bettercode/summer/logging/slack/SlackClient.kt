@@ -3,6 +3,7 @@ package top.bettercode.summer.logging.slack
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -15,6 +16,10 @@ import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
+import java.net.HttpURLConnection
+import java.security.KeyStore
+import java.security.cert.X509Certificate
+import javax.net.ssl.*
 
 /**
  *
@@ -47,9 +52,56 @@ class SlackClient(
     private val api = "https://slack.com/api/"
     private val log: Logger = LoggerFactory.getLogger(SlackClient::class.java)
     private val restTemplate: RestTemplate = RestTemplate()
+    var useCustomKeyStore = false
 
     init {
-        val clientHttpRequestFactory = SimpleClientHttpRequestFactory()
+        val clientHttpRequestFactory = object : SimpleClientHttpRequestFactory() {
+
+            override fun prepareConnection(connection: HttpURLConnection, httpMethod: String) {
+                if (useCustomKeyStore) {
+                    val keyStore = KeyStore.getInstance("PKCS12")
+                    val certFileResource = ClassPathResource("/slack-com.p12")
+                    keyStore.load(certFileResource.inputStream, "changeit".toCharArray())
+
+                    val keyManagerFactory =
+                        KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+                    keyManagerFactory.init(keyStore, null)
+
+                    val trustManager = object : X509TrustManager {
+                        override fun checkClientTrusted(
+                            chain: Array<out X509Certificate>?,
+                            authType: String?
+                        ) {
+                        }
+
+                        override fun checkServerTrusted(
+                            chain: Array<out X509Certificate>?,
+                            authType: String?
+                        ) {
+                        }
+
+                        override fun getAcceptedIssuers(): Array<X509Certificate> {
+                            return emptyArray()
+                        }
+                    }
+
+                    val sslContext = SSLContext.getInstance("TLS")
+                    sslContext.init(
+                        keyManagerFactory.keyManagers,
+                        arrayOf(trustManager),
+                        java.security.SecureRandom()
+                    )
+                    val httpsConnection = connection as HttpsURLConnection
+                    val socketFactory = sslContext.socketFactory
+
+                    httpsConnection.sslSocketFactory = socketFactory
+
+                    httpsConnection.setHostnameVerifier { _: String?, _: SSLSession? -> true }
+                }
+
+                super.prepareConnection(connection, httpMethod)
+            }
+        }
         //Connect timeout
         clientHttpRequestFactory.setConnectTimeout(2000)
         //Read timeout
