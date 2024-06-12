@@ -78,7 +78,7 @@ open class WeixinPayClient(properties: WeixinPayProperties) : ApiTemplate<Weixin
                 java.security.SecureRandom()
             )
             val httpsConnection = connection as HttpsURLConnection
-            httpsConnection.setSSLSocketFactory(sslContext.socketFactory)
+            httpsConnection.sslSocketFactory = sslContext.socketFactory
 
             httpsConnection.setHostnameVerifier { _: String?, _: SSLSession? -> true }
 
