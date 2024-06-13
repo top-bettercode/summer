@@ -47,7 +47,7 @@ class DatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPos
                 environment).bind("summer.datasource.multi.datasources", Bindable
                 .mapOf(String::class.java, DataSourceExtProperties::class.java)).orElse(null)
         val configurationSources = JpaMybatisConfigurationUtil.findConfigurationSources(beanFactory)
-        if (configurationSources.size > 1) {
+        if (dataSources.isNotEmpty()) {
             val factory = beanFactory as DefaultListableBeanFactory
             configurationSources.forEach { (key, configurationSource) ->
                 val properties = dataSources[key]
