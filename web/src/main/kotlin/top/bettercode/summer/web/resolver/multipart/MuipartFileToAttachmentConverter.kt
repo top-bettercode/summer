@@ -26,7 +26,9 @@ import java.util.*
  * @author Peter Wu
  */
 class MuipartFileToAttachmentConverter(private val multipartProperties: SummerMultipartProperties) : Converter<MultipartFile, Attachment> {
+
     private val log = LoggerFactory.getLogger(MuipartFileToAttachmentConverter::class.java)
+
     override fun convert(source: MultipartFile): Attachment {
         return try {
             val requestAttributes = RequestContextHolder
