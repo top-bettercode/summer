@@ -18,8 +18,8 @@ open class WeixinProperties(
     open var basicAccessTokenUrl: String =
         "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}"
 
-    var appId: String = ""
-    var secret: String = ""
+    open var appId: String = ""
+    open var secret: String = ""
     var token: String = ""
     var aesKey: String = ""
 
