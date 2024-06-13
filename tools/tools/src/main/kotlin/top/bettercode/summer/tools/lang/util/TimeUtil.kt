@@ -18,7 +18,7 @@ import kotlin.math.absoluteValue
  * @author Peter Wu
  */
 open class TimeUtil(
-        private val localDateTime: LocalDateTime
+    private val localDateTime: LocalDateTime
 ) {
 
     /**
@@ -55,8 +55,8 @@ open class TimeUtil(
      */
     val firstDayOfQuarter: TimeUtil by lazy {
         of(
-                localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
-                        .with(TemporalAdjusters.firstDayOfMonth())
+            localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
+                .with(TemporalAdjusters.firstDayOfMonth())
         )
     }
 
@@ -67,8 +67,8 @@ open class TimeUtil(
      */
     val firstDayOfNextQuarter: TimeUtil by lazy {
         of(
-                localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
-                        .with(TemporalAdjusters.firstDayOfMonth())
+            localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
+                .with(TemporalAdjusters.firstDayOfMonth())
         )
     }
 
@@ -79,9 +79,9 @@ open class TimeUtil(
      */
     val lastDayOfQuarter: TimeUtil by lazy {
         of(
-                localDateTime
-                        .withMonth(localDateTime.month.firstMonthOfQuarter().plus(2).value)
-                        .with(TemporalAdjusters.lastDayOfMonth())
+            localDateTime
+                .withMonth(localDateTime.month.firstMonthOfQuarter().plus(2).value)
+                .with(TemporalAdjusters.lastDayOfMonth())
         )
     }
 
@@ -187,7 +187,7 @@ open class TimeUtil(
         @JvmStatic
         fun parse(text: CharSequence, pattern: String): TimeUtil {
             return parse(
-                    text, DateTimeFormatterBuilder()
+                text, DateTimeFormatterBuilder()
                     .appendPattern(pattern)
                     .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
                     .toFormatter()
@@ -207,12 +207,12 @@ open class TimeUtil(
         @JvmStatic
         fun parseDate(text: CharSequence, formatter: String): TimeUtil {
             return of(
-                    LocalDate.parse(
-                            text, DateTimeFormatterBuilder()
-                            .appendPattern(formatter)
-                            .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                            .toFormatter()
-                    )
+                LocalDate.parse(
+                    text, DateTimeFormatterBuilder()
+                        .appendPattern(formatter)
+                        .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                        .toFormatter()
+                )
             )
         }
 
@@ -250,7 +250,7 @@ open class TimeUtil(
         @JvmStatic
         fun of(calendar: Calendar): TimeUtil {
             return TimeUtil(
-                    LocalDateTime.ofInstant(calendar.toInstant(), calendar.timeZone.toZoneId())
+                LocalDateTime.ofInstant(calendar.toInstant(), calendar.timeZone.toZoneId())
             )
         }
 
@@ -302,7 +302,11 @@ open class TimeUtil(
          */
         @JvmStatic
         @JvmOverloads
-        fun getNtpTime(server: String = "http://cn.pool.ntp.org", connectTimeout: Int = 5, readTimeout: Int = 5): Long {
+        fun getNtpTime(
+            server: String = "http://cn.pool.ntp.org",
+            connectTimeout: Int = 5,
+            readTimeout: Int = 5
+        ): Long {
             val connection: URLConnection = URL(server).openConnection()
             connection.connectTimeout = connectTimeout * 1000
             connection.readTimeout = readTimeout * 1000
@@ -321,11 +325,11 @@ open class TimeUtil(
         private fun getNetworkTime(): Long {
             return runBlocking {
                 val ntpServers = listOf(
-                        "http://cn.pool.ntp.org",
-                        "http://pool.ntp.org",
-                        "http://time.windows.com",
-                        "http://time.apple.com",
-                        "http://time.google.com",
+                    "http://cn.pool.ntp.org",
+                    "http://pool.ntp.org",
+                    "http://time.windows.com",
+                    "http://time.apple.com",
+                    "http://time.google.com",
                 )
                 // 使用单一的 Deferred 对象，用于保存第一个返回的结果
                 val firstResult = CompletableDeferred<Long>()
@@ -363,11 +367,22 @@ open class TimeUtil(
             }
             now = now.plusMillis((System.currentTimeMillis() - now.toEpochMilli()) / 2)
             val networkTime = Instant.ofEpochMilli(time)
-            log.info("网络时间:{},本地时间:{}", of(networkTime).format(), of(now).format())
-            val diffSeconds = Duration.between(now, networkTime).seconds.absoluteValue
+            val seconds = Duration.between(networkTime, now).seconds
+            log.info(
+                "网络时间:{},本地时间:{},相差{}s",
+                of(networkTime).format(),
+                of(now).format(),
+                seconds
+            )
+            val diffSeconds = seconds.absoluteValue
             val synchronous = diffSeconds < acceptedDiffSeconds
             if (!synchronous) {
-                log.error("网络时间和本地时间不一致,网络时间:{},本地时间:{}", of(networkTime).format(), of(now).format())
+                log.error(
+                    "网络时间和本地时间不一致{}s,网络时间:{},本地时间:{}",
+                    seconds,
+                    of(networkTime).format(),
+                    of(now).format()
+                )
             }
             return synchronous
         }
