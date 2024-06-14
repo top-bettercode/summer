@@ -76,26 +76,24 @@ class SummerWebMvcConfigurer(
         registry.addConverter(
             genericConverter(
                 sourceType = Date::class.java,
-                targetType = String::class.java,
-                isParser = false
+                targetType = String::class.java
             ) { source ->
                 source.time.toString()
             })
         registry.addConverter(
             genericConverter(
                 sourceType = LocalDate::class.java,
-                targetType = String::class.java, isParser = false
+                targetType = String::class.java
             ) { source -> of(source).toMillis().toString() })
         registry.addConverter(
             genericConverter(
                 sourceType = LocalDateTime::class.java,
-                targetType = String::class.java, isParser = false
+                targetType = String::class.java
             ) { source -> of(source).toMillis().toString() })
     }
 
     private fun <S, T> genericConverter(
         sourceType: Class<S>, targetType: Class<T>,
-        isParser: Boolean = true,
         convert: (S) -> T?
     ) = object : ConditionalGenericConverter {
 
@@ -114,9 +112,8 @@ class SummerWebMvcConfigurer(
         }
 
         override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
-            return if (isParser) !targetType.hasAnnotation(DateTimeFormat::class.java) else !sourceType.hasAnnotation(
-                DateTimeFormat::class.java
-            )
+            return !targetType.hasAnnotation(DateTimeFormat::class.java) &&
+                    !sourceType.hasAnnotation(DateTimeFormat::class.java)
         }
     }
 
