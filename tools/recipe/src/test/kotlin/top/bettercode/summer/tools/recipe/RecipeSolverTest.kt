@@ -81,7 +81,6 @@ internal class RecipeSolverTest {
     private fun solve(requirement: RecipeRequirement, solverType: SolverType = SolverType.COPT, maxResult: Int, includeProductionCost: Boolean, nutrientUnchanged: Boolean, materialUnchanged: Boolean, toExcel: Boolean = false): RecipeResult {
         val solver = createSolver(solverType, epsilon = epsilon)
         val recipeResult = MultiRecipeSolver.solve(solver = solver, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
-
         System.err.println("============toExcel=============")
         if (toExcel)
             toExcel(recipeResult)

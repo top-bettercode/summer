@@ -182,9 +182,6 @@ data class RecipeRequirement(
             notMixMaterialConstraints: List<Array<MaterialIDs>> = emptyList(),
         ): RecipeRequirement {
             val tmpMaterial = materials.associateBy { it.id }
-            materials.forEach {
-                it.indicators.sysIndicators = systemIndicators
-            }
             //约束原料
             indicatorMaterialIDConstraints.values.forEach { indicator ->
                 indicator.value = indicator.value.minFrom(tmpMaterial)
