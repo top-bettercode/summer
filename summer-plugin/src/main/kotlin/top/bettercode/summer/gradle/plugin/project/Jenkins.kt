@@ -1,12 +1,26 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpResponse
+import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.web.client.DefaultResponseErrorHandler
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.getForObject
+import org.springframework.web.client.postForObject
+import org.w3c.dom.Element
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ClientProperties
+import java.io.ByteArrayOutputStream
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 
 /**
@@ -15,22 +29,70 @@ import top.bettercode.summer.tools.lang.capitalized
  */
 class Jenkins(private val url: String, auth: String) {
     private val log = LoggerFactory.getLogger(Jenkins::class.java)
-    private val restTemplate: RestTemplate
+    private val restTemplate: ApiTemplate<ClientProperties> =
+        ApiTemplate("jenkins", ClientProperties("jenkins"))
 
     init {
-        val (username, password) = auth.split(":")
-        restTemplate = RestTemplate()
-
         restTemplate.interceptors.add { request, body, execution ->
             val headers = request.headers
+            val (username, password) = auth.split(":")
             headers.setBasicAuth(username, password)
             execution.execute(request, body)
         }
         restTemplate.errorHandler = (object : DefaultResponseErrorHandler() {
             override fun handleError(response: ClientHttpResponse) {}
         })
+
+        (restTemplate.messageConverters.find { it is StringHttpMessageConverter } as StringHttpMessageConverter?)?.defaultCharset =
+            StandardCharsets.UTF_8
     }
 
+    fun config(job: String): String? {
+        return restTemplate.getForObject("$url/job/${job}/config.xml")
+    }
+
+    fun updateConfig(job: String, config: ByteArray) {
+        val headers = HttpHeaders()
+        headers.set(
+            "Content-Type",
+            MediaType(MediaType.TEXT_XML, Charset.forName("UTF-8")).toString()
+        )
+        val response: String =
+            restTemplate.postForObject("$url/job/${job}/config.xml", HttpEntity(config, headers))
+                ?: "成功"
+        log.warn("更新$job 配置结果:$response")
+    }
+
+    fun changeBranch(job: String, branch: String) {
+        val config = config(job)
+        if (config.isNullOrBlank()) {
+            log.warn("$job 配置获取失败")
+            return
+        }
+        val docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        val doc = docBuilder.parse(config.byteInputStream())
+        doc.documentElement.normalize()
+
+        // 修改 <name> 节点的值
+        val branchSpecNodes = doc.getElementsByTagName("hudson.plugins.git.BranchSpec")
+        for (i in 0 until branchSpecNodes.length) {
+            val branchSpecNode = branchSpecNodes.item(i) as Element
+            val nameNodes = branchSpecNode.getElementsByTagName("name")
+            if (nameNodes.length > 0) {
+                val nameNode = nameNodes.item(0)
+                nameNode.textContent = branch
+            }
+        }
+        // 将修改后的 XML 转换为字符串
+        val transformerFactory = TransformerFactory.newInstance()
+        val transformer = transformerFactory.newTransformer()
+        val source = DOMSource(doc)
+        val outputStream = ByteArrayOutputStream()
+        val result = StreamResult(outputStream)
+        transformer.transform(source, result)
+
+        updateConfig(job, outputStream.toByteArray())
+    }
 
     fun description(job: String): String {
         return restTemplate.getForObject("$url/job/${job}/description") ?: ""
@@ -46,8 +108,8 @@ class Jenkins(private val url: String, auth: String) {
         }
         val envName = if (env == "default") "" else env.capitalized()
         val jobTaskName = jobName.replace(
-                "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
-                ""
+            "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
+            ""
         ).capitalized()
         log.warn("如需查看最新build信息，请运行:lastBuildInfo$envName$jobTaskName 任务")
     }
@@ -56,7 +118,7 @@ class Jenkins(private val url: String, auth: String) {
         //X-Text-Size: 2565
         //X-More-Data: true
         val entity =
-                restTemplate.getForEntity<String>("$url/job/${job}/$id/logText/progressiveText")
+            restTemplate.getForEntity<String>("$url/job/${job}/$id/logText/progressiveText")
         val body = entity.body ?: ""
         val message = body.substring(startIndex)
         if (message.isNotBlank())

@@ -22,14 +22,16 @@ object RootProjectTasks {
         project.tasks.apply {
 
             val prefix = "jenkins"
-            val entries = project.properties.filter { it.key.startsWith("$prefix.") && it.key.endsWith(".jobs") }
+            val entries =
+                project.properties.filter { it.key.startsWith("$prefix.") && it.key.endsWith(".jobs") }
 
-            val jobs = ((if (project.properties.containsKey("$prefix.jobs")) mapOf("default" to entries["$prefix.jobs"]
+            val jobs = ((if (project.properties.containsKey("$prefix.jobs")) mapOf(
+                "default" to entries["$prefix.jobs"]
             ) else emptyMap()) + entries.filter { it.key.split('.').size == 3 }.mapKeys {
                 it.key.substringAfter("$prefix.").substringBefore(".")
             }).mapValues {
                 it.value.toString().split(",")
-                        .filter { s -> s.isNotBlank() }.distinct()
+                    .filter { s -> s.isNotBlank() }.distinct()
             }
 
             val jenkinsServer = project.findProperty("$prefix.server")?.toString()
@@ -61,13 +63,32 @@ object RootProjectTasks {
                             })
                         }
                     }
-                    if (env in arrayOf("default", "dev", "test", "other") || env.startsWith("test") || env.startsWith("dev")) {
+                    if (env in arrayOf(
+                            "default",
+                            "dev",
+                            "test",
+                            "other"
+                        ) || env.startsWith("test") || env.startsWith("dev")
+                    ) {
+                        val envName = if (env == "default") "" else env.capitalized()
+                        val branch = project.findProperty("$prefix.branch")?.toString()
+                        if (!branch.isNullOrBlank())
+                            create("changeBranch$envName") {
+                                it.group = prefix
+                                it.doLast(object : Action<Task> {
+                                    override fun execute(it: Task) {
+                                        jobNames.forEach { jobName ->
+                                            jenkins.changeBranch(jobName, branch)
+                                        }
+                                    }
+                                })
+                            }
+
                         jobNames.forEach { jobName ->
                             val jobTaskName = jobName.replace(
-                                    "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
-                                    ""
+                                "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
+                                ""
                             ).capitalized()
-                            val envName = if (env == "default") "" else env.capitalized()
                             create("build$envName$jobTaskName") {
                                 it.group = prefix
                                 it.doLast(object : Action<Task> {
@@ -130,7 +151,7 @@ object RootProjectTasks {
                             val suffix = if (isDefault) "" else "-$module"
                             //init.sql
                             val destFile = FileUnit(
-                                    "database/init$suffix.sql"
+                                "database/init$suffix.sql"
                             )
                             destFile.apply {
                                 val commentPrefix = when (database.driver) {
@@ -142,7 +163,8 @@ object RootProjectTasks {
                                         "--"
                                     }
                                 }
-                                val databaseFile = project.rootProject.file("database/database$suffix.sql")
+                                val databaseFile =
+                                    project.rootProject.file("database/database$suffix.sql")
                                 if (databaseFile.exists()) {
                                     +"$commentPrefix ${
                                         databaseFile.readText().trim()
@@ -161,27 +183,29 @@ object RootProjectTasks {
                                     else -> {}
                                 }
 
-                                val schema = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}.sql")
+                                val schema =
+                                    project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}.sql")
                                 if (schema.exists()) {
                                     +schema.readText().trim()
                                     +""
                                 } else {
-                                    project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}").listFiles()?.filter { it.isFile }?.forEach {
-                                        +it.readText().trim()
-                                        +""
-                                    }
-                                }
-                                project.rootProject.file("database/init/$suffix").listFiles()
-                                        ?.filter { it.isFile }
-                                        ?.forEach {
+                                    project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}")
+                                        .listFiles()?.filter { it.isFile }?.forEach {
                                             +it.readText().trim()
                                             +""
                                         }
+                                }
+                                project.rootProject.file("database/init/$suffix").listFiles()
+                                    ?.filter { it.isFile }
+                                    ?.forEach {
+                                        +it.readText().trim()
+                                        +""
+                                    }
                             }
                             destFile.writeTo(project.rootDir)
                             //update.sql
                             val updateFile = FileUnit(
-                                    "database/update$suffix.sql"
+                                "database/update$suffix.sql"
                             )
                             updateFile.apply {
                                 val commentPrefix = when (database.driver) {
@@ -195,12 +219,14 @@ object RootProjectTasks {
                                 }
 
                                 val updateDdl =
-                                        project.rootProject.file("database/update/v${project.version}$suffix.sql")
+                                    project.rootProject.file("database/update/v${project.version}$suffix.sql")
                                 if (updateDdl.exists()) {
                                     +updateDdl.readText().trim()
                                     +""
                                 } else {
-                                    val listFiles = project.rootProject.file("database/update/v${project.version}$suffix").listFiles()
+                                    val listFiles =
+                                        project.rootProject.file("database/update/v${project.version}$suffix")
+                                            .listFiles()
                                     if (listFiles.isNullOrEmpty()) {
                                         +"$commentPrefix ${database.url.substringBefore("?")}"
                                         when (database.driver) {
@@ -219,18 +245,19 @@ object RootProjectTasks {
                                     }
                                 }
                                 +""
-                                project.rootProject.file("database/update-data/v${project.version}$suffix").listFiles()
-                                        ?.filter { it.isFile }
-                                        ?.forEach {
-                                            +it.readText().trim()
-                                            +""
-                                        }
+                                project.rootProject.file("database/update-data/v${project.version}$suffix")
+                                    .listFiles()
+                                    ?.filter { it.isFile }
+                                    ?.forEach {
+                                        +it.readText().trim()
+                                        +""
+                                    }
                             }
                             updateFile.writeTo(project.rootDir)
 
                             //test.sql
                             val testFile = FileUnit(
-                                    "database/test$suffix.sql"
+                                "database/test$suffix.sql"
                             )
                             testFile.apply {
                                 val commentPrefix = when (database.driver) {
@@ -242,7 +269,8 @@ object RootProjectTasks {
                                         "--"
                                     }
                                 }
-                                val databaseFile = project.rootProject.file("database/database$suffix.sql")
+                                val databaseFile =
+                                    project.rootProject.file("database/database$suffix.sql")
                                 if (databaseFile.exists()) {
                                     +"$commentPrefix ${
                                         databaseFile.readText().trim()
@@ -261,10 +289,11 @@ object RootProjectTasks {
                                     else -> {}
                                 }
 
-                                project.rootProject.file("database/test/v${project.version}$suffix").listFiles()?.filter { it.isFile }?.forEach {
-                                    +it.readText().trim()
-                                    +""
-                                }
+                                project.rootProject.file("database/test/v${project.version}$suffix")
+                                    .listFiles()?.filter { it.isFile }?.forEach {
+                                        +it.readText().trim()
+                                        +""
+                                    }
                             }
                             testFile.writeTo(project.rootDir)
                         }
@@ -275,9 +304,9 @@ object RootProjectTasks {
             create("prettyConfig") { t ->
                 t.doLast {
                     ConfigTool.prettyConfig(
-                            project.file("conf"),
-                            project.subprojects.map { it.file("src/main/resources/application.yml") }
-                                    .filter { it.exists() })
+                        project.file("conf"),
+                        project.subprojects.map { it.file("src/main/resources/application.yml") }
+                            .filter { it.exists() })
                 }
             }
 
