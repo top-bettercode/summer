@@ -16,7 +16,7 @@
       "id" : "总养分",
       "index" : 0,
       "name" : "总养分",
-      "type" : "GENERAL",
+      "type" : "TOTAL_NUTRIENT",
       "unit" : "%",
       "value" : {
         "max" : 1.0,
@@ -27,7 +27,7 @@
       "id" : "氮",
       "index" : 1,
       "name" : "氮",
-      "type" : "GENERAL",
+      "type" : "NUTRIENT",
       "unit" : "%",
       "value" : {
         "max" : 1.0,
@@ -84,7 +84,7 @@
       "id" : "磷",
       "index" : 2,
       "name" : "磷",
-      "type" : "GENERAL",
+      "type" : "NUTRIENT",
       "unit" : "%",
       "value" : {
         "max" : 1.0,
@@ -95,7 +95,7 @@
       "id" : "钾",
       "index" : 3,
       "name" : "钾",
-      "type" : "GENERAL",
+      "type" : "NUTRIENT",
       "unit" : "%",
       "value" : {
         "max" : 1.0,
@@ -202,19 +202,11 @@
     "id" : "氯化铵（湿）",
     "index" : 5,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.235
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.235
       },
@@ -242,19 +234,11 @@
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.253
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.253
       },
@@ -282,19 +266,11 @@
     "id" : "焦化硫铵",
     "index" : 7,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.205
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.205
       },
@@ -322,19 +298,11 @@
     "id" : "己内级硫铵",
     "index" : 8,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.21
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.21
       },
@@ -362,19 +330,11 @@
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.81
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.81
       },
@@ -394,19 +354,11 @@
     "id" : "碳铵",
     "index" : 10,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.17
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.17
       },
@@ -426,19 +378,11 @@
     "id" : "32-4-0硝磷",
     "index" : 11,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.36
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.315
       },
@@ -462,7 +406,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.045
       }
@@ -474,19 +418,11 @@
     "id" : "55磷酸一铵（粉）",
     "index" : 12,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.55
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.1
       },
@@ -520,7 +456,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.45
       }
@@ -532,19 +468,11 @@
     "id" : "58磷酸一铵（粉）",
     "index" : 13,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.58
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.1
       },
@@ -578,7 +506,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.48
       }
@@ -590,19 +518,11 @@
     "id" : "60磷酸一铵（粉）",
     "index" : 14,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.6
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.1
       },
@@ -636,7 +556,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.5
       }
@@ -648,19 +568,11 @@
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.48
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.08
       },
@@ -694,7 +606,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.4
       }
@@ -706,19 +618,11 @@
     "id" : "8-40-0再浆肥（颗料）",
     "index" : 17,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.48
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.08
       },
@@ -752,7 +656,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.4
       }
@@ -764,19 +668,11 @@
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.64
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.18
       },
@@ -810,7 +706,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.46
       }
@@ -822,19 +718,11 @@
     "id" : "64全水溶磷酸一铵",
     "index" : 19,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.64
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.11
       },
@@ -868,7 +756,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.53
       }
@@ -880,19 +768,11 @@
     "id" : "67全水溶磷酸一铵",
     "index" : 20,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.67
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.11
       },
@@ -926,7 +806,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.56
       }
@@ -938,19 +818,11 @@
     "id" : "工业一铵73%",
     "index" : 21,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.73
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.11
       },
@@ -984,7 +856,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.62
       }
@@ -996,19 +868,11 @@
     "id" : "锌工铵",
     "index" : 22,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.65
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.11
       },
@@ -1050,7 +914,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.54
       },
@@ -1070,14 +934,6 @@
     "id" : "磷酸二氢钾",
     "index" : 23,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.86
-      },
       "水溶磷" : {
         "id" : "水溶磷",
         "index" : 8,
@@ -1108,7 +964,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.52
       },
@@ -1116,7 +972,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.34
       }
@@ -1128,19 +984,11 @@
     "id" : "硝酸钾",
     "index" : 25,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.58
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.135
       },
@@ -1164,7 +1012,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.445
       }
@@ -1176,14 +1024,6 @@
     "id" : "中白肥（24%)",
     "index" : 26,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.24
-      },
       "水溶磷" : {
         "id" : "水溶磷",
         "index" : 8,
@@ -1214,7 +1054,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.24
       }
@@ -1226,14 +1066,6 @@
     "id" : "低白肥（14%）",
     "index" : 27,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.14
-      },
       "水溶磷" : {
         "id" : "水溶磷",
         "index" : 8,
@@ -1264,7 +1096,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.14
       }
@@ -1276,14 +1108,6 @@
     "id" : "磷矿粉",
     "index" : 28,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.32
-      },
       "物料水分" : {
         "id" : "物料水分",
         "index" : 6,
@@ -1296,7 +1120,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.32
       }
@@ -1308,14 +1132,6 @@
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.21
-      },
       "水溶磷" : {
         "id" : "水溶磷",
         "index" : 8,
@@ -1346,7 +1162,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.21
       }
@@ -1358,14 +1174,6 @@
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.6
-      },
       "氯离子" : {
         "id" : "氯离子",
         "index" : 4,
@@ -1386,7 +1194,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.6
       }
@@ -1398,14 +1206,6 @@
     "id" : "95%进口红钾（粉）",
     "index" : 32,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.61
-      },
       "氯离子" : {
         "id" : "氯离子",
         "index" : 4,
@@ -1426,7 +1226,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.61
       }
@@ -1438,14 +1238,6 @@
     "id" : "52%罗布泊硫酸钾（粉）",
     "index" : 34,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.52
-      },
       "氯离子" : {
         "id" : "氯离子",
         "index" : 4,
@@ -1474,7 +1266,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.52
       }
@@ -1486,14 +1278,6 @@
     "id" : "52%曼海姆硫酸钾（粉）",
     "index" : 35,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.52
-      },
       "氯离子" : {
         "id" : "氯离子",
         "index" : 4,
@@ -1522,7 +1306,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.52
       }
@@ -2219,14 +2003,6 @@
     "id" : "生化黄腐酸钾",
     "index" : 67,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.1
-      },
       "有机质" : {
         "id" : "有机质",
         "index" : 19,
@@ -2255,7 +2031,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.1
       },
@@ -2275,14 +2051,6 @@
     "id" : "心连心矿源黄腐酸钾",
     "index" : 68,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.1
-      },
       "有机质" : {
         "id" : "有机质",
         "index" : 19,
@@ -2311,7 +2079,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.1
       }
@@ -2323,14 +2091,6 @@
     "id" : "植物氨基酸",
     "index" : 69,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.1
-      },
       "有机质" : {
         "id" : "有机质",
         "index" : 19,
@@ -2343,7 +2103,7 @@
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.1
       },
@@ -2379,19 +2139,11 @@
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.345
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.345
       },
@@ -2492,7 +2244,7 @@
       "id" : "产品水分",
       "index" : 5,
       "name" : "产品水分",
-      "type" : "GENERAL",
+      "type" : "PRODUCT_WATER",
       "unit" : "%",
       "value" : 0.0
     },
@@ -2500,7 +2252,7 @@
       "id" : "总养分",
       "index" : 0,
       "name" : "总养分",
-      "type" : "GENERAL",
+      "type" : "TOTAL_NUTRIENT",
       "unit" : "%",
       "value" : 0.0
     },
@@ -2740,7 +2492,7 @@
       "id" : "氮",
       "index" : 1,
       "name" : "氮",
-      "type" : "GENERAL",
+      "type" : "NUTRIENT",
       "unit" : "%",
       "value" : 0.0
     },
@@ -2764,7 +2516,7 @@
       "id" : "水溶磷率",
       "index" : 7,
       "name" : "水溶磷率",
-      "type" : "GENERAL",
+      "type" : "RATE_TO_OTHER",
       "unit" : "%",
       "value" : 0.0
     },
@@ -2780,7 +2532,7 @@
       "id" : "物料水分",
       "index" : 6,
       "name" : "物料水分",
-      "type" : "GENERAL",
+      "type" : "WATER",
       "unit" : "%",
       "value" : 0.0
     },
@@ -2820,7 +2572,7 @@
       "id" : "磷",
       "index" : 2,
       "name" : "磷",
-      "type" : "GENERAL",
+      "type" : "NUTRIENT",
       "unit" : "%",
       "value" : 0.0
     },
@@ -2852,7 +2604,7 @@
       "id" : "钾",
       "index" : 3,
       "name" : "钾",
-      "type" : "GENERAL",
+      "type" : "NUTRIENT",
       "unit" : "%",
       "value" : 0.0
     },

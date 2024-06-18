@@ -42,7 +42,15 @@ object TestPrepareData {
                 id = name,
                 name = name,
                 value = 0.0,
-                unit = if ("活性菌" == name) "亿" else "%"
+                unit = if ("活性菌" == name) "亿" else "%",
+                type = when (name) {
+                    "总养分" -> RecipeIndicatorType.TOTAL_NUTRIENT
+                    "氮", "磷", "钾" -> RecipeIndicatorType.NUTRIENT
+                    "产品水分" -> RecipeIndicatorType.PRODUCT_WATER
+                    "物料水分" -> RecipeIndicatorType.WATER
+                    "水溶磷率" -> RecipeIndicatorType.RATE_TO_OTHER
+                    else -> RecipeIndicatorType.GENERAL
+                }
             )
         })
 
@@ -218,6 +226,17 @@ object TestPrepareData {
             val min = (targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble().scale()
             val max = (targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble().scale()
             val indicator = when (i) {
+                //总养分
+                0 -> RecipeIndicator(
+                    index = 0,
+                    id = indicatorNames[0],
+                    name = indicatorNames[0],
+                    value = DoubleRange(min, max),
+                    unit = "%",
+                    type = RecipeIndicatorType.TOTAL_NUTRIENT,
+                )
+
+                //水溶磷率
                 3 -> RecipeIndicator(
                     index = 7,
                     id = indicatorNames[7],
@@ -228,15 +247,35 @@ object TestPrepareData {
                     itId = "水溶磷",
                     otherId = "磷"
                 )
-
+                //氮
+                1 -> RecipeIndicator(
+                    index = 1,
+                    id = indicatorNames[1],
+                    name = indicatorNames[1],
+                    value = DoubleRange(min, max),
+                    type = RecipeIndicatorType.NUTRIENT,
+                    unit = "%"
+                )
+                //磷
+                2 -> RecipeIndicator(
+                    index = 2,
+                    id = indicatorNames[2],
+                    name = indicatorNames[2],
+                    value = DoubleRange(min, max),
+                    type = RecipeIndicatorType.NUTRIENT,
+                    unit = "%"
+                )
+                //钾
                 4 -> RecipeIndicator(
                     index = 3,
                     id = indicatorNames[3],
                     name = indicatorNames[3],
                     value = DoubleRange(min, max),
+                    type = RecipeIndicatorType.NUTRIENT,
                     unit = "%"
                 )
 
+                //氯离子
                 5 -> RecipeIndicator(
                     index = 4,
                     id = indicatorNames[4],
@@ -245,6 +284,7 @@ object TestPrepareData {
                     unit = "%"
                 )
 
+                //产品水分
                 6 -> RecipeIndicator(
                     index = 5,
                     id = indicatorNames[5],
@@ -254,6 +294,7 @@ object TestPrepareData {
                     type = RecipeIndicatorType.PRODUCT_WATER
                 )
 
+                //物料水分
                 7 -> RecipeIndicator(
                     index = 6,
                     id = indicatorNames[6],
@@ -263,6 +304,7 @@ object TestPrepareData {
                     type = RecipeIndicatorType.WATER
                 )
 
+                //硼
                 8 -> RecipeIndicator(
                     index = 10,
                     id = indicatorNames[10],
@@ -271,6 +313,7 @@ object TestPrepareData {
                     unit = "%"
                 )
 
+                //锌
                 9 -> RecipeIndicator(
                     index = 11,
                     id = indicatorNames[11],
@@ -601,21 +644,15 @@ object TestPrepareData {
             val materialPrice = materialPrices[materialName] ?: continue
             val indicators = mutableListOf<RecipeIndicator<Double>>()
             var i = 0
-            indicators.add(
-                RecipeIndicator(
-                    index = i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
-                    value = materialForm.totalNutrient.scale(),
-                    unit = "%"
-                )
-            )
+            //跳过总养分
+            // 氮 磷 钾
             indicators.add(
                 RecipeIndicator(
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = materialForm.nitrogen!!.scale(),
+                    type = RecipeIndicatorType.NUTRIENT,
                     unit = "%"
                 )
             )
@@ -625,6 +662,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = materialForm.phosphorus!!.scale(),
+                    type = RecipeIndicatorType.NUTRIENT,
                     unit = "%"
                 )
             )
@@ -634,6 +672,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = materialForm.potassium!!.scale(),
+                    type = RecipeIndicatorType.NUTRIENT,
                     unit = "%"
                 )
             )
@@ -646,6 +685,7 @@ object TestPrepareData {
                     unit = "%"
                 )
             )
+            //跳过产品水份
             i++
             indicators.add(
                 RecipeIndicator(

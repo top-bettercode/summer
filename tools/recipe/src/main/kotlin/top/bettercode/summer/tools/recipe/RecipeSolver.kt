@@ -131,31 +131,37 @@ object RecipeSolver {
         // 成份要求 总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 物料水分 硼 锌
         for (indicator in rangeIndicators) {
             val range = indicator.value
-            if (indicator.isProductWater) {
-                continue
-            }
-            if (indicator.isRateToOther) {
-                val otherVar = recipeMaterials.map {
-                    val material = it.value
-                    val coeff = material.indicators.valueOf(indicator.otherId!!)
-                    it.value.weight * coeff
-                }.sum()
+            when {
+                indicator.isProductWater -> {
+                    continue
+                }
+                indicator.isTotalNutrient -> {
+                    recipeMaterials.map {
+                        it.value.weight * it.value.totalNutrient()
+                    }.between(targetWeight * range.min, targetWeight * range.max)
+                }
+                indicator.isRateToOther -> {
+                    val otherVar = recipeMaterials.map {
+                        val material = it.value
+                        val coeff = material.indicators.valueOf(indicator.otherId!!)
+                        material.weight * coeff
+                    }.sum()
 
-                val itVar = recipeMaterials.map {
-                    val material = it.value
-                    val coeff = material.indicators.valueOf(indicator.itId!!)
-                    it.value.weight * coeff
-                }.sum()
+                    val itVar = recipeMaterials.map {
+                        val material = it.value
+                        val coeff = material.indicators.valueOf(indicator.itId!!)
+                        material.weight * coeff
+                    }.sum()
 
-                val minRate = indicator.value.min
-                val maxRate = indicator.value.max
-                itVar.ratioInRange(otherVar, minRate, maxRate)
-            } else {
-                recipeMaterials.map {
-                    val material = it.value
-                    val coeff = material.indicators.valueOf(indicator.id)
-                    material.weight * coeff
-                }.between(targetWeight * range.min, targetWeight * range.max)
+                    itVar.ratioInRange(otherVar, range.min, range.max)
+                }
+                else -> {
+                    recipeMaterials.map {
+                        val material = it.value
+                        val coeff = material.indicators.valueOf(indicator.id)
+                        material.weight * coeff
+                    }.between(targetWeight * range.min, targetWeight * range.max)
+                }
             }
         }
 

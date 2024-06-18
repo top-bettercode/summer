@@ -56,6 +56,9 @@ data class RecipeIndicator<T>(
 ) : Comparable<RecipeIndicator<T>> {
 
     @get:JsonIgnore
+    val isTotalNutrient = type == RecipeIndicatorType.TOTAL_NUTRIENT
+
+    @get:JsonIgnore
     val isNutrient = type == RecipeIndicatorType.NUTRIENT
 
     @get:JsonIgnore

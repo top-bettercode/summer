@@ -61,12 +61,12 @@ object MultiRecipeSolver {
                             }
                             // 养份保持不变 总养份
                             if (nutrientUnchanged) {
-                                val totalNutrient = recipe.materials.sumOf { m ->
-                                    m.totalNutrient()
+                                val totalNutrientWeight = recipe.materials.sumOf { m ->
+                                    m.totalNutrientWeight()
                                 }
                                 recipeMaterials.map { (_, material) ->
                                     material.weight * material.totalNutrient()
-                                }.eq(totalNutrient)
+                                }.eq(totalNutrientWeight)
                             }
                         }
                         // 添加价格约束，约束下一个解的范围

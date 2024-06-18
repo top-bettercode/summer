@@ -40,10 +40,15 @@ object RecipeExport {
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
             // 原料成份
-            requirement.systemIndicators.values.sortedBy { it.index }
+            requirement.systemIndicators.values.filter { !it.isProductWater }.sortedBy { it.index }
                 .forEachIndexed { index, indicator ->
                     val column = c + index
-                    cell(r, column).value(matrial.indicators.valueOf(indicator.id).scale())
+                    val value =
+                        if (indicator.isTotalNutrient) matrial.totalNutrient() else matrial.indicators.valueOf(
+                            indicator.id
+                        )
+
+                    cell(r, column).value(value.scale())
                         .format(if (indicator.unit == "%") "0.0%" else "").setStyle()
                 }
         }

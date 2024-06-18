@@ -38,6 +38,9 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
         return index.compareTo(other.index)
     }
 
+    fun totalNutrient(): Double {
+        return indicators.nutrients.sumOf { it.value }
+    }
 }
 
 

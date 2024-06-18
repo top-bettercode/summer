@@ -7,19 +7,11 @@
       "id" : "氯化铵（干）",
       "index" : 3,
       "indicators" : {
-        "总养分" : {
-          "id" : "总养分",
-          "index" : 0,
-          "name" : "总养分",
-          "type" : "GENERAL",
-          "unit" : "%",
-          "value" : 0.253
-        },
         "氮" : {
           "id" : "氮",
           "index" : 1,
           "name" : "氮",
-          "type" : "GENERAL",
+          "type" : "NUTRIENT",
           "unit" : "%",
           "value" : 0.253
         },
@@ -44,23 +36,15 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 474.3083003953,
+    "weight" : 553.8345271295,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.253
-      },
       "氮" : {
         "id" : "氮",
         "index" : 1,
         "name" : "氮",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.253
       },
@@ -92,14 +76,6 @@
       "id" : "低白肥（14%）",
       "index" : 25,
       "indicators" : {
-        "总养分" : {
-          "id" : "总养分",
-          "index" : 0,
-          "name" : "总养分",
-          "type" : "GENERAL",
-          "unit" : "%",
-          "value" : 0.14
-        },
         "水溶磷" : {
           "id" : "水溶磷",
           "index" : 8,
@@ -130,7 +106,7 @@
           "id" : "磷",
           "index" : 2,
           "name" : "磷",
-          "type" : "GENERAL",
+          "type" : "NUTRIENT",
           "unit" : "%",
           "value" : 0.14
         }
@@ -139,18 +115,10 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 417.1868805339,
+    "weight" : 377.7133188303,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.14
-      },
       "水溶磷" : {
         "id" : "水溶磷",
         "index" : 8,
@@ -181,7 +149,7 @@
         "id" : "磷",
         "index" : 2,
         "name" : "磷",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.14
       }
@@ -197,14 +165,6 @@
       "id" : "95%氯化钾烘干粉（国产）",
       "index" : 26,
       "indicators" : {
-        "总养分" : {
-          "id" : "总养分",
-          "index" : 0,
-          "name" : "总养分",
-          "type" : "GENERAL",
-          "unit" : "%",
-          "value" : 0.6
-        },
         "氯离子" : {
           "id" : "氯离子",
           "index" : 4,
@@ -225,7 +185,7 @@
           "id" : "钾",
           "index" : 3,
           "name" : "钾",
-          "type" : "GENERAL",
+          "type" : "NUTRIENT",
           "unit" : "%",
           "value" : 0.6
         }
@@ -234,18 +194,10 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 124.3230612088,
+    "weight" : 100.0,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
-      "总养分" : {
-        "id" : "总养分",
-        "index" : 0,
-        "name" : "总养分",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 0.6
-      },
       "氯离子" : {
         "id" : "氯离子",
         "index" : 4,
@@ -266,7 +218,7 @@
         "id" : "钾",
         "index" : 3,
         "name" : "钾",
-        "type" : "GENERAL",
+        "type" : "NUTRIENT",
         "unit" : "%",
         "value" : 0.6
       }
@@ -295,7 +247,7 @@
       "price" : 0.35,
       "unit" : "吨"
     },
-    "weight" : 92.6704082419,
+    "weight" : 80.0,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -314,8 +266,8 @@
     "price" : 0.35,
     "unit" : "吨"
   } ],
-  "dryWaterWeight" : 108.4886503799,
-  "materialCost" : 1289.3162055338,
+  "dryWaterWeight" : 111.5478459598,
+  "materialCost" : 1289.3162055336,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -375,6 +327,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "waterWeight" : 158.4886503798,
-  "weight" : 1108.4886503799
+  "totalNutrientWeight" : 253.0,
+  "waterWeight" : 144.3380068619,
+  "weight" : 1111.5478459598
 }

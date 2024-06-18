@@ -30,22 +30,22 @@ import java.io.File
  */
 internal class RecipeSolverTest {
     val products = listOf(
-            "13-05-07高氯枸磷",
-            "24-06-10高氯枸磷",
-            "15-15-15喷浆硫基",
-            "15-15-15喷浆氯基",
-            "15-15-15常规氯基"
+        "13-05-07高氯枸磷",
+        "24-06-10高氯枸磷",
+        "15-15-15喷浆硫基",
+        "15-15-15喷浆氯基",
+        "15-15-15常规氯基"
     )
     val solveTypes = listOf(
-            SolverType.COPT,
-            SolverType.CPLEX,
-            SolverType.SCIP,
-            SolverType.GUROBI,
-            SolverType.CBC,
+        SolverType.COPT,
+        SolverType.CPLEX,
+        SolverType.SCIP,
+        SolverType.GUROBI,
+        SolverType.CBC,
     )
 
     val maxResult = 20
-    val includeProductionCost = true
+    val includeProductionCost = false
     val nutrientUnchanged = true
     val materialUnchanged = true
     val solveTimes = 1
@@ -78,12 +78,27 @@ internal class RecipeSolverTest {
 //        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
     }
 
-    private fun solve(requirement: RecipeRequirement, solverType: SolverType = SolverType.COPT, maxResult: Int, includeProductionCost: Boolean, nutrientUnchanged: Boolean, materialUnchanged: Boolean, toExcel: Boolean = false): RecipeResult {
+    private fun solve(
+        requirement: RecipeRequirement,
+        solverType: SolverType = SolverType.COPT,
+        maxResult: Int,
+        includeProductionCost: Boolean,
+        nutrientUnchanged: Boolean,
+        materialUnchanged: Boolean,
+        toExcel: Boolean = false
+    ): RecipeResult {
         val solver = createSolver(solverType, epsilon = epsilon)
-        val recipeResult = MultiRecipeSolver.solve(solver = solver, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged)
+        val recipeResult = MultiRecipeSolver.solve(
+            solver = solver,
+            requirement = requirement,
+            maxResult = maxResult,
+            includeProductionCost = includeProductionCost,
+            nutrientUnchanged = nutrientUnchanged,
+            materialUnchanged = materialUnchanged
+        )
         System.err.println("============toExcel=============")
         if (toExcel)
-            toExcel(recipeResult)
+            toExcel(requirement, recipeResult)
 
         System.err.println("============效验结果=============")
         validateResult(recipeResult)
@@ -107,7 +122,15 @@ internal class RecipeSolverTest {
 
         val results = mutableMapOf<SolverType, Long>()
         solveTypes.forEachIndexed { index, solverType ->
-            val result = solve(solverType = solverType, requirement = requirement, maxResult = maxResult, includeProductionCost = includeProductionCost, nutrientUnchanged = nutrientUnchanged, materialUnchanged = materialUnchanged, toExcel = index == 0 && toExcel)
+            val result = solve(
+                solverType = solverType,
+                requirement = requirement,
+                maxResult = maxResult,
+                includeProductionCost = includeProductionCost,
+                nutrientUnchanged = nutrientUnchanged,
+                materialUnchanged = materialUnchanged,
+                toExcel = index == 0 && toExcel
+            )
             recipeResult?.let { res -> assert(res, result) }
             recipeResult = result
             results[solverType] = result.time
@@ -128,18 +151,16 @@ internal class RecipeSolverTest {
         }
     }
 
-    private fun toExcel(recipeResult: RecipeResult) {
+    private fun toExcel(requirement: RecipeRequirement, recipeResult: RecipeResult) {
         val recipes = recipeResult.recipes
         val size = recipes.size
-        if (size == 0) {
-            return
-        }
-        val requirement = recipes[0].requirement
-        val fileName: String = (requirement.productName + if (requirement.maxUseMaterialNum == null) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxUseMaterialNum}")
-        val outFile = File("build/excel/" + recipeResult.solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
+        val fileName: String =
+            (requirement.productName + if (requirement.maxUseMaterialNum == null) "配方计算结果-进料口不限" else "配方计算结果-进料口不大于${requirement.maxUseMaterialNum}")
+        val outFile =
+            File("build/excel/" + recipeResult.solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
         outFile.parentFile.mkdirs()
 
-        recipeResult.toExcel(outFile)
+        recipeResult.toExcel(outFile, requirement)
         Runtime.getRuntime().exec(arrayOf("xdg-open", outFile.absolutePath))
         System.err.println("==================================================")
         System.err.println(" 耗时：" + recipeResult.time + "ms" + " 结果：" + size + "个")
@@ -159,19 +180,31 @@ internal class RecipeSolverTest {
         val productName = requirement.productName
         val recipe1 = recipes[0]
         val includeProductionCost = recipe1.includeProductionCost
-        val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
+        val dir =
+            File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
         dir.mkdirs()
         val expectedRequirement = File("$dir/requirement.json").bufferedReader().readText()
         //配方要求
-        Assertions.assertEquals(expectedRequirement, json(requirement,
+        Assertions.assertEquals(
+            expectedRequirement, json(
+                requirement,
                 IRecipeMaterial::class.java to RecipeMaterialView::class.java
-        ), recipeResult.solverName)
+            ), recipeResult.solverName
+        )
         //配方
         recipes.forEachIndexed { index, recipe ->
             val file = File("$dir/${recipeResult.solverName}/配方${index + 1}.json")
             if (file.exists()) {
                 val expectedRecipe = file.bufferedReader().readText()
-                Assertions.assertEquals(expectedRecipe, json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java), recipeResult.solverName + "配方${index + 1}")
+                Assertions.assertEquals(
+                    expectedRecipe,
+                    json(
+                        recipe,
+                        IRecipeMaterial::class.java to RecipeMaterialView::class.java,
+                        Recipe::class.java to RecipeView::class.java
+                    ),
+                    recipeResult.solverName + "配方${index + 1}"
+                )
             }
         }
     }
@@ -181,8 +214,13 @@ internal class RecipeSolverTest {
         solve.recipes.forEachIndexed { index, recipe ->
             Assertions.assertEquals(recipe.cost.scale(7), solve1.recipes[index].cost.scale(7))
         }
-        Assertions.assertEquals(json(solve.recipes[0].materials), json(solve1.recipes[0].materials))
-        Assertions.assertEquals(json(solve.recipes[0]), json(solve1.recipes[0]))
+        if (solve.recipes.size > 0) {
+            Assertions.assertEquals(
+                json(solve.recipes[0].materials),
+                json(solve1.recipes[0].materials)
+            )
+            Assertions.assertEquals(json(solve.recipes[0]), json(solve1.recipes[0]))
+        }
     }
 
     private fun json(value: Any, vararg view: Pair<Class<*>, Class<*>>): String {
@@ -200,28 +238,41 @@ internal class RecipeSolverTest {
 
     private fun saveRecipe(recipeResult: RecipeResult) {
         val recipes = recipeResult.recipes
+        if (recipes.isEmpty()) {
+            return
+        }
         val recipe1 = recipes[0]
         val includeProductionCost = recipe1.includeProductionCost
         val requirement = recipe1.requirement
         val productName = requirement.productName
-        val dir = File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
+        val dir =
+            File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
         dir.mkdirs()
         //配方要求
-        File("$dir/requirement.json").writeText(json(requirement,
+        File("$dir/requirement.json").writeText(
+            json(
+                requirement,
                 IRecipeMaterial::class.java to RecipeMaterialView::class.java
-        ))
+            )
+        )
         //配方
         recipes.forEachIndexed { index, recipe ->
             val file = File("$dir/${recipeResult.solverName}/配方${index + 1}.json")
             file.parentFile.mkdirs()
-            file.writeText(json(recipe, IRecipeMaterial::class.java to RecipeMaterialView::class.java, Recipe::class.java to RecipeView::class.java))
+            file.writeText(
+                json(
+                    recipe,
+                    IRecipeMaterial::class.java to RecipeMaterialView::class.java,
+                    Recipe::class.java to RecipeView::class.java
+                )
+            )
         }
     }
 
     fun createSolver(
-            solverType: SolverType,
-            epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-            logging: Boolean = false,
+        solverType: SolverType,
+        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+        logging: Boolean = false,
     ): Solver {
         return when (solverType) {
             SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)

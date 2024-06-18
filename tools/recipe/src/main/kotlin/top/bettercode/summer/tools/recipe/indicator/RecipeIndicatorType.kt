@@ -11,6 +11,11 @@ enum class RecipeIndicatorType {
     GENERAL,
 
     /**
+     * 总养分
+     */
+    TOTAL_NUTRIENT,
+
+    /**
      * 养分
      */
     NUTRIENT,

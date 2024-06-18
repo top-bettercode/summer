@@ -33,20 +33,20 @@ import java.io.File
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder(alphabetic = true)
 data class Recipe(
-        /**
-         * 配方要求
-         */
-        @JsonProperty("requirement")
-        val requirement: RecipeRequirement,
-        @JsonProperty("includeProductionCost")
-        val includeProductionCost: Boolean,
-        @JsonProperty("optimalProductionCost")
-        val optimalProductionCost: ProductionCostValue?,
-        @JsonProperty("cost")
-        val cost: Double,
-        /** 选用的原料  */
-        @JsonProperty("materials")
-        val materials: List<RecipeMaterialValue>
+    /**
+     * 配方要求
+     */
+    @JsonProperty("requirement")
+    val requirement: RecipeRequirement,
+    @JsonProperty("includeProductionCost")
+    val includeProductionCost: Boolean,
+    @JsonProperty("optimalProductionCost")
+    val optimalProductionCost: ProductionCostValue?,
+    @JsonProperty("cost")
+    val cost: Double,
+    /** 选用的原料  */
+    @JsonProperty("materials")
+    val materials: List<RecipeMaterialValue>
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
 
@@ -67,6 +67,12 @@ data class Recipe(
         get() = materials.sumOf { it.waterWeight }.scale()
 
     /**
+     * 总养分
+     */
+    val totalNutrientWeight: Double
+        get() = materials.sumOf { it.totalNutrientWeight() }.scale()
+
+    /**
      * 产出重量
      */
     val weight: Double
@@ -78,13 +84,15 @@ data class Recipe(
 
     companion object {
         fun read(file: File): Recipe {
-            val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            val objectMapper =
+                StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
             return objectMapper.readValue(file, Recipe::class.java)
         }
     }
 
     fun write(file: File) {
-        val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+        val objectMapper =
+            StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
         objectMapper.writeValue(file, this)
     }
 
@@ -111,8 +119,14 @@ data class Recipe(
         val rangeIndicators = requirement.indicatorRangeConstraints
         for (indicator in rangeIndicators) {
             val indicatorValue = when (indicator.type) {
+                RecipeIndicatorType.TOTAL_NUTRIENT -> (totalNutrientWeight / targetWeight).scale()
                 RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight).scale()
-                RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
+                RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf {
+                    it.indicatorWeight(
+                        indicator.otherId!!
+                    )
+                }).scale()
+
                 else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / targetWeight).scale()
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
@@ -122,14 +136,16 @@ data class Recipe(
         }
 
         val materialRangeConstraints = requirement.materialRangeConstraints
-        val mustUseMaterials = materialRangeConstraints.filter { it.then.min > 0 }.map { it.term }.flatten()
+        val mustUseMaterials =
+            materialRangeConstraints.filter { it.then.min > 0 }.map { it.term }.flatten()
 
         // 指标原料约束
         val materialIDIndicators = requirement.indicatorMaterialIDConstraints
         for (indicator in materialIDIndicators) {
             val materialList = materials.filter { it.indicators.valueOf(indicator.id) > 0.0 }
             if (materialList.isNotEmpty()) {
-                val indicatorUsedMaterials = materialList.map { it.id }.filter { !mustUseMaterials.contains(it) }
+                val indicatorUsedMaterials =
+                    materialList.map { it.id }.filter { !mustUseMaterials.contains(it) }
                 if (!indicator.value.containsAll(indicatorUsedMaterials)) {
                     throw IllegalRecipeException("指标:${indicator.name}所用原料：${indicatorUsedMaterials} 不在范围${indicator.value}内")
                 }
@@ -154,10 +170,20 @@ data class Recipe(
         // 不能混用的原料,value: 原料ID
         val notMixMaterials = requirement.notMixMaterialConstraints
         for (notMixMaterial in notMixMaterials) {
-            val mixMaterials = notMixMaterial.map { notMix -> usedMaterials.filter { notMix.contains(it) } }.filter { it.isNotEmpty() }
+            val mixMaterials =
+                notMixMaterial.map { notMix -> usedMaterials.filter { notMix.contains(it) } }
+                    .filter { it.isNotEmpty() }
             val size = mixMaterials.size
             if (size > 1) {
-                throw IllegalRecipeException("配方混用原料：${mixMaterials.joinToString(",", "[", "]") { it.joinToString("、") }}")
+                throw IllegalRecipeException(
+                    "配方混用原料：${
+                        mixMaterials.joinToString(
+                            ",",
+                            "[",
+                            "]"
+                        ) { it.joinToString("、") }
+                    }"
+                )
             }
         }
 
@@ -183,8 +209,10 @@ data class Recipe(
             val ids = termThen.term
             val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
             val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
-            val usedNormalWeight = materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
-            val usedOverdoseWeight = materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
+            val usedNormalWeight =
+                materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
+            val usedOverdoseWeight =
+                materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
             if ((usedWeight - usedAddWeight).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException("原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}")
@@ -208,8 +236,10 @@ data class Recipe(
         // 条件约束，当条件1满足时，条件2必须满足
         val materialConditions = requirement.materialConditionConstraints
         for ((whenCon, thenCon) in materialConditions) {
-            val whenWeight = materials.filter { whenCon.materials.contains(it.id) }.sumOf { it.weight }
-            val thenWeight = materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
+            val whenWeight =
+                materials.filter { whenCon.materials.contains(it.id) }.sumOf { it.weight }
+            val thenWeight =
+                materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
             var whenTrue = false
             when (whenCon.condition.sense) {
                 Sense.EQ -> {
@@ -239,37 +269,79 @@ data class Recipe(
             when (thenCon.condition.sense) {
                 Sense.EQ -> {
                     if (whenTrue && thenWeight != thenCon.condition.value) {
-                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
+                        throw IllegalRecipeException(
+                            "条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    thenCon.materials,
+                                    RecipeCondition(value = thenWeight)
+                                )
+                            }"
+                        )
                     }
                 }
 
                 Sense.NE -> {
                     if (whenTrue && thenWeight == thenCon.condition.value) {
-                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
+                        throw IllegalRecipeException(
+                            "条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    thenCon.materials,
+                                    RecipeCondition(value = thenWeight)
+                                )
+                            }"
+                        )
                     }
                 }
 
                 Sense.GT -> {
                     if (whenTrue && thenWeight <= thenCon.condition.value) {
-                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
+                        throw IllegalRecipeException(
+                            "条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    thenCon.materials,
+                                    RecipeCondition(value = thenWeight)
+                                )
+                            }"
+                        )
                     }
                 }
 
                 Sense.LT -> {
                     if (whenTrue && thenWeight >= thenCon.condition.value) {
-                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
+                        throw IllegalRecipeException(
+                            "条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    thenCon.materials,
+                                    RecipeCondition(value = thenWeight)
+                                )
+                            }"
+                        )
                     }
                 }
 
                 Sense.GE -> {
                     if (whenTrue && thenWeight < thenCon.condition.value) {
-                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
+                        throw IllegalRecipeException(
+                            "条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    thenCon.materials,
+                                    RecipeCondition(value = thenWeight)
+                                )
+                            }"
+                        )
                     }
                 }
 
                 Sense.LE -> {
                     if (whenTrue && thenWeight > thenCon.condition.value) {
-                        throw IllegalRecipeException("条件约束：当${whenCon}时，${thenCon}不成立:${MaterialCondition(thenCon.materials, RecipeCondition(value = thenWeight))}")
+                        throw IllegalRecipeException(
+                            "条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    thenCon.materials,
+                                    RecipeCondition(value = thenWeight)
+                                )
+                            }"
+                        )
                     }
                 }
             }
@@ -290,7 +362,9 @@ data class Recipe(
     /**
      * 消耗原料汇总相关值
      */
-    fun TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>.relationValue(check: Boolean = false): Pair<DoubleRange, DoubleRange> {
+    fun TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>.relationValue(
+        check: Boolean = false
+    ): Pair<DoubleRange, DoubleRange> {
         val ids = this.term
         val materials = materials
         val consumeMaterials = materials.filter { ids.contains(it.id) }
@@ -316,20 +390,26 @@ data class Recipe(
 
                 //m 对应原料的用量变量
                 val normalWeight =
-                        if (relationIds == null) {//当无其他消耗m原料时，取本身用量
-                            m.weight
-                        } else {//当有其他消耗m原料时，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
-                            Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
-                            m.normalWeight(relationIds)
-                        }
+                    if (relationIds == null) {//当无其他消耗m原料时，取本身用量
+                        m.weight
+                    } else {//当有其他消耗m原料时，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
+                        Assert.notEmpty(
+                            m.consumes,
+                            "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
+                        )
+                        m.normalWeight(relationIds)
+                    }
                 //过量消耗原料用量变量
                 val overdoseWeight =
-                        if (relationIds == null) {//当无其他消耗m原料时，不存在过量消耗
-                            0.0
-                        } else {//当有其他消耗m原料时，如：氯化钾反应需过量硫酸耗液氨,取关联原料消耗汇总
-                            Assert.notEmpty(m.consumes, "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料")
-                            m.overdoseWeight(relationIds)
-                        }
+                    if (relationIds == null) {//当无其他消耗m原料时，不存在过量消耗
+                        0.0
+                    } else {//当有其他消耗m原料时，如：氯化钾反应需过量硫酸耗液氨,取关联原料消耗汇总
+                        Assert.notEmpty(
+                            m.consumes,
+                            "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
+                        )
+                        m.overdoseWeight(relationIds)
+                    }
                 if (normal != null) {
                     mMinNormalWeight += normalWeight * normal.min * replaceRate
                     mMaxNormalWeight += normalWeight * normal.max * replaceRate
@@ -376,6 +456,9 @@ data class Recipe(
             }
         }
 
-        return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(usedMinOverdoseWeight, usedMaxOverdoseWeight)
+        return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(
+            usedMinOverdoseWeight,
+            usedMaxOverdoseWeight
+        )
     }
 }
