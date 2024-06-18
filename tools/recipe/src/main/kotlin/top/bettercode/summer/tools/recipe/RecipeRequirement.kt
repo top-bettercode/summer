@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.criteria.TermThen
 import top.bettercode.summer.tools.recipe.indicator.RecipeMaterialIDIndicators
 import top.bettercode.summer.tools.recipe.indicator.RecipeRangeIndicators
+import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
 import top.bettercode.summer.tools.recipe.material.RecipeMaterial
@@ -28,76 +29,81 @@ import java.util.function.Predicate
  */
 @JsonPropertyOrder(alphabetic = true)
 data class RecipeRequirement(
-        /** 产品名称  */
-        @JsonProperty("productName")
-        val productName: String,
-        /** 目标重量，单位KG  */
-        @JsonProperty("targetWeight")
-        val targetWeight: Double = 1000.0,
-        /**
-         * 收率
-         */
-        @JsonProperty("yield")
-        val yield: Double = 1.0,
-        /** 原料进料口最大数，null不限  */
-        @JsonProperty("maxIngredientNum")
-        val maxUseMaterialNum: Int? = null,
-        /**
-         * 最大烘干量，单位KG，null 允许烘干全部水份
-         */
-        @JsonProperty("maxBakeWeight")
-        val maxBakeWeight: Double? = null,
-        /**
-         * 制造费用
-         */
-        @JsonProperty("productionCost")
-        val productionCost: ProductionCost,
-        /**
-         * 包装耗材
-         */
-        @JsonProperty("packagingMaterials")
-        val packagingMaterials: List<RecipeOtherMaterial>,
-        /** 原料  */
-        @JsonProperty("materials")
-        val materials: List<RecipeMaterial>,
+    /** 产品名称  */
+    @JsonProperty("productName")
+    val productName: String,
+    /** 目标重量，单位KG  */
+    @JsonProperty("targetWeight")
+    val targetWeight: Double = 1000.0,
+    /**
+     * 收率
+     */
+    @JsonProperty("yield")
+    val yield: Double = 1.0,
+    /** 原料进料口最大数，null不限  */
+    @JsonProperty("maxIngredientNum")
+    val maxUseMaterialNum: Int? = null,
+    /**
+     * 最大烘干量，单位KG，null 允许烘干全部水份
+     */
+    @JsonProperty("maxBakeWeight")
+    val maxBakeWeight: Double? = null,
+    /**
+     * 制造费用
+     */
+    @JsonProperty("productionCost")
+    val productionCost: ProductionCost,
+    /**
+     *系统指标
+     */
+    @JsonProperty("systemIndicators")
+    val systemIndicators: RecipeValueIndicators,
+    /**
+     * 包装耗材
+     */
+    @JsonProperty("packagingMaterials")
+    val packagingMaterials: List<RecipeOtherMaterial>,
+    /** 原料  */
+    @JsonProperty("materials")
+    val materials: List<RecipeMaterial>,
 
-        /** 指定用原料ID  */
-        @JsonProperty("useMaterialConstraints")
-        val useMaterialConstraints: MaterialIDs,
-        /** 不能用原料ID  */
-        @JsonProperty("noUseMaterialConstraints")
-        val noUseMaterialConstraints: MaterialIDs,
-        /**
-         * 指标范围约束,key：指标ID,value:指标值范围
-         */
-        @JsonProperty("indicatorRangeConstraints")
-        val indicatorRangeConstraints: RecipeRangeIndicators,
+    /** 指定用原料ID  */
+    @JsonProperty("useMaterialConstraints")
+    val useMaterialConstraints: MaterialIDs,
+    /** 不能用原料ID  */
+    @JsonProperty("noUseMaterialConstraints")
+    val noUseMaterialConstraints: MaterialIDs,
+    /**
+     * 指标范围约束,key：指标ID,value:指标值范围
+     */
+    @JsonProperty("indicatorRangeConstraints")
+    val indicatorRangeConstraints: RecipeRangeIndicators,
 
-        /** 原料约束,key:原料ID, value: 原料使用范围约束  */
-        @JsonProperty("materialRangeConstraints")
-        val materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-        /** 条件约束，当条件1满足时，条件2必须满足  */
-        @JsonProperty("materialConditionConstraints")
-        val materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
-        /**
-         *关联原料约束
-         */
-        @JsonProperty("materialRelationConstraints")
-        val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
-        /**
-         * 指定原料约束
-         */
-        @JsonProperty("materialIDConstraints")
-        val materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
-        /**
-         * 指标指定用原料约束,key:指标ID,value:原料ID
-         */
-        @JsonProperty("indicatorMaterialIDConstraints")
-        val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
+    /** 原料约束,key:原料ID, value: 原料使用范围约束  */
+    @JsonProperty("materialRangeConstraints")
+    val materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
+    /** 条件约束，当条件1满足时，条件2必须满足  */
+    @JsonProperty("materialConditionConstraints")
+    val materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
+    /**
+     *关联原料约束
+     */
+    @JsonProperty("materialRelationConstraints")
+    val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
+    /**
+     * 指定原料约束
+     */
+    @JsonProperty("materialIDConstraints")
+    val materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
+    /**
+     * 指标指定用原料约束,key:指标ID,value:原料ID
+     */
+    @JsonProperty("indicatorMaterialIDConstraints")
+    val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
 
-        /** 不能混用的原料,value: 原料ID  */
-        @JsonProperty("notMixMaterialConstraints")
-        val notMixMaterialConstraints: List<Array<MaterialIDs>>,
+    /** 不能混用的原料,value: 原料ID  */
+    @JsonProperty("notMixMaterialConstraints")
+    val notMixMaterialConstraints: List<Array<MaterialIDs>>,
 ) {
 
 
@@ -118,7 +124,8 @@ data class RecipeRequirement(
 
     //--------------------------------------------
     fun write(file: File) {
-        val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+        val objectMapper =
+            StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
         objectMapper.writeValue(file, this)
     }
     //--------------------------------------------
@@ -126,7 +133,8 @@ data class RecipeRequirement(
     companion object {
 
         fun read(file: File): RecipeRequirement {
-            val objectMapper = StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            val objectMapper =
+                StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
             return objectMapper.readValue(file, RecipeRequirement::class.java)
         }
 
@@ -154,25 +162,29 @@ data class RecipeRequirement(
         @JvmStatic
         @JvmOverloads
         fun of(
-                productName: String,
-                targetWeight: Double,
-                yield: Double = 1.0,
-                maxUseMaterialNum: Int? = null,
-                maxBakeWeight: Double? = null,
-                productionCost: ProductionCost,
-                packagingMaterials: List<RecipeOtherMaterial>,
-                materials: List<RecipeMaterial>,
-                useMaterialConstraints: MaterialIDs,
-                noUseMaterialConstraints: MaterialIDs,
-                indicatorRangeConstraints: RecipeRangeIndicators,
-                materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-                materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
-                materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
-                materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
-                indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
-                notMixMaterialConstraints: List<Array<MaterialIDs>> = emptyList(),
+            productName: String,
+            targetWeight: Double,
+            yield: Double = 1.0,
+            maxUseMaterialNum: Int? = null,
+            maxBakeWeight: Double? = null,
+            productionCost: ProductionCost,
+            systemIndicators: RecipeValueIndicators,
+            packagingMaterials: List<RecipeOtherMaterial>,
+            materials: List<RecipeMaterial>,
+            useMaterialConstraints: MaterialIDs,
+            noUseMaterialConstraints: MaterialIDs,
+            indicatorRangeConstraints: RecipeRangeIndicators,
+            materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
+            materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
+            materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
+            materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
+            indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
+            notMixMaterialConstraints: List<Array<MaterialIDs>> = emptyList(),
         ): RecipeRequirement {
             val tmpMaterial = materials.associateBy { it.id }
+            materials.forEach {
+                it.indicators.sysIndicators = systemIndicators
+            }
             //约束原料
             indicatorMaterialIDConstraints.values.forEach { indicator ->
                 indicator.value = indicator.value.minFrom(tmpMaterial)
@@ -205,7 +217,8 @@ data class RecipeRequirement(
                 arrayOf(it.term.materials, it.then.materials)
             }
             val fixNotMixMaterialConstraints = notMixMaterialConstraints + noMixMaterials
-            val fixMaterialConditionConstraints = (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
+            val fixMaterialConditionConstraints =
+                (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
 
             // 必选原料
             val useMaterialIds = useMaterialConstraints.ids.toMutableList()
@@ -289,62 +302,69 @@ data class RecipeRequirement(
 
 
             val materialList = materials.groupBy { it.indicators.key }.values
-                    .asSequence()
-                    .map { list ->
-                        val must = list.filter { f -> materialMust.test(f) }
-                        val min = list.filter { f -> materialFalse.test(f) }
-                                .minOfWithOrNull(materialComparator) { it }
-                        if (min == null)
-                            must
-                        else
-                            must + min
-                    }.filter { it.isNotEmpty() }.flatten().distinct()
-                    .toList()
+                .asSequence()
+                .map { list ->
+                    val must = list.filter { f -> materialMust.test(f) }
+                    val min = list.filter { f -> materialFalse.test(f) }
+                        .minOfWithOrNull(materialComparator) { it }
+                    if (min == null)
+                        must
+                    else
+                        must + min
+                }.filter { it.isNotEmpty() }.flatten().distinct()
+                .toList()
             return RecipeRequirement(
-                    productName = productName,
-                    targetWeight = targetWeight,
-                    yield = `yield`,
-                    maxUseMaterialNum = maxUseMaterialNum,
-                    maxBakeWeight = maxBakeWeight,
-                    productionCost = productionCost,
-                    packagingMaterials = packagingMaterials,
-                    materials = materialList,
-                    materialIDConstraints = materialIDConstraints,
-                    useMaterialConstraints = if (useMaterialConstraints.ids.isNotEmpty()) useMaterialIds.distinct().toMaterialIDs() else useMaterialConstraints,
-                    noUseMaterialConstraints = noUseMaterialConstraints,
-                    indicatorRangeConstraints = indicatorRangeConstraints,
-                    indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
-                    materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() },
-                    notMixMaterialConstraints = fixNotMixMaterialConstraints,
-                    materialConditionConstraints = fixMaterialConditionConstraints,
-                    materialRelationConstraints = materialRelationConstraints.filter { it.term.ids.isNotEmpty() && it.then.isNotEmpty() },
+                productName = productName,
+                targetWeight = targetWeight,
+                yield = `yield`,
+                maxUseMaterialNum = maxUseMaterialNum,
+                maxBakeWeight = maxBakeWeight,
+                productionCost = productionCost,
+                systemIndicators = systemIndicators,
+                packagingMaterials = packagingMaterials,
+                materials = materialList,
+                materialIDConstraints = materialIDConstraints,
+                useMaterialConstraints = if (useMaterialConstraints.ids.isNotEmpty()) useMaterialIds.distinct()
+                    .toMaterialIDs() else useMaterialConstraints,
+                noUseMaterialConstraints = noUseMaterialConstraints,
+                indicatorRangeConstraints = indicatorRangeConstraints,
+                indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
+                materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() },
+                notMixMaterialConstraints = fixNotMixMaterialConstraints,
+                materialConditionConstraints = fixMaterialConditionConstraints,
+                materialRelationConstraints = materialRelationConstraints.filter { it.term.ids.isNotEmpty() && it.then.isNotEmpty() },
             )
         }
 
         private fun MaterialIDs.minFrom(materials: Map<String, RecipeMaterial>): MaterialIDs {
-            val ids = this.mapNotNull { materials[it] }.groupBy { it.indicators.key }.values.mapNotNull { list ->
-                list.minOfWithOrNull(materialComparator) { it }?.id
-            }
+            val ids = this.mapNotNull { materials[it] }
+                .groupBy { it.indicators.key }.values.mapNotNull { list ->
+                    list.minOfWithOrNull(materialComparator) { it }?.id
+                }
             return MaterialIDs(ids)
         }
 
         private fun RelationMaterialIDs.minFrom(materials: Map<String, RecipeMaterial>): RelationMaterialIDs {
-            val ids = this.mapNotNull { materials[it] }.groupBy { it.indicators.key }.values.mapNotNull { list ->
-                list.minOfWithOrNull(materialComparator) { it }?.id
-            }
-            val relationIds = this.relationIds?.mapNotNull { materials[it] }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-                list.minOfWithOrNull(materialComparator) { it }?.id
-            }?.toMaterialIDs()
+            val ids = this.mapNotNull { materials[it] }
+                .groupBy { it.indicators.key }.values.mapNotNull { list ->
+                    list.minOfWithOrNull(materialComparator) { it }?.id
+                }
+            val relationIds = this.relationIds?.mapNotNull { materials[it] }
+                ?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
+                    list.minOfWithOrNull(materialComparator) { it }?.id
+                }?.toMaterialIDs()
             return RelationMaterialIDs(ids, relationIds)
         }
 
         private fun ReplacebleMaterialIDs.minFrom(materials: Map<String, RecipeMaterial>): ReplacebleMaterialIDs {
-            val ids = this.mapNotNull { materials[it] }.groupBy { it.indicators.key }.values.mapNotNull { list ->
-                list.minOfWithOrNull(materialComparator) { it }?.id
-            }
-            val replaceIds = this.replaceIds?.mapNotNull { materials[it] }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-                list.minOfWithOrNull(materialComparator) { it }?.id
-            }?.toMaterialIDs()
+            val ids = this.mapNotNull { materials[it] }
+                .groupBy { it.indicators.key }.values.mapNotNull { list ->
+                    list.minOfWithOrNull(materialComparator) { it }?.id
+                }
+            val replaceIds = this.replaceIds?.mapNotNull { materials[it] }
+                ?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
+                    list.minOfWithOrNull(materialComparator) { it }?.id
+                }?.toMaterialIDs()
             return ReplacebleMaterialIDs(ids, this.replaceRate, replaceIds)
         }
 

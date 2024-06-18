@@ -20,14 +20,15 @@ object RecipeExport {
         val indicators = if (materials.isEmpty()) {
             return
         } else
-            materials.first().indicators.values.sortedBy { it.index }
+            requirement.systemIndicators.values.sortedBy { it.index }
         //标题
         cell(0, 0).value("原料名称").headerStyle().setStyle()
         cell(0, 1).value("价格").headerStyle().setStyle()
         var i = 2
         for (indicator in indicators) {
             val column = i++
-            cell(0, column).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0).setStyle()
+            cell(0, column).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0)
+                .setStyle()
         }
         //原料
         var r = 0
@@ -39,10 +40,12 @@ object RecipeExport {
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
             // 原料成份
-            matrial.indicators.values.sortedBy { it.index }.forEachIndexed { index, indicator ->
-                val column = c + index
-                cell(r, column).value(indicator.value.scale()).format(if (indicator.unit == "%") "0.0%" else "").setStyle()
-            }
+            requirement.systemIndicators.values.sortedBy { it.index }
+                .forEachIndexed { index, indicator ->
+                    val column = c + index
+                    cell(r, column).value(matrial.indicators.valueOf(indicator.id).scale())
+                        .format(if (indicator.unit == "%") "0.0%" else "").setStyle()
+                }
         }
     }
 
@@ -60,8 +63,10 @@ object RecipeExport {
             rangeIndicators.forEach {
                 r = startCol
                 cell(r++, c).value("${it.name}(${it.unit})").headerStyle().width(11.0).setStyle()
-                cell(r++, c).value(it.value.max).format(if (it.unit == "%") "0.0%" else "").setStyle()
-                cell(r++, c++).value(it.value.min).format(if (it.unit == "%") "0.0%" else "").setStyle()
+                cell(r++, c).value(it.value.max).format(if (it.unit == "%") "0.0%" else "")
+                    .setStyle()
+                cell(r++, c++).value(it.value.min).format(if (it.unit == "%") "0.0%" else "")
+                    .setStyle()
             }
             val columnSize = rangeIndicators.size + startCol
             //推优原料限制
@@ -85,7 +90,8 @@ object RecipeExport {
             // 推优原料用量限制
             c = startCol
             val materialConditionConstraints = materialConditionConstraints
-            cell(r, c++).value("推优原料用量范围").height(20.0 * materialConditionConstraints.size).setStyle()
+            cell(r, c++).value("推优原料用量范围").height(20.0 * materialConditionConstraints.size)
+                .setStyle()
             val materialConditionConstraintsStr = materialConditionConstraints.joinToString("\n") {
                 "如果 ${it.term.materials} ${it.term.condition}公斤时，${it.then.materials} ${it.then.condition}公斤；"
             }
@@ -95,7 +101,8 @@ object RecipeExport {
             // 硫酸/液氨/碳铵计算规则
             c = startCol
             val relationConstraints = materialRelationConstraints
-            cell(r, c++).value("硫酸/液氨/碳铵计算规则").height(40.0 * relationConstraints.sumOf { it.then.size }).setStyle()
+            cell(r, c++).value("硫酸/液氨/碳铵计算规则")
+                .height(40.0 * relationConstraints.sumOf { it.then.size }).setStyle()
             val relationConstraintsStr = relationConstraints.joinToString("\n\n") {
                 "启用${it.term.idsString()}计算规则${if (it.term.replaceIds == null) "\n" else " ${it.term.idsString()}/${it.term.replaceIds}用量换算系数：${it.term.replaceRate}\n"}${
                     it.then.joinToString("\n") { v ->
@@ -156,8 +163,13 @@ object RecipeExport {
             r = pr
             cell(r++, c).value("税费").headerStyle().setStyle()
             cell(r++, c).value(productionCost.taxRate).comment("税费税率").format("0.00").setStyle()
-            cell(r++, c).value(productionCost.taxFloat).comment("税费浮动值").format("0.00").setStyle()
-            cell(r++, c).value(productionCost.dictItems.values.sumOf { it.cost } * productionCost.taxRate + productionCost.taxFloat).comment("税费").format("0.00").setStyle()
+            cell(r++, c).value(productionCost.taxFloat).comment("税费浮动值").format("0.00")
+                .setStyle()
+            cell(
+                r++,
+                c
+            ).value(productionCost.dictItems.values.sumOf { it.cost } * productionCost.taxRate + productionCost.taxFloat)
+                .comment("税费").format("0.00").setStyle()
             if (c < columnSize)
                 range(pr, c + 1, r - 1, columnSize).merge().setStyle()
 
@@ -168,15 +180,25 @@ object RecipeExport {
             val changesStr = changes.joinToString("\n") { logic ->
                 when (logic.type) {
                     ChangeLogicType.WATER_OVER -> {
-                        val filter = materials.filter { m -> logic.materialId?.contains(m.id) == true }
-                        val name = if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
+                        val filter =
+                            materials.filter { m -> logic.materialId?.contains(m.id) == true }
+                        val name =
+                            if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
                         "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，能耗费用增加${logic.changeValue * 100}%"
                     }
 
                     ChangeLogicType.OVER -> {
-                        val filter = materials.filter { m -> logic.materialId?.contains(m.id) == true }
-                        val name = if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
-                        "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${logic.changeItems?.joinToString { item -> item.name(productionCost.materialItems) }}增加${logic.changeValue * 100}%"
+                        val filter =
+                            materials.filter { m -> logic.materialId?.contains(m.id) == true }
+                        val name =
+                            if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
+                        "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${
+                            logic.changeItems?.joinToString { item ->
+                                item.name(
+                                    productionCost.materialItems
+                                )
+                            }
+                        }增加${logic.changeValue * 100}%"
                     }
 
                     ChangeLogicType.OTHER -> "其他额外增加制造费用${logic.changeValue * 100}%"
@@ -189,38 +211,48 @@ object RecipeExport {
             val materialIDIndicators = indicatorMaterialIDConstraints
             if (materialIDIndicators.isNotEmpty()) {
                 c = startCol
-                cell(r, c++).value("指标指定用原料").height(20.0 * materialIDIndicators.size).setStyle()
-                val materialIDIndicatorsStr = materialIDIndicators.entries.joinToString("\n") { "指标${it.value.name} 限用原料：${it.value.value}" }
+                cell(r, c++).value("指标指定用原料").height(20.0 * materialIDIndicators.size)
+                    .setStyle()
+                val materialIDIndicatorsStr =
+                    materialIDIndicators.entries.joinToString("\n") { "指标${it.value.name} 限用原料：${it.value.value}" }
                 cell(r, c).value(materialIDIndicatorsStr)
-                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText()
+                    .setStyle()
             }
             // 不能混用的原料
             val notMixMaterialConstraints = notMixMaterialConstraints
             if (notMixMaterialConstraints.isNotEmpty()) {
                 c = startCol
-                cell(r, c++).value("不能混用的原料").height(20.0 * notMixMaterialConstraints.size).setStyle()
+                cell(r, c++).value("不能混用的原料").height(20.0 * notMixMaterialConstraints.size)
+                    .setStyle()
                 val notMixMaterialConstraintsStr = notMixMaterialConstraints.joinToString("\n") {
                     it.joinToString("和") + "不能混用"
                 }
                 cell(r, c).value(notMixMaterialConstraintsStr)
-                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText()
+                    .setStyle()
             }
             // 指定原料约束
             val materialIDConstraints = materialIDConstraints
             if (materialIDConstraints.isNotEmpty()) {
                 c = startCol
-                cell(r, c++).value("指定原料约束").height(20.0 * materialIDConstraints.size).setStyle()
+                cell(r, c++).value("指定原料约束").height(20.0 * materialIDConstraints.size)
+                    .setStyle()
                 val materialIDConstraintsStr = materialIDConstraints.joinToString("\n") {
                     "${it.term}中指定使用原料：${it.then}"
                 }
                 cell(r, c).value(materialIDConstraintsStr)
-                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
+                range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText()
+                    .setStyle()
             }
 
             //其它产线信息
             c = startCol
             cell(r, c++).value("其它产线信息").height(20.0).setStyle()
-            cell(r, c).value("可用原料种类最大数：${maxUseMaterialNum ?: "不限"}；单吨产品水份最大烘干量：${if (maxBakeWeight == null) "不限" else "${maxBakeWeight}公斤"}；收率：${this.yield * 100}%")
+            cell(
+                r,
+                c
+            ).value("可用原料种类最大数：${maxUseMaterialNum ?: "不限"}；单吨产品水份最大烘干量：${if (maxBakeWeight == null) "不限" else "${maxBakeWeight}公斤"}；收率：${this.yield * 100}%")
             range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
         }
     }
@@ -243,7 +275,8 @@ object RecipeExport {
             c++
             materialItems.forEach {
                 r = row
-                cell(r++, c).value("${it.it.name}(${it.it.unit})").headerStyle().width(15.0).setStyle()
+                cell(r++, c).value("${it.it.name}(${it.it.unit})").headerStyle().width(15.0)
+                    .setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.it.value).format("0.00").setStyle()
                 cell(r++, c).value(it.value).format("0.00%").setStyle()
@@ -262,27 +295,34 @@ object RecipeExport {
             range(r, 1, r++, materialItems.size + dictItems.size).merge().format("0.00").setStyle()
             //制造费用
             cell(r, 1).value(totalFee)
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+                .setStyle()
             //原辅料成本
             cell(r, 1).value(recipe.materialCost)
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+                .setStyle()
             //包装费用
             cell(r, 1).value(recipe.packagingCost)
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+                .setStyle()
             //成本合计
             if (recipe.includeProductionCost) {
                 cell(r, 1).value(recipe.cost + recipe.packagingCost)
             } else {
                 cell(r, 1).value(totalFee + recipe.cost + recipe.packagingCost)
             }
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00").setStyle()
+            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+                .setStyle()
         }
     }
 
     fun FastExcel.exportRecipe(recipe: Recipe, showRate: Boolean = false): Int {
         val requirement = recipe.requirement
         RecipeExt(recipe).apply {
-            val titles = "项目${if (showRate) "\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量" else ""}\t投料量(公斤)".split("\t")
+            val titles =
+                "项目${if (showRate) "\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量" else ""}\t投料量(公斤)".split(
+                    "\t"
+                )
             val materials = recipe.materials.toSortedSet()
             val rangeIndicators = requirement.indicatorRangeConstraints.values.sortedBy { it.index }
             val columnSize = titles.size + rangeIndicators.size + 1
@@ -298,7 +338,8 @@ object RecipeExport {
             }
             c++
             rangeIndicators.forEach { indicator ->
-                cell(r, c++).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0).setStyle()
+                cell(r, c++).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0)
+                    .setStyle()
             }
 
             r++
@@ -325,20 +366,29 @@ object RecipeExport {
                 r = 1
                 //配方目标最大值
                 val max = indicator.value.max
-                cell(r++, c).value(max).bold().format(if (indicator.unit == "%") "0.0%" else "").setStyle()
+                cell(r++, c).value(max).bold().format(if (indicator.unit == "%") "0.0%" else "")
+                    .setStyle()
 
                 //配方目标最小值
                 val min = indicator.value.min
-                cell(r++, c).value(min).bold().format(if (indicator.unit == "%") "0.0%" else "").setStyle()
+                cell(r++, c).value(min).bold().format(if (indicator.unit == "%") "0.0%" else "")
+                    .setStyle()
 
                 //实配值
                 val value = when (indicator.type) {
                     RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight).scale()
-                    RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
+                    RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf {
+                        it.indicatorWeight(
+                            indicator.itId!!
+                        )
+                    } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
+
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }
-                val valid = value - min >= -RecipeUtil.DEFAULT_MIN_EPSILON && value - max <= RecipeUtil.DEFAULT_MIN_EPSILON
-                cell(r++, c).value(value).bold().format(if (indicator.unit == "%") "0.0%" else "").fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
+                val valid =
+                    value - min >= -RecipeUtil.DEFAULT_MIN_EPSILON && value - max <= RecipeUtil.DEFAULT_MIN_EPSILON
+                cell(r++, c).value(value).bold().format(if (indicator.unit == "%") "0.0%" else "")
+                    .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
             // 费用合计
@@ -362,13 +412,21 @@ object RecipeExport {
                     normalValue = relationValue?.first
                     relationName = material.relationName
                     // 最小耗液氨/硫酸系数
-                    cell(r, c++).value(normal?.min).comment(if (normal?.min == null || relationName == null) null else "${material.name}最小耗${relationName}系数").format("0.000000000").setStyle()
+                    cell(r, c++).value(normal?.min)
+                        .comment(if (normal?.min == null || relationName == null) null else "${material.name}最小耗${relationName}系数")
+                        .format("0.000000000").setStyle()
                     // 最小耗液氨/硫酸量
-                    cell(r, c++).value(normalValue?.min).comment(if (normalValue?.min == null || relationName == null) null else "${material.name}最小耗${relationName}数量").format("0.00").setStyle()
+                    cell(r, c++).value(normalValue?.min)
+                        .comment(if (normalValue?.min == null || relationName == null) null else "${material.name}最小耗${relationName}数量")
+                        .format("0.00").setStyle()
                     // 最大耗液氨/硫酸系数
-                    cell(r, c++).value(normal?.max).comment(if (normal?.max == null || relationName == null) null else "${material.name}最大耗${relationName}系数").format("0.000000000").setStyle()
+                    cell(r, c++).value(normal?.max)
+                        .comment(if (normal?.max == null || relationName == null) null else "${material.name}最大耗${relationName}系数")
+                        .format("0.000000000").setStyle()
                     // 最大耗液氨/硫酸量
-                    cell(r, c++).value(normalValue?.max).comment(if (normalValue?.max == null || relationName == null) null else "${material.name}最大耗${relationName}数量").format("0.00").setStyle()
+                    cell(r, c++).value(normalValue?.max)
+                        .comment(if (normalValue?.max == null || relationName == null) null else "${material.name}最大耗${relationName}数量")
+                        .format("0.00").setStyle()
                 } else {
                     recipeRelation = null
                     relationValue = null
@@ -381,9 +439,10 @@ object RecipeExport {
                 rangeIndicators.forEach { indicator ->
                     val value = when (indicator.type) {
                         RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue
-                        else -> material.indicators[indicator.id]?.value
+                        else -> material.indicators[indicator.id]?.value ?: 0
                     }
-                    cell(r, c++).value(value).format(if (indicator.unit == "%") "0.0%" else "").setStyle()
+                    cell(r, c++).value(value).format(if (indicator.unit == "%") "0.0%" else "")
+                        .setStyle()
                 }
                 // 费用合计
                 cell(r, c++).value(material.cost).format("0.00").setStyle()
@@ -391,16 +450,24 @@ object RecipeExport {
                     c = 1
                     val r1 = r + 1
                     val overdose = recipeRelation?.overdose
-                            ?: recipeRelation?.overdoseMaterial?.normal
+                        ?: recipeRelation?.overdoseMaterial?.normal
                     val overdoseValue = relationValue?.second
                     // 最小耗液氨/硫酸系数
-                    cell(r1, c++).value(overdose?.min).comment(if (overdose?.min == null || relationName == null) null else "${material.name}过量最小耗${relationName}系数").format("0.000000000").setStyle()
+                    cell(r1, c++).value(overdose?.min)
+                        .comment(if (overdose?.min == null || relationName == null) null else "${material.name}过量最小耗${relationName}系数")
+                        .format("0.000000000").setStyle()
                     // 最小耗液氨/硫酸量
-                    cell(r1, c++).value(overdoseValue?.min).comment(if (overdoseValue?.min == null || relationName == null) null else "${material.name}过量最小耗${relationName}数量").format("0.00").setStyle()
+                    cell(r1, c++).value(overdoseValue?.min)
+                        .comment(if (overdoseValue?.min == null || relationName == null) null else "${material.name}过量最小耗${relationName}数量")
+                        .format("0.00").setStyle()
                     // 最大耗液氨/硫酸系数
-                    cell(r1, c++).value(overdose?.max).comment(if (overdose?.max == null || relationName == null) null else "${material.name}过量最大耗${relationName}系数").format("0.000000000").setStyle()
+                    cell(r1, c++).value(overdose?.max)
+                        .comment(if (overdose?.max == null || relationName == null) null else "${material.name}过量最大耗${relationName}系数")
+                        .format("0.000000000").setStyle()
                     // 最大耗液氨/硫酸量
-                    cell(r1, c++).value(overdoseValue?.max).comment(if (overdoseValue?.max == null || relationName == null) null else "${material.name}过量最大耗${relationName}数量").format("0.00").setStyle()
+                    cell(r1, c++).value(overdoseValue?.max)
+                        .comment(if (overdoseValue?.max == null || relationName == null) null else "${material.name}过量最大耗${relationName}数量")
+                        .format("0.00").setStyle()
                     for (i in 0..columnSize) {
                         if (i !in 1..4) {
                             range(r, i, r1, i).merge().setStyle()

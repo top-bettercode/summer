@@ -6,10 +6,13 @@ import top.bettercode.summer.tools.optimal.OptimalUtil.scale
  *
  * @author Peter Wu
  */
-class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>> = emptyList()) : RecipeIndicators<Double>(indicators) {
+class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>> = emptyList()) :
+    RecipeIndicators<Double>(indicators) {
+
+    lateinit var sysIndicators: RecipeValueIndicators
 
     val key: String by lazy {
-        values.joinToString(",") { it.value.scale().toString() }
+        sysIndicators.values.joinToString(",") { valueOf(it.id).scale().toString() }
     }
 
     val waterValue: Double by lazy {

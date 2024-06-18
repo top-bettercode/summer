@@ -6,6 +6,40 @@
     "material" : {
       "id" : "氯化铵（干）",
       "index" : 6,
+      "indicators" : {
+        "总养分" : {
+          "id" : "总养分",
+          "index" : 0,
+          "name" : "总养分",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.253
+        },
+        "氮" : {
+          "id" : "氮",
+          "index" : 1,
+          "name" : "氮",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.253
+        },
+        "氯离子" : {
+          "id" : "氯离子",
+          "index" : 4,
+          "name" : "氯离子",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.667
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.01
+        }
+      },
       "name" : "氯化铵（干）",
       "price" : 1.25,
       "unit" : "吨"
@@ -13,6 +47,40 @@
     "weight" : 389.5367609864,
     "id" : "氯化铵（干）",
     "index" : 6,
+    "indicators" : {
+      "总养分" : {
+        "id" : "总养分",
+        "index" : 0,
+        "name" : "总养分",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.253
+      },
+      "氮" : {
+        "id" : "氮",
+        "index" : 1,
+        "name" : "氮",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.253
+      },
+      "氯离子" : {
+        "id" : "氯离子",
+        "index" : 4,
+        "name" : "氯离子",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.667
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.01
+      }
+    },
     "name" : "氯化铵（干）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -64,6 +132,32 @@
     "material" : {
       "id" : "液氨",
       "index" : 9,
+      "indicators" : {
+        "总养分" : {
+          "id" : "总养分",
+          "index" : 0,
+          "name" : "总养分",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.81
+        },
+        "氮" : {
+          "id" : "氮",
+          "index" : 1,
+          "name" : "氮",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.81
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.005
+        }
+      },
       "name" : "液氨",
       "price" : 4.2,
       "unit" : "吨"
@@ -71,6 +165,32 @@
     "weight" : 30.1150221471,
     "id" : "液氨",
     "index" : 9,
+    "indicators" : {
+      "总养分" : {
+        "id" : "总养分",
+        "index" : 0,
+        "name" : "总养分",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.81
+      },
+      "氮" : {
+        "id" : "氮",
+        "index" : 1,
+        "name" : "氮",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.81
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.005
+      }
+    },
     "name" : "液氨",
     "normalWeight" : 30.1150221472,
     "overdoseWeight" : 0.0,
@@ -81,6 +201,58 @@
     "material" : {
       "id" : "8-40-0再浆肥（粉）",
       "index" : 16,
+      "indicators" : {
+        "总养分" : {
+          "id" : "总养分",
+          "index" : 0,
+          "name" : "总养分",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.48
+        },
+        "氮" : {
+          "id" : "氮",
+          "index" : 1,
+          "name" : "氮",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.08
+        },
+        "水溶磷" : {
+          "id" : "水溶磷",
+          "index" : 8,
+          "name" : "水溶磷",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.192
+        },
+        "水溶磷率" : {
+          "id" : "水溶磷率",
+          "index" : 7,
+          "itId" : "水溶磷",
+          "name" : "水溶磷率",
+          "otherId" : "磷",
+          "type" : "RATE_TO_OTHER",
+          "unit" : "%",
+          "value" : 0.48
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.02
+        },
+        "磷" : {
+          "id" : "磷",
+          "index" : 2,
+          "name" : "磷",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.4
+        }
+      },
       "name" : "8-40-0再浆肥（粉）",
       "price" : 1.8,
       "unit" : "吨"
@@ -88,6 +260,58 @@
     "weight" : 161.180264083,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
+    "indicators" : {
+      "总养分" : {
+        "id" : "总养分",
+        "index" : 0,
+        "name" : "总养分",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.48
+      },
+      "氮" : {
+        "id" : "氮",
+        "index" : 1,
+        "name" : "氮",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.08
+      },
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "index" : 8,
+        "name" : "水溶磷",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.192
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "index" : 7,
+        "itId" : "水溶磷",
+        "name" : "水溶磷率",
+        "otherId" : "磷",
+        "type" : "RATE_TO_OTHER",
+        "unit" : "%",
+        "value" : 0.48
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.02
+      },
+      "磷" : {
+        "id" : "磷",
+        "index" : 2,
+        "name" : "磷",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.4
+      }
+    },
     "name" : "8-40-0再浆肥（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -98,6 +322,58 @@
     "material" : {
       "id" : "64磷酸二铵（颗粒）",
       "index" : 18,
+      "indicators" : {
+        "总养分" : {
+          "id" : "总养分",
+          "index" : 0,
+          "name" : "总养分",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.64
+        },
+        "氮" : {
+          "id" : "氮",
+          "index" : 1,
+          "name" : "氮",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.18
+        },
+        "水溶磷" : {
+          "id" : "水溶磷",
+          "index" : 8,
+          "name" : "水溶磷",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.4048
+        },
+        "水溶磷率" : {
+          "id" : "水溶磷率",
+          "index" : 7,
+          "itId" : "水溶磷",
+          "name" : "水溶磷率",
+          "otherId" : "磷",
+          "type" : "RATE_TO_OTHER",
+          "unit" : "%",
+          "value" : 0.88
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.005
+        },
+        "磷" : {
+          "id" : "磷",
+          "index" : 2,
+          "name" : "磷",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.46
+        }
+      },
       "name" : "64磷酸二铵（颗粒）",
       "price" : 3.85,
       "unit" : "吨"
@@ -105,6 +381,58 @@
     "weight" : 1.0E-4,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
+    "indicators" : {
+      "总养分" : {
+        "id" : "总养分",
+        "index" : 0,
+        "name" : "总养分",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.64
+      },
+      "氮" : {
+        "id" : "氮",
+        "index" : 1,
+        "name" : "氮",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.18
+      },
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "index" : 8,
+        "name" : "水溶磷",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.4048
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "index" : 7,
+        "itId" : "水溶磷",
+        "name" : "水溶磷率",
+        "otherId" : "磷",
+        "type" : "RATE_TO_OTHER",
+        "unit" : "%",
+        "value" : 0.88
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.005
+      },
+      "磷" : {
+        "id" : "磷",
+        "index" : 2,
+        "name" : "磷",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.46
+      }
+    },
     "name" : "64磷酸二铵（颗粒）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -115,6 +443,50 @@
     "material" : {
       "id" : "磷酸",
       "index" : 29,
+      "indicators" : {
+        "总养分" : {
+          "id" : "总养分",
+          "index" : 0,
+          "name" : "总养分",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.21
+        },
+        "水溶磷" : {
+          "id" : "水溶磷",
+          "index" : 8,
+          "name" : "水溶磷",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.168
+        },
+        "水溶磷率" : {
+          "id" : "水溶磷率",
+          "index" : 7,
+          "itId" : "水溶磷",
+          "name" : "水溶磷率",
+          "otherId" : "磷",
+          "type" : "RATE_TO_OTHER",
+          "unit" : "%",
+          "value" : 0.8
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.65
+        },
+        "磷" : {
+          "id" : "磷",
+          "index" : 2,
+          "name" : "磷",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.21
+        }
+      },
       "name" : "磷酸",
       "price" : 1.05,
       "unit" : "吨"
@@ -122,6 +494,50 @@
     "weight" : 511.9640036735,
     "id" : "磷酸",
     "index" : 29,
+    "indicators" : {
+      "总养分" : {
+        "id" : "总养分",
+        "index" : 0,
+        "name" : "总养分",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.21
+      },
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "index" : 8,
+        "name" : "水溶磷",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.168
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "index" : 7,
+        "itId" : "水溶磷",
+        "name" : "水溶磷率",
+        "otherId" : "磷",
+        "type" : "RATE_TO_OTHER",
+        "unit" : "%",
+        "value" : 0.8
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.65
+      },
+      "磷" : {
+        "id" : "磷",
+        "index" : 2,
+        "name" : "磷",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.21
+      }
+    },
     "name" : "磷酸",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -132,6 +548,40 @@
     "material" : {
       "id" : "95%氯化钾烘干粉（国产）",
       "index" : 30,
+      "indicators" : {
+        "总养分" : {
+          "id" : "总养分",
+          "index" : 0,
+          "name" : "总养分",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.6
+        },
+        "氯离子" : {
+          "id" : "氯离子",
+          "index" : 4,
+          "name" : "氯离子",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.477
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.01
+        },
+        "钾" : {
+          "id" : "钾",
+          "index" : 3,
+          "name" : "钾",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.6
+        }
+      },
       "name" : "95%氯化钾烘干粉（国产）",
       "price" : 3.55,
       "unit" : "吨"
@@ -139,6 +589,40 @@
     "weight" : 233.3333333333,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
+    "indicators" : {
+      "总养分" : {
+        "id" : "总养分",
+        "index" : 0,
+        "name" : "总养分",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.6
+      },
+      "氯离子" : {
+        "id" : "氯离子",
+        "index" : 4,
+        "name" : "氯离子",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.477
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.01
+      },
+      "钾" : {
+        "id" : "钾",
+        "index" : 3,
+        "name" : "钾",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.6
+      }
+    },
     "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -149,6 +633,7 @@
     "material" : {
       "id" : "防结油（白色）",
       "index" : 61,
+      "indicators" : { },
       "name" : "防结油（白色）",
       "price" : 8.0,
       "unit" : "吨"
@@ -156,6 +641,7 @@
     "weight" : 2.0,
     "id" : "防结油（白色）",
     "index" : 61,
+    "indicators" : { },
     "name" : "防结油（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -166,6 +652,7 @@
     "material" : {
       "id" : "防结粉（白色）",
       "index" : 62,
+      "indicators" : { },
       "name" : "防结粉（白色）",
       "price" : 2.0,
       "unit" : "吨"
@@ -173,6 +660,7 @@
     "weight" : 3.0,
     "id" : "防结粉（白色）",
     "index" : 62,
+    "indicators" : { },
     "name" : "防结粉（白色）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -183,6 +671,32 @@
     "material" : {
       "id" : "喷浆专用尿素",
       "index" : 90,
+      "indicators" : {
+        "总养分" : {
+          "id" : "总养分",
+          "index" : 0,
+          "name" : "总养分",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.345
+        },
+        "氮" : {
+          "id" : "氮",
+          "index" : 1,
+          "name" : "氮",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 0.345
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.25
+        }
+      },
       "name" : "喷浆专用尿素",
       "price" : 2.8,
       "unit" : "吨"
@@ -190,6 +704,32 @@
     "weight" : 15.0,
     "id" : "喷浆专用尿素",
     "index" : 90,
+    "indicators" : {
+      "总养分" : {
+        "id" : "总养分",
+        "index" : 0,
+        "name" : "总养分",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.345
+      },
+      "氮" : {
+        "id" : "氮",
+        "index" : 1,
+        "name" : "氮",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 0.345
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.25
+      }
+    },
     "name" : "喷浆专用尿素",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
@@ -236,7 +776,8 @@
         "price" : 1650.0,
         "unit" : "吨",
         "value" : 0.01,
-        "cost" : 16.5
+        "cost" : 16.5,
+        "indicators" : { }
       },
       "value" : 3.9612948422340004
     }, {
@@ -247,7 +788,8 @@
         "price" : 1000.0,
         "unit" : "吨",
         "value" : 0.01,
-        "cost" : 10.0
+        "cost" : 10.0,
+        "indicators" : { }
       },
       "value" : 1.0
     } ],

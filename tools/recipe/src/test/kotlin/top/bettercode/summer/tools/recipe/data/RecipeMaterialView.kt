@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
  * @author Peter Wu
  */
 interface RecipeMaterialView {
-    @get:JsonIgnore
+//    @get:JsonIgnore
     val indicators: RecipeValueIndicators
 }
 
