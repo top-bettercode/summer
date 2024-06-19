@@ -6,6 +6,7 @@ import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
+import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
 
@@ -49,7 +50,7 @@ object RecipeExport {
                         )
 
                     cell(r, column).value((value).scale())
-                        .format(if (indicator.unit == "%") "0.0%" else "").setStyle()
+                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "").setStyle()
                 }
         }
     }
@@ -69,10 +70,10 @@ object RecipeExport {
                 r = startCol
                 cell(r++, c).value("${it.name}(${it.unit})").headerStyle().width(11.0).setStyle()
                 cell(r++, c).value(it.scaledValue.max)
-                    .format(if (it.unit == "%") "0.0%" else "")
+                    .format(if (it.unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
                     .setStyle()
                 cell(r++, c++).value(it.scaledValue.min)
-                    .format(if (it.unit == "%") "0.0%" else "")
+                    .format(if (it.unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
                     .setStyle()
             }
             val columnSize = rangeIndicators.size + startCol
@@ -374,13 +375,13 @@ object RecipeExport {
                 //配方目标最大值
                 val max = indicator.scaledValue.max
                 cell(r++, c).value(max).bold()
-                    .format(if (indicator.unit == "%") "0.0%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .setStyle()
 
                 //配方目标最小值
                 val min = indicator.scaledValue.min
                 cell(r++, c).value(min).bold()
-                    .format(if (indicator.unit == "%") "0.0%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .setStyle()
 
                 //实配值
@@ -398,7 +399,7 @@ object RecipeExport {
                 val valid =
                     value - min >= -RecipeUtil.DEFAULT_MIN_EPSILON && value - max <= RecipeUtil.DEFAULT_MIN_EPSILON
                 cell(r++, c).value(value).bold()
-                    .format(if (indicator.unit == "%") "0.0%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
@@ -454,7 +455,7 @@ object RecipeExport {
                         else -> material.indicators.valueOf(indicator.id)
                     }
                     cell(r, c++).value(value)
-                        .format(if (indicator.unit == "%") "0.0%" else "")
+                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                         .setStyle()
                 }
                 // 费用合计

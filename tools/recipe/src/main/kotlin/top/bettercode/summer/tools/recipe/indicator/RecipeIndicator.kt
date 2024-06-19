@@ -75,10 +75,14 @@ data class RecipeIndicator<T>(
     /**
      * 单位换算比值
      */
-    val scale: Double = when (unit) {
-        "%" -> 0.01
-        else -> 1.0
-    }
+    val scale: Double = if (unit == null)
+        1.0
+    else
+        when (IndicatorUnit.enumOf(unit)) {
+            IndicatorUnit.PERCENTAGE -> 0.01
+            IndicatorUnit.KG_TON -> 0.001
+            IndicatorUnit.BILLION -> 1.0
+        }
 
     /**
      * 换算后值

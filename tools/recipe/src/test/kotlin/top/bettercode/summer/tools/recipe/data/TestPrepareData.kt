@@ -42,7 +42,7 @@ object TestPrepareData {
                 id = name,
                 name = name,
                 value = 0.0,
-                unit = if ("活性菌" == name) "亿" else "%",
+                unit = if ("活性菌" == name) IndicatorUnit.BILLION.unit else IndicatorUnit.PERCENTAGE.unit,
                 type = when (name) {
                     "总养分" -> RecipeIndicatorType.TOTAL_NUTRIENT
                     "氮", "磷", "钾" -> RecipeIndicatorType.NUTRIENT
@@ -234,7 +234,7 @@ object TestPrepareData {
                     id = indicatorNames[0],
                     name = indicatorNames[0],
                     value = DoubleRange(min, max),
-                    unit = "%",
+                    unit = IndicatorUnit.PERCENTAGE.unit,
                     type = RecipeIndicatorType.TOTAL_NUTRIENT,
                 )
 
@@ -244,7 +244,7 @@ object TestPrepareData {
                     id = indicatorNames[7],
                     name = indicatorNames[7],
                     value = DoubleRange(min, max),
-                    unit = "%",
+                    unit = IndicatorUnit.PERCENTAGE.unit,
                     type = RecipeIndicatorType.RATE_TO_OTHER,
                     itId = "水溶磷",
                     otherId = "磷"
@@ -256,7 +256,7 @@ object TestPrepareData {
                     name = indicatorNames[1],
                     value = DoubleRange(min, max),
                     type = RecipeIndicatorType.NUTRIENT,
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
                 //磷
                 2 -> RecipeIndicator(
@@ -265,7 +265,7 @@ object TestPrepareData {
                     name = indicatorNames[2],
                     value = DoubleRange(min, max),
                     type = RecipeIndicatorType.NUTRIENT,
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
                 //钾
                 4 -> RecipeIndicator(
@@ -274,7 +274,7 @@ object TestPrepareData {
                     name = indicatorNames[3],
                     value = DoubleRange(min, max),
                     type = RecipeIndicatorType.NUTRIENT,
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
                 //氯离子
@@ -283,7 +283,7 @@ object TestPrepareData {
                     id = indicatorNames[4],
                     name = indicatorNames[4],
                     value = DoubleRange(min, max),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
                 //产品水分
@@ -292,7 +292,7 @@ object TestPrepareData {
                     id = indicatorNames[5],
                     name = indicatorNames[5],
                     value = DoubleRange(min, max),
-                    unit = "%",
+                    unit = IndicatorUnit.PERCENTAGE.unit,
                     type = RecipeIndicatorType.PRODUCT_WATER
                 )
 
@@ -302,7 +302,7 @@ object TestPrepareData {
                     id = indicatorNames[6],
                     name = indicatorNames[6],
                     value = DoubleRange(min, max),
-                    unit = "%",
+                    unit = IndicatorUnit.PERCENTAGE.unit,
                     type = RecipeIndicatorType.WATER
                 )
 
@@ -312,7 +312,7 @@ object TestPrepareData {
                     id = indicatorNames[10],
                     name = indicatorNames[10],
                     value = DoubleRange(min, max),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
                 //锌
@@ -321,7 +321,7 @@ object TestPrepareData {
                     id = indicatorNames[11],
                     name = indicatorNames[11],
                     value = DoubleRange(min, max),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
                 else -> RecipeIndicator(
@@ -329,7 +329,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = DoubleRange(min, max),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             }
             rangeIndicators.add(indicator)
@@ -655,7 +655,7 @@ object TestPrepareData {
                     name = indicatorNames[i],
                     value = (materialForm.nitrogen!! * 100).scale(),
                     type = RecipeIndicatorType.NUTRIENT,
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -665,7 +665,7 @@ object TestPrepareData {
                     name = indicatorNames[i],
                     value = (materialForm.phosphorus!! * 100).scale(),
                     type = RecipeIndicatorType.NUTRIENT,
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -675,7 +675,7 @@ object TestPrepareData {
                     name = indicatorNames[i],
                     value = (materialForm.potassium!! * 100).scale(),
                     type = RecipeIndicatorType.NUTRIENT,
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -684,7 +684,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.chlorine!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             //跳过产品水份
@@ -695,7 +695,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.water!! * 100).scale(),
-                    unit = "%",
+                    unit = IndicatorUnit.PERCENTAGE.unit,
                     type = RecipeIndicatorType.WATER
                 )
             )
@@ -705,7 +705,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.waterSolublePhosphorusRate!! * 100).scale(),
-                    unit = "%",
+                    unit = IndicatorUnit.PERCENTAGE.unit,
                     type = RecipeIndicatorType.RATE_TO_OTHER,
                     itId = "水溶磷",
                     otherId = "磷"
@@ -717,7 +717,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.waterSolublePhosphorus!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -726,7 +726,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.nitrateNitrogen!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -735,7 +735,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.boron!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -744,7 +744,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.zinc!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -753,7 +753,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.manganese!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -762,7 +762,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.copper!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -771,7 +771,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.iron!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -780,7 +780,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.molybdenum!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -789,7 +789,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.magnesium!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -798,7 +798,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.sulfur!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -807,7 +807,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.calcium!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -816,7 +816,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.organicMatter!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -825,7 +825,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.humicAcid!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -834,7 +834,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.fulvicAcid!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             //活性菌
@@ -853,7 +853,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.silicon!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -862,7 +862,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index23!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -871,7 +871,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index24!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -880,7 +880,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index25!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -889,7 +889,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index26!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -898,7 +898,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index27!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -907,7 +907,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index28!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -916,7 +916,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index29!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -925,7 +925,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index30!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -934,7 +934,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index31!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -943,7 +943,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index32!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -952,7 +952,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index33!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -961,7 +961,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index34!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -970,7 +970,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index35!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -979,7 +979,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index36!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -988,7 +988,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index37!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -997,7 +997,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index38!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1006,7 +1006,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index39!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1015,7 +1015,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index40!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1024,7 +1024,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index41!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1033,7 +1033,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index42!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1042,7 +1042,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index43!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1051,7 +1051,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index44!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1060,7 +1060,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index45!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1069,7 +1069,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index46!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1078,7 +1078,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index47!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1087,7 +1087,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index48!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1096,7 +1096,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index49!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
@@ -1105,7 +1105,7 @@ object TestPrepareData {
                     id = indicatorNames[i],
                     name = indicatorNames[i],
                     value = (materialForm.index50!! * 100).scale(),
-                    unit = "%"
+                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
 

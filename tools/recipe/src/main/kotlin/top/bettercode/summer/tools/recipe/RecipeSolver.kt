@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.optimal.IVar
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.recipe.criteria.UsageVar
+import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
@@ -156,6 +157,16 @@ object RecipeSolver {
                     }.sum()
 
                     itVar.ratioInRange(otherVar, range.min, range.max)
+                }
+
+                //目标包含多少亿
+                IndicatorUnit.BILLION.eq(indicator.unit) -> {
+                    recipeMaterials.map {
+                        val material = it.value
+                        //每公斤包含多少亿
+                        val coeff = material.indicators.valueOf(indicator.id)
+                        material.weight * coeff
+                    }.between(range.min, range.max)
                 }
 
                 else -> {
