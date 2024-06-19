@@ -71,14 +71,20 @@ data class RecipeIndicator<T>(
     @get:JsonIgnore
     val isRateToOther = type == RecipeIndicatorType.RATE_TO_OTHER
 
+    /**
+     * 单位换算比值
+     */
     val scale: Double = when (unit) {
         "%" -> 0.01
         else -> 1.0
     }
 
+    /**
+     * 换算后值
+     */
     @Suppress("UNCHECKED_CAST")
     @get:JsonIgnore
-    val scaleValue: T = when (value) {
+    val scaledValue: T = when (value) {
         is Double -> (value as Double * scale) as T
         is DoubleRange -> (value as DoubleRange).replaceRate(scale) as T
         else -> value

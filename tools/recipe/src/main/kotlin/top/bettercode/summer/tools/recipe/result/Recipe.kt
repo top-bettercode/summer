@@ -130,8 +130,8 @@ data class Recipe(
                 else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / targetWeight).scale()
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
-            if (indicatorValue !in indicator.scaleValue.min..indicator.scaleValue.max) {
-                throw IllegalRecipeException("指标:${indicator.name}：${indicatorValue} 不在范围${indicator.scaleValue.min}-${indicator.scaleValue.max}内")
+            if (indicatorValue !in indicator.scaledValue.min..indicator.scaledValue.max) {
+                throw IllegalRecipeException("指标:${indicator.name}：${indicatorValue} 不在范围${indicator.scaledValue.min}-${indicator.scaledValue.max}内")
             }
         }
 

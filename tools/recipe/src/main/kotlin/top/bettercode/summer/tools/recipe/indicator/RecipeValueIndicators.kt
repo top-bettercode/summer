@@ -24,7 +24,7 @@ class RecipeValueIndicators(indicators: List<RecipeIndicator<Double>> = emptyLis
     }
 
     fun valueOf(id: String): Double {
-        return get(id)?.scaleValue ?: 0.0
+        return get(id)?.scaledValue ?: 0.0
     }
 
     companion object {

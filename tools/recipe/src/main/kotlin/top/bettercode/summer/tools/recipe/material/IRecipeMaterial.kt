@@ -42,7 +42,7 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
     @get:JsonIgnore
     val totalNutrient: Double
         get() {
-            return indicators.nutrients.sumOf { it.scaleValue }
+            return indicators.nutrients.sumOf { it.scaledValue }
         }
 }
 

@@ -68,10 +68,10 @@ object RecipeExport {
             rangeIndicators.forEach {
                 r = startCol
                 cell(r++, c).value("${it.name}(${it.unit})").headerStyle().width(11.0).setStyle()
-                cell(r++, c).value(it.scaleValue.max)
+                cell(r++, c).value(it.scaledValue.max)
                     .format(if (it.unit == "%") "0.0%" else "")
                     .setStyle()
-                cell(r++, c++).value(it.scaleValue.min)
+                cell(r++, c++).value(it.scaledValue.min)
                     .format(if (it.unit == "%") "0.0%" else "")
                     .setStyle()
             }
@@ -372,13 +372,13 @@ object RecipeExport {
             rangeIndicators.forEach { indicator ->
                 r = 1
                 //配方目标最大值
-                val max = indicator.scaleValue.max
+                val max = indicator.scaledValue.max
                 cell(r++, c).value(max).bold()
                     .format(if (indicator.unit == "%") "0.0%" else "")
                     .setStyle()
 
                 //配方目标最小值
-                val min = indicator.scaleValue.min
+                val min = indicator.scaledValue.min
                 cell(r++, c).value(min).bold()
                     .format(if (indicator.unit == "%") "0.0%" else "")
                     .setStyle()
