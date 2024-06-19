@@ -75,7 +75,7 @@ data class RecipeIndicator<T>(
     /**
      * 单位换算比值
      */
-    val scale: Double = if (unit == null)
+    val scale: Double = if (unit.isNullOrBlank())
         1.0
     else
         when (IndicatorUnit.enumOf(unit)) {
