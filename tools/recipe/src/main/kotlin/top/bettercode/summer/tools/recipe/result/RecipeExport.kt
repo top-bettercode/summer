@@ -20,7 +20,7 @@ object RecipeExport {
         val indicators = if (materials.isEmpty()) {
             return
         } else
-            requirement.systemIndicators.values.sortedBy { it.index }
+            requirement.systemIndicators.values.filter { !it.isProductWater }.sortedBy { it.index }
         //标题
         cell(0, 0).value("原料名称").headerStyle().setStyle()
         cell(0, 1).value("价格").headerStyle().setStyle()
@@ -40,15 +40,15 @@ object RecipeExport {
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
             // 原料成份
-            requirement.systemIndicators.values.filter { !it.isProductWater }.sortedBy { it.index }
+            indicators.sortedBy { it.index }
                 .forEachIndexed { index, indicator ->
                     val column = c + index
                     val value =
-                        if (indicator.isTotalNutrient) matrial.totalNutrient() else matrial.indicators.valueOf(
+                        if (indicator.isTotalNutrient) matrial.totalNutrient else matrial.indicators.valueOf(
                             indicator.id
                         )
 
-                    cell(r, column).value(value.scale())
+                    cell(r, column).value((value).scale())
                         .format(if (indicator.unit == "%") "0.0%" else "").setStyle()
                 }
         }
@@ -68,9 +68,11 @@ object RecipeExport {
             rangeIndicators.forEach {
                 r = startCol
                 cell(r++, c).value("${it.name}(${it.unit})").headerStyle().width(11.0).setStyle()
-                cell(r++, c).value(it.value.max).format(if (it.unit == "%") "0.0%" else "")
+                cell(r++, c).value(it.scaleValue.max)
+                    .format(if (it.unit == "%") "0.0%" else "")
                     .setStyle()
-                cell(r++, c++).value(it.value.min).format(if (it.unit == "%") "0.0%" else "")
+                cell(r++, c++).value(it.scaleValue.min)
+                    .format(if (it.unit == "%") "0.0%" else "")
                     .setStyle()
             }
             val columnSize = rangeIndicators.size + startCol
@@ -370,17 +372,20 @@ object RecipeExport {
             rangeIndicators.forEach { indicator ->
                 r = 1
                 //配方目标最大值
-                val max = indicator.value.max
-                cell(r++, c).value(max).bold().format(if (indicator.unit == "%") "0.0%" else "")
+                val max = indicator.scaleValue.max
+                cell(r++, c).value(max).bold()
+                    .format(if (indicator.unit == "%") "0.0%" else "")
                     .setStyle()
 
                 //配方目标最小值
-                val min = indicator.value.min
-                cell(r++, c).value(min).bold().format(if (indicator.unit == "%") "0.0%" else "")
+                val min = indicator.scaleValue.min
+                cell(r++, c).value(min).bold()
+                    .format(if (indicator.unit == "%") "0.0%" else "")
                     .setStyle()
 
                 //实配值
                 val value = when (indicator.type) {
+                    RecipeIndicatorType.TOTAL_NUTRIENT -> ((materials.sumOf { it.totalNutrientWeight }) / requirement.targetWeight).scale()
                     RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight).scale()
                     RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf {
                         it.indicatorWeight(
@@ -392,7 +397,8 @@ object RecipeExport {
                 }
                 val valid =
                     value - min >= -RecipeUtil.DEFAULT_MIN_EPSILON && value - max <= RecipeUtil.DEFAULT_MIN_EPSILON
-                cell(r++, c).value(value).bold().format(if (indicator.unit == "%") "0.0%" else "")
+                cell(r++, c).value(value).bold()
+                    .format(if (indicator.unit == "%") "0.0%" else "")
                     .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
@@ -442,11 +448,13 @@ object RecipeExport {
                 // 投料比
                 cell(r, c++).value(material.weight / recipe.weight).format("0.00%").setStyle()
                 rangeIndicators.forEach { indicator ->
-                    val value = when (indicator.type) {
+                    val value: Double = when (indicator.type) {
+                        RecipeIndicatorType.TOTAL_NUTRIENT -> material.totalNutrient
                         RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue
-                        else -> material.indicators[indicator.id]?.value ?: 0
+                        else -> material.indicators.valueOf(indicator.id)
                     }
-                    cell(r, c++).value(value).format(if (indicator.unit == "%") "0.0%" else "")
+                    cell(r, c++).value(value)
+                        .format(if (indicator.unit == "%") "0.0%" else "")
                         .setStyle()
                 }
                 // 费用合计

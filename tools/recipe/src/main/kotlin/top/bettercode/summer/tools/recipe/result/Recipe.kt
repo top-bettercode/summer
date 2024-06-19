@@ -70,7 +70,7 @@ data class Recipe(
      * 总养分
      */
     val totalNutrientWeight: Double
-        get() = materials.sumOf { it.totalNutrientWeight() }.scale()
+        get() = materials.sumOf { it.totalNutrientWeight }.scale()
 
     /**
      * 产出重量
@@ -130,8 +130,8 @@ data class Recipe(
                 else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / targetWeight).scale()
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
-            if (indicatorValue !in indicator.value.min..indicator.value.max) {
-                throw IllegalRecipeException("指标:${indicator.name}：${indicatorValue} 不在范围${indicator.value.min}-${indicator.value.max}内")
+            if (indicatorValue !in indicator.scaleValue.min..indicator.scaleValue.max) {
+                throw IllegalRecipeException("指标:${indicator.name}：${indicatorValue} 不在范围${indicator.scaleValue.min}-${indicator.scaleValue.max}内")
             }
         }
 

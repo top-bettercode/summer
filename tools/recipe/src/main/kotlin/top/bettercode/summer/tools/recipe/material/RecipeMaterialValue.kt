@@ -63,12 +63,13 @@ data class RecipeMaterialValue(
         }
     }
 
-    fun indicatorWeight(id: String): Double {
-        return indicators.valueOf(id) * weight
+    @get:JsonIgnore
+    val totalNutrientWeight: Double by lazy {
+        indicators.nutrients.sumOf { indicatorWeight(it.id) }
     }
 
-    fun totalNutrientWeight(): Double {
-        return indicators.nutrients.sumOf { indicatorWeight(it.id) }
+    fun indicatorWeight(id: String): Double {
+        return indicators.valueOf(id) * weight
     }
 
 }

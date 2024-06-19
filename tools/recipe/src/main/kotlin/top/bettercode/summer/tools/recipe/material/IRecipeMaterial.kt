@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.material
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 
@@ -38,9 +39,11 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
         return index.compareTo(other.index)
     }
 
-    fun totalNutrient(): Double {
-        return indicators.nutrients.sumOf { it.value }
-    }
+    @get:JsonIgnore
+    val totalNutrient: Double
+        get() {
+            return indicators.nutrients.sumOf { it.scaleValue }
+        }
 }
 
 

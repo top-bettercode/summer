@@ -13,7 +13,8 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.253
+          "value" : 25.3,
+          "scale" : 0.01
         },
         "氯离子" : {
           "id" : "氯离子",
@@ -21,7 +22,8 @@
           "name" : "氯离子",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.667
+          "value" : 66.7,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -29,14 +31,15 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.01
+          "value" : 1.0,
+          "scale" : 0.01
         }
       },
       "name" : "氯化铵（干）",
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 390.3837002704,
+    "weight" : 513.9499166429,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -46,7 +49,8 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.253
+        "value" : 25.3,
+        "scale" : 0.01
       },
       "氯离子" : {
         "id" : "氯离子",
@@ -54,7 +58,8 @@
         "name" : "氯离子",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.667
+        "value" : 66.7,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -62,7 +67,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.01
+        "value" : 1.0,
+        "scale" : 0.01
       }
     },
     "name" : "氯化铵（干）",
@@ -93,7 +99,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.0945678637,
+        "normal" : 2.2990242589,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -105,7 +111,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.3625097391,
+        "normal" : 1.6949624278,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -123,7 +129,8 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.81
+          "value" : 81.0,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -131,14 +138,15 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.005
+          "value" : 0.5,
+          "scale" : 0.01
         }
       },
       "name" : "液氨",
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 4.4570776028,
+    "weight" : 3.9939866867,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -148,7 +156,8 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.81
+        "value" : 81.0,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -156,11 +165,12 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.005
+        "value" : 0.5,
+        "scale" : 0.01
       }
     },
     "name" : "液氨",
-    "normalWeight" : 4.4570776028,
+    "normalWeight" : 3.9939866866999996,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -176,7 +186,8 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.08
+          "value" : 8.0,
+          "scale" : 0.01
         },
         "水溶磷" : {
           "id" : "水溶磷",
@@ -184,7 +195,8 @@
           "name" : "水溶磷",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.192
+          "value" : 19.2,
+          "scale" : 0.01
         },
         "水溶磷率" : {
           "id" : "水溶磷率",
@@ -194,7 +206,8 @@
           "otherId" : "磷",
           "type" : "RATE_TO_OTHER",
           "unit" : "%",
-          "value" : 0.48
+          "value" : 48.0,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -202,7 +215,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.02
+          "value" : 2.0,
+          "scale" : 0.01
         },
         "磷" : {
           "id" : "磷",
@@ -210,14 +224,15 @@
           "name" : "磷",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.4
+          "value" : 40.0,
+          "scale" : 0.01
         }
       },
       "name" : "8-40-0再浆肥（粉）",
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 224.2489247804,
+    "weight" : 196.6378050674,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "indicators" : {
@@ -227,7 +242,8 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.08
+        "value" : 8.0,
+        "scale" : 0.01
       },
       "水溶磷" : {
         "id" : "水溶磷",
@@ -235,7 +251,8 @@
         "name" : "水溶磷",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.192
+        "value" : 19.2,
+        "scale" : 0.01
       },
       "水溶磷率" : {
         "id" : "水溶磷率",
@@ -245,7 +262,8 @@
         "otherId" : "磷",
         "type" : "RATE_TO_OTHER",
         "unit" : "%",
-        "value" : 0.48
+        "value" : 48.0,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -253,7 +271,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.02
+        "value" : 2.0,
+        "scale" : 0.01
       },
       "磷" : {
         "id" : "磷",
@@ -261,7 +280,8 @@
         "name" : "磷",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.4
+        "value" : 40.0,
+        "scale" : 0.01
       }
     },
     "name" : "8-40-0再浆肥（粉）",
@@ -281,7 +301,8 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.18
+          "value" : 18.0,
+          "scale" : 0.01
         },
         "水溶磷" : {
           "id" : "水溶磷",
@@ -289,7 +310,8 @@
           "name" : "水溶磷",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.4048
+          "value" : 40.48,
+          "scale" : 0.01
         },
         "水溶磷率" : {
           "id" : "水溶磷率",
@@ -299,7 +321,8 @@
           "otherId" : "磷",
           "type" : "RATE_TO_OTHER",
           "unit" : "%",
-          "value" : 0.88
+          "value" : 88.0,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -307,7 +330,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.005
+          "value" : 0.5,
+          "scale" : 0.01
         },
         "磷" : {
           "id" : "磷",
@@ -315,14 +339,15 @@
           "name" : "磷",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.46
+          "value" : 46.0,
+          "scale" : 0.01
         }
       },
       "name" : "64磷酸二铵（颗粒）",
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 109.3487610605,
+    "weight" : 133.3584303762,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -332,7 +357,8 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.18
+        "value" : 18.0,
+        "scale" : 0.01
       },
       "水溶磷" : {
         "id" : "水溶磷",
@@ -340,7 +366,8 @@
         "name" : "水溶磷",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.4048
+        "value" : 40.48,
+        "scale" : 0.01
       },
       "水溶磷率" : {
         "id" : "水溶磷率",
@@ -350,7 +377,8 @@
         "otherId" : "磷",
         "type" : "RATE_TO_OTHER",
         "unit" : "%",
-        "value" : 0.88
+        "value" : 88.0,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -358,7 +386,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.005
+        "value" : 0.5,
+        "scale" : 0.01
       },
       "磷" : {
         "id" : "磷",
@@ -366,7 +395,8 @@
         "name" : "磷",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.46
+        "value" : 46.0,
+        "scale" : 0.01
       }
     },
     "name" : "64磷酸二铵（颗粒）",
@@ -386,7 +416,8 @@
           "name" : "氯离子",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.477
+          "value" : 47.7,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -394,7 +425,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.01
+          "value" : 1.0,
+          "scale" : 0.01
         },
         "钾" : {
           "id" : "钾",
@@ -402,14 +434,15 @@
           "name" : "钾",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.6
+          "value" : 60.0,
+          "scale" : 0.01
         }
       },
       "name" : "95%氯化钾烘干粉（国产）",
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 234.7190988764,
+    "weight" : 41.5459754407,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
@@ -419,7 +452,8 @@
         "name" : "氯离子",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.477
+        "value" : 47.7,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -427,7 +461,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.01
+        "value" : 1.0,
+        "scale" : 0.01
       },
       "钾" : {
         "id" : "钾",
@@ -435,7 +470,8 @@
         "name" : "钾",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.6
+        "value" : 60.0,
+        "scale" : 0.01
       }
     },
     "name" : "95%氯化钾烘干粉（国产）",
@@ -493,7 +529,8 @@
           "name" : "氯离子",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.02385
+          "value" : 2.385,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -501,7 +538,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.475
+          "value" : 47.5,
+          "scale" : 0.01
         },
         "钾" : {
           "id" : "钾",
@@ -509,14 +547,15 @@
           "name" : "钾",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.6
+          "value" : 60.0,
+          "scale" : 0.01
         }
       },
       "name" : "喷浆硫基用95氯化钾",
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 53.614234457,
+    "weight" : 191.7873578926,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -526,7 +565,8 @@
         "name" : "氯离子",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.02385
+        "value" : 2.385,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -534,7 +574,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.475
+        "value" : 47.5,
+        "scale" : 0.01
       },
       "钾" : {
         "id" : "钾",
@@ -542,7 +583,8 @@
         "name" : "钾",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.6
+        "value" : 60.0,
+        "scale" : 0.01
       }
     },
     "name" : "喷浆硫基用95氯化钾",
@@ -551,8 +593,8 @@
     "price" : 3.55,
     "unit" : "吨"
   } ],
-  "dryWaterWeight" : 21.7717970475,
-  "materialCost" : 2376.923479291,
+  "dryWaterWeight" : 86.2734721065,
+  "materialCost" : 2376.9234792907,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -582,7 +624,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 24.3173465128,
+    "energyFee" : 34.9601228976,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -594,7 +636,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.867717970475
+      "value" : 1.512734721065
     }, {
       "it" : {
         "id" : "生物质",
@@ -610,9 +652,9 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 211.450919978
+    "totalFee" : 222.2001241265
   },
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 36.7717970475,
-  "weight" : 1021.7717970475
+  "waterWeight" : 101.2734721065,
+  "weight" : 1086.2734721065
 }

@@ -118,7 +118,7 @@ object RecipeSolver {
 
         val rangeIndicators = requirement.indicatorRangeConstraints
         // 产品水分指标
-        val waterRange = rangeIndicators.productWater?.value
+        val waterRange = rangeIndicators.productWater?.scaleValue
         // 定义产品干净重
         val minDryWeight = targetWeight * (1 - (waterRange?.max ?: 0.0))
         val maxDryWeight = targetWeight * (1 - (waterRange?.min ?: 0.0))
@@ -130,16 +130,18 @@ object RecipeSolver {
         // 添加成份约束条件
         // 成份要求 总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 物料水分 硼 锌
         for (indicator in rangeIndicators) {
-            val range = indicator.value
+            val range = indicator.scaleValue
             when {
                 indicator.isProductWater -> {
                     continue
                 }
+
                 indicator.isTotalNutrient -> {
                     recipeMaterials.map {
-                        it.value.weight * it.value.totalNutrient()
+                        it.value.weight * it.value.totalNutrient
                     }.between(targetWeight * range.min, targetWeight * range.max)
                 }
+
                 indicator.isRateToOther -> {
                     val otherVar = recipeMaterials.map {
                         val material = it.value
@@ -155,6 +157,7 @@ object RecipeSolver {
 
                     itVar.ratioInRange(otherVar, range.min, range.max)
                 }
+
                 else -> {
                     recipeMaterials.map {
                         val material = it.value

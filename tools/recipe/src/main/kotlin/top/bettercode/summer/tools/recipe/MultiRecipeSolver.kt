@@ -62,10 +62,10 @@ object MultiRecipeSolver {
                             // 养份保持不变 总养份
                             if (nutrientUnchanged) {
                                 val totalNutrientWeight = recipe.materials.sumOf { m ->
-                                    m.totalNutrientWeight()
+                                    m.totalNutrientWeight
                                 }
                                 recipeMaterials.map { (_, material) ->
-                                    material.weight * material.totalNutrient()
+                                    material.weight * material.totalNutrient
                                 }.eq(totalNutrientWeight)
                             }
                         }

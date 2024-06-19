@@ -54,7 +54,8 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.81
+          "value" : 81.0,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -62,7 +63,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.005
+          "value" : 0.5,
+          "scale" : 0.01
         }
       },
       "name" : "液氨",
@@ -79,7 +81,8 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.81
+        "value" : 81.0,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -87,7 +90,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.005
+        "value" : 0.5,
+        "scale" : 0.01
       }
     },
     "name" : "液氨",
@@ -107,7 +111,8 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.08
+          "value" : 8.0,
+          "scale" : 0.01
         },
         "水溶磷" : {
           "id" : "水溶磷",
@@ -115,7 +120,8 @@
           "name" : "水溶磷",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.192
+          "value" : 19.2,
+          "scale" : 0.01
         },
         "水溶磷率" : {
           "id" : "水溶磷率",
@@ -125,7 +131,8 @@
           "otherId" : "磷",
           "type" : "RATE_TO_OTHER",
           "unit" : "%",
-          "value" : 0.48
+          "value" : 48.0,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -133,7 +140,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.02
+          "value" : 2.0,
+          "scale" : 0.01
         },
         "磷" : {
           "id" : "磷",
@@ -141,7 +149,8 @@
           "name" : "磷",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.4
+          "value" : 40.0,
+          "scale" : 0.01
         }
       },
       "name" : "8-40-0再浆肥（粉）",
@@ -158,7 +167,8 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.08
+        "value" : 8.0,
+        "scale" : 0.01
       },
       "水溶磷" : {
         "id" : "水溶磷",
@@ -166,7 +176,8 @@
         "name" : "水溶磷",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.192
+        "value" : 19.2,
+        "scale" : 0.01
       },
       "水溶磷率" : {
         "id" : "水溶磷率",
@@ -176,7 +187,8 @@
         "otherId" : "磷",
         "type" : "RATE_TO_OTHER",
         "unit" : "%",
-        "value" : 0.48
+        "value" : 48.0,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -184,7 +196,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.02
+        "value" : 2.0,
+        "scale" : 0.01
       },
       "磷" : {
         "id" : "磷",
@@ -192,7 +205,8 @@
         "name" : "磷",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.4
+        "value" : 40.0,
+        "scale" : 0.01
       }
     },
     "name" : "8-40-0再浆肥（粉）",
@@ -212,7 +226,8 @@
           "name" : "水溶磷",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.168
+          "value" : 16.8,
+          "scale" : 0.01
         },
         "水溶磷率" : {
           "id" : "水溶磷率",
@@ -222,7 +237,8 @@
           "otherId" : "磷",
           "type" : "RATE_TO_OTHER",
           "unit" : "%",
-          "value" : 0.8
+          "value" : 80.0,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -230,7 +246,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.65
+          "value" : 65.0,
+          "scale" : 0.01
         },
         "磷" : {
           "id" : "磷",
@@ -238,7 +255,8 @@
           "name" : "磷",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.21
+          "value" : 21.0,
+          "scale" : 0.01
         }
       },
       "name" : "磷酸",
@@ -255,7 +273,8 @@
         "name" : "水溶磷",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.168
+        "value" : 16.8,
+        "scale" : 0.01
       },
       "水溶磷率" : {
         "id" : "水溶磷率",
@@ -265,7 +284,8 @@
         "otherId" : "磷",
         "type" : "RATE_TO_OTHER",
         "unit" : "%",
-        "value" : 0.8
+        "value" : 80.0,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -273,7 +293,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.65
+        "value" : 65.0,
+        "scale" : 0.01
       },
       "磷" : {
         "id" : "磷",
@@ -281,7 +302,8 @@
         "name" : "磷",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.21
+        "value" : 21.0,
+        "scale" : 0.01
       }
     },
     "name" : "磷酸",
@@ -306,7 +328,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.005
+          "value" : 0.5,
+          "scale" : 0.01
         },
         "硫" : {
           "id" : "硫",
@@ -314,7 +337,8 @@
           "name" : "硫",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.327
+          "value" : 32.7,
+          "scale" : 0.01
         }
       },
       "name" : "硫酸",
@@ -331,7 +355,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.005
+        "value" : 0.5,
+        "scale" : 0.01
       },
       "硫" : {
         "id" : "硫",
@@ -339,7 +364,8 @@
         "name" : "硫",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.327
+        "value" : 32.7,
+        "scale" : 0.01
       }
     },
     "name" : "硫酸",
@@ -397,7 +423,8 @@
           "name" : "有机质",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.6
+          "value" : 60.0,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -405,7 +432,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.02
+          "value" : 2.0,
+          "scale" : 0.01
         },
         "腐植酸" : {
           "id" : "腐植酸",
@@ -413,7 +441,8 @@
           "name" : "腐植酸",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.3
+          "value" : 30.0,
+          "scale" : 0.01
         },
         "钾" : {
           "id" : "钾",
@@ -421,7 +450,8 @@
           "name" : "钾",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.1
+          "value" : 10.0,
+          "scale" : 0.01
         },
         "黄腐酸" : {
           "id" : "黄腐酸",
@@ -429,7 +459,8 @@
           "name" : "黄腐酸",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.32
+          "value" : 32.0,
+          "scale" : 0.01
         }
       },
       "name" : "生化黄腐酸钾",
@@ -446,7 +477,8 @@
         "name" : "有机质",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.6
+        "value" : 60.0,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -454,7 +486,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.02
+        "value" : 2.0,
+        "scale" : 0.01
       },
       "腐植酸" : {
         "id" : "腐植酸",
@@ -462,7 +495,8 @@
         "name" : "腐植酸",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.3
+        "value" : 30.0,
+        "scale" : 0.01
       },
       "钾" : {
         "id" : "钾",
@@ -470,7 +504,8 @@
         "name" : "钾",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.1
+        "value" : 10.0,
+        "scale" : 0.01
       },
       "黄腐酸" : {
         "id" : "黄腐酸",
@@ -478,7 +513,8 @@
         "name" : "黄腐酸",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.32
+        "value" : 32.0,
+        "scale" : 0.01
       }
     },
     "name" : "生化黄腐酸钾",
@@ -498,7 +534,8 @@
           "name" : "氯离子",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 0.02385
+          "value" : 2.385,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -506,7 +543,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.475
+          "value" : 47.5,
+          "scale" : 0.01
         },
         "钾" : {
           "id" : "钾",
@@ -514,7 +552,8 @@
           "name" : "钾",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.6
+          "value" : 60.0,
+          "scale" : 0.01
         }
       },
       "name" : "喷浆硫基用95氯化钾",
@@ -531,7 +570,8 @@
         "name" : "氯离子",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 0.02385
+        "value" : 2.385,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -539,7 +579,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.475
+        "value" : 47.5,
+        "scale" : 0.01
       },
       "钾" : {
         "id" : "钾",
@@ -547,7 +588,8 @@
         "name" : "钾",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.6
+        "value" : 60.0,
+        "scale" : 0.01
       }
     },
     "name" : "喷浆硫基用95氯化钾",
@@ -567,7 +609,8 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 0.345
+          "value" : 34.5,
+          "scale" : 0.01
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -575,7 +618,8 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.25
+          "value" : 25.0,
+          "scale" : 0.01
         }
       },
       "name" : "喷浆专用尿素",
@@ -592,7 +636,8 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 0.345
+        "value" : 34.5,
+        "scale" : 0.01
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -600,7 +645,8 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.25
+        "value" : 25.0,
+        "scale" : 0.01
       }
     },
     "name" : "喷浆专用尿素",

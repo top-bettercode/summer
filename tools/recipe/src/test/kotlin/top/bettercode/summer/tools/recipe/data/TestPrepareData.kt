@@ -223,8 +223,10 @@ object TestPrepareData {
         // 总养份 氮含量 磷含量 水溶磷率 钾含量  氯离子   产品水分   物料水分   硼    锌
         // 总养分 氮     磷    钾      氯离子  产品水分 物料水分   水溶磷率   水溶磷 硝态氮 硼   锌
         for (i in 0..9) {
-            val min = (targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble().scale()
-            val max = (targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble().scale()
+            val min =
+                ((targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble() * 100).scale()
+            val max =
+                ((targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble() * 100).scale()
             val indicator = when (i) {
                 //总养分
                 0 -> RecipeIndicator(
@@ -651,7 +653,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.nitrogen!!.scale(),
+                    value = (materialForm.nitrogen!! * 100).scale(),
                     type = RecipeIndicatorType.NUTRIENT,
                     unit = "%"
                 )
@@ -661,7 +663,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.phosphorus!!.scale(),
+                    value = (materialForm.phosphorus!! * 100).scale(),
                     type = RecipeIndicatorType.NUTRIENT,
                     unit = "%"
                 )
@@ -671,7 +673,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.potassium!!.scale(),
+                    value = (materialForm.potassium!! * 100).scale(),
                     type = RecipeIndicatorType.NUTRIENT,
                     unit = "%"
                 )
@@ -681,7 +683,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.chlorine!!.scale(),
+                    value = (materialForm.chlorine!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -692,7 +694,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.water!!.scale(),
+                    value = (materialForm.water!! * 100).scale(),
                     unit = "%",
                     type = RecipeIndicatorType.WATER
                 )
@@ -702,7 +704,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.waterSolublePhosphorusRate!!.scale(),
+                    value = (materialForm.waterSolublePhosphorusRate!! * 100).scale(),
                     unit = "%",
                     type = RecipeIndicatorType.RATE_TO_OTHER,
                     itId = "水溶磷",
@@ -714,7 +716,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.waterSolublePhosphorus!!.scale(),
+                    value = (materialForm.waterSolublePhosphorus!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -723,7 +725,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.nitrateNitrogen!!.scale(),
+                    value = (materialForm.nitrateNitrogen!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -732,7 +734,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.boron!!.scale(),
+                    value = (materialForm.boron!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -741,7 +743,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.zinc!!.scale(),
+                    value = (materialForm.zinc!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -750,7 +752,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.manganese!!.scale(),
+                    value = (materialForm.manganese!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -759,7 +761,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.copper!!.scale(),
+                    value = (materialForm.copper!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -768,7 +770,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.iron!!.scale(),
+                    value = (materialForm.iron!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -777,7 +779,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.molybdenum!!.scale(),
+                    value = (materialForm.molybdenum!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -786,7 +788,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.magnesium!!.scale(),
+                    value = (materialForm.magnesium!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -795,7 +797,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.sulfur!!.scale(),
+                    value = (materialForm.sulfur!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -804,7 +806,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.calcium!!.scale(),
+                    value = (materialForm.calcium!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -813,7 +815,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.organicMatter!!.scale(),
+                    value = (materialForm.organicMatter!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -822,7 +824,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.humicAcid!!.scale(),
+                    value = (materialForm.humicAcid!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -831,7 +833,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.fulvicAcid!!.scale(),
+                    value = (materialForm.fulvicAcid!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -850,7 +852,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.silicon!!.scale(),
+                    value = (materialForm.silicon!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -859,7 +861,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index23!!.scale(),
+                    value = (materialForm.index23!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -868,7 +870,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index24!!.scale(),
+                    value = (materialForm.index24!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -877,7 +879,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index25!!.scale(),
+                    value = (materialForm.index25!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -886,7 +888,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index26!!.scale(),
+                    value = (materialForm.index26!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -895,7 +897,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index27!!.scale(),
+                    value = (materialForm.index27!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -904,7 +906,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index28!!.scale(),
+                    value = (materialForm.index28!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -913,7 +915,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index29!!.scale(),
+                    value = (materialForm.index29!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -922,7 +924,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index30!!.scale(),
+                    value = (materialForm.index30!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -931,7 +933,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index31!!.scale(),
+                    value = (materialForm.index31!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -940,7 +942,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index32!!.scale(),
+                    value = (materialForm.index32!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -949,7 +951,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index33!!.scale(),
+                    value = (materialForm.index33!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -958,7 +960,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index34!!.scale(),
+                    value = (materialForm.index34!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -967,7 +969,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index35!!.scale(),
+                    value = (materialForm.index35!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -976,7 +978,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index36!!.scale(),
+                    value = (materialForm.index36!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -985,7 +987,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index37!!.scale(),
+                    value = (materialForm.index37!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -994,7 +996,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index38!!.scale(),
+                    value = (materialForm.index38!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1003,7 +1005,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index39!!.scale(),
+                    value = (materialForm.index39!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1012,7 +1014,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index40!!.scale(),
+                    value = (materialForm.index40!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1021,7 +1023,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index41!!.scale(),
+                    value = (materialForm.index41!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1030,7 +1032,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index42!!.scale(),
+                    value = (materialForm.index42!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1039,7 +1041,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index43!!.scale(),
+                    value = (materialForm.index43!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1048,7 +1050,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index44!!.scale(),
+                    value = (materialForm.index44!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1057,7 +1059,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index45!!.scale(),
+                    value = (materialForm.index45!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1066,7 +1068,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index46!!.scale(),
+                    value = (materialForm.index46!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1075,7 +1077,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index47!!.scale(),
+                    value = (materialForm.index47!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1084,7 +1086,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index48!!.scale(),
+                    value = (materialForm.index48!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1093,7 +1095,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index49!!.scale(),
+                    value = (materialForm.index49!! * 100).scale(),
                     unit = "%"
                 )
             )
@@ -1102,7 +1104,7 @@ object TestPrepareData {
                     index = ++i,
                     id = indicatorNames[i],
                     name = indicatorNames[i],
-                    value = materialForm.index50!!.scale(),
+                    value = (materialForm.index50!! * 100).scale(),
                     unit = "%"
                 )
             )
