@@ -78,17 +78,18 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
         for (i in params.indices) {
             sql = sql.replaceFirst("?", params[i].toString())
         }
+        val resultInfo = "${
+            if (sqlLogData.affected != null) "affected:${sqlLogData.affected} rows; " else ""
+        }${
+            if (sqlLogData.retrieved != null) "retrieved:${sqlLogData.retrieved} rows; " else ""
+        }${
+            if (sqlLogData.total != null) "total:${sqlLogData.total} rows; " else ""
+        }${
+            if (sqlLogData.cost != null) "cost:${sqlLogData.cost} ms;" else ""
+        }".trim()
         logger.debug(
-            "{}{}\n${
-                if (sqlLogData.affected != null) ", affected:${sqlLogData.affected} rows" else ""
-            }${
-                if (sqlLogData.retrieved != null) ", retrieved:${sqlLogData.retrieved} rows" else ""
-            }${
-                if (sqlLogData.total != null) ", total:${sqlLogData.total} rows" else ""
-            }${
-                if (sqlLogData.cost != null) ", cost:${sqlLogData.cost} ms" else ""
-            }",
-            id,
+            "{}{}\n$resultInfo",
+            if (id.isNotBlank()) "${id}: " else "",
             sql
         )
     }
