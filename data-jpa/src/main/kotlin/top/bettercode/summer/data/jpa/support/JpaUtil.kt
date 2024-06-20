@@ -22,8 +22,8 @@ object JpaUtil {
         return if (source != null && !targetType!!.isInstance(source)) {
             try {
                 TYPE_CONFIGURATION.javaTypeDescriptorRegistry
-                        .getDescriptor(ClassUtils.resolvePrimitiveIfNecessary(targetType))
-                        .wrap(source, null) as T?
+                    .getDescriptor(ClassUtils.resolvePrimitiveIfNecessary(targetType))
+                    .wrap(source, null) as T?
             } catch (e: Exception) {
                 ApplicationContextHolder.conversionService.convert(source, targetType)
             }
@@ -44,15 +44,21 @@ object JpaUtil {
                 val s = System.currentTimeMillis()
                 val result = run()
                 val duration = System.currentTimeMillis() - s
-                val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty("summer.data.jpa.timeout-alarm-seconds", Int::class.java)
-                        ?: -1)
+                val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty(
+                    "summer.data.jpa.timeout-alarm-seconds",
+                    Int::class.java
+                )
+                    ?: -1)
                 if (timeoutAlarmSeconds > 0 && duration > timeoutAlarmSeconds * 1000) {
                     if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
                         val initialComment = "$id：执行速度慢(${duration / 1000}秒)"
-                        log.warn(AlarmMarker(initialComment, true), initialComment + "cost: {} ms", duration)
-                    } else {
-                        sqlLog.warn("cost: {} ms", duration)
+                        log.warn(
+                            AlarmMarker(initialComment, true),
+                            initialComment + "cost: {} ms",
+                            duration
+                        )
                     }
+                    sqlLog.warn("cost: {} ms", duration)
                 } else {
                     if (duration > 2 * 1000) {
                         sqlLog.warn("cost: {} ms", duration)
