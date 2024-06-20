@@ -229,7 +229,8 @@ class JpaMybatisTupleTest {
     @Test
     @Transactional(readOnly = true)
     fun selectMybatisStream() {
-        repository.selectMybatisStream("Carter", null).forEach { x: User? -> System.err.println(x) }
+        val selectMybatisStream = repository.selectMybatisStream("Carter", null)
+        selectMybatisStream.forEach { x: User? -> System.err.println(x) }
     }
 
     val countDownLatch = CountDownLatch(200)

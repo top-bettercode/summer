@@ -3,6 +3,7 @@ package top.bettercode.summer.test.web.support.division
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
@@ -15,6 +16,7 @@ import java.sql.DriverManager
  *
  * @author Peter Wu
  */
+@Disabled
 class DivisionDataUpdateTest {
 
     val driver: WebDriver

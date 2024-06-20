@@ -16,7 +16,13 @@ import java.lang.reflect.Method
  *
  * @author Peter Wu
  */
-class MybatisQueryMethod(val mappedStatement: MappedStatement, isPageQuery: Boolean, isSliceQuery: Boolean, method: Method) {
+class MybatisQueryMethod(
+    val mappedStatement: MappedStatement,
+    isPageQuery: Boolean,
+    isSliceQuery: Boolean,
+    isStreamQuery: Boolean,
+    method: Method
+) {
     private val log = LoggerFactory.getLogger(MybatisQueryMethod::class.java)
 
     val paramed: Boolean
@@ -30,20 +36,25 @@ class MybatisQueryMethod(val mappedStatement: MappedStatement, isPageQuery: Bool
         MybatisResultSetHandler.validateResultMaps(mappedStatement)
 
         if (isPageQuery) {
-            val nestedResultMapId: String? = MybatisResultSetHandler.findNestedResultMap(mappedStatement)
+            val nestedResultMapId: String? =
+                MybatisResultSetHandler.findNestedResultMap(mappedStatement)
             if (nestedResultMapId != null) {
                 log.info(
-                        "{} may return incorrect paginated data. Please check result maps definition {}.",
-                        mappedStatement.id, nestedResultMapId)
+                    "{} may return incorrect paginated data. Please check result maps definition {}.",
+                    mappedStatement.id, nestedResultMapId
+                )
             }
         }
 
         val sqlCommandType = mappedStatement.sqlCommandType
-        isModifyingQuery = SqlCommandType.UPDATE == sqlCommandType || SqlCommandType.DELETE == sqlCommandType || SqlCommandType.INSERT == sqlCommandType
+        isModifyingQuery =
+            SqlCommandType.UPDATE == sqlCommandType || SqlCommandType.DELETE == sqlCommandType || SqlCommandType.INSERT == sqlCommandType
 
-        paramed = method.parameterAnnotations.any { it.any { anno -> anno.annotationClass == Param::class } }
+        paramed =
+            method.parameterAnnotations.any { it.any { anno -> anno.annotationClass == Param::class } }
 
-        val querySizeAnno = AnnotatedElementUtils.findMergedAnnotation(method, QuerySize::class.java)
+        val querySizeAnno =
+            AnnotatedElementUtils.findMergedAnnotation(method, QuerySize::class.java)
         if (querySizeAnno != null) {
             val value = querySizeAnno.value
             Assert.isTrue(value > 0, "size 必须大于0")
@@ -58,7 +69,7 @@ class MybatisQueryMethod(val mappedStatement: MappedStatement, isPageQuery: Bool
             null
         } else null
 
-        this.resultTransformer = MybatisResultTransformer(mappedStatement)
+        this.resultTransformer = MybatisResultTransformer(mappedStatement, isStreamQuery)
 
         nestedResultMapType = if (isSliceQuery) {
             MybatisResultSetHandler.findNestedResultMapType(mappedStatement)

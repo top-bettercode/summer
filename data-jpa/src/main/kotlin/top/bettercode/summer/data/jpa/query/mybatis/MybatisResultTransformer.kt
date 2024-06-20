@@ -8,12 +8,41 @@ import javax.persistence.Tuple
 /**
  * @author Peter Wu
  */
-class MybatisResultTransformer(private val mappedStatement: MappedStatement) : ResultTransformer {
+class MybatisResultTransformer(
+    private val mappedStatement: MappedStatement,
+    private val isStreamQuery: Boolean
+) : ResultTransformer {
 
     private var resultSetMetaData: TupleResultSetMetaData? = null
+    var autoCloseResultSet = true
 
     override fun transformTuple(tuple: Array<Any?>, aliases: Array<String>): Any {
-        return NativeTupleImpl(tuple, aliases)
+        val tupleImpl = NativeTupleImpl(tuple, aliases)
+        if (isStreamQuery) {
+            val tuples = listOf(tupleImpl)
+            val resultSetMetaData: TupleResultSetMetaData
+            if (this.resultSetMetaData == null) {
+                synchronized(this) {
+                    if (this.resultSetMetaData == null) {
+                        resultSetMetaData = TupleResultSetMetaData(tuples)
+                        if (resultSetMetaData.complete) {
+                            this.resultSetMetaData = resultSetMetaData
+                        }
+                    } else {
+                        resultSetMetaData = this.resultSetMetaData!!
+                    }
+                }
+            } else {
+                resultSetMetaData = this.resultSetMetaData!!
+            }
+            val resultSet = TupleResultSet(tuples, resultSetMetaData)
+            return MybatisResultSetHandler(mappedStatement, autoCloseResultSet).handleResultSets(
+                resultSet,
+                Int.MAX_VALUE
+            ).first()!!
+        } else {
+            return tupleImpl
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -35,7 +64,10 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement) : R
             resultSetMetaData = this.resultSetMetaData!!
         }
         val resultSet = TupleResultSet(tuples, resultSetMetaData)
-        return MybatisResultSetHandler(mappedStatement).handleResultSets(resultSet, Int.MAX_VALUE)
+        return MybatisResultSetHandler(mappedStatement, autoCloseResultSet).handleResultSets(
+            resultSet,
+            Int.MAX_VALUE
+        )
     }
 
     fun transformResultSet(resultSet: ResultSet?): Any? {
@@ -51,7 +83,10 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement) : R
         if (maxRows1 == 0) {
             maxRows1 = Int.MAX_VALUE
         }
-        return MybatisResultSetHandler(mappedStatement).handleResultSets(resultSet, maxRows1)
+        return MybatisResultSetHandler(mappedStatement, autoCloseResultSet).handleResultSets(
+            resultSet,
+            maxRows1
+        )
     }
 
 }

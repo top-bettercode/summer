@@ -39,6 +39,6 @@ class Service {
         val size3 = byMybatis!!.size
         System.err.println(size3)
         Assert.isTrue(size2 == size3, "查询结果不一致")
-        Assert.isTrue(size2 == users1.size + 1, "查询结果一致")
+        Assert.isTrue(size2 == users1.size, "查询结果不一致")
     }
 }

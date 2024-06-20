@@ -10,10 +10,10 @@ import java.lang.reflect.Method
  * @author Peter Wu
  */
 class JpaExtQueryMethod(
-        method: Method,
-        metadata: RepositoryMetadata,
-        factory: ProjectionFactory,
-        extractor: QueryExtractor, configuration: Configuration
+    method: Method,
+    metadata: RepositoryMetadata,
+    factory: ProjectionFactory,
+    extractor: QueryExtractor, configuration: Configuration
 ) : JpaQueryMethod(method, metadata, factory, extractor) {
     val statementId: String = method.declaringClass.name + "." + method.name
     val mybatisQueryMethod: MybatisQueryMethod?
@@ -25,7 +25,7 @@ class JpaExtQueryMethod(
             null
         }
         mybatisQueryMethod = if (statement != null) {
-            MybatisQueryMethod(statement, isPageQuery, isSliceQuery, method)
+            MybatisQueryMethod(statement, isPageQuery, isSliceQuery, isStreamQuery, method)
         } else {
             null
         }
