@@ -42,31 +42,33 @@ object JpaUtil {
         try {
             return if (put) {
                 val s = System.currentTimeMillis()
-                val result = run()
-                val duration = System.currentTimeMillis() - s
-                val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty(
-                    "summer.data.jpa.timeout-alarm-seconds",
-                    Int::class.java
-                )
-                    ?: -1)
-                if (timeoutAlarmSeconds > 0 && duration > timeoutAlarmSeconds * 1000) {
-                    if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
-                        val initialComment = "$id：执行速度慢(${duration / 1000}秒)"
-                        log.warn(
-                            AlarmMarker(initialComment, true),
-                            initialComment + "cost: {} ms",
-                            duration
-                        )
-                    }
-                    sqlLog.warn("cost: {} ms", duration)
-                } else {
-                    if (duration > 2 * 1000) {
+                try {
+                    run()
+                } finally {
+                    val duration = System.currentTimeMillis() - s
+                    val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty(
+                        "summer.data.jpa.timeout-alarm-seconds",
+                        Int::class.java
+                    )
+                        ?: -1)
+                    if (timeoutAlarmSeconds > 0 && duration > timeoutAlarmSeconds * 1000) {
+                        if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
+                            val initialComment = "$id：执行速度慢(${duration / 1000}秒)"
+                            log.warn(
+                                AlarmMarker(initialComment, true),
+                                initialComment + "cost: {} ms",
+                                duration
+                            )
+                        }
                         sqlLog.warn("cost: {} ms", duration)
                     } else {
-                        sqlLog.debug("cost: {} ms", duration)
+                        if (duration > 2 * 1000) {
+                            sqlLog.warn("cost: {} ms", duration)
+                        } else {
+                            sqlLog.debug("cost: {} ms", duration)
+                        }
                     }
                 }
-                result
             } else {
                 run()
             }
