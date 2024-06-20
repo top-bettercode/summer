@@ -17,12 +17,9 @@ summer:
     b2m:
       check-balance: false
 
-
-
 logging:
   level:
     org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 spring:
   jackson:

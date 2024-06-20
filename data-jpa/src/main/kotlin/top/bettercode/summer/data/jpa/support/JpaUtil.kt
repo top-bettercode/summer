@@ -49,6 +49,7 @@ object JpaUtil {
                     MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
                     throw e
                 } finally {
+                    MDC.put(SqlAppender.MDC_SQL_END, "END")
                     val duration = System.currentTimeMillis() - s
                     val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty(
                         "summer.data.jpa.timeout-alarm-seconds",
@@ -69,7 +70,7 @@ object JpaUtil {
                         if (duration > 2 * 1000) {
                             sqlLog.warn("cost: {} ms", duration)
                         } else {
-                            sqlLog.debug("cost: {} ms", duration)
+                            sqlLog.info("cost: {} ms", duration)
                         }
                     }
                 }
@@ -78,6 +79,7 @@ object JpaUtil {
             }
         } finally {
             MDC.remove(SqlAppender.MDC_SQL_ERROR)
+            MDC.remove(SqlAppender.MDC_SQL_END)
             if (put) {
                 MDC.remove(SqlAppender.MDC_SQL_ID)
             }

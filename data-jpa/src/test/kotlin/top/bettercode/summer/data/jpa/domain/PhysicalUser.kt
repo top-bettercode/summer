@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.domain
 
 import org.hibernate.annotations.ColumnDefault
+import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Type
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.*
@@ -8,6 +9,7 @@ import javax.persistence.*
 
 @Suppress("LeakingThis")
 @Entity
+@DynamicUpdate
 @Table(name = "t_user")
 open class PhysicalUser {
     @Id

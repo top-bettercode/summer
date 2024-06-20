@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.domain
 
 import org.hibernate.annotations.ColumnDefault
+import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Type
 import top.bettercode.summer.data.jpa.LogicalDelete
 import top.bettercode.summer.tools.lang.util.StringUtil.json
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
+@DynamicUpdate
 @Suppress("LeakingThis")
 @MappedSuperclass
 open class BaseUser {

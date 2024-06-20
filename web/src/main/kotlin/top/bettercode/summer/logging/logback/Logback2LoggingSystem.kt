@@ -58,6 +58,7 @@ import java.util.concurrent.TimeUnit
 open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSystem(classLoader) {
 
     private val log: Logger = LoggerFactory.getLogger(Logback2LoggingSystem::class.java)
+    private var showSql = false
     private val loggerContext: LoggerContext by lazy {
         val factory = LoggerFactory.getILoggerFactory()
         Assert.isInstanceOf(
@@ -84,12 +85,23 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     ) {
         super.loadDefaults(initializationContext, null)
         val context = loggerContext
+
+        val environment = initializationContext.environment
+        val rootLevel = environment.getProperty("logging.level.root")
+
         context.getLogger("org.jboss").level = Level.WARN
         context.getLogger("org.hibernate").level = Level.WARN
+        val sqlLevel = environment.getProperty("logging.level.org.hibernate.SQL")
+            ?.run { Level.toLevel(this) } ?: Level.DEBUG
+        showSql = Level.DEBUG == sqlLevel
+        val sqlLogger = context.getLogger("org.hibernate.SQL")
+        sqlLogger.level = sqlLevel
+        context.getLogger("top.bettercode.summer.SQL").level = sqlLevel
+        context.getLogger("org.hibernate.type.descriptor.sql.BasicBinder").level =
+            if (showSql) Level.TRACE else rootLevel?.run { Level.toLevel(this) } ?: Level.DEBUG
 
         start(context, sqlFilter)
 
-        val environment = initializationContext.environment
         val warnSubject = LoggingUtil.warnSubject(environment)
         //smtp log
         if (existProperty(environment, "summer.logging.smtp.host")) {
@@ -185,7 +197,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             }
         }
 
-        val rootLevel = environment.getProperty("logging.level.root")
         //websocket log
         if (ClassUtils.isPresent(
                 "org.springframework.web.socket.server.standard.ServerEndpointExporter",

@@ -9,13 +9,16 @@ import top.bettercode.summer.tools.lang.util.JavaTypeResolver
  */
 data class SqlLogParam(val index: Int, val type: String, val value: String) {
     override fun toString(): String {
-        val value = when (JavaTypeResolver.type(type)?.javaType) {
-            JavaType.stringInstance, JavaType.dateInstance, JavaType("java.time.LocalDate"), JavaType(
-                "java.time.LocalDateTime"
-            ) -> "'${this.value}'"
+        val value = if ("null" == value)
+            null
+        else
+            when (JavaTypeResolver.type(type)?.javaType) {
+                JavaType.stringInstance, JavaType.dateInstance, JavaType("java.time.LocalDate"), JavaType(
+                    "java.time.LocalDateTime"
+                ) -> "'${this.value}'"
 
-            else -> this.value
-        }
+                else -> this.value
+            }
         return "#$value"
     }
 }
