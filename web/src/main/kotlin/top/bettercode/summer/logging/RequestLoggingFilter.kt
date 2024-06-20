@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level
 import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.slf4j.MarkerFactory
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.core.Ordered
@@ -51,6 +52,7 @@ class RequestLoggingFilter(
 ) : OncePerRequestFilter(), Ordered {
 
     companion object {
+        const val MDC_REQUEST_HASHCODE = "REQUEST_HASHCODE"
         const val NOT_IN_ALL = "not_in_all"
         const val OPERATION_MARKER = "operation"
         const val IS_OPERATION_MARKER = "is_operation"
@@ -110,6 +112,7 @@ class RequestLoggingFilter(
             responseToUse = response
         }
         try {
+            MDC.put(MDC_REQUEST_HASHCODE, Integer.toHexString(request.hashCode()))
             filterChain.doFilter(requestToUse, responseToUse)
         } finally {
             try {
@@ -117,6 +120,7 @@ class RequestLoggingFilter(
             } catch (e: Exception) {
                 log.error(e.message, e)
             }
+            MDC.remove(MDC_REQUEST_HASHCODE)
         }
 
     }
