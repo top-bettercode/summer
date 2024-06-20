@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.tools.lang.log.AlarmMarker
+import top.bettercode.summer.tools.lang.log.SqlAppender
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
 /**
@@ -33,8 +34,8 @@ object JpaUtil {
     }
 
     fun <M> mdcId(id: String, run: () -> M): M {
-        val put = if (MDC.get("id") == null) {
-            MDC.put("id", id)
+        val put = if (MDC.get(SqlAppender.MDC_SQL_ID) == null) {
+            MDC.put(SqlAppender.MDC_SQL_ID, id)
             true
         } else {
             false
@@ -44,6 +45,9 @@ object JpaUtil {
                 val s = System.currentTimeMillis()
                 try {
                     run()
+                } catch (e: Exception) {
+                    MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
+                    throw e
                 } finally {
                     val duration = System.currentTimeMillis() - s
                     val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty(
@@ -73,8 +77,9 @@ object JpaUtil {
                 run()
             }
         } finally {
+            MDC.remove(SqlAppender.MDC_SQL_ERROR)
             if (put) {
-                MDC.remove("id")
+                MDC.remove(SqlAppender.MDC_SQL_ID)
             }
         }
     }

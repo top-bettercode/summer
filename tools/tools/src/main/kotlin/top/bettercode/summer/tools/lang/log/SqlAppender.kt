@@ -3,11 +3,17 @@ package top.bettercode.summer.tools.lang.log
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
 import org.slf4j.LoggerFactory
+import org.slf4j.MarkerFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 
 class SqlAppender : AppenderBase<ILoggingEvent>() {
+    companion object {
+        const val PID = "PID"
+        const val MDC_SQL_ERROR = "SQL_ERROR"
+        const val MDC_SQL_ID = "SQL_ID"
+    }
 
     private val sqlCache: ConcurrentMap<String, SqlLogData> = ConcurrentHashMap()
     private val logger = LoggerFactory.getLogger(SqlAppender::class.java)
@@ -16,8 +22,9 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
         if (event == null || !isStarted || !logger.isDebugEnabled) {
             return
         }
-        val pid = event.loggerContextVO.propertyMap["PID"]
-        val id = event.mdcPropertyMap["id"] ?: ""
+        val pid = event.loggerContextVO.propertyMap[PID]
+        val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
+        val error = event.mdcPropertyMap[MDC_SQL_ERROR]
         val key = "$pid:$id"
         var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData() }
         val msg = event.formattedMessage
@@ -25,7 +32,7 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
             "org.hibernate.SQL" -> {
                 if (!sqlLogData.sql.isNullOrBlank()) {
                     sqlCache.remove(key)
-                    log(sqlLogData, id)
+                    log(sqlLogData, id, error)
                     sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData() }
                 }
                 sqlLogData.sql = msg
@@ -62,7 +69,7 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
                 val matchResult4 = regex4.find(msg)
                 if (matchResult4 != null) {
                     sqlLogData.cost = matchResult4.groupValues[1].toLong()
-                    log(sqlLogData, id)
+                    log(sqlLogData, id, error)
                     sqlCache.remove(key)
                 }
             }
@@ -71,7 +78,8 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
 
     private fun log(
         sqlLogData: SqlLogData,
-        id: String
+        id: String,
+        error: String?
     ) {
         var sql = sqlLogData.sql!!
         val params = sqlLogData.params.sortedBy { it.index }
@@ -87,11 +95,20 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
         }${
             if (sqlLogData.cost != null) "cost:${sqlLogData.cost} ms;" else ""
         }".trim()
-        logger.debug(
-            "{}{}\n$resultInfo",
-            if (id.isNotBlank()) "${id}: " else "",
-            sql
-        )
+        if (error.isNullOrBlank())
+            logger.debug(
+                "{}{}\n$resultInfo",
+                if (id.isNotBlank()) "${id}: " else "",
+                sql
+            )
+        else
+            logger.error(
+                MarkerFactory.getMarker(AlarmAppender.NO_ALARM_LOG_MARKER),
+                "{}{}\n$resultInfo\n{}",
+                if (id.isNotBlank()) "${id}: " else "",
+                sql,
+                error
+            )
     }
 
 }
