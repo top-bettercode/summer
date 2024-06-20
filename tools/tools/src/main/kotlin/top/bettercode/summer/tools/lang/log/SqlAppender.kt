@@ -40,25 +40,25 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
 
             else -> {
                 //total: {} rows
-                val regex = Regex("total: (\\d)+ rows")
+                val regex = Regex("total: (\\d+) rows")
                 val matchResult = regex.find(msg)
                 if (matchResult != null) {
                     sqlLogData.total = matchResult.groupValues[1].toLong()
                 }
                 //{} rows retrieved
-                val regex2 = Regex("(\\d)+ rows retrieved")
+                val regex2 = Regex("(\\d+) rows retrieved")
                 val matchResult2 = regex2.find(msg)
                 if (matchResult2 != null) {
                     sqlLogData.retrieved = matchResult2.groupValues[1].toInt()
                 }
                 //{} row affected
-                val regex3 = Regex("(\\d)+ row affected")
+                val regex3 = Regex("(\\d+) row affected")
                 val matchResult3 = regex3.find(msg)
                 if (matchResult3 != null) {
                     sqlLogData.affected = matchResult3.groupValues[1].toInt()
                 }
                 //cost: {} ms
-                val regex4 = Regex("cost: (\\d)+ ms")
+                val regex4 = Regex("cost: (\\d+) ms")
                 val matchResult4 = regex4.find(msg)
                 if (matchResult4 != null) {
                     sqlLogData.cost = matchResult4.groupValues[1].toLong()
