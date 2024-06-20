@@ -16,6 +16,7 @@ import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
 import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.util.regex.Pattern
 import javax.persistence.EntityManager
+import javax.persistence.NoResultException
 import javax.persistence.Query
 
 class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJpaQuery(method, em) {
@@ -32,11 +33,14 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
 
         val sort = accessor.sort
         val size = mybatisParam.size
-        val sortedQueryString = applySorting(queryString,
-                if (sort.isUnsorted && size != null) size.sort else sort)
+        val sortedQueryString = applySorting(
+            queryString,
+            if (sort.isUnsorted && size != null) size.sort else sort
+        )
         val query = entityManager.createNativeQuery(sortedQueryString)
         @Suppress("DEPRECATION")
-        query.unwrap(NativeQuery::class.java).setResultTransformer(mybatisQueryMethod.resultTransformer)
+        query.unwrap(NativeQuery::class.java)
+            .setResultTransformer(mybatisQueryMethod.resultTransformer)
         val metadata = metadataCache.getMetadata(sortedQueryString, query)
         // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
         // parameters in the query do not change.
@@ -45,22 +49,28 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             query.setMaxResults(mybatisQueryMethod.querySize)
         }
         val countQuery: Query? =
-                if (accessor.pageable.isPaged) {
-                    val countMappedStatement = mybatisQueryMethod.countMappedStatement
-                    val countQueryString: String = if (countMappedStatement != null) {
-                        val countBoundSql = countMappedStatement.getBoundSql(mybatisParam.parameterObject)
-                        countBoundSql.sql
-                    } else {
-                        CountSqlParser.getSmartCountSql(queryString)
-                    }
-                    val countQuery = entityManager.createNativeQuery(countQueryString)
-                    val countMmetadata = metadataCache.getMetadata(countQueryString, countQuery)
-                    parameterBinder.bind(countMmetadata.withQuery(countQuery), mybatisParam)
-                    if (queryMethod.applyHintsToCountQuery()) applyHints(countQuery, queryMethod) else countQuery
-                } else null
+            if (accessor.pageable.isPaged) {
+                val countMappedStatement = mybatisQueryMethod.countMappedStatement
+                val countQueryString: String = if (countMappedStatement != null) {
+                    val countBoundSql =
+                        countMappedStatement.getBoundSql(mybatisParam.parameterObject)
+                    countBoundSql.sql
+                } else {
+                    CountSqlParser.getSmartCountSql(queryString)
+                }
+                val countQuery = entityManager.createNativeQuery(countQueryString)
+                val countMmetadata = metadataCache.getMetadata(countQueryString, countQuery)
+                parameterBinder.bind(countMmetadata.withQuery(countQuery), mybatisParam)
+                if (queryMethod.applyHintsToCountQuery()) applyHints(
+                    countQuery,
+                    queryMethod
+                ) else countQuery
+            } else null
 
-        return parameterBinder.bindAndPrepare(MybatisQuery(query, countQuery),
-                metadata, accessor, mybatisParam)
+        return parameterBinder.bindAndPrepare(
+            MybatisQuery(query, countQuery),
+            metadata, accessor, mybatisParam
+        )
     }
 
     override fun doCreateCountQuery(accessor: JpaParametersParameterAccessor): Query {
@@ -68,7 +78,11 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
     }
 
     override fun createBinder(): ParameterBinder {
-        return MybatisParameterBinder(queryMethod.parameters, mybatisQueryMethod.paramed, mybatisQueryMethod.mappedStatement)
+        return MybatisParameterBinder(
+            queryMethod.parameters,
+            mybatisQueryMethod.paramed,
+            mybatisQueryMethod.mappedStatement
+        )
     }
 
     override fun getExecution(): JpaQueryExecution {
@@ -89,8 +103,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                 }
 
                 override fun doExecute(
-                        repositoryQuery: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    repositoryQuery: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         val mybatisQuery = repositoryQuery.createQuery(accessor) as MybatisQuery
@@ -99,8 +113,11 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         if (accessor.pageable.isPaged) {
                             val countQuery = mybatisQuery.countQuery!!
                             val totals = countQuery.resultList
-                            total = if (totals.size == 1) CONVERSION_SERVICE.convert(totals[0], Long::class.java)
-                                    ?: 0 else totals.size.toLong()
+                            total = if (totals.size == 1) CONVERSION_SERVICE.convert(
+                                totals[0],
+                                Long::class.java
+                            )
+                                ?: 0 else totals.size.toLong()
                             if (sqlLog.isInfoEnabled) {
                                 sqlLog.info("total: {} rows", total)
                             }
@@ -126,8 +143,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         } else if (method.isCollectionQuery) {
             object : CollectionExecution() {
                 override fun doExecute(
-                        query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor) as List<*>
@@ -141,8 +158,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         } else if (mybatisQueryMethod.isModifyingQuery || method.isModifyingQuery) {
             object : ModifyingExecution(method, entityManager) {
                 override fun doExecute(
-                        query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor)
@@ -156,8 +173,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         } else if (method.isProcedureQuery) {
             object : ProcedureExecution() {
                 override fun doExecute(
-                        jpaQuery: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    jpaQuery: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         super.doExecute(jpaQuery, accessor)
@@ -167,8 +184,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         } else if (method.isStreamQuery) {
             object : StreamExecution() {
                 override fun doExecute(
-                        query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         super.doExecute(query, accessor)
@@ -178,20 +195,23 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         } else if (method.isSliceQuery) {
             object : SlicedExecution() {
                 override fun doExecute(
-                        query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
                 ): Any {
                     return JpaUtil.mdcId(sqlLogId) {
                         val pageable = accessor.pageable
                         val nestedResultMapType = mybatisQueryMethod.nestedResultMapType
                         if (pageable.isPaged && nestedResultMapType != null) {
                             if (nestedResultMapType.isCollection) {
-                                throw UnsupportedOperationException(nestedResultMapType.nestedResultMapId
-                                        + " collection resultmap not support page query")
+                                throw UnsupportedOperationException(
+                                    nestedResultMapType.nestedResultMapId
+                                            + " collection resultmap not support page query"
+                                )
                             } else {
                                 sqlLog.info(
-                                        "{} may return incorrect paginated data. Please check result maps definition {}.",
-                                        sqlLogId, nestedResultMapType.nestedResultMapId)
+                                    "{} may return incorrect paginated data. Please check result maps definition {}.",
+                                    sqlLogId, nestedResultMapType.nestedResultMapId
+                                )
                             }
                         }
                         val result = super.doExecute(query, accessor) as SliceImpl<*>
@@ -206,9 +226,16 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         } else {
             object : SingleEntityExecution() {
                 @Suppress("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE")
-                override fun doExecute(query: AbstractJpaQuery, accessor: JpaParametersParameterAccessor): Any? {
+                override fun doExecute(
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
+                ): Any? {
                     return JpaUtil.mdcId(sqlLogId) {
-                        val result: Any? = super.doExecute(query, accessor)
+                        val result: Any? = try {
+                            super.doExecute(query, accessor)
+                        } catch (e: NoResultException) {
+                            null
+                        }
                         if (sqlLog.isInfoEnabled) {
                             sqlLog.info("{} rows retrieved", if (result == null) 0 else 1)
                         }
@@ -224,11 +251,18 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         fun convertOrderBy(sort: Sort?): String? {
             return if (sort == null || !sort.isSorted) {
                 null
-            } else sort.map { o: Sort.Order -> ParsingUtils.reconcatenateCamelCase(o.property, "_") + " " + o.direction }.joinToString(",")
+            } else sort.map { o: Sort.Order ->
+                ParsingUtils.reconcatenateCamelCase(
+                    o.property,
+                    "_"
+                ) + " " + o.direction
+            }.joinToString(",")
         }
 
-        private val ORDER_BY = Pattern.compile("[\\s\\S]*order\\s+by\\s+[\\s\\S]*",
-                Pattern.CASE_INSENSITIVE)
+        private val ORDER_BY = Pattern.compile(
+            "[\\s\\S]*order\\s+by\\s+[\\s\\S]*",
+            Pattern.CASE_INSENSITIVE
+        )
 
         fun applySorting(query: String, sort: Sort?): String {
             Assert.hasText(query, "Query must not be null or empty!")

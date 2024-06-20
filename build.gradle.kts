@@ -117,6 +117,7 @@ allprojects {
 
         tasks {
             "test"(Test::class) {
+//                this.outputs.upToDateWhen { false }
                 useJUnitPlatform()
                 reports.html.required.set(false)
                 reports.junitXml.required.set(false)

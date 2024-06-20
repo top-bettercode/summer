@@ -56,7 +56,7 @@ class JpaMybatisTupleTest {
 
     @AfterEach
     fun tearDown() {
-        System.err.println("token seconds:" + (System.currentTimeMillis() - s))
+        System.err.println("take seconds:" + (System.currentTimeMillis() - s))
         System.err.println("--------------------------------------------------------")
         repository.deleteAll()
         repository.cleanRecycleBin()
