@@ -1,5 +1,6 @@
 package top.bettercode.summer.test.web.support.packagescan
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import top.bettercode.summer.web.Response
@@ -13,25 +14,25 @@ class PackageScanClassResolverTest {
 
     @Test
     fun findClass() {
-        System.err.println(
-                packageScanClassResolver.findImplementations(Response::class.java, "top.bettercode"))
+        val findImplementations =
+            packageScanClassResolver.findImplementations(Response::class.java, "top.bettercode")
+        Assertions.assertTrue(findImplementations.isNotEmpty())
+//        System.err.println(findImplementations)
     }
 
     @Test
     fun findResource() {
         val target = "*/**/*"
         val resources = PathMatchingResourcePatternResolver(
-                Response::class.java.classLoader)
-                .getResources("classpath*:$target.class")
-        for (resource in resources) {
-            try {
-                System.err.println(resource.uri)
-            } catch (_: Exception) {
-            }
-        }
+            Response::class.java.classLoader
+        ) .getResources("classpath*:$target.class")
+        Assertions.assertTrue(resources.isNotEmpty())
+//        for (resource in resources) {
+//            try {
+//                System.err.println(resource.uri)
+//            } catch (_: Exception) {
+//            }
+//        }
     }
 
-    @Test
-    fun findClass2() {
-    }
 }
