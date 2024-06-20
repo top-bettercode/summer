@@ -7,7 +7,7 @@ import org.dom4j.io.SAXReader
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
-import top.bettercode.summer.tools.generator.dom.java.JavaTypeResolver
+import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.io.File
 
 /**

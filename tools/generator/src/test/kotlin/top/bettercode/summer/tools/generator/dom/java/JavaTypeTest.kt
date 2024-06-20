@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.generator.dom.java
 
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.lang.util.JavaType
 
 /**
  *

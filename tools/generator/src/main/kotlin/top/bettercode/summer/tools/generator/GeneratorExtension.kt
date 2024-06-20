@@ -1,10 +1,10 @@
 package top.bettercode.summer.tools.generator
 
-import top.bettercode.summer.tools.generator.dom.java.JavaTypeResolver
 import top.bettercode.summer.tools.generator.dom.java.element.JavaElement
 import top.bettercode.summer.tools.generator.dsl.Generator
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.io.File
 import java.util.*
 

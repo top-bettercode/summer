@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
-import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.PackageInfo
 import top.bettercode.summer.tools.generator.dom.unit.DirectorySet
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit

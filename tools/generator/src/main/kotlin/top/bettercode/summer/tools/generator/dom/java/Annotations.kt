@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.generator.dom.java
 
+import top.bettercode.summer.tools.lang.util.JavaType
+
 class Annotations(private val annotations: MutableList<String> = mutableListOf()) :
         MutableList<String> by annotations {
     companion object {

@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.generator.dom.java.element
 
-import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.JavaTypeOperator
+import top.bettercode.summer.tools.lang.util.JavaType
 import java.util.*
 
 abstract class InnerUnit(

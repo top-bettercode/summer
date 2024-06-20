@@ -1,8 +1,8 @@
 package top.bettercode.summer.tools.generator.database.entity
 
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.dom.java.JavaType
-import top.bettercode.summer.tools.generator.dom.java.JavaTypeResolver
+import top.bettercode.summer.tools.generator.dom.java.ColumnJavaTypeResolver
+import top.bettercode.summer.tools.lang.util.JavaType
 import java.math.RoundingMode
 import java.util.*
 
@@ -12,86 +12,89 @@ import java.util.*
  * @author Peter Wu
  */
 data class Column(
-        val tableCat: String?,
-        val tableSchem: String?,
-        /**
-         * 数据库字段名
-         */
-        val columnName: String,
-        /**
-         * 数据库字段类型
-         */
-        var typeName: String,
-        /**
-         * 字段类型
-         */
-        val dataType: Int?,
-        /**
-         * DECIMAL_DIGITS
-         */
-        var decimalDigits: Int,
-        /**
-         * COLUMN_SIZE
-         */
-        var columnSize: Int,
-        /**
-         * 注释说明
-         */
-        var remarks: String,
-        /**
-         * 是否可为空
-         */
-        var nullable: Boolean,
-        /**
-         * 默认值
-         */
-        var columnDef: String?,
-        var unsigned: Boolean = false,
-        var autoIncrement: Boolean = false,
-        var generatedColumn: Boolean = false,
-        var isForeignKey: Boolean = false,
-        var pktableName: String? = null,
-        var pkcolumnName: String? = null,
-        var extra: String = "",
-        var unique: Boolean = false,
-        var indexed: Boolean = false,
-        var isPrimary: Boolean = false,
+    val tableCat: String?,
+    val tableSchem: String?,
+    /**
+     * 数据库字段名
+     */
+    val columnName: String,
+    /**
+     * 数据库字段类型
+     */
+    var typeName: String,
+    /**
+     * 字段类型
+     */
+    val dataType: Int?,
+    /**
+     * DECIMAL_DIGITS
+     */
+    var decimalDigits: Int,
+    /**
+     * COLUMN_SIZE
+     */
+    var columnSize: Int,
+    /**
+     * 注释说明
+     */
+    var remarks: String,
+    /**
+     * 是否可为空
+     */
+    var nullable: Boolean,
+    /**
+     * 默认值
+     */
+    var columnDef: String?,
+    var unsigned: Boolean = false,
+    var autoIncrement: Boolean = false,
+    var generatedColumn: Boolean = false,
+    var isForeignKey: Boolean = false,
+    var pktableName: String? = null,
+    var pkcolumnName: String? = null,
+    var extra: String = "",
+    var unique: Boolean = false,
+    var indexed: Boolean = false,
+    var isPrimary: Boolean = false,
 
-        var idgenerator: String = "",
-        var idgeneratorParam: String = "",
-        var sequence: String = "",
-        var sequenceStartWith: Long = 1,
-        var version: Boolean = false,
-        var logicalDelete: Boolean = false,
-        var createdDate: Boolean = false,
-        var createdBy: Boolean = false,
-        var lastModifiedDate: Boolean = false,
-        var lastModifiedBy: Boolean = false,
-        var asBoolean: Boolean = false
+    var idgenerator: String = "",
+    var idgeneratorParam: String = "",
+    var sequence: String = "",
+    var sequenceStartWith: Long = 1,
+    var version: Boolean = false,
+    var logicalDelete: Boolean = false,
+    var createdDate: Boolean = false,
+    var createdBy: Boolean = false,
+    var lastModifiedDate: Boolean = false,
+    var lastModifiedBy: Boolean = false,
+    var asBoolean: Boolean = false
 ) {
     init {
         if ("null".equals(columnDef, true)) {
             columnDef = null
-        } else if (columnDef != null && columnDef!!.startsWith("'") && columnDef!!.endsWith("'") && JavaTypeResolver.calculateJavaType(this) == JavaType.stringInstance) {
+        } else if (columnDef != null && columnDef!!.startsWith("'") && columnDef!!.endsWith("'") && ColumnJavaTypeResolver.calculateJavaType(
+                this
+            ) == JavaType.stringInstance
+        ) {
             columnDef = columnDef!!.trim('\'')
         }
     }
 
     private val codeRemarks: String by lazy {
         remarks.replace('（', '(').replace('）', ')').replace('：', ':')
-                .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
-                .replace('；', ';').replace(' ', ';').replace(Regex(";+"), ";")
+            .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
+            .replace('；', ';').replace(' ', ';').replace(Regex(";+"), ";")
     }
 
     private val oldCodeRemarks: String by lazy {
         codeRemarks.replace('，', ',')
-                .replace(Regex(",+"), ",")
+            .replace(Regex(",+"), ",")
     }
 
     val prettyRemarks: String by lazy {
         when {
             oldCodeRemarks.matches(Regex(".*\\((.*:.*[, ]?)+\\).*")) && !oldCodeRemarks.contains(
-                    ";"
+                ";"
             ) -> {
                 oldCodeRemarks.replace(",", ";")
             }
@@ -111,7 +114,7 @@ data class Column(
     }
 
     val originJavaType: JavaType
-            by lazy { JavaTypeResolver.calculateJavaType(this) }
+            by lazy { ColumnJavaTypeResolver.calculateJavaType(this) }
 
 
     val javaName: String = GeneratorExtension.javaName(this.columnName)
@@ -206,27 +209,27 @@ data class Column(
     }
 
     val jdbcType: String
-            by lazy { JavaTypeResolver.calculateJdbcTypeName(this) }
+            by lazy { ColumnJavaTypeResolver.calculateJdbcTypeName(this) }
 
     val typeDesc: String
             by lazy { "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}" }
 
     val containsSize: Boolean by lazy {
         columnSize > 0 && !arrayOf(
-                "java.lang.Object",
-                "byte[]",
-                "java.util.Date",
-                "java.time.OffsetTime",
-                "java.time.OffsetDateTime",
-                "java.time.LocalDate",
-                "java.time.LocalTime",
-                "java.time.LocalDateTime"
+            "java.lang.Object",
+            "byte[]",
+            "java.util.Date",
+            "java.time.OffsetTime",
+            "java.time.OffsetDateTime",
+            "java.time.LocalDate",
+            "java.time.LocalTime",
+            "java.time.LocalDateTime"
         ).contains(javaType.fullyQualifiedName) && !arrayOf(
-                "TINYTEXT",
-                "MEDIUMTEXT",
-                "TEXT",
-                "CLOB",
-                "NCLOB"
+            "TINYTEXT",
+            "MEDIUMTEXT",
+            "TEXT",
+            "CLOB",
+            "NCLOB"
         ).contains(typeName.uppercase(Locale.getDefault()))
     }
 

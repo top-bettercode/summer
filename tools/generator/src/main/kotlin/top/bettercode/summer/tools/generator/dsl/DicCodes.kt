@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.generator.dsl
 
-import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType
 import java.io.Serializable
 
 /**

@@ -21,6 +21,7 @@ import java.util.logging.Logger
 import java.util.zip.DeflaterOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
+import com.fasterxml.jackson.databind.JavaType
 import java.util.zip.InflaterOutputStream
 
 

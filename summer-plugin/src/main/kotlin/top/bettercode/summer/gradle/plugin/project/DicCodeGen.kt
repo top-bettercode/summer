@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
-import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.DicCodes

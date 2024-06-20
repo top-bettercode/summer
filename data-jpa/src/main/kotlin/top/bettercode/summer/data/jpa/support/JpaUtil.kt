@@ -13,7 +13,8 @@ import top.bettercode.summer.web.support.ApplicationContextHolder
 
 object JpaUtil {
 
-    private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
+    private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
+    private val log = LoggerFactory.getLogger(JpaUtil::class.java)
     private val TYPE_CONFIGURATION = TypeConfiguration()
 
     @Suppress("UNCHECKED_CAST")
@@ -48,15 +49,15 @@ object JpaUtil {
                 if (timeoutAlarmSeconds > 0 && duration > timeoutAlarmSeconds * 1000) {
                     if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
                         val initialComment = "$id：执行速度慢(${duration / 1000}秒)"
-                        sqlLog.warn(AlarmMarker(initialComment, true), initialComment + "cost:{}ms", duration)
+                        log.warn(AlarmMarker(initialComment, true), initialComment + "cost: {} ms", duration)
                     } else {
-                        sqlLog.warn("cost:{}ms", duration)
+                        sqlLog.warn("cost: {} ms", duration)
                     }
                 } else {
                     if (duration > 2 * 1000) {
-                        sqlLog.warn("cost:{}ms", duration)
+                        sqlLog.warn("cost: {} ms", duration)
                     } else {
-                        sqlLog.debug("cost:{}ms", duration)
+                        sqlLog.debug("cost: {} ms", duration)
                     }
                 }
                 result

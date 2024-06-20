@@ -2,7 +2,7 @@ package top.bettercode.summer.gradle.plugin.project.template
 
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.database.entity.Column
-import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dsl.Generator
 import top.bettercode.summer.tools.lang.capitalized

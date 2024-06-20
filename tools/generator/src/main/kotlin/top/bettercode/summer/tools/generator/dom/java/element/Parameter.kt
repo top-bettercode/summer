@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.generator.dom.java.element
 
 import top.bettercode.summer.tools.generator.dom.java.Annotations
 import top.bettercode.summer.tools.generator.dom.java.JavaDomUtils
-import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.StringOperator
 
 class Parameter() {

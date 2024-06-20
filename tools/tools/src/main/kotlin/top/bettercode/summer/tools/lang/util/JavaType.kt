@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.generator.dom.java
+package top.bettercode.summer.tools.lang.util
 
 import java.io.File
 import java.util.*

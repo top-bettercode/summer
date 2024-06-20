@@ -2,7 +2,7 @@ package top.bettercode.summer.gradle.plugin.project.template.unit
 
 import org.atteo.evo.inflector.English
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
-import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.InnerInterface
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit

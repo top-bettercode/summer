@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.generator.dom.java
 
 import top.bettercode.summer.tools.generator.dom.java.element.CompilationUnit
+import top.bettercode.summer.tools.lang.util.JavaType
 
 object JavaDomUtils {
     /**

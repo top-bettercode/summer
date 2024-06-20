@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import org.springframework.util.CollectionUtils
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.javaName
-import top.bettercode.summer.tools.generator.dom.java.JavaType
-import top.bettercode.summer.tools.generator.dom.java.JavaType.Companion.dateInstance
-import top.bettercode.summer.tools.generator.dom.java.JavaType.Companion.stringInstance
+import top.bettercode.summer.tools.lang.util.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType.Companion.dateInstance
+import top.bettercode.summer.tools.lang.util.JavaType.Companion.stringInstance
 import top.bettercode.summer.tools.generator.dom.java.element.Field
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.Method

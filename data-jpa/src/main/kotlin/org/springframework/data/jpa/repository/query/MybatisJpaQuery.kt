@@ -19,7 +19,7 @@ import javax.persistence.EntityManager
 import javax.persistence.Query
 
 class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJpaQuery(method, em) {
-    private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
+    private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
 
     private val metadataCache = QueryMetadataCache()
     private val mybatisQueryMethod: MybatisQueryMethod = method.mybatisQueryMethod!!

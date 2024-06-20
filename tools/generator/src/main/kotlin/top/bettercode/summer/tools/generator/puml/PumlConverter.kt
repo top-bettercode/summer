@@ -8,7 +8,7 @@ import top.bettercode.summer.tools.generator.PumlTableHolder
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
-import top.bettercode.summer.tools.generator.dom.java.JavaTypeResolver
+import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
 import java.io.File
 import java.util.*

@@ -34,7 +34,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     private val entityInformation: JpaEntityInformation<T, ID>,
     @Suppress("RedundantModalityModifier") final override val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
-    private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
+    private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
     private val extJpaSupport: ExtJpaSupport<T> =
         DefaultExtJpaSupport(jpaExtProperties, entityManager, auditorAware, domainClass)
     private val escapeCharacter = EscapeCharacter.DEFAULT

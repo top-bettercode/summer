@@ -83,7 +83,7 @@ management:
 
 logging:
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%5p} ${PID: } --- [%-6.6t] %-40.40logger{39} %20file:%-3line :%X{id} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%5p} ${PID: } --- [%-6.6t] %-40.40logger{39} %20file:%-3line : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
     file: ${logging.pattern.console}
 
   level:
@@ -96,6 +96,7 @@ logging:
     org.mybatis.spring.mapper.ClassPathMapperScanner: error
     org.hibernate: warn
     org.hibernate.SQL: ${logging.level.root:warn}
+    top.bettercode.summer.SQL: ${logging.level.org.hibernate.SQL}
     org.hibernate.SQL_SLOW: info
     org.hibernate.engine.jdbc.spi.SqlExceptionHelper: off
     org.redisson.connection.ClientConnectionsEntry: info
