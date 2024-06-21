@@ -4,6 +4,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
+import top.bettercode.summer.tools.lang.operation.HttpOperation
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
@@ -24,11 +25,12 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
             return
         }
         try {
-            val pid = event.loggerContextVO.propertyMap[PID]
+            val traceid = event.mdcPropertyMap[HttpOperation.MDC_TRACEID]
+                ?: event.loggerContextVO.propertyMap[PID] ?: ""
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
             val error = event.mdcPropertyMap[MDC_SQL_ERROR]
             val end = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
-            val key = "$pid:$id"
+            val key = "$traceid:$id"
             var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData() }
             val msg = event.formattedMessage
             when (event.loggerName) {
