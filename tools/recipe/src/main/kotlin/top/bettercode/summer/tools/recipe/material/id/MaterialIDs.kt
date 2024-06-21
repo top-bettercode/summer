@@ -1,13 +1,15 @@
 package top.bettercode.summer.tools.recipe.material.id
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import top.bettercode.summer.tools.recipe.RecipeRequirement
 
 /**
  *
  * @author Peter Wu
  */
 open class MaterialIDs(
-        ids: List<String> = emptyList()) : Comparable<MaterialIDs>, Iterable<String> {
+    ids: List<String> = emptyList()
+) : Comparable<MaterialIDs>, Iterable<String> {
     constructor(vararg id: String) : this(id.toList())
     constructor(ids: Iterable<String>) : this(ids.toList())
 
@@ -63,6 +65,11 @@ open class MaterialIDs(
     }
 
     fun idsString(): String = if (ids.size == 1) ids.first() else ids.joinToString(",", "[", "]")
+
+    fun toNames(requirement: RecipeRequirement): String {
+        val names = ids.map { t -> requirement.materials.find { m -> m.id == t }?.name ?: t }
+        return if (names.size == 1) names.first() else names.joinToString(",", "[", "]")
+    }
 
     override fun toString(): String {
         return idsString()
