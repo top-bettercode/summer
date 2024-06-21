@@ -5,6 +5,7 @@ import ch.qos.logback.core.AppenderBase
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.operation.HttpOperation
+import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
@@ -31,14 +32,14 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
             val error = event.mdcPropertyMap[MDC_SQL_ERROR]
             val end = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
             val key = "$traceid:$id"
-            var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData() }
+            var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
             val msg = event.formattedMessage
             when (event.loggerName) {
                 "org.hibernate.SQL" -> {
                     if (!sqlLogData.sql.isNullOrBlank()) {
                         sqlCache.remove(key)
-                        log(sqlLogData, id, error)
-                        sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData() }
+                        log(sqlLogData)
+                        sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
                     }
                     sqlLogData.sql = msg
                 }
@@ -47,7 +48,7 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
                     val regex = Regex("""\[(.*?)]""")
                     val matches = regex.findAll(msg).map { it.groupValues[1] }.toList()
                     val index = matches[0].toInt()
-                    sqlLogData.params.add(SqlLogParam(index, matches[1], matches[2]))
+                    sqlLogData.params.add(SqlLogParam(index, JavaTypeResolver.type(matches[1])?.javaType, matches[2]))
                 }
 
                 else -> {
@@ -79,7 +80,9 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
                 }
             }
             if (end) {
-                log(sqlLogData, id, error)
+                if (!error.isNullOrBlank())
+                    sqlLogData.error = error
+                log(sqlLogData)
                 sqlCache.remove(key)
             }
         } catch (e: Exception) {
@@ -88,39 +91,14 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
     }
 
     private fun log(
-        sqlLogData: SqlLogData,
-        id: String,
-        error: String?
+        sqlLogData: SqlLogData
     ) {
-        var sql = sqlLogData.sql ?: ""
-        if (sql.isNotBlank() && sqlLogData.params.isNotEmpty()) {
-            val params = sqlLogData.params.sortedBy { it.index }
-            for (i in params.indices) {
-                sql = sql.replaceFirst("?", params[i].toString())
-            }
-        }
-        val resultInfo = "${
-            if (sqlLogData.affected != null) "affected:${sqlLogData.affected} rows; " else ""
-        }${
-            if (sqlLogData.retrieved != null) "retrieved:${sqlLogData.retrieved} rows; " else ""
-        }${
-            if (sqlLogData.total != null) "total:${sqlLogData.total} rows; " else ""
-        }${
-            if (sqlLogData.cost != null) "cost:${sqlLogData.cost} ms;" else ""
-        }".trim()
-        if (error.isNullOrBlank())
-            logger.info(
-                "{}$resultInfo {}",
-                if (id.isNotBlank()) "${id}: " else "",
-                sql
-            )
+        if (sqlLogData.error.isNullOrBlank())
+            logger.info(sqlLogData.toString())
         else
             logger.error(
                 MarkerFactory.getMarker(AlarmAppender.NO_ALARM_LOG_MARKER),
-                "{}$resultInfo\n{} {}",
-                if (id.isNotBlank()) "${id}: " else "",
-                sql,
-                error
+                sqlLogData.toString()
             )
     }
 

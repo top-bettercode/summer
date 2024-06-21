@@ -1,18 +1,17 @@
 package top.bettercode.summer.tools.lang.log
 
 import top.bettercode.summer.tools.lang.util.JavaType
-import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 
 /**
  *
  * @author Peter Wu
  */
-data class SqlLogParam(val index: Int, val type: String, val value: String) {
+data class SqlLogParam(val index: Int, val type: JavaType?, val value: String?) {
     override fun toString(): String {
-        val value = if ("null" == value)
+        val value = if (value == null || "null" == value)
             null
         else
-            when (JavaTypeResolver.type(type)?.javaType) {
+            when (type) {
                 JavaType.stringInstance, JavaType.dateInstance, JavaType("java.time.LocalDate"), JavaType(
                     "java.time.LocalDateTime"
                 ) -> "'${this.value}'"

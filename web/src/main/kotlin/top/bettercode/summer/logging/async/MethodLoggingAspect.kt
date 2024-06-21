@@ -6,6 +6,8 @@ import org.aspectj.lang.annotation.Aspect
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import org.slf4j.MarkerFactory
+import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import kotlin.random.Random
 
@@ -27,7 +29,7 @@ class MethodLoggingAspect {
             logger.info("==={} finished===", methodName)
             return result
         } catch (e: Throwable) {
-            logger.error("==={} error===", methodName, e)
+            logger.error(MarkerFactory.getMarker(NO_ALARM_LOG_MARKER), "===$methodName error===", e)
             throw e
         } finally {
             MDC.remove(HttpOperation.MDC_TRACEID)

@@ -10,12 +10,20 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.Assert
 import top.bettercode.summer.security.token.StoreToken
 import top.bettercode.summer.security.token.TokenId
+import top.bettercode.summer.tools.lang.log.SqlLogData
+import top.bettercode.summer.tools.lang.log.SqlLogParam
+import top.bettercode.summer.tools.lang.operation.Operation.Companion.UNRECORDED_MARK
+import top.bettercode.summer.tools.lang.util.JavaType
+import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.sql.ResultSet
 import java.sql.Types
 import javax.sql.DataSource
 
 
-open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSource?, tableName: String = "api_token") : StoreTokenRepository {
+open class JdbcStoreTokenRepository @JvmOverloads constructor(
+    dataSource: DataSource?,
+    tableName: String = "api_token"
+) : StoreTokenRepository {
     private val log = LoggerFactory.getLogger(JdbcStoreTokenRepository::class.java)
     private val defaultInsertStatement: String
     private val defaultSelectStatement: String
@@ -33,8 +41,10 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
         defaultInsertStatement = ("insert into " + tableName
                 + " (id, access_token, refresh_token, authentication) values (?, ?, ?, ?)")
         defaultSelectStatement = "select authentication,id from $tableName where id=?"
-        defaultSelectByAccessStatement = "select authentication,id from $tableName where access_token = ?"
-        defaultSelectByRefreshStatement = "select authentication,id from $tableName where refresh_token = ?"
+        defaultSelectByAccessStatement =
+            "select authentication,id from $tableName where access_token = ?"
+        defaultSelectByRefreshStatement =
+            "select authentication,id from $tableName where refresh_token = ?"
         defaultDeleteStatement = "delete from $tableName where id=?"
         defaultBatchDeleteStatement = "delete from $tableName where id in "
     }
@@ -48,11 +58,20 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
             val accessToken = storeToken.accessToken.tokenValue
             val refreshToken = storeToken.refreshToken.tokenValue
             val auth = jdkSerializationSerializer.serialize(storeToken)
-            val update = jdbcTemplate.update(defaultInsertStatement, arrayOf(id, accessToken, refreshToken, SqlLobValue(auth)), intArrayOf(Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB))
+            val args = arrayOf(id, accessToken, refreshToken, SqlLobValue(auth))
+            val types = intArrayOf(Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB)
+            val update = jdbcTemplate.update(defaultInsertStatement, args, types)
             if (log.isInfoEnabled) {
-                log.info("JdbcApiAuthorizationService.save\n{}\n{},{},{}\naffected:{}",
-                        defaultInsertStatement, id,
-                        accessToken, refreshToken, update)
+                val logData = SqlLogData("JdbcApiAuthorizationService.save")
+                logData.sql = defaultInsertStatement
+                for (i in args.indices) {
+                    val value = if (i == 3) UNRECORDED_MARK else args[i].toString()
+                    logData.params.add(
+                        SqlLogParam(i, JavaTypeResolver.type(types[i])?.javaType, value)
+                    )
+                }
+                logData.affected = update
+                log.info(logData.toString())
             }
         } catch (e: DuplicateKeyException) {
             save(storeToken)
@@ -69,8 +88,13 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
         val id = tokenId.toString()
         val update = jdbcTemplate.update(defaultDeleteStatement, id)
         if (log.isInfoEnabled) {
-            log.info("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", defaultDeleteStatement,
-                    id, update)
+            val logData = SqlLogData("JdbcApiAuthorizationService.remove")
+            logData.sql = defaultDeleteStatement
+            logData.params.add(
+                SqlLogParam(0, JavaType.stringInstance, id)
+            )
+            logData.affected = update
+            log.info(logData.toString())
         }
     }
 
@@ -81,8 +105,15 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
         val sql = defaultBatchDeleteStatement + "(${ids.joinToString(",") { "?" }})"
         @Suppress("SqlSourceToSinkFlow") val update = jdbcTemplate.update(sql, *ids)
         if (log.isInfoEnabled) {
-            log.info("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", sql,
-                    ids, update)
+            val logData = SqlLogData("JdbcApiAuthorizationService.remove")
+            logData.sql = sql
+            ids.forEachIndexed { index, s ->
+                logData.params.add(
+                    SqlLogParam(index, JavaType.stringInstance, s)
+                )
+            }
+            logData.affected = update
+            log.info(logData.toString())
         }
     }
 
@@ -105,32 +136,41 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(dataSource: DataSo
      */
     private fun getStoreToken(param: String?, selectStatement: String): StoreToken? {
         return try {
-            val storeToken = jdbcTemplate.queryForObject<StoreToken>(selectStatement,
-                    RowMapper { rs: ResultSet, _: Int ->
-                        val bytes = rs.getBytes(1)
-                        if (JdkSerializationSerializer.isEmpty(bytes)) {
-                            return@RowMapper null
-                        }
+            val storeToken = jdbcTemplate.queryForObject<StoreToken>(
+                selectStatement,
+                RowMapper { rs: ResultSet, _: Int ->
+                    val bytes = rs.getBytes(1)
+                    if (JdkSerializationSerializer.isEmpty(bytes)) {
+                        return@RowMapper null
+                    }
+                    try {
+                        return@RowMapper jdkSerializationSerializer.deserialize(bytes) as StoreToken
+                    } catch (e: Exception) {
+                        log.warn("apiToken反序列化失败", e)
                         try {
-                            return@RowMapper jdkSerializationSerializer.deserialize(bytes) as StoreToken
-                        } catch (e: Exception) {
-                            log.warn("apiToken反序列化失败", e)
-                            try {
-                                val update = jdbcTemplate.update(defaultDeleteStatement, rs.getString(2))
-                                if (log.isInfoEnabled) {
-                                    log.info(
-                                            "JdbcApiAuthorizationService.getApiAuthenticationToken delete\n{}\n{}\naffected:{}",
-                                            defaultDeleteStatement, rs.getString(2), update)
-                                }
-                            } catch (ex: Exception) {
-                                log.warn("apiToken删除失败", ex)
+                            val id = rs.getString(2)
+                            val update =
+                                jdbcTemplate.update(defaultDeleteStatement, id)
+                            if (log.isInfoEnabled) {
+                                val logData = SqlLogData("JdbcApiAuthorizationService.delete")
+                                logData.sql = defaultDeleteStatement
+                                logData.params.add(SqlLogParam(0, JavaType.stringInstance, id))
+                                logData.affected = update
+                                log.info(logData.toString())
                             }
-                            return@RowMapper null
+                        } catch (ex: Exception) {
+                            log.warn("apiToken删除失败", ex)
                         }
-                    }, param)
+                        return@RowMapper null
+                    }
+                }, param
+            )
             if (log.isInfoEnabled) {
-                log.info("JdbcApiAuthorizationService.getApiAuthenticationToken\n{}\n{}\nresult:{}",
-                        selectStatement, param, storeToken?.userDetails)
+                val logData = SqlLogData("JdbcApiAuthorizationService.getStoreToken")
+                logData.sql = selectStatement
+                logData.params.add(SqlLogParam(0, JavaType.stringInstance, param))
+                logData.affected = if (storeToken == null) 0 else 1
+                log.info(logData.toString())
             }
             storeToken
         } catch (e: EmptyResultDataAccessException) {
