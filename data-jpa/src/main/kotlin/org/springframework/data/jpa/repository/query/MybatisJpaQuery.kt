@@ -14,6 +14,9 @@ import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
 import top.bettercode.summer.data.jpa.support.JpaUtil
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.affected
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
 import java.util.regex.Pattern
 import javax.persistence.EntityManager
 import javax.persistence.NoResultException
@@ -119,12 +122,12 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                             )
                                 ?: 0 else totals.size.toLong()
                             if (sqlLog.isInfoEnabled) {
-                                sqlLog.info("total: {} rows", total)
+                                sqlLog.total(total)
                             }
                             if (total > 0 && total > accessor.pageable.offset) {
                                 resultList = mybatisQuery.resultList
                                 if (sqlLog.isInfoEnabled) {
-                                    sqlLog.info("{} rows retrieved", resultList.size)
+                                    sqlLog.retrieved(resultList.size)
                                 }
                             } else {
                                 resultList = emptyList<Any>()
@@ -132,7 +135,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         } else {
                             resultList = mybatisQuery.resultList
                             if (sqlLog.isInfoEnabled) {
-                                sqlLog.info("{} rows retrieved", resultList.size)
+                                sqlLog.retrieved(resultList.size)
                             }
                             total = resultList.size.toLong()
                         }
@@ -149,7 +152,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor) as List<*>
                         if (sqlLog.isInfoEnabled) {
-                            sqlLog.info("{} rows retrieved", result.size)
+                            sqlLog.retrieved(result.size)
                         }
                         result
                     }
@@ -164,7 +167,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     return JpaUtil.mdcId(sqlLogId) {
                         val result = super.doExecute(query, accessor)
                         if (sqlLog.isInfoEnabled) {
-                            sqlLog.info("{} row affected", result)
+                            sqlLog.affected(result)
                         }
                         result
                     }
@@ -216,8 +219,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         }
                         val result = super.doExecute(query, accessor) as SliceImpl<*>
                         if (sqlLog.isInfoEnabled) {
-                            sqlLog.info("total: {} rows", result.numberOfElements)
-                            sqlLog.info("{} rows retrieved", result.size)
+                            sqlLog.total(result.numberOfElements)
+                            sqlLog.retrieved(result.size)
                         }
                         result
                     }
@@ -237,7 +240,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                             null
                         }
                         if (sqlLog.isInfoEnabled) {
-                            sqlLog.info("{} rows retrieved", if (result == null) 0 else 1)
+                            sqlLog.retrieved(if (result == null) 0 else 1)
                         }
                         result
                     }

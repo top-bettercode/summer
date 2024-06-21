@@ -2,7 +2,9 @@ package top.bettercode.summer.tools.lang.log
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
@@ -15,6 +17,49 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
         const val MDC_SQL_ERROR = "SQL_ERROR"
         const val MDC_SQL_ID = "SQL_ID"
         const val MDC_SQL_END = "SQL_END"
+        const val MDC_SQL_TOTAL = "SQL_TOTAL"
+        const val MDC_SQL_RETRIEVED = "SQL_RETRIEVED"
+        const val MDC_SQL_AFFECTED = "SQL_AFFECTED"
+        const val MDC_SQL_COST = "SQL_COST"
+
+        fun Logger.total(total: Number) {
+            try {
+                MDC.put(MDC_SQL_TOTAL, total.toString())
+                info("total: {} rows", total)
+            } finally {
+                MDC.remove(MDC_SQL_TOTAL)
+            }
+        }
+
+        fun Logger.retrieved(retrieved: Int) {
+            try {
+                MDC.put(MDC_SQL_RETRIEVED, retrieved.toString())
+                info("retrieved: {} rows", retrieved)
+            } finally {
+                MDC.remove(MDC_SQL_RETRIEVED)
+            }
+        }
+
+        fun Logger.affected(affected: Any) {
+            try {
+                MDC.put(MDC_SQL_AFFECTED, affected.toString())
+                info("affected: {} rows", affected)
+            } finally {
+                MDC.remove(MDC_SQL_AFFECTED)
+            }
+        }
+
+        fun Logger.cost(cost: Long) {
+            try {
+                MDC.put(MDC_SQL_COST, cost.toString())
+                if (cost > 2 * 1000) {
+                    warn("cost: {} ms", cost)
+                } else
+                    info("cost: {} ms", cost)
+            } finally {
+                MDC.remove(MDC_SQL_COST)
+            }
+        }
     }
 
     private val sqlCache: ConcurrentMap<String, SqlLogData> = ConcurrentHashMap()
@@ -58,29 +103,24 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
 
                 else -> {
                     //total: {} rows
-                    val regex = Regex("total: (\\d+) rows")
-                    val matchResult = regex.find(msg)
-                    if (matchResult != null) {
-                        sqlLogData.total = matchResult.groupValues[1].toLong()
+                    val total = event.mdcPropertyMap[MDC_SQL_TOTAL]
+                    if (!total.isNullOrBlank()) {
+                        sqlLogData.total = total.toLong()
                     }
                     //{} rows retrieved
-                    val regex2 = Regex("(\\d+) rows retrieved")
-                    val matchResult2 = regex2.find(msg)
-                    if (matchResult2 != null) {
-                        sqlLogData.retrieved = matchResult2.groupValues[1].toInt()
+                    val retrieved = event.mdcPropertyMap[MDC_SQL_RETRIEVED]
+                    if (!retrieved.isNullOrBlank()) {
+                        sqlLogData.retrieved = retrieved.toInt()
                     }
                     //{} row affected
-                    val regex3 = Regex("(\\d+) row affected")
-                    val matchResult3 = regex3.find(msg)
-                    if (matchResult3 != null) {
-                        sqlLogData.affected = matchResult3.groupValues[1].toInt()
+                    val affected = event.mdcPropertyMap[MDC_SQL_AFFECTED]
+                    if (!affected.isNullOrBlank()) {
+                        sqlLogData.affected = affected.toInt()
                     }
                     //cost: {} ms
-                    val regex4 = Regex("cost: (\\d+) ms")
-                    val matchResult4 = regex4.find(msg)
-                    if (matchResult4 != null) {
-                        sqlLogData.cost = matchResult4.groupValues[1].toLong()
-
+                    val cost = event.mdcPropertyMap[MDC_SQL_COST]
+                    if (!cost.isNullOrBlank()) {
+                        sqlLogData.cost = cost.toLong()
                     }
                 }
             }

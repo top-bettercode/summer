@@ -6,6 +6,7 @@ import org.slf4j.MDC
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.log.SqlAppender
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.cost
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
 /**
@@ -65,14 +66,8 @@ object JpaUtil {
                                 duration
                             )
                         }
-                        sqlLog.warn("cost: {} ms", duration)
-                    } else {
-                        if (duration > 2 * 1000) {
-                            sqlLog.warn("cost: {} ms", duration)
-                        } else {
-                            sqlLog.info("cost: {} ms", duration)
-                        }
                     }
+                    sqlLog.cost(duration)
                 }
             } else {
                 run()
