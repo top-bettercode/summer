@@ -39,7 +39,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 401.3611431642,
+    "weight" : 401.3611431643,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -232,7 +232,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 125.6895197325,
+    "weight" : 125.6895197323,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -690,8 +690,8 @@
     "taxFee" : 25.26000378,
     "totalFee" : 160.7572856205
   },
-  "dryWaterWeight" : 0.0,
-  "materialCost" : 2483.545165576,
+  "dryWaterWeight" : -1.0E-10,
+  "materialCost" : 2483.5451655758,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -751,7 +751,7 @@
     "taxFee" : 25.26000378,
     "totalFee" : 160.7572856202
   },
-  "totalNutrientWeight" : 453.0,
+  "totalNutrientWeight" : 452.9999999999,
   "waterWeight" : 10.0338396785,
-  "weight" : 1000.0
+  "weight" : 999.9999999999
 }

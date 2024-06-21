@@ -3,11 +3,12 @@ package top.bettercode.summer.tools.recipe.productioncost
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.LoggerFactory
-import org.springframework.util.Assert
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.CarrierValue
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
+import top.bettercode.summer.tools.recipe.result.IllegalRecipeException
+import java.math.BigDecimal
 
 /**
  *
@@ -58,62 +59,131 @@ data class ProductionCostValue(
 
     fun compareTo(other: ProductionCostValue) {
         val otherMaterialItemsMap = other.materialItems.associateBy { it.it.id }
-        Assert.isTrue(
-            materialItems.size == other.materialItems.size,
-            "能耗费用原料数量不一致:${materialItems.size}!=${other.materialItems.size}"
-        )
+        val names = mutableListOf<String>()
+        val itValues = mutableListOf<Number>()
+        val compares = mutableListOf<Boolean>()
+        val otherValues = mutableListOf<Number>()
+        val diffValues = mutableListOf<Number>()
+        names.add("能耗费用原料数量")
+        itValues.add(materialItems.size)
+        compares.add(materialItems.size == other.materialItems.size)
+        otherValues.add(other.materialItems.size)
+        diffValues.add(materialItems.size - other.materialItems.size)
+
         materialItems.forEach {
             val thisVal = (it.it.cost * it.value).scale()
             val oth = otherMaterialItemsMap[it.it.id]
             val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value).scale()
-            Assert.isTrue(
-                thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-                "${it.it.name}不一致:${thisVal}!=${otherVal}, 差值：${
-                    (thisVal - otherVal).scale().toBigDecimal().toPlainString()
-                }"
-            )
+            names.add(it.it.name)
+            itValues.add(thisVal)
+            compares.add(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+            otherValues.add(otherVal)
+            diffValues.add((thisVal - otherVal).scale())
         }
-        Assert.isTrue(
-            this.energyFee - other.energyFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-            "总能耗费用不一致:${this.energyFee}!=${other.energyFee},差值：${
-                (this.energyFee - other.energyFee).scale().toBigDecimal().toPlainString()
-            }"
-        )
-        Assert.isTrue(
-            dictItems.size == other.dictItems.size,
-            "其他固定费用数量不一致:${dictItems.size}!=${other.dictItems.size}"
-        )
+        if (materialItems.size < other.materialItems.size) {
+            other.materialItems.filter { m -> !materialItems.any { m.it.id == it.it.id } }.forEach {
+                val otherVal = (it.it.cost * it.value).scale()
+                names.add(it.it.name)
+                itValues.add(0.0)
+                compares.add(-otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+                otherValues.add(otherVal)
+                diffValues.add(-otherVal)
+            }
+        }
+
+        names.add("总能耗费用")
+        itValues.add(energyFee)
+        compares.add(this.energyFee - other.energyFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        otherValues.add(other.energyFee)
+        diffValues.add((energyFee - other.energyFee).scale())
+
+        names.add("其他固定费用数量")
+        itValues.add(dictItems.size)
+        compares.add(dictItems.size == other.dictItems.size)
+        otherValues.add(other.dictItems.size)
+        diffValues.add(dictItems.size - other.dictItems.size)
+
         dictItems.forEach { (key, value) ->
             val thisVal = (value.it.cost * value.value).scale()
             val oth = other.dictItems[key]
             val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value).scale()
-            Assert.isTrue(
-                thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-                "${key.dictName}不一致:${thisVal}!=${otherVal}, 差值：${
-                    (thisVal - otherVal).scale().toBigDecimal().toPlainString()
-                }"
-            )
+
+            names.add(key.dictName)
+            itValues.add(thisVal)
+            compares.add(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+            otherValues.add(otherVal)
+            diffValues.add((thisVal - otherVal).scale())
         }
-        Assert.isTrue(
-            this.otherFee - other.otherFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-            "人工+折旧费+其他费用不一致:${this.otherFee}!=${other.otherFee}, 差值：${
-                (this.otherFee - other.otherFee).scale().toBigDecimal().toPlainString()
-            }"
+        if (dictItems.size < other.dictItems.size) {
+            other.dictItems.filter { m -> !dictItems.any { m.key == it.key } }.forEach {
+                val otherVal = (it.value.it.cost * it.value.value).scale()
+                names.add(it.key.dictName)
+                itValues.add(0.0)
+                compares.add(-otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+                otherValues.add(otherVal)
+                diffValues.add(-otherVal)
+            }
+        }
+
+        names.add("人工+折旧费+其他费用")
+        itValues.add(otherFee)
+        compares.add(this.otherFee - other.otherFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        otherValues.add(other.otherFee)
+        diffValues.add((otherFee - other.otherFee).scale())
+
+        names.add("税费")
+        itValues.add(taxFee)
+        compares.add(this.taxFee - other.taxFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        otherValues.add(other.taxFee)
+        diffValues.add((taxFee - other.taxFee).scale())
+
+        names.add("制造费用合计")
+        itValues.add(totalFee)
+        compares.add(this.totalFee - other.totalFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        otherValues.add(other.totalFee)
+        diffValues.add((totalFee - other.totalFee).scale())
+
+
+        // 计算每一列的最大宽度
+        val nameWidth = names.maxOf { it.length }
+        val thisStrValues =
+            itValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+        val otherStrValues =
+            otherValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+        val diffStrValues =
+            diffValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+
+        val itValueWidth = thisStrValues.maxOf { it.length }
+        val otherValueWidth = otherStrValues.maxOf { it.length }
+        val diffValueWidth = diffStrValues.maxOf { it.length }
+
+        val result = StringBuilder()
+        // 打印表头
+        val compareWidth = "比较".length
+        result.appendLine(
+            "${"原料名称".padEnd(nameWidth)} | ${"this".padStart(itValueWidth)} | ${
+                "比较".padEnd(
+                    compareWidth
+                )
+            } | ${"other".padEnd(otherValueWidth)} | ${"差值".padStart(diffValueWidth)}"
         )
 
-        Assert.isTrue(
-            this.taxFee - other.taxFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-            "税费不一致:${this.taxFee}!=${other.taxFee}, 差值：${
-                (this.taxFee - other.taxFee).scale().toBigDecimal().toPlainString()
-            }"
-        )
+        // 打印数据行
+        for (i in names.indices) {
+            val name = names[i].padEnd(nameWidth)
+            val compare = (if (compares[i]) "==" else "!=").padEnd(compareWidth)
+            val itValue = thisStrValues[i].padStart(itValueWidth)
+            val otherValue = otherStrValues[i].padEnd(otherValueWidth)
+            val diffValue = diffStrValues[i].padStart(diffValueWidth)
+            result.appendLine("$name | $itValue | $compare | $otherValue | $diffValue")
+        }
 
-        Assert.isTrue(
-            this.totalFee - other.totalFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-            "制造费用合计不一致:${this.totalFee}!=${other.totalFee}, 差值：${
-                (this.totalFee - other.totalFee).scale().toBigDecimal().toPlainString()
-            }"
-        )
+        val diff = !compares.all { it }
+        if (diff) {
+            throw IllegalRecipeException("制造成本计算结果不一致\n$result")
+        } else if (log.isDebugEnabled) {
+            log.debug("制造成本计算结果一致\n$result")
+        }
     }
 
 }

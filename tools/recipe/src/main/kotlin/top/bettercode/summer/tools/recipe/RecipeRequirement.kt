@@ -29,9 +29,14 @@ import java.util.function.Predicate
  */
 @JsonPropertyOrder(alphabetic = true)
 data class RecipeRequirement(
+    /**
+     * id
+     */
+    @JsonProperty("id")
+    val id: String,
     /** 产品名称  */
     @JsonProperty("productName")
-    val productName: String,
+    val productName: String = id,
     /** 目标重量，单位KG  */
     @JsonProperty("targetWeight")
     val targetWeight: Double = 1000.0,
@@ -103,7 +108,7 @@ data class RecipeRequirement(
 
     /** 不能混用的原料,value: 原料ID  */
     @JsonProperty("notMixMaterialConstraints")
-    val notMixMaterialConstraints: List<Array<MaterialIDs>>,
+    val notMixMaterialConstraints: List<Array<MaterialIDs>>
 ) {
 
 
@@ -141,6 +146,7 @@ data class RecipeRequirement(
 
         /**
          * 生产配方要求
+         * @param id id
          * @param productName 产品名称
          * @param targetWeight 目标重量，单位KG
          * @param yield 收率
@@ -163,7 +169,8 @@ data class RecipeRequirement(
         @JvmStatic
         @JvmOverloads
         fun of(
-            productName: String,
+            id: String,
+            productName: String = id,
             targetWeight: Double,
             yield: Double = 1.0,
             maxUseMaterialNum: Int? = null,
@@ -312,6 +319,7 @@ data class RecipeRequirement(
                 }.filter { it.isNotEmpty() }.flatten().distinct()
                 .toList()
             return RecipeRequirement(
+                id = id,
                 productName = productName,
                 targetWeight = targetWeight,
                 yield = `yield`,

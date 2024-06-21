@@ -24,6 +24,7 @@ import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
 import java.io.File
+import java.math.BigDecimal
 
 /**
  * 配方
@@ -98,29 +99,84 @@ data class Recipe(
      */
     fun compareTo(other: Recipe?) {
         Assert.notNull(other, "other配方不能为空")
+        val names = mutableListOf<String>()
+        val itValues = mutableListOf<Number>()
+        val compares = mutableListOf<Boolean>()
+        val otherValues = mutableListOf<Number>()
+        val diffValues = mutableListOf<Number>()
+
         //总成本(制造费用+原料成本)
-        Assert.isTrue(
-            cost - other!!.cost in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-            "总成本(制造费用+原料成本)不一致:${cost}!=${other.cost}, 差值：${
-                (cost - other.cost).scale().toBigDecimal().toPlainString()
-            }"
-        )
+        names.add("总成本(制造费用+原料成本)")
+        itValues.add(cost)
+        compares.add(cost - other!!.cost in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        otherValues.add(other.cost)
+        diffValues.add((cost - other.cost).scale())
         //原料用量
-        Assert.isTrue(
-            materials.size == other.materials.size,
-            "原料数量不一致:${materials.size}!=${other.materials.size}"
-        )
+        names.add("原料数量")
+        itValues.add(materials.size)
+        compares.add(materials.size == other.materials.size)
+        otherValues.add(other.materials.size)
+        diffValues.add(materials.size - other.materials.size)
+
         val otherMaterialsMap = other.materials.associateBy { it.id }
         materials.forEach { m ->
             val otherMaterialValue = otherMaterialsMap[m.id]
             val otherWeight = otherMaterialValue?.weight ?: 0.0
-            Assert.isTrue(
-                m.weight - otherWeight in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-                "原料[${m.name}]用量不一致:${m.weight}!=$otherWeight, 差值：${
-                    (m.weight - otherWeight).scale().toBigDecimal()
-                        .toPlainString()
-                }"
-            )
+            names.add(m.name)
+            itValues.add(m.weight)
+            compares.add(m.weight - otherWeight in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+            otherValues.add(otherWeight)
+            diffValues.add((m.weight - otherWeight).scale())
+        }
+        if (materials.size < other.materials.size) {
+            other.materials.filter { m -> !materials.any { m.id == it.id } }.forEach {
+                val otherWeight = it.weight
+                names.add(it.name)
+                itValues.add(0.0)
+                compares.add(-otherWeight in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+                otherValues.add(otherWeight)
+                diffValues.add(-otherWeight)
+            }
+        }
+        // 计算每一列的最大宽度
+        val nameWidth = names.maxOf { it.length }
+        val thisStrValues =
+            itValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+        val otherStrValues =
+            otherValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+        val diffStrValues =
+            diffValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+
+        val itValueWidth = thisStrValues.maxOf { it.length }
+        val otherValueWidth = otherStrValues.maxOf { it.length }
+        val diffValueWidth = diffStrValues.maxOf { it.length }
+
+        val result = StringBuilder()
+        // 打印表头
+        val compareWidth = "比较".length
+        result.appendLine(
+            "${"原料名称".padEnd(nameWidth)} | ${"this".padStart(itValueWidth)} | ${
+                "比较".padEnd(
+                    compareWidth
+                )
+            } | ${"other".padEnd(otherValueWidth)} | ${"差值".padStart(diffValueWidth)}"
+        )
+
+        // 打印数据行
+        for (i in names.indices) {
+            val name = names[i].padEnd(nameWidth)
+            val compare = (if (compares[i]) "==" else "!=").padEnd(compareWidth)
+            val itValue = thisStrValues[i].padStart(itValueWidth)
+            val otherValue = otherStrValues[i].padEnd(otherValueWidth)
+            val diffValue = diffStrValues[i].padStart(diffValueWidth)
+            result.appendLine("$name | $itValue | $compare | $otherValue | $diffValue")
+        }
+
+        val diff = !compares.all { it }
+        if (diff) {
+            throw IllegalRecipeException("配方不一致\n$result")
+        } else if (log.isDebugEnabled) {
+            log.debug("配方一致\n$result")
         }
         //制造费用
         if (optimalProductionCost != null) {

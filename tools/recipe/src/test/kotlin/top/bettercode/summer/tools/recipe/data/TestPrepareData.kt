@@ -516,7 +516,7 @@ object TestPrepareData {
         )
 
         val requirement = RecipeRequirement.of(
-            productName = productName,
+            id = productName,
             targetWeight = 1000.0,
             systemIndicators = systemIndicators,
             materials = materials,

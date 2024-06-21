@@ -31,7 +31,7 @@ object OptimalUtil {
     @JvmStatic
     fun Double.scale(scale: Int = DEFAULT_SCALE): Double {
         require(scale >= 0) { "小数位数不能为负数" }
-        return BigDecimal(this).setScale(scale, RoundingMode.HALF_UP).toDouble()
+        return BigDecimal(this).setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros().toDouble()
     }
 
     /**
