@@ -3,10 +3,7 @@ package top.bettercode.summer.tools.recipe
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
-import top.bettercode.summer.tools.optimal.Constraint
-import top.bettercode.summer.tools.optimal.IVar
-import top.bettercode.summer.tools.optimal.Solver
-import top.bettercode.summer.tools.optimal.SolverType
+import top.bettercode.summer.tools.optimal.*
 import top.bettercode.summer.tools.recipe.criteria.UsageVar
 import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
@@ -183,8 +180,21 @@ object RecipeSolver {
         // 原料用量
         val materialRangeConstraints = requirement.materialRangeConstraints
         materialRangeConstraints.forEach { (t, u) ->
-            t.mapNotNull { recipeMaterials[it]?.weight }
-                .between(u.min, u.max)
+            val iVars = t.mapNotNull { recipeMaterials[it]?.weight }
+            if (Sense.GE == u.minSense && Sense.LE == u.maxSense) {
+                iVars.between(u.min, u.max)
+            } else {
+                when(u.minSense) {
+                    Sense.GE -> iVars.ge(u.min)
+                    Sense.GT -> iVars.gt(u.min)
+                    else -> throw IllegalArgumentException("原料用量范围配置错误${u.minSense} ${u.min}")
+                }
+                when(u.maxSense) {
+                    Sense.LE -> iVars.le(u.max)
+                    Sense.LT -> iVars.lt(u.max)
+                    else -> throw IllegalArgumentException("原料用量范围配置错误${u.maxSense} ${u.max}")
+                }
+            }
         }
 
         // 关联原料比率约束

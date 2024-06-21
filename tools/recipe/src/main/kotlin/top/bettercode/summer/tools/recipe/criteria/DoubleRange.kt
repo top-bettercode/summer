@@ -3,20 +3,37 @@ package top.bettercode.summer.tools.recipe.criteria
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.Sense
 
 @JsonPropertyOrder(alphabetic = true)
 data class DoubleRange(
+    @JsonProperty("minSense")
+    val minSense: Sense,
     @JsonProperty("min")
     val min: Double,
+    @JsonProperty("maxSense")
+    val maxSense: Sense,
     @JsonProperty("max")
-    val max: Double
+    val max: Double,
 ) {
 
+    constructor(min: Double, max: Double) : this(
+        minSense = Sense.GE,
+        min = min,
+        maxSense = Sense.LE,
+        max = max
+    )
+
     fun replaceRate(rate: Double): DoubleRange {
-        return DoubleRange((min * rate).scale(), (max * rate).scale())
+        return DoubleRange(
+            min = (min * rate).scale(),
+            max = (max * rate).scale(),
+            minSense = minSense,
+            maxSense = maxSense
+        )
     }
 
     override fun toString(): String {
-        return "$min - $max"
+        return "$min $minSense - $maxSense $max"
     }
 }

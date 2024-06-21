@@ -9,7 +9,9 @@
       "unit" : "%",
       "value" : {
         "max" : 1.2,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -21,7 +23,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 45.3
+        "maxSense" : "LE",
+        "min" : 45.3,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -33,7 +37,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 14.0
+        "maxSense" : "LE",
+        "min" : 14.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -45,7 +51,9 @@
       "unit" : "%",
       "value" : {
         "max" : 99.5,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -59,7 +67,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 61.0
+        "maxSense" : "LE",
+        "min" : 61.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -71,7 +81,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -83,7 +95,9 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -95,7 +109,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 14.0
+        "maxSense" : "LE",
+        "min" : 14.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -107,7 +123,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 14.0
+        "maxSense" : "LE",
+        "min" : 14.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -119,10 +137,15 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     }
+  },
+  "keepMaterialConstraints" : {
+    "ids" : [ ]
   },
   "materialConditionConstraints" : [ ],
   "materialIDConstraints" : [ {
@@ -139,7 +162,9 @@
     },
     "then" : {
       "max" : 3.0,
-      "min" : 3.0
+      "maxSense" : "LE",
+      "min" : 3.0,
+      "minSense" : "GE"
     }
   }, {
     "term" : {
@@ -147,7 +172,9 @@
     },
     "then" : {
       "max" : 2.0,
-      "min" : 2.0
+      "maxSense" : "LE",
+      "min" : 2.0,
+      "minSense" : "GE"
     }
   }, {
     "term" : {
@@ -155,7 +182,9 @@
     },
     "then" : {
       "max" : 15.0,
-      "min" : 0.0
+      "maxSense" : "LE",
+      "min" : 0.0,
+      "minSense" : "GE"
     }
   } ],
   "materialRelationConstraints" : [ {
@@ -173,7 +202,9 @@
       "then" : {
         "normal" : {
           "max" : 0.055505762,
-          "min" : 0.049338455
+          "maxSense" : "LE",
+          "min" : 0.049338455,
+          "minSense" : "GE"
         }
       }
     }, {
@@ -183,7 +214,9 @@
       "then" : {
         "normal" : {
           "max" : 0.350443208,
-          "min" : 0.350443208
+          "maxSense" : "LE",
+          "min" : 0.350443208,
+          "minSense" : "GE"
         }
       }
     }, {
@@ -193,7 +226,9 @@
       "then" : {
         "normal" : {
           "max" : 0.010535211,
-          "min" : 0.008619718
+          "maxSense" : "LE",
+          "min" : 0.008619718,
+          "minSense" : "GE"
         }
       }
     }, {
@@ -203,7 +238,9 @@
       "then" : {
         "normal" : {
           "max" : 0.01915493,
-          "min" : 0.017239437
+          "maxSense" : "LE",
+          "min" : 0.017239437,
+          "minSense" : "GE"
         }
       }
     } ]
@@ -2901,9 +2938,6 @@
     }
   },
   "targetWeight" : 1000.0,
-  "useMaterialConstraints" : {
-    "ids" : [ ]
-  },
   "yield" : 1.0,
   "timeout" : 30
 }

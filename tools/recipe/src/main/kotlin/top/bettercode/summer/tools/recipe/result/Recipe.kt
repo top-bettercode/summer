@@ -162,11 +162,11 @@ data class Recipe(
         }
 
         val usedMaterials = materials.map { it.id }
-        // 指定用原料ID
-        val useMaterials = requirement.useMaterialConstraints
-        if (useMaterials.ids.isNotEmpty()) {
-            if (!useMaterials.containsAll(usedMaterials)) {
-                throw IllegalRecipeException("配方所用原料：${usedMaterials} 不在范围${useMaterials}内")
+        // 保留用原料ID
+        val keepMaterials = requirement.keepMaterialConstraints
+        if (keepMaterials.ids.isNotEmpty()) {
+            if (!keepMaterials.containsAll(usedMaterials)) {
+                throw IllegalRecipeException("配方所用原料：${usedMaterials} 不在范围${keepMaterials}内")
             }
         }
         // 不能用原料ID

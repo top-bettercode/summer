@@ -533,7 +533,7 @@ object TestPrepareData {
             ),
             indicatorRangeConstraints = RecipeRangeIndicators(rangeIndicators),
             indicatorMaterialIDConstraints = RecipeMaterialIDIndicators(materialIDIndicators),
-            useMaterialConstraints = useMaterials.toMaterialIDs(),
+            keepMaterialConstraints = useMaterials.toMaterialIDs(),
             noUseMaterialConstraints = noUseMaterials.toMaterialIDs(),
             notMixMaterialConstraints = notMixMaterials,
             materialRangeConstraints = materialRangeConstraints,

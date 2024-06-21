@@ -9,7 +9,9 @@
       "unit" : "%",
       "value" : {
         "max" : 5.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -21,7 +23,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 25.3
+        "maxSense" : "LE",
+        "min" : 25.3,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -33,7 +37,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 12.0
+        "maxSense" : "LE",
+        "min" : 12.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -45,7 +51,9 @@
       "unit" : "%",
       "value" : {
         "max" : 99.5,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -59,7 +67,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -71,7 +81,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -83,7 +95,9 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -95,7 +109,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 4.5
+        "maxSense" : "LE",
+        "min" : 4.5,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -107,7 +123,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 6.0
+        "maxSense" : "LE",
+        "min" : 6.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -119,10 +137,15 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     }
+  },
+  "keepMaterialConstraints" : {
+    "ids" : [ ]
   },
   "materialConditionConstraints" : [ ],
   "materialIDConstraints" : [ ],
@@ -132,7 +155,9 @@
     },
     "then" : {
       "max" : 100.0,
-      "min" : 80.0
+      "maxSense" : "LE",
+      "min" : 80.0,
+      "minSense" : "GE"
     }
   } ],
   "materialRelationConstraints" : [ ],
@@ -2705,9 +2730,6 @@
     }
   },
   "targetWeight" : 1000.0,
-  "useMaterialConstraints" : {
-    "ids" : [ ]
-  },
   "yield" : 1.0,
   "timeout" : 30
 }

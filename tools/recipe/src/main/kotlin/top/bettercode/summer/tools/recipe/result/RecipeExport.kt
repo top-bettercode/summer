@@ -80,11 +80,11 @@ object RecipeExport {
             //推优原料限制
             c = startCol
             cell(r, c++).value("推优原料限制").height(20.0).setStyle()
-            //指定用原料
-            val useMaterials = useMaterialConstraints
+            //保留用原料
+            val keepMaterials = keepMaterialConstraints
             //不能用原料
             val noUseMaterials = noUseMaterialConstraints
-            cell(r, c).value("指定用原料：${useMaterials}；不能用原料：${noUseMaterials}")
+            cell(r, c).value("保留用原料：${keepMaterials}；不能用原料：${noUseMaterials}")
             range(r, c, r++, columnSize).merge().horizontalAlignment("left").setStyle()
             //推优原料用量范围
             c = startCol

@@ -67,9 +67,9 @@ data class RecipeRequirement(
     @JsonProperty("materials")
     val materials: List<RecipeMaterial>,
 
-    /** 指定用原料ID  */
-    @JsonProperty("useMaterialConstraints")
-    val useMaterialConstraints: MaterialIDs,
+    /** 保留用原料ID  */
+    @JsonProperty("keepMaterialConstraints")
+    val keepMaterialConstraints: MaterialIDs,
     /** 不能用原料ID  */
     @JsonProperty("noUseMaterialConstraints")
     val noUseMaterialConstraints: MaterialIDs,
@@ -148,7 +148,7 @@ data class RecipeRequirement(
          * @param productionCost 制造费用
          * @param packagingMaterials 包装耗材
          * @param materials 原料
-         * @param useMaterialConstraints 指定用原料ID
+         * @param keepMaterialConstraints 保留用原料ID
          * @param noUseMaterialConstraints 不能用原料ID
          * @param indicatorRangeConstraints 指标范围约束,key：指标ID,value:指标值范围
          * @param materialRangeConstraints 原料约束,key:原料ID, value: 原料使用范围约束
@@ -171,7 +171,7 @@ data class RecipeRequirement(
             systemIndicators: RecipeValueIndicators,
             packagingMaterials: List<RecipeOtherMaterial>,
             materials: List<RecipeMaterial>,
-            useMaterialConstraints: MaterialIDs,
+            keepMaterialConstraints: MaterialIDs,
             noUseMaterialConstraints: MaterialIDs,
             indicatorRangeConstraints: RecipeRangeIndicators,
             materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
@@ -217,20 +217,20 @@ data class RecipeRequirement(
             val fixMaterialConditionConstraints =
                 (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
 
-            // 必选原料
-            val useMaterialIds = useMaterialConstraints.ids.toMutableList()
+            // 可选原料
+            val keepMaterialIds = keepMaterialConstraints.ids.toMutableList()
             val materialMust = Predicate { material: IRecipeMaterial ->
                 val materialId = material.id
 
-                // 指定用原料ID
-                if (useMaterialIds.isNotEmpty()) {
-                    if (useMaterialConstraints.contains(materialId)) return@Predicate true
+                // 保留用原料ID
+                if (keepMaterialIds.isNotEmpty()) {
+                    if (keepMaterialConstraints.contains(materialId)) return@Predicate true
                 }
 
                 // 用量>0的原料
                 materialRangeConstraints.forEach { (t, u) ->
                     if (t.contains(materialId) && u.min > 0) {
-                        useMaterialIds.add(materialId)
+                        keepMaterialIds.add(materialId)
                         return@Predicate true
                     }
                 }
@@ -238,7 +238,7 @@ data class RecipeRequirement(
                 //关联原料
                 for (materialRelationConstraint in materialRelationConstraints) {
                     if (materialRelationConstraint.term.contains(materialId)) {
-                        useMaterialIds.add(materialId)
+                        keepMaterialIds.add(materialId)
                         return@Predicate true
                     }
                 }
@@ -246,7 +246,7 @@ data class RecipeRequirement(
                 //条件约束
                 fixMaterialConditionConstraints.forEach { (_, thenCon) ->
                     if (thenCon.materials.contains(materialId)) {
-                        useMaterialIds.add(materialId)
+                        keepMaterialIds.add(materialId)
                         return@Predicate true
                     }
                 }
@@ -274,8 +274,8 @@ data class RecipeRequirement(
                 }
 
                 // 排除全局非限用原料
-                if (useMaterialConstraints.ids.isNotEmpty()) {
-                    if (!useMaterialConstraints.contains(materialId)) return@Predicate false
+                if (keepMaterialConstraints.ids.isNotEmpty()) {
+                    if (!keepMaterialConstraints.contains(materialId)) return@Predicate false
                 }
 
                 // 排除非限用原料
@@ -321,8 +321,8 @@ data class RecipeRequirement(
                 packagingMaterials = packagingMaterials,
                 materials = materialList,
                 materialIDConstraints = materialIDConstraints,
-                useMaterialConstraints = if (useMaterialConstraints.ids.isNotEmpty()) useMaterialIds.distinct()
-                    .toMaterialIDs() else useMaterialConstraints,
+                keepMaterialConstraints = if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
+                    .toMaterialIDs() else keepMaterialConstraints,
                 noUseMaterialConstraints = noUseMaterialConstraints,
                 indicatorRangeConstraints = indicatorRangeConstraints,
                 indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
