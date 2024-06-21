@@ -83,7 +83,7 @@ management:
 
 logging:
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%5p} ${PID: } --- [%-6.6t] %-40.40logger{39} %20file:%-3line %X{REQUEST_HASHCODE}: %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%5p} ${PID: } --- [%-6.6t] %-40.40logger{39} %20file:%-3line %X{traceid}: %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
     file: ${logging.pattern.console}
 
   level:

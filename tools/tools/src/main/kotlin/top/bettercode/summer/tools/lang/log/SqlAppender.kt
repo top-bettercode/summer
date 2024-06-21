@@ -26,7 +26,7 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
         }
         try {
             val traceid = event.mdcPropertyMap[HttpOperation.MDC_TRACEID]
-                ?: event.loggerContextVO.propertyMap[PID] ?: ""
+                ?: "${event.loggerContextVO.propertyMap[PID]}-${event.threadName}"
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
             val error = event.mdcPropertyMap[MDC_SQL_ERROR]
             val end = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()

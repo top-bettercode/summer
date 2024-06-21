@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
+import top.bettercode.summer.logging.async.LoggerAnnotationBeanPostProcessor
 
 /**
  * 自动增加请求日志过滤器
@@ -18,23 +19,28 @@ import org.springframework.core.annotation.Order
  * @since 0.1.5
  */
 @ConditionalOnProperty(
-        prefix = "summer.logging.request",
-        name = ["enabled"],
-        havingValue = "true",
-        matchIfMissing = true
+    prefix = "summer.logging.request",
+    name = ["enabled"],
+    havingValue = "true",
+    matchIfMissing = true
 )
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(
-        RequestLoggingProperties::class,
-        WebsocketProperties::class
+    RequestLoggingProperties::class,
+    WebsocketProperties::class
 )
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class RequestLoggingConfiguration {
 
     @Bean
+    fun asyncAnnotationBeanPostProcessor(): LoggerAnnotationBeanPostProcessor {
+        return LoggerAnnotationBeanPostProcessor()
+    }
+
+    @Bean
     fun requestLoggingFilter(
-            properties: RequestLoggingProperties,
-            @Autowired(required = false) handlers: List<RequestLoggingHandler>?
+        properties: RequestLoggingProperties,
+        @Autowired(required = false) handlers: List<RequestLoggingHandler>?
     ): RequestLoggingFilter {
         return RequestLoggingFilter(properties, handlers ?: emptyList())
     }
