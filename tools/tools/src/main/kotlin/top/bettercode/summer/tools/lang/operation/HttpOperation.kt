@@ -15,6 +15,7 @@ import java.io.StringWriter
 object HttpOperation {
     private const val MULTIPART_BOUNDARY = "6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm"
 
+    const val MDC_TRACEID = "traceid"
     const val REQUEST_LOG_MARKER = "request"
     val REQUEST_DATE_TIME = HttpOperation::class.java.name + ".dateTime"
     val BEST_MATCHING_PATTERN_ATTRIBUTE = HttpOperation::class.java.name + ".bestMatchingPattern"

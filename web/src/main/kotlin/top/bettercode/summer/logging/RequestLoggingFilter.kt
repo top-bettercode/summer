@@ -52,7 +52,6 @@ class RequestLoggingFilter(
 ) : OncePerRequestFilter(), Ordered {
 
     companion object {
-        const val MDC_REQUEST_HASHCODE = "REQUEST_HASHCODE"
         const val NOT_IN_ALL = "not_in_all"
         const val OPERATION_MARKER = "operation"
         const val IS_OPERATION_MARKER = "is_operation"
@@ -112,7 +111,11 @@ class RequestLoggingFilter(
             responseToUse = response
         }
         try {
-            MDC.put(MDC_REQUEST_HASHCODE, Integer.toHexString(request.hashCode()))
+            var traceid = request.getHeader(HttpOperation.MDC_TRACEID)
+            if (traceid.isNullOrBlank()) {
+                traceid = Integer.toHexString(request.hashCode())
+            }
+            MDC.put(HttpOperation.MDC_TRACEID, traceid)
             filterChain.doFilter(requestToUse, responseToUse)
         } finally {
             try {
@@ -120,7 +123,7 @@ class RequestLoggingFilter(
             } catch (e: Exception) {
                 log.error(e.message, e)
             }
-            MDC.remove(MDC_REQUEST_HASHCODE)
+            MDC.remove(HttpOperation.MDC_TRACEID)
         }
 
     }
