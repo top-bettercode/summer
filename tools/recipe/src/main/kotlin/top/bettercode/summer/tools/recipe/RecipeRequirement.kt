@@ -229,7 +229,7 @@ data class RecipeRequirement(
 
                 // 用量>0的原料
                 materialRangeConstraints.forEach { (t, u) ->
-                    if (t.contains(materialId) && u.min > 0) {
+                    if (t.contains(materialId) && ((Sense.GE == u.minSense && u.min > 0) || (Sense.GT == u.minSense && u.min >= 0))) {
                         keepMaterialIds.add(materialId)
                         return@Predicate true
                     }

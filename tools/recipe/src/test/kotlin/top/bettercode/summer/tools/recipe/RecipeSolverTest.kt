@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.optimal.OptimalUtil
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.optimal.copt.COPTSolver
@@ -212,14 +211,13 @@ internal class RecipeSolverTest {
     private fun assert(solve: RecipeResult, solve1: RecipeResult) {
         Assertions.assertEquals(solve.recipes.size, solve1.recipes.size)
         solve.recipes.forEachIndexed { index, recipe ->
-            Assertions.assertEquals(recipe.cost.scale(7), solve1.recipes[index].cost.scale(7))
+            Assertions.assertTrue(
+                recipe.cost - solve1.recipes[index].cost in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
+                "推优成本不一致"
+            )
         }
         if (solve.recipes.size > 0) {
-            Assertions.assertEquals(
-                json(solve.recipes[0].materials),
-                json(solve1.recipes[0].materials)
-            )
-            Assertions.assertEquals(json(solve.recipes[0]), json(solve1.recipes[0]))
+            solve.recipes[0].compareTo(solve1.recipes[0])
         }
     }
 

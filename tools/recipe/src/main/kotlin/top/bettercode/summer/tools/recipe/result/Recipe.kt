@@ -42,6 +42,9 @@ data class Recipe(
     val includeProductionCost: Boolean,
     @JsonProperty("optimalProductionCost")
     val optimalProductionCost: ProductionCostValue?,
+    /**
+     * 总成本(制造费用+原料成本)
+     */
     @JsonProperty("cost")
     val cost: Double,
     /** 选用的原料  */
@@ -78,7 +81,7 @@ data class Recipe(
     val weight: Double
         get() = materials.sumOf { it.weight }.scale()
 
-    /** 配方成本  */
+    /** 原料成本  */
     val materialCost: Double
         get() = materials.sumOf { it.weight * it.price }.scale()
 
@@ -87,6 +90,36 @@ data class Recipe(
             val objectMapper =
                 StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
             return objectMapper.readValue(file, Recipe::class.java)
+        }
+    }
+
+    /**
+     * 比较配方
+     */
+    fun compareTo(other: Recipe?) {
+        Assert.notNull(other, "other配方不能为空")
+        //总成本(制造费用+原料成本)
+        Assert.isTrue(
+            cost - other!!.cost in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
+            "总成本(制造费用+原料成本)不一致:${cost}!=${other.cost}, 差值：${
+                (cost - other.cost).scale().toBigDecimal().toPlainString()
+            }"
+        )
+        //原料用量
+        materials.forEachIndexed { index, materialValue ->
+            val otherMaterialValue = other.materials[index]
+            Assert.isTrue(
+                materialValue.weight - otherMaterialValue.weight in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
+                "原料用量不一致:${materialValue.weight}!=${otherMaterialValue.weight}, 差值：${
+                    (materialValue.weight - otherMaterialValue.weight).scale().toBigDecimal()
+                        .toPlainString()
+                }"
+            )
+        }
+        //制造费用
+        if (optimalProductionCost != null) {
+            Assert.notNull(other.optimalProductionCost, "other配方制造费用为空")
+            optimalProductionCost.compareTo(other.optimalProductionCost!!)
         }
     }
 
@@ -361,7 +394,7 @@ data class Recipe(
         }
 
         //检查制造费用
-        optimalProductionCost?.validate(productionCost)
+        optimalProductionCost?.compareTo(productionCost)
 
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
