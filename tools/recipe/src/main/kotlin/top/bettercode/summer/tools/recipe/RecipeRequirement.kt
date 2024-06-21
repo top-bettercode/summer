@@ -132,6 +132,7 @@ data class RecipeRequirement(
 
     companion object {
 
+        @JvmStatic
         fun read(file: File): RecipeRequirement {
             val objectMapper =
                 StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
