@@ -112,7 +112,7 @@ data class Recipe(
             val otherWeight = otherMaterialValue?.weight ?: 0.0
             Assert.isTrue(
                 m.weight - otherWeight in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-                "原料用量不一致:${m.weight}!=$otherWeight, 差值：${
+                "原料[${m.name}]用量不一致:${m.weight}!=$otherWeight, 差值：${
                     (m.weight - otherWeight).scale().toBigDecimal()
                         .toPlainString()
                 }"
