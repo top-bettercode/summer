@@ -62,7 +62,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
             val types = intArrayOf(Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB)
             val update = jdbcTemplate.update(defaultInsertStatement, args, types)
             if (log.isInfoEnabled) {
-                val logData = SqlLogData("JdbcApiAuthorizationService.save")
+                val logData = SqlLogData("JdbcStoreTokenRepository.save")
                 logData.sql = defaultInsertStatement
                 for (i in args.indices) {
                     val value = if (i == 3) UNRECORDED_MARK else args[i].toString()
@@ -88,7 +88,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
         val id = tokenId.toString()
         val update = jdbcTemplate.update(defaultDeleteStatement, id)
         if (log.isInfoEnabled) {
-            val logData = SqlLogData("JdbcApiAuthorizationService.remove")
+            val logData = SqlLogData("JdbcStoreTokenRepository.remove")
             logData.sql = defaultDeleteStatement
             logData.params.add(
                 SqlLogParam(0, JavaType.stringInstance, id)
@@ -105,7 +105,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
         val sql = defaultBatchDeleteStatement + "(${ids.joinToString(",") { "?" }})"
         @Suppress("SqlSourceToSinkFlow") val update = jdbcTemplate.update(sql, *ids)
         if (log.isInfoEnabled) {
-            val logData = SqlLogData("JdbcApiAuthorizationService.remove")
+            val logData = SqlLogData("JdbcStoreTokenRepository.remove")
             logData.sql = sql
             ids.forEachIndexed { index, s ->
                 logData.params.add(
@@ -152,7 +152,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
                             val update =
                                 jdbcTemplate.update(defaultDeleteStatement, id)
                             if (log.isInfoEnabled) {
-                                val logData = SqlLogData("JdbcApiAuthorizationService.delete")
+                                val logData = SqlLogData("JdbcStoreTokenRepository.delete")
                                 logData.sql = defaultDeleteStatement
                                 logData.params.add(SqlLogParam(0, JavaType.stringInstance, id))
                                 logData.affected = update
@@ -166,7 +166,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
                 }, param
             )
             if (log.isInfoEnabled) {
-                val logData = SqlLogData("JdbcApiAuthorizationService.getStoreToken")
+                val logData = SqlLogData("JdbcStoreTokenRepository.getStoreToken")
                 logData.sql = selectStatement
                 logData.params.add(SqlLogParam(0, JavaType.stringInstance, param))
                 logData.affected = if (storeToken == null) 0 else 1
