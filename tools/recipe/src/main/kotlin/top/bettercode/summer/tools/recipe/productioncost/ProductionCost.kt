@@ -11,6 +11,7 @@ import top.bettercode.summer.tools.recipe.productioncost.ChangeItemType.MATERIAL
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType.*
 import top.bettercode.summer.tools.recipe.productioncost.DictType.ENERGY
 import top.bettercode.summer.tools.recipe.result.Recipe
+import java.util.SortedMap
 
 /**
  * 制造费用
@@ -33,7 +34,7 @@ data class ProductionCost(
          * 其他固定费用
          */
         @JsonProperty("dictItems")
-        val dictItems: Map<DictType, Cost>,
+        val dictItems: SortedMap<DictType, Cost>,
         /**
          * 税费税率
          */

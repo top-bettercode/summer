@@ -472,7 +472,7 @@ object TestPrepareData {
             ),
         )
         // 其他固定费用
-        val dictItems: Map<DictType, Cost> = mapOf(
+        val dictItems = sortedMapOf(
             DictType.STAFF to Cost(1.0, 42.0),
             DictType.DEPRECIATION to Cost(1.0, 52.0),
             DictType.OTHER to Cost(1.0, 62.0),
