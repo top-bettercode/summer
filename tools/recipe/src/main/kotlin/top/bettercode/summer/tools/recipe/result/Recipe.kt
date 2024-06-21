@@ -106,6 +106,10 @@ data class Recipe(
             }"
         )
         //原料用量
+        Assert.isTrue(
+            materials.size == other.materials.size,
+            "原料数量不一致:${materials.size}!=${other.materials.size}"
+        )
         val otherMaterialsMap = other.materials.associateBy { it.id }
         materials.forEach { m ->
             val otherMaterialValue = otherMaterialsMap[m.id]
