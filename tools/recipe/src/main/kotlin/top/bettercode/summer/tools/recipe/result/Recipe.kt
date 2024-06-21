@@ -106,12 +106,14 @@ data class Recipe(
             }"
         )
         //原料用量
-        materials.forEachIndexed { index, materialValue ->
-            val otherMaterialValue = other.materials[index]
+        val otherMaterialsMap = other.materials.associateBy { it.id }
+        materials.forEach { m ->
+            val otherMaterialValue = otherMaterialsMap[m.id]
+            val otherWeight = otherMaterialValue?.weight ?: 0.0
             Assert.isTrue(
-                materialValue.weight - otherMaterialValue.weight in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
-                "原料用量不一致:${materialValue.weight}!=${otherMaterialValue.weight}, 差值：${
-                    (materialValue.weight - otherMaterialValue.weight).scale().toBigDecimal()
+                m.weight - otherWeight in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
+                "原料用量不一致:${m.weight}!=$otherWeight, 差值：${
+                    (m.weight - otherWeight).scale().toBigDecimal()
                         .toPlainString()
                 }"
             )
