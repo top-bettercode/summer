@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
-import top.bettercode.summer.logging.async.LoggerAnnotationBeanPostProcessor
+import top.bettercode.summer.logging.async.MethodLoggingAspect
 
 /**
  * 自动增加请求日志过滤器
@@ -33,8 +33,8 @@ import top.bettercode.summer.logging.async.LoggerAnnotationBeanPostProcessor
 class RequestLoggingConfiguration {
 
     @Bean
-    fun asyncAnnotationBeanPostProcessor(): LoggerAnnotationBeanPostProcessor {
-        return LoggerAnnotationBeanPostProcessor()
+    fun methodLoggingAspect(): MethodLoggingAspect {
+        return MethodLoggingAspect()
     }
 
     @Bean

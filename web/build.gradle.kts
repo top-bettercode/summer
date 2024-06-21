@@ -10,6 +10,7 @@ dependencies {
 
     //web
     api("org.springframework.boot:spring-boot-starter-web")
+    api("org.springframework.boot:spring-boot-starter-aop")
     api("org.springframework.boot:spring-boot-starter-validation")
     api("org.springframework.boot:spring-boot-starter-logging")
     api("com.github.ben-manes.caffeine:caffeine")

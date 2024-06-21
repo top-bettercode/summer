@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync
  * @author Peter Wu
  */
 @ConditionalOnProperty(name = ["summer.async.enabled"], havingValue = "true")
-@EnableAsync(proxyTargetClass = true)
+@EnableAsync
 @Configuration(proxyBeanMethods = false)
 class AsyncConfiguration {
     init {
