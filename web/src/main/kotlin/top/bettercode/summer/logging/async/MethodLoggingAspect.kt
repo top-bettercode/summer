@@ -14,12 +14,13 @@ class MethodLoggingAspect {
 
     private val logger: Logger = LoggerFactory.getLogger(MethodLoggingAspect::class.java)
 
-    @Around("@annotation(org.springframework.scheduling.annotation.Async) || @annotation(org.springframework.scheduling.annotation.Scheduled)")
+    @Around("@annotation(org.springframework.scheduling.annotation.Async) || @annotation(org.springframework.scheduling.annotation.Scheduled) || @annotation(top.bettercode.summer.logging.async.Loggable)")
     @Throws(Throwable::class)
     fun logProceed(joinPoint: ProceedingJoinPoint): Any? {
         val methodName = joinPoint.signature.toShortString()
         try {
-            val traceid = Integer.toHexString(Random.nextInt())
+            val traceid =
+                MDC.get(HttpOperation.MDC_TRACEID) ?: Integer.toHexString(Random.nextInt())
             MDC.put(HttpOperation.MDC_TRACEID, traceid)
             logger.info("==={} started===", methodName)
             val result = joinPoint.proceed()
