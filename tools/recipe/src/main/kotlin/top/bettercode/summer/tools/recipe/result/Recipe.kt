@@ -108,10 +108,19 @@ data class Recipe(
             throw IllegalRecipeException("配方烘干水分异常：${dryWaterWeight}")
         }
         if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight).scale() > RecipeUtil.DEFAULT_MIN_EPSILON) {
-            throw IllegalRecipeException("配方烘干水分:${dryWaterWeight} 超过最大可烘干水分：${requirement.maxBakeWeight}")
+            throw IllegalRecipeException(
+                "配方烘干水分:${dryWaterWeight} 超过最大可烘干水分：${requirement.maxBakeWeight} ,差值：${
+                    (dryWaterWeight - requirement.maxBakeWeight).scale().toBigDecimal()
+                        .toPlainString()
+                }"
+            )
         }
         if ((dryWaterWeight - waterWeight).scale() > RecipeUtil.DEFAULT_MIN_EPSILON) {
-            throw IllegalRecipeException("配方烘干水分:${dryWaterWeight} 超过总水分：${waterWeight}")
+            throw IllegalRecipeException(
+                "配方烘干水分:${dryWaterWeight} 超过总水分：${waterWeight},差值：${
+                    (dryWaterWeight - waterWeight).scale().toBigDecimal().toPlainString()
+                }"
+            )
         }
 
         val targetWeight = requirement.targetWeight
@@ -215,7 +224,11 @@ data class Recipe(
                 materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
             if ((usedWeight - usedAddWeight).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
-                throw IllegalRecipeException("原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}")
+                throw IllegalRecipeException(
+                    "原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}，差值:${
+                        (usedWeight - usedAddWeight).scale().toBigDecimal().toPlainString()
+                    }"
+                )
             }
             val (normal, overdose) = termThen.relationValue(true)
             val usedMinNormalWeights = normal.min
@@ -353,7 +366,11 @@ data class Recipe(
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
         if ((materialCost + productionCostFee - cost).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
-            throw IllegalRecipeException("配方成本不匹配，物料成本：${materialCost}+制造费用：${productionCostFee}=${materialCost + productionCostFee} / ${cost},差：${materialCost + productionCostFee - cost}")
+            throw IllegalRecipeException(
+                "配方成本不匹配，物料成本：${materialCost}+制造费用：${productionCostFee}=${materialCost + productionCostFee} / ${cost},差值：${
+                    (materialCost + productionCostFee - cost).scale().toBigDecimal().toPlainString()
+                }"
+            )
         }
 
         return true
