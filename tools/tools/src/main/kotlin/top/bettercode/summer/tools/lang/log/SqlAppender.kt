@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentMap
 
 class SqlAppender : AppenderBase<ILoggingEvent>() {
     companion object {
-        const val PID = "PID"
         const val MDC_SQL_ERROR = "SQL_ERROR"
         const val MDC_SQL_ID = "SQL_ID"
         const val MDC_SQL_END = "SQL_END"
@@ -27,7 +26,7 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
         }
         try {
             val traceid = event.mdcPropertyMap[HttpOperation.MDC_TRACEID]
-                ?: "${event.loggerContextVO.propertyMap[PID]}-${event.threadName}"
+                ?: event.threadName
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
             val error = event.mdcPropertyMap[MDC_SQL_ERROR]
             val end = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
@@ -48,7 +47,13 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
                     val regex = Regex("""\[(.*?)]""")
                     val matches = regex.findAll(msg).map { it.groupValues[1] }.toList()
                     val index = matches[0].toInt()
-                    sqlLogData.params.add(SqlLogParam(index, JavaTypeResolver.type(matches[1])?.javaType, matches[2]))
+                    sqlLogData.params.add(
+                        SqlLogParam(
+                            index,
+                            JavaTypeResolver.type(matches[1])?.javaType,
+                            matches[2]
+                        )
+                    )
                 }
 
                 else -> {
