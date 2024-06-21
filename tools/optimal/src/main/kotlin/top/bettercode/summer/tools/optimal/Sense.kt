@@ -18,7 +18,7 @@ enum class Sense(val symbol: String) {
     /**
      * 大于等于
      */
-    GE(">="),
+    GE("≥"),
 
     /**
      * 大于
@@ -28,7 +28,7 @@ enum class Sense(val symbol: String) {
     /**
      * 小于等于
      */
-    LE("<="),
+    LE("≤"),
 
     /**
      * 小于

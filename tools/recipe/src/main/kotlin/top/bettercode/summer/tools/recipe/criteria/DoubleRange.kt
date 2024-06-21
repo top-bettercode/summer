@@ -34,6 +34,12 @@ data class DoubleRange(
     }
 
     override fun toString(): String {
-        return "$min $minSense - $maxSense $max"
+        return "$min ${
+            when (minSense) {
+                Sense.GE -> Sense.LE
+                Sense.GT -> Sense.LT
+                else -> minSense
+            }
+        } - $maxSense $max"
     }
 }

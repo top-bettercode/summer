@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
+import kotlin.math.max
 
 /**
  *
@@ -50,7 +51,8 @@ object RecipeExport {
                         )
 
                     cell(r, column).value((value).scale())
-                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "").setStyle()
+                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
+                        .setStyle()
                 }
         }
     }
@@ -58,14 +60,18 @@ object RecipeExport {
     fun FastExcel.exportRequirement(requirement: RecipeRequirement) {
         requirement.apply {
             val startCol = 0
+            val startRow = 0
+            val rangeIndicators = indicatorRangeConstraints.values.sortedBy { it.index }
+            val productionColumnSize =
+                productionCost.materialItems.size + productionCost.dictItems.size + 2
+            val columnSize = max(rangeIndicators.size, productionColumnSize) + startCol
             var c = startCol
-            var r = startCol
+            var r = startRow
             cell(r++, c).value("项目").headerStyle().width(20.0).setStyle()
             cell(r++, c).value("配方目标最大值").setStyle()
             cell(r, c).value("配方目标最小值").setStyle()
             //配方目标
             c++
-            val rangeIndicators = indicatorRangeConstraints.values.sortedBy { it.index }
             rangeIndicators.forEach {
                 r = startCol
                 cell(r++, c).value("${it.name}(${it.unit})").headerStyle().width(11.0).setStyle()
@@ -76,7 +82,8 @@ object RecipeExport {
                     .format(if (it.unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
                     .setStyle()
             }
-            val columnSize = rangeIndicators.size + startCol
+            if (columnSize > c)
+                range(startRow, c, r - 1, columnSize).merge().horizontalAlignment("left").setStyle()
             //推优原料限制
             c = startCol
             cell(r, c++).value("推优原料限制").height(20.0).setStyle()
@@ -91,7 +98,7 @@ object RecipeExport {
             val limitMaterials = materialRangeConstraints
             cell(r, c++).value("推优原料用量范围").height(20.0 * limitMaterials.size).setStyle()
             val limitMaterialsStr = limitMaterials.joinToString("\n") {
-                "${it.term} 用量范围：${it.then.min} 至 ${it.then.max} 公斤；"
+                "${it.term} 用量范围：${it.then} 公斤；"
             }
             cell(r, c).value(limitMaterialsStr)
             range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText().setStyle()
