@@ -13,10 +13,12 @@ import java.io.File
  *
  * @author Peter Wu
  */
-class RecipeResult(val solverName: String) {
-
+class RecipeResult @JvmOverloads constructor(
+    val requirement: RecipeRequirement,
     /** 配方  */
-    var recipes: MutableList<Recipe> = ArrayList()
+    var recipes: MutableList<Recipe> = ArrayList(),
+    val solverName: String = "defaultSolver"
+) {
 
     /** 耗时  */
     var time: Long = 0
@@ -27,20 +29,13 @@ class RecipeResult(val solverName: String) {
     }
 
     // 输出 Excel
-    @JvmOverloads
-    fun toExcel(outFile: File, requirement: RecipeRequirement? = null) {
-        var recipeRequirement = requirement
+    fun toExcel(outFile: File) {
         val filePath = outFile.absolutePath
         FastExcel.of(filePath).apply {
-            if (recipeRequirement == null && recipes.isNotEmpty()) {
-                recipeRequirement = recipes[0].requirement
-            }
-            if (recipeRequirement != null) {
-                sheet("最终候选原料")
-                exportMaterial(recipeRequirement!!)
-                sheet("配方要求")
-                exportRequirement(recipeRequirement!!)
-            }
+            sheet("最终候选原料")
+            exportMaterial(requirement)
+            sheet("配方要求")
+            exportRequirement(requirement)
 
             for ((index, recipe) in recipes.withIndex()) {
                 val sheetname = "配方" + (index + 1)

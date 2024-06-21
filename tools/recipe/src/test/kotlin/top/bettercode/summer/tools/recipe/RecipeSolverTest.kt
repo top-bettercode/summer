@@ -160,7 +160,7 @@ internal class RecipeSolverTest {
             File("build/excel/" + recipeResult.solverName + "-${fileName}" + "-推" + size + "个-" + System.currentTimeMillis() + ".xlsx")
         outFile.parentFile.mkdirs()
 
-        recipeResult.toExcel(outFile, requirement)
+        recipeResult.toExcel(outFile)
         Runtime.getRuntime().exec(arrayOf("xdg-open", outFile.absolutePath))
         System.err.println("==================================================")
         System.err.println(" 耗时：" + recipeResult.time + "ms" + " 结果：" + size + "个")
