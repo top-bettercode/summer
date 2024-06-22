@@ -8,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Sense
 import top.bettercode.summer.tools.recipe.RecipeRequirement
@@ -25,6 +26,7 @@ import top.bettercode.summer.tools.recipe.material.id.ReplacebleMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
 import java.io.File
 import java.math.BigDecimal
+import kotlin.math.max
 
 /**
  * 配方
@@ -149,13 +151,13 @@ data class Recipe(
 
         val itValueWidth = thisStrValues.maxOf { it.length }
         val otherValueWidth = otherStrValues.maxOf { it.length }
-        val diffValueWidth = diffStrValues.maxOf { it.length }
+        val diffValueWidth = max(diffStrValues.maxOf { it.toFullWidth().length }, "差值".length)
 
         val result = StringBuilder()
         // 打印表头
         val compareWidth = "比较".length
         result.appendLine(
-            "${"原料名称".padEnd(nameWidth)} | ${"this".padStart(itValueWidth)} | ${
+            "${"原料名称".padEnd(nameWidth, '\u3000')} | ${"this".padStart(itValueWidth)} | ${
                 "比较".padEnd(
                     compareWidth
                 )
@@ -164,8 +166,8 @@ data class Recipe(
 
         // 打印数据行
         for (i in names.indices) {
-            val name = names[i].padEnd(nameWidth)
-            val compare = (if (compares[i]) "==" else "!=").padEnd(compareWidth)
+            val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
+            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
             val itValue = thisStrValues[i].padStart(itValueWidth)
             val otherValue = otherStrValues[i].padEnd(otherValueWidth)
             val diffValue = diffStrValues[i].padStart(diffValueWidth)
@@ -175,8 +177,8 @@ data class Recipe(
         val diff = !compares.all { it }
         if (diff) {
             throw IllegalRecipeException("配方不一致\n$result")
-        } else if (log.isDebugEnabled) {
-            log.debug("配方一致\n$result")
+        } else if (log.isTraceEnabled) {
+            log.trace("配方一致\n$result")
         }
         //制造费用
         if (optimalProductionCost != null) {

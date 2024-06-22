@@ -3,12 +3,14 @@ package top.bettercode.summer.tools.recipe.productioncost
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.CarrierValue
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.result.IllegalRecipeException
 import java.math.BigDecimal
+import kotlin.math.max
 
 /**
  *
@@ -155,13 +157,13 @@ data class ProductionCostValue(
 
         val itValueWidth = thisStrValues.maxOf { it.length }
         val otherValueWidth = otherStrValues.maxOf { it.length }
-        val diffValueWidth = diffStrValues.maxOf { it.length }
+        val diffValueWidth = max(diffStrValues.maxOf { it.toFullWidth().length }, "差值".length)
 
         val result = StringBuilder()
         // 打印表头
         val compareWidth = "比较".length
         result.appendLine(
-            "${"原料名称".padEnd(nameWidth)} | ${"this".padStart(itValueWidth)} | ${
+            "${"原料名称".padEnd(nameWidth, '\u3000')} | ${"this".padStart(itValueWidth)} | ${
                 "比较".padEnd(
                     compareWidth
                 )
@@ -170,8 +172,8 @@ data class ProductionCostValue(
 
         // 打印数据行
         for (i in names.indices) {
-            val name = names[i].padEnd(nameWidth)
-            val compare = (if (compares[i]) "==" else "!=").padEnd(compareWidth)
+            val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
+            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
             val itValue = thisStrValues[i].padStart(itValueWidth)
             val otherValue = otherStrValues[i].padEnd(otherValueWidth)
             val diffValue = diffStrValues[i].padStart(diffValueWidth)
@@ -181,8 +183,8 @@ data class ProductionCostValue(
         val diff = !compares.all { it }
         if (diff) {
             throw IllegalRecipeException("制造成本计算结果不一致\n$result")
-        } else if (log.isDebugEnabled) {
-            log.debug("制造成本计算结果一致\n$result")
+        } else if (log.isTraceEnabled) {
+            log.trace("制造成本计算结果一致\n$result")
         }
     }
 

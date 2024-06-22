@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import java.io.ByteArrayInputStream
@@ -21,7 +22,6 @@ import java.util.logging.Logger
 import java.util.zip.DeflaterOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
-import com.fasterxml.jackson.databind.JavaType
 import java.util.zip.InflaterOutputStream
 
 
@@ -40,7 +40,11 @@ object StringUtil {
 
     @JvmOverloads
     @JvmStatic
-    fun objectMapper(format: Boolean = false, escapeNonAscii: Boolean = false, include: JsonInclude.Include = JsonInclude.Include.USE_DEFAULTS): ObjectMapper {
+    fun objectMapper(
+        format: Boolean = false,
+        escapeNonAscii: Boolean = false,
+        include: JsonInclude.Include = JsonInclude.Include.USE_DEFAULTS
+    ): ObjectMapper {
         val key = "$format:$escapeNonAscii"
         return cacheObjectMapper.getOrPut(key) {
             val objectMapper = ObjectMapper()
@@ -68,51 +72,51 @@ object StringUtil {
     val timeModule: SimpleModule by lazy {
         val module = SimpleModule()
         module.addSerializer(
-                LocalDate::class.java,
-                object : JsonSerializer<LocalDate>() {
-                    override fun serialize(
-                            value: LocalDate,
-                            gen: JsonGenerator,
-                            serializers: SerializerProvider
-                    ) {
-                        gen.writeNumber(TimeUtil.of(value).toMillis())
-                    }
-                })
+            LocalDate::class.java,
+            object : JsonSerializer<LocalDate>() {
+                override fun serialize(
+                    value: LocalDate,
+                    gen: JsonGenerator,
+                    serializers: SerializerProvider
+                ) {
+                    gen.writeNumber(TimeUtil.of(value).toMillis())
+                }
+            })
         module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
             override fun serialize(
-                    value: LocalDateTime, gen: JsonGenerator,
-                    serializers: SerializerProvider?
+                value: LocalDateTime, gen: JsonGenerator,
+                serializers: SerializerProvider?
             ) {
                 gen.writeNumber(TimeUtil.of(value).toMillis())
             }
         })
 
         module.addDeserializer(
-                LocalDate::class.java,
-                object : JsonDeserializer<LocalDate?>() {
-                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
-                        val valueAsString = p.valueAsString
-                        return if (valueAsString.isNullOrBlank())
-                            null
-                        else
-                            TimeUtil.toLocalDate(valueAsString.toLong())
-                    }
-                })
+            LocalDate::class.java,
+            object : JsonDeserializer<LocalDate?>() {
+                override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
+                    val valueAsString = p.valueAsString
+                    return if (valueAsString.isNullOrBlank())
+                        null
+                    else
+                        TimeUtil.toLocalDate(valueAsString.toLong())
+                }
+            })
 
         module.addDeserializer(
-                LocalDateTime::class.java,
-                object : JsonDeserializer<LocalDateTime?>() {
-                    override fun deserialize(
-                            p: JsonParser,
-                            ctxt: DeserializationContext
-                    ): LocalDateTime? {
-                        val valueAsString = p.valueAsString
-                        return if (valueAsString.isNullOrBlank())
-                            null
-                        else
-                            return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
-                    }
-                })
+            LocalDateTime::class.java,
+            object : JsonDeserializer<LocalDateTime?>() {
+                override fun deserialize(
+                    p: JsonParser,
+                    ctxt: DeserializationContext
+                ): LocalDateTime? {
+                    val valueAsString = p.valueAsString
+                    return if (valueAsString.isNullOrBlank())
+                        null
+                    else
+                        return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
+                }
+            })
         module
     }
 
@@ -127,8 +131,8 @@ object StringUtil {
         var i = 1
         while (i < buf.length - 1) {
             if (Character.isLowerCase(buf[i - 1]) &&
-                    Character.isUpperCase(buf[i]) &&
-                    Character.isLowerCase(buf[i + 1])
+                Character.isUpperCase(buf[i]) &&
+                Character.isLowerCase(buf[i + 1])
             ) {
                 buf.insert(i++, '_')
             }
@@ -183,19 +187,19 @@ object StringUtil {
                 when (c) {
                     '{', '[' -> {
                         ret.append(c).append(newline)
-                                .append(String.format("%" + indentWidth.let { indent += it; indent } + "s",
-                                        ""))
+                            .append(String.format("%" + indentWidth.let { indent += it; indent } + "s",
+                                ""))
                         i++
                         continue@loop
                     }
 
                     '}', ']' -> {
                         ret.append(newline)
-                                .append(if (indentWidth.let { indent -= it; indent } > 0) String.format(
-                                        "%" + indent + "s",
-                                        ""
-                                ) else "")
-                                .append(c)
+                            .append(if (indentWidth.let { indent -= it; indent } > 0) String.format(
+                                "%" + indent + "s",
+                                ""
+                            ) else "")
+                            .append(c)
                         i++
                         continue@loop
                     }
@@ -208,7 +212,7 @@ object StringUtil {
 
                     ',' -> {
                         ret.append(c).append(newline)
-                                .append(if (indent > 0) String.format("%" + indent + "s", "") else "")
+                            .append(if (indent > 0) String.format("%" + indent + "s", "") else "")
                         i++
                         continue@loop
                     }
@@ -238,7 +242,11 @@ object StringUtil {
 
     @JvmOverloads
     @JvmStatic
-    fun jsonBytes(`object`: Any?, format: Boolean = false, escapeNonAscii: Boolean = false): ByteArray {
+    fun jsonBytes(
+        `object`: Any?,
+        format: Boolean = false,
+        escapeNonAscii: Boolean = false
+    ): ByteArray {
         return objectMapper(format, escapeNonAscii).writeValueAsBytes(`object`)
     }
 
@@ -254,13 +262,21 @@ object StringUtil {
 
     @JvmStatic
     fun readJson(`object`: ByteArray): Map<String, Any?> {
-        val valueType = objectMapper().typeFactory.constructMapType(HashMap::class.java, String::class.java, Any::class.java)
+        val valueType = objectMapper().typeFactory.constructMapType(
+            HashMap::class.java,
+            String::class.java,
+            Any::class.java
+        )
         return objectMapper().readValue(`object`, valueType)
     }
 
     @JvmStatic
     fun readJson(`object`: String): Map<String, Any?> {
-        val valueType = objectMapper().typeFactory.constructMapType(HashMap::class.java, String::class.java, Any::class.java)
+        val valueType = objectMapper().typeFactory.constructMapType(
+            HashMap::class.java,
+            String::class.java,
+            Any::class.java
+        )
         return objectMapper().readValue(`object`, valueType)
     }
 
@@ -357,8 +373,8 @@ object StringUtil {
      * @return 分割后数组
      */
     private fun splitWorker(
-            str: String?, separatorChars: String?, max: Int,
-            preserveAllTokens: Boolean
+        str: String?, separatorChars: String?, max: Int,
+        preserveAllTokens: Boolean
     ): List<String>? {
         // Performance tuned for 2.0 (JDK1.4)
         // Direct code is quicker than StringTokenizer.
@@ -614,13 +630,13 @@ object StringUtil {
             else if (toIntOrNull1 != null && toIntOrNull2 == null)
                 return 1
             var v2 = toIntOrNull2
-                    ?: versionTails.indexOf(
-                            version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
-                    )
+                ?: versionTails.indexOf(
+                    version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                )
             var v1 = toIntOrNull1
-                    ?: versionTails.indexOf(
-                            version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
-                    )
+                ?: versionTails.indexOf(
+                    version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                )
             if (v1 != -1 && v1 == v2 && toIntOrNull1 == null) {
                 v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
                 v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
@@ -650,4 +666,14 @@ object StringUtil {
         } else return this
     }
 
+    @JvmStatic
+    fun String.toFullWidth(): String {
+        return this.map { char ->
+            if (char in '!'..'~') {
+                (char.code + 0xFEE0).toChar()
+            } else {
+                char
+            }
+        }.joinToString("")
+    }
 }
