@@ -133,6 +133,13 @@ data class RecipeRequirement(
             StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
         objectMapper.writeValue(file, this)
     }
+
+    override fun toString(): String {
+        val objectMapper =
+            StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+        return objectMapper.writeValueAsString(this)
+    }
+
     //--------------------------------------------
 
     companion object {
@@ -143,6 +150,14 @@ data class RecipeRequirement(
                 StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
             return objectMapper.readValue(file, RecipeRequirement::class.java)
         }
+
+        @JvmStatic
+        fun read(content: String): RecipeRequirement {
+            val objectMapper =
+                StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            return objectMapper.readValue(content, RecipeRequirement::class.java)
+        }
+
 
         /**
          * 生产配方要求
