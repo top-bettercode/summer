@@ -2,10 +2,12 @@ package top.bettercode.summer.gradle.plugin.project.template.unit
 
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
 import top.bettercode.summer.tools.generator.database.entity.Column
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.JavaType
+
+private val cache = mutableMapOf<String, String?>()
 
 /**
  * @author Peter Wu
@@ -16,16 +18,16 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
             +"/** $remarks */"
         }
         implement(
-                JavaType("top.bettercode.summer.web.serializer.MixIn").typeArgument(
-                        if (isFullComposite) primaryKeyType else entityType
-                ), methodInfoType, serializationViewsType
+            JavaType("top.bettercode.summer.web.serializer.MixIn").typeArgument(
+                if (isFullComposite) primaryKeyType else entityType
+            ), methodInfoType, serializationViewsType
         )
 
         if (!isFullComposite) {
             //primaryKey getter
             method(
-                    "get${primaryKeyName.capitalized()}",
-                    primaryKeyType
+                "get${primaryKeyName.capitalized()}",
+                primaryKeyType
             ) {
                 javadoc {
                     +"/** ${remarks}主键 */"
@@ -47,8 +49,8 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
     interfaze.apply {
         if (it.jsonViewIgnored)
             method(
-                    "get${it.javaName.capitalized()}",
-                    it.javaType
+                "get${it.javaName.capitalized()}",
+                it.javaType
             ) {
                 annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
                 annotation("@Override")
@@ -56,16 +58,36 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
 
         //code
         if (!it.logicalDelete && it.isCodeField) {
+
+            val dicCodes = it.dicCodes()!!
+            var codeType = dicCodes.type
+
+            if (cache.contains(codeType) && it.remark != cache[codeType]) {
+                codeType = "$entityName${codeType.capitalized()}"
+            }
+            if (cache.contains(codeType) && it.remark != cache[codeType]) {
+                codeType =
+                    "${database.className(table.schema ?: "")}${codeType.capitalized()}"
+            }
+            if (!cache.contains(codeType)) {
+                cache[codeType] = it.remark
+            }
+
             method(
-                    "get${it.javaName.capitalized()}",
-                    it.javaType
+                "get${it.javaName.capitalized()}",
+                it.javaType
             ) {
-                if (it.columnName.contains("_") || it.logicalDelete)
+                if (it.javaName == codeType)
                     annotation("@top.bettercode.summer.web.serializer.annotation.JsonCode")
                 else {
-                    import("${(ext.packageName + ".support.dic." + enumClassName(it.codeType))}Enum")
+                    import("${(ext.packageName + ".support.dic." + enumClassName(codeType))}Enum")
 
-                    annotation("@top.bettercode.summer.web.serializer.annotation.JsonCode(${enumClassName(it.codeType)}Enum.ENUM_NAME)"
+                    annotation(
+                        "@top.bettercode.summer.web.serializer.annotation.JsonCode(${
+                            enumClassName(
+                                codeType
+                            )
+                        }Enum.ENUM_NAME)"
                     )
                 }
                 annotation("@Override")
