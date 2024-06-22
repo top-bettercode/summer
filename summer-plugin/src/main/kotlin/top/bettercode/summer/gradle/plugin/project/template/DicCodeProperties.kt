@@ -9,7 +9,6 @@ import top.bettercode.summer.tools.lang.capitalized
  */
 class DicCodeProperties : Generator() {
     private val name = "default-dic-code.properties"
-    private val cache = mutableMapOf<String, String?>()
     override fun setUp() {
         add(properties(name, overwrite = true))
     }
@@ -19,17 +18,9 @@ class DicCodeProperties : Generator() {
             columns.forEach { col ->
                 if (col.isCodeField) {
                     val dicCodes = col.dicCodes()!!
-                    var codeType = dicCodes.type
+                    val codeType = dicCodes.type
 
-                    if (this.contains(codeType) && col.remark != cache[codeType]) {
-                        codeType = "$entityName${codeType.capitalized()}"
-                    }
-                    if (this.contains(codeType) && col.remark != cache[codeType]) {
-                        codeType =
-                            "${database.className(table.schema ?: "")}${codeType.capitalized()}"
-                    }
                     if (!this.contains(codeType)) {
-                        cache[codeType] = col.remark
                         this[codeType] = dicCodes.name
                         this["$codeType|TYPE"] =
                             dicCodes.javaType.fullyQualifiedNameWithoutTypeParameters

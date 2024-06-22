@@ -101,10 +101,6 @@ open class GeneratorExtension(
         var generators: Array<Generator> = arrayOf(),
 
         /**
-         * 公共状态码
-         */
-        var commonCodeTypes: Array<String> = arrayOf(),
-        /**
          * 相关数据表
          */
         var tableNames: Array<String> = arrayOf(),

@@ -189,10 +189,6 @@ class GeneratorPlugin : Plugin<Project> {
             extension.logicalDeleteColumnName =
                 findGeneratorProperty(project, "logicalDeleteColumnName")
                     ?: "deleted"
-            extension.commonCodeTypes = (findGeneratorProperty(project, "commonCodeTypes")
-                ?: extension.logicalDeleteColumnName).split(",").asSequence()
-                .filter { it.isNotBlank() }.map { it.trim() }.toList()
-                .toTypedArray()
             extension.logicalDeleteAsBoolean =
                 (findGeneratorProperty(project, "logicalDeleteAsBoolean"))?.toBoolean()
                     ?: true

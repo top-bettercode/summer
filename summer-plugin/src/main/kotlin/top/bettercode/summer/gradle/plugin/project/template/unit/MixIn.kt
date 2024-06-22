@@ -7,7 +7,6 @@ import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassNa
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
 
-private val cache = mutableMapOf<String, String?>()
 
 /**
  * @author Peter Wu
@@ -58,21 +57,7 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
 
         //code
         if (!it.logicalDelete && it.isCodeField) {
-
-            val dicCodes = it.dicCodes()!!
-            var codeType = dicCodes.type
-
-            if (cache.contains(codeType) && it.remark != cache[codeType]) {
-                codeType = "$entityName${codeType.capitalized()}"
-            }
-            if (cache.contains(codeType) && it.remark != cache[codeType]) {
-                codeType =
-                    "${database.className(table.schema ?: "")}${codeType.capitalized()}"
-            }
-            if (!cache.contains(codeType)) {
-                cache[codeType] = it.remark
-            }
-
+            val codeType = it.codeType
             method(
                 "get${it.javaName.capitalized()}",
                 it.javaType

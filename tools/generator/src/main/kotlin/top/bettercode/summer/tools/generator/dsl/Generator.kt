@@ -5,12 +5,12 @@ import top.bettercode.summer.tools.generator.GeneratorException
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.*
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil
+import top.bettercode.summer.tools.lang.util.JavaType
 import java.io.File
 import java.util.*
 
@@ -19,6 +19,7 @@ import java.util.*
  */
 open class Generator {
 
+    private val codeTypeCache = mutableMapOf<String, String?>()
     private val projectUnits: MutableList<GenUnit> = mutableListOf()
     private val units: MutableList<GenUnit> = mutableListOf()
 
@@ -31,8 +32,8 @@ open class Generator {
     val Column.docRemark: String
         get() = "${
             (if (remark.isBlank()) "" else (if (logicalDelete) remark.split(Regex("[:：,， (（]"))[0] else remark.replace(
-                    "@",
-                    "\\@"
+                "@",
+                "\\@"
             )))
         }${if (columnDef == null || logicalDelete) "" else " 默认值：${if (columnDef!!.isBlank()) "'$columnDef'" else columnDef}"}"
 
@@ -64,9 +65,10 @@ open class Generator {
         get() {
             var packageName = basePackageName
             if (settings["no-modules"] == null) {
-                val module = if (GeneratorExtension.isDefaultModule(table.module)) "modules" else table.module
+                val module =
+                    if (GeneratorExtension.isDefaultModule(table.module)) "modules" else table.module
                 packageName =
-                        if (packageName.endsWith(".$module") || packageName.contains(".$module.")) packageName else "$packageName.$module"
+                    if (packageName.endsWith(".$module") || packageName.contains(".$module.")) packageName else "$packageName.$module"
             }
             return if (ext.userModule && table.subModule.isNotBlank()) {
                 "$packageName.${table.subModule}"
@@ -84,15 +86,15 @@ open class Generator {
     val projectClassName
         get() =
             if (enable(
-                            "projectClassName",
-                            true
-                    )
+                    "projectClassName",
+                    true
+                )
             ) table.className + shortProjectName else table.className
 
     val shortProjectName
         get() =
             projectName.replace("-", "").substring(
-                    0, if (projectName.length > 5) 5 else projectName.length
+                0, if (projectName.length > 5) 5 else projectName.length
             ).capitalized()
 
     val entityName
@@ -129,8 +131,8 @@ open class Generator {
             val primaryKeys = table.primaryKeys
             return if (primaryKeys.isEmpty()) {
                 val primaryKey =
-                        columns.find { it.columnName.equals(ext.primaryKeyName, true) }
-                                ?: columns.find { it.remark.contains("主键") }
+                    columns.find { it.columnName.equals(ext.primaryKeyName, true) }
+                        ?: columns.find { it.remark.contains("主键") }
                 if (primaryKey != null) {
                     listOf(primaryKey)
                 } else {
@@ -185,10 +187,10 @@ open class Generator {
                 if (primaryKey.sequence.isNotBlank()) JavaType("java.lang.Long") else primaryKey.javaType
             } else {
                 JavaType(
-                        "$packageName.${modulePackage("Entity")}.${
-                            if (isFullComposite) table.className
-                            else "${table.className}Key"
-                        }"
+                    "$packageName.${modulePackage("Entity")}.${
+                        if (isFullComposite) table.className
+                        else "${table.className}Key"
+                    }"
                 )
             }
 
@@ -265,107 +267,107 @@ open class Generator {
     }
 
     fun file(
-            name: String,
-            overwrite: Boolean = true,
-            sourceSet: SourceSet = SourceSet.ROOT,
-            directorySet: DirectorySet = DirectorySet.RESOURCES,
-            apply: FileUnit.() -> Unit = { }
+        name: String,
+        overwrite: Boolean = true,
+        sourceSet: SourceSet = SourceSet.ROOT,
+        directorySet: DirectorySet = DirectorySet.RESOURCES,
+        apply: FileUnit.() -> Unit = { }
     ): FileUnit {
         return FileUnit(
-                name = name,
-                overwrite = overwrite,
-                sourceSet = sourceSet,
-                directorySet = directorySet
+            name = name,
+            overwrite = overwrite,
+            sourceSet = sourceSet,
+            directorySet = directorySet
         ).apply(apply)
     }
 
     fun file(
-            file: File,
-            overwrite: Boolean = true,
-            sourceSet: SourceSet = SourceSet.ROOT,
-            directorySet: DirectorySet = DirectorySet.RESOURCES,
-            apply: FileUnit.() -> Unit = { }
+        file: File,
+        overwrite: Boolean = true,
+        sourceSet: SourceSet = SourceSet.ROOT,
+        directorySet: DirectorySet = DirectorySet.RESOURCES,
+        apply: FileUnit.() -> Unit = { }
     ): FileUnit {
         return FileUnit(
-                file = file,
-                overwrite = overwrite,
-                sourceSet = sourceSet,
-                directorySet = directorySet
+            file = file,
+            overwrite = overwrite,
+            sourceSet = sourceSet,
+            directorySet = directorySet
         ).apply(apply)
     }
 
     fun properties(
-            name: String,
-            overwrite: Boolean = false,
-            sourceSet: SourceSet = SourceSet.MAIN,
-            directorySet: DirectorySet = DirectorySet.RESOURCES,
-            apply: PropertiesUnit.() -> Unit = { }
+        name: String,
+        overwrite: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        directorySet: DirectorySet = DirectorySet.RESOURCES,
+        apply: PropertiesUnit.() -> Unit = { }
     ): PropertiesUnit {
         return PropertiesUnit(
-                name = name,
-                overwrite = overwrite,
-                sourceSet = sourceSet,
-                directorySet = directorySet
+            name = name,
+            overwrite = overwrite,
+            sourceSet = sourceSet,
+            directorySet = directorySet
         ).apply(apply)
     }
 
     fun packageInfo(
-            type: JavaType,
-            overwrite: Boolean = false,
-            sourceSet: SourceSet = SourceSet.MAIN,
-            directorySet: DirectorySet = DirectorySet.JAVA,
-            apply: PackageInfo.() -> Unit = { }
+        type: JavaType,
+        overwrite: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        directorySet: DirectorySet = DirectorySet.JAVA,
+        apply: PackageInfo.() -> Unit = { }
     ): PackageInfo {
         return PackageInfo(
-                type = type,
-                overwrite = overwrite,
-                sourceSet = sourceSet,
-                directorySet = directorySet
+            type = type,
+            overwrite = overwrite,
+            sourceSet = sourceSet,
+            directorySet = directorySet
         ).apply(apply)
     }
 
 
     fun interfaze(
-            type: JavaType,
-            overwrite: Boolean = false,
-            sourceSet: SourceSet = SourceSet.MAIN,
-            visibility: JavaVisibility = JavaVisibility.PUBLIC,
-            apply: Interface.() -> Unit = { }
+        type: JavaType,
+        overwrite: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        visibility: JavaVisibility = JavaVisibility.PUBLIC,
+        apply: Interface.() -> Unit = { }
     ): Interface {
         return Interface(
-                type = type,
-                overwrite = overwrite,
-                sourceSet = sourceSet,
-                visibility = visibility
+            type = type,
+            overwrite = overwrite,
+            sourceSet = sourceSet,
+            visibility = visibility
         ).apply(apply)
     }
 
     fun clazz(
-            type: JavaType,
-            overwrite: Boolean = false,
-            sourceSet: SourceSet = SourceSet.MAIN,
-            visibility: JavaVisibility = JavaVisibility.PUBLIC,
-            apply: TopLevelClass.() -> Unit = { }
+        type: JavaType,
+        overwrite: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        visibility: JavaVisibility = JavaVisibility.PUBLIC,
+        apply: TopLevelClass.() -> Unit = { }
     ): TopLevelClass {
         return TopLevelClass(
-                type = type,
-                overwrite = overwrite,
-                sourceSet = sourceSet,
-                visibility = visibility
+            type = type,
+            overwrite = overwrite,
+            sourceSet = sourceSet,
+            visibility = visibility
         ).apply(apply)
     }
 
 
     fun enum(
-            type: JavaType,
-            overwrite: Boolean = false,
-            sourceSet: SourceSet = SourceSet.MAIN,
-            apply: TopLevelEnumeration.() -> Unit = { }
+        type: JavaType,
+        overwrite: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        apply: TopLevelEnumeration.() -> Unit = { }
     ): TopLevelEnumeration {
         return TopLevelEnumeration(
-                type = type,
-                overwrite = overwrite,
-                sourceSet = sourceSet
+            type = type,
+            overwrite = overwrite,
+            sourceSet = sourceSet
         ).apply(apply)
     }
 
@@ -409,31 +411,41 @@ open class Generator {
     }
 
     val Column.codeType: String
-        get() = if (columnName.contains("_") || ext.commonCodeTypes.any {
-                    it.equals(
-                            columnName,
-                            true
-                    )
-                }) javaName else (className + javaName.capitalized()).decapitalized()
+        get() {
+            var codeType = javaName
+
+            if (codeTypeCache.contains(codeType) && remark != codeTypeCache[codeType]) {
+                codeType = "$entityName${codeType.capitalized()}"
+            }
+            if (codeTypeCache.contains(codeType) && remark != codeTypeCache[codeType]) {
+                codeType =
+                    "${
+                        database.className(table.schema ?: "").decapitalized()
+                    }${codeType.capitalized()}"
+            }
+            if (!codeTypeCache.contains(codeType)) {
+                codeTypeCache[codeType] = remark
+            }
+            return codeType
+        }
 
     fun Column.dicCodes(): DicCodes? {
         return if (isCodeField) {
-            val codeType = codeType
             val prettyRemarks = prettyRemarks
             val codeTypeName = prettyRemarks.substringBefore('(')
 
             val dicCodes = DicCodes(
-                    codeType,
-                    codeTypeName,
-                    javaType.primitiveType ?: javaType
+                codeType,
+                codeTypeName,
+                javaType.primitiveType ?: javaType
             )
             prettyRemarks.substringAfter('(').substringBeforeLast(')').trim('?', '.')
-                    .split(";").filter { it.isNotBlank() }
-                    .forEach { item: String ->
-                        val code = item.substringBefore(":").trim().trim(',', '，').trim()
-                        val name = item.substringAfter(":").trim().trim(',', '，').trim()
-                        dicCodes.codes[code] = name
-                    }
+                .split(";").filter { it.isNotBlank() }
+                .forEach { item: String ->
+                    val code = item.substringBefore(":").trim().trim(',', '，').trim()
+                    val name = item.substringAfter(":").trim().trim(',', '，').trim()
+                    dicCodes.codes[code] = name
+                }
 
             return dicCodes
         } else {
@@ -547,9 +559,9 @@ open class Generator {
                 JavaType.stringInstance -> "\"$columnDef\""
                 else -> {
                     if ("CURRENT_TIMESTAMP".equals(columnDef, true) || "SYSDATE".equals(
-                                    columnDef,
-                                    true
-                            )
+                            columnDef,
+                            true
+                        )
                     ) {
                         when (javaType) {
                             JavaType("java.sql.Timestamp") -> {
@@ -609,7 +621,7 @@ open class Generator {
                     it.capitalized()
                 else
                     it.lowercase(Locale.getDefault())
-                            .capitalized()
+                        .capitalized()
             }
         }
     }
