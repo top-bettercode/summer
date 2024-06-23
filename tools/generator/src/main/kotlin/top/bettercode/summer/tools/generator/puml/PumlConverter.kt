@@ -151,9 +151,9 @@ object PumlConverter {
 
                         //DEFAULT
                         var defaultVal: String? = null
-                        if (extra.contains(" DEFAULT ", true)) {
+                        if (extra.contains(" DEFAULT ")) {
                             val defaultRawVal =
-                                extra.uppercase().substringAfter(" DEFAULT ").substringBefore(" ")
+                                extra.substringAfter(" DEFAULT ").substringBefore(" ")
                             defaultVal = defaultRawVal.trim()
                             extra = extra.replace(" DEFAULT $defaultRawVal ", " ", true)
                         }
@@ -162,8 +162,8 @@ object PumlConverter {
                         var fk = false
                         var refTable: String? = null
                         var refColumn: String? = null
-                        if (extra.contains(" FK > ", true)) {//FK > docs.id
-                            val ref = extra.uppercase().substringAfter(" FK > ").trim()
+                        if (extra.contains(" FK > ")) {//FK > docs.id
+                            val ref = extra.substringAfter(" FK > ").trim()
                                 .substringBefore(" ").trim()
                             extra = extra.replace(" FK > $ref", " ", true)
                             val refs = ref.split(".")
