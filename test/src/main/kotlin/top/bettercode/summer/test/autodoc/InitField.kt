@@ -11,10 +11,8 @@ import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
-import top.bettercode.summer.tools.generator.DataType
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.database.entity.Table
-import top.bettercode.summer.tools.generator.powerdesigner.PdmReader
 import top.bettercode.summer.tools.generator.puml.PumlConverter
 import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.operation.Operation
@@ -29,19 +27,19 @@ import java.io.File
 object InitField {
 
     private val contentWrapFields: Set<String> =
-            setOf("status", "message", "data", "trace", "errors")
+        setOf("status", "message", "data", "trace", "errors")
     private val fieldDescBundle: PropertiesSource = PropertiesSource.of("field-desc-replace")
     private val messageFields =
-            setOf(Field(name = "lines", description = "行信息")) + PropertiesSource.of("messages").all()
-                    .map { Field(name = it.key, description = it.value) }
-                    .toSet()
+        setOf(Field(name = "lines", description = "行信息")) + PropertiesSource.of("messages").all()
+            .map { Field(name = it.key, description = it.value) }
+            .toSet()
 
     fun init(
-            operation: DocOperation,
-            extension: GeneratorExtension,
-            wrap: Boolean,
-            defaultValueHeaders: Map<String, String>,
-            defaultValueParams: Map<String, String>
+        operation: DocOperation,
+        extension: GeneratorExtension,
+        wrap: Boolean,
+        defaultValueHeaders: Map<String, String>,
+        defaultValueParams: Map<String, String>
     ) {
         val request = operation.request as DocOperationRequest
         val response = operation.response as DocOperationResponse
@@ -55,14 +53,49 @@ object InitField {
         var resContentNeedFix = response.contentExt.blankField()
         if (uriNeedFix.isNotEmpty() || reqHeadNeedFix.isNotEmpty() || paramNeedFix.isNotEmpty() || partNeedFix.isNotEmpty() || reqContentNeedFix.isNotEmpty() || resHeadNeedFix.isNotEmpty() || resContentNeedFix.isNotEmpty()) {
             extension.fixFields { fields, onlyDesc, fixNoDescField ->
-                fields.fixFieldTree(needFixFields = uriNeedFix, fixNoDescField = fixNoDescField, userDefault = false,
-                        onlyDesc = onlyDesc)
-                fields.fixFieldTree(needFixFields = reqHeadNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
-                fields.fixFieldTree(needFixFields = paramNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
-                fields.fixFieldTree(needFixFields = partNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
-                fields.fixFieldTree(needFixFields = reqContentNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
-                fields.fixFieldTree(needFixFields = resHeadNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
-                fields.fixFieldTree(needFixFields = resContentNeedFix, wrap = wrap, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
+                fields.fixFieldTree(
+                    needFixFields = uriNeedFix,
+                    fixNoDescField = fixNoDescField,
+                    userDefault = false,
+                    onlyDesc = onlyDesc
+                )
+                fields.fixFieldTree(
+                    needFixFields = reqHeadNeedFix,
+                    fixNoDescField = fixNoDescField,
+                    userDefault = false,
+                    onlyDesc = onlyDesc
+                )
+                fields.fixFieldTree(
+                    needFixFields = paramNeedFix,
+                    fixNoDescField = fixNoDescField,
+                    userDefault = false,
+                    onlyDesc = onlyDesc
+                )
+                fields.fixFieldTree(
+                    needFixFields = partNeedFix,
+                    fixNoDescField = fixNoDescField,
+                    userDefault = false,
+                    onlyDesc = onlyDesc
+                )
+                fields.fixFieldTree(
+                    needFixFields = reqContentNeedFix,
+                    fixNoDescField = fixNoDescField,
+                    userDefault = false,
+                    onlyDesc = onlyDesc
+                )
+                fields.fixFieldTree(
+                    needFixFields = resHeadNeedFix,
+                    fixNoDescField = fixNoDescField,
+                    userDefault = false,
+                    onlyDesc = onlyDesc
+                )
+                fields.fixFieldTree(
+                    needFixFields = resContentNeedFix,
+                    wrap = wrap,
+                    fixNoDescField = fixNoDescField,
+                    userDefault = false,
+                    onlyDesc = onlyDesc
+                )
 
                 uriNeedFix = request.uriVariablesExt.blankField(canConver = false)
                 reqHeadNeedFix = request.headersExt.blankField(canConver = false)
@@ -75,13 +108,56 @@ object InitField {
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
             if (!(uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank())) {
-                request.uriVariablesExt.fixFieldTree(needFixFields = uriNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
-                request.headersExt.fixFieldTree(needFixFields = reqHeadNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
-                request.parametersExt.fixFieldTree(needFixFields = paramNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
-                request.partsExt.fixFieldTree(needFixFields = partNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
-                request.contentExt.fixFieldTree(needFixFields = reqContentNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
-                response.headersExt.fixFieldTree(needFixFields = resHeadNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
-                response.contentExt.fixFieldTree(needFixFields = resContentNeedFix, fixNoDescField = true, hasDesc = true, wrap = wrap, userDefault = false, fuzzy = true)
+                request.uriVariablesExt.fixFieldTree(
+                    needFixFields = uriNeedFix,
+                    fixNoDescField = true,
+                    hasDesc = true,
+                    userDefault = false,
+                    fuzzy = true
+                )
+                request.headersExt.fixFieldTree(
+                    needFixFields = reqHeadNeedFix,
+                    fixNoDescField = true,
+                    hasDesc = true,
+                    userDefault = false,
+                    fuzzy = true
+                )
+                request.parametersExt.fixFieldTree(
+                    needFixFields = paramNeedFix,
+                    fixNoDescField = true,
+                    hasDesc = true,
+                    userDefault = false,
+                    fuzzy = true
+                )
+                request.partsExt.fixFieldTree(
+                    needFixFields = partNeedFix,
+                    fixNoDescField = true,
+                    hasDesc = true,
+                    userDefault = false,
+                    fuzzy = true
+                )
+                request.contentExt.fixFieldTree(
+                    needFixFields = reqContentNeedFix,
+                    fixNoDescField = true,
+                    hasDesc = true,
+                    userDefault = false,
+                    fuzzy = true
+                )
+                response.headersExt.fixFieldTree(
+                    needFixFields = resHeadNeedFix,
+                    fixNoDescField = true,
+                    hasDesc = true,
+                    userDefault = false,
+                    fuzzy = true
+                )
+                response.contentExt.fixFieldTree(
+                    needFixFields = resContentNeedFix,
+                    fixNoDescField = true,
+                    hasDesc = true,
+                    wrap = wrap,
+                    userDefault = false,
+                    fuzzy = true
+                )
             }
         }
 
@@ -131,76 +207,45 @@ object InitField {
     }
 
     private fun GeneratorExtension.fixFields(
-            fn: (Set<Field>, Boolean, Boolean) -> Boolean
+        fn: (Set<Field>, Boolean, Boolean) -> Boolean
     ) {
         if (fn(messageFields, true, false)) return
 
         val fixFields =
-                { sources: Map<String, List<File>>, toTables: (file: File, module: String) -> List<Table> ->
-                    sources.forEach all@{ (module, files) ->
-                        files.forEach { file ->
-                            val tables = toTables(file, module)
-                            for (tableName in Autodoc.tableNames) {
-                                val table = tables.find { it.tableName == tableName }
-                                if (table != null) {
-                                    if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
-                                        return@all
-                                    }
-                                }
-                            }
-                            for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
-                                if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
+            { sources: Map<String, List<File>>, toTables: (file: File, module: String) -> List<Table> ->
+                sources.forEach all@{ (module, files) ->
+                    files.forEach { file ->
+                        val tables = toTables(file, module)
+                        for (tableName in Autodoc.tableNames) {
+                            val table = tables.find { it.tableName == tableName }
+                            if (table != null) {
+                                if (fn(
+                                        table.fields(),
+                                        false,
+                                        !GeneratorExtension.isDefaultModule(module)
+                                    )
+                                ) {
                                     return@all
                                 }
                             }
                         }
-                    }
-                }
-        when (dataType) {
-            DataType.DATABASE -> {
-                databases.forEach { (module, database) ->
-                    database.schema = Autodoc.schema
-                    database.use {
-                        Autodoc.tableNames.forEach { tableName ->
-                            val table = table(tableName) {
-                                it.database = database
-                            }
-                            if (table != null) {
-                                if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
-                                    return
-                                }
-                            }
-                        }
-                        val tableNames = tableNames().toMutableList()
-                        tableNames.removeAll(Autodoc.tableNames)
-                        tableNames.forEach { tableName ->
-                            val table = table(tableName) {
-                                it.database = database
-                            }
-                            if (table != null) {
-                                if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
-                                    return
-                                }
+                        for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
+                            if (fn(
+                                    table.fields(),
+                                    false,
+                                    !GeneratorExtension.isDefaultModule(module)
+                                )
+                            ) {
+                                return@all
                             }
                         }
                     }
                 }
             }
 
-            DataType.PUML -> {
-                fixFields(pumlSources) { file, module ->
-                    PumlConverter.toTables(file) {
-                        it.database = this.database(module)
-                    }
-                }
-            }
-
-            DataType.PDM -> {
-                fixFields(pdmSources) { file, module ->
-                    PdmReader.read(file) {
-                        it.database = this.database(module)
-                    }
-                }
+        fixFields(pumlSources) { file, module ->
+            PumlConverter.toTables(file) {
+                it.database = this.database(module)
             }
         }
     }
@@ -208,28 +253,28 @@ object InitField {
     private fun Table.fields(): Set<Field> {
         val fields = columns.flatMapTo(mutableSetOf()) { column ->
             var type =
-                    if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
+                if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
             if (column.javaType.shortNameWithoutTypeArguments in arrayOf(
-                            "Date",
-                            "LocalDate",
-                            "LocalDateTime"
-                    )
+                    "Date",
+                    "LocalDate",
+                    "LocalDateTime"
+                )
             )//前端统一传毫秒数
                 type = "Long"
             setOf(
-                    Field(
-                            column.javaName, type, column.remarks, column.columnDef
-                            ?: "", "", required = column.nullable
-                    ), Field(
+                Field(
+                    column.javaName, type, column.remarks, column.columnDef
+                        ?: "", "", required = column.nullable
+                ), Field(
                     column.columnName, type, column.remarks, column.columnDef
-                    ?: "", "", required = column.nullable
-            )
+                        ?: "", "", required = column.nullable
+                )
             )
         }
         fields.addAll(fields.map {
             Field(
-                    name = English.plural(it.name),
-                    description = it.description
+                name = English.plural(it.name),
+                description = it.description
             )
         })
         fields.add(Field(name = entityName, description = remarks))
@@ -240,10 +285,10 @@ object InitField {
             if (primaryKeys.size > 1) {
                 fields.add(Field(name = entityName + "Key", description = remarks + "主键"))
                 fields.add(
-                        Field(
-                                name = English.plural(entityName + "Key"),
-                                description = remarks + "主键"
-                        )
+                    Field(
+                        name = English.plural(entityName + "Key"),
+                        description = remarks + "主键"
+                    )
                 )
             }
         }
@@ -294,25 +339,25 @@ object InitField {
     }
 
     private fun Set<Field>.fixFieldTree(
-            needFixFields: Set<Field>,
-            fixNoDescField: Boolean = false,
-            hasDesc: Boolean = true,
-            userDefault: Boolean = true,
-            wrap: Boolean = false,
-            onlyDesc: Boolean = false,
-            fuzzy: Boolean = false
+        needFixFields: Set<Field>,
+        fixNoDescField: Boolean = false,
+        hasDesc: Boolean = true,
+        userDefault: Boolean = true,
+        wrap: Boolean = false,
+        onlyDesc: Boolean = false,
+        fuzzy: Boolean = false
     ) {
         needFixFields.forEach { field ->
             val findField = if (field.description.isBlank() || !fixNoDescField) {
                 val findField = this.findPossibleField(
-                        name = field.name,
-                        type = field.value.type,
-                        hasDesc = hasDesc,
-                        fuzzy = fuzzy
+                    name = field.name,
+                    type = field.value.type,
+                    hasDesc = hasDesc,
+                    fuzzy = fuzzy
                 )
                 if (findField != null && (field.canCover || field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(
-                                field.name
-                        ))
+                        field.name
+                    ))
                 ) {
                     if (onlyDesc) {
                         if (findField.description.isNotBlank())
@@ -342,12 +387,36 @@ object InitField {
 
             val children = findField?.children
             if (!children.isNullOrEmpty()) {
-                children.fixFieldTree(needFixFields = field.children, fixNoDescField = fixNoDescField, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap, onlyDesc = onlyDesc, fuzzy = fuzzy)
+                children.fixFieldTree(
+                    needFixFields = field.children,
+                    fixNoDescField = fixNoDescField,
+                    hasDesc = hasDesc,
+                    userDefault = userDefault,
+                    wrap = wrap,
+                    onlyDesc = onlyDesc,
+                    fuzzy = fuzzy
+                )
             } else if (fuzzy) {
-                field.children.fixFieldTree(needFixFields = field.children, fixNoDescField = fixNoDescField, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap, onlyDesc = onlyDesc, fuzzy = true)
+                field.children.fixFieldTree(
+                    needFixFields = field.children,
+                    fixNoDescField = fixNoDescField,
+                    hasDesc = hasDesc,
+                    userDefault = userDefault,
+                    wrap = wrap,
+                    onlyDesc = onlyDesc,
+                    fuzzy = true
+                )
             }
 
-            fixFieldTree(needFixFields = field.children, fixNoDescField = fixNoDescField, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap, onlyDesc = onlyDesc, fuzzy = fuzzy)
+            fixFieldTree(
+                needFixFields = field.children,
+                fixNoDescField = fixNoDescField,
+                hasDesc = hasDesc,
+                userDefault = userDefault,
+                wrap = wrap,
+                onlyDesc = onlyDesc,
+                fuzzy = fuzzy
+            )
         }
     }
 
@@ -367,12 +436,12 @@ object InitField {
     }
 
     private fun Field.isBlank(canConver: Boolean) =
-            description.isBlank() || canConver && canCover
+        description.isBlank() || canConver && canCover
 
 
     fun Map<String, Any?>.toFields(
-            fields: Set<Field>,
-            expand: Boolean = false
+        fields: Set<Field>,
+        expand: Boolean = false
     ): LinkedHashSet<Field> {
         return this.mapTo(LinkedHashSet()) { (k, v) ->
             val field = fields.field(k, v)
@@ -390,17 +459,17 @@ object InitField {
 
     fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet<Field> {
         return this.mapTo(
-                LinkedHashSet()
+            LinkedHashSet()
         ) {
             fields.field(it.name, it.contentAsString)
-                    .apply {
-                        partType = if (it.submittedFileName == null) {
-                            "text"
-                        } else {
-                            value = if (value.isNotBlank()) Operation.UNRECORDED_MARK else value
-                            "file"
-                        }
+                .apply {
+                    partType = if (it.submittedFileName == null) {
+                        "text"
+                    } else {
+                        value = if (value.isNotBlank()) Operation.UNRECORDED_MARK else value
+                        "file"
                     }
+                }
         }
     }
 
@@ -420,68 +489,68 @@ object InitField {
     }
 
     private fun Set<Field>.findPossibleField(
-            name: String,
-            type: String,
-            hasDesc: Boolean = false,
-            fuzzy: Boolean = false
+        name: String,
+        type: String,
+        hasDesc: Boolean = false,
+        fuzzy: Boolean = false
     ): Field? {
         return this.findField(name = name, type = type, hasDesc = hasDesc)
-                ?: if (fuzzy) {
-                    val newName = when {
-                        name.endsWith("Name") -> name.substringBeforeLast("Name")
-                        name.endsWith("Desc") -> name.substringBeforeLast("Desc")
-                        name.endsWith("Path") -> name.substringBeforeLast("Path")
-                        name.endsWith("Url") -> name.substringBeforeLast("Url")
-                        name.endsWith("Urls") -> name.substringBeforeLast("Urls")
-                        name.startsWith("start") -> name.substringAfter("start")
-                                .decapitalized()
+            ?: if (fuzzy) {
+                val newName = when {
+                    name.endsWith("Name") -> name.substringBeforeLast("Name")
+                    name.endsWith("Desc") -> name.substringBeforeLast("Desc")
+                    name.endsWith("Path") -> name.substringBeforeLast("Path")
+                    name.endsWith("Url") -> name.substringBeforeLast("Url")
+                    name.endsWith("Urls") -> name.substringBeforeLast("Urls")
+                    name.startsWith("start") -> name.substringAfter("start")
+                        .decapitalized()
 
-                        name.endsWith("Start") -> name.substringBeforeLast("Start")
-                        name.startsWith("end") -> name.substringAfter("end")
-                                .decapitalized()
+                    name.endsWith("Start") -> name.substringBeforeLast("Start")
+                    name.startsWith("end") -> name.substringAfter("end")
+                        .decapitalized()
 
-                        name.endsWith("End") -> name.substringBeforeLast("End")
-                        name.endsWith("Pct") -> name.substringBeforeLast("Pct")
-                        name.endsWith("Psign") -> name.substringBeforeLast("Psign")
-                        name.endsWith("Alurl") -> name.substringBeforeLast("Alurl")
-                        name.endsWith("Alurls") -> name.substringBeforeLast("Alurls")
-                        else -> {
-                            return null
-                        }
+                    name.endsWith("End") -> name.substringBeforeLast("End")
+                    name.endsWith("Pct") -> name.substringBeforeLast("Pct")
+                    name.endsWith("Psign") -> name.substringBeforeLast("Psign")
+                    name.endsWith("Alurl") -> name.substringBeforeLast("Alurl")
+                    name.endsWith("Alurls") -> name.substringBeforeLast("Alurls")
+                    else -> {
+                        return null
                     }
-                    val field = this.findField(newName, type, hasDesc)
-                    if (field != null) {
-                        field.name = name
-                        field.type = "String"
-                        field.defaultVal = ""
-                        field.description = field.description.split(Regex("[（(,:，：]"))[0]
-                        if (name.startsWith("start") || name.endsWith("Start"))
-                            field.description = "开始" + field.description
-                        if (name.startsWith("end") || name.endsWith("End"))
-                            field.description = "结束" + field.description
-                        if (name.endsWith("Psign"))
-                            field.description = "播放器签名"
-                        if (name.endsWith("Desc"))
-                            field.description = "描述"
-                        if (name.endsWith("Alurl") || name.endsWith("Alurls"))
-                            field.description += "防盗链URL"
-                    }
-                    return field
-                } else null
+                }
+                val field = this.findField(newName, type, hasDesc)
+                if (field != null) {
+                    field.name = name
+                    field.type = "String"
+                    field.defaultVal = ""
+                    field.description = field.description.split(Regex("[（(,:，：]"))[0]
+                    if (name.startsWith("start") || name.endsWith("Start"))
+                        field.description = "开始" + field.description
+                    if (name.startsWith("end") || name.endsWith("End"))
+                        field.description = "结束" + field.description
+                    if (name.endsWith("Psign"))
+                        field.description = "播放器签名"
+                    if (name.endsWith("Desc"))
+                        field.description = "描述"
+                    if (name.endsWith("Alurl") || name.endsWith("Alurls"))
+                        field.description += "防盗链URL"
+                }
+                return field
+            } else null
     }
 
     private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
         val set = (if (hasDesc) this.filter { it.description.isNotBlank() } else this)
         val field = (set.find { it.name == name && it.type.substringBefore("(") == type }?.copy()
-                ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }
-                        ?.copy()
-                        ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }
-                                ?.copy())
-                ?: set.find {
-                    it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true)
-                }?.copy())
-                ?: set.find { it.name == name }?.copy()
-                ?: set.find { it.name.equals(name, true) }?.copy()
+            ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }
+                ?.copy()
+                ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }
+                    ?.copy())
+            ?: set.find {
+                it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true)
+            }?.copy())
+            ?: set.find { it.name == name }?.copy()
+            ?: set.find { it.name.equals(name, true) }?.copy()
         return field?.apply { this.name = name }
     }
 

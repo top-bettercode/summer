@@ -61,6 +61,7 @@ data class Column(
     var idgeneratorParam: String = "",
     var sequence: String = "",
     var sequenceStartWith: Long = 1,
+    var codeType: String = "",
     var version: Boolean = false,
     var logicalDelete: Boolean = false,
     var createdDate: Boolean = false,
@@ -110,7 +111,7 @@ data class Column(
     }
 
     val isCodeField: Boolean by lazy {
-        javaType != JavaType.booleanWrapper && codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
+        codeType.isNotBlank()
     }
 
     val originJavaType: JavaType

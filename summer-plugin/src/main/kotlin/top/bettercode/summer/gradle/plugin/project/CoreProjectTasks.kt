@@ -11,13 +11,13 @@ import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.util.*
@@ -94,9 +94,8 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        gen.generators = arrayOf(MapperPrint())
-                        Generators.callInAllModule(gen)
+                        ext.generators = arrayOf(MapperPrint())
+                        Generators.callInAllModule(ext)
                     }
                 })
             }
@@ -104,9 +103,8 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        gen.generators = arrayOf(MybatisWherePrint())
-                        Generators.callInAllModule(gen)
+                        ext.generators = arrayOf(MybatisWherePrint())
+                        Generators.callInAllModule(ext)
                     }
                 })
             }
@@ -115,9 +113,8 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        gen.generators = arrayOf(SetterPrint(true))
-                        Generators.callInAllModule(gen)
+                        ext.generators = arrayOf(SetterPrint(true))
+                        Generators.callInAllModule(ext)
                     }
                 })
             }
@@ -126,9 +123,8 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        gen.generators = arrayOf(ExcelCodePrint())
-                        Generators.callInAllModule(gen)
+                        ext.generators = arrayOf(ExcelCodePrint())
+                        Generators.callInAllModule(ext)
                     }
                 })
             }
@@ -222,10 +218,9 @@ object CoreProjectTasks {
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val dbDoc = DbDoc(project)
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        gen.generators = arrayOf(dbDoc)
-                        gen.tableNames = emptyArray()
-                        Generators.callInAllModule(gen)
+                        ext.generators = arrayOf(dbDoc)
+                        ext.tableNames = emptyArray()
+                        Generators.callInAllModule(ext)
                     }
                 })
             }
@@ -233,13 +228,12 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
                         //生成 properties
-                        gen.tableNames = emptyArray()
-                        gen.generators = arrayOf(DicCodeProperties())
-                        Generators.callInAllModule(gen)
+                        ext.tableNames = emptyArray()
+                        ext.generators = arrayOf(DicCodeProperties())
+                        Generators.callInAllModule(ext)
                         //生成
-                        val packageName = gen.packageName
+                        val packageName = ext.packageName
                         DicCodeGen(project, packageName).run()
                     }
                 })

@@ -192,12 +192,6 @@ class GeneratorPlugin : Plugin<Project> {
             extension.logicalDeleteAsBoolean =
                 (findGeneratorProperty(project, "logicalDeleteAsBoolean"))?.toBoolean()
                     ?: true
-            extension.dataType = top.bettercode.summer.tools.generator.DataType.valueOf(
-                (findGeneratorProperty(project, "dataType")
-                    ?: top.bettercode.summer.tools.generator.DataType.DATABASE.name).uppercase(
-                    Locale.getDefault()
-                )
-            )
             //puml
             extension.pumlSrc = findGeneratorProperty(project, "puml.src") ?: "puml"
             extension.pumlDiagramFormat =
@@ -337,7 +331,7 @@ class GeneratorPlugin : Plugin<Project> {
                 }
             })
         }
-        if (extension.dataType != top.bettercode.summer.tools.generator.DataType.DATABASE) {
+        if (extension.hasPuml) {
             val databaseModules = extension.databases.keys
             extension.run { module, tableHolder ->
                 if (databaseModules.contains(module)) {

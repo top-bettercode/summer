@@ -100,7 +100,13 @@ object SubProjectTasks {
                         if (project.isCloud) {
                             task.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
-                                    ext.generators = arrayOf(Entity(), SerializationViews(), Form(), Service(), Controller())
+                                    ext.generators = arrayOf(
+                                        Entity(),
+                                        SerializationViews(),
+                                        Form(),
+                                        Service(),
+                                        Controller()
+                                    )
                                     Generators.call(ext, tableHolder)
                                 }
                             })

@@ -32,10 +32,10 @@ import javax.annotation.PreDestroy
  * @author Peter Wu
  */
 class AutodocHandler(
-        private val datasources: Map<String, DatabaseConfiguration>,
-        private val genProperties: GenProperties,
-        private val signProperties: ApiSignProperties,
-        private val summerWebProperties: SummerWebProperties
+    private val datasources: Map<String, DatabaseConfiguration>,
+    private val genProperties: GenProperties,
+    private val signProperties: ApiSignProperties,
+    private val summerWebProperties: SummerWebProperties
 ) : RequestLoggingHandler {
 
     private val log: Logger = LoggerFactory.getLogger(AutodocHandler::class.java)
@@ -55,14 +55,14 @@ class AutodocHandler(
         if (Autodoc.enable) {
             try {
                 val disableOnException =
-                        Autodoc.disableOnException ?: genProperties.isDisableOnException
+                    Autodoc.disableOnException ?: genProperties.isDisableOnException
                 if (disableOnException && operation.response.stackTrace.isNotBlank()) {
                     return
                 }
                 //生成相应数据
                 val projectModuleDic = File(
-                        genProperties.source,
-                        Autodoc.version.ifBlank { genProperties.version }
+                    genProperties.source,
+                    Autodoc.version.ifBlank { genProperties.version }
                 )
                 projectModuleDic.mkdirs()
                 val module = cache.getOrPut(projectModuleDic) {
@@ -85,19 +85,19 @@ class AutodocHandler(
                     return
                 }
                 operation.collectionName =
-                        operation.collectionName.replace("/", AutodocUtil.REPLACE_CHAR)
+                    operation.collectionName.replace("/", AutodocUtil.REPLACE_CHAR)
                 operation.name = operation.name.replace("/", AutodocUtil.REPLACE_CHAR)
 
                 if (genProperties.projectPath.isNotBlank()) {
                     operation.request.restUri =
-                            "/${genProperties.projectPath}${operation.request.restUri}"
+                        "/${genProperties.projectPath}${operation.request.restUri}"
                     val uri = operation.request.uri
                     operation.request.uri = URI(
-                            uri.scheme,
-                            uri.authority,
-                            operation.request.restUri,
-                            uri.query,
-                            uri.fragment
+                        uri.scheme,
+                        uri.authority,
+                        operation.request.restUri,
+                        uri.query,
+                        uri.fragment
                     )
                 }
 
@@ -108,7 +108,7 @@ class AutodocHandler(
                 //headers
                 val calculateHeaders = RequiredParameters.calculateHeaders(handler)
                 val defaultValueHeaders =
-                        calculateHeaders.filter { it.value != ValueConstants.DEFAULT_NONE }
+                    calculateHeaders.filter { it.value != ValueConstants.DEFAULT_NONE }
                 val requiredHeaders = calculateHeaders.keys.toMutableSet()
                 requiredHeaders.addAll(Autodoc.requiredHeaders)
                 val signParamName = signProperties.parameterName
@@ -157,10 +157,7 @@ class AutodocHandler(
                 module.collections(docOperation.collectionName, docOperation.name)
 
                 //field
-                val extension = GeneratorExtension(
-                        dataType = genProperties.dataType
-                )
-
+                val extension = GeneratorExtension()
                 extension.databases = datasources
 
                 request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
@@ -170,7 +167,7 @@ class AutodocHandler(
                 }
 
                 request.parametersExt =
-                        request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
+                    request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
                 request.parametersExt.forEach {
                     setRequired(it, requiredParameters)
                 }
@@ -181,8 +178,8 @@ class AutodocHandler(
                 }
 
                 request.contentExt =
-                        request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
-                                ?: linkedSetOf()
+                    request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
+                        ?: linkedSetOf()
                 if (request.contentExt.isEmpty()) {
                     if (request.content.isNotEmpty())
                         request.content = Operation.UNRECORDED_MARK.toByteArray()
@@ -194,7 +191,8 @@ class AutodocHandler(
 
                 val response = docOperation.response as DocOperationResponse
                 response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
-                response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
+                response.contentExt =
+                    response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
                         ?: linkedSetOf()
                 if (response.contentExt.isEmpty() && response.content.isNotEmpty()) {
                     response.content = Operation.UNRECORDED_MARK.toByteArray()
@@ -202,19 +200,19 @@ class AutodocHandler(
 
                 InitField.extFieldExt(genProperties, docOperation)
                 InitField.init(
-                        docOperation,
-                        extension,
-                        summerWebProperties.isWrapEnable,
-                        defaultValueHeaders,
-                        defaultValueParams
+                    docOperation,
+                    extension,
+                    summerWebProperties.isWrapEnable,
+                    defaultValueHeaders,
+                    defaultValueParams
                 )
 
                 if (paramInfo.existNoAnnoDefaultPageParam) {
                     (docOperation.request as DocOperationRequest).parametersExt.filter { "page" == it.name || "size" == it.name }
-                            .forEach {
-                                it.description += "，不传返回所有数据"
-                                it.defaultVal = ""
-                            }
+                        .forEach {
+                            it.description += "，不传返回所有数据"
+                            it.defaultVal = ""
+                        }
                 }
 
                 docOperation.save()
@@ -233,9 +231,9 @@ class AutodocHandler(
     }
 
     private fun setRequired(
-            field: Field,
-            requiredParameters: MutableSet<String>,
-            prefix: String = ""
+        field: Field,
+        requiredParameters: MutableSet<String>,
+        prefix: String = ""
     ) {
         field.required = requiredParameters.contains(prefix + field.name)
         if (field.children.isNotEmpty()) {
@@ -258,10 +256,10 @@ class AutodocHandler(
                         val oldOperationFile = File(oDir, "collection/$collectionName/$name.yml")
                         if (oldOperationFile.exists()) {
                             docOperation =
-                                    AutodocUtil.yamlMapper.readValue(
-                                            oldOperationFile,
-                                            DocOperation::class.java
-                                    )
+                                AutodocUtil.yamlMapper.readValue(
+                                    oldOperationFile,
+                                    DocOperation::class.java
+                                )
                             break
                         }
                     }
@@ -280,18 +278,18 @@ class AutodocHandler(
                 protocol = operation.protocol
                 val existReq = request as DocOperationRequest
                 request = DocOperationRequest(
-                        operationRequest = operation.request,
-                        uriVariablesExt = existReq.uriVariablesExt,
-                        headersExt = existReq.headersExt,
-                        parametersExt = existReq.parametersExt,
-                        partsExt = existReq.partsExt,
-                        contentExt = existReq.contentExt
+                    operationRequest = operation.request,
+                    uriVariablesExt = existReq.uriVariablesExt,
+                    headersExt = existReq.headersExt,
+                    parametersExt = existReq.parametersExt,
+                    partsExt = existReq.partsExt,
+                    contentExt = existReq.contentExt
                 )
                 val existRes = response as DocOperationResponse
                 response = DocOperationResponse(
-                        operationResponse = operation.response,
-                        headersExt = existRes.headersExt,
-                        contentExt = existRes.contentExt
+                    operationResponse = operation.response,
+                    headersExt = existRes.headersExt,
+                    contentExt = existRes.contentExt
                 )
             }
             docOperation
@@ -309,8 +307,8 @@ class AutodocHandler(
          * @param operation operation
          */
         fun prerequestExec(
-                operation: Operation,
-                signProperties: ApiSignProperties
+            operation: Operation,
+            signProperties: ApiSignProperties
         ): List<String> {
             val exec = mutableListOf<String>()
             operation.request.apply {
@@ -319,10 +317,10 @@ class AutodocHandler(
                 }
             }
             exec.addAll(
-                    StreamUtils.copyToString(
-                            AutodocHandler::class.java.getResourceAsStream("/sign.js"),
-                            charset("UTF-8")
-                    ).lines()
+                StreamUtils.copyToString(
+                    AutodocHandler::class.java.getResourceAsStream("/sign.js"),
+                    charset("UTF-8")
+                ).lines()
             )
             exec.add("signClient({")
             exec.add("    clientSecret: '${signProperties.clientSecret}'")

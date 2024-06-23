@@ -8,8 +8,8 @@ import top.bettercode.summer.tools.generator.PumlTableHolder
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
-import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
+import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.io.File
 import java.util.*
 
@@ -18,6 +18,7 @@ import java.util.*
  * @since 0.0.45
  */
 object PumlConverter {
+    private val codeTypeCache = mutableMapOf<String, String?>()
 
     fun toTables(
         puml: File,
@@ -31,7 +32,7 @@ object PumlConverter {
         call: (Table) -> Unit = {}
     ): List<Any> {
         val tables = mutableListOf<Any>()
-        var remarks = ""
+        var tableRemarks = ""
         var primaryKeyNames = mutableListOf<String>()
         var indexes = mutableListOf<Indexed>()
         var pumlColumns = mutableListOf<Any>()
@@ -53,7 +54,7 @@ object PumlConverter {
                     if ("==" == line)
                         isField = true
                     else
-                        remarks = line
+                        tableRemarks = line
                 } else if (isField) {
                     val uniqueMult = line.startsWith("'UNIQUE")
                     if (uniqueMult || line.startsWith("'INDEX")) {
@@ -74,7 +75,7 @@ object PumlConverter {
                             schema = null,
                             tableName = tableName,
                             tableType = "",
-                            remarks = remarks,
+                            remarks = tableRemarks,
                             primaryKeyNames = primaryKeyNames,
                             indexes = indexes,
                             pumlColumns = pumlColumns,
@@ -89,11 +90,12 @@ object PumlConverter {
                         indexes = mutableListOf()
                         pumlColumns = mutableListOf()
                         tableName = ""
-                        remarks = ""
+                        tableRemarks = ""
                         engine = null
                         isField = false
                     } else if (!line.startsWith("'")) {
                         val lineDef = line.trim().replace(" +".toRegex(), " ").split("--")
+                        val remarks = lineDef.last().trim()
                         val fieldDef = lineDef[0]
                         val fieldDefs = fieldDef.split(" +: +".toRegex())
                         val columnName = fieldDefs[0].trim()
@@ -173,31 +175,45 @@ object PumlConverter {
                         // SEQUENCE
                         var sequence = ""
                         var sequenceStartWith = 1L
-                        val sequenceRegex = " SEQUENCE +(.+)(\\(\\d+\\))? "
-                        if (extra.matches(sequenceRegex.toRegex())) {
-                            sequence =
-                                extra.replace(sequenceRegex, "$0").substringAfter(" SEQUENCE ")
-                            extra = extra.replace(sequenceRegex.toRegex(), " ")
-                            if (sequence.contains("(")) {
-                                sequenceStartWith =
-                                    sequence.substringAfter("(").substringBefore(")").toLong()
-                                sequence = sequence.substringBefore("(")
+                        val sequenceRegex = Regex(" SEQUENCE +(.+?)(\\(\\d+\\))? ")
+                        val sequenceMatch = sequenceRegex.find(extra)
+                        if (sequenceMatch != null) {
+                            val groupValues = sequenceMatch.groupValues
+                            sequence = groupValues[1]
+                            sequenceStartWith = groupValues[2].trim('(', ')').toLongOrNull() ?: 1L
+                            extra = extra.replace(sequenceRegex, " ")
+                        }
+
+                        //CODETYPE
+                        var codeType = ""
+                        val isCodeType =
+                            !asBoolean && remarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
+                        if (isCodeType) {
+                            codeType = GeneratorExtension.javaName(columnName)
+                            val codeTypeRegex = Regex(" CODETYPE +(.+) ")
+                            val codeTypeMatch = codeTypeRegex.find(extra)
+                            if (codeTypeMatch != null) {
+                                codeType = codeTypeMatch.groupValues[1]
+                                extra = extra.replace(codeTypeRegex, " ")
+                            }
+                            if (codeTypeCache.containsKey(codeType) && remarks != codeTypeCache[codeType]) {
+                                throw IllegalArgumentException("${pumlFile.name}:$tableName:$columnName codeType重复：$codeType")
+                            } else {
+                                codeTypeCache[codeType] = remarks
                             }
                         }
 
                         //IDGENERATOR
                         var idgenerator = ""
                         var idgeneratorParam = ""
-                        val idRegex = " ([A-Z0-9]*IDGENERATOR\\d*)(\\(.*\\))? "
-                        if (extra.matches(idRegex.toRegex())) {
-                            idgenerator = extra.replace(idRegex, "$0")
-                            extra = extra.replace(idRegex.toRegex(), " ")
-                            if (idgenerator.contains("(")) {
-                                idgeneratorParam =
-                                    idgenerator.substringAfter("(").substringBefore(")")
-                                idgenerator = idgenerator.substringBefore("(")
-                            }
+                        val idRegex = Regex(" ([A-Z0-9]*IDGENERATOR\\d*)(\\(.*\\))? ")
+                        val idgeneratorMatch = idRegex.find(extra)
+                        if (idgeneratorMatch != null) {
+                            idgenerator = idgeneratorMatch.groupValues[1]
+                            idgeneratorParam = idgeneratorMatch.groupValues[2].trim('(', ')')
+                            extra = extra.replace(idRegex, " ")
                         }
+
                         //兼容
                         if (!createdDate && columnName.equals(
                                 "created_date",
@@ -217,7 +233,7 @@ object PumlConverter {
                         val column = Column(
                             tableCat = null,
                             columnName = columnName,
-                            remarks = lineDef.last().trim(),
+                            remarks = remarks,
                             typeName = typeName,
                             dataType = JavaTypeResolver.calculateDataType(typeName),
                             columnSize = columnSize,
@@ -243,7 +259,8 @@ object PumlConverter {
                             logicalDelete = logicalDelete,
                             asBoolean = asBoolean,
                             sequence = sequence.trim(),
-                            sequenceStartWith = sequenceStartWith
+                            sequenceStartWith = sequenceStartWith,
+                            codeType = codeType
                         )
                         if (unique)
                             indexes.add(

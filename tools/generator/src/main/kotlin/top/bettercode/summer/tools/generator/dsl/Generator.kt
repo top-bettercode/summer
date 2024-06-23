@@ -19,7 +19,6 @@ import java.util.*
  */
 open class Generator {
 
-    private val codeTypeCache = mutableMapOf<String, String?>()
     private val projectUnits: MutableList<GenUnit> = mutableListOf()
     private val units: MutableList<GenUnit> = mutableListOf()
 
@@ -410,24 +409,6 @@ open class Generator {
 
     }
 
-    val Column.codeType: String
-        get() {
-            var codeType = javaName
-
-            if (codeTypeCache.contains(codeType) && remark != codeTypeCache[codeType]) {
-                codeType = "$entityName${codeType.capitalized()}"
-            }
-            if (codeTypeCache.contains(codeType) && remark != codeTypeCache[codeType]) {
-                codeType =
-                    "${
-                        database.className(table.schema ?: "").decapitalized()
-                    }${codeType.capitalized()}"
-            }
-            if (!codeTypeCache.contains(codeType)) {
-                codeTypeCache[codeType] = remark
-            }
-            return codeType
-        }
 
     fun Column.dicCodes(): DicCodes? {
         return if (isCodeField) {

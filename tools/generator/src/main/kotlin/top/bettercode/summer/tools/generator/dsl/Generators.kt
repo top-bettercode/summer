@@ -20,7 +20,7 @@ object Generators {
         return extension.run { module, tableHolder ->
             tableHolder.tableNames().map { tableName ->
                 (extension.database(module)).fixTableName(
-                        tableName
+                    tableName
                 )
             }
         }.flatten().sortedBy { it }
@@ -41,19 +41,7 @@ object Generators {
 
         extension.run { _, tableHolder ->
             tableHolder.tables(
-                    checkFound = when (extension.dataType) {
-                        top.bettercode.summer.tools.generator.DataType.DATABASE -> {
-                            extension.databases.size <= 1
-                        }
-
-                        top.bettercode.summer.tools.generator.DataType.PUML -> {
-                            extension.pumlSources.size <= 1
-                        }
-
-                        top.bettercode.summer.tools.generator.DataType.PDM -> {
-                            extension.pdmSources.size <= 1
-                        }
-                    }, tableName = extension.tableNames
+                checkFound = extension.pumlSources.size <= 1, tableName = extension.tableNames
             ).filter { !it.database.excludeGenTableNames.contains(it.tableName) }.forEach { table ->
                 generators.forEach { generator ->
                     generator.run(table)
@@ -77,19 +65,7 @@ object Generators {
         }
 
         tableHolder.tables(
-                checkFound = when (extension.dataType) {
-                    top.bettercode.summer.tools.generator.DataType.DATABASE -> {
-                        extension.databases.size <= 1
-                    }
-
-                    top.bettercode.summer.tools.generator.DataType.PUML -> {
-                        extension.pumlSources.size <= 1
-                    }
-
-                    top.bettercode.summer.tools.generator.DataType.PDM -> {
-                        extension.pdmSources.size <= 1
-                    }
-                }, tableName = extension.tableNames
+            checkFound = extension.pumlSources.size <= 1, tableName = extension.tableNames
         ).filter { !it.database.excludeGenTableNames.contains(it.tableName) }.forEach { table ->
             generators.forEach { generator ->
                 generator.run(table)

@@ -12,9 +12,9 @@ import java.util.*
  * @since 0.0.41
  */
 class PlantUML(
-        private val umlModuleName: String?,
-        destFile: File,
-        private val remarksProperties: Properties?
+    private val umlModuleName: String?,
+    destFile: File,
+    private val remarksProperties: Properties?
 ) : Generator() {
 
     private val log = org.slf4j.LoggerFactory.getLogger(PlantUML::class.java)
@@ -23,7 +23,7 @@ class PlantUML(
 
     override fun setUp() {
         dest.append(
-                """@startuml ${if (umlModuleName.isNullOrBlank()) top.bettercode.summer.tools.generator.DataType.DATABASE.name else umlModuleName}
+            """@startuml ${if (umlModuleName.isNullOrBlank()) top.bettercode.summer.tools.generator.DataType.DATABASE.name else umlModuleName}
 
 """
         )
@@ -34,7 +34,7 @@ class PlantUML(
             log.warn("表名：${tableName} 最好不要超过 30 个字符")
         }
         dest.append(
-                """entity $tableName {
+            """entity $tableName {
     $remarks
     ==
 """
@@ -51,7 +51,9 @@ class PlantUML(
                     prettyRemarks = remarksProperties?.getProperty(it.columnName)?.trim() ?: ""
                 }
 
-                dest.append("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.idgenerator.isBlank()) "" else " ${it.idgenerator}${if (it.idgeneratorParam.isBlank()) "" else "(${it.idgeneratorParam})"}"}${if (it.isPrimary && it.sequence.isNotBlank()) " SEQUENCE ${it.sequence}${if (it.sequenceStartWith != 1L) "(${it.sequenceStartWith})" else ""}" else ""}${it.defaultDesc}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.version) " VERSION" else ""}${if (it.createdDate) " CREATEDDATE" else ""}${if (it.createdBy) " CREATEDBY" else ""}${if (it.lastModifiedDate) " LASTMODIFIEDDATE" else ""}${if (it.lastModifiedBy) " LASTMODIFIEDBY" else ""}${if (it.logicalDelete) " LOGICALDELETE" else ""}${if (it.asBoolean) " ASBOOLEAN" else ""}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n")
+                dest.append(
+                    "    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.idgenerator.isBlank()) "" else " ${it.idgenerator}${if (it.idgeneratorParam.isBlank()) "" else "(${it.idgeneratorParam})"}"}${if (it.isPrimary && it.sequence.isNotBlank()) " SEQUENCE ${it.sequence}${if (it.sequenceStartWith != 1L) "(${it.sequenceStartWith})" else ""}" else ""}${it.defaultDesc}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.version) " VERSION" else ""}${if (it.createdDate) " CREATEDDATE" else ""}${if (it.createdBy) " CREATEDBY" else ""}${if (it.lastModifiedDate) " LASTMODIFIEDDATE" else ""}${if (it.lastModifiedBy) " LASTMODIFIEDBY" else ""}${if (it.logicalDelete) " LOGICALDELETE" else ""}${if (it.asBoolean) " ASBOOLEAN" else ""}${if (it.codeType.isNotBlank() && it.codeType != it.javaName) " CODETYPE ${it.codeType}" else ""}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n"
+                )
                 if (it.isForeignKey) {
                     fklines.add("${it.pktableName} ||--o{ $tableName")
                 }
@@ -62,11 +64,11 @@ class PlantUML(
         }
         table.indexes.filter { it.columnName.size > 1 }.forEach {
             dest.append(
-                    "    '${if (it.unique) "UNIQUE" else "INDEX"} ${
-                        it.columnName.joinToString(
-                                ","
-                        )
-                    }\n"
+                "    '${if (it.unique) "UNIQUE" else "INDEX"} ${
+                    it.columnName.joinToString(
+                        ","
+                    )
+                }\n"
             )
         }
         if (table.engine.isNotBlank() && !"InnoDB".equals(table.engine, true)) {
@@ -84,7 +86,7 @@ class PlantUML(
             dest.append("\n")
 
         dest.append(
-                """
+            """
 |@enduml
 ENGINE
 PK
@@ -105,6 +107,7 @@ ASBOOLEAN
 DEFAULT
 SEQUENCE
 IDGENERATOR
+CODETYPE
 """.trimMargin()
         )
         dest.writeTo()

@@ -43,7 +43,6 @@ class GeneratorsTest {
 
     @Test
     fun testModule() {
-        extension.dataType = top.bettercode.summer.tools.generator.DataType.PUML
         extension.run { module, _ ->
             val keys = extension.databases.keys
             Assertions.assertEquals(true, keys.contains(module))
@@ -55,13 +54,11 @@ class GeneratorsTest {
         extension.generators = arrayOf(
                 PlantUML(null, File("build/gen/puml/database.puml"), null)
         )
-        extension.dataType = top.bettercode.summer.tools.generator.DataType.PDM
         Generators.callInAllModule(extension)
     }
 
     @Test
     fun tableNames() {
-        extension.dataType = top.bettercode.summer.tools.generator.DataType.PDM
         print(
                 "============>" + Generators.tableNames(extension).joinToString(",") + "<============"
         )

@@ -1,7 +1,7 @@
 package top.bettercode.summer.gradle.plugin.project.template
 
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.JavaType
 
 /**
  * @author Peter Wu
@@ -13,32 +13,37 @@ open class ExcelCodePrint : ProjectGenerator() {
 
             val excelClassName = className
 
-            val filterColumns = columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
+            val filterColumns =
+                columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
 
             import("top.bettercode.summer.tools.lang.util.ArrayUtil")
             field(
-                    "excelFields",
-                    JavaType("top.bettercode.util.excel.ExcelField<${excelClassName}, ?>[]"),
-                    isFinal = true
+                "excelFields",
+                JavaType("top.bettercode.util.excel.ExcelField<${excelClassName}, ?>[]"),
+                isFinal = true
             ) {
                 initializationString = "ArrayUtil.of(\n"
                 val size = filterColumns.size
                 filterColumns.forEachIndexed { i, it ->
                     val code =
-                            if (it.isCodeField) {
-                                if (it.columnName.contains("_") || it.logicalDelete) ".code()" else ".code(${
-                                    it.codeType.capitalized()
-                                }Enum.ENUM_NAME).dataValidation(${it.dicCodes()!!.codes.values.joinToString(", ") { s -> "\"$s\"" }})"
-                            } else {
-                                ""
-                            }
+                        if (it.isCodeField) {
+                            if (it.javaName == it.codeType) ".code()" else ".code(${
+                                it.codeType.capitalized()
+                            }Enum.ENUM_NAME).dataValidation(${
+                                it.dicCodes()!!.codes.values.joinToString(
+                                    ", "
+                                ) { s -> "\"$s\"" }
+                            })"
+                        } else {
+                            ""
+                        }
                     val propertyGetter =
-                            "${excelClassName}::get${it.javaName.capitalized()}"
+                        "${excelClassName}::get${it.javaName.capitalized()}"
                     initializationString += "      ExcelField.of(\"${
                         it.remark.split(
-                                Regex(
-                                        "[:：,， (（]"
-                                )
+                            Regex(
+                                "[:：,， (（]"
+                            )
                         )[0]
                     }\", $propertyGetter)${code}${if (i == size - 1) "" else ","}\n"
                 }

@@ -1,10 +1,10 @@
 package top.bettercode.summer.gradle.plugin.project.template.unit
 
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.Parameter
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.JavaType
 
 /**
  * @author Peter Wu
@@ -24,16 +24,16 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/$pathName\", name = \"$remarks\")")
 
         field(
-                "${projectEntityName}Service",
-                if (interfaceService) iserviceType else serviceType,
-                isFinal = true
+            "${projectEntityName}Service",
+            if (interfaceService) iserviceType else serviceType,
+            isFinal = true
         )
 
         constructor(
-                Parameter(
-                        "${projectEntityName}Service",
-                        if (interfaceService) iserviceType else serviceType
-                )
+            Parameter(
+                "${projectEntityName}Service",
+                if (interfaceService) iserviceType else serviceType
+            )
         ) {
             +"this.${projectEntityName}Service = ${projectEntityName}Service;"
         }
@@ -68,28 +68,28 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         if (excel) {
             import("top.bettercode.summer.tools.lang.util.ArrayUtil")
             field(
-                    "excelFields",
-                    JavaType("top.bettercode.summer.tools.excel.ExcelField<${if (isFullComposite) primaryKeyClassName else className}, ?>[]"),
-                    isFinal = true
+                "excelFields",
+                JavaType("top.bettercode.summer.tools.excel.ExcelField<${if (isFullComposite) primaryKeyClassName else className}, ?>[]"),
+                isFinal = true
             ) {
                 initializationString = "ArrayUtil.of(\n"
                 val size = columns.size
                 columns.forEachIndexed { i, it ->
                     val code =
-                            if (it.isCodeField) {
-                                if (it.columnName.contains("_") || it.logicalDelete) ".code()" else ".code(${
-                                    (className + it.javaName.capitalized())
-                                }Enum.ENUM_NAME)"
-                            } else {
-                                ""
-                            }
+                        if (it.isCodeField) {
+                            if (it.javaName == it.codeType) ".code()" else ".code(${
+                                (className + it.javaName.capitalized())
+                            }Enum.ENUM_NAME)"
+                        } else {
+                            ""
+                        }
                     val propertyGetter =
-                            "${if (isFullComposite) primaryKeyClassName else className}::get${it.javaName.capitalized()}"
+                        "${if (isFullComposite) primaryKeyClassName else className}::get${it.javaName.capitalized()}"
                     initializationString += "      ExcelField.of(\"${
                         it.remark.split(
-                                Regex(
-                                        "[:：,， (（]"
-                                )
+                            Regex(
+                                "[:：,， (（]"
+                            )
                         )[0]
                     }\", $propertyGetter)${code}${if (i == size - 1) "" else ","}\n"
                 }
@@ -132,7 +132,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 parameter {
                     name = primaryKeyName
                     type =
-                            if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
+                        if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
                     if (JavaType.stringInstance == type) {
                         annotation("@javax.validation.constraints.NotBlank")
                     } else {
@@ -230,7 +230,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 parameter {
                     name = primaryKeyName
                     type =
-                            if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
+                        if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
                     if (JavaType.stringInstance == type) {
                         annotation("@javax.validation.constraints.NotBlank")
                     } else {
@@ -248,7 +248,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 val appController: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         superClass =
-                JavaType("top.bettercode.summer.data.jpa.web.PageController")
+            JavaType("top.bettercode.summer.data.jpa.web.PageController")
 
         implement(serializationViewsType)
     }
