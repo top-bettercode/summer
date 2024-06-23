@@ -244,9 +244,7 @@ object InitField {
             }
 
         fixFields(pumlSources) { file, module ->
-            PumlConverter.toTables(file) {
-                it.database = this.database(module)
-            }
+            PumlConverter.toTables(this.database(module), file)
         }
     }
 

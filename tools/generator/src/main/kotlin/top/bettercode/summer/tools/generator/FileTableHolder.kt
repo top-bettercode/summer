@@ -8,8 +8,8 @@ import java.io.File
  * @author Peter Wu
  */
 abstract class FileTableHolder(
-        val database: DatabaseConfiguration,
-        val files: List<File>
+    val database: DatabaseConfiguration,
+    val files: List<File>
 ) : TableHolder {
 
     private val log = org.slf4j.LoggerFactory.getLogger(FileTableHolder::class.java)
@@ -23,7 +23,7 @@ abstract class FileTableHolder(
                 result.addAll(getTables(file).filter { !database.excludeTableNames.contains(it.tableName) })
             } else if (result.size < tableNames.size) {
                 result.addAll(getTables(file).filter { !database.excludeTableNames.contains(it.tableName) }
-                        .filter { table -> tableNames.contains(table.tableName) })
+                    .filter { table -> tableNames.contains(table.tableName) })
 
                 if (result.size == tableNames.size) {
                     return result
@@ -45,11 +45,5 @@ abstract class FileTableHolder(
         }.flatten().sortedBy { it }
     }
 
-    abstract fun getTables(
-            file: File, call: (Table) -> Unit = {
-                it.file = file
-                it.database = database
-                it.collate = database.collate
-            }
-    ): List<Table>
+    abstract fun getTables(file: File): List<Table>
 }

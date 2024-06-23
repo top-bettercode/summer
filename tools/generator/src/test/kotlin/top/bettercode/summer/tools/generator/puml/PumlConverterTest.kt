@@ -36,7 +36,7 @@ class PumlConverterTest {
 
     @Test
     fun convert() {
-        val tables = PumlConverter.toTables(oraclePuml)
+        val tables = PumlConverter.toTables(DatabaseConfiguration(), oraclePuml)
         println(tables)
     }
 

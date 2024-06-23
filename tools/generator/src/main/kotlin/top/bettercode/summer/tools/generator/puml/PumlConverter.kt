@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
+import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.io.File
 import java.util.*
@@ -18,18 +19,19 @@ import java.util.*
  * @since 0.0.45
  */
 object PumlConverter {
+
     private val codeTypeCache = mutableMapOf<String, String?>()
 
     fun toTables(
-        puml: File,
-        call: (Table) -> Unit = {}
+        database: DatabaseConfiguration,
+        puml: File
     ): List<Table> {
-        return toTableOrAnys(puml, call).filterIsInstance<Table>()
+        return toTableOrAnys(database, puml).filterIsInstance<Table>()
     }
 
     private fun toTableOrAnys(
-        pumlFile: File,
-        call: (Table) -> Unit = {}
+        database: DatabaseConfiguration,
+        pumlFile: File
     ): List<Any> {
         val tables = mutableListOf<Any>()
         var tableRemarks = ""
@@ -41,9 +43,9 @@ object PumlConverter {
         var isUml = false
         var engine: String? = null
         var subModuleName: String? = null
-        pumlFile.readLines().forEach {
-            if (it.isNotBlank()) {
-                val line = it.trim()
+        pumlFile.readLines().forEach { l ->
+            if (l.isNotBlank()) {
+                val line = l.trim()
                 if (line.startsWith("@startuml")) {
                     subModuleName = line.substringAfter("@startuml").trim()
                     isUml = true
@@ -83,7 +85,9 @@ object PumlConverter {
                             subModuleName = subModuleName ?: "database",
                             engine = engine ?: "InnoDB"
                         )
-                        call(table)
+                        table.file = pumlFile
+                        table.database = database
+                        table.collate = database.collate
                         tables.add(table)
 
                         primaryKeyNames = mutableListOf()
@@ -189,7 +193,20 @@ object PumlConverter {
                         val isCodeType =
                             !asBoolean && remarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
                         if (isCodeType) {
-                            codeType = GeneratorExtension.javaName(columnName)
+                            codeType =
+                                if (columnName.contains("_") || logicalDelete || database.extension.commonCodeTypes.any {
+                                        it.equals(
+                                            columnName,
+                                            true
+                                        )
+                                    })
+                                    GeneratorExtension.javaName(columnName)
+                                else
+                                    database.className(tableName).decapitalized() + GeneratorExtension.javaName(
+                                        columnName,
+                                        true
+                                    )
+
                             val codeTypeRegex = Regex(" CODETYPE +(.+) ")
                             val codeTypeMatch = codeTypeRegex.find(extra)
                             if (codeTypeMatch != null) {
@@ -392,9 +409,7 @@ object PumlConverter {
     ) {
         compile(
             database,
-            toTableOrAnys(src) {
-                it.database = database
-            },
+            toTableOrAnys(database, src),
             out,
             remarksProperties
         )
@@ -405,9 +420,7 @@ object PumlConverter {
         src: File, out: File,
         remarksProperties: Properties? = null
     ) {
-        val tables = toTableOrAnys(src) {
-            it.database = database
-        }
+        val tables = toTableOrAnys(database, src)
         tables.forEach { t ->
             if (t is Table) {
                 t.pumlColumns.forEach {
@@ -458,9 +471,7 @@ object PumlConverter {
         src: File, out: File,
         remarksProperties: Properties? = null
     ) {
-        val tables = toTableOrAnys(src) {
-            it.database = database
-        }
+        val tables = toTableOrAnys(database, src)
         tables.forEach { t ->
             if (t is Table) {
                 t.pumlColumns.forEach {

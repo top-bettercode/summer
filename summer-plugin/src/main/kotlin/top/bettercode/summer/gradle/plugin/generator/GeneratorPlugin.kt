@@ -186,6 +186,10 @@ class GeneratorPlugin : Plugin<Project> {
 
             extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
             extension.remarks = findGeneratorProperty(project, "remarks") ?: ""
+            extension.commonCodeTypes = (findGeneratorProperty(project, "commonCodeTypes")
+                ?: extension.logicalDeleteColumnName).split(",").asSequence()
+                .filter { it.isNotBlank() }.map { it.trim() }.toList()
+                .toTypedArray()
             extension.logicalDeleteColumnName =
                 findGeneratorProperty(project, "logicalDeleteColumnName")
                     ?: "deleted"
@@ -299,7 +303,8 @@ class GeneratorPlugin : Plugin<Project> {
             val src = extension.file(extension.pumlSrc)
             if (src.exists())
                 task.inputs.dir(src)
-            val out = File(project.rootProject.layout.buildDirectory.get().asFile, extension.pumlSrc)
+            val out =
+                File(project.rootProject.layout.buildDirectory.get().asFile, extension.pumlSrc)
             if (out.exists())
                 task.outputs.dir(out)
             task.doLast(object : Action<Task> {
@@ -426,9 +431,7 @@ class GeneratorPlugin : Plugin<Project> {
 
                                         val oldTables =
                                             if (database.offline && currentPumlFile.exists()) {
-                                                PumlConverter.toTables(currentPumlFile) {
-                                                    it.database = database
-                                                }
+                                                PumlConverter.toTables(database, currentPumlFile)
                                             } else {
                                                 if (!database.offline && (tableNames.isNotEmpty() || deleteTablesWhenUpdate)) {
                                                     database.tables(
@@ -507,9 +510,7 @@ class GeneratorPlugin : Plugin<Project> {
 
                                         val oldTables =
                                             if (database.offline && currentPumlFile.exists()) {
-                                                PumlConverter.toTables(currentPumlFile) {
-                                                    it.database = database
-                                                }
+                                                PumlConverter.toTables(database, currentPumlFile)
                                             } else {
                                                 database.tables(tableName = emptyArray())
                                             }
