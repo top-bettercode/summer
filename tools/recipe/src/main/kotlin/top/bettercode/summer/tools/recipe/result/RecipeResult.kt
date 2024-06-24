@@ -28,26 +28,29 @@ class RecipeResult @JvmOverloads constructor(
         recipes.add(recipe)
     }
 
-    // 输出 Excel
     fun toExcel(outFile: File) {
-        val filePath = outFile.absolutePath
-        FastExcel.of(filePath).apply {
-            sheet("最终候选原料")
-            exportMaterial(requirement)
-            sheet("配方要求")
-            exportRequirement(requirement)
-
-            for ((index, recipe) in recipes.withIndex()) {
-                val sheetname = "配方" + (index + 1)
-                sheet(sheetname)
-                if (index == 0) {
-                    keepInActiveTab()
-                }
-                val row = exportRecipe(recipe, true)
-                exportProductionCost(recipe = recipe, row + 1)
-            }
-
+        FastExcel.of(outFile).apply {
+            toExcel()
             finish()
+        }
+    }
+
+    // 输出 Excel
+    fun FastExcel.toExcel() {
+        val productName = requirement.id
+        sheet("最终候选原料-$productName")
+        exportMaterial(requirement)
+        sheet("配方要求-$productName")
+        exportRequirement(requirement)
+
+        for ((index, recipe) in recipes.withIndex()) {
+            val sheetname = "配方${index + 1}-$productName"
+            sheet(sheetname)
+            if (index == 0) {
+                keepInActiveTab()
+            }
+            val row = exportRecipe(recipe, true)
+            exportProductionCost(recipe = recipe, row + 1)
         }
     }
 

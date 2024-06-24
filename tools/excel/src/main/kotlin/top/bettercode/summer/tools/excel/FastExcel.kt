@@ -19,14 +19,18 @@ import java.util.*
 class FastExcel(outputStream: OutputStream) : IExcel {
 
     companion object {
+
+        @JvmStatic
         fun of(outputStream: OutputStream): FastExcel {
             return FastExcel(outputStream)
         }
 
+        @JvmStatic
         fun of(filename: String): FastExcel {
             return of(File(filename))
         }
 
+        @JvmStatic
         fun of(file: File): FastExcel {
             return FastExcel(Files.newOutputStream(file.toPath()))
         }

@@ -139,14 +139,18 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
     }
 
     companion object {
+
+        @JvmStatic
         fun of(outputStream: OutputStream): PoiExcel {
             return PoiExcel(outputStream)
         }
 
+        @JvmStatic
         fun of(filename: String): PoiExcel {
             return of(File(filename))
         }
 
+        @JvmStatic
         fun of(file: File): PoiExcel {
             return PoiExcel(Files.newOutputStream(file.toPath()))
         }
