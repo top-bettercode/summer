@@ -39,6 +39,7 @@ import javax.servlet.FilterChain
 import javax.servlet.RequestDispatcher
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.random.Random
 
 /**
  * 请求日志过滤器
@@ -113,7 +114,7 @@ class RequestLoggingFilter(
         try {
             var traceid = request.getHeader(HttpOperation.MDC_TRACEID)
             if (traceid.isNullOrBlank()) {
-                traceid = Integer.toHexString(request.hashCode())
+                traceid = Integer.toHexString(Random.nextInt())
             }
             MDC.put(HttpOperation.MDC_TRACEID, traceid)
             filterChain.doFilter(requestToUse, responseToUse)
