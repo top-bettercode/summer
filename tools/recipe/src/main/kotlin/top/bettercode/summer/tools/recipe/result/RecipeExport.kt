@@ -198,7 +198,8 @@ object RecipeExport {
             cell(r++, c++).value("合计").setStyle()
             productionCost.materialItems.forEach {
                 r = pr
-                cell(r++, c).value("${it.name}(${it.unit})").headerStyle().setStyle()
+                cell(r++, c).value("${it.name}${if (it.unit.isBlank()) "" else "(${it.unit})"}")
+                    .headerStyle().setStyle()
                 cell(r++, c).value(it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.value).format("0.00").setStyle()
                 cell(r++, c++).value(it.cost).format("0.00").setStyle()
