@@ -332,7 +332,7 @@ object RecipeExport {
             c++
             materialItems.forEach {
                 r = row
-                cell(r++, c).value("${it.it.name}(${it.it.unit})").headerStyle().width(15.0)
+                cell(r++, c).value("${it.it.name}${if (it.it.unit.isBlank()) "" else "(${it.it.unit})"}").headerStyle().width(15.0)
                     .setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.it.value).format("0.00").setStyle()
