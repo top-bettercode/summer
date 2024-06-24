@@ -22,7 +22,7 @@ class MethodLoggingAspect {
         val methodName = joinPoint.signature.toShortString()
         try {
             val traceid =
-                MDC.get(HttpOperation.MDC_TRACEID) ?: Integer.toHexString(Random.nextInt())
+                MDC.get(HttpOperation.MDC_TRACEID) ?: java.lang.Long.toHexString(Random.nextLong())
             MDC.put(HttpOperation.MDC_TRACEID, traceid)
             logger.info("==={} started===", methodName)
             val result = joinPoint.proceed()

@@ -114,7 +114,7 @@ class RequestLoggingFilter(
         try {
             var traceid = request.getHeader(HttpOperation.MDC_TRACEID)
             if (traceid.isNullOrBlank()) {
-                traceid = Integer.toHexString(Random.nextInt())
+                traceid = java.lang.Long.toHexString(Random.nextLong())
             }
             MDC.put(HttpOperation.MDC_TRACEID, traceid)
             filterChain.doFilter(requestToUse, responseToUse)
