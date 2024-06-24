@@ -9,7 +9,6 @@ import org.slf4j.MDC
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
 import top.bettercode.summer.tools.lang.operation.HttpOperation
-import kotlin.random.Random
 
 @Aspect
 class MethodLoggingAspect {
@@ -21,8 +20,7 @@ class MethodLoggingAspect {
     fun logProceed(joinPoint: ProceedingJoinPoint): Any? {
         val methodName = joinPoint.signature.toShortString()
         try {
-            val traceid =
-                MDC.get(HttpOperation.MDC_TRACEID) ?: java.lang.Long.toHexString(Random.nextLong())
+            val traceid = HttpOperation.traceid()
             MDC.put(HttpOperation.MDC_TRACEID, traceid)
             logger.info("==={} started===", methodName)
             val result = joinPoint.proceed()

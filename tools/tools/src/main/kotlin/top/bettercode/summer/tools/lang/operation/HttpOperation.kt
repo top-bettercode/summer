@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.lang.operation
 
+import org.slf4j.MDC
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -7,6 +8,7 @@ import org.springframework.http.MediaType
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.PrintWriter
 import java.io.StringWriter
+import kotlin.random.Random
 
 /**
  *
@@ -23,6 +25,11 @@ object HttpOperation {
     @JvmField
     val REQUEST_LOGGING_USERNAME = HttpOperation::class.java.name + ".username"
     const val SEPARATOR_LINE = "------------------------------------------------------------"
+
+
+    fun traceid(): String {
+        return MDC.get(MDC_TRACEID) ?: Integer.toHexString(Random.nextInt())
+    }
 
     fun toString(
         output: Operation,
