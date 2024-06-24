@@ -10,6 +10,18 @@ import java.io.File
  * @since 0.0.45
  */
 class PumlConverterTest {
+    private val extension = GeneratorExtension(
+        projectDir = File("build/resources/test/"),
+        dir = "gen/java",
+        packageName = "com.bettercode.test",
+        replaceAll = true
+    )
+    private val databaseConfiguration = DatabaseConfiguration()
+
+    init {
+        extension.databases = mapOf(GeneratorExtension.DEFAULT_MODULE_NAME to databaseConfiguration)
+    }
+
     val oraclePuml = File(
         PumlConverterTest::class.java.getResource("/puml/src/oracle.puml")?.file
             ?: throw IllegalStateException()
@@ -34,16 +46,17 @@ class PumlConverterTest {
         System.err.println(sequenceStartWith)
     }
 
+
     @Test
     fun convert() {
-        val tables = PumlConverter.toTables(DatabaseConfiguration(), oraclePuml)
+        val tables = PumlConverter.toTables(databaseConfiguration, oraclePuml)
         println(tables)
     }
 
     @Test
     fun compile() {
         PumlConverter.compile(
-            DatabaseConfiguration().apply { extension = GeneratorExtension() },
+            databaseConfiguration.apply { extension = GeneratorExtension() },
             oraclePuml,
             File("build/gen/puml/database.puml")
         )
@@ -52,7 +65,7 @@ class PumlConverterTest {
     @Test
     fun toMysql() {
         PumlConverter.toMysql(
-            DatabaseConfiguration().apply { extension = GeneratorExtension() },
+            databaseConfiguration.apply { extension = GeneratorExtension() },
             oraclePuml,
             File("build/gen/puml/database.puml")
         )
