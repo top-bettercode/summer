@@ -364,8 +364,10 @@ object RecipeSolver {
         if (minMaterialNum) {
             //使用最小数量原料
             val materialsCount = recipeMaterials.values.map {
-                val intVar = intVar(0.0, 1.0)
-                intVar.geConst(1.0).onlyEnforceIf(it.weight.gtConst(0.0))
+                //数量放大100倍，避免CPLEX无法搜索最小数量
+                val intVar = intVar(0.0, 1.0 * RecipeUtil.DEFAULT_COUNT_MULTIPLE)
+                intVar.geConst(1.0 * RecipeUtil.DEFAULT_COUNT_MULTIPLE)
+                    .onlyEnforceIf(it.weight.gtConst(0.0))
                 intVar
             }.sum()
 

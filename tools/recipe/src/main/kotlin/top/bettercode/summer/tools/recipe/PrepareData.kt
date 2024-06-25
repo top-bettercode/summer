@@ -40,7 +40,7 @@ data class PrepareData(
             optimalProductionCost = requirement.productionCost.computeFee(
                 this.materialItems?.map { CarrierValue(it.it, it.value.value) },
                 this.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
-            cost = if (minMaterialNum) value - materials.size else value,
+            cost = if (minMaterialNum) value - materials.size * RecipeUtil.DEFAULT_COUNT_MULTIPLE else value,
             materials = materials
         )
     }
