@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.optimal.cplex
 
 import ilog.cplex.IloCplex
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.IVar
 
 /**
@@ -9,20 +8,20 @@ import top.bettercode.summer.tools.optimal.IVar
  * @author Peter Wu
  */
 class CplexObjectiveVar(
-        val model: IloCplex,
-        override val isInt: Boolean = false,
-        override val coeff: Double = 1.0
+    val model: IloCplex,
+    override val isInt: Boolean = false,
+    override val coeff: Double = 1.0
 ) : IVar {
 
     override val value: Double
-        get() = model.objValue.scale()
+        get() = model.objValue
 
     override var lb: Double
-        get() = model.objValue.scale()
+        get() = model.objValue
         set(_) {}
 
     override var ub: Double
-        get() = model.objValue.scale()
+        get() = model.objValue
         set(_) {}
 
 

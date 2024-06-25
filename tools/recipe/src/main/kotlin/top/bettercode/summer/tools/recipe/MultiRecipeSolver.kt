@@ -48,14 +48,12 @@ object MultiRecipeSolver {
                         }
                     }
                     // 求解
-                    solve()
-                    if (isOptimal()) {
-                        val recipeMaterials = prepareData.recipeMaterials
-                        // 约束
-                        val recipe =
-                            prepareData.toRecipe("${so.name}-${recipeResult.recipes.size + 1}")
-                        val first = recipeResult.recipes.isEmpty()
+                    val recipe =
+                        prepareData.solve(this, "${so.name}-${recipeResult.recipes.size + 1}")
+                    if (recipe != null) {
                         recipeResult.addRecipe(recipe)
+                        val recipeMaterials = prepareData.recipeMaterials
+                        val first = recipeResult.recipes.isEmpty()
                         if (first) {
                             val useMaterials: Map<String, RecipeMaterialValue> =
                                 recipe.materials.associateBy { it.id }
@@ -82,9 +80,7 @@ object MultiRecipeSolver {
                         // 添加价格约束，约束下一个解的范围
                         // 前十个每3元价差一推，后十个每5元价差一推。
                         val cost = recipe.cost
-                        recipeMaterials.map { (_, material) ->
-                            material.weight * material.price
-                        }.ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
+                        prepareData.objectiveVars.ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
                     } else {
                         log.warn("Could not find optimal solution:${getResultStatus()}")
                         e = System.currentTimeMillis()

@@ -1,5 +1,5 @@
 {
-  "cost" : 2364.3467503007,
+  "cost" : 2364.3467503007387,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -30,7 +30,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.0,
+    "weight" : 379.99999999999994,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 296.8035744973,
+    "weight" : 296.80357449733646,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -306,7 +306,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.3260869565,
+    "weight" : 35.32608695652172,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -458,7 +458,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.4953385461,
+    "weight" : 48.49533854614195,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -517,8 +517,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "SCIPSolver-1",
-  "dryWaterWeight" : -1.0E-10,
-  "materialCost" : 2364.3467503006,
+  "dryWaterWeight" : 0.0,
+  "materialCost" : 2364.3467503007,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -580,5 +580,5 @@
   },
   "totalNutrientWeight" : 403.0,
   "waterWeight" : 8.7171195652,
-  "weight" : 999.9999999999
+  "weight" : 1000.0
 }

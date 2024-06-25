@@ -2,26 +2,26 @@ package top.bettercode.summer.tools.optimal.ortools
 
 import com.google.ortools.linearsolver.MPObjective
 import top.bettercode.summer.tools.optimal.IVar
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 
 /**
  *
  * @author Peter Wu
  */
-class MPObjectiveVar(private val _delegate: MPObjective,
-                     override val isInt: Boolean = false,
-                     override val coeff: Double = 1.0
+class MPObjectiveVar(
+    private val _delegate: MPObjective,
+    override val isInt: Boolean = false,
+    override val coeff: Double = 1.0
 ) : IVar {
 
     override val value: Double
-        get() = _delegate.value().scale()
+        get() = _delegate.value()
 
     override var lb: Double
-        get() = _delegate.value().scale()
+        get() = _delegate.value()
         set(_) {}
 
     override var ub: Double
-        get() = _delegate.value().scale()
+        get() = _delegate.value()
         set(_) {}
 
     override fun times(coeff: Double): IVar {

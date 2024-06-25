@@ -29,15 +29,19 @@ object OptimalUtil {
      * @return 指定小数位数的数字
      */
     @JvmStatic
-    fun Double.scale(scale: Int = DEFAULT_SCALE): Double {
+    fun Double.scale(
+        scale: Int = DEFAULT_SCALE,
+        roundingMode: RoundingMode = RoundingMode.HALF_UP
+    ): Double {
         require(scale >= 0) { "小数位数不能为负数" }
-        return BigDecimal(this).setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros().toDouble()
+        return BigDecimal(this).setScale(scale, roundingMode).stripTrailingZeros().toDouble()
     }
 
     /**
      * 是否没有小数位数
      */
     @JvmStatic
-    val Double.isInt: Boolean get() = this.toBigDecimal().compareTo(this.toLong().toBigDecimal()) == 0
+    val Double.isInt: Boolean
+        get() = this.toBigDecimal().compareTo(this.toLong().toBigDecimal()) == 0
 
 }

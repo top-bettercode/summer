@@ -44,7 +44,7 @@ class RecipeResult @JvmOverloads constructor(
         exportRequirement(requirement)
 
         for ((index, recipe) in recipes.withIndex()) {
-            val sheetname = "配方${recipe.recipeName}${index + 1}-$productName"
+            val sheetname = "配方${recipe.recipeName}-$productName"
             sheet(sheetname)
             if (index == 0) {
                 keepInActiveTab()

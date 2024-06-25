@@ -40,16 +40,10 @@ object RecipeSolver {
                     }
                 }
                 // 求解
-                solve()
+                val solve = prepareData.solve(this)
                 val e = System.currentTimeMillis()
                 log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
-
-                if (isOptimal()) {
-                    return prepareData.toRecipe()
-                } else {
-                    log.warn("Could not find optimal solution:${getResultStatus()}")
-                    return null
-                }
+                return solve
             }
         }
     }
@@ -361,27 +355,13 @@ object RecipeSolver {
             dictItems = null
         }
 
-        if (minMaterialNum) {
-            //使用最小数量原料
-            val materialsCount = recipeMaterials.values.map {
-                //数量放大一定倍数，避免CPLEX无法搜索最小数量
-                val intVar = intVar(0.0, 1.0 * RecipeUtil.DEFAULT_COUNT_MULTIPLE)
-                intVar.geConst(1.0 * RecipeUtil.DEFAULT_COUNT_MULTIPLE)
-                    .onlyEnforceIf(it.weight.gtConst(0.0))
-                intVar
-            }.sum()
-
-            // 定义目标函数：最小化成本
-            objectiveVars.add(materialsCount)
-        }
-        val objective = objectiveVars.minimize()
         return PrepareData(
             defaultRecipeName = this.name,
             requirement = requirement,
             includeProductionCost = includeProductionCost,
             minMaterialNum = minMaterialNum,
             recipeMaterials = recipeMaterials,
-            objective = objective,
+            objectiveVars = objectiveVars,
             materialItems = materialItems,
             dictItems = dictItems
         )

@@ -2,19 +2,19 @@ package top.bettercode.summer.tools.optimal.ortools
 
 import com.google.ortools.linearsolver.MPVariable
 import top.bettercode.summer.tools.optimal.IVar
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 
 /**
  *
  * @author Peter Wu
  */
-class MPVar(private val _delegate: MPVariable,
-            override val isInt: Boolean,
-            override val coeff: Double = 1.0
+class MPVar(
+    private val _delegate: MPVariable,
+    override val isInt: Boolean,
+    override val coeff: Double = 1.0
 ) : IVar {
 
     override val value: Double
-        get() = _delegate.solutionValue().scale()
+        get() = _delegate.solutionValue()
 
     override var lb: Double
         get() = _delegate.lb()

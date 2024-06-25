@@ -38,15 +38,16 @@ internal class RecipeSolverTest {
     val solveTypes = listOf(
         SolverType.COPT,
         SolverType.CPLEX,
-        SolverType.SCIP,
         SolverType.GUROBI,
+        SolverType.SCIP,
         SolverType.CBC,
     )
 
     val maxResult = 20
-    val includeProductionCost = true
+    val includeProductionCost = false
     val nutrientUnchanged = true
     val materialUnchanged = true
+    val minMaterialNum = true
     val solveTimes = 1
     val toExcel = false
     val epsilon = 1e-4
@@ -93,7 +94,8 @@ internal class RecipeSolverTest {
             maxResult = maxResult,
             includeProductionCost = includeProductionCost,
             nutrientUnchanged = nutrientUnchanged,
-            materialUnchanged = materialUnchanged
+            materialUnchanged = materialUnchanged,
+            minMaterialNum = minMaterialNum
         )
         System.err.println("============toExcel=============")
         if (toExcel)

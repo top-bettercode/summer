@@ -3,20 +3,19 @@ package top.bettercode.summer.tools.optimal.gurobi
 import com.gurobi.gurobi.GRB
 import com.gurobi.gurobi.GRBVar
 import top.bettercode.summer.tools.optimal.IVar
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 
 /**
  *
  * @author Peter Wu
  */
 class GurobiVar(
-        private val _delegate: GRBVar,
-        override val isInt: Boolean,
-        override val coeff: Double = 1.0
+    private val _delegate: GRBVar,
+    override val isInt: Boolean,
+    override val coeff: Double = 1.0
 ) : IVar {
 
     override val value: Double
-        get() = _delegate.get(GRB.DoubleAttr.X).scale()
+        get() = _delegate.get(GRB.DoubleAttr.X)
 
     override var lb: Double
         get() = _delegate.get(GRB.DoubleAttr.LB)

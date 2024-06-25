@@ -186,7 +186,7 @@ data class Recipe(
         // 打印数据行
         for (i in names.indices) {
             val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
-            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
+            val compare = (if (compares[i]) "=" else "≠").toFullWidth().padEnd(compareWidth)
             val itValue = thisStrValues[i].padStart(itValueWidth)
             val otherValue = otherStrValues[i].padEnd(otherValueWidth)
             val diffValue = diffStrValues[i].padStart(diffValueWidth)
@@ -310,7 +310,7 @@ data class Recipe(
         // 原料约束,key:原料ID, value: 原料使用范围约束
         for ((ids, range) in materialRangeConstraints) {
             val weight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
-            if (weight !in range.min..range.max) {
+            if (weight !in range.min - RecipeUtil.DEFAULT_MIN_EPSILON..range.max + RecipeUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException("原料${ids}使用量：${weight} 不在范围${range.min}-${range.max}内")
             }
         }

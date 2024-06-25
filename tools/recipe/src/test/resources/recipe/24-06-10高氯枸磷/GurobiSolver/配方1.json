@@ -1,5 +1,5 @@
 {
-  "cost" : 2364.3467503007,
+  "cost" : 2364.346750300739,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 296.8035744973,
+    "weight" : 296.8035744973113,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -191,7 +191,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 84.375,
+    "weight" : 84.37500000001162,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -306,7 +306,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.3260869565,
+    "weight" : 35.326086956526616,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -458,7 +458,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.4953385461,
+    "weight" : 48.49533854615436,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -517,8 +517,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "GurobiSolver-1",
-  "dryWaterWeight" : -1.0E-10,
-  "materialCost" : 2364.3467503006,
+  "dryWaterWeight" : 0.0,
+  "materialCost" : 2364.3467503008,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -580,5 +580,5 @@
   },
   "totalNutrientWeight" : 403.0,
   "waterWeight" : 8.7171195652,
-  "weight" : 999.9999999999
+  "weight" : 1000.0
 }

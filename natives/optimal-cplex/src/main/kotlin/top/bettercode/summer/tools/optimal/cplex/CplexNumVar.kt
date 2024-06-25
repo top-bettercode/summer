@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.optimal.cplex
 
 import ilog.concert.IloNumVar
 import ilog.cplex.IloCplex
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.IVar
 
 /**
@@ -10,14 +9,14 @@ import top.bettercode.summer.tools.optimal.IVar
  * @author Peter Wu
  */
 class CplexNumVar(
-        private val _delegate: IloNumVar,
-        val model: IloCplex,
-        override val isInt: Boolean,
-        override val coeff: Double = 1.0
+    private val _delegate: IloNumVar,
+    val model: IloCplex,
+    override val isInt: Boolean,
+    override val coeff: Double = 1.0
 ) : IVar {
 
     override val value: Double
-        get() = model.getValue(_delegate).scale()
+        get() = model.getValue(_delegate)
 
     override var lb: Double
         get() = _delegate.lb

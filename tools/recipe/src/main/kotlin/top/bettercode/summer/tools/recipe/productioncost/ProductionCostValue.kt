@@ -94,7 +94,7 @@ data class ProductionCostValue(
         // 打印数据行
         for (i in names.indices) {
             val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
-            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
+            val compare = (if (compares[i]) "=" else "≠").toFullWidth().padEnd(compareWidth)
             val itValue = thisStrValues[i].padStart(itValueWidth)
             val otherValue = otherStrValues[i].padEnd(otherValueWidth)
             val diffValue = diffStrValues[i].padStart(diffValueWidth)
