@@ -32,8 +32,7 @@ object RecipeSolver {
                 val s = System.currentTimeMillis()
                 val prepareData = prepare(
                     requirement = requirement,
-                    includeProductionCost = includeProductionCost,
-                    minMaterialNum = minMaterialNum
+                    includeProductionCost = includeProductionCost
                 )
                 if (SolverType.COPT == so.type) {
                     val numVariables = numVariables()
@@ -54,8 +53,7 @@ object RecipeSolver {
 
     fun Solver.prepare(
         requirement: RecipeRequirement,
-        includeProductionCost: Boolean = true,
-        minMaterialNum: Boolean = true
+        includeProductionCost: Boolean = true
     ): PrepareSolveData {
         setTimeLimit(requirement.timeout)
         // 原料数量

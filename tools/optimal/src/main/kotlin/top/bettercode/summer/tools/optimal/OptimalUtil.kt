@@ -29,6 +29,7 @@ object OptimalUtil {
      * @return 指定小数位数的数字
      */
     @JvmStatic
+    @JvmOverloads
     fun Double.scale(
         scale: Int = DEFAULT_SCALE,
         roundingMode: RoundingMode = RoundingMode.HALF_UP

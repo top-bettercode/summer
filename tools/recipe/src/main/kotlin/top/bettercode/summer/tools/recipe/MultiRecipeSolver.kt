@@ -35,8 +35,7 @@ object MultiRecipeSolver {
                 val s = System.currentTimeMillis()
                 var prepareData = prepare(
                     requirement = requirement,
-                    includeProductionCost = includeProductionCost,
-                    minMaterialNum = minMaterialNum
+                    includeProductionCost = includeProductionCost
                 )
                 var eachMinMaterialNum = minMaterialNum
                 var e = System.currentTimeMillis()
@@ -65,8 +64,7 @@ object MultiRecipeSolver {
                         reset()
                         prepareData = prepare(
                             requirement = requirement,
-                            includeProductionCost = includeProductionCost,
-                            minMaterialNum = minMaterialNum
+                            includeProductionCost = includeProductionCost
                         )
                         val recipeMaterials = prepareData.recipeMaterials
                         val first = recipeResult.recipes.isEmpty()
