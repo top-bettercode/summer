@@ -55,10 +55,9 @@ class CplexSolver @JvmOverloads constructor(
         model.close()
     }
 
-    override fun clear() {
+    override fun reset() {
         model.clearModel()
         objective = null
-//        model = IloCplex()
     }
 
     override fun isOptimal(): Boolean {

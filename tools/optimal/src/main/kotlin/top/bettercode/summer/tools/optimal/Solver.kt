@@ -24,7 +24,7 @@ abstract class Solver(
 
     abstract fun setTimeLimit(seconds: Long)
     abstract fun solve()
-    abstract fun clear()
+    abstract fun reset()
     abstract fun isOptimal(): Boolean
     abstract fun getResultStatus(): String
     abstract fun numVariables(): Int

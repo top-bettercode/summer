@@ -75,7 +75,7 @@ internal class RecipeSolverTest {
             }
             finish()
         }
-//        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
+        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
     }
 
     private fun solve(

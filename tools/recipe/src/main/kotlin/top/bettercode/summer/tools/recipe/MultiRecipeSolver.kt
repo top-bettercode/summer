@@ -59,7 +59,7 @@ object MultiRecipeSolver {
                         )
                     if (recipe != null) {
                         recipeResult.addRecipe(recipe)
-                        clear()
+                        reset()
                         prepareData = prepare(
                             requirement = requirement,
                             includeProductionCost = includeProductionCost,

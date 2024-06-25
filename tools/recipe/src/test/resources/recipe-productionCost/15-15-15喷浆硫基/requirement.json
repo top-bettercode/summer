@@ -21,9 +21,9 @@
       "unit" : "%",
       "value" : {
         "max" : 1.2,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 1.2,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -35,9 +35,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 45.3,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -49,9 +49,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 14.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -63,9 +63,9 @@
       "unit" : "%",
       "value" : {
         "max" : 2.5,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -79,9 +79,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 61.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -93,9 +93,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -107,9 +107,9 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -121,9 +121,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 14.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -135,9 +135,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 14.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -149,9 +149,9 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     }
@@ -181,9 +181,9 @@
     },
     "then" : {
       "max" : 3.0,
-      "maxSense" : "LE",
+      "maxOperator" : "LE",
       "min" : 3.0,
-      "minSense" : "GE"
+      "minOperator" : "GE"
     }
   }, {
     "term" : {
@@ -191,9 +191,9 @@
     },
     "then" : {
       "max" : 2.0,
-      "maxSense" : "LE",
+      "maxOperator" : "LE",
       "min" : 2.0,
-      "minSense" : "GE"
+      "minOperator" : "GE"
     }
   }, {
     "term" : {
@@ -201,9 +201,9 @@
     },
     "then" : {
       "max" : 5.0,
-      "maxSense" : "LE",
+      "maxOperator" : "LE",
       "min" : 5.0,
-      "minSense" : "GE"
+      "minOperator" : "GE"
     }
   } ],
   "materialRelationConstraints" : [ {
@@ -217,15 +217,15 @@
       "then" : {
         "normal" : {
           "max" : 1.224671141,
-          "maxSense" : "LE",
+          "maxOperator" : "LE",
           "min" : 1.224671141,
-          "minSense" : "GE"
+          "minOperator" : "GE"
         },
         "overdose" : {
           "max" : 0.306167785,
-          "maxSense" : "LE",
+          "maxOperator" : "LE",
           "min" : 0.122467114,
-          "minSense" : "GE"
+          "minOperator" : "GE"
         }
       }
     } ]
@@ -244,9 +244,9 @@
       "then" : {
         "normal" : {
           "max" : 0.055505762,
-          "maxSense" : "LE",
+          "maxOperator" : "LE",
           "min" : 0.049338455,
-          "minSense" : "GE"
+          "minOperator" : "GE"
         }
       }
     }, {
@@ -256,9 +256,9 @@
       "then" : {
         "normal" : {
           "max" : 0.010535211,
-          "maxSense" : "LE",
+          "maxOperator" : "LE",
           "min" : 0.008619718,
-          "minSense" : "GE"
+          "minOperator" : "GE"
         }
       }
     }, {
@@ -268,9 +268,9 @@
       "then" : {
         "normal" : {
           "max" : 0.01915493,
-          "maxSense" : "LE",
+          "maxOperator" : "LE",
           "min" : 0.017239437,
-          "minSense" : "GE"
+          "minOperator" : "GE"
         }
       }
     }, {
@@ -283,16 +283,16 @@
       "then" : {
         "normal" : {
           "max" : 0.175221604,
-          "maxSense" : "LE",
+          "maxOperator" : "LE",
           "min" : 0.175221604,
-          "minSense" : "GE"
+          "minOperator" : "GE"
         },
         "overdoseMaterial" : {
           "normal" : {
             "max" : 0.350443208,
-            "maxSense" : "LE",
+            "maxOperator" : "LE",
             "min" : 0.350443208,
-            "minSense" : "GE"
+            "minOperator" : "GE"
           }
         }
       }

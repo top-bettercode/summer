@@ -7,11 +7,11 @@ import top.bettercode.summer.tools.optimal.Operator
 
 @JsonPropertyOrder(alphabetic = true)
 data class DoubleRange(
-    @JsonProperty("minSense")
+    @JsonProperty("minOperator")
     val minOperator: Operator,
     @JsonProperty("min")
     val min: Double,
-    @JsonProperty("maxSense")
+    @JsonProperty("maxOperator")
     val maxOperator: Operator,
     @JsonProperty("max")
     val max: Double,

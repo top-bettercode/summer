@@ -802,7 +802,7 @@ open class SCIPSolverTest {
     }
 
     protected fun Solver.numVariables(num: Int) {
-        clear()
+        reset()
         val numVarArray = numVarArray(num / 2, 0.0, 1000.0)
         val intVarArray = intVarArray(num - num / 2, 0.0, 1000.0)
         for (i in 0 until num / 2) {
@@ -822,7 +822,7 @@ open class SCIPSolverTest {
     }
 
     protected fun Solver.lpNumVariables(num: Int) {
-        clear()
+        reset()
         val numVarArray = numVarArray(num, 0.0, 1000.0)
         for (i in 0 until num) {
             numVarArray[i].le(i.toDouble())

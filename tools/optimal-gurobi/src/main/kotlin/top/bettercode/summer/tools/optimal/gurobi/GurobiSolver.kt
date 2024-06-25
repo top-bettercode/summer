@@ -15,9 +15,9 @@ import kotlin.math.min
  * @author Peter Wu
  */
 class GurobiSolver @JvmOverloads constructor(
-        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-        logging: Boolean = false,
-        name: String = "GurobiSolver"
+    epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    logging: Boolean = false,
+    name: String = "GurobiSolver"
 ) : Solver(name = name, type = SolverType.GUROBI, epsilon = epsilon) {
 
     private val env = GRBEnv()
@@ -88,8 +88,8 @@ class GurobiSolver @JvmOverloads constructor(
         env.dispose()
     }
 
-    override fun clear() {
-        model= GRBModel(env)
+    override fun reset() {
+        model = GRBModel(env)
     }
 
     override fun isOptimal(): Boolean {
@@ -125,22 +125,34 @@ class GurobiSolver @JvmOverloads constructor(
     private fun IVar.expr() = GRBLinExpr().also { it.addTerm(this.coeff, this.getDelegate()) }
 
     override fun boolVar(name: String?): IVar {
-        val gurobiVar = GurobiVar(_delegate = model.addVar(0.0, 1.0, 1.0, GRB.BINARY, name
-                ?: ("b" + (numVariables() + 1))), isInt = true)
+        val gurobiVar = GurobiVar(
+            _delegate = model.addVar(
+                0.0, 1.0, 1.0, GRB.BINARY, name
+                    ?: ("b" + (numVariables() + 1))
+            ), isInt = true
+        )
         model.update()
         return gurobiVar
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        val gurobiVar = GurobiVar(_delegate = model.addVar(lb, ub, 1.0, GRB.INTEGER, name
-                ?: ("i" + (numVariables() + 1))), isInt = true)
+        val gurobiVar = GurobiVar(
+            _delegate = model.addVar(
+                lb, ub, 1.0, GRB.INTEGER, name
+                    ?: ("i" + (numVariables() + 1))
+            ), isInt = true
+        )
         model.update()
         return gurobiVar
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        val gurobiVar = GurobiVar(_delegate = model.addVar(lb, ub, 1.0, GRB.CONTINUOUS, name
-                ?: ("n" + (numVariables() + 1))), isInt = false)
+        val gurobiVar = GurobiVar(
+            _delegate = model.addVar(
+                lb, ub, 1.0, GRB.CONTINUOUS, name
+                    ?: ("n" + (numVariables() + 1))
+            ), isInt = false
+        )
         model.update()
         return gurobiVar
     }
@@ -416,47 +428,117 @@ class GurobiSolver @JvmOverloads constructor(
 
 
     override fun IVar.geIf(value: Double, bool: IVar) {
-        model.addGenConstrIndicator(bool.getDelegate(), 1, this.expr(), GRB.GREATER_EQUAL, value, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            1,
+            this.expr(),
+            GRB.GREATER_EQUAL,
+            value,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 
     override fun IVar.geIfNot(value: Double, bool: IVar) {
-        model.addGenConstrIndicator(bool.getDelegate(), 0, this.expr(), GRB.GREATER_EQUAL, value, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            0,
+            this.expr(),
+            GRB.GREATER_EQUAL,
+            value,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 
     override fun IVar.leIf(value: Double, bool: IVar) {
-        model.addGenConstrIndicator(bool.getDelegate(), 1, this.expr(), GRB.LESS_EQUAL, value, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            1,
+            this.expr(),
+            GRB.LESS_EQUAL,
+            value,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 
     override fun IVar.leIfNot(value: Double, bool: IVar) {
-        model.addGenConstrIndicator(bool.getDelegate(), 0, this.expr(), GRB.LESS_EQUAL, value, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            0,
+            this.expr(),
+            GRB.LESS_EQUAL,
+            value,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 
 
     override fun IVar.eqIf(value: Double, bool: IVar) {
-        model.addGenConstrIndicator(bool.getDelegate(), 1, this.expr(), GRB.EQUAL, value, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            1,
+            this.expr(),
+            GRB.EQUAL,
+            value,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 
     override fun IVar.eqIfNot(value: Double, bool: IVar) {
-        model.addGenConstrIndicator(bool.getDelegate(), 0, this.expr(), GRB.EQUAL, value, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            0,
+            this.expr(),
+            GRB.EQUAL,
+            value,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
         val expr = this.expr()
-        model.addGenConstrIndicator(bool.getDelegate(), 1, expr, GRB.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
-        model.addGenConstrIndicator(bool.getDelegate(), 1, expr, GRB.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            1,
+            expr,
+            GRB.GREATER_EQUAL,
+            lb,
+            "c" + (numConstraints() + 1)
+        )
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            1,
+            expr,
+            GRB.LESS_EQUAL,
+            ub,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 
     override fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar) {
         val expr = this.expr()
-        model.addGenConstrIndicator(bool.getDelegate(), 0, expr, GRB.GREATER_EQUAL, lb, "c" + (numConstraints() + 1))
-        model.addGenConstrIndicator(bool.getDelegate(), 0, expr, GRB.LESS_EQUAL, ub, "c" + (numConstraints() + 1))
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            0,
+            expr,
+            GRB.GREATER_EQUAL,
+            lb,
+            "c" + (numConstraints() + 1)
+        )
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            0,
+            expr,
+            GRB.LESS_EQUAL,
+            ub,
+            "c" + (numConstraints() + 1)
+        )
         model.update()
     }
 

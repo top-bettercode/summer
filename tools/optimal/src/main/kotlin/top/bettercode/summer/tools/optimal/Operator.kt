@@ -44,8 +44,8 @@ enum class Operator(val operator: String) {
 
         @JvmStatic
         fun validate(operator: String): Boolean {
-            for (sense in values()) {
-                if (sense.operator == (otherOperator[operator] ?: operator)) {
+            for (op in values()) {
+                if (op.operator == (otherOperator[operator] ?: operator)) {
                     return true
                 }
             }
@@ -54,9 +54,9 @@ enum class Operator(val operator: String) {
 
         @JvmStatic
         fun of(operator: String): Operator {
-            for (sense in values()) {
-                if (sense.operator == (otherOperator[operator] ?: operator)) {
-                    return sense
+            for (op in values()) {
+                if (op.operator == (otherOperator[operator] ?: operator)) {
+                    return op
                 }
             }
             throw IllegalArgumentException("symbol=$operator not found")

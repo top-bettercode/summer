@@ -13,7 +13,7 @@ data class RecipeCondition(
     /**
          * 符号
          */
-        @JsonProperty("sense")
+        @JsonProperty("operator")
         val operator: Operator = Operator.EQ,
 
     /**

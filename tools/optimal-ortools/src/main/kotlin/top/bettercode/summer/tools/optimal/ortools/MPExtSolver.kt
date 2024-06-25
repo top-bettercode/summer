@@ -57,9 +57,8 @@ open class MPExtSolver @JvmOverloads constructor(
         solver.clear()
     }
 
-    override fun clear() {
+    override fun reset() {
         solver.clear()
-//        solver = MPSolver(name, mpType)
     }
 
     override fun isOptimal(): Boolean {

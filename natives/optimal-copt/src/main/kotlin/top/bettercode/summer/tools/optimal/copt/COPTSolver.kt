@@ -47,9 +47,8 @@ class COPTSolver @JvmOverloads constructor(
         env.dispose()
     }
 
-    override fun clear() {
+    override fun reset() {
         model.clear()
-//        model = env.createModel(name)
     }
 
     override fun isOptimal(): Boolean {
