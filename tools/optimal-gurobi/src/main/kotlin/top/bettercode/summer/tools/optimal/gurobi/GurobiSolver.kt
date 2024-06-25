@@ -12,6 +12,8 @@ import kotlin.math.min
 /**
  * https://www.gurobi.com/documentation/11.0/refman/java_api_overview.html
  *
+ * without license the size is limited to 2000 variables and 2000 constraints
+ *
  * @author Peter Wu
  */
 class GurobiSolver @JvmOverloads constructor(
