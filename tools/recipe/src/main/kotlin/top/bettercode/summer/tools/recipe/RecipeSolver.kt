@@ -365,7 +365,7 @@ object RecipeSolver {
             //原料数量使用最小
             val materialsCount = recipeMaterials.values.map {
                 val intVar = intVar(0.0, 1.0)
-                intVar.const(Sense.GE, 1.0).onlyEnforceIf(it.weight.const(Sense.GT, 0.0))
+                intVar.geConst(1.0).onlyEnforceIf(it.weight.gtConst(0.0))
                 intVar
             }.sum()
 
