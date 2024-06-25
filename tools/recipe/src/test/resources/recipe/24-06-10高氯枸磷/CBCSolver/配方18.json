@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 114.5864093478,
+    "weight" : 345.2158990239,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -191,7 +191,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 81.9194977242,
+    "weight" : 84.375,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -306,7 +306,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 109.2004367615,
+    "weight" : 35.3260869565,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -441,8 +441,8 @@
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "石粉（尿基高塔用）",
-      "index" : 55,
+      "id" : "七钼酸铵",
+      "index" : 46,
       "indicators" : {
         "物料水分" : {
           "id" : "物料水分",
@@ -450,17 +450,26 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 1.0,
+          "value" : 0.5,
+          "scale" : 0.01
+        },
+        "钼" : {
+          "id" : "钼",
+          "index" : 15,
+          "name" : "钼",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 54.0,
           "scale" : 0.01
         }
       },
-      "name" : "石粉（尿基高塔用）",
-      "price" : 0.24,
+      "name" : "七钼酸铵",
+      "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 159.2936561665,
-    "id" : "石粉（尿基高塔用）",
-    "index" : 55,
+    "weight" : 0.0830140196,
+    "id" : "七钼酸铵",
+    "index" : 46,
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
@@ -468,14 +477,23 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 1.0,
+        "value" : 0.5,
+        "scale" : 0.01
+      },
+      "钼" : {
+        "id" : "钼",
+        "index" : 15,
+        "name" : "钼",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 54.0,
         "scale" : 0.01
       }
     },
-    "name" : "石粉（尿基高塔用）",
+    "name" : "七钼酸铵",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 0.24,
+    "price" : 160.0,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -516,8 +534,9 @@
     "price" : 2.0,
     "unit" : "吨"
   } ],
+  "recipeName" : "CBCSolver-18",
   "dryWaterWeight" : 0.0,
-  "materialCost" : 2431.3467503007,
+  "materialCost" : 2431.3467502964,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -577,7 +596,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 403.0,
-  "waterWeight" : 8.3231927934,
+  "totalNutrientWeight" : 415.2483181052,
+  "waterWeight" : 8.7167044951,
   "weight" : 1000.0
 }

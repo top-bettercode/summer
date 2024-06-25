@@ -39,7 +39,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 509.8143401586,
+    "weight" : 527.6517627125,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -99,7 +99,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.4910474631,
+        "normal" : 0.0710161915,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -111,7 +111,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.5845490918,
+        "normal" : 2.387324017,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -146,7 +146,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 4.0755965549,
+    "weight" : 2.4583402085,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -170,7 +170,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 4.075596554900001,
+    "normalWeight" : 2.4583402085,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -232,7 +232,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 183.8284143186,
+    "weight" : 276.9608027778,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "indicators" : {
@@ -347,7 +347,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 144.4970310273,
+    "weight" : 4.1194031732,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -407,16 +407,36 @@
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "95%氯化钾烘干粉（国产）",
-      "index" : 36,
+      "id" : "工业一铵73%",
+      "index" : 26,
       "indicators" : {
-        "氯离子" : {
-          "id" : "氯离子",
-          "index" : 4,
-          "name" : "氯离子",
+        "氮" : {
+          "id" : "氮",
+          "index" : 1,
+          "name" : "氮",
+          "type" : "NUTRIENT",
+          "unit" : "%",
+          "value" : 11.0,
+          "scale" : 0.01
+        },
+        "水溶磷" : {
+          "id" : "水溶磷",
+          "index" : 8,
+          "name" : "水溶磷",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 47.7,
+          "value" : 62.0,
+          "scale" : 0.01
+        },
+        "水溶磷率" : {
+          "id" : "水溶磷率",
+          "index" : 7,
+          "itId" : "水溶磷",
+          "name" : "水溶磷率",
+          "otherId" : "磷",
+          "type" : "RATE_TO_OTHER",
+          "unit" : "%",
+          "value" : 100.0,
           "scale" : 0.01
         },
         "物料水分" : {
@@ -425,34 +445,54 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 1.0,
+          "value" : 0.5,
           "scale" : 0.01
         },
-        "钾" : {
-          "id" : "钾",
-          "index" : 3,
-          "name" : "钾",
+        "磷" : {
+          "id" : "磷",
+          "index" : 2,
+          "name" : "磷",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 60.0,
+          "value" : 62.0,
           "scale" : 0.01
         }
       },
-      "name" : "95%氯化钾烘干粉（国产）",
-      "price" : 3.55,
+      "name" : "工业一铵73%",
+      "price" : 6.22,
       "unit" : "吨"
     },
-    "weight" : 53.3380489602,
-    "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 36,
+    "weight" : 57.4455412338,
+    "id" : "工业一铵73%",
+    "index" : 26,
     "indicators" : {
-      "氯离子" : {
-        "id" : "氯离子",
-        "index" : 4,
-        "name" : "氯离子",
+      "氮" : {
+        "id" : "氮",
+        "index" : 1,
+        "name" : "氮",
+        "type" : "NUTRIENT",
+        "unit" : "%",
+        "value" : 11.0,
+        "scale" : 0.01
+      },
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "index" : 8,
+        "name" : "水溶磷",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 47.7,
+        "value" : 62.0,
+        "scale" : 0.01
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "index" : 7,
+        "itId" : "水溶磷",
+        "name" : "水溶磷率",
+        "otherId" : "磷",
+        "type" : "RATE_TO_OTHER",
+        "unit" : "%",
+        "value" : 100.0,
         "scale" : 0.01
       },
       "物料水分" : {
@@ -461,23 +501,23 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 1.0,
+        "value" : 0.5,
         "scale" : 0.01
       },
-      "钾" : {
-        "id" : "钾",
-        "index" : 3,
-        "name" : "钾",
+      "磷" : {
+        "id" : "磷",
+        "index" : 2,
+        "name" : "磷",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 60.0,
+        "value" : 62.0,
         "scale" : 0.01
       }
     },
-    "name" : "95%氯化钾烘干粉（国产）",
+    "name" : "工业一铵73%",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.55,
+    "price" : 6.22,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -555,7 +595,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 179.9952843731,
+    "weight" : 233.3333333333,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -593,7 +633,8 @@
     "price" : 3.55,
     "unit" : "吨"
   } ],
-  "dryWaterWeight" : 80.5487153927,
+  "recipeName" : "GurobiSolver-20",
+  "dryWaterWeight" : 106.9691834391,
   "materialCost" : 2391.9234792906,
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -624,7 +665,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 34.0155380398,
+    "energyFee" : 38.3749152675,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -636,7 +677,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.455487153927
+      "value" : 1.719691834391
     }, {
       "it" : {
         "id" : "生物质",
@@ -652,9 +693,9 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 221.2460934202
+    "totalFee" : 225.6490644201
   },
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 95.5487153927,
-  "weight" : 1080.5487153927
+  "waterWeight" : 121.9691834391,
+  "weight" : 1106.9691834391
 }

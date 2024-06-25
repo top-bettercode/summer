@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 122.7138475793,
+    "weight" : 334.6414123351,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -191,7 +191,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 108.790840377,
+    "weight" : 84.375,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -306,7 +306,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 85.834051846,
+    "weight" : 35.3260869565,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -458,7 +458,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 147.6612601977,
+    "weight" : 10.6575007083,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -516,7 +516,8 @@
     "price" : 2.0,
     "unit" : "吨"
   } ],
-  "dryWaterWeight" : 0.0,
+  "recipeName" : "CBCSolver-13",
+  "dryWaterWeight" : -1.0E-10,
   "materialCost" : 2406.3467503006,
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -577,7 +578,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 403.0,
-  "waterWeight" : 8.7087381445,
-  "weight" : 1000.0
+  "totalNutrientWeight" : 412.5729729729,
+  "waterWeight" : 8.7171195652,
+  "weight" : 999.9999999999
 }

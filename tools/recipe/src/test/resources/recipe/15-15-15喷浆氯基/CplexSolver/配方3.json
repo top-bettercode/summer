@@ -672,6 +672,7 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
+  "recipeName" : "CplexSolver-3",
   "dryWaterWeight" : 236.3372776804,
   "materialCost" : 2321.4244417908,
   "packagingCost" : 52.13,

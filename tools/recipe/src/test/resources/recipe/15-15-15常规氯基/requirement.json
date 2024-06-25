@@ -1,4 +1,5 @@
 {
+  "id" : "15-15-15常规氯基",
   "indicatorMaterialIDConstraints" : { },
   "indicatorRangeConstraints" : {
     "产品水分" : {
@@ -9,7 +10,9 @@
       "unit" : "%",
       "value" : {
         "max" : 1.5,
-        "min" : 1.5
+        "maxSense" : "LE",
+        "min" : 1.5,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -21,7 +24,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 45.3
+        "maxSense" : "LE",
+        "min" : 45.3,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -33,7 +38,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 14.0
+        "maxSense" : "LE",
+        "min" : 14.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -45,7 +52,9 @@
       "unit" : "%",
       "value" : {
         "max" : 99.5,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -59,7 +68,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 61.0
+        "maxSense" : "LE",
+        "min" : 61.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -71,7 +82,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -83,7 +96,9 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -95,7 +110,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 14.0
+        "maxSense" : "LE",
+        "min" : 14.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -107,7 +124,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "min" : 14.0
+        "maxSense" : "LE",
+        "min" : 14.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     },
@@ -119,10 +138,15 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "min" : 0.0
+        "maxSense" : "LE",
+        "min" : 0.0,
+        "minSense" : "GE"
       },
       "scale" : 0.01
     }
+  },
+  "keepMaterialConstraints" : {
+    "ids" : [ ]
   },
   "materialConditionConstraints" : [ {
     "term" : {
@@ -151,7 +175,9 @@
     },
     "then" : {
       "max" : 3.0,
-      "min" : 3.0
+      "maxSense" : "LE",
+      "min" : 3.0,
+      "minSense" : "GE"
     }
   }, {
     "term" : {
@@ -159,7 +185,9 @@
     },
     "then" : {
       "max" : 2.0,
-      "min" : 2.0
+      "maxSense" : "LE",
+      "min" : 2.0,
+      "minSense" : "GE"
     }
   } ],
   "materialRelationConstraints" : [ {
@@ -177,7 +205,9 @@
       "then" : {
         "normal" : {
           "max" : 0.010535211,
-          "min" : 0.008619718
+          "maxSense" : "LE",
+          "min" : 0.008619718,
+          "minSense" : "GE"
         }
       }
     }, {
@@ -187,7 +217,9 @@
       "then" : {
         "normal" : {
           "max" : 0.01915493,
-          "min" : 0.017239437
+          "maxSense" : "LE",
+          "min" : 0.017239437,
+          "minSense" : "GE"
         }
       }
     } ]
@@ -3059,9 +3091,6 @@
     }
   },
   "targetWeight" : 1000.0,
-  "useMaterialConstraints" : {
-    "ids" : [ ]
-  },
   "yield" : 1.0,
   "timeout" : 30
 }

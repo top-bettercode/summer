@@ -39,7 +39,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 340.1443416018,
+    "weight" : 339.4522683725,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -95,7 +95,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.2953695072,
+        "normal" : 2.0648464285,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -103,7 +103,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 3.0153216467,
+        "normal" : 3.0757435208,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -115,7 +115,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 5.5506E-6,
+        "normal" : 2.4941992108,
         "overdose" : 0.0
       }
     },
@@ -146,7 +146,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 5.3106967045,
+    "weight" : 7.6347891601,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -170,7 +170,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 5.3106967045,
+    "normalWeight" : 7.6347891601,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -232,7 +232,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 286.213692989,
+    "weight" : 291.9489244965,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -347,7 +347,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 119.8317878054,
+    "weight" : 107.7971273464,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -453,7 +453,7 @@
       "price" : 1.05,
       "unit" : "吨"
     },
-    "weight" : 1.0E-4,
+    "weight" : 44.9358610876,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -539,7 +539,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 238.9864656897,
+    "weight" : 233.3333333333,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
     "indicators" : {
@@ -672,7 +672,8 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "dryWaterWeight" : 10.4870847904,
+  "recipeName" : "SCIPSolver-8",
+  "dryWaterWeight" : 45.1023037964,
   "materialCost" : 2336.4244417906,
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -703,7 +704,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 20.8720742936,
+    "energyFee" : 25.6918801264,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -715,7 +716,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.6589135935520001
+      "value" : 0.951023037965
     }, {
       "it" : {
         "id" : "生物质",
@@ -731,9 +732,9 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 207.9711950365
+    "totalFee" : 212.8391989277
   },
-  "totalNutrientWeight" : 452.9999999999,
-  "waterWeight" : 15.8913593552,
-  "weight" : 1010.4870847904
+  "totalNutrientWeight" : 455.8027792063,
+  "waterWeight" : 45.1023037965,
+  "weight" : 1045.1023037964
 }

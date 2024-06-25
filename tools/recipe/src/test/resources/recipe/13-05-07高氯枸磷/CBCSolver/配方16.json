@@ -39,7 +39,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 570.7550009028,
+    "weight" : 474.3083003953,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -125,7 +125,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 347.1356055115,
+    "weight" : 521.4285714286,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -251,6 +251,63 @@
   }, {
     "consumes" : { },
     "material" : {
+      "id" : "EDTA-镁",
+      "index" : 33,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.5,
+          "scale" : 0.01
+        },
+        "镁" : {
+          "id" : "镁",
+          "index" : 16,
+          "name" : "镁",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 6.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "EDTA-镁",
+      "price" : 29.3,
+      "unit" : "吨"
+    },
+    "weight" : 1.9453924915,
+    "id" : "EDTA-镁",
+    "index" : 33,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.5,
+        "scale" : 0.01
+      },
+      "镁" : {
+        "id" : "镁",
+        "index" : 16,
+        "name" : "镁",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 6.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "EDTA-镁",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 29.3,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
       "id" : "白泥",
       "index" : 53,
       "indicators" : {
@@ -288,8 +345,9 @@
     "price" : 0.35,
     "unit" : "吨"
   } ],
-  "dryWaterWeight" : 97.8906064143,
-  "materialCost" : 1299.3162055336,
+  "recipeName" : "CBCSolver-16",
+  "dryWaterWeight" : 177.6822643154,
+  "materialCost" : 1299.3162055346,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -350,6 +408,6 @@
     "totalFee" : 213.6554
   },
   "totalNutrientWeight" : 253.0,
-  "waterWeight" : 133.8050119381,
-  "weight" : 1097.8906064143
+  "waterWeight" : 193.8528099664,
+  "weight" : 1177.6822643154
 }
