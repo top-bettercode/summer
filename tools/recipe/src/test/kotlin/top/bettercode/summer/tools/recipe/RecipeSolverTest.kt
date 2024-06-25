@@ -47,7 +47,7 @@ internal class RecipeSolverTest {
     val includeProductionCost = true
     val nutrientUnchanged = true
     val materialUnchanged = true
-    val minMaterialNum = false
+    val minMaterialNum = true
     val solveTimes = 1
     val toExcel = false
     val epsilon = 1e-4
@@ -75,7 +75,7 @@ internal class RecipeSolverTest {
             }
             finish()
         }
-        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
+//        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
     }
 
     private fun solve(

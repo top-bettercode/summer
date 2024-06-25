@@ -21,7 +21,6 @@ data class PrepareSolveData(
     val epsilon: Double,
     val requirement: RecipeRequirement,
     val includeProductionCost: Boolean,
-    val minMaterialNum: Boolean,
     val recipeMaterials: Map<String, RecipeMaterialVar>,
     val objectiveVars: List<IVar>,
     val materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>?,
@@ -31,7 +30,7 @@ data class PrepareSolveData(
     private val log = LoggerFactory.getLogger(PrepareSolveData::class.java)
 
     @JvmOverloads
-    fun solve(solver: Solver, recipeName: String? = null): Recipe? {
+    fun solve(solver: Solver, minMaterialNum: Boolean, recipeName: String? = null): Recipe? {
         solver.apply {
             val minimize = objectiveVars.minimize()
             solve()

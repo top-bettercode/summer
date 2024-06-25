@@ -38,6 +38,7 @@ object MultiRecipeSolver {
                     includeProductionCost = includeProductionCost,
                     minMaterialNum = minMaterialNum
                 )
+                var eachMinMaterialNum = minMaterialNum
                 var e = System.currentTimeMillis()
                 val recipeResult = RecipeResult(requirement = requirement, solverName = name)
                 while ((e - s) / 1000 < requirement.timeout
@@ -55,10 +56,12 @@ object MultiRecipeSolver {
                     val recipe =
                         prepareData.solve(
                             this,
+                            eachMinMaterialNum,
                             "${so.name}-${recipeResult.recipes.size + 1}"
                         )
                     if (recipe != null) {
                         recipeResult.addRecipe(recipe)
+                        eachMinMaterialNum = false
                         reset()
                         prepareData = prepare(
                             requirement = requirement,

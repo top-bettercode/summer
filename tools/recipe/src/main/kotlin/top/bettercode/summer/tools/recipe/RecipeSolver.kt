@@ -44,7 +44,7 @@ object RecipeSolver {
                     }
                 }
                 // 求解
-                val solve = prepareData.solve(this)
+                val solve = prepareData.solve(this, minMaterialNum)
                 val e = System.currentTimeMillis()
                 log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
                 return solve
@@ -364,7 +364,6 @@ object RecipeSolver {
             epsilon = epsilon,
             requirement = requirement,
             includeProductionCost = includeProductionCost,
-            minMaterialNum = minMaterialNum,
             recipeMaterials = recipeMaterials,
             objectiveVars = objectiveVars,
             materialItems = materialItems,
