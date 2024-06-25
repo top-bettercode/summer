@@ -23,7 +23,7 @@ object RecipeSolver {
         requirement: RecipeRequirement,
         includeProductionCost: Boolean = true,
         /**
-         * 是否最小原料数量
+         * 是否使用最小数量原料
          */
         minMaterialNum: Boolean = true
     ): Recipe? {
@@ -362,7 +362,7 @@ object RecipeSolver {
         }
 
         if (minMaterialNum) {
-            //原料数量使用最小
+            //使用最小数量原料
             val materialsCount = recipeMaterials.values.map {
                 val intVar = intVar(0.0, 1.0)
                 intVar.geConst(1.0).onlyEnforceIf(it.weight.gtConst(0.0))

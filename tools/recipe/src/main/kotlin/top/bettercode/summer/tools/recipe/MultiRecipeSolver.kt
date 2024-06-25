@@ -26,7 +26,7 @@ object MultiRecipeSolver {
         nutrientUnchanged: Boolean = true,
         includeProductionCost: Boolean = true,
         /**
-         * 是否最小原料数量
+         * 是否使用最小数量原料
          */
         minMaterialNum: Boolean = true
     ): RecipeResult {
