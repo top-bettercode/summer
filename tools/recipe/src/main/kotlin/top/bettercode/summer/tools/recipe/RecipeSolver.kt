@@ -21,12 +21,16 @@ object RecipeSolver {
     fun solve(
         solver: Solver,
         requirement: RecipeRequirement,
-        includeProductionCost: Boolean = true
+        includeProductionCost: Boolean = true,
+        /**
+         * 是否最小原料数量
+         */
+        minMaterialNum: Boolean = true
     ): Recipe? {
         solver.use { so ->
             so.apply {
                 val s = System.currentTimeMillis()
-                val prepareData = prepare(requirement, includeProductionCost)
+                val prepareData = prepare(requirement, includeProductionCost, minMaterialNum)
                 if (SolverType.COPT == so.type) {
                     val numVariables = numVariables()
                     val numConstraints = numConstraints()
@@ -41,7 +45,7 @@ object RecipeSolver {
                 log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
 
                 if (isOptimal()) {
-                    return prepareData.toRecipe(requirement, includeProductionCost)
+                    return prepareData.toRecipe()
                 } else {
                     log.warn("Could not find optimal solution:${getResultStatus()}")
                     return null
@@ -50,27 +54,11 @@ object RecipeSolver {
         }
     }
 
-    fun PrepareData.toRecipe(requirement: RecipeRequirement, includeProductionCost: Boolean) =
-        Recipe(requirement = requirement,
-            includeProductionCost = includeProductionCost,
-            optimalProductionCost = requirement.productionCost.computeFee(
-                this.materialItems?.map { CarrierValue(it.it, it.value.value) },
-                this.dictItems?.mapValues { CarrierValue(it.value.it, it.value.value.value) }),
-            cost = this.objective.value,
-            materials = this.recipeMaterials.mapNotNull { (_, u) ->
-                val value = u.weight.value
-                if (value != 0.0) {
-                    u.toMaterialValue()
-                } else {
-                    null
-                }
-            })
-
     fun Solver.prepare(
         requirement: RecipeRequirement,
-        includeProductionCost: Boolean = true
+        includeProductionCost: Boolean = true,
+        minMaterialNum: Boolean = true
     ): PrepareData {
-
         setTimeLimit(requirement.timeout)
         // 原料数量
         val materials = requirement.materials
@@ -184,12 +172,12 @@ object RecipeSolver {
             if (Sense.GE == u.minSense && Sense.LE == u.maxSense) {
                 iVars.between(u.min, u.max)
             } else {
-                when(u.minSense) {
+                when (u.minSense) {
                     Sense.GE -> iVars.ge(u.min)
                     Sense.GT -> iVars.gt(u.min)
                     else -> throw IllegalArgumentException("原料用量范围配置错误${u.minSense} ${u.min}")
                 }
-                when(u.maxSense) {
+                when (u.maxSense) {
                     Sense.LE -> iVars.le(u.max)
                     Sense.LT -> iVars.lt(u.max)
                     else -> throw IllegalArgumentException("原料用量范围配置错误${u.maxSense} ${u.max}")
@@ -315,7 +303,11 @@ object RecipeSolver {
         //制造费用
         val materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>?
         val dictItems: Map<DictType, CarrierValue<Cost, IVar>>?
-        val objectiveVarList = if (includeProductionCost) {
+        val objectiveVars = recipeMaterials.values.map {
+            it.weight * it.price
+        }.toMutableList()
+
+        if (includeProductionCost) {
             val productionCost = requirement.productionCost
             materialItems = productionCost.materialItems.map { CarrierValue(it, numVar(1.0, 1.0)) }
             dictItems =
@@ -363,20 +355,29 @@ object RecipeSolver {
             val taxFee = otherFee * productionCost.taxRate + productionCost.taxFloat
             val fee = arrayOf(energyFee, otherFee, taxFee).sum() * allChange
 
-            recipeMaterials.values.map {
-                it.weight * it.price
-            } + fee
+            objectiveVars.add(fee)
         } else {
             materialItems = null
             dictItems = null
-            recipeMaterials.values.map {
-                it.weight * it.price
-            }
         }
-        // 定义目标函数：最小化成本
-        val objective = objectiveVarList.minimize()
 
+        if (minMaterialNum) {
+            //原料数量使用最小
+            val materialsCount = recipeMaterials.values.map {
+                val intVar = intVar(0.0, 1.0)
+                intVar.const(Sense.GE, 1.0).onlyEnforceIf(it.weight.const(Sense.GT, 0.0))
+                intVar
+            }.sum()
+
+            // 定义目标函数：最小化成本
+            objectiveVars.add(materialsCount)
+        }
+        val objective = objectiveVars.minimize()
         return PrepareData(
+            defaultRecipeName = this.name,
+            requirement = requirement,
+            includeProductionCost = includeProductionCost,
+            minMaterialNum = minMaterialNum,
             recipeMaterials = recipeMaterials,
             objective = objective,
             materialItems = materialItems,

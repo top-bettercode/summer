@@ -690,6 +690,7 @@
     "taxFee" : 25.26000378,
     "totalFee" : 161.2977273292
   },
+  "recipeName" : "SCIPSolver-1",
   "dryWaterWeight" : 13.2768142275,
   "materialCost" : 2319.2474382469,
   "packagingCost" : 52.13,

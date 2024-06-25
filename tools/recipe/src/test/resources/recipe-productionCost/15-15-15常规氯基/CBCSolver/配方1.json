@@ -651,6 +651,7 @@
     "taxFee" : 29.04,
     "totalFee" : 210.2657339155
   },
+  "recipeName" : "CBCSolver-1",
   "dryWaterWeight" : 14.659969486,
   "materialCost" : 2315.0805777648,
   "packagingCost" : 52.13,

@@ -37,6 +37,11 @@ import kotlin.math.max
 @JsonPropertyOrder(alphabetic = true)
 data class Recipe(
     /**
+     * 配方名称
+     */
+    @JsonProperty("recipeName")
+    val recipeName: String,
+    /**
      * 配方要求
      */
     @JsonProperty("requirement")
@@ -140,6 +145,19 @@ data class Recipe(
                 diffValues.add(-otherWeight)
             }
         }
+        //制造费用
+        if (optimalProductionCost != null) {
+            Assert.notNull(other.optimalProductionCost, "other配方制造费用为空")
+            optimalProductionCost.compareTo(
+                other.optimalProductionCost!!,
+                names,
+                itValues,
+                compares,
+                otherValues,
+                diffValues
+            )
+        }
+
         // 计算每一列的最大宽度
         val nameWidth = names.maxOf { it.length }
         val thisStrValues =
@@ -148,20 +166,21 @@ data class Recipe(
             otherValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
         val diffStrValues =
             diffValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
-
-        val itValueWidth = thisStrValues.maxOf { it.length }
-        val otherValueWidth = otherStrValues.maxOf { it.length }
+        val thisName = recipeName
+        val otherName = other.recipeName
+        val itValueWidth = max((thisStrValues + thisName).maxOf { it.length }, 15)
+        val otherValueWidth = max((otherStrValues + otherName).maxOf { it.length }, 15)
         val diffValueWidth = max(diffStrValues.maxOf { it.toFullWidth().length }, "差值".length)
 
         val result = StringBuilder()
         // 打印表头
         val compareWidth = "比较".length
         result.appendLine(
-            "${"原料名称".padEnd(nameWidth, '\u3000')} | ${"this".padStart(itValueWidth)} | ${
+            "${"原料名称".padEnd(nameWidth, '\u3000')} | ${thisName.padStart(itValueWidth)} | ${
                 "比较".padEnd(
                     compareWidth
                 )
-            } | ${"other".padEnd(otherValueWidth)} | ${"差值".padStart(diffValueWidth)}"
+            } | ${otherName.padEnd(otherValueWidth)} | ${"差值".padStart(diffValueWidth)}"
         )
 
         // 打印数据行
@@ -177,13 +196,8 @@ data class Recipe(
         val diff = !compares.all { it }
         if (diff) {
             throw IllegalRecipeException("配方不一致\n$result")
-        } else if (log.isTraceEnabled) {
-            log.trace("配方一致\n$result")
-        }
-        //制造费用
-        if (optimalProductionCost != null) {
-            Assert.notNull(other.optimalProductionCost, "other配方制造费用为空")
-            optimalProductionCost.compareTo(other.optimalProductionCost!!)
+        } else if (log.isDebugEnabled) {
+            log.debug("配方一致\n$result")
         }
     }
 

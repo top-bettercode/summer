@@ -60,18 +60,70 @@ data class ProductionCostValue(
     private val log = LoggerFactory.getLogger(ProductionCostValue::class.java)
 
     fun compareTo(other: ProductionCostValue) {
-        val otherMaterialItemsMap = other.materialItems.associateBy { it.it.id }
         val names = mutableListOf<String>()
         val itValues = mutableListOf<Number>()
         val compares = mutableListOf<Boolean>()
         val otherValues = mutableListOf<Number>()
         val diffValues = mutableListOf<Number>()
+        compareTo(other, names, itValues, compares, otherValues, diffValues)
+
+        // 计算每一列的最大宽度
+        val nameWidth = names.maxOf { it.length }
+        val thisStrValues =
+            itValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+        val otherStrValues =
+            otherValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+        val diffStrValues =
+            diffValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+
+        val itValueWidth = thisStrValues.maxOf { it.length }
+        val otherValueWidth = otherStrValues.maxOf { it.length }
+        val diffValueWidth = max(diffStrValues.maxOf { it.toFullWidth().length }, "差值".length)
+
+        val result = StringBuilder()
+        // 打印表头
+        val compareWidth = "比较".length
+        result.appendLine(
+            "${"原料名称".padEnd(nameWidth, '\u3000')} | ${"this".padStart(itValueWidth)} | ${
+                "比较".padEnd(
+                    compareWidth
+                )
+            } | ${"other".padEnd(otherValueWidth)} | ${"差值".padStart(diffValueWidth)}"
+        )
+
+        // 打印数据行
+        for (i in names.indices) {
+            val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
+            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
+            val itValue = thisStrValues[i].padStart(itValueWidth)
+            val otherValue = otherStrValues[i].padEnd(otherValueWidth)
+            val diffValue = diffStrValues[i].padStart(diffValueWidth)
+            result.appendLine("$name | $itValue | $compare | $otherValue | $diffValue")
+        }
+
+        val diff = !compares.all { it }
+        if (diff) {
+            throw IllegalRecipeException("制造成本计算结果不一致\n$result")
+        } else if (log.isDebugEnabled) {
+            log.debug("制造成本计算结果一致")
+        }
+    }
+
+    fun compareTo(
+        other: ProductionCostValue,
+        names: MutableList<String>,
+        itValues: MutableList<Number>,
+        compares: MutableList<Boolean>,
+        otherValues: MutableList<Number>,
+        diffValues: MutableList<Number>
+    ) {
         names.add("能耗费用原料数量")
         itValues.add(materialItems.size)
         compares.add(materialItems.size == other.materialItems.size)
         otherValues.add(other.materialItems.size)
         diffValues.add(materialItems.size - other.materialItems.size)
 
+        val otherMaterialItemsMap = other.materialItems.associateBy { it.it.id }
         materialItems.forEach {
             val thisVal = (it.it.cost * it.value).scale()
             val oth = otherMaterialItemsMap[it.it.id]
@@ -144,48 +196,6 @@ data class ProductionCostValue(
         compares.add(this.totalFee - other.totalFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
         otherValues.add(other.totalFee)
         diffValues.add((totalFee - other.totalFee).scale())
-
-
-        // 计算每一列的最大宽度
-        val nameWidth = names.maxOf { it.length }
-        val thisStrValues =
-            itValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
-        val otherStrValues =
-            otherValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
-        val diffStrValues =
-            diffValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
-
-        val itValueWidth = thisStrValues.maxOf { it.length }
-        val otherValueWidth = otherStrValues.maxOf { it.length }
-        val diffValueWidth = max(diffStrValues.maxOf { it.toFullWidth().length }, "差值".length)
-
-        val result = StringBuilder()
-        // 打印表头
-        val compareWidth = "比较".length
-        result.appendLine(
-            "${"原料名称".padEnd(nameWidth, '\u3000')} | ${"this".padStart(itValueWidth)} | ${
-                "比较".padEnd(
-                    compareWidth
-                )
-            } | ${"other".padEnd(otherValueWidth)} | ${"差值".padStart(diffValueWidth)}"
-        )
-
-        // 打印数据行
-        for (i in names.indices) {
-            val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
-            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
-            val itValue = thisStrValues[i].padStart(itValueWidth)
-            val otherValue = otherStrValues[i].padEnd(otherValueWidth)
-            val diffValue = diffStrValues[i].padStart(diffValueWidth)
-            result.appendLine("$name | $itValue | $compare | $otherValue | $diffValue")
-        }
-
-        val diff = !compares.all { it }
-        if (diff) {
-            throw IllegalRecipeException("制造成本计算结果不一致\n$result")
-        } else if (log.isTraceEnabled) {
-            log.trace("制造成本计算结果一致\n$result")
-        }
     }
 
 }

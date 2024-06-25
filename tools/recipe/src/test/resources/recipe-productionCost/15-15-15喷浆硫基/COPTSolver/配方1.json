@@ -731,6 +731,7 @@
     "taxFee" : 37.0993245542,
     "totalFee" : 327.9307023852
   },
+  "recipeName" : "COPTSolver-1",
   "dryWaterWeight" : 132.1605369196,
   "materialCost" : 2618.3615538062,
   "packagingCost" : 52.13,

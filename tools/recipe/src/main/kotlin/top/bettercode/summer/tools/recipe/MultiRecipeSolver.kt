@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.recipe.RecipeSolver.prepare
-import top.bettercode.summer.tools.recipe.RecipeSolver.toRecipe
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
 import top.bettercode.summer.tools.recipe.result.RecipeResult
 
@@ -17,14 +16,24 @@ object MultiRecipeSolver {
         solver: Solver,
         requirement: RecipeRequirement,
         maxResult: Int = 1,
+        /**
+         * 结果原料不变
+         */
         materialUnchanged: Boolean = true,
+        /**
+         * 养分含量不变
+         */
         nutrientUnchanged: Boolean = true,
-        includeProductionCost: Boolean = true
+        includeProductionCost: Boolean = true,
+        /**
+         * 是否最小原料数量
+         */
+        minMaterialNum: Boolean = true
     ): RecipeResult {
         solver.use { so ->
             so.apply {
                 val s = System.currentTimeMillis()
-                val prepareData = prepare(requirement, includeProductionCost)
+                val prepareData = prepare(requirement, includeProductionCost, minMaterialNum)
                 var e = System.currentTimeMillis()
                 val recipeResult = RecipeResult(requirement = requirement, solverName = name)
                 while ((e - s) / 1000 < requirement.timeout
@@ -43,7 +52,8 @@ object MultiRecipeSolver {
                     if (isOptimal()) {
                         val recipeMaterials = prepareData.recipeMaterials
                         // 约束
-                        val recipe = prepareData.toRecipe(requirement, includeProductionCost)
+                        val recipe =
+                            prepareData.toRecipe("${so.name}-${recipeResult.recipes.size + 1}")
                         val first = recipeResult.recipes.isEmpty()
                         recipeResult.addRecipe(recipe)
                         if (first) {
