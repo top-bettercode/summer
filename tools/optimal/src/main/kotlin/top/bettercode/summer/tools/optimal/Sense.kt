@@ -13,7 +13,7 @@ enum class Sense(val symbol: String) {
     /**
      * 不等于
      */
-    NE("!="),
+    NE("≠"),
 
     /**
      * 大于等于
@@ -35,12 +35,17 @@ enum class Sense(val symbol: String) {
      */
     LT("<");
 
-
     companion object {
+        private val otherSymbols: Map<String, String> = mapOf(
+            "<=" to "≤",
+            ">=" to "≥",
+            "!=" to "≠",
+        )
+
         @JvmStatic
         fun validate(symbol: String): Boolean {
             for (sense in values()) {
-                if (sense.symbol == symbol) {
+                if (sense.symbol == (otherSymbols[symbol] ?: symbol)) {
                     return true
                 }
             }
@@ -50,7 +55,7 @@ enum class Sense(val symbol: String) {
         @JvmStatic
         fun symbolOf(symbol: String): Sense {
             for (sense in values()) {
-                if (sense.symbol == symbol) {
+                if (sense.symbol == (otherSymbols[symbol] ?: symbol)) {
                     return sense
                 }
             }
