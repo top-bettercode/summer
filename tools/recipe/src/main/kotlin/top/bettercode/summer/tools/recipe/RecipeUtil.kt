@@ -15,5 +15,5 @@ object RecipeUtil {
      * 数量放大倍数
      */
     @JvmStatic
-    var DEFAULT_COUNT_MULTIPLE = 100
+    var DEFAULT_COUNT_MULTIPLE = 10
 }
