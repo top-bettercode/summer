@@ -39,7 +39,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 478.6133092708,
+    "weight" : 474.3083003953,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -125,7 +125,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 514.733900043,
+    "weight" : 528.5714285714,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -347,7 +347,7 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "SCIPSolver-2",
-  "dryWaterWeight" : 173.3472093138,
+  "dryWaterWeight" : 182.8797289667,
   "materialCost" : 1245.3162055336,
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -408,7 +408,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 253.1519132515,
-  "waterWeight" : 191.5429981078,
-  "weight" : 1173.3472093138
+  "totalNutrientWeight" : 254.0,
+  "waterWeight" : 196.3430830039,
+  "weight" : 1182.8797289667
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.lang.util.StringUtil
-import top.bettercode.summer.tools.optimal.Sense
+import top.bettercode.summer.tools.optimal.Operator
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.criteria.TermThen
@@ -227,11 +227,11 @@ data class RecipeRequirement(
             }
             // conditoin 转noMix
             val noMixConditions = materialConditionConstraints.filter {
-                val op = it.term.condition.sense
+                val op = it.term.condition.operator
                 val value = it.term.condition.value
-                val otherOp = it.then.condition.sense
+                val otherOp = it.then.condition.operator
                 val otherValue = it.then.condition.value
-                op == Sense.GT && value == 0.0 && (otherOp == Sense.LT || otherOp == Sense.LE || otherOp == Sense.EQ) && otherValue == 0.0
+                op == Operator.GT && value == 0.0 && (otherOp == Operator.LT || otherOp == Operator.LE || otherOp == Operator.EQ) && otherValue == 0.0
             }
             val noMixMaterials = noMixConditions.map {
                 arrayOf(it.term.materials, it.then.materials)
@@ -252,7 +252,7 @@ data class RecipeRequirement(
 
                 // 用量>0的原料
                 materialRangeConstraints.forEach { (t, u) ->
-                    if (t.contains(materialId) && ((Sense.GE == u.minSense && u.min > 0) || (Sense.GT == u.minSense && u.min >= 0))) {
+                    if (t.contains(materialId) && ((Operator.GE == u.minOperator && u.min > 0) || (Operator.GT == u.minOperator && u.min >= 0))) {
                         keepMaterialIds.add(materialId)
                         return@Predicate true
                     }

@@ -51,32 +51,32 @@ interface IVar {
     @JsonIgnore
     fun <T> getDelegate(): T
 
-    fun const(sense: Sense, value: Double): Constraint {
-        return Constraint(this, sense, value)
+    fun expr(operator: Operator, value: Double): Expr {
+        return Expr(this, operator, value)
     }
 
-    fun eqConst(value: Double): Constraint {
-        return Constraint(this, Sense.EQ, value)
+    fun eqExpr(value: Double): Expr {
+        return Expr(this, Operator.EQ, value)
     }
 
-    fun neConst(value: Double): Constraint {
-        return Constraint(this, Sense.NE, value)
+    fun neExpr(value: Double): Expr {
+        return Expr(this, Operator.NE, value)
     }
 
-    fun geConst(value: Double): Constraint {
-        return Constraint(this, Sense.GE, value)
+    fun geExpr(value: Double): Expr {
+        return Expr(this, Operator.GE, value)
     }
 
-    fun gtConst(value: Double): Constraint {
-        return Constraint(this, Sense.GT, value)
+    fun gtExpr(value: Double): Expr {
+        return Expr(this, Operator.GT, value)
     }
 
-    fun leConst(value: Double): Constraint {
-        return Constraint(this, Sense.LE, value)
+    fun leExpr(value: Double): Expr {
+        return Expr(this, Operator.LE, value)
     }
 
-    fun ltConst(value: Double): Constraint {
-        return Constraint(this, Sense.LT, value)
+    fun ltExpr(value: Double): Expr {
+        return Expr(this, Operator.LT, value)
     }
 
 

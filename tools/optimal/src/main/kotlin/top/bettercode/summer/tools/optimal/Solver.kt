@@ -7,12 +7,12 @@ import org.slf4j.Logger
  * @author Peter Wu
  */
 abstract class Solver(
-        val name: String,
-        val type: SolverType,
-        /**
-         * 容错程度，该参数控制如何在线性化期间管理严格的不等式。例如，当 x 是数字变量时， x < a 变为 x <= a-eplin
-         */
-        protected val epsilon: Double = OptimalUtil.DEFAULT_EPSILON
+    val name: String,
+    val type: SolverType,
+    /**
+     * 容错程度，该参数控制如何在线性化期间管理严格的不等式。例如，当 x 是数字变量时， x < a 变为 x <= a-eplin
+     */
+    val epsilon: Double = OptimalUtil.DEFAULT_EPSILON
 ) : AutoCloseable {
 
 
@@ -220,130 +220,130 @@ abstract class Solver(
 
     abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
     abstract fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar)
-    open fun Constraint.onlyEnforceIf(condition: Constraint): IVar? {
+    open fun Expr.onlyEnforceIf(condition: Expr): IVar? {
         val boolVar = boolVar()
         val whenVariable = condition.variable
         val whenValue = condition.value
-        when (condition.sense) {
-            Sense.EQ -> {
+        when (condition.operator) {
+            Operator.EQ -> {
                 whenVariable.neIfNot(whenValue, boolVar)
             }
 
-            Sense.NE -> {
+            Operator.NE -> {
                 whenVariable.eqIfNot(whenValue, boolVar)
             }
 
-            Sense.GT -> {
+            Operator.GT -> {
                 whenVariable.leIfNot(whenValue, boolVar)
             }
 
-            Sense.LT -> {
+            Operator.LT -> {
                 whenVariable.geIfNot(whenValue, boolVar)
             }
 
-            Sense.GE -> {
+            Operator.GE -> {
                 whenVariable.ltIfNot(whenValue, boolVar)
             }
 
-            Sense.LE -> {
+            Operator.LE -> {
                 whenVariable.gtIfNot(whenValue, boolVar)
             }
         }
         val thenVar = this.variable
         val thenValue = this.value
-        when (this.sense) {
-            Sense.EQ -> thenVar.eqIf(thenValue, boolVar)
-            Sense.NE -> thenVar.neIf(thenValue, boolVar)
-            Sense.GT -> thenVar.gtIf(thenValue, boolVar)
-            Sense.LT -> thenVar.ltIf(thenValue, boolVar)
-            Sense.GE -> thenVar.geIf(thenValue, boolVar)
-            Sense.LE -> thenVar.leIf(thenValue, boolVar)
+        when (this.operator) {
+            Operator.EQ -> thenVar.eqIf(thenValue, boolVar)
+            Operator.NE -> thenVar.neIf(thenValue, boolVar)
+            Operator.GT -> thenVar.gtIf(thenValue, boolVar)
+            Operator.LT -> thenVar.ltIf(thenValue, boolVar)
+            Operator.GE -> thenVar.geIf(thenValue, boolVar)
+            Operator.LE -> thenVar.leIf(thenValue, boolVar)
         }
         return boolVar
     }
 
-    open fun Array<Constraint>.onlyEnforceIf(condition: Constraint) {
+    open fun Array<Expr>.onlyEnforceIf(condition: Expr) {
         val boolVar = boolVar()
         val whenVariable = condition.variable
         val whenValue = condition.value
-        when (condition.sense) {
-            Sense.EQ -> {
+        when (condition.operator) {
+            Operator.EQ -> {
                 whenVariable.neIfNot(whenValue, boolVar)
             }
 
-            Sense.NE -> {
+            Operator.NE -> {
                 whenVariable.eqIfNot(whenValue, boolVar)
             }
 
-            Sense.GT -> {
+            Operator.GT -> {
                 whenVariable.leIfNot(whenValue, boolVar)
             }
 
-            Sense.LT -> {
+            Operator.LT -> {
                 whenVariable.geIfNot(whenValue, boolVar)
             }
 
-            Sense.GE -> {
+            Operator.GE -> {
                 whenVariable.ltIfNot(whenValue, boolVar)
             }
 
-            Sense.LE -> {
+            Operator.LE -> {
                 whenVariable.gtIfNot(whenValue, boolVar)
             }
         }
         this.forEach {
             val thenVar = it.variable
             val thenValue = it.value
-            when (it.sense) {
-                Sense.EQ -> thenVar.eqIf(thenValue, boolVar)
-                Sense.NE -> thenVar.neIf(thenValue, boolVar)
-                Sense.GT -> thenVar.gtIf(thenValue, boolVar)
-                Sense.LT -> thenVar.ltIf(thenValue, boolVar)
-                Sense.GE -> thenVar.geIf(thenValue, boolVar)
-                Sense.LE -> thenVar.leIf(thenValue, boolVar)
+            when (it.operator) {
+                Operator.EQ -> thenVar.eqIf(thenValue, boolVar)
+                Operator.NE -> thenVar.neIf(thenValue, boolVar)
+                Operator.GT -> thenVar.gtIf(thenValue, boolVar)
+                Operator.LT -> thenVar.ltIf(thenValue, boolVar)
+                Operator.GE -> thenVar.geIf(thenValue, boolVar)
+                Operator.LE -> thenVar.leIf(thenValue, boolVar)
             }
         }
     }
 
-    open fun Iterable<Constraint>.onlyEnforceIf(condition: Constraint) {
+    open fun Iterable<Expr>.onlyEnforceIf(condition: Expr) {
         val boolVar = boolVar()
         val whenVariable = condition.variable
         val whenValue = condition.value
-        when (condition.sense) {
-            Sense.EQ -> {
+        when (condition.operator) {
+            Operator.EQ -> {
                 whenVariable.neIfNot(whenValue, boolVar)
             }
 
-            Sense.NE -> {
+            Operator.NE -> {
                 whenVariable.eqIfNot(whenValue, boolVar)
             }
 
-            Sense.GT -> {
+            Operator.GT -> {
                 whenVariable.leIfNot(whenValue, boolVar)
             }
 
-            Sense.LT -> {
+            Operator.LT -> {
                 whenVariable.geIfNot(whenValue, boolVar)
             }
 
-            Sense.GE -> {
+            Operator.GE -> {
                 whenVariable.ltIfNot(whenValue, boolVar)
             }
 
-            Sense.LE -> {
+            Operator.LE -> {
                 whenVariable.gtIfNot(whenValue, boolVar)
             }
         }
         this.forEach {
             val thenVar = it.variable
             val thenValue = it.value
-            when (it.sense) {
-                Sense.EQ -> thenVar.eqIf(thenValue, boolVar)
-                Sense.NE -> thenVar.neIf(thenValue, boolVar)
-                Sense.GT -> thenVar.gtIf(thenValue, boolVar)
-                Sense.LT -> thenVar.ltIf(thenValue, boolVar)
-                Sense.GE -> thenVar.geIf(thenValue, boolVar)
-                Sense.LE -> thenVar.leIf(thenValue, boolVar)
+            when (it.operator) {
+                Operator.EQ -> thenVar.eqIf(thenValue, boolVar)
+                Operator.NE -> thenVar.neIf(thenValue, boolVar)
+                Operator.GT -> thenVar.gtIf(thenValue, boolVar)
+                Operator.LT -> thenVar.ltIf(thenValue, boolVar)
+                Operator.GE -> thenVar.geIf(thenValue, boolVar)
+                Operator.LE -> thenVar.leIf(thenValue, boolVar)
             }
         }
     }

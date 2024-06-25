@@ -21,13 +21,13 @@ class GurobiSolver @JvmOverloads constructor(
 ) : Solver(name = name, type = SolverType.GUROBI, epsilon = epsilon) {
 
     private val env = GRBEnv()
-    val model: GRBModel = GRBModel(env)
+    var model: GRBModel = GRBModel(env)
 
     init {
-        model.set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
-        model.set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
-        model.set(GRB.DoubleParam.IntFeasTol, 1e-6)
-        model.set(GRB.DoubleParam.FeasibilityTol, 1e-9)
+        env.set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
+        env.set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
+        env.set(GRB.DoubleParam.IntFeasTol, 1e-6)
+        env.set(GRB.DoubleParam.FeasibilityTol, 1e-9)
 
 //        model.set(GRB.DoubleParam.PerturbValue, 0.0)
 
@@ -89,6 +89,7 @@ class GurobiSolver @JvmOverloads constructor(
     }
 
     override fun clear() {
+        model= GRBModel(env)
     }
 
     override fun isOptimal(): Boolean {

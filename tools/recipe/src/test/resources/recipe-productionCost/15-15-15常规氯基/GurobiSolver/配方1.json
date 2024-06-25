@@ -555,7 +555,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 37.1660657639,
+    "weight" : 37.1660657638,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -652,8 +652,8 @@
     "totalFee" : 210.2657339155
   },
   "recipeName" : "GurobiSolver-1",
-  "dryWaterWeight" : 14.6599694861,
-  "materialCost" : 2315.0805777652,
+  "dryWaterWeight" : 14.659969486,
+  "materialCost" : 2315.0805777648,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -713,7 +713,7 @@
     "taxFee" : 29.04,
     "totalFee" : 210.2657339148
   },
-  "totalNutrientWeight" : 453.0000000001,
+  "totalNutrientWeight" : 453.0,
   "waterWeight" : 29.659969486,
-  "weight" : 1014.6599694861
+  "weight" : 1014.659969486
 }

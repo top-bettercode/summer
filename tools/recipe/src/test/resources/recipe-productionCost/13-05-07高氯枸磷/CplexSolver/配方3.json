@@ -125,7 +125,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 535.7142857143,
+    "weight" : 521.4285714286,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -251,6 +251,63 @@
   }, {
     "consumes" : { },
     "material" : {
+      "id" : "七钼酸铵",
+      "index" : 45,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.5,
+          "scale" : 0.01
+        },
+        "钼" : {
+          "id" : "钼",
+          "index" : 15,
+          "name" : "钼",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 54.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "七钼酸铵",
+      "price" : 160.0,
+      "unit" : "吨"
+    },
+    "weight" : 0.0375,
+    "id" : "七钼酸铵",
+    "index" : 45,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.5,
+        "scale" : 0.01
+      },
+      "钼" : {
+        "id" : "钼",
+        "index" : 15,
+        "name" : "钼",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 54.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "七钼酸铵",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 160.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
       "id" : "白泥",
       "index" : 53,
       "indicators" : {
@@ -347,7 +404,7 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "CplexSolver-3",
-  "dryWaterWeight" : 190.0225861096,
+  "dryWaterWeight" : 175.7743718239,
   "materialCost" : 1248.3162055337,
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -408,7 +465,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 255.0,
-  "waterWeight" : 198.843083004,
-  "weight" : 1190.0225861096
+  "totalNutrientWeight" : 253.0,
+  "waterWeight" : 193.843270504,
+  "weight" : 1175.7743718239
 }

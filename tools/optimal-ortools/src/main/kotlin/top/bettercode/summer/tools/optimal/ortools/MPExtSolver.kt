@@ -15,14 +15,14 @@ import kotlin.math.min
  * @author Peter Wu
  */
 open class MPExtSolver @JvmOverloads constructor(
-        /**
-         * OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING
-         * OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING
-         */
-        type: MPSolver.OptimizationProblemType,
-        solverType: SolverType,
-        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-        name: String = "MPSolver"
+    /**
+     * OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING
+     * OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING
+     */
+    private val mpType: MPSolver.OptimizationProblemType,
+    solverType: SolverType,
+    epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    name: String = "MPSolver"
 ) : Solver(name = name, type = solverType, epsilon = epsilon) {
 
     companion object {
@@ -33,13 +33,13 @@ open class MPExtSolver @JvmOverloads constructor(
     }
 
     private val parameters = MPSolverParameters()
-    val solver: MPSolver = MPSolver(name, type)
+    var solver: MPSolver = MPSolver(name, mpType)
 
     var resultStatus: MPSolver.ResultStatus = MPSolver.ResultStatus.NOT_SOLVED
 
     init {
         parameters.setDoubleParam(MPSolverParameters.DoubleParam.RELATIVE_MIP_GAP, 1e-9)
-        if (MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING == type) {
+        if (MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING == mpType) {
             parameters.setDoubleParam(MPSolverParameters.DoubleParam.PRIMAL_TOLERANCE, 1e-9)
             parameters.setDoubleParam(MPSolverParameters.DoubleParam.DUAL_TOLERANCE, 1e-9)
         }
@@ -59,6 +59,7 @@ open class MPExtSolver @JvmOverloads constructor(
 
     override fun clear() {
         solver.clear()
+//        solver = MPSolver(name, mpType)
     }
 
     override fun isOptimal(): Boolean {
@@ -78,18 +79,30 @@ open class MPExtSolver @JvmOverloads constructor(
     }
 
     override fun boolVar(name: String?): IVar {
-        return MPVar(_delegate = solver.makeBoolVar(name
-                ?: ("b" + (numVariables() + 1))), isInt = true)
+        return MPVar(
+            _delegate = solver.makeBoolVar(
+                name
+                    ?: ("b" + (numVariables() + 1))
+            ), isInt = true
+        )
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        return MPVar(_delegate = solver.makeIntVar(lb, ub, name
-                ?: ("i" + (numVariables() + 1))), isInt = true)
+        return MPVar(
+            _delegate = solver.makeIntVar(
+                lb, ub, name
+                    ?: ("i" + (numVariables() + 1))
+            ), isInt = true
+        )
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        return MPVar(_delegate = solver.makeNumVar(lb, ub, name
-                ?: ("n" + (numVariables() + 1))), isInt = false)
+        return MPVar(
+            _delegate = solver.makeNumVar(
+                lb, ub, name
+                    ?: ("n" + (numVariables() + 1))
+            ), isInt = false
+        )
     }
 
     override fun IVar.ge(lb: Double) {

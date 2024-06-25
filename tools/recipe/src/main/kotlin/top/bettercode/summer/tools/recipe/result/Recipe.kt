@@ -10,7 +10,7 @@ import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
-import top.bettercode.summer.tools.optimal.Sense
+import top.bettercode.summer.tools.optimal.Operator
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
@@ -186,7 +186,7 @@ data class Recipe(
         // 打印数据行
         for (i in names.indices) {
             val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
-            val compare = (if (compares[i]) "=" else "≠").toFullWidth().padEnd(compareWidth)
+            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
             val itValue = thisStrValues[i].padStart(itValueWidth)
             val otherValue = otherStrValues[i].padEnd(otherValueWidth)
             val diffValue = diffStrValues[i].padStart(diffValueWidth)
@@ -365,33 +365,33 @@ data class Recipe(
             val thenWeight =
                 materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
             var whenTrue = false
-            when (whenCon.condition.sense) {
-                Sense.EQ -> {
+            when (whenCon.condition.operator) {
+                Operator.EQ -> {
                     whenTrue = whenWeight == whenCon.condition.value
                 }
 
-                Sense.NE -> {
+                Operator.NE -> {
                     whenTrue = whenWeight != whenCon.condition.value
                 }
 
-                Sense.GT -> {
+                Operator.GT -> {
                     whenTrue = whenWeight > whenCon.condition.value
                 }
 
-                Sense.LT -> {
+                Operator.LT -> {
                     whenTrue = whenWeight < whenCon.condition.value
                 }
 
-                Sense.GE -> {
+                Operator.GE -> {
                     whenTrue = whenWeight >= whenCon.condition.value
                 }
 
-                Sense.LE -> {
+                Operator.LE -> {
                     whenTrue = whenWeight <= whenCon.condition.value
                 }
             }
-            when (thenCon.condition.sense) {
-                Sense.EQ -> {
+            when (thenCon.condition.operator) {
+                Operator.EQ -> {
                     if (whenTrue && thenWeight != thenCon.condition.value) {
                         throw IllegalRecipeException(
                             "条件约束：当${whenCon}时，${thenCon}不成立:${
@@ -404,7 +404,7 @@ data class Recipe(
                     }
                 }
 
-                Sense.NE -> {
+                Operator.NE -> {
                     if (whenTrue && thenWeight == thenCon.condition.value) {
                         throw IllegalRecipeException(
                             "条件约束：当${whenCon}时，${thenCon}不成立:${
@@ -417,7 +417,7 @@ data class Recipe(
                     }
                 }
 
-                Sense.GT -> {
+                Operator.GT -> {
                     if (whenTrue && thenWeight <= thenCon.condition.value) {
                         throw IllegalRecipeException(
                             "条件约束：当${whenCon}时，${thenCon}不成立:${
@@ -430,7 +430,7 @@ data class Recipe(
                     }
                 }
 
-                Sense.LT -> {
+                Operator.LT -> {
                     if (whenTrue && thenWeight >= thenCon.condition.value) {
                         throw IllegalRecipeException(
                             "条件约束：当${whenCon}时，${thenCon}不成立:${
@@ -443,7 +443,7 @@ data class Recipe(
                     }
                 }
 
-                Sense.GE -> {
+                Operator.GE -> {
                     if (whenTrue && thenWeight < thenCon.condition.value) {
                         throw IllegalRecipeException(
                             "条件约束：当${whenCon}时，${thenCon}不成立:${
@@ -456,7 +456,7 @@ data class Recipe(
                     }
                 }
 
-                Sense.LE -> {
+                Operator.LE -> {
                     if (whenTrue && thenWeight > thenCon.condition.value) {
                         throw IllegalRecipeException(
                             "条件约束：当${whenCon}时，${thenCon}不成立:${

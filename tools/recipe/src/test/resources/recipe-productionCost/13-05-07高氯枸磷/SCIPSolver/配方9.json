@@ -125,7 +125,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 542.8468986948,
+    "weight" : 549.1661224998,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -211,7 +211,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 104.2265640981,
+    "weight" : 100.0,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -247,6 +247,63 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "七钼酸铵",
+      "index" : 45,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.5,
+          "scale" : 0.01
+        },
+        "钼" : {
+          "id" : "钼",
+          "index" : 15,
+          "name" : "钼",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 54.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "七钼酸铵",
+      "price" : 160.0,
+      "unit" : "吨"
+    },
+    "weight" : 0.0771889284,
+    "id" : "七钼酸铵",
+    "index" : 45,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.5,
+        "scale" : 0.01
+      },
+      "钼" : {
+        "id" : "钼",
+        "index" : 15,
+        "name" : "钼",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 54.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "七钼酸铵",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 160.0,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -347,8 +404,8 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "SCIPSolver-9",
-  "dryWaterWeight" : 201.3817631882,
-  "materialCost" : 1266.3162055337,
+  "dryWaterWeight" : 203.5516118235,
+  "materialCost" : 1266.3162055276,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -408,7 +465,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 258.5345042761,
-  "waterWeight" : 201.3817631881,
-  "weight" : 1201.3817631882
+  "totalNutrientWeight" : 256.88325715,
+  "waterWeight" : 203.5516118235,
+  "weight" : 1203.5516118235
 }

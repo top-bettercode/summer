@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.optimal
  * 操作符
  * @author Peter Wu
  */
-enum class Sense(val symbol: String) {
+enum class Operator(val operator: String) {
     /**
      * 等于
      */
@@ -36,16 +36,16 @@ enum class Sense(val symbol: String) {
     LT("<");
 
     companion object {
-        private val otherSymbols: Map<String, String> = mapOf(
+        private val otherOperator: Map<String, String> = mapOf(
             "<=" to "≤",
             ">=" to "≥",
             "!=" to "≠",
         )
 
         @JvmStatic
-        fun validate(symbol: String): Boolean {
+        fun validate(operator: String): Boolean {
             for (sense in values()) {
-                if (sense.symbol == (otherSymbols[symbol] ?: symbol)) {
+                if (sense.operator == (otherOperator[operator] ?: operator)) {
                     return true
                 }
             }
@@ -53,18 +53,18 @@ enum class Sense(val symbol: String) {
         }
 
         @JvmStatic
-        fun symbolOf(symbol: String): Sense {
+        fun of(operator: String): Operator {
             for (sense in values()) {
-                if (sense.symbol == (otherSymbols[symbol] ?: symbol)) {
+                if (sense.operator == (otherOperator[operator] ?: operator)) {
                     return sense
                 }
             }
-            throw IllegalArgumentException("symbol=$symbol not found")
+            throw IllegalArgumentException("symbol=$operator not found")
         }
     }
 
     override fun toString(): String {
-        return symbol
+        return operator
     }
 
 }

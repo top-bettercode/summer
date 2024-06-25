@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.recipe.material
 
 import top.bettercode.summer.tools.optimal.IVar
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.criteria.UsageVar
 
 /**
@@ -21,7 +22,7 @@ data class RecipeMaterialVar(
 
     fun toMaterialValue(): RecipeMaterialValue {
         return RecipeMaterialValue(
-            material, weight.value,
+            material, weight.value.scale(),
             consumes.mapValues { it.value.toUsage() }
         )
     }

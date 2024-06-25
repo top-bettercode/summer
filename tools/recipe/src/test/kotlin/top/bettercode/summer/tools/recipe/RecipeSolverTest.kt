@@ -44,10 +44,10 @@ internal class RecipeSolverTest {
     )
 
     val maxResult = 20
-    val includeProductionCost = false
+    val includeProductionCost = true
     val nutrientUnchanged = true
     val materialUnchanged = true
-    val minMaterialNum = true
+    val minMaterialNum = false
     val solveTimes = 1
     val toExcel = false
     val epsilon = 1e-4

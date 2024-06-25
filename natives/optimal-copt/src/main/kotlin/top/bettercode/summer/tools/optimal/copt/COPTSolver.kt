@@ -20,13 +20,13 @@ import kotlin.math.min
  * @author Peter Wu
  */
 class COPTSolver @JvmOverloads constructor(
-        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-        logging: Boolean = false,
-        name: String = "COPTSolver"
+    epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    logging: Boolean = false,
+    name: String = "COPTSolver"
 ) : Solver(name = name, type = SolverType.COPT, epsilon = epsilon) {
 
     private val env: copt.Envr = copt.Envr()
-    val model: copt.Model = env.createModel(name)
+    var model: copt.Model = env.createModel(name)
 
     init {
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
@@ -49,6 +49,7 @@ class COPTSolver @JvmOverloads constructor(
 
     override fun clear() {
         model.clear()
+//        model = env.createModel(name)
     }
 
     override fun isOptimal(): Boolean {
@@ -86,21 +87,33 @@ class COPTSolver @JvmOverloads constructor(
     }
 
     private fun IVar.expr() =
-            if (this is COPTExprVar) this.getDelegate() else copt.Expr(this.getDelegate(), this.coeff)
+        if (this is COPTExprVar) this.getDelegate() else copt.Expr(this.getDelegate(), this.coeff)
 
     override fun boolVar(name: String?): IVar {
-        return COPTVar(_delegate = model.addVar(0.0, 1.0, 1.0, Consts.BINARY, name
-                ?: ("b" + (numVariables() + 1))), isInt = true)
+        return COPTVar(
+            _delegate = model.addVar(
+                0.0, 1.0, 1.0, Consts.BINARY, name
+                    ?: ("b" + (numVariables() + 1))
+            ), isInt = true
+        )
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        return COPTVar(_delegate = model.addVar(lb, ub, 1.0, Consts.INTEGER, name
-                ?: ("i" + (numVariables() + 1))), isInt = true)
+        return COPTVar(
+            _delegate = model.addVar(
+                lb, ub, 1.0, Consts.INTEGER, name
+                    ?: ("i" + (numVariables() + 1))
+            ), isInt = true
+        )
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        return COPTVar(_delegate = model.addVar(lb, ub, 1.0, Consts.CONTINUOUS, name
-                ?: ("n" + (numVariables() + 1))), isInt = false)
+        return COPTVar(
+            _delegate = model.addVar(
+                lb, ub, 1.0, Consts.CONTINUOUS, name
+                    ?: ("n" + (numVariables() + 1))
+            ), isInt = false
+        )
     }
 
     override fun IVar.plus(value: Double): IVar {

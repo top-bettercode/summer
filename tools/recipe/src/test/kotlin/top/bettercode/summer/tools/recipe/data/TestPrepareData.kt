@@ -6,7 +6,7 @@ import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
-import top.bettercode.summer.tools.optimal.Sense
+import top.bettercode.summer.tools.optimal.Operator
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
@@ -558,11 +558,11 @@ object TestPrepareData {
         val value = split[1].toDouble()
         val typeStr = desc.substringAfter(split[0]).substringBeforeLast(split[1])
         val op = when (typeStr) {
-            "=" -> Sense.EQ
-            ">" -> Sense.GT
-            "<" -> Sense.LT
-            ">=" -> Sense.GE
-            "<=" -> Sense.LE
+            "=" -> Operator.EQ
+            ">" -> Operator.GT
+            "<" -> Operator.LT
+            ">=" -> Operator.GE
+            "<=" -> Operator.LE
             else -> throw RuntimeException("不支持的操作符")
         }
         return MaterialCondition(materials, RecipeCondition(op, value))

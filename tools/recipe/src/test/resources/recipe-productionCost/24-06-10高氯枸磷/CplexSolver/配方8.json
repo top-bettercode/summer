@@ -30,7 +30,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.0,
+    "weight" : 390.438432587,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 323.300293368,
+    "weight" : 150.8345514735,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -191,7 +191,7 @@
       "price" : 3.51,
       "unit" : "吨"
     },
-    "weight" : 77.9819030095,
+    "weight" : 122.3717948718,
     "id" : "58磷酸一铵（粉）",
     "index" : 10,
     "indicators" : {
@@ -297,7 +297,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 64.4198329209,
+    "weight" : 101.0897435897,
     "id" : "中白肥（24%)",
     "index" : 25,
     "indicators" : {
@@ -423,6 +423,45 @@
   }, {
     "consumes" : { },
     "material" : {
+      "id" : "石粉（尿基高塔用）",
+      "index" : 55,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 1.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "石粉（尿基高塔用）",
+      "price" : 0.24,
+      "unit" : "吨"
+    },
+    "weight" : 83.5855889943,
+    "id" : "石粉（尿基高塔用）",
+    "index" : 55,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 1.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "石粉（尿基高塔用）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.24,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
       "id" : "防结油（白色）",
       "index" : 58,
       "indicators" : { },
@@ -518,8 +557,8 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "CplexSolver-8",
-  "dryWaterWeight" : 0.7020292984,
-  "materialCost" : 2385.3467503008,
+  "dryWaterWeight" : 3.3201115163,
+  "materialCost" : 2385.3467503007,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -579,7 +618,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 407.2852378686,
-  "waterWeight" : 12.7020292983,
-  "weight" : 1000.7020292984
+  "totalNutrientWeight" : 403.0,
+  "waterWeight" : 15.3201115163,
+  "weight" : 1003.3201115163
 }

@@ -30,7 +30,11 @@ object RecipeSolver {
         solver.use { so ->
             so.apply {
                 val s = System.currentTimeMillis()
-                val prepareData = prepare(requirement, includeProductionCost, minMaterialNum)
+                val prepareData = prepare(
+                    requirement = requirement,
+                    includeProductionCost = includeProductionCost,
+                    minMaterialNum = minMaterialNum
+                )
                 if (SolverType.COPT == so.type) {
                     val numVariables = numVariables()
                     val numConstraints = numConstraints()
@@ -52,7 +56,7 @@ object RecipeSolver {
         requirement: RecipeRequirement,
         includeProductionCost: Boolean = true,
         minMaterialNum: Boolean = true
-    ): PrepareData {
+    ): PrepareSolveData {
         setTimeLimit(requirement.timeout)
         // 原料数量
         val materials = requirement.materials
@@ -163,18 +167,18 @@ object RecipeSolver {
         val materialRangeConstraints = requirement.materialRangeConstraints
         materialRangeConstraints.forEach { (t, u) ->
             val iVars = t.mapNotNull { recipeMaterials[it]?.weight }
-            if (Sense.GE == u.minSense && Sense.LE == u.maxSense) {
+            if (Operator.GE == u.minOperator && Operator.LE == u.maxOperator) {
                 iVars.between(u.min, u.max)
             } else {
-                when (u.minSense) {
-                    Sense.GE -> iVars.ge(u.min)
-                    Sense.GT -> iVars.gt(u.min)
-                    else -> throw IllegalArgumentException("原料用量范围配置错误${u.minSense} ${u.min}")
+                when (u.minOperator) {
+                    Operator.GE -> iVars.ge(u.min)
+                    Operator.GT -> iVars.gt(u.min)
+                    else -> throw IllegalArgumentException("原料用量范围配置错误${u.minOperator} ${u.min}")
                 }
-                when (u.maxSense) {
-                    Sense.LE -> iVars.le(u.max)
-                    Sense.LT -> iVars.lt(u.max)
-                    else -> throw IllegalArgumentException("原料用量范围配置错误${u.maxSense} ${u.max}")
+                when (u.maxOperator) {
+                    Operator.LE -> iVars.le(u.max)
+                    Operator.LT -> iVars.lt(u.max)
+                    else -> throw IllegalArgumentException("原料用量范围配置错误${u.maxOperator} ${u.max}")
                 }
             }
         }
@@ -291,8 +295,8 @@ object RecipeSolver {
             val thenVar = thenCondition.materials.mapNotNull { recipeMaterials[it]?.weight }.sum()
             val whenCon = whenCondition.condition
             val thenCon = thenCondition.condition
-            thenVar.const(thenCon.sense, thenCon.value)
-                .onlyEnforceIf(whenVar.const(whenCon.sense, whenCon.value))
+            thenVar.expr(thenCon.operator, thenCon.value)
+                .onlyEnforceIf(whenVar.expr(whenCon.operator, whenCon.value))
         }
         //制造费用
         val materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>?
@@ -355,8 +359,9 @@ object RecipeSolver {
             dictItems = null
         }
 
-        return PrepareData(
+        return PrepareSolveData(
             defaultRecipeName = this.name,
+            epsilon = epsilon,
             requirement = requirement,
             includeProductionCost = includeProductionCost,
             minMaterialNum = minMaterialNum,
@@ -378,7 +383,7 @@ object RecipeSolver {
             .map { it.value.weight }
         if (iVars.isNotEmpty()) {
             val useMaterial = iVars.sum()
-            val thens = mutableListOf<Constraint>()
+            val thens = mutableListOf<Expr>()
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
                     ChangeItemType.MATERIAL -> {//能耗费用
@@ -388,7 +393,7 @@ object RecipeSolver {
                             //change
                             val changeVar = ((value
                                 ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                            thens.add(changeVar.eqConst(0.0))
+                            thens.add(changeVar.eqExpr(0.0))
                             material.value += changeVar
                         }
                     }
@@ -400,7 +405,7 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                         ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                    thens.add(changeVar.eqConst(0.0))
+                                    thens.add(changeVar.eqExpr(0.0))
                                     it.value += changeVar
                                 }
                             }
@@ -411,7 +416,7 @@ object RecipeSolver {
                                     //change
                                     val changeVar = ((value
                                         ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                    thens.add(changeVar.eqConst(0.0))
+                                    thens.add(changeVar.eqExpr(0.0))
                                     cost.value += changeVar
                                 }
                             }
@@ -419,7 +424,7 @@ object RecipeSolver {
                     }
                 }
             }
-            thens.onlyEnforceIf(useMaterial.leConst(0.0))
+            thens.onlyEnforceIf(useMaterial.leExpr(0.0))
         }
     }
 

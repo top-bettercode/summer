@@ -39,7 +39,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 474.3083003953,
+    "weight" : 478.7587997532,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -75,6 +75,103 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 1.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "中白肥（24%)",
+      "index" : 24,
+      "indicators" : {
+        "水溶磷" : {
+          "id" : "水溶磷",
+          "index" : 8,
+          "name" : "水溶磷",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 3.6,
+          "scale" : 0.01
+        },
+        "水溶磷率" : {
+          "id" : "水溶磷率",
+          "index" : 7,
+          "itId" : "水溶磷",
+          "name" : "水溶磷率",
+          "otherId" : "磷",
+          "type" : "RATE_TO_OTHER",
+          "unit" : "%",
+          "value" : 15.0,
+          "scale" : 0.01
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 7.0,
+          "scale" : 0.01
+        },
+        "磷" : {
+          "id" : "磷",
+          "index" : 2,
+          "name" : "磷",
+          "type" : "NUTRIENT",
+          "unit" : "%",
+          "value" : 24.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "中白肥（24%)",
+      "price" : 0.75,
+      "unit" : "吨"
+    },
+    "weight" : 266.5186891425,
+    "id" : "中白肥（24%)",
+    "index" : 24,
+    "indicators" : {
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "index" : 8,
+        "name" : "水溶磷",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 3.6,
+        "scale" : 0.01
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "index" : 7,
+        "itId" : "水溶磷",
+        "name" : "水溶磷率",
+        "otherId" : "磷",
+        "type" : "RATE_TO_OTHER",
+        "unit" : "%",
+        "value" : 15.0,
+        "scale" : 0.01
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 7.0,
+        "scale" : 0.01
+      },
+      "磷" : {
+        "id" : "磷",
+        "index" : 2,
+        "name" : "磷",
+        "type" : "NUTRIENT",
+        "unit" : "%",
+        "value" : 24.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "中白肥（24%)",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.75,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -125,7 +222,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 484.693877551,
+    "weight" : 56.496701916,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -211,7 +308,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 108.5714285714,
+    "weight" : 100.0,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -287,6 +384,45 @@
     "overdoseWeight" : 0.0,
     "price" : 0.35,
     "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "石粉（尿基高塔用）",
+      "index" : 54,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 1.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "石粉（尿基高塔用）",
+      "price" : 0.24,
+      "unit" : "吨"
+    },
+    "weight" : 18.2258091883,
+    "id" : "石粉（尿基高塔用）",
+    "index" : 54,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 1.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "石粉（尿基高塔用）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.24,
+    "unit" : "吨"
   } ],
   "optimalProductionCost" : {
     "allChange" : 1.01,
@@ -347,8 +483,8 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "COPTSolver-6",
-  "dryWaterWeight" : 147.5736065177,
-  "materialCost" : 1257.3162055335,
+  "dryWaterWeight" : 0.0,
+  "materialCost" : 1257.3162055336,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -409,6 +545,6 @@
     "totalFee" : 213.6554
   },
   "totalNutrientWeight" : 253.0,
-  "waterWeight" : 181.0716544325,
-  "weight" : 1147.5736065177
+  "waterWeight" : 50.0,
+  "weight" : 1000.0
 }

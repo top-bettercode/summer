@@ -603,7 +603,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 3.8037397901,
+    "weight" : 3.80373979,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -691,8 +691,8 @@
     "totalFee" : 161.2977273292
   },
   "recipeName" : "GurobiSolver-1",
-  "dryWaterWeight" : 13.2768142276,
-  "materialCost" : 2319.2474382472,
+  "dryWaterWeight" : 13.2768142275,
+  "materialCost" : 2319.2474382469,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -754,5 +754,5 @@
   },
   "totalNutrientWeight" : 453.0,
   "waterWeight" : 13.2768142276,
-  "weight" : 1013.2768142276
+  "weight" : 1013.2768142275
 }

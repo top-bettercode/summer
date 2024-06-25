@@ -7,7 +7,7 @@ import ilog.cplex.IloCplex.Param
 import ilog.cplex.IloCplex.Status
 import top.bettercode.summer.tools.optimal.*
 import top.bettercode.summer.tools.optimal.OptimalUtil.isInt
-import top.bettercode.summer.tools.optimal.Sense.*
+import top.bettercode.summer.tools.optimal.Operator.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,9 +19,9 @@ import kotlin.math.min
  * @author Peter Wu
  */
 class CplexSolver @JvmOverloads constructor(
-        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-        logging: Boolean = false,
-        name: String = "CplexSolver"
+    epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    logging: Boolean = false,
+    name: String = "CplexSolver"
 ) : Solver(name = name, type = SolverType.CPLEX, epsilon = epsilon) {
 
     companion object {
@@ -30,7 +30,7 @@ class CplexSolver @JvmOverloads constructor(
         }
     }
 
-    val model: IloCplex = IloCplex()
+    var model: IloCplex = IloCplex()
     var objective: IloObjective? = null
 
 
@@ -57,6 +57,8 @@ class CplexSolver @JvmOverloads constructor(
 
     override fun clear() {
         model.clearModel()
+        objective = null
+//        model = IloCplex()
     }
 
     override fun isOptimal(): Boolean {
@@ -77,18 +79,30 @@ class CplexSolver @JvmOverloads constructor(
 
 
     override fun boolVar(name: String?): IVar {
-        return CplexNumVar(_delegate = model.boolVar(name
-                ?: ("b" + (numVariables() + 1))), model = model, isInt = true)
+        return CplexNumVar(
+            _delegate = model.boolVar(
+                name
+                    ?: ("b" + (numVariables() + 1))
+            ), model = model, isInt = true
+        )
     }
 
     override fun intVar(lb: Double, ub: Double, name: String?): IVar {
-        return CplexNumVar(_delegate = model.intVar(lb.toInt(), ub.toInt(), name
-                ?: ("i" + (numVariables() + 1))), model = model, isInt = true)
+        return CplexNumVar(
+            _delegate = model.intVar(
+                lb.toInt(), ub.toInt(), name
+                    ?: ("i" + (numVariables() + 1))
+            ), model = model, isInt = true
+        )
     }
 
     override fun numVar(lb: Double, ub: Double, name: String?): IVar {
-        return CplexNumVar(_delegate = model.numVar(lb, ub, name
-                ?: ("n" + (numVariables() + 1))), model = model, isInt = false)
+        return CplexNumVar(
+            _delegate = model.numVar(
+                lb, ub, name
+                    ?: ("n" + (numVariables() + 1))
+            ), model = model, isInt = false
+        )
     }
 
     private fun expr(`var`: IVar): IloLinearNumExpr {
@@ -350,11 +364,21 @@ class CplexSolver @JvmOverloads constructor(
     }
 
     override fun IVar.neIf(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 1.0), model.not(model.eq(expr(this), value))))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 1.0),
+                model.not(model.eq(expr(this), value))
+            )
+        )
     }
 
     override fun IVar.neIfNot(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.not(model.eq(expr(this), value))))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 0.0),
+                model.not(model.eq(expr(this), value))
+            )
+        )
     }
 
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
@@ -365,8 +389,8 @@ class CplexSolver @JvmOverloads constructor(
         model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.range(lb, expr(this), ub)))
     }
 
-    override fun Constraint.onlyEnforceIf(condition: Constraint): IVar? {
-        val whenCon = when (condition.sense) {
+    override fun Expr.onlyEnforceIf(condition: Expr): IVar? {
+        val whenCon = when (condition.operator) {
             EQ -> model.eq(condition.variable.getDelegate(), condition.value)
             NE -> model.not(model.eq(condition.variable.getDelegate(), condition.value))
             GE -> model.ge(condition.variable.getDelegate(), condition.value)
@@ -374,7 +398,7 @@ class CplexSolver @JvmOverloads constructor(
             LE -> model.le(condition.variable.getDelegate(), condition.value)
             LT -> model.le(condition.variable.getDelegate(), condition.value - epsilon)
         }
-        val thenCon = when (this.sense) {
+        val thenCon = when (this.operator) {
             EQ -> model.eq(this.variable.getDelegate(), this.value)
             NE -> model.not(model.eq(this.variable.getDelegate(), this.value))
             GE -> model.ge(this.variable.getDelegate(), this.value)
@@ -386,8 +410,8 @@ class CplexSolver @JvmOverloads constructor(
         return null
     }
 
-    override fun Array<Constraint>.onlyEnforceIf(condition: Constraint) {
-        val whenCon = when (condition.sense) {
+    override fun Array<Expr>.onlyEnforceIf(condition: Expr) {
+        val whenCon = when (condition.operator) {
             EQ -> model.eq(condition.variable.getDelegate(), condition.value)
             NE -> model.not(model.eq(condition.variable.getDelegate(), condition.value))
             GE -> model.ge(condition.variable.getDelegate(), condition.value)
@@ -396,7 +420,7 @@ class CplexSolver @JvmOverloads constructor(
             LT -> model.le(condition.variable.getDelegate(), condition.value - epsilon)
         }
         this.forEach {
-            val thenCon = when (it.sense) {
+            val thenCon = when (it.operator) {
                 EQ -> model.eq(it.variable.getDelegate(), it.value)
                 NE -> model.not(model.eq(it.variable.getDelegate(), it.value))
                 GE -> model.ge(it.variable.getDelegate(), it.value)
@@ -408,8 +432,8 @@ class CplexSolver @JvmOverloads constructor(
         }
     }
 
-    override fun Iterable<Constraint>.onlyEnforceIf(condition: Constraint) {
-        val whenCon = when (condition.sense) {
+    override fun Iterable<Expr>.onlyEnforceIf(condition: Expr) {
+        val whenCon = when (condition.operator) {
             EQ -> model.eq(condition.variable.getDelegate(), condition.value)
             NE -> model.not(model.eq(condition.variable.getDelegate(), condition.value))
             GE -> model.ge(condition.variable.getDelegate(), condition.value)
@@ -418,7 +442,7 @@ class CplexSolver @JvmOverloads constructor(
             LT -> model.le(condition.variable.getDelegate(), condition.value - epsilon)
         }
         this.forEach {
-            val thenCon = when (it.sense) {
+            val thenCon = when (it.operator) {
                 EQ -> model.eq(it.variable.getDelegate(), it.value)
                 NE -> model.not(model.eq(it.variable.getDelegate(), it.value))
                 GE -> model.ge(it.variable.getDelegate(), it.value)

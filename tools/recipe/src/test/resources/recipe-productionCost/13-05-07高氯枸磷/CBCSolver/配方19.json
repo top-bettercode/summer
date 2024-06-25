@@ -79,8 +79,8 @@
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "中白肥（24%)",
-      "index" : 24,
+      "id" : "低白肥（14%）",
+      "index" : 25,
       "indicators" : {
         "水溶磷" : {
           "id" : "水溶磷",
@@ -88,7 +88,7 @@
           "name" : "水溶磷",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 3.6,
+          "value" : 1.4,
           "scale" : 0.01
         },
         "水溶磷率" : {
@@ -99,7 +99,7 @@
           "otherId" : "磷",
           "type" : "RATE_TO_OTHER",
           "unit" : "%",
-          "value" : 15.0,
+          "value" : 10.0,
           "scale" : 0.01
         },
         "物料水分" : {
@@ -108,7 +108,7 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 7.0,
+          "value" : 35.0,
           "scale" : 0.01
         },
         "磷" : {
@@ -117,17 +117,17 @@
           "name" : "磷",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 24.0,
+          "value" : 14.0,
           "scale" : 0.01
         }
       },
-      "name" : "中白肥（24%)",
-      "price" : 0.75,
+      "name" : "低白肥（14%）",
+      "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 369.5300546448,
-    "id" : "中白肥（24%)",
-    "index" : 24,
+    "weight" : 521.4285714286,
+    "id" : "低白肥（14%）",
+    "index" : 25,
     "indicators" : {
       "水溶磷" : {
         "id" : "水溶磷",
@@ -135,7 +135,7 @@
         "name" : "水溶磷",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 3.6,
+        "value" : 1.4,
         "scale" : 0.01
       },
       "水溶磷率" : {
@@ -146,7 +146,7 @@
         "otherId" : "磷",
         "type" : "RATE_TO_OTHER",
         "unit" : "%",
-        "value" : 15.0,
+        "value" : 10.0,
         "scale" : 0.01
       },
       "物料水分" : {
@@ -155,7 +155,7 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 7.0,
+        "value" : 35.0,
         "scale" : 0.01
       },
       "磷" : {
@@ -164,20 +164,20 @@
         "name" : "磷",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 24.0,
+        "value" : 14.0,
         "scale" : 0.01
       }
     },
-    "name" : "中白肥（24%)",
+    "name" : "低白肥（14%）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 0.75,
+    "price" : 0.42,
     "unit" : "吨"
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "95%进口白钾(粉)",
-      "index" : 29,
+      "id" : "95%氯化钾烘干粉（国产）",
+      "index" : 26,
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
@@ -194,7 +194,7 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.5,
+          "value" : 1.0,
           "scale" : 0.01
         },
         "钾" : {
@@ -203,17 +203,17 @@
           "name" : "钾",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 61.0,
+          "value" : 60.0,
           "scale" : 0.01
         }
       },
-      "name" : "95%进口白钾(粉)",
-      "price" : 3.75,
+      "name" : "95%氯化钾烘干粉（国产）",
+      "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 98.3606557377,
-    "id" : "95%进口白钾(粉)",
-    "index" : 29,
+    "weight" : 100.0,
+    "id" : "95%氯化钾烘干粉（国产）",
+    "index" : 26,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -230,7 +230,7 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.5,
+        "value" : 1.0,
         "scale" : 0.01
       },
       "钾" : {
@@ -239,14 +239,71 @@
         "name" : "钾",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 61.0,
+        "value" : 60.0,
         "scale" : 0.01
       }
     },
-    "name" : "95%进口白钾(粉)",
+    "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.75,
+    "price" : 3.55,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "EDTA-镁",
+      "index" : 33,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.5,
+          "scale" : 0.01
+        },
+        "镁" : {
+          "id" : "镁",
+          "index" : 16,
+          "name" : "镁",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 6.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "EDTA-镁",
+      "price" : 29.3,
+      "unit" : "吨"
+    },
+    "weight" : 2.457337884,
+    "id" : "EDTA-镁",
+    "index" : 33,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.5,
+        "scale" : 0.01
+      },
+      "镁" : {
+        "id" : "镁",
+        "index" : 16,
+        "name" : "镁",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 6.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "EDTA-镁",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 29.3,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -347,8 +404,8 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "CBCSolver-19",
-  "dryWaterWeight" : 22.1990107778,
-  "materialCost" : 1314.3162055336,
+  "dryWaterWeight" : 178.1942097079,
+  "materialCost" : 1314.3162055349,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -408,7 +465,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 268.6872131148,
-  "waterWeight" : 36.7019901078,
-  "weight" : 1022.1990107778
+  "totalNutrientWeight" : 253.0,
+  "waterWeight" : 193.8553696934,
+  "weight" : 1178.1942097079
 }

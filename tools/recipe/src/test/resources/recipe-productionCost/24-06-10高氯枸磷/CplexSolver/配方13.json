@@ -30,7 +30,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.0,
+    "weight" : 427.7647279657,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 299.6415335108,
+    "weight" : 82.968559876,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -136,8 +136,8 @@
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "67全水溶磷酸一铵",
-      "index" : 17,
+      "id" : "58磷酸一铵（粉）",
+      "index" : 10,
       "indicators" : {
         "氮" : {
           "id" : "氮",
@@ -145,7 +145,7 @@
           "name" : "氮",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 11.0,
+          "value" : 10.0,
           "scale" : 0.01
         },
         "水溶磷" : {
@@ -154,7 +154,7 @@
           "name" : "水溶磷",
           "type" : "GENERAL",
           "unit" : "%",
-          "value" : 56.0,
+          "value" : 38.4,
           "scale" : 0.01
         },
         "水溶磷率" : {
@@ -165,7 +165,7 @@
           "otherId" : "磷",
           "type" : "RATE_TO_OTHER",
           "unit" : "%",
-          "value" : 100.0,
+          "value" : 80.0,
           "scale" : 0.01
         },
         "物料水分" : {
@@ -174,7 +174,7 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 0.5,
+          "value" : 2.0,
           "scale" : 0.01
         },
         "磷" : {
@@ -183,17 +183,17 @@
           "name" : "磷",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 56.0,
+          "value" : 48.0,
           "scale" : 0.01
         }
       },
-      "name" : "67全水溶磷酸一铵",
-      "price" : 5.17,
+      "name" : "58磷酸一铵（粉）",
+      "price" : 3.51,
       "unit" : "吨"
     },
-    "weight" : 56.3552497233,
-    "id" : "67全水溶磷酸一铵",
-    "index" : 17,
+    "weight" : 122.3717948718,
+    "id" : "58磷酸一铵（粉）",
+    "index" : 10,
     "indicators" : {
       "氮" : {
         "id" : "氮",
@@ -201,7 +201,7 @@
         "name" : "氮",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 11.0,
+        "value" : 10.0,
         "scale" : 0.01
       },
       "水溶磷" : {
@@ -210,7 +210,7 @@
         "name" : "水溶磷",
         "type" : "GENERAL",
         "unit" : "%",
-        "value" : 56.0,
+        "value" : 38.4,
         "scale" : 0.01
       },
       "水溶磷率" : {
@@ -221,7 +221,7 @@
         "otherId" : "磷",
         "type" : "RATE_TO_OTHER",
         "unit" : "%",
-        "value" : 100.0,
+        "value" : 80.0,
         "scale" : 0.01
       },
       "物料水分" : {
@@ -230,7 +230,7 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 0.5,
+        "value" : 2.0,
         "scale" : 0.01
       },
       "磷" : {
@@ -239,14 +239,14 @@
         "name" : "磷",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 56.0,
+        "value" : 48.0,
         "scale" : 0.01
       }
     },
-    "name" : "67全水溶磷酸一铵",
+    "name" : "58磷酸一铵（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 5.17,
+    "price" : 3.51,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -297,7 +297,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 111.4853853222,
+    "weight" : 101.0897435897,
     "id" : "中白肥（24%)",
     "index" : 25,
     "indicators" : {
@@ -423,6 +423,45 @@
   }, {
     "consumes" : { },
     "material" : {
+      "id" : "石粉（尿基高塔用）",
+      "index" : 55,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 1.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "石粉（尿基高塔用）",
+      "price" : 0.24,
+      "unit" : "吨"
+    },
+    "weight" : 113.9367685698,
+    "id" : "石粉（尿基高塔用）",
+    "index" : 55,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 1.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "石粉（尿基高塔用）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.24,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
       "id" : "防结油（白色）",
       "index" : 58,
       "indicators" : { },
@@ -518,8 +557,8 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "CplexSolver-13",
-  "dryWaterWeight" : 2.4821685563,
-  "materialCost" : 2406.3467503007,
+  "dryWaterWeight" : 3.131594873,
+  "materialCost" : 2406.3467503009,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -579,7 +618,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 405.1238177702,
-  "waterWeight" : 14.4821685563,
-  "weight" : 1002.4821685563
+  "totalNutrientWeight" : 403.0,
+  "waterWeight" : 15.131594873,
+  "weight" : 1003.131594873
 }

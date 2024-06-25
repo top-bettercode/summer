@@ -458,7 +458,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.4953385462,
+    "weight" : 48.4953385461,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -575,7 +575,7 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "GurobiSolver-1",
-  "dryWaterWeight" : 0.0,
+  "dryWaterWeight" : -1.0E-10,
   "materialCost" : 2364.3467503006,
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -638,5 +638,5 @@
   },
   "totalNutrientWeight" : 403.0,
   "waterWeight" : 8.7171195652,
-  "weight" : 1000.0
+  "weight" : 999.9999999999
 }

@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.lang.util.StringUtil.json
 /**
  * @author Peter Wu
  */
-internal class TestPrepareDataTest {
+internal class TestPrepareSolveDataTest {
 
     @Test
     fun testReadData() {

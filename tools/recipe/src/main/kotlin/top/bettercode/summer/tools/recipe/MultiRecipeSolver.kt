@@ -33,7 +33,11 @@ object MultiRecipeSolver {
         solver.use { so ->
             so.apply {
                 val s = System.currentTimeMillis()
-                val prepareData = prepare(requirement, includeProductionCost, minMaterialNum)
+                var prepareData = prepare(
+                    requirement = requirement,
+                    includeProductionCost = includeProductionCost,
+                    minMaterialNum = minMaterialNum
+                )
                 var e = System.currentTimeMillis()
                 val recipeResult = RecipeResult(requirement = requirement, solverName = name)
                 while ((e - s) / 1000 < requirement.timeout
@@ -49,9 +53,18 @@ object MultiRecipeSolver {
                     }
                     // 求解
                     val recipe =
-                        prepareData.solve(this, "${so.name}-${recipeResult.recipes.size + 1}")
+                        prepareData.solve(
+                            this,
+                            "${so.name}-${recipeResult.recipes.size + 1}"
+                        )
                     if (recipe != null) {
                         recipeResult.addRecipe(recipe)
+                        clear()
+                        prepareData = prepare(
+                            requirement = requirement,
+                            includeProductionCost = includeProductionCost,
+                            minMaterialNum = minMaterialNum
+                        )
                         val recipeMaterials = prepareData.recipeMaterials
                         val first = recipeResult.recipes.isEmpty()
                         if (first) {
@@ -82,7 +95,6 @@ object MultiRecipeSolver {
                         val cost = recipe.cost
                         prepareData.objectiveVars.ge(cost + if (recipeResult.recipes.size < 10) 3 else 5)
                     } else {
-                        log.warn("Could not find optimal solution:${getResultStatus()}")
                         e = System.currentTimeMillis()
                         recipeResult.time = e - s
                         log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")

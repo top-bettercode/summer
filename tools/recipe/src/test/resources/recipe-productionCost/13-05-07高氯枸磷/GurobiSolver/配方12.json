@@ -125,7 +125,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 324.0019762846,
+    "weight" : 339.2823374409,
     "id" : "中白肥（24%)",
     "index" : 24,
     "indicators" : {
@@ -211,7 +211,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 101.6897233202,
+    "weight" : 100.0,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -268,7 +268,7 @@
       "price" : 0.35,
       "unit" : "吨"
     },
-    "weight" : 100.0,
+    "weight" : 80.0,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -286,6 +286,45 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "石粉（尿基高塔用）",
+      "index" : 54,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 1.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "石粉（尿基高塔用）",
+      "price" : 0.24,
+      "unit" : "吨"
+    },
+    "weight" : 6.4093621638,
+    "id" : "石粉（尿基高塔用）",
+    "index" : 54,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 1.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "石粉（尿基高塔用）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.24,
     "unit" : "吨"
   } ],
   "optimalProductionCost" : {
@@ -347,8 +386,8 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "GurobiSolver-12",
-  "dryWaterWeight" : 1.0E-10,
-  "materialCost" : 1279.3162055338,
+  "dryWaterWeight" : 0.0,
+  "materialCost" : 1279.3162055336,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -408,7 +447,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 258.7743083004,
-  "waterWeight" : 35.4401185771,
-  "weight" : 1000.0000000001
+  "totalNutrientWeight" : 261.4277609858,
+  "waterWeight" : 35.1569402465,
+  "weight" : 1000.0
 }
