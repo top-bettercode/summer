@@ -1,5 +1,5 @@
 {
-  "cost" : 2314.9234792906686,
+  "cost" : 2314.9234792907,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -39,7 +39,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 359.28389379054875,
+    "weight" : 359.2838937905,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -99,7 +99,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.1071464028804376,
+        "normal" : 2.1071464029,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -111,7 +111,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.516418923624999,
+        "normal" : 2.5164189236,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -146,7 +146,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 4.623565326505437,
+    "weight" : 4.6235653265,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -170,7 +170,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 4.623565326505437,
+    "normalWeight" : 4.6235653265,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -232,7 +232,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 291.9374999999998,
+    "weight" : 291.9375,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "indicators" : {
@@ -347,7 +347,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 122.22826086956536,
+    "weight" : 122.2282608696,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -442,7 +442,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 192.45726469304648,
+    "weight" : 192.457264693,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
@@ -489,7 +489,7 @@
       "price" : 8.0,
       "unit" : "吨"
     },
-    "weight" : 1.9999999999999996,
+    "weight" : 2.0,
     "id" : "防结油（白色）",
     "index" : 64,
     "indicators" : { },
@@ -508,7 +508,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 3.0000000000000004,
+    "weight" : 3.0,
     "id" : "防结粉（白色）",
     "index" : 65,
     "indicators" : { },
@@ -555,7 +555,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 40.87606864028685,
+    "weight" : 40.8760686403,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -594,8 +594,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "CBCSolver-1",
-  "dryWaterWeight" : 16.40655332,
-  "materialCost" : 2314.9234792907,
+  "dryWaterWeight" : 16.4065533199,
+  "materialCost" : 2314.9234792906,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -657,5 +657,5 @@
   },
   "totalNutrientWeight" : 453.0,
   "waterWeight" : 31.40655332,
-  "weight" : 1016.40655332
+  "weight" : 1016.4065533199
 }

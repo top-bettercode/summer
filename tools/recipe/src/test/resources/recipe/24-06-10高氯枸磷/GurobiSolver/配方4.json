@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 326.7247300706,
+    "weight" : 234.5308673603,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -191,7 +191,7 @@
       "price" : 3.51,
       "unit" : "吨"
     },
-    "weight" : 73.7179487179,
+    "weight" : 101.3332336777,
     "id" : "58磷酸一铵（粉）",
     "index" : 10,
     "indicators" : {
@@ -297,7 +297,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 60.8974358974,
+    "weight" : 83.7100626033,
     "id" : "中白肥（24%)",
     "index" : 25,
     "indicators" : {
@@ -440,7 +440,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 4.1053657595,
+    "weight" : 47.5328425132,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -499,8 +499,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "GurobiSolver-4",
-  "dryWaterWeight" : 0.4454804454,
-  "materialCost" : 2373.3467503005,
+  "dryWaterWeight" : 2.1070061545,
+  "materialCost" : 2373.3467503008,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -560,7 +560,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 404.8331515796,
-  "waterWeight" : 12.4454804455,
-  "weight" : 1000.4454804454
+  "totalNutrientWeight" : 403.0,
+  "waterWeight" : 14.1070061545,
+  "weight" : 1002.1070061545
 }

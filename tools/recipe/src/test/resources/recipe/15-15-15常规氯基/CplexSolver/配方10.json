@@ -39,7 +39,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 522.0522222272,
+    "weight" : 529.6627363792,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -99,7 +99,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 1.7409885401,
+        "normal" : 1.7788150356,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -111,7 +111,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.0791419629,
+        "normal" : 1.9940827139,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -146,7 +146,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 3.820130503,
+    "weight" : 3.7728977495,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -170,7 +170,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 3.820130503,
+    "normalWeight" : 3.7728977495000002,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -232,7 +232,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 241.2076546903,
+    "weight" : 231.3396695641,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "indicators" : {
@@ -347,7 +347,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 100.9887121087,
+    "weight" : 103.1828960312,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -519,8 +519,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "CplexSolver-10",
-  "dryWaterWeight" : 106.4020528625,
-  "materialCost" : 2341.9234792909,
+  "dryWaterWeight" : 106.2915330573,
+  "materialCost" : 2341.9234792906,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -550,7 +550,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 38.2813387223,
+    "energyFee" : 38.2631029545,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -562,7 +562,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.7140205286249999
+      "value" : 1.712915330573
     }, {
       "it" : {
         "id" : "生物质",
@@ -578,9 +578,9 @@
     } ],
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 225.5545521095
+    "totalFee" : 225.536133984
   },
-  "totalNutrientWeight" : 455.5859679318,
-  "waterWeight" : 121.4020528625,
-  "weight" : 1106.4020528625
+  "totalNutrientWeight" : 454.1408143317,
+  "waterWeight" : 121.2915330573,
+  "weight" : 1106.2915330573
 }

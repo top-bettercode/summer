@@ -1,5 +1,5 @@
 {
-  "cost" : 1455.971605533597,
+  "cost" : 1455.9716055336,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -39,7 +39,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 474.30830039525694,
+    "weight" : 474.3083003953,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -125,7 +125,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 521.4285714285717,
+    "weight" : 521.4285714286,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -347,8 +347,8 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "COPTSolver-1",
-  "dryWaterWeight" : 175.7368718238,
-  "materialCost" : 1242.3162055336,
+  "dryWaterWeight" : 175.7368718239,
+  "materialCost" : 1242.3162055337,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -410,5 +410,5 @@
   },
   "totalNutrientWeight" : 253.0,
   "waterWeight" : 193.843083004,
-  "weight" : 1175.7368718238
+  "weight" : 1175.7368718239
 }

@@ -39,7 +39,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 339.7999796814,
+    "weight" : 361.4615948746,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -95,7 +95,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.3050642218,
+        "normal" : 2.4420295572,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -103,7 +103,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.9365309229,
+        "normal" : 2.8112114858,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -111,7 +111,7 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 4.2204194521,
+        "normal" : 3.50443E-5,
         "overdose" : 0.0
       },
       "磷酸" : {
@@ -146,7 +146,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 9.4620145969,
+    "weight" : 5.2532760873,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -170,7 +170,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 9.4620145968,
+    "normalWeight" : 5.2532760873,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -232,7 +232,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 278.734894151,
+    "weight" : 266.8395996832,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -347,7 +347,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 133.7087876948,
+    "weight" : 127.488304952,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -442,7 +442,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 233.3333333333,
+    "weight" : 246.0325664147,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
     "indicators" : {
@@ -508,7 +508,7 @@
       "price" : 0.295,
       "unit" : "吨"
     },
-    "weight" : 12.0430910224,
+    "weight" : 1.0E-4,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -584,7 +584,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 0.1204309102
+        "value" : 1.0E-6
       },
       "DEPRECIATION" : {
         "it" : {
@@ -603,7 +603,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 20.2435465792,
+    "energyFee" : 20.2424479317,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -615,7 +615,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.6208210048
+      "value" : 0.6207544201
     }, {
       "it" : {
         "id" : "生物质",
@@ -629,13 +629,13 @@
       },
       "value" : 1.0
     } ],
-    "otherFee" : 119.0580982284,
-    "taxFee" : 25.7152288406,
-    "totalFee" : 166.6670423846
+    "otherFee" : 114.000042,
+    "taxFee" : 25.26000378,
+    "totalFee" : 161.0975186488
   },
   "recipeName" : "CplexSolver-8",
-  "dryWaterWeight" : 12.0821004798,
-  "materialCost" : 2334.8781231903,
+  "dryWaterWeight" : 12.0754420118,
+  "materialCost" : 2340.4476469271,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -646,7 +646,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 0.12043091022399999
+        "value" : 1.0000000000287557E-6
       },
       "DEPRECIATION" : {
         "it" : {
@@ -665,7 +665,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 20.2435465792,
+    "energyFee" : 20.2424479319,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -677,7 +677,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.620821004797
+      "value" : 0.620754420118
     }, {
       "it" : {
         "id" : "生物质",
@@ -691,11 +691,11 @@
       },
       "value" : 1.0
     } ],
-    "otherFee" : 119.0580982294,
-    "taxFee" : 25.7152288406,
-    "totalFee" : 166.6670423857
+    "otherFee" : 114.000042,
+    "taxFee" : 25.26000378,
+    "totalFee" : 161.0975186491
   },
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 12.0821004797,
-  "weight" : 1012.0821004798
+  "waterWeight" : 12.0754420118,
+  "weight" : 1012.0754420118
 }

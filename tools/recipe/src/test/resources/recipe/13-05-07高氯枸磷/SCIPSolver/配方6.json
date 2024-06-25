@@ -125,7 +125,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 549.2525756612,
+    "weight" : 524.1608118657,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -176,8 +176,8 @@
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "95%氯化钾烘干粉（国产）",
-      "index" : 26,
+      "id" : "95%进口白钾(粉)",
+      "index" : 29,
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
@@ -194,7 +194,7 @@
           "name" : "物料水分",
           "type" : "WATER",
           "unit" : "%",
-          "value" : 1.0,
+          "value" : 0.5,
           "scale" : 0.01
         },
         "钾" : {
@@ -203,17 +203,17 @@
           "name" : "钾",
           "type" : "NUTRIENT",
           "unit" : "%",
-          "value" : 60.0,
+          "value" : 61.0,
           "scale" : 0.01
         }
       },
-      "name" : "95%氯化钾烘干粉（国产）",
-      "price" : 3.55,
+      "name" : "95%进口白钾(粉)",
+      "price" : 3.75,
       "unit" : "吨"
     },
-    "weight" : 100.0,
-    "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 26,
+    "weight" : 98.3606557377,
+    "id" : "95%进口白钾(粉)",
+    "index" : 29,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -230,7 +230,7 @@
         "name" : "物料水分",
         "type" : "WATER",
         "unit" : "%",
-        "value" : 1.0,
+        "value" : 0.5,
         "scale" : 0.01
       },
       "钾" : {
@@ -239,71 +239,14 @@
         "name" : "钾",
         "type" : "NUTRIENT",
         "unit" : "%",
-        "value" : 60.0,
+        "value" : 61.0,
         "scale" : 0.01
       }
     },
-    "name" : "95%氯化钾烘干粉（国产）",
+    "name" : "95%进口白钾(粉)",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.55,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "material" : {
-      "id" : "七钼酸铵",
-      "index" : 45,
-      "indicators" : {
-        "物料水分" : {
-          "id" : "物料水分",
-          "index" : 6,
-          "name" : "物料水分",
-          "type" : "WATER",
-          "unit" : "%",
-          "value" : 0.5,
-          "scale" : 0.01
-        },
-        "钼" : {
-          "id" : "钼",
-          "index" : 15,
-          "name" : "钼",
-          "type" : "GENERAL",
-          "unit" : "%",
-          "value" : 54.0,
-          "scale" : 0.01
-        }
-      },
-      "name" : "七钼酸铵",
-      "price" : 160.0,
-      "unit" : "吨"
-    },
-    "weight" : 0.0207119889,
-    "id" : "七钼酸铵",
-    "index" : 45,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "index" : 6,
-        "name" : "物料水分",
-        "type" : "WATER",
-        "unit" : "%",
-        "value" : 0.5,
-        "scale" : 0.01
-      },
-      "钼" : {
-        "id" : "钼",
-        "index" : 15,
-        "name" : "钼",
-        "type" : "GENERAL",
-        "unit" : "%",
-        "value" : 54.0,
-        "scale" : 0.01
-      }
-    },
-    "name" : "七钼酸铵",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 160.0,
+    "price" : 3.75,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -346,8 +289,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "SCIPSolver-6",
-  "dryWaterWeight" : 203.5815880454,
-  "materialCost" : 1257.3162055354,
+  "dryWaterWeight" : 176.8297679987,
+  "materialCost" : 1257.3162055336,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -407,7 +350,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 256.8953605926,
-  "waterWeight" : 203.5815880453,
-  "weight" : 1203.5815880454
+  "totalNutrientWeight" : 253.3825136612,
+  "waterWeight" : 194.2911704356,
+  "weight" : 1176.8297679987
 }
