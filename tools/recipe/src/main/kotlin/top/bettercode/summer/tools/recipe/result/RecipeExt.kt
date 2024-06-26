@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.recipe.result
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.material.id.RelationMaterialIDs
 
@@ -26,14 +27,14 @@ class RecipeExt(private val recipe: Recipe) {
     /**
      * 消耗原料ID
      */
-    val RecipeMaterialValue.relationName: String?
+    val RecipeMaterialValue.relationName: MaterialIDs?
         get() {
             val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.then.any { m -> m.term.contains(this.id) } }
             val ids = materialRelationConstraints.firstOrNull() ?: return null
 
             val materials = recipe.materials
             val usedIds = materials.filter { ids.term.contains(it.id) }.map { it.id }.toMaterialIDs()
-            return usedIds.toString()
+            return usedIds
         }
 
     /**

@@ -245,9 +245,7 @@ object RecipeExport {
                             if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
                         "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${
                             logic.changeItems?.joinToString { item ->
-                                item.name(
-                                    productionCost.materialItems
-                                )
+                                item.toName(requirement)
                             }
                         }增加${logic.changeValue * 100}%"
                     }
@@ -332,7 +330,11 @@ object RecipeExport {
             c++
             materialItems.forEach {
                 r = row
-                cell(r++, c).value("${it.it.name}${if (it.it.unit.isBlank()) "" else "(${it.it.unit})"}").headerStyle().width(15.0)
+                cell(
+                    r++,
+                    c
+                ).value("${it.it.name}${if (it.it.unit.isBlank()) "" else "(${it.it.unit})"}")
+                    .headerStyle().width(15.0)
                     .setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.it.value).format("0.00").setStyle()
@@ -471,7 +473,7 @@ object RecipeExport {
                     normal = recipeRelation?.normal
                     relationValue = material.relationValue
                     normalValue = relationValue?.first
-                    relationName = material.relationName
+                    relationName = material.relationName?.toNames(requirement)
                     // 最小耗液氨/硫酸系数
                     cell(r, c++).value(normal?.min)
                         .comment(if (normal?.min == null || relationName == null) null else "${material.name}最小耗${relationName}系数")

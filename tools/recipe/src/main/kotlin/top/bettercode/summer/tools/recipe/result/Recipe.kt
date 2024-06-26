@@ -147,7 +147,10 @@ data class Recipe(
         }
         //制造费用
         if (optimalProductionCost != null) {
-            Assert.notNull(other.optimalProductionCost, "${requirement.productName}-other配方制造费用为空")
+            Assert.notNull(
+                other.optimalProductionCost,
+                "${requirement.productName}-other配方制造费用为空"
+            )
             optimalProductionCost.compareTo(
                 other.optimalProductionCost!!,
                 names,
@@ -311,15 +314,31 @@ data class Recipe(
         for ((ids, range) in materialRangeConstraints) {
             val weight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
             if (weight !in range.min - RecipeUtil.DEFAULT_MIN_EPSILON..range.max + RecipeUtil.DEFAULT_MIN_EPSILON) {
-                throw IllegalRecipeException("${requirement.productName}-原料${ids}使用量：${weight} 不在范围${range.min}-${range.max}内")
+                throw IllegalRecipeException(
+                    "${requirement.productName}-原料${
+                        ids.toNames(
+                            requirement
+                        )
+                    }使用量：${
+                        weight.scale().toBigDecimal().toPlainString()
+                    } 不在范围${range.min}-${range.max}内"
+                )
             }
         }
         // 指定原料约束
         val materialIDConstraints = requirement.materialIDConstraints
         for ((ids, value) in materialIDConstraints) {
-            for (id in ids) {
-                if (usedMaterials.contains(id) && !value.contains(id)) {
-                    throw IllegalRecipeException("${requirement.productName}-${ids}使用了不在指定原料${value}范围内的原料：${id}")
+            for (idd in ids) {
+                if (usedMaterials.contains(idd) && !value.contains(idd)) {
+                    throw IllegalRecipeException(
+                        "${requirement.productName}-${
+                            ids.toNames(
+                                requirement
+                            )
+                        }使用了不在指定原料${value.toNames(requirement)}范围内的原料：${
+                            arrayOf(idd).toMaterialIDs().toNames(requirement)
+                        }"
+                    )
                 }
             }
         }
@@ -336,7 +355,15 @@ data class Recipe(
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
             if ((usedWeight - usedAddWeight).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException(
-                    "${requirement.productName}-原料${usedIds}使用量：${usedWeight} 不等于:${usedAddWeight} = 正常使用量：${usedNormalWeight}+过量使用量：${usedOverdoseWeight}，差值:${
+                    "${requirement.productName}-原料[${usedIds.toNames(requirement)}]使用量：${
+                        usedWeight.scale().toBigDecimal().toPlainString()
+                    } 不等于:${
+                        usedAddWeight.scale().toBigDecimal().toPlainString()
+                    } = 正常使用量：${
+                        usedNormalWeight.scale().toBigDecimal().toPlainString()
+                    }+过量使用量：${
+                        usedOverdoseWeight.scale().toBigDecimal().toPlainString()
+                    }，差值:${
                         (usedWeight - usedAddWeight).scale().toBigDecimal().toPlainString()
                     }"
                 )
@@ -349,12 +376,24 @@ data class Recipe(
 
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
             if (usedNormalWeight !in usedMinNormalWeights - RecipeUtil.DEFAULT_MIN_EPSILON..usedMaxNormalWeights + RecipeUtil.DEFAULT_MIN_EPSILON) {
-                throw IllegalRecipeException("${requirement.productName}-原料${usedIds}正常使用量：${usedNormalWeight} 不在范围${usedMinNormalWeights}-${usedMaxNormalWeights}内")
+                throw IllegalRecipeException(
+                    "${requirement.productName}-原料[${usedIds.toNames(requirement)}]正常使用量：${
+                        usedNormalWeight.scale().toBigDecimal().toPlainString()
+                    } 不在范围${
+                        usedMinNormalWeights.scale().toBigDecimal().toPlainString()
+                    }-${usedMaxNormalWeights.scale().toBigDecimal().toPlainString()}内"
+                )
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
             if (usedOverdoseWeight !in usedMinOverdoseWeights - RecipeUtil.DEFAULT_MIN_EPSILON..usedMaxOverdoseWeights + RecipeUtil.DEFAULT_MIN_EPSILON) {
-                throw IllegalRecipeException("${requirement.productName}-原料${usedIds}过量使用量：${usedOverdoseWeight} 不在范围${usedMinOverdoseWeights}-${usedMaxOverdoseWeights}内")
+                throw IllegalRecipeException(
+                    "${requirement.productName}-原料[${usedIds.toNames(requirement)}]过量使用量：${
+                        usedOverdoseWeight.scale().toBigDecimal().toPlainString()
+                    } 不在范围${
+                        usedMinOverdoseWeights.scale().toBigDecimal().toPlainString()
+                    }-${usedMaxOverdoseWeights.scale().toBigDecimal().toPlainString()}内"
+                )
             }
         }
         // 条件约束，当条件1满足时，条件2必须满足
@@ -478,7 +517,11 @@ data class Recipe(
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
         if ((materialCost + productionCostFee - cost).scale() !in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON) {
             throw IllegalRecipeException(
-                "${requirement.productName}-配方成本不匹配，物料成本：${materialCost}+制造费用：${productionCostFee}=${materialCost + productionCostFee} / ${cost},差值：${
+                "${requirement.productName}-配方成本不匹配，物料成本：${materialCost}+制造费用：${
+                    productionCostFee.scale().toBigDecimal().toPlainString()
+                }=${
+                    (materialCost + productionCostFee).scale().toBigDecimal().toPlainString()
+                } / ${cost.scale().toBigDecimal().toPlainString()},差值：${
                     (materialCost + productionCostFee - cost).scale().toBigDecimal().toPlainString()
                 }"
             )
@@ -497,7 +540,8 @@ data class Recipe(
         val materials = materials
         val consumeMaterials = materials.filter { ids.contains(it.id) }
         val usedIds = consumeMaterials.map { it.id }.toMaterialIDs()
-        val replaceRate = if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
+        val replaceRate =
+            if (ids.replaceRate != null && ids.replaceIds?.any { usedIds.contains(it) } == true) ids.replaceRate else 1.0
 
         var usedMinNormalWeight = 0.0
         var usedMaxNormalWeight = 0.0
@@ -569,12 +613,32 @@ data class Recipe(
                     }
                     // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
                     if (consumeNormalWeight !in mMinNormalWeight - RecipeUtil.DEFAULT_MIN_EPSILON..mMaxNormalWeight + RecipeUtil.DEFAULT_MIN_EPSILON) {
-                        throw IllegalRecipeException("${requirement.productName}-${requirement.productName}-原料${m.name}消耗${usedIds}正常使用量：${consumeNormalWeight} 不在范围${mMinNormalWeight}-${mMaxNormalWeight}内")
+                        throw IllegalRecipeException(
+                            "${requirement.productName}-原料${m.name}消耗${
+                                usedIds.toNames(
+                                    requirement
+                                )
+                            }正常使用量：${
+                                consumeNormalWeight.scale().toBigDecimal().toPlainString()
+                            } 不在范围${
+                                mMinNormalWeight.scale().toBigDecimal().toPlainString()
+                            }-${mMaxNormalWeight.scale().toBigDecimal().toPlainString()}内"
+                        )
                     }
 
                     // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
                     if (consumeOverdoseWeight !in mMinOverdoseWeight - RecipeUtil.DEFAULT_MIN_EPSILON..mMaxOverdoseWeight + RecipeUtil.DEFAULT_MIN_EPSILON) {
-                        throw IllegalRecipeException("${requirement.productName}-${requirement.productName}-原料${m.name}消耗${usedIds}过量使用量：${consumeOverdoseWeight} 不在范围${mMinOverdoseWeight}-${mMaxOverdoseWeight}内")
+                        throw IllegalRecipeException(
+                            "${requirement.productName}-原料${m.name}消耗${
+                                usedIds.toNames(
+                                    requirement
+                                )
+                            }过量使用量：${
+                                consumeOverdoseWeight.scale().toBigDecimal().toPlainString()
+                            } 不在范围${
+                                mMinOverdoseWeight.scale().toBigDecimal().toPlainString()
+                            }-${mMaxOverdoseWeight.scale().toBigDecimal().toPlainString()}内"
+                        )
                     }
                 }
                 usedMinNormalWeight += mMinNormalWeight
