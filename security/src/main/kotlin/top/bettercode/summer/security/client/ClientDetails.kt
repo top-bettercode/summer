@@ -32,7 +32,7 @@ open class ClientDetails {
         return isLoginKickedOut || loginKickedOutScopes.any { scope.contains(it) }
     }
 
-    fun supportScope(scope: Collection<String>): Boolean {
+    open fun supportScope(scope: Collection<String>): Boolean {
         return if (this.scope.isEmpty()) {
             true
         } else
