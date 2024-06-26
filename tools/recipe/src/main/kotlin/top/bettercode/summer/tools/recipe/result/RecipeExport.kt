@@ -48,9 +48,9 @@ object RecipeExport {
                     val value =
                         if (indicator.isTotalNutrient) matrial.totalNutrient else matrial.indicators.valueOf(
                             indicator.id
-                        )
+                        ).scale()
 
-                    cell(r, column).value((value).scale())
+                    cell(r, column).value(value)
                         .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                         .setStyle()
                 }

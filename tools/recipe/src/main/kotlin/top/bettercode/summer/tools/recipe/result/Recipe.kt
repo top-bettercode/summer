@@ -348,12 +348,12 @@ data class Recipe(
             val usedMaxOverdoseWeights = overdose.max
 
             // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
-            if (usedNormalWeight !in (usedMinNormalWeights - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxNormalWeights + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
+            if (usedNormalWeight !in usedMinNormalWeights - RecipeUtil.DEFAULT_MIN_EPSILON..usedMaxNormalWeights + RecipeUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException("${requirement.productName}-原料${usedIds}正常使用量：${usedNormalWeight} 不在范围${usedMinNormalWeights}-${usedMaxNormalWeights}内")
             }
 
             // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
-            if (usedOverdoseWeight !in (usedMinOverdoseWeights - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(usedMaxOverdoseWeights + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
+            if (usedOverdoseWeight !in usedMinOverdoseWeights - RecipeUtil.DEFAULT_MIN_EPSILON..usedMaxOverdoseWeights + RecipeUtil.DEFAULT_MIN_EPSILON) {
                 throw IllegalRecipeException("${requirement.productName}-原料${usedIds}过量使用量：${usedOverdoseWeight} 不在范围${usedMinOverdoseWeights}-${usedMaxOverdoseWeights}内")
             }
         }
@@ -568,12 +568,12 @@ data class Recipe(
                         it.consumes[m.id]!!.overdose
                     }
                     // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
-                    if (consumeNormalWeight !in (mMinNormalWeight - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(mMaxNormalWeight + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
+                    if (consumeNormalWeight !in mMinNormalWeight - RecipeUtil.DEFAULT_MIN_EPSILON..mMaxNormalWeight + RecipeUtil.DEFAULT_MIN_EPSILON) {
                         throw IllegalRecipeException("${requirement.productName}-${requirement.productName}-原料${m.name}消耗${usedIds}正常使用量：${consumeNormalWeight} 不在范围${mMinNormalWeight}-${mMaxNormalWeight}内")
                     }
 
                     // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
-                    if (consumeOverdoseWeight !in (mMinOverdoseWeight - RecipeUtil.DEFAULT_MIN_EPSILON).scale()..(mMaxOverdoseWeight + RecipeUtil.DEFAULT_MIN_EPSILON).scale()) {
+                    if (consumeOverdoseWeight !in mMinOverdoseWeight - RecipeUtil.DEFAULT_MIN_EPSILON..mMaxOverdoseWeight + RecipeUtil.DEFAULT_MIN_EPSILON) {
                         throw IllegalRecipeException("${requirement.productName}-${requirement.productName}-原料${m.name}消耗${usedIds}过量使用量：${consumeOverdoseWeight} 不在范围${mMinOverdoseWeight}-${mMaxOverdoseWeight}内")
                     }
                 }
