@@ -128,7 +128,7 @@ data class ProductionCostValue(
             val thisVal = (it.it.cost * it.value).scale()
             val oth = otherMaterialItemsMap[it.it.id]
             val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value).scale()
-            names.add(it.it.name)
+            names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
             itValues.add(thisVal)
             compares.add(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
             otherValues.add(otherVal)
@@ -137,7 +137,7 @@ data class ProductionCostValue(
         if (materialItems.size < other.materialItems.size) {
             other.materialItems.filter { m -> !materialItems.any { m.it.id == it.it.id } }.forEach {
                 val otherVal = (it.it.cost * it.value).scale()
-                names.add(it.it.name)
+                names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
                 itValues.add(0.0)
                 compares.add(-otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
                 otherValues.add(otherVal)
@@ -162,7 +162,7 @@ data class ProductionCostValue(
             val oth = other.dictItems[key]
             val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value).scale()
 
-            names.add(key.dictName)
+            names.add("${key.dictName} (${(value.value * 100).scale(2)}%)")
             itValues.add(thisVal)
             compares.add(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
             otherValues.add(otherVal)
@@ -171,7 +171,7 @@ data class ProductionCostValue(
         if (dictItems.size < other.dictItems.size) {
             other.dictItems.filter { m -> !dictItems.any { m.key == it.key } }.forEach {
                 val otherVal = (it.value.it.cost * it.value.value).scale()
-                names.add(it.key.dictName)
+                names.add("${it.key.dictName} (${(it.value.value * 100).scale(2)}%)")
                 itValues.add(0.0)
                 compares.add(-otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
                 otherValues.add(otherVal)
@@ -191,7 +191,7 @@ data class ProductionCostValue(
         otherValues.add(other.taxFee)
         diffValues.add((taxFee - other.taxFee).scale())
 
-        names.add("制造费用合计")
+        names.add("制造费用合计 (${(allChange * 100).scale(2)}%)")
         itValues.add(totalFee)
         compares.add(this.totalFee - other.totalFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
         otherValues.add(other.totalFee)
