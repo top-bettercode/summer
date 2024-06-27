@@ -669,15 +669,22 @@ object StringUtil {
     @JvmStatic
     fun String.toFullWidth(): String {
         return this.map { char ->
-            when (char) {
-                in '!'..'~' -> {
-                    (char.code + 0xFEE0).toChar()
-                }
-                ' ' -> '\u3000'
-                else -> {
-                    char
-                }
-            }
+            char.toFullWidth()
         }.joinToString("")
     }
+
+    @JvmStatic
+    fun Char.toFullWidth(): Char {
+        return when (this) {
+            in '!'..'~' -> {
+                (this.code + 0xFEE0).toChar()
+            }
+
+            ' ' -> '\u3000'
+            else -> {
+                this
+            }
+        }
+    }
+
 }

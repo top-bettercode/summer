@@ -9,8 +9,7 @@ import top.bettercode.summer.tools.recipe.CarrierValue
 import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.result.IllegalRecipeException
-import java.math.BigDecimal
-import kotlin.math.max
+import top.bettercode.summer.tools.recipe.result.RecipeColumns
 
 /**
  *
@@ -60,49 +59,47 @@ data class ProductionCostValue(
     private val log = LoggerFactory.getLogger(ProductionCostValue::class.java)
 
     fun compareTo(other: ProductionCostValue) {
-        val names = mutableListOf<String>()
-        val itValues = mutableListOf<Number>()
-        val compares = mutableListOf<Boolean>()
-        val otherValues = mutableListOf<Number>()
-        val diffValues = mutableListOf<Number>()
-        compareTo(other, names, itValues, compares, otherValues, diffValues)
+        val names = RecipeColumns()
+        val itValues = RecipeColumns()
+        val compares = RecipeColumns()
+        val otherValues = RecipeColumns()
+        val diffValues = RecipeColumns()
+        names.add("制造费用项")
+        itValues.add("this")
+        compares.add("比较")
+        otherValues.add("other")
+        diffValues.add("差值")
+
+        val separatorIndexs = compareTo(other, names, itValues, compares, otherValues, diffValues)
 
         // 计算每一列的最大宽度
-        val nameWidth = names.maxOf { it.length }
-        val thisStrValues =
-            itValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
-        val otherStrValues =
-            otherValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
-        val diffStrValues =
-            diffValues.map { BigDecimal(it.toString()).stripTrailingZeros().toPlainString() }
+        val nameWidth = names.width
+        val itValueWidth = itValues.width
+        val compareWidth = compares.width
+        val otherValueWidth = otherValues.width
+        val diffValueWidth = diffValues.width
 
-        val itValueWidth = thisStrValues.maxOf { it.length }
-        val otherValueWidth = otherStrValues.maxOf { it.length }
-        val diffValueWidth = max(diffStrValues.maxOf { it.toFullWidth().length }, "差值".length)
+        separatorIndexs.forEachIndexed { index, i ->
+            val index1 = index + i
+            names.add(index1, "".padEnd(nameWidth, '-'))
+            itValues.add(index1, "".padEnd(itValueWidth, '-'))
+            compares.add(index1, "".padEnd(compareWidth, '-'))
+            otherValues.add(index1, "".padEnd(otherValueWidth, '-'))
+            diffValues.add(index1, "".padEnd(diffValueWidth, '-'))
+        }
 
         val result = StringBuilder()
-        // 打印表头
-        val compareWidth = "比较".length
-        result.appendLine(
-            "${"原料名称".padEnd(nameWidth, '\u3000')} | ${"this".padStart(itValueWidth)} | ${
-                "比较".padEnd(
-                    compareWidth
-                )
-            } | ${"other".padEnd(otherValueWidth)} | ${"差值".padStart(diffValueWidth)}"
-        )
 
-        // 打印数据行
         for (i in names.indices) {
             val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
-            val compare = (if (compares[i]) "==" else "!=").toFullWidth().padEnd(compareWidth)
-            val itValue = thisStrValues[i].padStart(itValueWidth)
-            val otherValue = otherStrValues[i].padEnd(otherValueWidth)
-            val diffValue = diffStrValues[i].padStart(diffValueWidth)
+            val itValue = itValues[i].padStart(itValueWidth)
+            val compare = compares[i].toFullWidth().padEnd(compareWidth)
+            val otherValue = otherValues[i].padEnd(otherValueWidth)
+            val diffValue = diffValues[i].padStart(diffValueWidth)
             result.appendLine("$name | $itValue | $compare | $otherValue | $diffValue")
         }
 
-        val diff = !compares.all { it }
-        if (diff) {
+        if (compares.isDiff) {
             throw IllegalRecipeException("制造成本计算结果不一致\n$result")
         } else if (log.isDebugEnabled) {
             log.debug("制造成本计算结果一致")
@@ -111,17 +108,20 @@ data class ProductionCostValue(
 
     fun compareTo(
         other: ProductionCostValue,
-        names: MutableList<String>,
-        itValues: MutableList<Number>,
-        compares: MutableList<Boolean>,
-        otherValues: MutableList<Number>,
-        diffValues: MutableList<Number>
-    ) {
+        names: RecipeColumns,
+        itValues: RecipeColumns,
+        compares: RecipeColumns,
+        otherValues: RecipeColumns,
+        diffValues: RecipeColumns
+    ): List<Int> {
+        val separatorIndexs = mutableListOf<Int>()
+        separatorIndexs.add(names.size)
         names.add("能耗费用原料数量")
         itValues.add(materialItems.size)
         compares.add(materialItems.size == other.materialItems.size)
         otherValues.add(other.materialItems.size)
         diffValues.add(materialItems.size - other.materialItems.size)
+        separatorIndexs.add(names.size)
 
         val otherMaterialItemsMap = other.materialItems.associateBy { it.it.id }
         materialItems.forEach {
@@ -144,18 +144,21 @@ data class ProductionCostValue(
                 diffValues.add(-otherVal)
             }
         }
+        separatorIndexs.add(names.size)
 
         names.add("总能耗费用")
         itValues.add(energyFee)
         compares.add(this.energyFee - other.energyFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
         otherValues.add(other.energyFee)
         diffValues.add((energyFee - other.energyFee).scale())
+        separatorIndexs.add(names.size)
 
         names.add("其他固定费用数量")
         itValues.add(dictItems.size)
         compares.add(dictItems.size == other.dictItems.size)
         otherValues.add(other.dictItems.size)
         diffValues.add(dictItems.size - other.dictItems.size)
+        separatorIndexs.add(names.size)
 
         dictItems.forEach { (key, value) ->
             val thisVal = (value.it.cost * value.value).scale()
@@ -178,24 +181,29 @@ data class ProductionCostValue(
                 diffValues.add(-otherVal)
             }
         }
+        separatorIndexs.add(names.size)
 
         names.add("人工+折旧费+其他费用")
         itValues.add(otherFee)
         compares.add(this.otherFee - other.otherFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
         otherValues.add(other.otherFee)
         diffValues.add((otherFee - other.otherFee).scale())
+        separatorIndexs.add(names.size)
 
         names.add("税费")
         itValues.add(taxFee)
         compares.add(this.taxFee - other.taxFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
         otherValues.add(other.taxFee)
         diffValues.add((taxFee - other.taxFee).scale())
+        separatorIndexs.add(names.size)
 
         names.add("制造费用合计 (${(allChange * 100).scale(2)}%)")
         itValues.add(totalFee)
         compares.add(this.totalFee - other.totalFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
         otherValues.add(other.totalFee)
         diffValues.add((totalFee - other.totalFee).scale())
+        separatorIndexs.add(names.size)
+        return separatorIndexs
     }
 
 }
