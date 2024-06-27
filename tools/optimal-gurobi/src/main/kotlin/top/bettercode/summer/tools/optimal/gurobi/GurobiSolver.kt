@@ -14,6 +14,8 @@ import kotlin.math.min
  *
  * without license the size is limited to 2000 variables and 2000 constraints
  *
+ * support min epsilon = 1e-5
+ *
  * @author Peter Wu
  */
 class GurobiSolver @JvmOverloads constructor(
@@ -22,15 +24,15 @@ class GurobiSolver @JvmOverloads constructor(
     name: String = "GurobiSolver"
 ) : Solver(name = name, type = SolverType.GUROBI, epsilon = epsilon) {
 
-    private val env = GRBEnv()
-    var model: GRBModel = GRBModel(env)
-
     init {
-        env.set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
-        env.set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
-        env.set(GRB.DoubleParam.IntFeasTol, 1e-6)
-        env.set(GRB.DoubleParam.FeasibilityTol, 1e-9)
+        assert(epsilon >= 1e-5) { "epsilon must be >= 1e-5" }
+    }
 
+    private val env = GRBEnv().apply {
+        set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
+        set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
+        set(GRB.DoubleParam.IntFeasTol, 1e-6)
+        set(GRB.DoubleParam.FeasibilityTol, 1e-9)
 //        model.set(GRB.DoubleParam.PerturbValue, 0.0)
 
         //Cutoff:1.0E100
@@ -75,7 +77,10 @@ class GurobiSolver @JvmOverloads constructor(
         //NoRelHeurTime:0.0
         //NoRelHeurWork:0.0
         //WLSTokenRefresh:0.9
+
     }
+
+    var model: GRBModel = GRBModel(env)
 
     override fun setTimeLimit(seconds: Long) {
         model.set(GRB.DoubleParam.TimeLimit, seconds.toDouble())

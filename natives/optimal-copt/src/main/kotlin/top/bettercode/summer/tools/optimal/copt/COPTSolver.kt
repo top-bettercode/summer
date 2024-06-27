@@ -17,6 +17,8 @@ import kotlin.math.min
  * without license the size is limited to 2000 variables and 2000 constraints
  * without license LP size is limited to 10000 variables and 10000 constraints
  *
+ * support min epsilon = 1e-7
+ *
  * @author Peter Wu
  */
 class COPTSolver @JvmOverloads constructor(
@@ -29,6 +31,8 @@ class COPTSolver @JvmOverloads constructor(
     var model: copt.Model = env.createModel(name)
 
     init {
+        assert(epsilon >= 1e-7) { "epsilon must be greater than or equal to 1e-7" }
+
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
         model.setDblParam(copt.DblParam.FeasTol, 1e-9)

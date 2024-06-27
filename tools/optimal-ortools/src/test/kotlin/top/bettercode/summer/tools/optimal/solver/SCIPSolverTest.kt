@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.optimal.solver
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.ortools.SCIPSolver
 
@@ -412,7 +413,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-                Assertions.assertTrue(numVar1.value <= 10.0)
+                Assertions.assertTrue(numVar1.value.scale() <= 10.0)
             }
         }
     }
@@ -504,7 +505,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-                Assertions.assertTrue(numVar1.value == 10.0)
+                Assertions.assertTrue(numVar1.value.scale() == 10.0)
             }
         }
     }
@@ -527,7 +528,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-                Assertions.assertTrue(numVar1.value == 10.0)
+                Assertions.assertTrue(numVar1.value.scale() == 10.0)
             }
         }
     }
@@ -544,7 +545,7 @@ open class SCIPSolverTest {
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
-                Assertions.assertTrue(numVar1.value == 100.0)
+                Assertions.assertTrue(numVar1.value.scale() == 100.0)
                 arrayOf(numVar1).maximize()
                 boolVar.eq(1.0)
                 solve()
@@ -568,7 +569,7 @@ open class SCIPSolverTest {
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
-                Assertions.assertTrue(numVar1.value == 100.0)
+                Assertions.assertTrue(numVar1.value.scale() == 100.0)
                 arrayOf(numVar1).maximize()
                 boolVar.eq(0.0)
                 solve()
@@ -639,8 +640,8 @@ open class SCIPSolverTest {
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
                 System.err.println(numVar1.value)
                 System.err.println(numVar2.value)
-                Assertions.assertTrue(numVar1.value == 10.0)
-                Assertions.assertTrue(numVar2.value < 20.0)
+                Assertions.assertTrue(numVar1.value.scale() == 10.0)
+                Assertions.assertTrue(numVar2.value.scale() < 20.0)
             }
         }
     }

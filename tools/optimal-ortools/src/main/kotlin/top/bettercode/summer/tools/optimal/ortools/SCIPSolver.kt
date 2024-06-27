@@ -5,14 +5,20 @@ import top.bettercode.summer.tools.optimal.OptimalUtil
 import top.bettercode.summer.tools.optimal.SolverType
 
 /**
+ * support min epsilon = 1e-6
  *
  * @author Peter Wu
  */
 class SCIPSolver @JvmOverloads constructor(
-        epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-        name: String = "SCIPSolver"
+    epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    name: String = "SCIPSolver"
 ) : MPExtSolver(
-        mpType = MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING,
-        solverType = SolverType.SCIP,
-        epsilon = epsilon,
-        name = name)
+    mpType = MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING,
+    solverType = SolverType.SCIP,
+    epsilon = epsilon,
+    name = name
+) {
+    init {
+        assert(epsilon >= 1e-6) { "epsilon must be >= 1e-6" }
+    }
+}

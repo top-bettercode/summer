@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.optimal.Solver
  */
 open class COPTSolverTest {
 
-    open val solver: Solver = COPTSolver(logging = true, epsilon = 1e-6)
+    open val solver: Solver = COPTSolver(logging = true, epsilon = 1e-7)
 
     @Test
     fun operator() {

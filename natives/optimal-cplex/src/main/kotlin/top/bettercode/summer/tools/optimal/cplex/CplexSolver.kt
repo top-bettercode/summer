@@ -6,8 +6,8 @@ import ilog.cplex.IloCplex
 import ilog.cplex.IloCplex.Param
 import ilog.cplex.IloCplex.Status
 import top.bettercode.summer.tools.optimal.*
-import top.bettercode.summer.tools.optimal.OptimalUtil.isInt
 import top.bettercode.summer.tools.optimal.Operator.*
+import top.bettercode.summer.tools.optimal.OptimalUtil.isInt
 import kotlin.math.max
 import kotlin.math.min
 
@@ -15,6 +15,8 @@ import kotlin.math.min
  * https://www.ibm.com/docs/zh/icos/22.1.1?topic=optimizers-users-manual-cplex
  *
  * without license the size is limited to 1000 variables and 1000 constraints
+ *
+ * support min epsilon = 1e-6
  *
  * @author Peter Wu
  */
@@ -35,6 +37,8 @@ class CplexSolver @JvmOverloads constructor(
 
 
     init {
+        assert(epsilon >= 1e-6) { "epsilon must be >= 1e-6" }
+
         model.setParam(Param.MIP.Display, if (logging) 2 else 0) // 0表示禁用日志，1表示启用
         if (!logging) {
             model.setOut(null)
