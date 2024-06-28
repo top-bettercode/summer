@@ -18,8 +18,12 @@ class RecipeExt(private val recipe: Recipe) {
      */
     val RecipeMaterialValue.hasOverdose: Boolean
         get() {
-            val relationMap = recipe.requirement.materialRelationConstraints.find { it.then.any { m -> m.term.contains(this.id) } }
-                    ?: return false
+            val relationMap = recipe.requirement.materialRelationConstraints.find {
+                it.then.any { m ->
+                    m.term.contains(this.id)
+                }
+            }
+                ?: return false
             val recipeRelation = relationMap.then.first { it.term.contains(this.id) }.then
             return recipeRelation.overdose != null || recipeRelation.overdoseMaterial != null
         }
@@ -29,33 +33,34 @@ class RecipeExt(private val recipe: Recipe) {
      */
     val RecipeMaterialValue.relationName: MaterialIDs?
         get() {
-            val materialRelationConstraints = recipe.requirement.materialRelationConstraints.filter { it.then.any { m -> m.term.contains(this.id) } }
+            val materialRelationConstraints =
+                recipe.requirement.materialRelationConstraints.filter {
+                    it.then.any { m ->
+                        m.term.contains(this.id)
+                    }
+                }
             val ids = materialRelationConstraints.firstOrNull() ?: return null
 
             val materials = recipe.materials
-            val usedIds = materials.filter { ids.term.contains(it.id) }.map { it.id }.toMaterialIDs()
+            val usedIds =
+                materials.filter { ids.term.contains(it.id) }.map { it.id }.toMaterialIDs()
             return usedIds
         }
 
-    /**
-     * 消息原料替换比率
-     */
-    private val RecipeMaterialValue.replaceRate: Double
-        get() {
-            val ids = recipe.requirement.materialRelationConstraints.firstOrNull { it.term.any { m -> m.contains(this.id) } }?.term
-                    ?: return 1.0
-
-            val usedIds = recipe.materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
-            return if (ids.replaceIds == usedIds) ids.replaceRate ?: 1.0 else 1.0
-        }
-
-
     val RecipeMaterialValue.recipeRelationPair: Pair<RelationMaterialIDs, RecipeRelation>?
         get() {
-            val entry = recipe.requirement.materialRelationConstraints.flatMap { it.then }.firstOrNull { it.term.contains(this.id) }
-                    ?: return null
+            val entry = recipe.requirement.materialRelationConstraints
+                .firstOrNull { it.then.any { m -> m.term.contains(this.id) } }
+                ?: return null
+            val customids = entry.term
+            val usedIds =
+                recipe.materials.filter { customids.contains(it.id) }.map { it.id }.toMaterialIDs()
+            val replaceRate =
+                if (customids.replaceRate != null && customids.replaceIds?.any { usedIds.contains(it) } == true) customids.replaceRate else 1.0
 
-            return entry.term to entry.then.replaceRate(replaceRate)
+            val then = entry.then.first { it.term.contains(this.id) }
+
+            return then.term to then.then.replaceRate(replaceRate)
         }
 
 
@@ -65,7 +70,10 @@ class RecipeExt(private val recipe: Recipe) {
             val recipeRelationPair = recipeRelationPair
             if (recipeRelationPair == null) {
                 //消耗汇总
-                val materialRelationConstraint = recipe.requirement.materialRelationConstraints.firstOrNull { it.term.contains(this.id) }
+                val materialRelationConstraint =
+                    recipe.requirement.materialRelationConstraints.firstOrNull {
+                        it.term.contains(this.id)
+                    }
                         ?: return null
                 recipe.apply {
                     return materialRelationConstraint.relationValue(false)
@@ -116,7 +124,10 @@ class RecipeExt(private val recipe: Recipe) {
                     usedMaxOverdoseWeight = usedMaxOverdoseMaterialWeight
                 }
 
-                return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(usedMinOverdoseWeight, usedMaxOverdoseWeight)
+                return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(
+                    usedMinOverdoseWeight,
+                    usedMaxOverdoseWeight
+                )
             }
         }
 
