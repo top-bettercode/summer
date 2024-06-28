@@ -2557,6 +2557,7 @@
   } ],
   "productName" : "15-15-15常规氯基",
   "productionCost" : {
+    "changeWhenMaterialUsed" : true,
     "changes" : [ {
       "changeItems" : [ {
         "id" : "籽煤",

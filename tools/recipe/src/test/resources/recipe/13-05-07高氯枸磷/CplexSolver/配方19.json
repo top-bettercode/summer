@@ -39,7 +39,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 540.5270092227,
+    "weight" : 474.3083003953,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -125,7 +125,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 259.4729907773,
+    "weight" : 383.8877449399,
     "id" : "中白肥（24%)",
     "index" : 24,
     "indicators" : {
@@ -251,6 +251,63 @@
   }, {
     "consumes" : { },
     "material" : {
+      "id" : "七钼酸铵",
+      "index" : 45,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 0.5,
+          "scale" : 0.01
+        },
+        "钼" : {
+          "id" : "钼",
+          "index" : 15,
+          "name" : "钼",
+          "type" : "GENERAL",
+          "unit" : "%",
+          "value" : 54.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "七钼酸铵",
+      "price" : 160.0,
+      "unit" : "吨"
+    },
+    "weight" : 0.0192761956,
+    "id" : "七钼酸铵",
+    "index" : 45,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 0.5,
+        "scale" : 0.01
+      },
+      "钼" : {
+        "id" : "钼",
+        "index" : 15,
+        "name" : "钼",
+        "type" : "GENERAL",
+        "unit" : "%",
+        "value" : 54.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "七钼酸铵",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 160.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
       "id" : "白泥",
       "index" : 53,
       "indicators" : {
@@ -268,7 +325,7 @@
       "price" : 0.35,
       "unit" : "吨"
     },
-    "weight" : 100.0,
+    "weight" : 80.0,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -289,8 +346,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "CplexSolver-19",
-  "dryWaterWeight" : 0.0,
-  "materialCost" : 1314.3162055336,
+  "dryWaterWeight" : 38.2153215308,
+  "materialCost" : 1314.3162055346,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -350,7 +407,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 259.0268511199,
-  "waterWeight" : 31.5683794466,
-  "weight" : 1000.0
+  "totalNutrientWeight" : 272.1330587856,
+  "waterWeight" : 38.2153215307,
+  "weight" : 1038.2153215308
 }

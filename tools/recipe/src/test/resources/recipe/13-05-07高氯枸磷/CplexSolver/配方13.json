@@ -125,7 +125,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 322.2162619989,
+    "weight" : 348.0,
     "id" : "中白肥（24%)",
     "index" : 24,
     "indicators" : {
@@ -211,7 +211,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 103.4754376059,
+    "weight" : 100.0,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -268,7 +268,7 @@
       "price" : 0.35,
       "unit" : "吨"
     },
-    "weight" : 100.0,
+    "weight" : 80.0,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -289,8 +289,8 @@
     "unit" : "吨"
   } ],
   "recipeName" : "CplexSolver-13",
-  "dryWaterWeight" : 1.0E-10,
-  "materialCost" : 1284.3162055338,
+  "dryWaterWeight" : 2.3083003953,
+  "materialCost" : 1284.3162055337,
   "packagingCost" : 52.13,
   "productionCost" : {
     "allChange" : 1.01,
@@ -350,7 +350,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 259.4171654433,
-  "waterWeight" : 35.3329757199,
-  "weight" : 1000.0000000001
+  "totalNutrientWeight" : 263.52,
+  "waterWeight" : 35.703083004,
+  "weight" : 1002.3083003953
 }

@@ -2235,6 +2235,7 @@
   } ],
   "productName" : "15-15-15喷浆硫基",
   "productionCost" : {
+    "changeWhenMaterialUsed" : true,
     "changes" : [ {
       "changeItems" : [ {
         "id" : "籽煤",

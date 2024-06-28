@@ -313,6 +313,7 @@ data class PrepareSolveData(
                         when (changeLogic.type) {
                             ChangeLogicType.WATER_OVER -> {
                                 changeProductionCost(
+                                    productionCost.changeWhenMaterialUsed,
                                     recipeMaterials,
                                     changeLogic,
                                     recipeMaterials.map {
@@ -325,6 +326,7 @@ data class PrepareSolveData(
 
                             ChangeLogicType.OVER -> {
                                 changeProductionCost(
+                                    productionCost.changeWhenMaterialUsed,
                                     recipeMaterials,
                                     changeLogic,
                                     null,
@@ -376,6 +378,7 @@ data class PrepareSolveData(
         }
 
         private fun Solver.changeProductionCost(
+            changeWhenMaterialUsed: Boolean,
             materials: Map<String, RecipeMaterialVar>,
             changeLogic: CostChangeLogic,
             value: IVar?,
@@ -396,7 +399,8 @@ data class PrepareSolveData(
                                 //change
                                 val changeVar = ((value
                                     ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                thens.add(changeVar.eqExpr(0.0))
+                                if (changeWhenMaterialUsed)
+                                    thens.add(changeVar.eqExpr(0.0))
                                 material.value += changeVar
                             }
                         }
@@ -408,7 +412,8 @@ data class PrepareSolveData(
                                         //change
                                         val changeVar = ((value
                                             ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                        thens.add(changeVar.eqExpr(0.0))
+                                        if (changeWhenMaterialUsed)
+                                            thens.add(changeVar.eqExpr(0.0))
                                         it.value += changeVar
                                     }
                                 }
@@ -419,7 +424,8 @@ data class PrepareSolveData(
                                         //change
                                         val changeVar = ((value
                                             ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                        thens.add(changeVar.eqExpr(0.0))
+                                        if (changeWhenMaterialUsed)
+                                            thens.add(changeVar.eqExpr(0.0))
                                         cost.value += changeVar
                                     }
                                 }
@@ -427,7 +433,9 @@ data class PrepareSolveData(
                         }
                     }
                 }
-                thens.onlyEnforceIf(useMaterial.leExpr(0.0))
+                if (changeWhenMaterialUsed)
+                //当使用原料为0时，changeVar=0.0
+                    thens.onlyEnforceIf(useMaterial.leExpr(0.0))
             }
         }
     }

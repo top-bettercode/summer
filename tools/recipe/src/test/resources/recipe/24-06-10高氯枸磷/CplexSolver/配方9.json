@@ -30,7 +30,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.0,
+    "weight" : 395.7707604982,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -96,7 +96,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 333.7219044855,
+    "weight" : 141.1394098167,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -191,7 +191,7 @@
       "price" : 3.51,
       "unit" : "吨"
     },
-    "weight" : 76.9712334553,
+    "weight" : 122.3717948718,
     "id" : "58磷酸一铵（粉）",
     "index" : 10,
     "indicators" : {
@@ -297,7 +297,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 54.3908664227,
+    "weight" : 101.0897435897,
     "id" : "中白肥（24%)",
     "index" : 25,
     "indicators" : {
@@ -423,6 +423,45 @@
   }, {
     "consumes" : { },
     "material" : {
+      "id" : "石粉（尿基高塔用）",
+      "index" : 55,
+      "indicators" : {
+        "物料水分" : {
+          "id" : "物料水分",
+          "index" : 6,
+          "name" : "物料水分",
+          "type" : "WATER",
+          "unit" : "%",
+          "value" : 1.0,
+          "scale" : 0.01
+        }
+      },
+      "name" : "石粉（尿基高塔用）",
+      "price" : 0.24,
+      "unit" : "吨"
+    },
+    "weight" : 87.9214717908,
+    "id" : "石粉（尿基高塔用）",
+    "index" : 55,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "index" : 6,
+        "name" : "物料水分",
+        "type" : "WATER",
+        "unit" : "%",
+        "value" : 1.0,
+        "scale" : 0.01
+      }
+    },
+    "name" : "石粉（尿基高塔用）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.24,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
       "id" : "防结油（白色）",
       "index" : 58,
       "indicators" : { },
@@ -460,7 +499,7 @@
     "unit" : "吨"
   } ],
   "recipeName" : "CplexSolver-9",
-  "dryWaterWeight" : 0.0840043635,
+  "dryWaterWeight" : 3.2931805672,
   "materialCost" : 2388.3467503006,
   "packagingCost" : 52.13,
   "productionCost" : {
@@ -521,7 +560,7 @@
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
-  "totalNutrientWeight" : 406.9287651804,
-  "waterWeight" : 12.0840043636,
-  "weight" : 1000.0840043635
+  "totalNutrientWeight" : 403.0,
+  "waterWeight" : 15.2931805673,
+  "weight" : 1003.2931805672
 }

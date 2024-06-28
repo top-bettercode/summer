@@ -2197,6 +2197,7 @@
   } ],
   "productName" : "13-05-07高氯枸磷",
   "productionCost" : {
+    "changeWhenMaterialUsed" : true,
     "changes" : [ {
       "changeItems" : [ {
         "id" : "籽煤",

@@ -10,9 +10,9 @@
       "unit" : "%",
       "value" : {
         "max" : 5.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -24,9 +24,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 25.3,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -38,9 +38,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 12.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -52,9 +52,9 @@
       "unit" : "%",
       "value" : {
         "max" : 99.5,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -68,9 +68,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -82,9 +82,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -96,9 +96,9 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -110,9 +110,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 4.5,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -124,9 +124,9 @@
       "unit" : "%",
       "value" : {
         "max" : 100.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 6.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     },
@@ -138,9 +138,9 @@
       "unit" : "%",
       "value" : {
         "max" : 0.0,
-        "maxSense" : "LE",
+        "maxOperator" : "LE",
         "min" : 0.0,
-        "minSense" : "GE"
+        "minOperator" : "GE"
       },
       "scale" : 0.01
     }
@@ -156,9 +156,9 @@
     },
     "then" : {
       "max" : 100.0,
-      "maxSense" : "LE",
+      "maxOperator" : "LE",
       "min" : 80.0,
-      "minSense" : "GE"
+      "minOperator" : "GE"
     }
   } ],
   "materialRelationConstraints" : [ ],
@@ -2197,6 +2197,7 @@
   } ],
   "productName" : "13-05-07高氯枸磷",
   "productionCost" : {
+    "changeWhenMaterialUsed" : true,
     "changes" : [ {
       "changeItems" : [ {
         "id" : "籽煤",
