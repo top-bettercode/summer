@@ -23,16 +23,15 @@ import kotlin.math.min
  */
 class COPTSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    minEpsilon: Double? = 1e-7,
     logging: Boolean = false,
     name: String = "COPTSolver"
-) : Solver(name = name, type = SolverType.COPT, epsilon = epsilon) {
+) : Solver(name = name, type = SolverType.COPT, epsilon = epsilon, minEpsilon = minEpsilon) {
 
     private val env: copt.Envr = copt.Envr()
     var model: copt.Model = env.createModel(name)
 
     init {
-        assert(epsilon >= 1e-7) { "epsilon must be greater than or equal to 1e-7" }
-
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
         model.setDblParam(copt.DblParam.FeasTol, 1e-9)

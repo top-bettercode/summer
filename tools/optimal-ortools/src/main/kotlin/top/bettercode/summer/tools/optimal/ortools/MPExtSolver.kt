@@ -22,8 +22,9 @@ open class MPExtSolver @JvmOverloads constructor(
     private val mpType: MPSolver.OptimizationProblemType,
     solverType: SolverType,
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    minEpsilon: Double? = null,
     name: String = "MPSolver"
-) : Solver(name = name, type = solverType, epsilon = epsilon) {
+) : Solver(name = name, type = solverType, epsilon = epsilon, minEpsilon = minEpsilon) {
 
     companion object {
 

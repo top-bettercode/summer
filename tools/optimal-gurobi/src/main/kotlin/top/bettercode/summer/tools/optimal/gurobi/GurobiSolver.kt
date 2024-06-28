@@ -20,13 +20,10 @@ import kotlin.math.min
  */
 class GurobiSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    minEpsilon: Double? = 1e-5,
     logging: Boolean = false,
     name: String = "GurobiSolver"
-) : Solver(name = name, type = SolverType.GUROBI, epsilon = epsilon) {
-
-    init {
-        assert(epsilon >= 1e-5) { "epsilon must be >= 1e-5" }
-    }
+) : Solver(name = name, type = SolverType.GUROBI, epsilon = epsilon, minEpsilon = minEpsilon) {
 
     private val env = GRBEnv().apply {
         set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)

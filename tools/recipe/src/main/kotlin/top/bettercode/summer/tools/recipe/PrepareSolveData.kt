@@ -461,7 +461,9 @@ data class PrepareSolveData(
                 }
             }
             val materials = recipeMaterials.mapNotNull { (_, u) ->
-                val value = u.weight.value.scale(abs(log10(epsilon)).toInt())
+                val solverValue = u.weight.value
+                val scale = abs(log10(epsilon)).toInt()
+                val value = solverValue.scale(scale)
                 if (value != 0.0) {
                     u.toMaterialValue()
                 } else {

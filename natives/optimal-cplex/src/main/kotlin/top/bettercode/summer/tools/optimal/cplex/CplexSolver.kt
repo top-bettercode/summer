@@ -22,9 +22,10 @@ import kotlin.math.min
  */
 class CplexSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
+    minEpsilon: Double? = 1e-6,
     logging: Boolean = false,
     name: String = "CplexSolver"
-) : Solver(name = name, type = SolverType.CPLEX, epsilon = epsilon) {
+) : Solver(name = name, type = SolverType.CPLEX, epsilon = epsilon, minEpsilon = minEpsilon) {
 
     companion object {
         init {
@@ -37,8 +38,6 @@ class CplexSolver @JvmOverloads constructor(
 
 
     init {
-        assert(epsilon >= 1e-6) { "epsilon must be >= 1e-6" }
-
         model.setParam(Param.MIP.Display, if (logging) 2 else 0) // 0表示禁用日志，1表示启用
         if (!logging) {
             model.setOut(null)
