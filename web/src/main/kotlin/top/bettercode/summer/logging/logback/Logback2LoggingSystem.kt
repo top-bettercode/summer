@@ -94,7 +94,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         context.getLogger("org.jboss").level = Level.WARN
         context.getLogger("org.hibernate").level = Level.WARN
-        val sqlLevel = environment.getProperty("logging.level.org.hibernate.SQL")
+        val sqlLevel = (environment.getProperty("logging.level.org.hibernate.SQL") ?: rootLevel)
             ?.run { Level.toLevel(this) } ?: Level.DEBUG
         showSql = Level.DEBUG == sqlLevel
         val sqlLogger = context.getLogger("org.hibernate.SQL")
