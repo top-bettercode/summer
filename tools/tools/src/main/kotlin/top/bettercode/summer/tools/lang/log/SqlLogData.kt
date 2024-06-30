@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.lang.util.JavaTypeResolver
  */
 class SqlLogData(val id: String? = null) {
     var sql: String? = null
+    var slowSql: MutableList<String> = mutableListOf()
     var params: MutableList<SqlLogParam> = mutableListOf()
     var cost: Long? = null
     var affected: Int? = null

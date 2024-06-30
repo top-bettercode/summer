@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 
-class SqlAppender : AppenderBase<ILoggingEvent>() {
+class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent>() {
     companion object {
         const val MDC_SQL_ERROR = "SQL_ERROR"
         const val MDC_SQL_ID = "SQL_ID"
@@ -88,6 +88,11 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
                     sqlLogData.sql = msg
                 }
 
+                "org.hibernate.SQL_SLOW" -> {
+                    //SlowQuery: 2896 milliseconds. SQL: 'HikariProxyPreparedStatement@803096561 wrapping com.mysql.cj.jdbc.ClientPreparedStatement:
+                    sqlLogData.slowSql.add(msg)
+                }
+
                 "org.hibernate.type.descriptor.sql.BasicBinder" -> {
                     val regex = Regex("""\[(.*?)]""")
                     val matches = regex.findAll(msg).map { it.groupValues[1] }.toList()
@@ -138,13 +143,27 @@ class SqlAppender : AppenderBase<ILoggingEvent>() {
     private fun log(
         sqlLogData: SqlLogData
     ) {
-        if (sqlLogData.error.isNullOrBlank())
-            logger.info(sqlLogData.toString())
-        else
+        val cost = sqlLogData.cost
+        val slowSql = sqlLogData.slowSql
+        if (sqlLogData.sql.isNullOrBlank()) {
+            sqlLogData.sql = slowSql.joinToString("\n------\n")
+        }
+
+        if (!sqlLogData.error.isNullOrBlank()) {
             logger.error(
                 MarkerFactory.getMarker(AlarmAppender.NO_ALARM_LOG_MARKER),
                 sqlLogData.toString()
             )
+        } else if (cost != null && timeoutAlarmMS > 0 && cost > timeoutAlarmMS) {
+            val initialComment = "${sqlLogData.id}：执行速度慢(${cost / 1000}秒)"
+            logger.warn(
+                AlarmMarker(initialComment, true),
+                sqlLogData.toString()
+            )
+        } else if (slowSql.isNotEmpty()) {
+            logger.warn(sqlLogData.toString())
+        } else
+            logger.info(sqlLogData.toString())
     }
 
 }

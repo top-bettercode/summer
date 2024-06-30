@@ -4,7 +4,6 @@ import org.hibernate.type.spi.TypeConfiguration
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.util.ClassUtils
-import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.log.SqlAppender
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.cost
 import top.bettercode.summer.web.support.ApplicationContextHolder
@@ -52,21 +51,6 @@ object JpaUtil {
                 } finally {
                     MDC.put(SqlAppender.MDC_SQL_END, "END")
                     val duration = System.currentTimeMillis() - s
-                    val timeoutAlarmSeconds = (ApplicationContextHolder.getProperty(
-                        "summer.data.jpa.timeout-alarm-seconds",
-                        Int::class.java
-                    )
-                        ?: -1)
-                    if (timeoutAlarmSeconds > 0 && duration > timeoutAlarmSeconds * 1000) {
-                        if (ApplicationContextHolder.isTest || ApplicationContextHolder.isDev) {
-                            val initialComment = "$id：执行速度慢(${duration / 1000}秒)"
-                            log.warn(
-                                AlarmMarker(initialComment, true),
-                                initialComment + "cost: {} ms",
-                                duration
-                            )
-                        }
-                    }
                     sqlLog.cost(duration)
                 }
             } else {

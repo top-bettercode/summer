@@ -49,6 +49,9 @@ import java.io.File
 import java.nio.charset.Charset
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 /**
  * 自定义 LogbackLoggingSystem
@@ -138,11 +141,17 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         val fileLogPattern = environment.getProperty("logging.pattern.file", LOG_PATTERN)
         //sql log
-        val sqlAppender = SqlAppender()
+        val timeoutAlarmSeconds =
+            if (environment.activeProfiles.any { it.contains("test") || it.contains("dev") }) environment.getProperty(
+                "spring.jpa.properties.hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS",
+                "2000"
+            ).toLong() else -1
+        val sqlAppender = SqlAppender(timeoutAlarmSeconds)
         sqlAppender.context = context
         sqlAppender.start()
         arrayOf(
             "org.hibernate.SQL",
+            "org.hibernate.SQL_SLOW",
             "org.hibernate.type.descriptor.sql.BasicBinder",
             "top.bettercode.summer.SQL"
         ).map { context.getLogger(it) }
@@ -766,6 +775,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             }
             if (arrayOf(
                     "org.hibernate.SQL",
+                    "org.hibernate.SQL_SLOW",
                     "org.hibernate.type.descriptor.sql.BasicBinder",
                     "top.bettercode.summer.SQL"
                 ).contains(event.loggerName)
