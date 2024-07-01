@@ -41,7 +41,7 @@ class RecipeColumns : ArrayList<Any>() {
         }
 
     private fun valueOf(it: Any) = when (it) {
-        is Boolean -> if (it) "==" else "!="
+        is Boolean -> if (it) "=" else "≠"
         else -> it.toString()
     }
 }

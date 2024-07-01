@@ -275,11 +275,26 @@ internal class RecipeSolverTest {
         logging: Boolean = false,
     ): Solver {
         return when (solverType) {
-            SolverType.COPT -> COPTSolver(epsilon = epsilon, logging = logging)
-            SolverType.CPLEX -> CplexSolver(epsilon = epsilon, logging = logging)
-            SolverType.GUROBI -> GurobiSolver(epsilon = epsilon, logging = logging)
-            SolverType.SCIP -> SCIPSolver(epsilon = epsilon)
-            SolverType.CBC -> CBCSolver(epsilon = epsilon)
+            SolverType.COPT -> COPTSolver(
+                epsilon = epsilon,
+                minEpsilon = epsilon,
+                logging = logging
+            )
+
+            SolverType.CPLEX -> CplexSolver(
+                epsilon = epsilon,
+                minEpsilon = epsilon,
+                logging = logging
+            )
+
+            SolverType.GUROBI -> GurobiSolver(
+                epsilon = epsilon,
+                minEpsilon = epsilon,
+                logging = logging
+            )
+
+            SolverType.SCIP -> SCIPSolver(epsilon = epsilon, minEpsilon = epsilon)
+            SolverType.CBC -> CBCSolver(epsilon = epsilon, minEpsilon = epsilon)
         }
     }
 

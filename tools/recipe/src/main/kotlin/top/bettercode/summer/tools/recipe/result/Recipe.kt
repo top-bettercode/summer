@@ -113,9 +113,9 @@ data class Recipe(
         separatorIndexs.add(names.size)
         names.add("原料/制造费用")
         itValues.add(this.recipeName)
-        compares.add("比较")
+        compares.add("▽")
         otherValues.add(other!!.recipeName)
-        diffValues.add("差值")
+        diffValues.add("Δ")
         separatorIndexs.add(names.size)
 
         //总成本(制造费用+原料成本)
@@ -192,7 +192,7 @@ data class Recipe(
         for (i in names.indices) {
             val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
             val itValue = itValues[i].padStart(itValueWidth)
-            val compare = compares[i].toFullWidth().padEnd(compareWidth)
+            val compare = compares[i].padEnd(compareWidth)
             val otherValue = otherValues[i].padEnd(otherValueWidth)
             val diffValue = diffValues[i].padStart(diffValueWidth)
             result.appendLine("$name | $itValue | $compare | $otherValue | $diffValue")
