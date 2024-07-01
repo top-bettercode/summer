@@ -451,7 +451,9 @@ data class PrepareSolveData(
             }
 
             val objectiveValue = minimize.value
-            if (minMaterialNum) {
+            val maxUseMaterialNum = requirement.maxUseMaterialNum
+            val materialsCount = recipeMaterials.filter { it.value.weight.value > 0.0 }.count()
+            if ((maxUseMaterialNum == null || maxUseMaterialNum > materialsCount) && minMaterialNum) {
                 //固定成本
                 objectiveVars.eq(objectiveValue)
 
