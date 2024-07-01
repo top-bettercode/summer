@@ -27,6 +27,7 @@ object HttpOperation {
     const val SEPARATOR_LINE = "------------------------------------------------------------"
 
 
+    @JvmStatic
     fun traceid(): String {
         return MDC.get(MDC_TRACEID) ?: Integer.toHexString(Random.nextInt())
     }
