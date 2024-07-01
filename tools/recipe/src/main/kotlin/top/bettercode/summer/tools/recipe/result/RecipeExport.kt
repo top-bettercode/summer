@@ -349,20 +349,25 @@ object RecipeExport {
                 cell(r++, c).value(v.value).format("0.00%").setStyle()
                 cell(r++, c++).value(v.value * v.it.price * v.it.value).format("0.00").setStyle()
             }
+            var itemsSize = materialItems.size + dictItems.size
+            if (itemsSize == 0) {
+                r = row + 5
+                itemsSize = 1
+            }
             //税费
             cell(r, 1).value(taxFee)
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().format("0.00").setStyle()
+            range(r, 1, r++, itemsSize).merge().format("0.00").setStyle()
             //制造费用
             cell(r, 1).value(totalFee)
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+            range(r, 1, r++, itemsSize).merge().bold().format("0.00")
                 .setStyle()
             //原辅料成本
             cell(r, 1).value(recipe.materialCost)
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+            range(r, 1, r++, itemsSize).merge().bold().format("0.00")
                 .setStyle()
             //包装费用
             cell(r, 1).value(recipe.packagingCost)
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+            range(r, 1, r++, itemsSize).merge().bold().format("0.00")
                 .setStyle()
             //成本合计
             if (recipe.includeProductionCost) {
@@ -370,7 +375,7 @@ object RecipeExport {
             } else {
                 cell(r, 1).value(totalFee + recipe.cost + recipe.packagingCost)
             }
-            range(r, 1, r++, materialItems.size + dictItems.size).merge().bold().format("0.00")
+            range(r, 1, r++, itemsSize).merge().bold().format("0.00")
                 .setStyle()
         }
     }
