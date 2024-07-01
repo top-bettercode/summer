@@ -321,7 +321,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 System.err.println(numVar2.value)
-                Assertions.assertTrue(numVar2.value >= 10.0)
+                Assertions.assertTrue(numVar2.value.scale() >= 10.0)
             }
         }
     }
