@@ -35,7 +35,7 @@ internal class RecipeSolverTest {
         "15-15-15喷浆氯基",
         "15-15-15常规氯基"
     )
-    val solveTypes = listOf(
+    val solverTypes = listOf(
         SolverType.COPT,
         SolverType.CPLEX,
         SolverType.GUROBI,
@@ -122,7 +122,7 @@ internal class RecipeSolverTest {
         var recipeResult: RecipeResult? = null
 
         val results = mutableMapOf<SolverType, Long>()
-        solveTypes.forEachIndexed { index, solverType ->
+        solverTypes.forEachIndexed { index, solverType ->
             val result = solve(
                 solverType = solverType,
                 requirement = requirement,
