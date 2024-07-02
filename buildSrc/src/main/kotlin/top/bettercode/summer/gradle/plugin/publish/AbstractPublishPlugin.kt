@@ -36,8 +36,8 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 
     companion object {
         fun conifgRepository(
-                project: Project,
-                p: PublishingExtension
+            project: Project,
+            p: PublishingExtension
         ) {
             project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
                 var mavenRepoName = project.findProperty("$it.name") as String? ?: it
@@ -47,13 +47,13 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 
                 if (project.version.toString().endsWith("SNAPSHOT")) {
                     mavenRepoName = project.findProperty("$it.snapshots.name") as String?
-                            ?: mavenRepoName
+                        ?: mavenRepoName
                     mavenRepoUrl = project.findProperty("$it.snapshots.url") as String?
-                            ?: mavenRepoUrl
+                        ?: mavenRepoUrl
                     mavenRepoUsername = project.findProperty("$it.snapshots.username") as String?
-                            ?: mavenRepoUsername
+                        ?: mavenRepoUsername
                     mavenRepoPassword = project.findProperty("$it.snapshots.password") as String?
-                            ?: mavenRepoPassword
+                        ?: mavenRepoPassword
                 }
                 if (mavenRepoUrl != null)
                     p.repositories { handler ->
@@ -95,21 +95,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
      * 公用配置
      */
     protected fun configPublish(project: Project) {
-        project.tasks.withType(Javadoc::class.java) {
-            with(it.options as StandardJavadocDocletOptions) {
-                encoding = project.findProperty("project.encoding") as String? ?: "UTF-8"
-                charSet = project.findProperty("project.encoding") as String? ?: "UTF-8"
-                isAuthor = true
-                isVersion = true
-            }
-        }
 
-        val projectUrl = project.findProperty("projectUrl") as String?
-        val projectVcsUrl = project.findProperty("vcsUrl") as String?
-
-        project.tasks.withType(GenerateModuleMetadata::class.java) {
-            it.enabled = false
-        }
         project.extensions.configure(PublishingExtension::class.java) { p ->
             conifgRepository(project, p)
 
@@ -121,10 +107,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                 }
                 val gradle = project.gradle as GradleInternal
 
-                val taskNames =
-                        gradle.startParameter.taskNames.map {
-                            it.substringAfterLast(":")
-                        }
+                val taskNames = gradle.startParameter.taskNames.map { it.substringAfterLast(":") }
                 if (!taskNames.contains("publish")) {
                     mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
                         it.classifier = "sources"
@@ -134,7 +117,8 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                         it.classifier = "javadoc"
                     }
                 }
-
+                val projectUrl = project.findProperty("projectUrl") as String?
+                val projectVcsUrl = project.findProperty("vcsUrl") as String?
                 mavenPublication.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
             }
 
@@ -143,13 +127,12 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
         if (project.hasProperty("signing.keyId"))
             project.extensions.getByType(SigningExtension::class.java).apply {
                 sign(
-                        project.extensions.getByType(PublishingExtension::class.java).publications.findByName(
-                                "mavenJava"
-                        )
+                    project.extensions.getByType(PublishingExtension::class.java).publications.findByName(
+                        "mavenJava"
+                    )
                 )
             }
 
-        project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
     }
 
 
@@ -157,9 +140,9 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
      * 配置pom.xml相关信息
      */
     protected fun configurePomXml(
-            project: Project,
-            projectUrl: String?,
-            projectVcsUrl: String?
+        project: Project,
+        projectUrl: String?,
+        projectVcsUrl: String?
     ): (XmlProvider) -> Unit {
         return {
             val root = it.asNode()
@@ -171,8 +154,8 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                     appendNode("packaging", if (project.plugins.hasPlugin("war")) "war" else "jar")
                 appendNode("name", project.name)
                 appendNode(
-                        "description",
-                        if (!project.description.isNullOrBlank()) project.description else project.name
+                    "description",
+                    if (!project.description.isNullOrBlank()) project.description else project.name
                 )
                 if (!projectUrl.isNullOrBlank())
                     appendNode("url", projectUrl)
@@ -191,7 +174,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                     val scm = appendNode("scm")
                     scm.appendNode("url", projectVcsUrl)
                     val tag =
-                            if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
+                        if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
                     scm.appendNode("connection", "scm:$tag:$projectVcsUrl")
                     scm.appendNode("developerConnection", "scm:$tag:$projectVcsUrl")
                 }
@@ -212,7 +195,18 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
         }
 
         project.tasks.withType(Javadoc::class.java) {
+            with(it.options as StandardJavadocDocletOptions) {
+                addStringOption("Xdoclint:none", "-quiet")
+                encoding = project.findProperty("project.encoding") as String? ?: "UTF-8"
+                charSet = project.findProperty("project.encoding") as String? ?: "UTF-8"
+                isAuthor = true
+                isVersion = true
+            }
             it.isFailOnError = false
+        }
+
+        project.tasks.withType(GenerateModuleMetadata::class.java) {
+            it.enabled = false
         }
 
 //        源文件打包Task
@@ -221,26 +215,20 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
             it.dependsOn("classes")
             it.archiveClassifier.set("sources")
             it.from(
-                    project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
-                            SourceSet.MAIN_SOURCE_SET_NAME
-                    ).allSource
+                project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
+                    SourceSet.MAIN_SOURCE_SET_NAME
+                ).allSource
             )
         }
         project.tasks.named("jar", Jar::class.java) {
             it.manifest { manifest ->
                 manifest.attributes(
-                        mapOf(
-                                "Manifest-Version" to project.version,
-                                "Implementation-Title" to "${project.rootProject.name}${project.path}",
-                                "Implementation-Version" to project.version
-                        )
+                    mapOf(
+                        "Manifest-Version" to project.version,
+                        "Implementation-Title" to "${project.rootProject.name}${project.path}",
+                        "Implementation-Version" to project.version
+                    )
                 )
-            }
-        }
-        project.tasks.named("javadoc", Javadoc::class.java) {
-            it.options { options ->
-                options as StandardJavadocDocletOptions
-                options.addStringOption("Xdoclint:none", "-quiet")
             }
         }
         project.tasks.named("publishToMavenLocal") {
@@ -251,6 +239,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
             })
         }
         project.tasks.named("publish") {
+            it.dependsOn("publishToMavenLocal")
             it.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     project.extensions.getByType(PublishingExtension::class.java).repositories.forEach { repository ->
@@ -263,42 +252,6 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                 }
             })
         }
-
-//        if (!project.rootProject.plugins.hasPlugin("io.codearte.nexus-staging")) {
-//            project.rootProject.plugins.apply("io.codearte.nexus-staging")
-//        }
-//        project.rootProject.extensions.configure(NexusStagingExtension::class.java) {
-//            //required only for projects registered in Sonatype after 2021-02-24
-//            it.serverUrl = project.rootProject.findProperty("nexusStaging.serverUrl")?.toString()
-//                ?: "https://s01.oss.sonatype.org/service/local/"
-//            //optional if packageGroup == project.getGroup()
-//            val packageGroup = project.rootProject.findProperty("nexusStaging.packageGroup")
-//            if (packageGroup != null) {
-//                it.packageGroup = packageGroup.toString()
-//            }
-//            //when not defined will be got from server using "packageGroup"
-//            val stagingProfileId = project.rootProject.findProperty("nexusStaging.stagingProfileId")
-//            if (stagingProfileId != null) {
-//                it.stagingProfileId = stagingProfileId.toString()
-//            }
-//            val stagingRepositoryId =
-//                project.rootProject.findProperty("nexusStaging.stagingRepositoryId")
-//            if (stagingRepositoryId != null) {
-//                it.stagingRepositoryId.set(stagingRepositoryId.toString())
-//            }
-//
-//            var mavenRepoUsername = project.findProperty("mavenRepo.username") as String?
-//            var mavenRepoPassword = project.findProperty("mavenRepo.password") as String?
-//
-//            if (project.version.toString().endsWith("SNAPSHOT")) {
-//                mavenRepoUsername = project.findProperty("mavenRepo.snapshots.username") as String?
-//                    ?: mavenRepoUsername
-//                mavenRepoPassword = project.findProperty("mavenRepo.snapshots.password") as String?
-//                    ?: mavenRepoPassword
-//            }
-//            it.username = mavenRepoUsername
-//            it.password = mavenRepoPassword
-//        }
     }
 
 }

@@ -26,18 +26,14 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
         project.plugins.apply("java-gradle-plugin")
         project.plugins.apply("com.gradle.plugin-publish")
 
-        if (project.findProperty("dokka.enabled") == "true") {
-            if (project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
-                if (!project.plugins.hasPlugin("org.jetbrains.dokka"))
-                    project.plugins.apply("org.jetbrains.dokka")
-
-                dokkaTask(project)
-            }
-        }
-
         when {
             project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") -> {
                 if (project.findProperty("dokka.enabled") == "true") {
+                    if (!project.plugins.hasPlugin("org.jetbrains.dokka"))
+                        project.plugins.apply("org.jetbrains.dokka")
+
+                    dokkaTask(project)
+
                     project.tasks.create("javadocJar", Jar::class.java) {
                         it.group = "documentation"
                         it.archiveClassifier.set("javadoc")
@@ -47,8 +43,8 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
             }
 
             project.plugins.hasPlugin("groovy") -> project.tasks.create(
-                    "javadocJar",
-                    Jar::class.java
+                "javadocJar",
+                Jar::class.java
             ) {
                 it.group = "documentation"
                 it.archiveClassifier.set("javadoc")
@@ -63,7 +59,7 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
         }
 
         val gradlePlugin = (project.findProperty("gradlePlugin.${project.name}.plugins") as String?
-                ?: project.findProperty("gradlePlugin.plugins") as String?)?.split(",")
+            ?: project.findProperty("gradlePlugin.plugins") as String?)?.split(",")
         project.extensions.configure(GradlePluginDevelopmentExtension::class.java) {
             gradlePlugin?.forEach { plugin ->
                 val pluginId = project.findProperty("gradlePlugin.plugins.$plugin.id") as String
@@ -71,7 +67,7 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
                 it.plugins.create(plugin) {
                     it.id = pluginId
                     it.implementationClass =
-                            project.findProperty("gradlePlugin.plugins.$plugin.implementationClass") as String
+                        project.findProperty("gradlePlugin.plugins.$plugin.implementationClass") as String
                 }
             }
         }
@@ -105,9 +101,9 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
             project.extensions.configure(PublishingExtension::class.java) { p ->
                 conifgRepository(project, p)
                 val plugins =
-                        project.extensions.getByType(GradlePluginDevelopmentExtension::class.java).plugins
+                    project.extensions.getByType(GradlePluginDevelopmentExtension::class.java).plugins
                 val publicationNames =
-                        plugins.map { it.name + "PluginMarkerMaven" }.toMutableSet()
+                    plugins.map { it.name + "PluginMarkerMaven" }.toMutableSet()
                 publicationNames.add("pluginMaven")
                 publicationNames.forEach {
                     p.publications.getByName(it) { publication ->
@@ -117,8 +113,6 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
                 }
             }
         }
-
-        project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
 
     }
 
