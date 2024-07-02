@@ -5,14 +5,9 @@ import org.springframework.util.DigestUtils
 import org.springframework.web.filter.GenericFilterBean
 import org.springframework.web.util.HtmlUtils
 import java.nio.charset.StandardCharsets
-import java.util.regex.Pattern
-import javax.servlet.FilterChain
-import java.io.IOException
-import java.nio.charset.StandardCharsets
 import java.util.function.Function
 import java.util.regex.Pattern
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.Cookie
@@ -28,8 +23,10 @@ open class LogLoginPageGeneratingFilter(
     private var authenticationUrl: String
     private var usernameParameter: String
     private var pwdParameter: String
-    private var resolveHiddenInputs = Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
-    private val authKey: String = DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray())
+    private var resolveHiddenInputs =
+        Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
+    private val authKey: String =
+        DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray())
 
     /**
      * Sets a Function used to resolve a Map of the hidden inputs where the key is the name of the
@@ -237,27 +234,27 @@ open class LogLoginPageGeneratingFilter(
         )
         val contextPath = request.contextPath
         sb.append("      <form class=\"form-signin\" method=\"post\" action=\"")
-                .append(contextPath)
-                .append(authenticationUrl)
-                .append("\">\n")
-                .append("        <h2 class=\"form-signin-heading\">Please sign in</h2>\n")
-                .append(createError(loginError, errorMsg))
-                .append(createLogoutSuccess(logoutSuccess))
-                .append("        <p>\n")
-                .append("          <label for=\"username\" class=\"sr-only\"></label>\n")
-                .append("          <input type=\"text\" id=\"username\" name=\"")
-                .append(usernameParameter)
-                .append("\" class=\"form-control\" placeholder=\"Username\" required autofocus>\n")
-                .append("        </p>\n")
-                .append("        <p>\n")
-                .append("          <label for=\"password\" class=\"sr-only\"></label>\n")
-                .append("          <input type=\"password\" id=\"password\" name=\"")
-                .append(pwdParameter)
-                .append("\" class=\"form-control\" placeholder=\"Password\" required>\n")
-                .append("        </p>\n")
-                .append(renderHiddenInputs(request))
-                .append("        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Sign in</button>\n")
-                .append("      </form>\n")
+            .append(contextPath)
+            .append(authenticationUrl)
+            .append("\">\n")
+            .append("        <h2 class=\"form-signin-heading\">Please sign in</h2>\n")
+            .append(createError(loginError, errorMsg))
+            .append(createLogoutSuccess(logoutSuccess))
+            .append("        <p>\n")
+            .append("          <label for=\"username\" class=\"sr-only\"></label>\n")
+            .append("          <input type=\"text\" id=\"username\" name=\"")
+            .append(usernameParameter)
+            .append("\" class=\"form-control\" placeholder=\"Username\" required autofocus>\n")
+            .append("        </p>\n")
+            .append("        <p>\n")
+            .append("          <label for=\"password\" class=\"sr-only\"></label>\n")
+            .append("          <input type=\"password\" id=\"password\" name=\"")
+            .append(pwdParameter)
+            .append("\" class=\"form-control\" placeholder=\"Password\" required>\n")
+            .append("        </p>\n")
+            .append(renderHiddenInputs(request))
+            .append("        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Sign in</button>\n")
+            .append("      </form>\n")
         sb.append("</div>\n")
         sb.append("</body></html>")
         return sb.toString()
