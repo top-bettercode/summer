@@ -66,9 +66,9 @@ data class ProductionCostValue(
         val diffValues = RecipeColumns()
         names.add("制造费用项")
         itValues.add("this")
-        compares.add("▽")
+        compares.add("=")
         otherValues.add("other")
-        diffValues.add("Δ")
+        diffValues.add("diff")
 
         val separatorIndexs = compareTo(other, names, itValues, compares, otherValues, diffValues)
 

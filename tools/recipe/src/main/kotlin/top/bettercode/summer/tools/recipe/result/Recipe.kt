@@ -113,9 +113,9 @@ data class Recipe(
         separatorIndexs.add(names.size)
         names.add("原料/制造费用")
         itValues.add(this.recipeName)
-        compares.add("▽")
+        compares.add("=")
         otherValues.add(other!!.recipeName)
-        diffValues.add("Δ")
+        diffValues.add("diff")
         separatorIndexs.add(names.size)
 
         //总成本(制造费用+原料成本)
