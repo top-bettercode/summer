@@ -324,6 +324,7 @@ object RecipeExport {
             cell(r++, c).value("税费").setStyle()
             cell(r++, c).value("制造费用（元）(${(allChange * 100).scale(2)}%)").bold().setStyle()
             cell(r++, c).value("原辅料成本（元）").bold().setStyle()
+            cell(r++, c).value("原辅料成本（元）/收率").bold().setStyle()
             cell(r++, c).value("包装费用（元）").bold().setStyle()
             cell(r++, c).value("成本合计（元）").bold().setStyle()
 
@@ -363,6 +364,10 @@ object RecipeExport {
                 .setStyle()
             //原辅料成本
             cell(r, 1).value(recipe.materialCost)
+            range(r, 1, r++, itemsSize).merge().bold().format("0.00")
+                .setStyle()
+            //原辅料成本/收率
+            cell(r, 1).value((recipe.materialCost / recipe.requirement.yield).scale())
             range(r, 1, r++, itemsSize).merge().bold().format("0.00")
                 .setStyle()
             //包装费用
