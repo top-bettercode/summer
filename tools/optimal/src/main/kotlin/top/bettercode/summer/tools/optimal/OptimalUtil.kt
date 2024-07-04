@@ -12,7 +12,7 @@ object OptimalUtil {
      * 默认实现<,>约束，误差
      */
     @JvmStatic
-    var DEFAULT_EPSILON = 1e-4
+    var DEFAULT_EPSILON = 1e-3
 
     /**
      * 求解结果小数位
