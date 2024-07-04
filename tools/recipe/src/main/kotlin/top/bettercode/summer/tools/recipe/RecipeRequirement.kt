@@ -92,7 +92,7 @@ data class RecipeRequirement(
     @JsonProperty("materialConditionConstraints")
     val materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
     /**
-     *关联原料约束,term:消耗的原料，then:关联的原料（trem 原料，then:关联的指标）
+     *关联原料约束,term:消耗的原料，then:关联的原料（trem 原料(relation 消耗此原料的原料)，then:关联的指标）
      */
     @JsonProperty("materialRelationConstraints")
     val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
@@ -372,7 +372,8 @@ data class RecipeRequirement(
                 packagingMaterials = packagingMaterials,
                 materials = materialList,
                 materialIDConstraints = materialIDConstraints,
-                keepMaterialConstraints = keepMaterialConstraints,
+                keepMaterialConstraints =  if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
+                    .toMaterialIDs() else keepMaterialConstraints,
                 noUseMaterialConstraints = noUseMaterialConstraints,
                 indicatorRangeConstraints = indicatorRangeConstraints,
                 indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
@@ -390,12 +391,13 @@ data class RecipeRequirement(
         ): MaterialIDs {
             val ids =
                 this.mapNotNull {
-                    if (checkExist) materials[it]
-                        ?: throw IllegalArgumentException("$msg[$it]不在原料列表中") else materials[it]
+                    materials[it]
+                }.groupBy { it.indicators.key }.values.mapNotNull { list ->
+                    list.minOfWithOrNull(materialComparator) { it }?.id
                 }
-                    .groupBy { it.indicators.key }.values.mapNotNull { list ->
-                        list.minOfWithOrNull(materialComparator) { it }?.id
-                    }
+            if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
+                throw IllegalArgumentException("$msg[$this]不在原料列表中")
+            }
             return MaterialIDs(ids)
         }
 
@@ -421,21 +423,24 @@ data class RecipeRequirement(
             materials: Map<String, RecipeMaterial>,
             checkExist: Boolean, msg: String
         ): ReplacebleMaterialIDs {
-            val ids = this.mapNotNull {
-                if (checkExist) materials[it]
-                    ?: throw IllegalArgumentException("$msg[$it]不在原料列表中") else materials[it]
-            }
+            val ids = this.mapNotNull { materials[it] }
                 .groupBy { it.indicators.key }.values.mapNotNull { list ->
-                    list.minOfWithOrNull(materialComparator) { it }?.id
+                    list.minOfWithOrNull(
+                        materialComparator
+                    ) { it }?.id
                 }
-            val replaceIds = this.replaceIds?.mapNotNull {
-                if (checkExist) materials[it]
-                    ?: throw IllegalArgumentException("$msg[$it]不在原料列表中") else materials[it]
+            if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
+                throw IllegalArgumentException("$msg[${this.ids}]不在原料列表中")
             }
-                ?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-                    list.minOfWithOrNull(materialComparator) { it }?.id
-                }?.toMaterialIDs()
-            return ReplacebleMaterialIDs(ids, this.replaceRate, replaceIds)
+            val replaceIds = this.replaceIds?.mapNotNull {
+                materials[it]
+            }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
+                list.minOfWithOrNull(materialComparator) { it }?.id
+            }
+            if (checkExist && !this.replaceIds?.ids.isNullOrEmpty() && replaceIds.isNullOrEmpty()) {
+                throw IllegalArgumentException("$msg[${this.replaceIds}]不在原料列表中")
+            }
+            return ReplacebleMaterialIDs(ids, this.replaceRate, replaceIds?.toMaterialIDs())
         }
 
         private val materialComparator: Comparator<RecipeMaterial> = Comparator { o1, o2 ->
