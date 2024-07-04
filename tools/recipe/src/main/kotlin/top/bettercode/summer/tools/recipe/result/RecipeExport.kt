@@ -245,7 +245,7 @@ object RecipeExport {
                             if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
                         "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${
                             logic.changeItems?.joinToString { item ->
-                                item.toName(requirement)
+                                item.toName(productionCost)
                             }
                         }增加${logic.changeValue * 100}%"
                     }

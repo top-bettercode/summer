@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.recipe.productioncost
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.summer.tools.recipe.RecipeRequirement
 
 /** 制造费用增减结果项 */
 @JsonPropertyOrder(alphabetic = true)
@@ -16,9 +15,9 @@ data class ChangeItem(
     val id: String
 ) {
 
-    fun toName(requirement: RecipeRequirement): String {
+    fun toName(productionCost: ProductionCost): String {
         return when (type) {
-            ChangeItemType.MATERIAL -> requirement.materials.find { it.id == id }?.name ?: id
+            ChangeItemType.MATERIAL -> productionCost.materialItems.find { it.id == id }?.name ?: id
             ChangeItemType.DICT -> {
                 DictType.valueOf(id).dictName
             }
