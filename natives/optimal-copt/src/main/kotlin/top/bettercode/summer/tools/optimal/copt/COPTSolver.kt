@@ -41,6 +41,14 @@ class COPTSolver @JvmOverloads constructor(
         model.setDblParam("TimeLimit", seconds.toDouble())
     }
 
+    override fun writeLp(filename: String) {
+        model.writeLp(filename)
+    }
+
+    override fun writeMps(filename: String) {
+        model.writeMps(filename)
+    }
+
     override fun solve() {
         model.solve()
     }

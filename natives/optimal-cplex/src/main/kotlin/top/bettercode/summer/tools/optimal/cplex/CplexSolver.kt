@@ -50,6 +50,14 @@ class CplexSolver @JvmOverloads constructor(
         model.setParam(Param.TimeLimit, seconds.toDouble())
     }
 
+    override fun writeLp(filename: String) {
+        model.exportModel(filename)
+    }
+
+    override fun writeMps(filename: String) {
+        model.exportModel(filename)
+    }
+
     override fun solve() {
         model.solve()
     }

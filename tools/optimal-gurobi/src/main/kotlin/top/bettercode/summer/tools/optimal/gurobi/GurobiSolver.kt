@@ -83,6 +83,14 @@ class GurobiSolver @JvmOverloads constructor(
         model.set(GRB.DoubleParam.TimeLimit, seconds.toDouble())
     }
 
+    override fun writeLp(filename: String) {
+        model.write(filename)
+    }
+
+    override fun writeMps(filename: String) {
+        model.write(filename)
+    }
+
     override fun solve() {
         model.optimize()
     }

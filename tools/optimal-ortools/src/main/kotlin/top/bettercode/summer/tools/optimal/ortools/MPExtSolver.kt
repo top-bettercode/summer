@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.optimal.OptimalUtil
 import top.bettercode.summer.tools.optimal.OptimalUtil.isInt
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.SolverType
+import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 
@@ -48,6 +49,16 @@ open class MPExtSolver @JvmOverloads constructor(
 
     override fun setTimeLimit(seconds: Long) {
         solver.setTimeLimit(seconds * 1000L)
+    }
+
+    override fun writeLp(filename: String) {
+        val lpFormat = solver.exportModelAsLpFormat()
+        File(filename).writeText(lpFormat)
+    }
+
+    override fun writeMps(filename: String) {
+        val mpsFormat = solver.exportModelAsMpsFormat()
+        File(filename).writeText(mpsFormat)
     }
 
     override fun solve() {
