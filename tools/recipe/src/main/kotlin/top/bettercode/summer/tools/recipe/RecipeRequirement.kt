@@ -136,10 +136,14 @@ data class RecipeRequirement(
         objectMapper.writeValue(file, this)
     }
 
-    override fun toString(): String {
+    fun toString(format: Boolean): String {
         val objectMapper =
-            StringUtil.objectMapper(include = JsonInclude.Include.NON_NULL)
+            StringUtil.objectMapper(format = format, include = JsonInclude.Include.NON_NULL)
         return objectMapper.writeValueAsString(this)
+    }
+
+    override fun toString(): String {
+        return toString(format = true)
     }
 
     @JsonIgnore
