@@ -116,7 +116,7 @@ internal class RecipeSolverTest {
         System.err.println("======================$productName=====================")
         var requirement = TestPrepareData.readRequirement(productName)
         val file = File("build/requirement.json")
-        requirement.write(file)
+        requirement.write(file, true)
         requirement = RecipeRequirement.read(file)
 
         var recipeResult: RecipeResult? = null

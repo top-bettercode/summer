@@ -129,15 +129,16 @@ data class RecipeRequirement(
     }
 
     //--------------------------------------------
-    fun write(file: File) {
+    @JvmOverloads
+    fun write(file: File, format: Boolean = false) {
         val objectMapper =
-            StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            StringUtil.objectMapper(format = format, include = JsonInclude.Include.NON_NULL)
         objectMapper.writeValue(file, this)
     }
 
     override fun toString(): String {
         val objectMapper =
-            StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+            StringUtil.objectMapper(include = JsonInclude.Include.NON_NULL)
         return objectMapper.writeValueAsString(this)
     }
 
@@ -178,14 +179,14 @@ data class RecipeRequirement(
         @JvmStatic
         fun read(file: File): RecipeRequirement {
             val objectMapper =
-                StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+                StringUtil.objectMapper(include = JsonInclude.Include.NON_NULL)
             return objectMapper.readValue(file, RecipeRequirement::class.java)
         }
 
         @JvmStatic
         fun read(content: String): RecipeRequirement {
             val objectMapper =
-                StringUtil.objectMapper(format = true, include = JsonInclude.Include.NON_NULL)
+                StringUtil.objectMapper(include = JsonInclude.Include.NON_NULL)
             return objectMapper.readValue(content, RecipeRequirement::class.java)
         }
 
@@ -372,7 +373,7 @@ data class RecipeRequirement(
                 packagingMaterials = packagingMaterials,
                 materials = materialList,
                 materialIDConstraints = materialIDConstraints,
-                keepMaterialConstraints =  if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
+                keepMaterialConstraints = if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
                     .toMaterialIDs() else keepMaterialConstraints,
                 noUseMaterialConstraints = noUseMaterialConstraints,
                 indicatorRangeConstraints = indicatorRangeConstraints,
