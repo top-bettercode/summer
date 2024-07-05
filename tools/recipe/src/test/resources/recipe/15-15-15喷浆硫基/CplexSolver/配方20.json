@@ -1,6 +1,7 @@
 {
   "cost" : 2658.383249075752,
   "includeProductionCost" : false,
+  "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : { },
     "material" : {

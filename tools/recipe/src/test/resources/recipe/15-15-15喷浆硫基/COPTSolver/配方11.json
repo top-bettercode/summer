@@ -1,6 +1,7 @@
 {
   "cost" : 2613.383249075758,
   "includeProductionCost" : false,
+  "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : {
       "55磷酸一铵（粉）" : {
