@@ -518,17 +518,17 @@ class GurobiSolver @JvmOverloads constructor(
         model.update()
     }
 
-    override fun IVar.eqIfNot(value: Double, bool: IVar) {
-        model.addGenConstrIndicator(
-            bool.getDelegate(),
-            0,
-            this.expr(),
-            GRB.EQUAL,
-            value,
-            "c" + (numConstraints() + 1)
-        )
-        model.update()
-    }
+//    override fun IVar.eqIfNot(value: Double, bool: IVar) {
+//        model.addGenConstrIndicator(
+//            bool.getDelegate(),
+//            0,
+//            this.expr(),
+//            GRB.EQUAL,
+//            value,
+//            "c" + (numConstraints() + 1)
+//        )
+//        model.update()
+//    }
 
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
         val expr = this.expr()
