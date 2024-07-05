@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.recipe.criteria
 
 import top.bettercode.summer.tools.optimal.IVar
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 
 data class UsageVar(
     val normal: IVar,
@@ -9,6 +8,6 @@ data class UsageVar(
 ) {
 
     fun toUsage(): Usage {
-        return Usage(normal = normal.value.scale(), overdose = overdose.value.scale())
+        return Usage(normal = normal.value, overdose = overdose.value)
     }
 }

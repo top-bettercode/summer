@@ -6,7 +6,6 @@ import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
 import top.bettercode.summer.tools.optimal.Operator
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
@@ -222,9 +221,9 @@ object TestPrepareData {
         // 总养分 氮     磷    钾      氯离子  产品水分 物料水分   水溶磷率   水溶磷 硝态氮 硼   锌
         for (i in 0..9) {
             val min =
-                ((targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble() * 100).scale()
+                ((targetMinLimitRow!!.getCell(index).value as BigDecimal).toDouble() * 100)
             val max =
-                ((targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble() * 100).scale()
+                ((targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble() * 100)
             val indicator = when (i) {
                 //总养分
                 0 -> RecipeIndicatorValue(
@@ -315,7 +314,7 @@ object TestPrepareData {
                 materialRangeConstraints.add(
                     TermThen(
                         array,
-                        DoubleRange(minUse.toDouble().scale(), maxUse.toDouble().scale())
+                        DoubleRange(minUse.toDouble(), maxUse.toDouble())
                     )
                 )
             }
@@ -356,7 +355,7 @@ object TestPrepareData {
                     val relationMaterialIDs = m1.toRelationMaterialIDs(relationIds?.toMaterialIDs())
                     var findRelation = find.then.find { it.term == relationMaterialIDs }
                     val doubleRange =
-                        DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
+                        DoubleRange(minUse.toDouble(), maxUse.toDouble())
                     if (findRelation == null) {
                         findRelation = TermThen(relationMaterialIDs, RecipeRelation(doubleRange))
                         find.then.add(findRelation)
@@ -393,7 +392,7 @@ object TestPrepareData {
                         materialRelationConstraints.add(find)
                     }
                     val doubleRange =
-                        DoubleRange(minUse.toDouble().scale(9), maxUse.toDouble().scale(9))
+                        DoubleRange(minUse.toDouble(), maxUse.toDouble())
                     val relationMaterialIDs = m1.toRelationMaterialIDs()
                     var findRelation = find.then.find { it.term == relationMaterialIDs }
                     if (findRelation == null) {
@@ -607,25 +606,25 @@ object TestPrepareData {
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.nitrogen!! * 100).scale(),
+                    value = (materialForm.nitrogen!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.phosphorus!! * 100).scale(),
+                    value = (materialForm.phosphorus!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.potassium!! * 100).scale(),
+                    value = (materialForm.potassium!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.chlorine!! * 100).scale(),
+                    value = (materialForm.chlorine!! * 100),
                 )
             )
             //跳过产品水份
@@ -633,278 +632,278 @@ object TestPrepareData {
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.water!! * 100).scale(),
+                    value = (materialForm.water!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.waterSolublePhosphorusRate!! * 100).scale(),
+                    value = (materialForm.waterSolublePhosphorusRate!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.waterSolublePhosphorus!! * 100).scale(),
+                    value = (materialForm.waterSolublePhosphorus!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.nitrateNitrogen!! * 100).scale(),
+                    value = (materialForm.nitrateNitrogen!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.boron!! * 100).scale(),
+                    value = (materialForm.boron!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.zinc!! * 100).scale(),
+                    value = (materialForm.zinc!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.manganese!! * 100).scale(),
+                    value = (materialForm.manganese!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.copper!! * 100).scale(),
+                    value = (materialForm.copper!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.iron!! * 100).scale(),
+                    value = (materialForm.iron!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.molybdenum!! * 100).scale(),
+                    value = (materialForm.molybdenum!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.magnesium!! * 100).scale(),
+                    value = (materialForm.magnesium!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.sulfur!! * 100).scale(),
+                    value = (materialForm.sulfur!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.calcium!! * 100).scale(),
+                    value = (materialForm.calcium!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.organicMatter!! * 100).scale(),
+                    value = (materialForm.organicMatter!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.humicAcid!! * 100).scale(),
+                    value = (materialForm.humicAcid!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.fulvicAcid!! * 100).scale(),
+                    value = (materialForm.fulvicAcid!! * 100),
                 )
             )
             //活性菌
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = materialForm.activeBacteria!!.scale(),
+                    value = materialForm.activeBacteria!!,
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.silicon!! * 100).scale(),
+                    value = (materialForm.silicon!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index23!! * 100).scale(),
+                    value = (materialForm.index23!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index24!! * 100).scale(),
+                    value = (materialForm.index24!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index25!! * 100).scale(),
+                    value = (materialForm.index25!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index26!! * 100).scale(),
+                    value = (materialForm.index26!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index27!! * 100).scale(),
+                    value = (materialForm.index27!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index28!! * 100).scale(),
+                    value = (materialForm.index28!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index29!! * 100).scale(),
+                    value = (materialForm.index29!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index30!! * 100).scale(),
+                    value = (materialForm.index30!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index31!! * 100).scale(),
+                    value = (materialForm.index31!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index32!! * 100).scale(),
+                    value = (materialForm.index32!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index33!! * 100).scale(),
+                    value = (materialForm.index33!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index34!! * 100).scale(),
+                    value = (materialForm.index34!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index35!! * 100).scale(),
+                    value = (materialForm.index35!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index36!! * 100).scale(),
+                    value = (materialForm.index36!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index37!! * 100).scale(),
+                    value = (materialForm.index37!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index38!! * 100).scale(),
+                    value = (materialForm.index38!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index39!! * 100).scale(),
+                    value = (materialForm.index39!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index40!! * 100).scale(),
+                    value = (materialForm.index40!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index41!! * 100).scale(),
+                    value = (materialForm.index41!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index42!! * 100).scale(),
+                    value = (materialForm.index42!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index43!! * 100).scale(),
+                    value = (materialForm.index43!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index44!! * 100).scale(),
+                    value = (materialForm.index44!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index45!! * 100).scale(),
+                    value = (materialForm.index45!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index46!! * 100).scale(),
+                    value = (materialForm.index46!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index47!! * 100).scale(),
+                    value = (materialForm.index47!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index48!! * 100).scale(),
+                    value = (materialForm.index48!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index49!! * 100).scale(),
+                    value = (materialForm.index49!! * 100),
                 )
             )
             indicators.add(
                 RecipeIndicatorValue(
                     id = indicatorNames[++i],
-                    value = (materialForm.index50!! * 100).scale(),
+                    value = (materialForm.index50!! * 100),
                 )
             )
 

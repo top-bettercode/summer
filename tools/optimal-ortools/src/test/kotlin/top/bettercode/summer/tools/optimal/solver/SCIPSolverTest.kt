@@ -321,7 +321,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 System.err.println(numVar2.value)
-                Assertions.assertTrue(numVar2.value.scale() >= 10.0)
+                Assertions.assertTrue(numVar2.value.scale(10) >= 10.0)
             }
         }
     }
@@ -413,7 +413,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-                Assertions.assertTrue(numVar1.value.scale() <= 10.0)
+                Assertions.assertTrue(numVar1.value.scale(10) <= 10.0)
             }
         }
     }
@@ -505,7 +505,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-                Assertions.assertTrue(numVar1.value.scale() == 10.0)
+                Assertions.assertTrue(numVar1.value.scale(10) == 10.0)
             }
         }
     }
@@ -528,7 +528,7 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-                Assertions.assertTrue(numVar1.value.scale() == 10.0)
+                Assertions.assertTrue(numVar1.value.scale(10) == 10.0)
             }
         }
     }
@@ -545,7 +545,7 @@ open class SCIPSolverTest {
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
-                Assertions.assertTrue(numVar1.value.scale() == 100.0)
+                Assertions.assertTrue(numVar1.value.scale(10) == 100.0)
                 arrayOf(numVar1).maximize()
                 boolVar.eq(1.0)
                 solve()
@@ -569,7 +569,7 @@ open class SCIPSolverTest {
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
-                Assertions.assertTrue(numVar1.value.scale() == 100.0)
+                Assertions.assertTrue(numVar1.value.scale(10) == 100.0)
                 arrayOf(numVar1).maximize()
                 boolVar.eq(0.0)
                 solve()
@@ -640,8 +640,8 @@ open class SCIPSolverTest {
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
                 System.err.println(numVar1.value)
                 System.err.println(numVar2.value)
-                Assertions.assertTrue(numVar1.value.scale() == 10.0)
-                Assertions.assertTrue(numVar2.value.scale() < 20.0)
+                Assertions.assertTrue(numVar1.value.scale(10) == 10.0)
+                Assertions.assertTrue(numVar2.value.scale(10) < 20.0)
             }
         }
     }

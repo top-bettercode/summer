@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 
 
@@ -85,7 +84,7 @@ data class RecipeIndicator(
      */
     @Suppress("UNCHECKED_CAST")
     fun <T> scaleOf(value: T) = when (value) {
-        is Double -> (value as Double * scale).scale() as T
+        is Double -> (value as Double * scale) as T
         is DoubleRange -> (value as DoubleRange).replaceRate(scale) as T
         else -> value
     }

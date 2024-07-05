@@ -15,14 +15,6 @@ object OptimalUtil {
     var DEFAULT_EPSILON = 1e-3
 
     /**
-     * 求解结果小数位
-     *
-     * Math.abs(Math.log10(epsilon)).toInt()
-     */
-    @JvmStatic
-    var DEFAULT_SCALE: Int = 6
-
-    /**
      * 将数字转换为指定小数位数的数字
      *
      * @param scale 小数位数
@@ -31,7 +23,7 @@ object OptimalUtil {
     @JvmStatic
     @JvmOverloads
     fun Double.scale(
-        scale: Int = DEFAULT_SCALE,
+        scale: Int,
         roundingMode: RoundingMode = RoundingMode.HALF_UP
     ): Double {
         require(scale >= 0) { "小数位数不能为负数" }

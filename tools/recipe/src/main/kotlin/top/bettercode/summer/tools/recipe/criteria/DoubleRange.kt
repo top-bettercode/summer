@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.recipe.criteria
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Operator
 
 @JsonPropertyOrder(alphabetic = true)
@@ -26,8 +25,8 @@ data class DoubleRange(
 
     fun replaceRate(rate: Double): DoubleRange {
         return DoubleRange(
-            min = (min * rate).scale(),
-            max = (max * rate).scale(),
+            min = (min * rate),
+            max = (max * rate),
             minOperator = minOperator,
             maxOperator = maxOperator
         )

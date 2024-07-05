@@ -494,18 +494,18 @@ data class PrepareSolveData(
                     materialItems = materialItems?.map {
                         CarrierValue(
                             it.it,
-                            it.value.value.scale()
+                            it.value.value
                         )
                     },
                     dictItems = dictItems?.mapValues {
                         CarrierValue(
                             it.value.it,
-                            it.value.value.value.scale()
+                            it.value.value.value
                         )
                     },
                     minEpsilon = minEpsilon
                 ),
-                cost = objectiveValue.scale(),
+                cost = objectiveValue,
                 materials = materials,
                 minEpsilon = minEpsilon
             )

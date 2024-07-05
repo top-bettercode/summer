@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.recipe.indicator
 
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import kotlin.properties.Delegates
 
 /**
@@ -16,7 +15,7 @@ class RecipeValueIndicators(indicators: List<RecipeIndicatorValue<Double>> = emp
             it.scaledValue = it.indicator.scaleOf(it.value)
         }
         key = this.values.sortedBy { indicators[it.id]!!.index }
-            .joinToString(",") { "${it.id}:${it.value.scale()}" }
+            .joinToString(",") { "${it.id}:${it.value}" }
 
         val water = indicators.water
         waterValue = if (water == null) {

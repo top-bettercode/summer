@@ -129,18 +129,18 @@ data class ProductionCostValue(
 
         val otherMaterialItemsMap = other.materialItems.associateBy { it.it.id }
         materialItems.forEach {
-            val thisVal = (it.it.cost * it.value).scale()
+            val thisVal = (it.it.cost * it.value)
             val oth = otherMaterialItemsMap[it.it.id]
-            val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value).scale()
+            val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value)
             names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
             itValues.add(thisVal)
             compares.add(thisVal - otherVal in -minEpsilon..minEpsilon)
             otherValues.add(otherVal)
-            diffValues.add((thisVal - otherVal).scale())
+            diffValues.add((thisVal - otherVal))
         }
         if (materialItems.size < other.materialItems.size) {
             other.materialItems.filter { m -> !materialItems.any { m.it.id == it.it.id } }.forEach {
-                val otherVal = (it.it.cost * it.value).scale()
+                val otherVal = (it.it.cost * it.value)
                 names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
                 itValues.add(0.0)
                 compares.add(-otherVal in -minEpsilon..minEpsilon)
@@ -154,7 +154,7 @@ data class ProductionCostValue(
         itValues.add(energyFee)
         compares.add(this.energyFee - other.energyFee in -minEpsilon..minEpsilon)
         otherValues.add(other.energyFee)
-        diffValues.add((energyFee - other.energyFee).scale())
+        diffValues.add((energyFee - other.energyFee))
         separatorIndexs.add(names.size)
 
         names.add("其他固定费用数量")
@@ -165,19 +165,19 @@ data class ProductionCostValue(
         separatorIndexs.add(names.size)
 
         dictItems.forEach { (key, value) ->
-            val thisVal = (value.it.cost * value.value).scale()
+            val thisVal = (value.it.cost * value.value)
             val oth = other.dictItems[key]
-            val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value).scale()
+            val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value)
 
             names.add("${key.dictName} (${(value.value * 100).scale(2)}%)")
             itValues.add(thisVal)
             compares.add(thisVal - otherVal in -minEpsilon..minEpsilon)
             otherValues.add(otherVal)
-            diffValues.add((thisVal - otherVal).scale())
+            diffValues.add((thisVal - otherVal))
         }
         if (dictItems.size < other.dictItems.size) {
             other.dictItems.filter { m -> !dictItems.any { m.key == it.key } }.forEach {
-                val otherVal = (it.value.it.cost * it.value.value).scale()
+                val otherVal = (it.value.it.cost * it.value.value)
                 names.add("${it.key.dictName} (${(it.value.value * 100).scale(2)}%)")
                 itValues.add(0.0)
                 compares.add(-otherVal in -minEpsilon..minEpsilon)
@@ -191,21 +191,21 @@ data class ProductionCostValue(
         itValues.add(otherFee)
         compares.add(this.otherFee - other.otherFee in -minEpsilon..minEpsilon)
         otherValues.add(other.otherFee)
-        diffValues.add((otherFee - other.otherFee).scale())
+        diffValues.add((otherFee - other.otherFee))
         separatorIndexs.add(names.size)
 
         names.add("税费")
         itValues.add(taxFee)
         compares.add(this.taxFee - other.taxFee in -minEpsilon..minEpsilon)
         otherValues.add(other.taxFee)
-        diffValues.add((taxFee - other.taxFee).scale())
+        diffValues.add((taxFee - other.taxFee))
         separatorIndexs.add(names.size)
 
         names.add("制造费用合计 (${(allChange * 100).scale(2)}%)")
         itValues.add(totalFee)
         compares.add(this.totalFee - other.totalFee in -minEpsilon..minEpsilon)
         otherValues.add(other.totalFee)
-        diffValues.add((totalFee - other.totalFee).scale())
+        diffValues.add((totalFee - other.totalFee))
         separatorIndexs.add(names.size)
         return separatorIndexs
     }

@@ -1,17 +1,12 @@
 package top.bettercode.summer.tools.recipe.result
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.Operator
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
@@ -74,29 +69,29 @@ data class Recipe(
 
     /** 需要烘干的水分含量  */
     val dryWaterWeight: Double
-        get() = (weight - requirement.targetWeight).scale()
+        get() = (weight - requirement.targetWeight)
 
     /**
      * 物料水分重量
      */
     val waterWeight: Double
-        get() = materials.sumOf { it.waterWeight }.scale()
+        get() = materials.sumOf { it.waterWeight }
 
     /**
      * 总养分
      */
     val totalNutrientWeight: Double
-        get() = materials.sumOf { it.totalNutrientWeight }.scale()
+        get() = materials.sumOf { it.totalNutrientWeight }
 
     /**
      * 产出重量
      */
     val weight: Double
-        get() = materials.sumOf { it.weight }.scale()
+        get() = materials.sumOf { it.weight }
 
     /** 原料成本  */
     val materialCost: Double
-        get() = materials.sumOf { it.weight * it.price }.scale()
+        get() = materials.sumOf { it.weight * it.price }
 
     companion object {
         fun read(file: File): Recipe {
@@ -130,7 +125,7 @@ data class Recipe(
         itValues.add(cost)
         compares.add(cost - other.cost in -minEpsilon..minEpsilon)
         otherValues.add(other.cost)
-        diffValues.add((cost - other.cost).scale())
+        diffValues.add((cost - other.cost))
         separatorIndexs.add(names.size)
         //原料用量
         names.add("原料数量")
@@ -148,7 +143,7 @@ data class Recipe(
             itValues.add(m.weight)
             compares.add(m.weight - otherWeight in -minEpsilon..minEpsilon)
             otherValues.add(otherWeight)
-            diffValues.add((m.weight - otherWeight).scale())
+            diffValues.add((m.weight - otherWeight))
         }
         if (materials.size < other.materials.size) {
             other.materials.filter { m -> !materials.any { m.id == it.id } }.forEach {
@@ -229,18 +224,18 @@ data class Recipe(
         if (dryWaterWeight < -minEpsilon) {
             throw IllegalRecipeException("${requirement.productName}-配方烘干水分异常：${dryWaterWeight}")
         }
-        if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight).scale() > minEpsilon) {
+        if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight) > minEpsilon) {
             throw IllegalRecipeException(
                 "${requirement.productName}-配方烘干水分:${dryWaterWeight} 超过最大可烘干水分：${requirement.maxBakeWeight} ,差值：${
-                    (dryWaterWeight - requirement.maxBakeWeight).scale().toBigDecimal()
+                    (dryWaterWeight - requirement.maxBakeWeight).toBigDecimal()
                         .toPlainString()
                 }"
             )
         }
-        if ((dryWaterWeight - waterWeight).scale() > minEpsilon) {
+        if ((dryWaterWeight - waterWeight) > minEpsilon) {
             throw IllegalRecipeException(
                 "${requirement.productName}-配方烘干水分:${dryWaterWeight} 超过总水分：${waterWeight},差值：${
-                    (dryWaterWeight - waterWeight).scale().toBigDecimal().toPlainString()
+                    (dryWaterWeight - waterWeight).toBigDecimal().toPlainString()
                 }"
             )
         }
@@ -251,15 +246,15 @@ data class Recipe(
         for (rangeIndicator in rangeIndicators) {
             val indicator = rangeIndicator.indicator
             val indicatorValue = when (indicator.type) {
-                RecipeIndicatorType.TOTAL_NUTRIENT -> (totalNutrientWeight / targetWeight).scale()
-                RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight).scale()
+                RecipeIndicatorType.TOTAL_NUTRIENT -> (totalNutrientWeight / targetWeight)
+                RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight)
                 RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf {
                     it.indicatorWeight(
                         indicator.otherId!!
                     )
-                }).scale()
+                })
 
-                else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight).scale()
+                else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight)
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
             if (indicatorValue !in rangeIndicator.scaledValue.min - minEpsilon..rangeIndicator.scaledValue.max + minEpsilon) {
@@ -331,7 +326,7 @@ data class Recipe(
                             requirement
                         )
                     }使用量：${
-                        weight.scale().toBigDecimal().toPlainString()
+                        weight.toBigDecimal().toPlainString()
                     } 不在范围${range.min}-${range.max}内"
                 )
             }
@@ -364,18 +359,18 @@ data class Recipe(
             val usedOverdoseWeight =
                 materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
             val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
-            if ((usedWeight - usedAddWeight).scale() !in -minEpsilon..minEpsilon) {
+            if ((usedWeight - usedAddWeight) !in -minEpsilon..minEpsilon) {
                 throw IllegalRecipeException(
                     "${requirement.productName}-原料[${usedIds.toNames(requirement)}]使用量：${
-                        usedWeight.scale().toBigDecimal().toPlainString()
+                        usedWeight.toBigDecimal().toPlainString()
                     } 不等于:${
-                        usedAddWeight.scale().toBigDecimal().toPlainString()
+                        usedAddWeight.toBigDecimal().toPlainString()
                     } = 正常使用量：${
-                        usedNormalWeight.scale().toBigDecimal().toPlainString()
+                        usedNormalWeight.toBigDecimal().toPlainString()
                     }+过量使用量：${
-                        usedOverdoseWeight.scale().toBigDecimal().toPlainString()
+                        usedOverdoseWeight.toBigDecimal().toPlainString()
                     }，差值:${
-                        (usedWeight - usedAddWeight).scale().toBigDecimal().toPlainString()
+                        (usedWeight - usedAddWeight).toBigDecimal().toPlainString()
                     }"
                 )
             }
@@ -389,10 +384,10 @@ data class Recipe(
             if (usedNormalWeight !in usedMinNormalWeights - minEpsilon..usedMaxNormalWeights + minEpsilon) {
                 throw IllegalRecipeException(
                     "${requirement.productName}-原料[${usedIds.toNames(requirement)}]正常使用量：${
-                        usedNormalWeight.scale().toBigDecimal().toPlainString()
+                        usedNormalWeight.toBigDecimal().toPlainString()
                     } 不在范围${
-                        usedMinNormalWeights.scale().toBigDecimal().toPlainString()
-                    }-${usedMaxNormalWeights.scale().toBigDecimal().toPlainString()}内"
+                        usedMinNormalWeights.toBigDecimal().toPlainString()
+                    }-${usedMaxNormalWeights.toBigDecimal().toPlainString()}内"
                 )
             }
 
@@ -400,10 +395,10 @@ data class Recipe(
             if (usedOverdoseWeight !in usedMinOverdoseWeights - minEpsilon..usedMaxOverdoseWeights + minEpsilon) {
                 throw IllegalRecipeException(
                     "${requirement.productName}-原料[${usedIds.toNames(requirement)}]过量使用量：${
-                        usedOverdoseWeight.scale().toBigDecimal().toPlainString()
+                        usedOverdoseWeight.toBigDecimal().toPlainString()
                     } 不在范围${
-                        usedMinOverdoseWeights.scale().toBigDecimal().toPlainString()
-                    }-${usedMaxOverdoseWeights.scale().toBigDecimal().toPlainString()}内"
+                        usedMinOverdoseWeights.toBigDecimal().toPlainString()
+                    }-${usedMaxOverdoseWeights.toBigDecimal().toPlainString()}内"
                 )
             }
         }
@@ -415,34 +410,36 @@ data class Recipe(
             val thenWeight =
                 materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
             var whenTrue = false
+            val whenValue = whenCon.condition.value
             when (whenCon.condition.operator) {
                 Operator.EQ -> {
-                    whenTrue = whenWeight == whenCon.condition.value
+                    whenTrue = whenWeight in whenValue - minEpsilon..whenValue + minEpsilon
                 }
 
                 Operator.NE -> {
-                    whenTrue = whenWeight != whenCon.condition.value
+                    whenTrue = whenWeight !in whenValue - minEpsilon..whenValue + minEpsilon
                 }
 
                 Operator.GT -> {
-                    whenTrue = whenWeight > whenCon.condition.value
+                    whenTrue = whenWeight > whenValue + minEpsilon
                 }
 
                 Operator.LT -> {
-                    whenTrue = whenWeight < whenCon.condition.value
+                    whenTrue = whenWeight < whenValue - minEpsilon
                 }
 
                 Operator.GE -> {
-                    whenTrue = whenWeight >= whenCon.condition.value
+                    whenTrue = whenWeight >= whenValue + minEpsilon
                 }
 
                 Operator.LE -> {
-                    whenTrue = whenWeight <= whenCon.condition.value
+                    whenTrue = whenWeight <= whenValue - minEpsilon
                 }
             }
+            val thenValue = thenCon.condition.value
             when (thenCon.condition.operator) {
                 Operator.EQ -> {
-                    if (whenTrue && thenWeight != thenCon.condition.value) {
+                    if (whenTrue && thenWeight !in thenValue - minEpsilon..thenValue + minEpsilon) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
@@ -455,7 +452,7 @@ data class Recipe(
                 }
 
                 Operator.NE -> {
-                    if (whenTrue && thenWeight == thenCon.condition.value) {
+                    if (whenTrue && thenWeight in thenValue - minEpsilon..thenValue + minEpsilon) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
@@ -468,7 +465,7 @@ data class Recipe(
                 }
 
                 Operator.GT -> {
-                    if (whenTrue && thenWeight <= thenCon.condition.value) {
+                    if (whenTrue && thenWeight <= thenValue - minEpsilon) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
@@ -481,7 +478,7 @@ data class Recipe(
                 }
 
                 Operator.LT -> {
-                    if (whenTrue && thenWeight >= thenCon.condition.value) {
+                    if (whenTrue && thenWeight >= thenValue + minEpsilon) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
@@ -494,7 +491,7 @@ data class Recipe(
                 }
 
                 Operator.GE -> {
-                    if (whenTrue && thenWeight < thenCon.condition.value) {
+                    if (whenTrue && thenWeight < thenValue - minEpsilon) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
@@ -507,7 +504,7 @@ data class Recipe(
                 }
 
                 Operator.LE -> {
-                    if (whenTrue && thenWeight > thenCon.condition.value) {
+                    if (whenTrue && thenWeight > thenValue + minEpsilon) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
@@ -526,14 +523,14 @@ data class Recipe(
 
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
-        if ((materialCost + productionCostFee - cost).scale() !in -minEpsilon..minEpsilon) {
+        if ((materialCost + productionCostFee - cost) !in -minEpsilon..minEpsilon) {
             throw IllegalRecipeException(
                 "${requirement.productName}-配方成本不匹配，物料成本：${materialCost}+制造费用：${
-                    productionCostFee.scale().toBigDecimal().toPlainString()
+                    productionCostFee.toBigDecimal().toPlainString()
                 }=${
-                    (materialCost + productionCostFee).scale().toBigDecimal().toPlainString()
-                } / ${cost.scale().toBigDecimal().toPlainString()},差值：${
-                    (materialCost + productionCostFee - cost).scale().toBigDecimal().toPlainString()
+                    (materialCost + productionCostFee).toBigDecimal().toPlainString()
+                } / ${cost.toBigDecimal().toPlainString()},差值：${
+                    (materialCost + productionCostFee - cost).toBigDecimal().toPlainString()
                 }"
             )
         }
@@ -630,10 +627,10 @@ data class Recipe(
                                     requirement
                                 )
                             }正常使用量：${
-                                consumeNormalWeight.scale().toBigDecimal().toPlainString()
+                                consumeNormalWeight.toBigDecimal().toPlainString()
                             } 不在范围${
-                                mMinNormalWeight.scale().toBigDecimal().toPlainString()
-                            }-${mMaxNormalWeight.scale().toBigDecimal().toPlainString()}内"
+                                mMinNormalWeight.toBigDecimal().toPlainString()
+                            }-${mMaxNormalWeight.toBigDecimal().toPlainString()}内"
                         )
                     }
 
@@ -645,10 +642,10 @@ data class Recipe(
                                     requirement
                                 )
                             }过量使用量：${
-                                consumeOverdoseWeight.scale().toBigDecimal().toPlainString()
+                                consumeOverdoseWeight.toBigDecimal().toPlainString()
                             } 不在范围${
-                                mMinOverdoseWeight.scale().toBigDecimal().toPlainString()
-                            }-${mMaxOverdoseWeight.scale().toBigDecimal().toPlainString()}内"
+                                mMinOverdoseWeight.toBigDecimal().toPlainString()
+                            }-${mMaxOverdoseWeight.toBigDecimal().toPlainString()}内"
                         )
                     }
                 }

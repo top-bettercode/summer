@@ -47,7 +47,7 @@ object RecipeExport {
                     val value =
                         if (indicator.isTotalNutrient) matrial.totalNutrient else matrial.indicators.valueOf(
                             indicator.id
-                        ).scale()
+                        )
 
                     cell(r, column).value(value)
                         .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
@@ -368,7 +368,7 @@ object RecipeExport {
             range(r, 1, r++, itemsSize).merge().bold().format("0.00")
                 .setStyle()
             //原辅料成本/收率
-            cell(r, 1).value((recipe.materialCost / recipe.requirement.yield).scale())
+            cell(r, 1).value((recipe.materialCost / recipe.requirement.yield))
             range(r, 1, r++, itemsSize).merge().bold().format("0.00")
                 .setStyle()
             //包装费用
@@ -450,15 +450,15 @@ object RecipeExport {
 
                 //实配值
                 val value = when (indicator.type) {
-                    RecipeIndicatorType.TOTAL_NUTRIENT -> ((materials.sumOf { it.totalNutrientWeight }) / requirement.targetWeight).scale()
-                    RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight).scale()
+                    RecipeIndicatorType.TOTAL_NUTRIENT -> ((materials.sumOf { it.totalNutrientWeight }) / requirement.targetWeight)
+                    RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight)
                     RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf {
                         it.indicatorWeight(
                             indicator.itId!!
                         )
-                    } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) }).scale()
+                    } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) })
 
-                    else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
+                    else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight)
                 }
                 val minEpsilon = recipe.minEpsilon
                 val valid =

@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.recipe.productioncost
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.CarrierValue
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
@@ -104,11 +103,11 @@ data class ProductionCost(
         return ProductionCostValue(
             materialItems = materialItems,
             dictItems = dictItems,
-            otherFee = otherFee.scale(),
-            energyFee = energyFee.scale(),
-            taxFee = taxFee.scale(),
-            totalFee = totalFee.scale(),
-            allChange = allChange.scale(),
+            otherFee = otherFee,
+            energyFee = energyFee,
+            taxFee = taxFee,
+            totalFee = totalFee,
+            allChange = allChange,
             minEpsilon = recipe.minEpsilon
         )
     }
@@ -145,11 +144,11 @@ data class ProductionCost(
         return ProductionCostValue(
             materialItems = materialItems,
             dictItems = dictItems,
-            otherFee = otherFee.scale(),
-            energyFee = energyFee.scale(),
-            taxFee = taxFee.scale(),
-            totalFee = totalFee.scale(),
-            allChange = allChange.scale(),
+            otherFee = otherFee,
+            energyFee = energyFee,
+            taxFee = taxFee,
+            totalFee = totalFee,
+            allChange = allChange,
             minEpsilon = minEpsilon
         )
     }
