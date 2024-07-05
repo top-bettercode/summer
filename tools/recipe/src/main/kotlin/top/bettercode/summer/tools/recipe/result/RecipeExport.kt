@@ -281,8 +281,8 @@ object RecipeExport {
                 c = startCol
                 cell(r, c++).value("不能混用的原料").height(20.0 * notMixMaterialConstraints.size)
                     .setStyle()
-                val notMixMaterialConstraintsStr = notMixMaterialConstraints.joinToString("\n") {
-                    it.joinToString("和") + "不能混用"
+                val notMixMaterialConstraintsStr = notMixMaterialConstraints.joinToString("\n") { notMix ->
+                    notMix.joinToString("和") { it.toNames(requirement) } + "不能混用"
                 }
                 cell(r, c).value(notMixMaterialConstraintsStr)
                 range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText()

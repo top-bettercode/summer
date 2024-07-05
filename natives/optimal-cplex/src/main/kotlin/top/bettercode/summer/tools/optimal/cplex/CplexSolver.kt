@@ -369,9 +369,9 @@ class CplexSolver @JvmOverloads constructor(
         model.add(model.ifThen(model.eq(bool.getDelegate(), 1.0), model.eq(expr(this), value)))
     }
 
-    override fun IVar.eqIfNot(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.eq(expr(this), value)))
-    }
+//    override fun IVar.eqIfNot(value: Double, bool: IVar) {
+//        model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.eq(expr(this), value)))
+//    }
 
     override fun IVar.neIf(value: Double, bool: IVar) {
         model.add(

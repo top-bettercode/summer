@@ -150,7 +150,7 @@ data class Recipe(
         materials.forEach { m ->
             val otherMaterialValue = otherMaterialsMap[m.id]
             val otherWeight = otherMaterialValue?.weight ?: 0.0
-            names.add(m.name)
+            names.add("${m.name}(${m.id})")
             itValues.add(m.weight)
             compares.add((m.weight - otherWeight).scale(scale) in -minEpsilon..minEpsilon)
             otherValues.add(otherWeight)
@@ -158,7 +158,7 @@ data class Recipe(
         }
         other.materials.filter { m -> !materials.any { m.id == it.id } }.forEach {
             val otherWeight = it.weight
-            names.add(it.name)
+            names.add("${it.name}(${it.id})")
             itValues.add(0.0)
             compares.add(-otherWeight.scale(scale) in -minEpsilon..minEpsilon)
             otherValues.add(otherWeight)

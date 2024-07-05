@@ -87,7 +87,7 @@ data class RecipeRequirement(
 
     /** 原料约束,key:原料ID, value: 原料使用范围约束  */
     @JsonProperty("materialRangeConstraints")
-    val materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
+    var materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
     /** 条件约束，当条件1满足时，条件2必须满足  */
     @JsonProperty("materialConditionConstraints")
     var materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
@@ -95,7 +95,7 @@ data class RecipeRequirement(
      *关联原料约束,term:消耗的原料，then:关联的原料（trem 原料(relation 消耗此原料的原料)，then:关联的指标）
      */
     @JsonProperty("materialRelationConstraints")
-    val materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
+    var materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
     /**
      * 指定原料约束
      */
@@ -254,6 +254,8 @@ data class RecipeRequirement(
                 "用量范围约束原料"
             )
         }
+        materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() }
+
         materialRelationConstraints.forEach {
             it.term = it.term.minFrom(tmpMaterial, true, "关联约束消耗原料")
             it.then.forEach { then ->
@@ -261,11 +263,16 @@ data class RecipeRequirement(
             }
             it.then = it.then.filter { t -> t.term.ids.isNotEmpty() }
         }
+        materialRelationConstraints =
+            materialRelationConstraints.filter { it.term.ids.isNotEmpty() }
 
         materialConditionConstraints.forEach { (first, second) ->
             first.materials = first.materials.minFrom(tmpMaterial)
             second.materials = second.materials.minFrom(tmpMaterial, true, "条件约束使用原料")
         }
+        materialConditionConstraints =
+            materialConditionConstraints.filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
+
         // conditoin 转noMix
         val noMixConditions = materialConditionConstraints.filter {
             val op = it.term.condition.operator
@@ -278,8 +285,7 @@ data class RecipeRequirement(
             arrayOf(it.term.materials, it.then.materials)
         }
         notMixMaterialConstraints = notMixMaterialConstraints + noMixMaterials
-        materialConditionConstraints =
-            (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
+        materialConditionConstraints = (materialConditionConstraints - noMixConditions.toSet())
 
         // 可选原料
         val keepMaterialIds = keepMaterialConstraints.ids.toMutableList()

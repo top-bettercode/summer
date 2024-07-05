@@ -29,8 +29,8 @@ abstract class Solver(
     protected val log: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass)
 
     abstract fun setTimeLimit(seconds: Long)
-    abstract fun writeLp(filename:String)
-    abstract fun writeMps(filename:String)
+    abstract fun writeLp(filename: String)
+    abstract fun writeMps(filename: String)
     abstract fun solve()
     abstract fun reset()
     abstract fun isOptimal(): Boolean
@@ -196,7 +196,13 @@ abstract class Solver(
     }
 
     abstract fun IVar.eqIf(value: Double, bool: IVar)
-    abstract fun IVar.eqIfNot(value: Double, bool: IVar)
+    open fun IVar.eqIfNot(value: Double, bool: IVar) {
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIfNot(2.0, bool)
+        geIf(value, bool1)
+        leIf(value, bool2)
+    }
 
     /**
      * if bool=1,this<value,this>value
