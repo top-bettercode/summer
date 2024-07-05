@@ -86,7 +86,7 @@ data class PrepareSolveData(
 
                 val rangeIndicators = requirement.indicatorRangeConstraints
                 // 产品水分指标
-                val waterRange = rangeIndicators.productWater?.scaledValue
+                val waterRange = rangeIndicators.productWaterValue
                 // 定义产品干净重
                 val minDryWeight = targetWeight * (1 - (waterRange?.max ?: 0.0))
                 val maxDryWeight = targetWeight * (1 - (waterRange?.min ?: 0.0))
@@ -97,8 +97,9 @@ data class PrepareSolveData(
 
                 // 添加成份约束条件
                 // 成份要求 总养分 氮含量 磷含量 水溶磷率 钾含量 氯离子 产品水分 物料水分 硼 锌
-                for (indicator in rangeIndicators) {
-                    val range = indicator.scaledValue
+                for (rangeIndicator in rangeIndicators) {
+                    val range = rangeIndicator.scaledValue
+                    val indicator = rangeIndicator.indicator
                     when {
                         indicator.isProductWater -> {
                             continue

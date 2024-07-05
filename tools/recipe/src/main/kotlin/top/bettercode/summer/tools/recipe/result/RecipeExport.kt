@@ -22,7 +22,7 @@ object RecipeExport {
         val indicators = if (materials.isEmpty()) {
             return
         } else
-            requirement.systemIndicators.values.filter { !it.isProductWater }.sortedBy { it.index }
+            requirement.indicators.filter { !it.isProductWater }.sortedBy { it.index }
         //标题
         cell(0, 0).value("原料名称").headerStyle().setStyle()
         cell(0, 1).value("价格").headerStyle().setStyle()
@@ -61,7 +61,7 @@ object RecipeExport {
         requirement.apply {
             val startCol = 0
             val startRow = 0
-            val rangeIndicators = indicatorRangeConstraints.values.sortedBy { it.index }
+            val rangeIndicators = indicatorRangeConstraints.values.sortedBy { it.indicator.index }
             val productionColumnSize =
                 productionCost.materialItems.size + productionCost.dictItems.size + 2
             val columnSize = max(rangeIndicators.size, productionColumnSize) + startCol
@@ -73,13 +73,15 @@ object RecipeExport {
             //配方目标
             c++
             rangeIndicators.forEach {
+                val indicator = it.indicator
                 r = startCol
-                cell(r++, c).value("${it.name}(${it.unit})").headerStyle().width(11.0).setStyle()
+                val unit = indicator.unit
+                cell(r++, c).value("${indicator.name}($unit)").headerStyle().width(11.0).setStyle()
                 cell(r++, c).value(it.scaledValue.max)
-                    .format(if (it.unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
+                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
                     .setStyle()
                 cell(r++, c++).value(it.scaledValue.min)
-                    .format(if (it.unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
+                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
                     .setStyle()
             }
             if (columnSize > c)
@@ -264,7 +266,7 @@ object RecipeExport {
                     .setStyle()
                 val materialIDIndicatorsStr =
                     materialIDIndicators.entries.joinToString("\n") {
-                        "指标${it.value.name} 限用原料：${
+                        "指标${it.value.indicator.name} 限用原料：${
                             it.value.value.toNames(
                                 requirement
                             )
@@ -393,7 +395,8 @@ object RecipeExport {
                     "\t"
                 )
             val materials = recipe.materials.toSortedSet()
-            val rangeIndicators = requirement.indicatorRangeConstraints.values.sortedBy { it.index }
+            val rangeIndicators =
+                requirement.indicatorRangeConstraints.values.sortedBy { it.indicator.index }
             val columnSize = titles.size + rangeIndicators.size + 1
 
             var r = 0
@@ -406,7 +409,7 @@ object RecipeExport {
                 return 0
             }
             c++
-            rangeIndicators.forEach { indicator ->
+            rangeIndicators.map { it.indicator }.forEach { indicator ->
                 cell(r, c++).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0)
                     .setStyle()
             }
@@ -431,16 +434,17 @@ object RecipeExport {
             cell(2, c).value("/").setStyle()
             cell(3, c++).value(1.0).bold().format("0%").setStyle()
 
-            rangeIndicators.forEach { indicator ->
+            rangeIndicators.forEach { rangeIndicator ->
+                val indicator = rangeIndicator.indicator
                 r = 1
                 //配方目标最大值
-                val max = indicator.scaledValue.max
+                val max = rangeIndicator.scaledValue.max
                 cell(r++, c).value(max).bold()
                     .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .setStyle()
 
                 //配方目标最小值
-                val min = indicator.scaledValue.min
+                val min = rangeIndicator.scaledValue.min
                 cell(r++, c).value(min).bold()
                     .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .setStyle()
@@ -509,7 +513,7 @@ object RecipeExport {
                 cell(r, c++).value(material.weight).bold().format("0.00").setStyle()
                 // 投料比
                 cell(r, c++).value(material.weight / recipe.weight).format("0.00%").setStyle()
-                rangeIndicators.forEach { indicator ->
+                rangeIndicators.map { it.indicator }.forEach { indicator ->
                     val value: Double = when (indicator.type) {
                         RecipeIndicatorType.TOTAL_NUTRIENT -> material.totalNutrient
                         RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue

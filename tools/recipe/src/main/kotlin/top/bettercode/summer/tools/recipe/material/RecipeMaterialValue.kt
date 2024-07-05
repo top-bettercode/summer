@@ -14,16 +14,16 @@ import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder(alphabetic = true)
 data class RecipeMaterialValue(
-        @JsonProperty("material")
-        val material: RecipeMaterial,
-        /** 最终使用量  */
-        @JsonProperty("weight")
-        val weight: Double,
-        /**
-         * 其他原料消耗详情,key:原料ID
-         */
-        @JsonProperty("consumes")
-        val consumes: Map<String, Usage>
+    @JsonProperty("material")
+    val material: RecipeMaterial,
+    /** 最终使用量  */
+    @JsonProperty("weight")
+    val weight: Double,
+    /**
+     * 其他原料消耗详情,key:原料ID
+     */
+    @JsonProperty("consumes")
+    val consumes: Map<String, Usage>
 ) : IRecipeMaterial by material {
 
     val normalWeight: Double = consumes.values.sumOf { it.normal }
@@ -55,12 +55,7 @@ data class RecipeMaterialValue(
 
     @get:JsonIgnore
     val waterWeight: Double by lazy {
-        val water = indicators.water
-        if (water != null) {
-            indicatorWeight(water.id)
-        } else {
-            0.0
-        }
+        indicators.waterValue * weight
     }
 
     @get:JsonIgnore
@@ -69,7 +64,7 @@ data class RecipeMaterialValue(
     }
 
     fun indicatorWeight(id: String): Double {
-        return indicators.valueOf(id) * weight
+        return (indicators[id]?.scaledValue ?: 0.0) * weight
     }
 
 }

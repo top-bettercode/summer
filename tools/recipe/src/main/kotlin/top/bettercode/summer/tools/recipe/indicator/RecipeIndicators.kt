@@ -4,7 +4,7 @@ package top.bettercode.summer.tools.recipe.indicator
  *
  * @author Peter Wu
  */
-open class RecipeIndicators<T>(indicators: List<RecipeIndicator<T>>) : HashMap<String, RecipeIndicator<T>>() {
+open class RecipeIndicators(indicators: List<RecipeIndicator>) : HashMap<String, RecipeIndicator>() {
     init {
         indicators.forEach {
             put(it.id, it)
@@ -27,5 +27,5 @@ open class RecipeIndicators<T>(indicators: List<RecipeIndicator<T>>) : HashMap<S
     val productWater by lazy { values.find { it.type == RecipeIndicatorType.PRODUCT_WATER } }
 
     @JvmName("mutableIterator")
-    operator fun iterator(): MutableIterator<RecipeIndicator<T>> = values.iterator()
+    operator fun iterator(): MutableIterator<RecipeIndicator> = values.iterator()
 }

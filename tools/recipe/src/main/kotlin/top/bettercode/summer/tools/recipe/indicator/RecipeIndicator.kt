@@ -14,7 +14,7 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
  */
 @JsonPropertyOrder(alphabetic = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class RecipeIndicator<T>(
+data class RecipeIndicator(
     /**
      * 序号，从0开始
      */
@@ -30,11 +30,6 @@ data class RecipeIndicator<T>(
      */
     @JsonProperty("name")
     val name: String,
-    /**
-     * 值
-     */
-    @JsonProperty("value")
-    var value: T,
     /**
      * 单位
      */
@@ -55,7 +50,7 @@ data class RecipeIndicator<T>(
      */
     @JsonProperty("otherId")
     val otherId: String? = null
-) : Comparable<RecipeIndicator<T>> {
+) : Comparable<RecipeIndicator> {
 
     @get:JsonIgnore
     val isTotalNutrient = type == RecipeIndicatorType.TOTAL_NUTRIENT
@@ -75,6 +70,7 @@ data class RecipeIndicator<T>(
     /**
      * 单位换算比值
      */
+    @get:JsonIgnore
     val scale: Double = if (unit.isNullOrBlank())
         1.0
     else
@@ -85,17 +81,16 @@ data class RecipeIndicator<T>(
         }
 
     /**
-     * 换算后值
+     * 换算值
      */
     @Suppress("UNCHECKED_CAST")
-    @get:JsonIgnore
-    val scaledValue: T = when (value) {
+    fun <T> scaleOf(value: T) = when (value) {
         is Double -> (value as Double * scale).scale() as T
         is DoubleRange -> (value as DoubleRange).replaceRate(scale) as T
         else -> value
     }
 
-    override fun compareTo(other: RecipeIndicator<T>): Int {
+    override fun compareTo(other: RecipeIndicator): Int {
         return id.compareTo(other.id)
     }
 }

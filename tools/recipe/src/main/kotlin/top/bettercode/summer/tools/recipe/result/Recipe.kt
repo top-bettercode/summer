@@ -241,7 +241,8 @@ data class Recipe(
         val targetWeight = requirement.targetWeight
         // 指标范围约束
         val rangeIndicators = requirement.indicatorRangeConstraints
-        for (indicator in rangeIndicators) {
+        for (rangeIndicator in rangeIndicators) {
+            val indicator = rangeIndicator.indicator
             val indicatorValue = when (indicator.type) {
                 RecipeIndicatorType.TOTAL_NUTRIENT -> (totalNutrientWeight / targetWeight).scale()
                 RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight).scale()
@@ -251,11 +252,11 @@ data class Recipe(
                     )
                 }).scale()
 
-                else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / targetWeight).scale()
+                else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight).scale()
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
-            if (indicatorValue !in indicator.scaledValue.min..indicator.scaledValue.max) {
-                throw IllegalRecipeException("${requirement.productName}-指标:${indicator.name}：${indicatorValue} 不在范围${indicator.scaledValue.min}-${indicator.scaledValue.max}内")
+            if (indicatorValue !in rangeIndicator.scaledValue.min..rangeIndicator.scaledValue.max) {
+                throw IllegalRecipeException("${requirement.productName}-指标:${indicator.name}：${indicatorValue} 不在范围${rangeIndicator.scaledValue.min}-${rangeIndicator.scaledValue.max}内")
             }
         }
 
@@ -265,13 +266,15 @@ data class Recipe(
 
         // 指标原料约束
         val materialIDIndicators = requirement.indicatorMaterialIDConstraints
-        for (indicator in materialIDIndicators) {
-            val materialList = materials.filter { it.indicators.valueOf(indicator.id) > 0.0 }
+        for (materialIDIndicator in materialIDIndicators) {
+            val indicator = materialIDIndicator.indicator
+            val materialList =
+                materials.filter { it.indicators.valueOf(materialIDIndicator.id) > 0.0 }
             if (materialList.isNotEmpty()) {
                 val indicatorUsedMaterials =
                     materialList.map { it.id }.filter { !mustUseMaterials.contains(it) }
-                if (!indicator.value.containsAll(indicatorUsedMaterials)) {
-                    throw IllegalRecipeException("${requirement.productName}-指标:${indicator.name}所用原料：${indicatorUsedMaterials} 不在范围${indicator.value}内")
+                if (!materialIDIndicator.value.containsAll(indicatorUsedMaterials)) {
+                    throw IllegalRecipeException("${requirement.productName}-指标:${indicator.name}所用原料：${indicatorUsedMaterials} 不在范围${materialIDIndicator.value}内")
                 }
             }
         }

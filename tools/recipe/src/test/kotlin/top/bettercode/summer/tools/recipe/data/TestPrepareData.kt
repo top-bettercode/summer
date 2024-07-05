@@ -5,8 +5,8 @@ import org.dhatim.fastexcel.reader.Row
 import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.excel.ExcelField
 import top.bettercode.summer.tools.excel.ExcelImport
-import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Operator
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
@@ -35,24 +35,24 @@ object TestPrepareData {
     const val INDICATOR_NAME_STRING =
         "总养分 氮 磷 钾 氯离子 产品水分 物料水分 水溶磷率 水溶磷 硝态氮 硼 锌 锰 铜 铁 钼 镁 硫 钙 有机质 腐植酸 黄腐酸 活性菌 硅 指标23 指标24 指标25 指标26 指标27 指标28 指标29 指标30 指标31 指标32 指标33 指标34 指标35 指标36 指标37 指标38 指标39 指标40 指标41 指标42 指标43 指标44 指标45 指标46 指标47 指标48 指标49 指标50"
     val indicatorNames: List<String> = INDICATOR_NAME_STRING.split(" +".toRegex())
-    val systemIndicators: RecipeValueIndicators =
-        RecipeValueIndicators(indicatorNames.mapIndexed { i, name ->
-            RecipeIndicator(
-                index = i,
-                id = name,
-                name = name,
-                value = 0.0,
-                unit = if ("活性菌" == name) IndicatorUnit.BILLION.unit else IndicatorUnit.PERCENTAGE.unit,
-                type = when (name) {
-                    "总养分" -> RecipeIndicatorType.TOTAL_NUTRIENT
-                    "氮", "磷", "钾" -> RecipeIndicatorType.NUTRIENT
-                    "产品水分" -> RecipeIndicatorType.PRODUCT_WATER
-                    "物料水分" -> RecipeIndicatorType.WATER
-                    "水溶磷率" -> RecipeIndicatorType.RATE_TO_OTHER
-                    else -> RecipeIndicatorType.GENERAL
-                }
-            )
-        })
+    val indicators = indicatorNames.mapIndexed { i, name ->
+        RecipeIndicator(
+            index = i,
+            id = name,
+            name = name,
+            unit = if ("活性菌" == name) IndicatorUnit.BILLION.unit else IndicatorUnit.PERCENTAGE.unit,
+            type = when (name) {
+                "总养分" -> RecipeIndicatorType.TOTAL_NUTRIENT
+                "氮", "磷", "钾" -> RecipeIndicatorType.NUTRIENT
+                "产品水分" -> RecipeIndicatorType.PRODUCT_WATER
+                "物料水分" -> RecipeIndicatorType.WATER
+                "水溶磷率" -> RecipeIndicatorType.RATE_TO_OTHER
+                else -> RecipeIndicatorType.GENERAL
+            },
+            itId = if ("水溶磷率" == name) "水溶磷" else null,
+            otherId = if ("水溶磷率" == name) "磷" else null
+        )
+    }
 
 
     fun readRequirement(productName: String): RecipeRequirement {
@@ -173,7 +173,7 @@ object TestPrepareData {
             }
 
         // 成份原料约束
-        val materialIDIndicators = mutableListOf<RecipeIndicator<MaterialIDs>>()
+        val materialIDIndicators = mutableListOf<RecipeIndicatorValue<MaterialIDs>>()
         rows.values
             .filter { row: Row -> row.rowNum > conditionStartRow }
             .forEach { row: Row ->
@@ -182,10 +182,8 @@ object TestPrepareData {
                         if (str.isNotBlank()) {
                             val split = str.split(",".toRegex()).dropLastWhile { it.isEmpty() }
                             val key = split[0]
-                            val indicator = RecipeIndicator(
-                                index = indicatorNames.indexOf(key),
+                            val indicator = RecipeIndicatorValue(
                                 id = key,
-                                name = key,
                                 value = Arrays.copyOfRange(split.toTypedArray(), 1, split.size)
                                     .toMaterialIDs()
                             )
@@ -218,7 +216,7 @@ object TestPrepareData {
         var index = 2
         val targetMaxLimitRow = rows[10]
         val targetMinLimitRow = rows[11]
-        val rangeIndicators = mutableListOf<RecipeIndicator<DoubleRange>>()
+        val rangeIndicators = mutableListOf<RecipeIndicatorValue<DoubleRange>>()
         // 0     1     2     3       4      5       6        7         8     9     10  11
         // 总养份 氮含量 磷含量 水溶磷率 钾含量  氯离子   产品水分   物料水分   硼    锌
         // 总养分 氮     磷    钾      氯离子  产品水分 物料水分   水溶磷率   水溶磷 硝态氮 硼   锌
@@ -229,107 +227,65 @@ object TestPrepareData {
                 ((targetMaxLimitRow!!.getCell(index++).value as BigDecimal).toDouble() * 100).scale()
             val indicator = when (i) {
                 //总养分
-                0 -> RecipeIndicator(
-                    index = 0,
+                0 -> RecipeIndicatorValue(
                     id = indicatorNames[0],
-                    name = indicatorNames[0],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit,
-                    type = RecipeIndicatorType.TOTAL_NUTRIENT,
                 )
 
                 //水溶磷率
-                3 -> RecipeIndicator(
-                    index = 7,
+                3 -> RecipeIndicatorValue(
                     id = indicatorNames[7],
-                    name = indicatorNames[7],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit,
-                    type = RecipeIndicatorType.RATE_TO_OTHER,
-                    itId = "水溶磷",
-                    otherId = "磷"
                 )
                 //氮
-                1 -> RecipeIndicator(
-                    index = 1,
+                1 -> RecipeIndicatorValue(
                     id = indicatorNames[1],
-                    name = indicatorNames[1],
                     value = DoubleRange(min, max),
-                    type = RecipeIndicatorType.NUTRIENT,
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
                 //磷
-                2 -> RecipeIndicator(
-                    index = 2,
+                2 -> RecipeIndicatorValue(
                     id = indicatorNames[2],
-                    name = indicatorNames[2],
                     value = DoubleRange(min, max),
-                    type = RecipeIndicatorType.NUTRIENT,
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
                 //钾
-                4 -> RecipeIndicator(
-                    index = 3,
+                4 -> RecipeIndicatorValue(
                     id = indicatorNames[3],
-                    name = indicatorNames[3],
                     value = DoubleRange(min, max),
-                    type = RecipeIndicatorType.NUTRIENT,
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
                 //氯离子
-                5 -> RecipeIndicator(
-                    index = 4,
+                5 -> RecipeIndicatorValue(
                     id = indicatorNames[4],
-                    name = indicatorNames[4],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
                 //产品水分
-                6 -> RecipeIndicator(
-                    index = 5,
+                6 -> RecipeIndicatorValue(
                     id = indicatorNames[5],
-                    name = indicatorNames[5],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit,
-                    type = RecipeIndicatorType.PRODUCT_WATER
                 )
 
                 //物料水分
-                7 -> RecipeIndicator(
-                    index = 6,
+                7 -> RecipeIndicatorValue(
                     id = indicatorNames[6],
-                    name = indicatorNames[6],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit,
-                    type = RecipeIndicatorType.WATER
                 )
 
                 //硼
-                8 -> RecipeIndicator(
-                    index = 10,
+                8 -> RecipeIndicatorValue(
                     id = indicatorNames[10],
-                    name = indicatorNames[10],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
                 //锌
-                9 -> RecipeIndicator(
-                    index = 11,
+                9 -> RecipeIndicatorValue(
                     id = indicatorNames[11],
-                    name = indicatorNames[11],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
 
-                else -> RecipeIndicator(
-                    index = i,
+                else -> RecipeIndicatorValue(
                     id = indicatorNames[i],
-                    name = indicatorNames[i],
                     value = DoubleRange(min, max),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             }
             rangeIndicators.add(indicator)
@@ -515,10 +471,10 @@ object TestPrepareData {
             )
         )
 
-        val requirement = RecipeRequirement.of(
+        val requirement = RecipeRequirement(
             id = productName,
             targetWeight = 1000.0,
-            systemIndicators = systemIndicators,
+            indicators = indicators,
             materials = materials,
             productionCost = productionCost,
             packagingMaterials = listOf(
@@ -644,468 +600,311 @@ object TestPrepareData {
         for (materialForm in materialForms) {
             val materialName = materialForm.name!!
             val materialPrice = materialPrices[materialName] ?: continue
-            val indicators = mutableListOf<RecipeIndicator<Double>>()
+            val indicators = mutableListOf<RecipeIndicatorValue<Double>>()
             var i = 0
             //跳过总养分
             // 氮 磷 钾
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.nitrogen!! * 100).scale(),
-                    type = RecipeIndicatorType.NUTRIENT,
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.phosphorus!! * 100).scale(),
-                    type = RecipeIndicatorType.NUTRIENT,
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.potassium!! * 100).scale(),
-                    type = RecipeIndicatorType.NUTRIENT,
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.chlorine!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             //跳过产品水份
-            i++
+            ++i
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.water!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit,
-                    type = RecipeIndicatorType.WATER
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.waterSolublePhosphorusRate!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit,
-                    type = RecipeIndicatorType.RATE_TO_OTHER,
-                    itId = "水溶磷",
-                    otherId = "磷"
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.waterSolublePhosphorus!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.nitrateNitrogen!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.boron!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.zinc!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.manganese!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.copper!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.iron!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.molybdenum!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.magnesium!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.sulfur!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.calcium!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.organicMatter!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.humicAcid!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.fulvicAcid!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             //活性菌
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = materialForm.activeBacteria!!.scale(),
-                    unit = "亿"
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.silicon!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index23!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index24!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index25!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index26!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index27!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index28!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index29!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index30!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index31!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index32!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index33!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index34!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index35!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index36!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index37!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index38!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index39!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index40!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index41!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index42!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index43!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index44!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index45!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index46!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index47!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index48!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index49!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
             indicators.add(
-                RecipeIndicator(
-                    index = ++i,
-                    id = indicatorNames[i],
-                    name = indicatorNames[i],
+                RecipeIndicatorValue(
+                    id = indicatorNames[++i],
                     value = (materialForm.index50!! * 100).scale(),
-                    unit = IndicatorUnit.PERCENTAGE.unit
                 )
             )
 

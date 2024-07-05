@@ -9,9 +9,10 @@ import top.bettercode.summer.tools.optimal.Operator
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.criteria.TermThen
+import top.bettercode.summer.tools.recipe.indicator.RecipeIndicator
+import top.bettercode.summer.tools.recipe.indicator.RecipeIndicators
 import top.bettercode.summer.tools.recipe.indicator.RecipeMaterialIDIndicators
 import top.bettercode.summer.tools.recipe.indicator.RecipeRangeIndicators
-import top.bettercode.summer.tools.recipe.indicator.RecipeValueIndicators
 import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.material.MaterialCondition
 import top.bettercode.summer.tools.recipe.material.RecipeMaterial
@@ -60,10 +61,10 @@ data class RecipeRequirement(
     @JsonProperty("productionCost")
     val productionCost: ProductionCost,
     /**
-     *系统指标
+     *指标
      */
-    @JsonProperty("systemIndicators")
-    val systemIndicators: RecipeValueIndicators,
+    @JsonProperty("indicators")
+    val indicators: List<RecipeIndicator>,
     /**
      * 包装耗材
      */
@@ -71,11 +72,10 @@ data class RecipeRequirement(
     val packagingMaterials: List<RecipeOtherMaterial>,
     /** 原料  */
     @JsonProperty("materials")
-    val materials: List<RecipeMaterial>,
-
+    var materials: List<RecipeMaterial>,
     /** 保留用原料ID  */
     @JsonProperty("keepMaterialConstraints")
-    val keepMaterialConstraints: MaterialIDs,
+    var keepMaterialConstraints: MaterialIDs,
     /** 不能用原料ID  */
     @JsonProperty("noUseMaterialConstraints")
     val noUseMaterialConstraints: MaterialIDs,
@@ -90,7 +90,7 @@ data class RecipeRequirement(
     val materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
     /** 条件约束，当条件1满足时，条件2必须满足  */
     @JsonProperty("materialConditionConstraints")
-    val materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
+    var materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
     /**
      *关联原料约束,term:消耗的原料，then:关联的原料（trem 原料(relation 消耗此原料的原料)，then:关联的指标）
      */
@@ -105,16 +105,51 @@ data class RecipeRequirement(
      * 指标指定用原料约束,key:指标ID,value:原料ID
      */
     @JsonProperty("indicatorMaterialIDConstraints")
-    val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
+    val indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators.EMPTY,
 
     /** 不能混用的原料,value: 原料ID  */
     @JsonProperty("notMixMaterialConstraints")
-    val notMixMaterialConstraints: List<Array<MaterialIDs>>
+    var notMixMaterialConstraints: List<Array<MaterialIDs>>
 ) {
-
 
     /** 超时时间,单位秒  */
     var timeout: Long = 30L
+
+    @get:JsonIgnore
+    val indicatorMap: RecipeIndicators by lazy {
+        RecipeIndicators(indicators)
+    }
+
+    @get:JsonIgnore
+    val materialMust: Predicate<String> by lazy {
+        Predicate { materialId: String ->
+            // 保留用原料ID
+            if (keepMaterialConstraints.contains(materialId)) return@Predicate true
+
+            // 用量>0的原料
+            materialRangeConstraints.forEach { (t, u) ->
+                if (t.contains(materialId) && ((Operator.GE == u.minOperator && u.min > 0) || (Operator.GT == u.minOperator && u.min >= 0))) {
+                    return@Predicate true
+                }
+            }
+
+            //关联原料
+            for (materialRelationConstraint in materialRelationConstraints) {
+                if (materialRelationConstraint.term.contains(materialId)) {
+                    return@Predicate true
+                }
+            }
+
+            //条件约束
+            materialConditionConstraints.forEach { (_, thenCon) ->
+                if (thenCon.materials.contains(materialId)) {
+                    return@Predicate true
+                }
+            }
+
+            return@Predicate false
+        }
+    }
 
     init {
         if (targetWeight <= 0) {
@@ -126,6 +161,110 @@ data class RecipeRequirement(
         if (maxBakeWeight != null && maxBakeWeight <= 0) {
             throw IllegalArgumentException("maxBakeWeight must be greater than 0")
         }
+
+        indicatorMaterialIDConstraints.init(indicatorMap)
+        indicatorRangeConstraints.init(indicatorMap)
+        materials.forEach {
+            it.indicators.init(indicatorMap)
+        }
+
+        val tmpMaterial = materials.associateBy { it.id }
+        //约束原料
+        indicatorMaterialIDConstraints.values.forEach { indicator ->
+            indicator.value = indicator.value.minFrom(tmpMaterial, true, "指标指定用原料")
+        }
+
+        materialRangeConstraints.forEach {
+            val u = it.then
+            it.term = it.term.minFrom(
+                tmpMaterial,
+                ((Operator.GE == u.minOperator && u.min > 0) || (Operator.GT == u.minOperator && u.min >= 0)),
+                "用量范围约束原料"
+            )
+        }
+        materialRelationConstraints.forEach {
+            it.term = it.term.minFrom(tmpMaterial, true, "关联约束消耗原料")
+            it.then.forEach { then ->
+                then.term = then.term.minFrom(tmpMaterial)
+            }
+            it.then = it.then.filter { t -> t.term.ids.isNotEmpty() }
+        }
+
+        materialConditionConstraints.forEach { (first, second) ->
+            first.materials = first.materials.minFrom(tmpMaterial)
+            second.materials = second.materials.minFrom(tmpMaterial, true, "条件约束使用原料")
+        }
+        // conditoin 转noMix
+        val noMixConditions = materialConditionConstraints.filter {
+            val op = it.term.condition.operator
+            val value = it.term.condition.value
+            val otherOp = it.then.condition.operator
+            val otherValue = it.then.condition.value
+            op == Operator.GT && value == 0.0 && (otherOp == Operator.LT || otherOp == Operator.LE || otherOp == Operator.EQ) && otherValue == 0.0
+        }
+        val noMixMaterials = noMixConditions.map {
+            arrayOf(it.term.materials, it.then.materials)
+        }
+        notMixMaterialConstraints = notMixMaterialConstraints + noMixMaterials
+        materialConditionConstraints =
+            (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
+
+        // 可选原料
+        val keepMaterialIds = keepMaterialConstraints.ids.toMutableList()
+        //不用原料
+        val materialFalse = Predicate { material: IRecipeMaterial ->
+            val materialId = material.id
+            if (materialMust.test(materialId)) {
+                keepMaterialIds.add(materialId)
+                return@Predicate true
+            }
+
+            // 过滤不使用的原料
+            if (noUseMaterialConstraints.contains(materialId)) {
+                return@Predicate false
+            }
+
+            // 排除全局非限用原料
+            if (keepMaterialConstraints.ids.isNotEmpty()) {
+                if (!keepMaterialConstraints.contains(materialId)) return@Predicate false
+            }
+
+            // 排除非限用原料
+            materialIDConstraints.forEach { (t, u) ->
+                if (t.contains(materialId) && !u.contains(materialId)) {
+                    return@Predicate false
+                }
+            }
+
+            // 过滤不在成份约束的原料
+            indicatorMaterialIDConstraints.values.forEach { indicator ->
+                val materialIDs = indicator.value
+                val materialIndicator = material.indicators[indicator.id]?.scaledValue ?: 0.0
+                if (materialIndicator > 0 && !materialIDs.contains(materialId)) {
+                    return@Predicate false
+                }
+            }
+
+            true
+        }
+
+
+        this.materials = materials.groupBy { it.indicators.key }.values
+            .asSequence()
+            .map { list ->
+                val must = list.filter { f -> materialMust.test(f.id) }
+                val min = list.filter { f -> materialFalse.test(f) }
+                    .minOfWithOrNull(materialComparator) { it }
+                if (min == null)
+                    must
+                else
+                    must + min
+            }.filter { it.isNotEmpty() }.flatten().distinct()
+            .toList()
+
+        this.keepMaterialConstraints =
+            if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
+                .toMaterialIDs() else keepMaterialConstraints
     }
 
     //--------------------------------------------
@@ -146,36 +285,6 @@ data class RecipeRequirement(
         return toString(format = true)
     }
 
-    @JsonIgnore
-    val materialMust = Predicate { materialId: String ->
-        // 保留用原料ID
-        if (keepMaterialConstraints.contains(materialId)) return@Predicate true
-
-        // 用量>0的原料
-        materialRangeConstraints.forEach { (t, u) ->
-            if (t.contains(materialId) && ((Operator.GE == u.minOperator && u.min > 0) || (Operator.GT == u.minOperator && u.min >= 0))) {
-                return@Predicate true
-            }
-        }
-
-        //关联原料
-        for (materialRelationConstraint in materialRelationConstraints) {
-            if (materialRelationConstraint.term.contains(materialId)) {
-                return@Predicate true
-            }
-        }
-
-        //条件约束
-        materialConditionConstraints.forEach { (_, thenCon) ->
-            if (thenCon.materials.contains(materialId)) {
-                return@Predicate true
-            }
-        }
-
-        return@Predicate false
-    }
-
-
     //--------------------------------------------
 
     companion object {
@@ -194,200 +303,6 @@ data class RecipeRequirement(
             return objectMapper.readValue(content, RecipeRequirement::class.java)
         }
 
-
-        /**
-         * 生产配方要求
-         * @param id id
-         * @param productName 产品名称
-         * @param targetWeight 目标重量，单位KG
-         * @param yield 收率
-         * @param maxUseMaterialNum 原料进料口最大数，null不限
-         * @param maxBakeWeight 最大烘干量，单位KG，null 允许烘干全部水份
-         * @param productionCost 制造费用
-         * @param packagingMaterials 包装耗材
-         * @param materials 原料
-         * @param keepMaterialConstraints 保留用原料ID
-         * @param noUseMaterialConstraints 不能用原料ID
-         * @param indicatorRangeConstraints 指标范围约束,key：指标ID,value:指标值范围
-         * @param materialRangeConstraints 原料约束,key:原料ID, value: 原料使用范围约束
-         * @param materialConditionConstraints 条件约束，当条件1满足时，条件2必须满足
-         * @param materialRelationConstraints 关联原料约束
-         * @param materialIDConstraints 指定原料约束
-         * @param indicatorMaterialIDConstraints 指标指定用原料约束,key:指标ID,value:原料ID
-         * @param notMixMaterialConstraints 不能混用的原料,value: 原料ID
-         * @return 配方要求
-         */
-        @JvmStatic
-        @JvmOverloads
-        fun of(
-            id: String,
-            productName: String = id,
-            targetWeight: Double,
-            yield: Double = 1.0,
-            maxUseMaterialNum: Int? = null,
-            maxBakeWeight: Double? = null,
-            productionCost: ProductionCost,
-            systemIndicators: RecipeValueIndicators,
-            packagingMaterials: List<RecipeOtherMaterial>,
-            materials: List<RecipeMaterial>,
-            keepMaterialConstraints: MaterialIDs,
-            noUseMaterialConstraints: MaterialIDs,
-            indicatorRangeConstraints: RecipeRangeIndicators,
-            materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-            materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
-            materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
-            materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
-            indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
-            notMixMaterialConstraints: List<Array<MaterialIDs>> = emptyList(),
-        ): RecipeRequirement {
-            val tmpMaterial = materials.associateBy { it.id }
-            //约束原料
-            indicatorMaterialIDConstraints.values.forEach { indicator ->
-                indicator.value = indicator.value.minFrom(tmpMaterial, true, "指标指定用原料")
-            }
-
-            materialRangeConstraints.forEach {
-                val u = it.then
-                it.term = it.term.minFrom(
-                    tmpMaterial,
-                    ((Operator.GE == u.minOperator && u.min > 0) || (Operator.GT == u.minOperator && u.min >= 0)),
-                    "用量范围约束原料"
-                )
-            }
-            materialRelationConstraints.forEach {
-                it.term = it.term.minFrom(tmpMaterial, true, "关联约束消耗原料")
-                it.then.forEach { then ->
-                    then.term = then.term.minFrom(tmpMaterial)
-                }
-                it.then = it.then.filter { t -> t.term.ids.isNotEmpty() }
-            }
-
-            materialConditionConstraints.forEach { (first, second) ->
-                first.materials = first.materials.minFrom(tmpMaterial)
-                second.materials = second.materials.minFrom(tmpMaterial, true, "条件约束使用原料")
-            }
-            // conditoin 转noMix
-            val noMixConditions = materialConditionConstraints.filter {
-                val op = it.term.condition.operator
-                val value = it.term.condition.value
-                val otherOp = it.then.condition.operator
-                val otherValue = it.then.condition.value
-                op == Operator.GT && value == 0.0 && (otherOp == Operator.LT || otherOp == Operator.LE || otherOp == Operator.EQ) && otherValue == 0.0
-            }
-            val noMixMaterials = noMixConditions.map {
-                arrayOf(it.term.materials, it.then.materials)
-            }
-            val fixNotMixMaterialConstraints = notMixMaterialConstraints + noMixMaterials
-            val fixMaterialConditionConstraints =
-                (materialConditionConstraints - noMixConditions.toSet()).filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
-
-            // 可选原料
-            val keepMaterialIds = keepMaterialConstraints.ids.toMutableList()
-            val materialMust = Predicate { material: IRecipeMaterial ->
-                val materialId = material.id
-
-                // 保留用原料ID
-                if (keepMaterialConstraints.contains(materialId)) return@Predicate true
-
-                // 用量>0的原料
-                materialRangeConstraints.forEach { (t, u) ->
-                    if (t.contains(materialId) && ((Operator.GE == u.minOperator && u.min > 0) || (Operator.GT == u.minOperator && u.min >= 0))) {
-                        keepMaterialIds.add(materialId)
-                        return@Predicate true
-                    }
-                }
-
-                //关联原料
-                for (materialRelationConstraint in materialRelationConstraints) {
-                    if (materialRelationConstraint.term.contains(materialId)) {
-                        keepMaterialIds.add(materialId)
-                        return@Predicate true
-                    }
-                }
-
-                //条件约束
-                fixMaterialConditionConstraints.forEach { (_, thenCon) ->
-                    if (thenCon.materials.contains(materialId)) {
-                        keepMaterialIds.add(materialId)
-                        return@Predicate true
-                    }
-                }
-
-                return@Predicate false
-            }
-            //不用原料
-            val materialFalse = Predicate { material: IRecipeMaterial ->
-                val materialId = material.id
-
-                if (materialMust.test(material)) {
-                    return@Predicate true
-                }
-
-                // 过滤不使用的原料
-                if (noUseMaterialConstraints.contains(materialId)) {
-                    return@Predicate false
-                }
-
-                // 排除全局非限用原料
-                if (keepMaterialConstraints.ids.isNotEmpty()) {
-                    if (!keepMaterialConstraints.contains(materialId)) return@Predicate false
-                }
-
-                // 排除非限用原料
-                materialIDConstraints.forEach { (t, u) ->
-                    if (t.contains(materialId) && !u.contains(materialId)) {
-                        return@Predicate false
-                    }
-                }
-
-                // 过滤不在成份约束的原料
-                indicatorMaterialIDConstraints.values.forEach { indicator ->
-                    val materialIDs = indicator.value
-                    val materialIndicator = material.indicators.valueOf(indicator.id)
-                    if (materialIndicator > 0 && !materialIDs.contains(materialId)) {
-                        return@Predicate false
-                    }
-                }
-
-                true
-            }
-
-
-            val materialList = materials.groupBy { it.indicators.key }.values
-                .asSequence()
-                .map { list ->
-                    val must = list.filter { f -> materialMust.test(f) }
-                    val min = list.filter { f -> materialFalse.test(f) }
-                        .minOfWithOrNull(materialComparator) { it }
-                    if (min == null)
-                        must
-                    else
-                        must + min
-                }.filter { it.isNotEmpty() }.flatten().distinct()
-                .toList()
-            return RecipeRequirement(
-                id = id,
-                productName = productName,
-                targetWeight = targetWeight,
-                yield = `yield`,
-                maxUseMaterialNum = maxUseMaterialNum,
-                maxBakeWeight = maxBakeWeight,
-                productionCost = productionCost,
-                systemIndicators = systemIndicators,
-                packagingMaterials = packagingMaterials,
-                materials = materialList,
-                materialIDConstraints = materialIDConstraints,
-                keepMaterialConstraints = if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
-                    .toMaterialIDs() else keepMaterialConstraints,
-                noUseMaterialConstraints = noUseMaterialConstraints,
-                indicatorRangeConstraints = indicatorRangeConstraints,
-                indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
-                materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() },
-                notMixMaterialConstraints = fixNotMixMaterialConstraints,
-                materialConditionConstraints = fixMaterialConditionConstraints,
-                materialRelationConstraints = materialRelationConstraints.filter { it.term.ids.isNotEmpty() && it.then.isNotEmpty() },
-            )
-        }
 
         private fun MaterialIDs.minFrom(
             materials: Map<String, RecipeMaterial>,
