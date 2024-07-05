@@ -738,6 +738,14 @@ open class CplexSolverTest {
                 numVarArray.forEach {
                     System.err.println(it.value)
                 }
+                solver as CplexSolver
+                System.err.println((solver as CplexSolver).model.ncols)
+                System.err.println((solver as CplexSolver).model.nrows)
+                System.err.println((solver as CplexSolver).model.nbinVars)
+                System.err.println((solver as CplexSolver).model.nintVars)
+                System.err.println((solver as CplexSolver).model.nsemiContVars)
+                System.err.println((solver as CplexSolver).model.nnZs)
+                System.err.println("======")
                 val size = numVarArray.map { it.value }.filter { it > 0 }.size
                 System.err.println(size)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())

@@ -56,6 +56,24 @@ class CplexSolver @JvmOverloads constructor(
         model.setParam(Param.TimeLimit, seconds.toDouble())
     }
 
+    override fun triggerLimit(): Boolean {
+        val numVariables = numVariables()
+        val numConstraints = numConstraints()
+        val nnZs = model.nnZs
+        log.info(
+            "$name 非零元数量：{}, 变量数量：{}, 约束数量：{}",
+            nnZs,
+            numConstraints,
+            numConstraints
+        )
+        val bool =
+            nnZs > communityLimits || numVariables > communityLimits || numConstraints > communityLimits
+        if (bool) {
+            log.error("$name 变量或约束过多，非零元数量：$nnZs 变量数量：$numVariables 约束数量：$numConstraints")
+        }
+        return bool
+    }
+
     override fun writeLp(filename: String) {
         model.exportModel(filename)
     }
