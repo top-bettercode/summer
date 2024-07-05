@@ -472,7 +472,7 @@ data class PrepareSolveData(
                 }.minimize()
                 solve()
                 if (!isOptimal()) {
-                    log.warn("Could not find optimal solution:${getResultStatus()}")
+                    log.warn("${solver.name} Could not find optimal solution:${getResultStatus()}")
                     return null
                 }
             }
