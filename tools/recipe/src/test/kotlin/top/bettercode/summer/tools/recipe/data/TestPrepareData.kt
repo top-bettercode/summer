@@ -499,7 +499,8 @@ object TestPrepareData {
                     it.then.toList()
                 )
             }.sortedBy { relationIndexList.indexOf(it.term) },
-            materialConditionConstraints = materialConditions
+            materialConditionConstraints = materialConditions,
+            indicatorScale = 4
         )
         return requirement
     }

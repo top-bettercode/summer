@@ -58,6 +58,11 @@ data class Recipe(
     @JsonProperty("scale")
     val scale: Int,
     /**
+     * 指标小数位数
+     */
+    @JsonProperty("indicatorScale")
+    val indicatorScale: Int,
+    /**
      * 误差
      */
     @JsonProperty("minEpsilon")
@@ -266,8 +271,10 @@ data class Recipe(
                 else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight)
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
-            if (indicatorValue.scale(scale) !in rangeIndicator.scaledValue.min.scale(scale)..rangeIndicator.scaledValue.max.scale(
-                    scale
+            if (indicatorValue.scale(indicatorScale) !in rangeIndicator.scaledValue.min.scale(
+                    indicatorScale
+                )..rangeIndicator.scaledValue.max.scale(
+                    indicatorScale
                 )
             ) {
                 throw IllegalRecipeException("${requirement.productName}-指标:${indicator.name}：${indicatorValue} 不在范围${rangeIndicator.scaledValue.min}-${rangeIndicator.scaledValue.max}内")

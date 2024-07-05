@@ -509,6 +509,7 @@ data class PrepareSolveData(
                 cost = objectiveValue,
                 materials = materials,
                 scale = scale,
+                indicatorScale = requirement.indicatorScale,
                 minEpsilon = minEpsilon
             )
         }
