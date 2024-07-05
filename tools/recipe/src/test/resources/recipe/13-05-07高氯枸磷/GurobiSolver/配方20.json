@@ -174,8 +174,9 @@
     "price" : 0.35,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "GurobiSolver-20",
+  "scale" : 3,
   "dryWaterWeight" : 38.0274841796836,
   "materialCost" : 1319.3162055335968,
   "packagingCost" : 52.13,

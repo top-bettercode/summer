@@ -24,7 +24,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 348.7638415366013,
+    "weight" : 348.7638415366012,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -65,7 +65,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 1.7235510910154965,
+        "normal" : 1.7235510910155005,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.9779458472527316,
+        "normal" : 2.977945847252732,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -85,7 +85,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 4.901167848659813,
+        "normal" : 4.9011678486597825,
         "overdose" : 0.0
       }
     },
@@ -106,7 +106,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 9.602664786928052,
+    "weight" : 9.60266478692802,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 9.60266478692804,
+    "normalWeight" : 9.602664786928015,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -155,7 +155,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 282.66598282746605,
+    "weight" : 282.6659828274661,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 89.97950548683838,
+    "weight" : 89.97950548683858,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -273,7 +273,7 @@
       "price" : 1.05,
       "unit" : "吨"
     },
-    "weight" : 88.30016354794267,
+    "weight" : 88.30016354794213,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -457,12 +457,13 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-20",
-  "dryWaterWeight" : 73.11967950269832,
+  "scale" : 3,
+  "dryWaterWeight" : 73.11967950269786,
   "materialCost" : 2392.424441672463,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0000000000001,
-  "waterWeight" : 73.11967950269818,
-  "weight" : 1073.1196795026983
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 73.11967950269782,
+  "weight" : 1073.1196795026979
 }

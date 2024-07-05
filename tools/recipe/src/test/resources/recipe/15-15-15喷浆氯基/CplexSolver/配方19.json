@@ -24,7 +24,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 348.82503055783513,
+    "weight" : 348.82503055783496,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -65,7 +65,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 1.7205210601390573,
+        "normal" : 1.7205210601390601,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.9774667236203944,
+        "normal" : 2.977466723620395,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -85,7 +85,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 4.925208880978969,
+        "normal" : 4.925208880978945,
         "overdose" : 0.0
       }
     },
@@ -106,7 +106,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 9.623196664738433,
+    "weight" : 9.623196664738405,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 9.62319666473842,
+    "normalWeight" : 9.6231966647384,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -155,7 +155,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 282.62050451477097,
+    "weight" : 282.620504514771,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 89.8213200513772,
+    "weight" : 89.82132005137736,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -273,7 +273,7 @@
       "price" : 1.05,
       "unit" : "吨"
     },
-    "weight" : 88.73329033551502,
+    "weight" : 88.7332903355146,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -363,7 +363,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.4433965560828361,
+    "weight" : 0.44339655608283657,
     "id" : "七钼酸铵",
     "index" : 49,
     "indicators" : {
@@ -457,12 +457,13 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-19",
-  "dryWaterWeight" : 73.40007201365279,
-  "materialCost" : 2387.4244416724637,
+  "scale" : 3,
+  "dryWaterWeight" : 73.40007201365256,
+  "materialCost" : 2387.424441672463,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0000000000001,
-  "waterWeight" : 73.40007201365286,
-  "weight" : 1073.4000720136528
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 73.40007201365258,
+  "weight" : 1073.4000720136526
 }

@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.0004807970584073,
+        "normal" : 1.0004807970584078,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -155,7 +155,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 94.96542325019672,
+    "weight" : 94.96542325019676,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -472,7 +472,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 137.20992461629058,
+    "weight" : 137.20992461629052,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -491,12 +491,13 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-17",
-  "dryWaterWeight" : 556.7308064229369,
+  "scale" : 3,
+  "dryWaterWeight" : 556.7308064229367,
   "materialCost" : 2643.3832490757527,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0000000000001,
   "waterWeight" : 568.7308064229369,
-  "weight" : 1556.730806422937
+  "weight" : 1556.7308064229367
 }

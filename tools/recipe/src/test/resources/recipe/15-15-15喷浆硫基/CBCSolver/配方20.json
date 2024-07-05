@@ -478,8 +478,9 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CBCSolver-20",
+  "scale" : 3,
   "dryWaterWeight" : 113.55323596896619,
   "materialCost" : 2658.3832490757586,
   "packagingCost" : 52.13,

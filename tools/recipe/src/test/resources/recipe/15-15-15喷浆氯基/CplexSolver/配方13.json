@@ -24,7 +24,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 349.19216468523894,
+    "weight" : 349.19216468523905,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -65,7 +65,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 1.7023408748804414,
+        "normal" : 1.7023408748804445,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -85,7 +85,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 5.069455074893722,
+        "normal" : 5.069455074893691,
         "overdose" : 0.0
       }
     },
@@ -106,7 +106,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 9.746387931600545,
+    "weight" : 9.74638793160052,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 9.74638793160054,
+    "normalWeight" : 9.746387931600513,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 88.87220743861123,
+    "weight" : 88.8722074386114,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -273,7 +273,7 @@
       "price" : 1.05,
       "unit" : "吨"
     },
-    "weight" : 91.33205106094574,
+    "weight" : 91.33205106094518,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -363,7 +363,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.25864799104832015,
+    "weight" : 0.2586479910483197,
     "id" : "七钼酸铵",
     "index" : 49,
     "indicators" : {
@@ -457,12 +457,13 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-13",
-  "dryWaterWeight" : 75.08242707937893,
+  "scale" : 3,
+  "dryWaterWeight" : 75.0824270793787,
   "materialCost" : 2357.424441672463,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 75.08242707937877,
-  "weight" : 1075.082427079379
+  "waterWeight" : 75.0824270793784,
+  "weight" : 1075.0824270793787
 }

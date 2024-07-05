@@ -65,7 +65,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.177576264331465,
+        "normal" : 4.177576264331466,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.914161886049767,
+        "normal" : 1.914161886049766,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -155,7 +155,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 181.6918367774531,
+    "weight" : 181.69183677745303,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 218.09405497612784,
+    "weight" : 218.0940549761279,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -307,7 +307,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.21854261991497337,
+    "weight" : 0.21854261991497181,
     "id" : "七钼酸铵",
     "index" : 49,
     "indicators" : {
@@ -480,7 +480,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 75.1422224786345,
+    "weight" : 75.14222247863455,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -499,7 +499,7 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "optimalProductionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -528,7 +528,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 41.017699024463006,
+    "energyFee" : 41.01769902446301,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -540,7 +540,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.8798605469371519
+      "value" : 1.879860546937152
     }, {
       "it" : {
         "id" : "生物质",
@@ -554,16 +554,18 @@
       },
       "value" : 1.0
     } ],
-    "minEpsilon" : 0.001,
+    "minEpsilon" : 0.0,
     "otherFee" : 245.54805060402683,
+    "scale" : 3,
     "taxFee" : 37.09932455436241,
     "totalFee" : 326.9017249246807
   },
   "recipeName" : "CplexSolver-19",
+  "scale" : 3,
   "dryWaterWeight" : 125.986054693715,
   "materialCost" : 2691.390531675854,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0,
+  "totalNutrientWeight" : 453.00000000000006,
   "waterWeight" : 137.98605469371518,
   "weight" : 1125.986054693715
 }

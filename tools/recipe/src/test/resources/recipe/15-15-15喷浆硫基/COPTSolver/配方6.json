@@ -478,8 +478,9 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "COPTSolver-6",
+  "scale" : 3,
   "dryWaterWeight" : 343.79694558109736,
   "materialCost" : 2596.383249075758,
   "packagingCost" : 52.13,

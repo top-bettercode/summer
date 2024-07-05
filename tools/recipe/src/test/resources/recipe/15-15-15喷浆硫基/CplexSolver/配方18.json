@@ -1,5 +1,5 @@
 {
-  "cost" : 2648.383249075753,
+  "cost" : 2648.3832490757527,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 0.9989556000615611,
+        "normal" : 0.9989556000615616,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -85,7 +85,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 35.70123709800699,
+        "normal" : 35.701237098006985,
         "overdose" : 0.0
       }
     },
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 96.57047945828796,
+    "normalWeight" : 96.57047945828795,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -155,7 +155,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 94.82065187750143,
+    "weight" : 94.82065187750148,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -212,7 +212,7 @@
       "price" : 1.055,
       "unit" : "吨"
     },
-    "weight" : 643.198758328569,
+    "weight" : 643.1987583285689,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -299,7 +299,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.2292764499858415,
+    "weight" : 0.2292764499858424,
     "id" : "七钼酸铵",
     "index" : 49,
     "indicators" : {
@@ -472,7 +472,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 137.21113988174292,
+    "weight" : 137.21113988174287,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -491,12 +491,13 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-18",
+  "scale" : 3,
   "dryWaterWeight" : 556.9076789270714,
   "materialCost" : 2648.383249075753,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 568.9076789270714,
+  "waterWeight" : 568.9076789270713,
   "weight" : 1556.9076789270714
 }

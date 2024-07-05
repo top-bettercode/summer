@@ -457,7 +457,7 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "optimalProductionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -512,12 +512,14 @@
       },
       "value" : 1.0
     } ],
-    "minEpsilon" : 0.001,
+    "minEpsilon" : 0.0,
     "otherFee" : 114.00041999999985,
+    "scale" : 3,
     "taxFee" : 25.260037799999985,
     "totalFee" : 188.40227882362115
   },
   "recipeName" : "GurobiSolver-10",
+  "scale" : 3,
   "dryWaterWeight" : 175.91789046277427,
   "materialCost" : 2319.1440265984406,
   "packagingCost" : 52.13,

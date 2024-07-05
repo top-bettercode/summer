@@ -1,5 +1,5 @@
 {
-  "cost" : 2332.9234792993766,
+  "cost" : 2332.9234792993775,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -24,7 +24,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 359.28389364974845,
+    "weight" : 359.2838936497484,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -69,7 +69,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.1071463563992645,
+        "normal" : 2.107146356399264,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 122.22826086956523,
+    "weight" : 122.22826086956522,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -269,7 +269,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 192.2165390922585,
+    "weight" : 192.21653909225856,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
@@ -310,7 +310,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.11249999999999749,
+    "weight" : 0.11250000000000426,
     "id" : "七钼酸铵",
     "index" : 51,
     "indicators" : {
@@ -389,7 +389,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 41.11679424107484,
+    "weight" : 41.116794241074786,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -412,12 +412,13 @@
     "price" : 3.55,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-7",
-  "dryWaterWeight" : 16.51905322313064,
-  "materialCost" : 2332.9234792993766,
+  "scale" : 3,
+  "dryWaterWeight" : 16.519053223130754,
+  "materialCost" : 2332.9234792993775,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 31.519053223130868,
-  "weight" : 1016.5190532231306
+  "totalNutrientWeight" : 452.99999999999994,
+  "waterWeight" : 31.51905322313084,
+  "weight" : 1016.5190532231308
 }

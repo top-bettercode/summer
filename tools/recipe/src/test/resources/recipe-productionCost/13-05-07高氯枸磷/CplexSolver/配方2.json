@@ -211,7 +211,7 @@
     "price" : 0.35,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "optimalProductionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -266,12 +266,14 @@
       },
       "value" : 1.0
     } ],
-    "minEpsilon" : 0.001,
+    "minEpsilon" : 0.0,
     "otherFee" : 156.0,
+    "scale" : 3,
     "taxFee" : 29.04,
     "totalFee" : 213.6554
   },
   "recipeName" : "CplexSolver-2",
+  "scale" : 3,
   "dryWaterWeight" : 175.7556218238285,
   "materialCost" : 1245.316205533597,
   "packagingCost" : 52.13,

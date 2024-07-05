@@ -211,8 +211,9 @@
     "price" : 0.35,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-19",
+  "scale" : 3,
   "dryWaterWeight" : 38.21532153072144,
   "materialCost" : 1314.3162055335972,
   "packagingCost" : 52.13,

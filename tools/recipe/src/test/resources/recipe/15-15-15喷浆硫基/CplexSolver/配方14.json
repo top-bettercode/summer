@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.0050563880489518,
+        "normal" : 1.0050563880489516,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -155,7 +155,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 95.39973736828316,
+    "weight" : 95.39973736828314,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -491,8 +491,9 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "CplexSolver-14",
+  "scale" : 3,
   "dryWaterWeight" : 556.2001889105322,
   "materialCost" : 2628.383249075754,
   "packagingCost" : 52.13,

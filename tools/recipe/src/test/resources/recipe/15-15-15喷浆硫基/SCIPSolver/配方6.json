@@ -507,8 +507,9 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "recipeName" : "SCIPSolver-6",
+  "scale" : 3,
   "dryWaterWeight" : 629.8079422685234,
   "materialCost" : 2596.3832490757604,
   "packagingCost" : 52.13,

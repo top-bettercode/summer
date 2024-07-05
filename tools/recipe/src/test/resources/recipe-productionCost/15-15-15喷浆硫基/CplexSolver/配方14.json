@@ -65,7 +65,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.168651688691596,
+        "normal" : 4.168651688691597,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.9198066801419893,
+        "normal" : 1.9198066801419884,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -155,7 +155,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 182.22763942524372,
+    "weight" : 182.2276394252437,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 217.6281396302229,
+    "weight" : 217.62813963022296,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -307,7 +307,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.06462870843973034,
+    "weight" : 0.06462870843973012,
     "id" : "七钼酸铵",
     "index" : 49,
     "indicators" : {
@@ -480,7 +480,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 75.26876501049901,
+    "weight" : 75.26876501049895,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -499,7 +499,7 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "optimalProductionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -554,16 +554,18 @@
       },
       "value" : 1.0
     } ],
-    "minEpsilon" : 0.001,
+    "minEpsilon" : 0.0,
     "otherFee" : 245.54805060402683,
+    "scale" : 3,
     "taxFee" : 37.09932455436241,
     "totalFee" : 326.90826362753296
   },
   "recipeName" : "CplexSolver-14",
+  "scale" : 3,
   "dryWaterWeight" : 126.02529083444233,
-  "materialCost" : 2666.3839929730016,
+  "materialCost" : 2666.383992973002,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0,
-  "waterWeight" : 138.0252908344425,
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 138.02529083444244,
   "weight" : 1126.0252908344423
 }

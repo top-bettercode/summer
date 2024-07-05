@@ -1,5 +1,5 @@
 {
-  "cost" : 2582.3463116751554,
+  "cost" : 2582.346311675155,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -24,7 +24,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 356.74397825602875,
+    "weight" : 356.74397825602864,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -69,7 +69,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.3412737293325185,
+        "normal" : 2.3412737293325177,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -106,7 +106,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 5.41689696876913,
+    "weight" : 5.416896968769128,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 5.41689696876913,
+    "normalWeight" : 5.416896968769128,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 122.22826086956525,
+    "weight" : 122.22826086956519,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -269,7 +269,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 195.40576246150553,
+    "weight" : 195.40576246150562,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
@@ -310,7 +310,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.355879329435957,
+    "weight" : 0.35587932943595835,
     "id" : "七钼酸铵",
     "index" : 51,
     "indicators" : {
@@ -389,7 +389,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 37.927570871827804,
+    "weight" : 37.92757087182774,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -412,7 +412,7 @@
     "price" : 3.55,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "optimalProductionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -441,7 +441,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 23.202615044926848,
+    "energyFee" : 23.202615044926844,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -453,7 +453,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.8001584875713241
+      "value" : 0.8001584875713238
     }, {
       "it" : {
         "id" : "生物质",
@@ -467,16 +467,18 @@
       },
       "value" : 1.0
     } ],
-    "minEpsilon" : 0.001,
+    "minEpsilon" : 0.0,
     "otherFee" : 156.0,
+    "scale" : 3,
     "taxFee" : 29.04,
     "totalFee" : 210.32504119537612
   },
   "recipeName" : "CplexSolver-16",
-  "dryWaterWeight" : 15.01584875713263,
-  "materialCost" : 2372.0212704797787,
+  "scale" : 3,
+  "dryWaterWeight" : 15.015848757132403,
+  "materialCost" : 2372.021270479779,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0000000000001,
-  "waterWeight" : 30.015848757132407,
-  "weight" : 1015.0158487571326
+  "totalNutrientWeight" : 453.0,
+  "waterWeight" : 30.015848757132378,
+  "weight" : 1015.0158487571324
 }

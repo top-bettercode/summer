@@ -404,7 +404,7 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
-  "minEpsilon" : 0.001,
+  "minEpsilon" : 0.0,
   "optimalProductionCost" : {
     "allChange" : 1.01,
     "dictItems" : {
@@ -459,12 +459,14 @@
       },
       "value" : 1.0
     } ],
-    "minEpsilon" : 0.001,
+    "minEpsilon" : 0.0,
     "otherFee" : 114.00041999999999,
+    "scale" : 3,
     "taxFee" : 25.2600378,
     "totalFee" : 161.50641415699513
   },
   "recipeName" : "SCIPSolver-3",
+  "scale" : 3,
   "dryWaterWeight" : 11.354322679001257,
   "materialCost" : 2325.0398912650708,
   "packagingCost" : 52.13,
