@@ -112,6 +112,48 @@ data class RecipeRequirement(
     var notMixMaterialConstraints: List<Array<MaterialIDs>>
 ) {
 
+    @JvmOverloads
+    constructor(
+        id: String,
+        productName: String = id,
+        targetWeight: Double,
+        yield: Double = 1.0,
+        maxUseMaterialNum: Int? = null,
+        maxBakeWeight: Double? = null,
+        productionCost: ProductionCost,
+        indicators: List<RecipeIndicator>,
+        packagingMaterials: List<RecipeOtherMaterial>,
+        materials: List<RecipeMaterial>,
+        keepMaterialConstraints: MaterialIDs,
+        noUseMaterialConstraints: MaterialIDs,
+        indicatorRangeConstraints: RecipeRangeIndicators,
+        materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
+        materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
+        materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
+        materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
+        indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
+    ) : this(
+        id = id,
+        productName = productName,
+        targetWeight = targetWeight,
+        yield = `yield`,
+        maxUseMaterialNum = maxUseMaterialNum,
+        maxBakeWeight = maxBakeWeight,
+        productionCost = productionCost,
+        indicators = indicators,
+        packagingMaterials = packagingMaterials,
+        materials = materials,
+        keepMaterialConstraints = keepMaterialConstraints,
+        noUseMaterialConstraints = noUseMaterialConstraints,
+        indicatorRangeConstraints = indicatorRangeConstraints,
+        materialRangeConstraints = materialRangeConstraints,
+        materialConditionConstraints = materialConditionConstraints,
+        materialRelationConstraints = materialRelationConstraints,
+        materialIDConstraints = materialIDConstraints,
+        indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
+        notMixMaterialConstraints = emptyList()
+    )
+
     /** 超时时间,单位秒  */
     var timeout: Long = 30L
 
