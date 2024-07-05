@@ -184,7 +184,9 @@ data class RecipeRequirement(
 
             //条件约束
             materialConditionConstraints.forEach { (_, thenCon) ->
-                if (thenCon.materials.contains(materialId)) {
+                val thenOperator = thenCon.condition.operator
+                val thenValue = thenCon.condition.value
+                if (thenCon.materials.contains(materialId) && ((thenOperator == Operator.GT && thenValue >= 0) || (thenOperator == Operator.EQ && thenValue > 0))) {
                     return@Predicate true
                 }
             }
