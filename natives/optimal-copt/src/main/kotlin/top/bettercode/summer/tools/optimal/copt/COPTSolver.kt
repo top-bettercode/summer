@@ -26,7 +26,13 @@ class COPTSolver @JvmOverloads constructor(
     minEpsilon: Double? = 1e-7,
     logging: Boolean = false,
     name: String = "COPTSolver"
-) : Solver(name = name, type = SolverType.COPT, epsilon = epsilon, minEpsilon = minEpsilon) {
+) : Solver(
+    name = name,
+    type = SolverType.COPT,
+    epsilon = epsilon,
+    minEpsilon = minEpsilon,
+    communityLimits = 2000
+) {
 
     private val env: copt.Envr = copt.Envr()
     var model: copt.Model = env.createModel(name)

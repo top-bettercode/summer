@@ -13,7 +13,8 @@ abstract class Solver(
      * 容错程度，该参数控制如何在线性化期间管理严格的不等式。例如，当 x 是数字变量时， x < a 变为 x <= a-eplin
      */
     val epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    val minEpsilon: Double?
+    val minEpsilon: Double?,
+    val communityLimits: Int
 ) : AutoCloseable {
 
     init {

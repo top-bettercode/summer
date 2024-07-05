@@ -4,7 +4,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.optimal.OptimalUtil
 import top.bettercode.summer.tools.optimal.Solver
-import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.recipe.result.Recipe
 
 object RecipeSolver {
@@ -30,13 +29,11 @@ object RecipeSolver {
                 requirement = requirement,
                 includeProductionCost = includeProductionCost
             )
-            if (SolverType.COPT == type) {
-                val numVariables = numVariables()
-                val numConstraints = numConstraints()
-                log.info("变量数量：{},约束数量：{}", numConstraints, numConstraints)
-                if (numVariables > 2000 || numConstraints > 2000) {
-                    log.error("变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
-                }
+            val numVariables = numVariables()
+            val numConstraints = numConstraints()
+            log.info("${solver.name} 变量数量：{},约束数量：{}", numConstraints, numConstraints)
+            if (numVariables > solver.communityLimits || numConstraints > solver.communityLimits) {
+                log.error("${solver.name} 变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
             }
             // 求解
             val solve = prepareData.solve(this, minMaterialNum, minEpsilon = minEpsilon)

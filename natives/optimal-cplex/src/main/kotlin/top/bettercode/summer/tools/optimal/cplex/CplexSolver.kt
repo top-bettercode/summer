@@ -25,7 +25,13 @@ class CplexSolver @JvmOverloads constructor(
     minEpsilon: Double? = 1e-6,
     logging: Boolean = false,
     name: String = "CplexSolver"
-) : Solver(name = name, type = SolverType.CPLEX, epsilon = epsilon, minEpsilon = minEpsilon) {
+) : Solver(
+    name = name,
+    type = SolverType.CPLEX,
+    epsilon = epsilon,
+    minEpsilon = minEpsilon,
+    communityLimits = 1000
+) {
 
     companion object {
         init {

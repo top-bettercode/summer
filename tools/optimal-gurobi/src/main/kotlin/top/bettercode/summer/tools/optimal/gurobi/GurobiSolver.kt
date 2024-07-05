@@ -12,7 +12,7 @@ import kotlin.math.min
 /**
  * https://www.gurobi.com/documentation/11.0/refman/java_api_overview.html
  *
- * without license the size is limited to 2000 variables and 2000 constraints
+ * with community license the size is limited to 2000 variables and 2000 constraints
  *
  * support min epsilon = 1e-5
  *
@@ -23,7 +23,13 @@ class GurobiSolver @JvmOverloads constructor(
     minEpsilon: Double? = 1e-5,
     logging: Boolean = false,
     name: String = "GurobiSolver"
-) : Solver(name = name, type = SolverType.GUROBI, epsilon = epsilon, minEpsilon = minEpsilon) {
+) : Solver(
+    name = name,
+    type = SolverType.GUROBI,
+    epsilon = epsilon,
+    minEpsilon = minEpsilon,
+    communityLimits = 2000
+) {
 
     private val env = GRBEnv().apply {
         set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)

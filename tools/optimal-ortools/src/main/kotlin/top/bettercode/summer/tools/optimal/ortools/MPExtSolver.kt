@@ -25,7 +25,13 @@ open class MPExtSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
     minEpsilon: Double? = null,
     name: String = "MPSolver"
-) : Solver(name = name, type = solverType, epsilon = epsilon, minEpsilon = minEpsilon) {
+) : Solver(
+    name = name,
+    type = solverType,
+    epsilon = epsilon,
+    minEpsilon = minEpsilon,
+    communityLimits = Int.MAX_VALUE
+) {
 
     companion object {
 
