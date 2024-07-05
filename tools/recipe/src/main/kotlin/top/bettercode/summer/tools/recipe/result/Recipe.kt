@@ -156,15 +156,13 @@ data class Recipe(
             otherValues.add(otherWeight)
             diffValues.add((m.weight - otherWeight))
         }
-        if (materials.size < other.materials.size) {
-            other.materials.filter { m -> !materials.any { m.id == it.id } }.forEach {
-                val otherWeight = it.weight
-                names.add(it.name)
-                itValues.add(0.0)
-                compares.add(-otherWeight.scale(scale) in -minEpsilon..minEpsilon)
-                otherValues.add(otherWeight)
-                diffValues.add(-otherWeight)
-            }
+        other.materials.filter { m -> !materials.any { m.id == it.id } }.forEach {
+            val otherWeight = it.weight
+            names.add(it.name)
+            itValues.add(0.0)
+            compares.add(-otherWeight.scale(scale) in -minEpsilon..minEpsilon)
+            otherValues.add(otherWeight)
+            diffValues.add(-otherWeight)
         }
 
         //制造费用

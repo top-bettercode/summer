@@ -143,15 +143,13 @@ data class ProductionCostValue(
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal))
         }
-        if (materialItems.size < other.materialItems.size) {
-            other.materialItems.filter { m -> !materialItems.any { m.it.id == it.it.id } }.forEach {
-                val otherVal = (it.it.cost * it.value)
-                names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
-                itValues.add(0.0)
-                compares.add(-otherVal.scale(scale) in -minEpsilon..minEpsilon)
-                otherValues.add(otherVal)
-                diffValues.add(-otherVal)
-            }
+        other.materialItems.filter { m -> !materialItems.any { m.it.id == it.it.id } }.forEach {
+            val otherVal = (it.it.cost * it.value)
+            names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
+            itValues.add(0.0)
+            compares.add(-otherVal.scale(scale) in -minEpsilon..minEpsilon)
+            otherValues.add(otherVal)
+            diffValues.add(-otherVal)
         }
         separatorIndexs.add(names.size)
 
@@ -180,15 +178,13 @@ data class ProductionCostValue(
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal))
         }
-        if (dictItems.size < other.dictItems.size) {
-            other.dictItems.filter { m -> !dictItems.any { m.key == it.key } }.forEach {
-                val otherVal = (it.value.it.cost * it.value.value)
-                names.add("${it.key.dictName} (${(it.value.value * 100).scale(2)}%)")
-                itValues.add(0.0)
-                compares.add(-otherVal.scale(scale) in -minEpsilon..minEpsilon)
-                otherValues.add(otherVal)
-                diffValues.add(-otherVal)
-            }
+        other.dictItems.filter { m -> !dictItems.any { m.key == it.key } }.forEach {
+            val otherVal = (it.value.it.cost * it.value.value)
+            names.add("${it.key.dictName} (${(it.value.value * 100).scale(2)}%)")
+            itValues.add(0.0)
+            compares.add(-otherVal.scale(scale) in -minEpsilon..minEpsilon)
+            otherValues.add(otherVal)
+            diffValues.add(-otherVal)
         }
         separatorIndexs.add(names.size)
 

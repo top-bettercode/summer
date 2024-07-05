@@ -36,7 +36,7 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
     val indicators: RecipeValueIndicators
 
     override fun compareTo(other: IRecipeMaterial): Int {
-        return index.compareTo(other.index)
+        return id.compareTo(other.id)
     }
 
     @get:JsonIgnore
