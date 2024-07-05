@@ -22,7 +22,7 @@ class RecipeValueIndicators(indicators: List<RecipeIndicatorValue<Double>> = emp
         waterValue = if (water == null) {
             0.0
         } else {
-            this[water.id]?.scaledValue ?: 0.0
+            valueOf(water.id)
         }
         nutrients = indicators.nutrients.mapNotNull { this[it.id] }
     }
