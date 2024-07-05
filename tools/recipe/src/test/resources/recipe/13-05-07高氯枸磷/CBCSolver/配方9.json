@@ -1,5 +1,5 @@
 {
-  "cost" : 1266.3162055336,
+  "cost" : 1266.316206,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -24,7 +24,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 474.3083003953,
+    "weight" : 474.3083,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -73,7 +73,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 521.4285714286,
+    "weight" : 521.428571,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -163,7 +163,7 @@
       "price" : 29.3,
       "unit" : "吨"
     },
-    "weight" : 0.819112628,
+    "weight" : 0.819113,
     "id" : "EDTA-镁",
     "index" : 33,
     "indicators" : {
@@ -211,69 +211,12 @@
     "price" : 0.35,
     "unit" : "吨"
   } ],
+  "minEpsilon" : 0.001,
   "recipeName" : "CBCSolver-9",
-  "dryWaterWeight" : 176.5559844519,
-  "materialCost" : 1266.3162055341,
+  "dryWaterWeight" : 176.555984,
+  "materialCost" : 1266.316216,
   "packagingCost" : 52.13,
-  "productionCost" : {
-    "allChange" : 1.01,
-    "dictItems" : {
-      "STAFF" : {
-        "it" : {
-          "price" : 42.0,
-          "value" : 1.0,
-          "cost" : 42.0
-        },
-        "value" : 1.0
-      },
-      "DEPRECIATION" : {
-        "it" : {
-          "price" : 52.0,
-          "value" : 1.0,
-          "cost" : 52.0
-        },
-        "value" : 1.0
-      },
-      "OTHER" : {
-        "it" : {
-          "price" : 62.0,
-          "value" : 1.0,
-          "cost" : 62.0
-        },
-        "value" : 1.0
-      }
-    },
-    "energyFee" : 26.5,
-    "materialItems" : [ {
-      "it" : {
-        "id" : "籽煤",
-        "index" : 9001,
-        "name" : "籽煤",
-        "price" : 1650.0,
-        "unit" : "吨",
-        "value" : 0.01,
-        "cost" : 16.5,
-        "indicators" : { }
-      },
-      "value" : 1.0
-    }, {
-      "it" : {
-        "id" : "生物质",
-        "index" : 9002,
-        "name" : "生物质",
-        "price" : 1000.0,
-        "unit" : "吨",
-        "value" : 0.01,
-        "cost" : 10.0,
-        "indicators" : { }
-      },
-      "value" : 1.0
-    } ],
-    "otherFee" : 156.0,
-    "taxFee" : 29.04,
-    "totalFee" : 213.6554
-  },
   "totalNutrientWeight" : 253.0,
-  "waterWeight" : 193.8471785671,
-  "weight" : 1176.5559844519
+  "waterWeight" : 193.847178,
+  "weight" : 1176.555984
 }

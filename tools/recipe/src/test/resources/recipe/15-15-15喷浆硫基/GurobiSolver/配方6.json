@@ -1,5 +1,5 @@
 {
-  "cost" : 2596.3832486084,
+  "cost" : 2596.383249,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -24,7 +24,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 29.1677286357,
+    "weight" : 29.167729,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 0.1027728481,
+        "normal" : 0.102773,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -81,11 +81,11 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 68.3977654544,
+        "normal" : 68.397766,
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 44.6948067275,
+        "normal" : 44.694807,
         "overdose" : 0.0
       }
     },
@@ -106,7 +106,7 @@
       "price" : 3.8,
       "unit" : "吨"
     },
-    "weight" : 113.1953450299,
+    "weight" : 113.195345,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 113.19534503,
+    "normalWeight" : 113.195346,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -155,7 +155,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 9.7551770047,
+    "weight" : 9.755175,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -212,7 +212,7 @@
       "price" : 1.055,
       "unit" : "吨"
     },
-    "weight" : 805.2282342768,
+    "weight" : 805.228239,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -241,8 +241,8 @@
   }, {
     "consumes" : {
       "喷浆硫基用95氯化钾" : {
-        "normal" : 284.7360402825,
-        "overdose" : 52.8070150513
+        "normal" : 284.73604,
+        "overdose" : 52.807016
       }
     },
     "material" : {
@@ -262,7 +262,7 @@
       "price" : 0.22,
       "unit" : "吨"
     },
-    "weight" : 337.5430553338,
+    "weight" : 337.543056,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -276,8 +276,8 @@
       }
     },
     "name" : "硫酸",
-    "normalWeight" : 284.7360402825,
-    "overdoseWeight" : 52.8070150513,
+    "normalWeight" : 284.73604,
+    "overdoseWeight" : 52.807016,
     "price" : 0.22,
     "unit" : "吨"
   }, {
@@ -443,7 +443,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 116.3823797697,
+    "weight" : 116.382379,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -462,69 +462,12 @@
     "price" : 2.8,
     "unit" : "吨"
   } ],
+  "minEpsilon" : 0.001,
   "recipeName" : "GurobiSolver-6",
-  "dryWaterWeight" : 653.7719200506,
-  "materialCost" : 2596.3832486083,
+  "dryWaterWeight" : 653.771923,
+  "materialCost" : 2596.383248,
   "packagingCost" : 52.13,
-  "productionCost" : {
-    "allChange" : 1.01,
-    "dictItems" : {
-      "STAFF" : {
-        "it" : {
-          "price" : 42.0,
-          "value" : 1.0,
-          "cost" : 42.0
-        },
-        "value" : 3.375430553338
-      },
-      "DEPRECIATION" : {
-        "it" : {
-          "price" : 52.0,
-          "value" : 1.0,
-          "cost" : 52.0
-        },
-        "value" : 1.0
-      },
-      "OTHER" : {
-        "it" : {
-          "price" : 62.0,
-          "value" : 1.0,
-          "cost" : 62.0
-        },
-        "value" : 1.0
-      }
-    },
-    "energyFee" : 128.1023668083,
-    "materialItems" : [ {
-      "it" : {
-        "id" : "籽煤",
-        "index" : 9001,
-        "name" : "籽煤",
-        "price" : 1650.0,
-        "unit" : "吨",
-        "value" : 0.01,
-        "cost" : 16.5,
-        "indicators" : { }
-      },
-      "value" : 7.157719200506
-    }, {
-      "it" : {
-        "id" : "生物质",
-        "index" : 9002,
-        "name" : "生物质",
-        "price" : 1000.0,
-        "unit" : "吨",
-        "value" : 0.01,
-        "cost" : 10.0,
-        "indicators" : { }
-      },
-      "value" : 1.0
-    } ],
-    "otherFee" : 255.7680832402,
-    "taxFee" : 38.0191274916,
-    "totalFee" : 426.1084733156
-  },
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 665.7719200506,
-  "weight" : 1653.7719200506
+  "waterWeight" : 665.771923,
+  "weight" : 1653.771923
 }
