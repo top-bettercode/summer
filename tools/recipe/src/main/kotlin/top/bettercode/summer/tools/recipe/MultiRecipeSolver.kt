@@ -93,14 +93,14 @@ object MultiRecipeSolver {
                 } else {
                     e = System.currentTimeMillis()
                     recipeResult.time = e - s
-                    log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
+                    log.info("${requirement.id}:${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
                     return recipeResult
                 }
                 e = System.currentTimeMillis()
             }
             e = System.currentTimeMillis()
             recipeResult.time = e - s
-            log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
+            log.info("${requirement.id}:${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
             return recipeResult
         }
     }

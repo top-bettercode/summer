@@ -34,7 +34,7 @@ object RecipeSolver {
             // 求解
             val solve = prepareData.solve(this, minMaterialNum, minEpsilon = minEpsilon)
             val e = System.currentTimeMillis()
-            log.info("${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
+            log.info("${requirement.id}:${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
             return solve
         }
     }
