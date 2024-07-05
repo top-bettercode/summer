@@ -23,7 +23,7 @@ import kotlin.math.min
  */
 class COPTSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    minEpsilon: Double? = 1e-7,
+    minEpsilon: Double = 1e-7,
     logging: Boolean = false,
     name: String = "COPTSolver"
 ) : Solver(

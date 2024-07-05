@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.optimal.SolverType
  */
 class SCIPSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    minEpsilon: Double? = 1e-6,
+    minEpsilon: Double = 1e-6,
     name: String = "SCIPSolver"
 ) : MPExtSolver(
     mpType = MPSolver.OptimizationProblemType.SCIP_MIXED_INTEGER_PROGRAMMING,

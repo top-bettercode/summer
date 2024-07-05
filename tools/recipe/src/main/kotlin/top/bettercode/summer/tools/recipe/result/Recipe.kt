@@ -578,7 +578,7 @@ data class Recipe(
 
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
-        if ((materialCost + productionCostFee - cost).scale(scale) != 0.0) {
+        if ((materialCost + productionCostFee - cost).scale(scale) !in -minEpsilon..minEpsilon) {
             throw IllegalRecipeException(
                 "${requirement.id}:${requirement.productName}-配方成本不匹配，物料成本：${materialCost}+制造费用：${
                     productionCostFee.toBigDecimal().toPlainString()

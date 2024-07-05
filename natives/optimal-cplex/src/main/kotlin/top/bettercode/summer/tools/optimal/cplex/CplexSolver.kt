@@ -22,7 +22,7 @@ import kotlin.math.min
  */
 class CplexSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    minEpsilon: Double? = 1e-6,
+    minEpsilon: Double = 1e-6,
     logging: Boolean = false,
     name: String = "CplexSolver"
 ) : Solver(
