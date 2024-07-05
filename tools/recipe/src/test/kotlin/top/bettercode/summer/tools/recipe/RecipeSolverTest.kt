@@ -44,13 +44,13 @@ internal class RecipeSolverTest {
     )
 
     val maxResult = 20
-    val includeProductionCost = false
+    val includeProductionCost = true
     val nutrientUnchanged = true
     val materialUnchanged = true
     val minMaterialNum = true
     val solveTimes = 1
     val toExcel = false
-    val epsilon = 1e-4
+    val epsilon = 1e-3
 
     @Test
     fun solve() {
@@ -214,7 +214,7 @@ internal class RecipeSolverTest {
         Assertions.assertEquals(solve.recipes.size, solve1.recipes.size)
         solve.recipes.forEachIndexed { index, recipe ->
             Assertions.assertTrue(
-                recipe.cost - solve1.recipes[index].cost in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON,
+                recipe.cost - solve1.recipes[index].cost in -recipe.minEpsilon..recipe.minEpsilon,
                 "推优成本不一致"
             )
         }

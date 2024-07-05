@@ -20,7 +20,7 @@ object OptimalUtil {
      * Math.abs(Math.log10(epsilon)).toInt()
      */
     @JvmStatic
-    var DEFAULT_SCALE: Int = 10
+    var DEFAULT_SCALE: Int = 6
 
     /**
      * 将数字转换为指定小数位数的数字

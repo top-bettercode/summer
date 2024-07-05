@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.recipe
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.optimal.OptimalUtil
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialValue
@@ -27,7 +28,8 @@ object MultiRecipeSolver {
         /**
          * 是否使用最小数量原料
          */
-        minMaterialNum: Boolean = true
+        minMaterialNum: Boolean = true,
+        minEpsilon: Double = OptimalUtil.DEFAULT_EPSILON
     ): RecipeResult {
         solver.apply {
             val s = System.currentTimeMillis()
@@ -55,7 +57,8 @@ object MultiRecipeSolver {
                     prepareData.solve(
                         this,
                         eachMinMaterialNum,
-                        "${name}-${recipeResult.recipes.size + 1}"
+                        "${name}-${recipeResult.recipes.size + 1}",
+                        minEpsilon
                     )
                 if (recipe != null) {
                     recipeResult.addRecipe(recipe)

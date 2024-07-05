@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.recipe.result
 import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
-import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
@@ -461,8 +460,9 @@ object RecipeExport {
 
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight).scale()
                 }
+                val minEpsilon = recipe.minEpsilon
                 val valid =
-                    value - min >= -RecipeUtil.DEFAULT_MIN_EPSILON && value - max <= RecipeUtil.DEFAULT_MIN_EPSILON
+                    value - min >= -minEpsilon && value - max <= minEpsilon
                 cell(r++, c).value(value).bold()
                     .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()

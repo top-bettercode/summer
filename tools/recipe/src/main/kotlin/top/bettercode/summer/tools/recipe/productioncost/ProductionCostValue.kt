@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.CarrierValue
-import top.bettercode.summer.tools.recipe.RecipeUtil
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.result.IllegalRecipeException
 import top.bettercode.summer.tools.recipe.result.RecipeColumns
@@ -54,7 +53,12 @@ data class ProductionCostValue(
      * 制造费用增减
      */
     @JsonProperty("allChange")
-    val allChange: Double
+    val allChange: Double,
+    /**
+     * 误差
+     */
+    @JsonProperty("minEpsilon")
+    val minEpsilon: Double
 ) {
     private val log = LoggerFactory.getLogger(ProductionCostValue::class.java)
 
@@ -130,7 +134,7 @@ data class ProductionCostValue(
             val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value).scale()
             names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
             itValues.add(thisVal)
-            compares.add(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+            compares.add(thisVal - otherVal in -minEpsilon..minEpsilon)
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal).scale())
         }
@@ -139,7 +143,7 @@ data class ProductionCostValue(
                 val otherVal = (it.it.cost * it.value).scale()
                 names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
                 itValues.add(0.0)
-                compares.add(-otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+                compares.add(-otherVal in -minEpsilon..minEpsilon)
                 otherValues.add(otherVal)
                 diffValues.add(-otherVal)
             }
@@ -148,7 +152,7 @@ data class ProductionCostValue(
 
         names.add("总能耗费用")
         itValues.add(energyFee)
-        compares.add(this.energyFee - other.energyFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        compares.add(this.energyFee - other.energyFee in -minEpsilon..minEpsilon)
         otherValues.add(other.energyFee)
         diffValues.add((energyFee - other.energyFee).scale())
         separatorIndexs.add(names.size)
@@ -167,7 +171,7 @@ data class ProductionCostValue(
 
             names.add("${key.dictName} (${(value.value * 100).scale(2)}%)")
             itValues.add(thisVal)
-            compares.add(thisVal - otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+            compares.add(thisVal - otherVal in -minEpsilon..minEpsilon)
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal).scale())
         }
@@ -176,7 +180,7 @@ data class ProductionCostValue(
                 val otherVal = (it.value.it.cost * it.value.value).scale()
                 names.add("${it.key.dictName} (${(it.value.value * 100).scale(2)}%)")
                 itValues.add(0.0)
-                compares.add(-otherVal in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+                compares.add(-otherVal in -minEpsilon..minEpsilon)
                 otherValues.add(otherVal)
                 diffValues.add(-otherVal)
             }
@@ -185,21 +189,21 @@ data class ProductionCostValue(
 
         names.add("人工+折旧费+其他费用")
         itValues.add(otherFee)
-        compares.add(this.otherFee - other.otherFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        compares.add(this.otherFee - other.otherFee in -minEpsilon..minEpsilon)
         otherValues.add(other.otherFee)
         diffValues.add((otherFee - other.otherFee).scale())
         separatorIndexs.add(names.size)
 
         names.add("税费")
         itValues.add(taxFee)
-        compares.add(this.taxFee - other.taxFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        compares.add(this.taxFee - other.taxFee in -minEpsilon..minEpsilon)
         otherValues.add(other.taxFee)
         diffValues.add((taxFee - other.taxFee).scale())
         separatorIndexs.add(names.size)
 
         names.add("制造费用合计 (${(allChange * 100).scale(2)}%)")
         itValues.add(totalFee)
-        compares.add(this.totalFee - other.totalFee in -RecipeUtil.DEFAULT_MIN_EPSILON..RecipeUtil.DEFAULT_MIN_EPSILON)
+        compares.add(this.totalFee - other.totalFee in -minEpsilon..minEpsilon)
         otherValues.add(other.totalFee)
         diffValues.add((totalFee - other.totalFee).scale())
         separatorIndexs.add(names.size)

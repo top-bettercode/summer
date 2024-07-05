@@ -442,7 +442,12 @@ data class PrepareSolveData(
     }
 
     @JvmOverloads
-    fun solve(solver: Solver, minMaterialNum: Boolean, recipeName: String? = null): Recipe? {
+    fun solve(
+        solver: Solver,
+        minMaterialNum: Boolean,
+        recipeName: String? = null,
+        minEpsilon: Double
+    ): Recipe? {
         solver.apply {
             val minimize = objectiveVars.minimize()
             solve()
@@ -486,15 +491,23 @@ data class PrepareSolveData(
                 requirement = requirement,
                 includeProductionCost = includeProductionCost,
                 optimalProductionCost = requirement.productionCost.computeFee(
-                    materialItems?.map { CarrierValue(it.it, it.value.value.scale()) },
-                    dictItems?.mapValues {
+                    materialItems = materialItems?.map {
+                        CarrierValue(
+                            it.it,
+                            it.value.value.scale()
+                        )
+                    },
+                    dictItems = dictItems?.mapValues {
                         CarrierValue(
                             it.value.it,
                             it.value.value.value.scale()
                         )
-                    }),
+                    },
+                    minEpsilon = minEpsilon
+                ),
                 cost = objectiveValue.scale(),
-                materials = materials
+                materials = materials,
+                minEpsilon = minEpsilon
             )
         }
     }

@@ -102,19 +102,21 @@ data class ProductionCost(
         // 制造费用合计=人工费+折旧费+其他费用+能耗费+税费
         val totalFee: Double = (otherFee + energyFee + taxFee) * allChange
         return ProductionCostValue(
-            materialItems,
-            dictItems,
-            otherFee.scale(),
-            energyFee.scale(),
-            taxFee.scale(),
-            totalFee.scale(),
-            allChange.scale()
+            materialItems = materialItems,
+            dictItems = dictItems,
+            otherFee = otherFee.scale(),
+            energyFee = energyFee.scale(),
+            taxFee = taxFee.scale(),
+            totalFee = totalFee.scale(),
+            allChange = allChange.scale(),
+            minEpsilon = recipe.minEpsilon
         )
     }
 
     fun computeFee(
         materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>?,
-        dictItems: Map<DictType, CarrierValue<Cost, Double>>?
+        dictItems: Map<DictType, CarrierValue<Cost, Double>>?,
+        minEpsilon: Double
     ): ProductionCostValue? {
         if (materialItems == null || dictItems == null) {
             return null
@@ -141,13 +143,14 @@ data class ProductionCost(
         // 制造费用合计=人工费+折旧费+其他费用+能耗费+税费
         val totalFee: Double = (otherFee + energyFee + taxFee) * allChange
         return ProductionCostValue(
-            materialItems,
-            dictItems,
-            otherFee.scale(),
-            energyFee.scale(),
-            taxFee.scale(),
-            totalFee.scale(),
-            allChange.scale()
+            materialItems = materialItems,
+            dictItems = dictItems,
+            otherFee = otherFee.scale(),
+            energyFee = energyFee.scale(),
+            taxFee = taxFee.scale(),
+            totalFee = totalFee.scale(),
+            allChange = allChange.scale(),
+            minEpsilon = minEpsilon
         )
     }
 
