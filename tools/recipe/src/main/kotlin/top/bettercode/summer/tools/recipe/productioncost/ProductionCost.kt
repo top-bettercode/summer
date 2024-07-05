@@ -108,6 +108,7 @@ data class ProductionCost(
             taxFee = taxFee,
             totalFee = totalFee,
             allChange = allChange,
+            scale = recipe.scale,
             minEpsilon = recipe.minEpsilon
         )
     }
@@ -115,6 +116,7 @@ data class ProductionCost(
     fun computeFee(
         materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>?,
         dictItems: Map<DictType, CarrierValue<Cost, Double>>?,
+        scale:Int,
         minEpsilon: Double
     ): ProductionCostValue? {
         if (materialItems == null || dictItems == null) {
@@ -149,6 +151,7 @@ data class ProductionCost(
             taxFee = taxFee,
             totalFee = totalFee,
             allChange = allChange,
+            scale = scale,
             minEpsilon = minEpsilon
         )
     }

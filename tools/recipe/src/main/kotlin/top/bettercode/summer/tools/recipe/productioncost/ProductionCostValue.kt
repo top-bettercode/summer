@@ -55,6 +55,11 @@ data class ProductionCostValue(
     @JsonProperty("allChange")
     val allChange: Double,
     /**
+     * 小数位数
+     */
+    @JsonProperty("scale")
+    val scale: Int,
+    /**
      * 误差
      */
     @JsonProperty("minEpsilon")
@@ -63,11 +68,11 @@ data class ProductionCostValue(
     private val log = LoggerFactory.getLogger(ProductionCostValue::class.java)
 
     fun compareTo(other: ProductionCostValue) {
-        val names = RecipeColumns()
-        val itValues = RecipeColumns()
-        val compares = RecipeColumns()
-        val otherValues = RecipeColumns()
-        val diffValues = RecipeColumns()
+        val names = RecipeColumns(scale)
+        val itValues = RecipeColumns(scale)
+        val compares = RecipeColumns(scale)
+        val otherValues = RecipeColumns(scale)
+        val diffValues = RecipeColumns(scale)
         names.add("制造费用项")
         itValues.add("this")
         compares.add("=")
@@ -134,7 +139,7 @@ data class ProductionCostValue(
             val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value)
             names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
             itValues.add(thisVal)
-            compares.add(thisVal - otherVal in -minEpsilon..minEpsilon)
+            compares.add((thisVal - otherVal).scale(scale) in -minEpsilon..minEpsilon)
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal))
         }
@@ -143,7 +148,7 @@ data class ProductionCostValue(
                 val otherVal = (it.it.cost * it.value)
                 names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
                 itValues.add(0.0)
-                compares.add(-otherVal in -minEpsilon..minEpsilon)
+                compares.add(-otherVal.scale(scale) in -minEpsilon..minEpsilon)
                 otherValues.add(otherVal)
                 diffValues.add(-otherVal)
             }
@@ -152,7 +157,7 @@ data class ProductionCostValue(
 
         names.add("总能耗费用")
         itValues.add(energyFee)
-        compares.add(this.energyFee - other.energyFee in -minEpsilon..minEpsilon)
+        compares.add((this.energyFee - other.energyFee).scale(scale) in -minEpsilon..minEpsilon)
         otherValues.add(other.energyFee)
         diffValues.add((energyFee - other.energyFee))
         separatorIndexs.add(names.size)
@@ -171,7 +176,7 @@ data class ProductionCostValue(
 
             names.add("${key.dictName} (${(value.value * 100).scale(2)}%)")
             itValues.add(thisVal)
-            compares.add(thisVal - otherVal in -minEpsilon..minEpsilon)
+            compares.add((thisVal - otherVal).scale(scale) in -minEpsilon..minEpsilon)
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal))
         }
@@ -180,7 +185,7 @@ data class ProductionCostValue(
                 val otherVal = (it.value.it.cost * it.value.value)
                 names.add("${it.key.dictName} (${(it.value.value * 100).scale(2)}%)")
                 itValues.add(0.0)
-                compares.add(-otherVal in -minEpsilon..minEpsilon)
+                compares.add(-otherVal.scale(scale) in -minEpsilon..minEpsilon)
                 otherValues.add(otherVal)
                 diffValues.add(-otherVal)
             }
@@ -189,21 +194,21 @@ data class ProductionCostValue(
 
         names.add("人工+折旧费+其他费用")
         itValues.add(otherFee)
-        compares.add(this.otherFee - other.otherFee in -minEpsilon..minEpsilon)
+        compares.add((this.otherFee - other.otherFee).scale(scale) in -minEpsilon..minEpsilon)
         otherValues.add(other.otherFee)
         diffValues.add((otherFee - other.otherFee))
         separatorIndexs.add(names.size)
 
         names.add("税费")
         itValues.add(taxFee)
-        compares.add(this.taxFee - other.taxFee in -minEpsilon..minEpsilon)
+        compares.add((this.taxFee - other.taxFee).scale(scale) in -minEpsilon..minEpsilon)
         otherValues.add(other.taxFee)
         diffValues.add((taxFee - other.taxFee))
         separatorIndexs.add(names.size)
 
         names.add("制造费用合计 (${(allChange * 100).scale(2)}%)")
         itValues.add(totalFee)
-        compares.add(this.totalFee - other.totalFee in -minEpsilon..minEpsilon)
+        compares.add((this.totalFee - other.totalFee).scale(scale) in -minEpsilon..minEpsilon)
         otherValues.add(other.totalFee)
         diffValues.add((totalFee - other.totalFee))
         separatorIndexs.add(names.size)

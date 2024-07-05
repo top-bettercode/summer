@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.optimal.OptimalUtil
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.optimal.copt.COPTSolver
@@ -22,6 +23,8 @@ import top.bettercode.summer.tools.recipe.material.IRecipeMaterial
 import top.bettercode.summer.tools.recipe.result.Recipe
 import top.bettercode.summer.tools.recipe.result.RecipeResult
 import java.io.File
+import kotlin.math.abs
+import kotlin.math.log10
 
 
 /**
@@ -51,6 +54,7 @@ internal class RecipeSolverTest {
     val solveTimes = 1
     val toExcel = false
     val epsilon = 1e-3
+    val minEpsilon = 0.0
 
     @Test
     fun solve() {
@@ -95,7 +99,8 @@ internal class RecipeSolverTest {
             includeProductionCost = includeProductionCost,
             nutrientUnchanged = nutrientUnchanged,
             materialUnchanged = materialUnchanged,
-            minMaterialNum = minMaterialNum
+            minMaterialNum = minMaterialNum,
+            minEpsilon = minEpsilon
         )
         System.err.println("============toExcel=============")
         if (toExcel)
@@ -212,9 +217,10 @@ internal class RecipeSolverTest {
 
     private fun assert(solve: RecipeResult, solve1: RecipeResult) {
         Assertions.assertEquals(solve.recipes.size, solve1.recipes.size)
+        val scale = abs(log10(epsilon)).toInt()
         solve.recipes.forEachIndexed { index, recipe ->
             Assertions.assertTrue(
-                recipe.cost - solve1.recipes[index].cost in -recipe.minEpsilon..recipe.minEpsilon,
+                (recipe.cost - solve1.recipes[index].cost).scale(scale) == 0.0,
                 "推优成本不一致"
             )
         }

@@ -8,15 +8,19 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @JacksonStdImpl
-class BigDecimalSerializer @JvmOverloads constructor(private val scale: Int = 2, private val divisor: BigDecimal? = null, private val roundingMode: RoundingMode = RoundingMode.HALF_UP, private val toPlainString: Boolean = false,
-                                                     private val reduceFraction: Boolean = false,
-                                                     private val percent: Boolean = false) : StdScalarSerializer<Number>(Number::class.java), ContextualSerializer {
+class BigDecimalSerializer @JvmOverloads constructor(
+    private val scale: Int = 2,
+    private val divisor: BigDecimal? = null,
+    private val roundingMode: RoundingMode = RoundingMode.HALF_UP,
+    private val toPlainString: Boolean = false,
+    private val reduceFraction: Boolean = false,
+    private val percent: Boolean = false
+) : StdScalarSerializer<Number>(Number::class.java), ContextualSerializer {
     override fun serialize(value: Number, gen: JsonGenerator, provider: SerializerProvider?) {
         var scale = scale
         var content = when (value) {
@@ -31,46 +35,52 @@ class BigDecimalSerializer @JvmOverloads constructor(private val scale: Int = 2,
         } else if (content.scale() != scale) {
             content = content.setScale(scale, roundingMode)
         }
-        var plainString = content.toPlainString()
         if (reduceFraction) {
-            plainString = reduceFraction(plainString)
-            content = BigDecimal(plainString)
+            content = content.stripTrailingZeros()
         }
         if (toPlainString) {
-            gen.writeString(plainString)
+            gen.writeString(content.toPlainString())
         } else {
             gen.writeNumber(content)
         }
         if (percent) {
             val outputContext = gen.outputContext
             val fieldName = outputContext.currentName
-            var percentPlainSring = content.multiply(BigDecimal(100))
-                    .setScale(scale - 2, roundingMode).toPlainString()
+            var percent = content.multiply(BigDecimal(100))
+                .setScale(scale - 2, roundingMode)
             if (reduceFraction) {
-                percentPlainSring = reduceFraction(percentPlainSring)
+                percent = percent.stripTrailingZeros()
             }
-            gen.writeStringField(fieldName + "Pct", "$percentPlainSring%")
+            gen.writeStringField(fieldName + "Pct", "${percent.toPlainString()}%")
         }
     }
 
-    override fun serializeWithType(value: Number, gen: JsonGenerator, provider: SerializerProvider, typeSer: TypeSerializer) {
+    override fun serializeWithType(
+        value: Number,
+        gen: JsonGenerator,
+        provider: SerializerProvider,
+        typeSer: TypeSerializer
+    ) {
         serialize(value, gen, provider)
     }
 
 
-    private fun reduceFraction(plainString: String): String {
-        return if (plainString.contains(".")) StringUtils
-                .trimTrailingCharacter(plainString.trimEnd('0'), '.') else plainString
-    }
-
-    override fun createContextual(prov: SerializerProvider, property: BeanProperty?): JsonSerializer<*> {
+    override fun createContextual(
+        prov: SerializerProvider,
+        property: BeanProperty?
+    ): JsonSerializer<*> {
         if (property != null) {
             val annotation = property.getAnnotation(JsonBigDecimal::class.java)
-                    ?: throw RuntimeException("未注解@" + JsonBigDecimal::class.java.name)
+                ?: throw RuntimeException("未注解@" + JsonBigDecimal::class.java.name)
             val divisor = annotation.divisor
-            return BigDecimalSerializer(annotation.scale, if ("" == divisor) null else BigDecimal(divisor), annotation.roundingMode,
-                    annotation.toPlainString,
-                    annotation.reduceFraction, annotation.percent)
+            return BigDecimalSerializer(
+                annotation.scale,
+                if ("" == divisor) null else BigDecimal(divisor),
+                annotation.roundingMode,
+                annotation.toPlainString,
+                annotation.reduceFraction,
+                annotation.percent
+            )
         }
         return this
     }
