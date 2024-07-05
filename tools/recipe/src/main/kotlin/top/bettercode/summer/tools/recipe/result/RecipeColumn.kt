@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.recipe.result
 
+import top.bettercode.summer.tools.optimal.OptimalUtil.scale
+
 /**
  *
  * @author Peter Wu
@@ -8,18 +10,18 @@ class RecipeColumns : ArrayList<Any>() {
 
     override fun add(element: Any): Boolean {
         return when (element) {
-            is Int -> super.add(element.toBigDecimal().stripTrailingZeros().toPlainString())
-            is Double -> super.add(element.toBigDecimal().stripTrailingZeros().toPlainString())
+            is Int -> super.add(element.toString())
+            is Double -> super.add(element.scale(6).toBigDecimal().stripTrailingZeros().toPlainString())
             else -> super.add(element)
         }
     }
 
     override fun add(index: Int, element: Any) {
         when (element) {
-            is Int -> super.add(index, element.toBigDecimal().stripTrailingZeros().toPlainString())
+            is Int -> super.add(index, element.toString())
             is Double -> super.add(
                 index,
-                element.toBigDecimal().stripTrailingZeros().toPlainString()
+                element.scale(6).toBigDecimal().stripTrailingZeros().toPlainString()
             )
 
             else -> super.add(index, element)
