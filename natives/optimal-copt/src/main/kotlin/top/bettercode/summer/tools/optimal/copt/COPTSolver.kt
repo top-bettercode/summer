@@ -50,7 +50,7 @@ class COPTSolver @JvmOverloads constructor(
     override fun triggerLimit(): Boolean {
         val numVariables = numVariables()
         val numConstraints = numConstraints()
-        log.info("$name 变量数量：{},约束数量：{}", numConstraints, numConstraints)
+        log.info("$name 变量数量：{},约束数量：{}", numVariables, numConstraints)
         val bool = numVariables > communityLimits || numConstraints > communityLimits
         if (bool) {
             log.error("$name 变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")

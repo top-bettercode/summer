@@ -63,7 +63,7 @@ class CplexSolver @JvmOverloads constructor(
         log.info(
             "$name 非零元数量：{}, 变量数量：{}, 约束数量：{}",
             nnZs,
-            numConstraints,
+            numVariables,
             numConstraints
         )
         val bool =
