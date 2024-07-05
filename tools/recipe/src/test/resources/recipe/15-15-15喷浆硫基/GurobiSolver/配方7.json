@@ -1,15 +1,15 @@
 {
-  "cost" : 2599.383249,
+  "cost" : 2599.3832490757586,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
     "material" : {
-      "id" : "氯化铵（干）",
-      "index" : 6,
+      "id" : "氯化铵（湿）",
+      "index" : 5,
       "indicators" : {
         "氮" : {
           "id" : "氮",
-          "value" : 25.3
+          "value" : 23.5
         },
         "氯离子" : {
           "id" : "氯离子",
@@ -17,20 +17,20 @@
         },
         "物料水分" : {
           "id" : "物料水分",
-          "value" : 1.0
+          "value" : 7.000000000000001
         }
       },
-      "name" : "氯化铵（干）",
-      "price" : 1.25,
+      "name" : "氯化铵（湿）",
+      "price" : 1.15,
       "unit" : "吨"
     },
-    "weight" : 29.167729,
-    "id" : "氯化铵（干）",
-    "index" : 6,
+    "weight" : 29.16772863568218,
+    "id" : "氯化铵（湿）",
+    "index" : 5,
     "indicators" : {
       "氮" : {
         "id" : "氮",
-        "value" : 25.3
+        "value" : 23.5
       },
       "氯离子" : {
         "id" : "氯离子",
@@ -38,13 +38,13 @@
       },
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 1.0
+        "value" : 7.000000000000001
       }
     },
-    "name" : "氯化铵（干）",
+    "name" : "氯化铵（湿）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.25,
+    "price" : 1.15,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -62,14 +62,14 @@
         },
         "硫" : {
           "id" : "硫",
-          "value" : 23.8
+          "value" : 23.799999999999997
         }
       },
       "name" : "焦化硫铵",
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 8.638972,
+    "weight" : 3.8675423520556986,
     "id" : "焦化硫铵",
     "index" : 7,
     "indicators" : {
@@ -83,7 +83,7 @@
       },
       "硫" : {
         "id" : "硫",
-        "value" : 23.8
+        "value" : 23.799999999999997
       }
     },
     "name" : "焦化硫铵",
@@ -126,11 +126,11 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 67.12866,
+        "normal" : 68.67493543665475,
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 45.726175,
+        "normal" : 45.726175233217496,
         "overdose" : 0.0
       }
     },
@@ -151,7 +151,7 @@
       "price" : 3.8,
       "unit" : "吨"
     },
-    "weight" : 112.854836,
+    "weight" : 114.40111066987225,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -165,7 +165,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 112.854835,
+    "normalWeight" : 114.40111066987225,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -196,7 +196,7 @@
       "price" : 1.055,
       "unit" : "吨"
     },
-    "weight" : 823.809524,
+    "weight" : 823.8095238095239,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -225,8 +225,8 @@
   }, {
     "consumes" : {
       "喷浆硫基用95氯化钾" : {
-        "normal" : 284.73604,
-        "overdose" : 49.185586
+        "normal" : 284.73604026845703,
+        "overdose" : 53.59792798530833
       }
     },
     "material" : {
@@ -246,7 +246,7 @@
       "price" : 0.22,
       "unit" : "吨"
     },
-    "weight" : 333.921627,
+    "weight" : 338.33396825376536,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -260,8 +260,8 @@
       }
     },
     "name" : "硫酸",
-    "normalWeight" : 284.73604,
-    "overdoseWeight" : 49.185586,
+    "normalWeight" : 284.73604026845703,
+    "overdoseWeight" : 53.59792798530833,
     "price" : 0.22,
     "unit" : "吨"
   }, {
@@ -427,7 +427,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 114.310604,
+    "weight" : 115.03721143723686,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -448,10 +448,10 @@
   } ],
   "minEpsilon" : 0.001,
   "recipeName" : "GurobiSolver-7",
-  "dryWaterWeight" : 665.203292,
-  "materialCost" : 2599.38325,
+  "dryWaterWeight" : 667.1170851581362,
+  "materialCost" : 2599.3832490757577,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 677.203291,
-  "weight" : 1665.203292
+  "waterWeight" : 679.1170851581361,
+  "weight" : 1667.1170851581362
 }

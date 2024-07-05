@@ -1,5 +1,5 @@
 {
-  "cost" : 2584.00215,
+  "cost" : 2584.002150300738,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -20,7 +20,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.0,
+    "weight" : 379.99999999999994,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -61,7 +61,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 302.20898,
+    "weight" : 302.20897990274085,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -114,7 +114,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 84.375,
+    "weight" : 84.37500000000004,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -175,7 +175,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.326087,
+    "weight" : 35.3260869565217,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -213,7 +213,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -228,13 +228,13 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 150.0,
+    "weight" : 150.00000000000003,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 27,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -265,7 +265,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 43.089933,
+    "weight" : 43.08993314073738,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -289,7 +289,7 @@
       "price" : 8.0,
       "unit" : "吨"
     },
-    "weight" : 2.0,
+    "weight" : 2.0000000000000004,
     "id" : "防结油（白色）",
     "index" : 58,
     "indicators" : { },
@@ -308,7 +308,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 3.0,
+    "weight" : 2.9999999999999996,
     "id" : "防结粉（白色）",
     "index" : 59,
     "indicators" : { },
@@ -379,10 +379,10 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "CBCSolver-3",
-  "dryWaterWeight" : 0.0,
-  "materialCost" : 2370.346751,
+  "dryWaterWeight" : -1.1368683772161603E-13,
+  "materialCost" : 2370.346750300738,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 404.367568,
-  "waterWeight" : 8.71712,
-  "weight" : 1000.0
+  "totalNutrientWeight" : 404.36756756756733,
+  "waterWeight" : 8.717119565217393,
+  "weight" : 999.9999999999999
 }

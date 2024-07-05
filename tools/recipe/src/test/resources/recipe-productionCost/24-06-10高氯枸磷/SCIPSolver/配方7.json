@@ -1,5 +1,5 @@
 {
-  "cost" : 2596.00215,
+  "cost" : 2596.00215030074,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -20,7 +20,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.0,
+    "weight" : 379.99999999999994,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -61,7 +61,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 296.803574,
+    "weight" : 296.8035744973364,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -114,7 +114,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 84.375,
+    "weight" : 84.37500000000001,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -175,7 +175,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.326087,
+    "weight" : 35.32608695652171,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -213,7 +213,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -234,7 +234,7 @@
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -269,7 +269,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.112669,
+    "weight" : 0.11266900350526539,
     "id" : "七钼酸铵",
     "index" : 46,
     "indicators" : {
@@ -302,7 +302,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.38267,
+    "weight" : 48.38266954263659,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -416,10 +416,10 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "SCIPSolver-7",
-  "dryWaterWeight" : 0.0,
-  "materialCost" : 2382.346749,
+  "dryWaterWeight" : -1.1368683772161603E-13,
+  "materialCost" : 2382.34675030074,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 403.0,
-  "waterWeight" : 8.716556,
-  "weight" : 1000.0
+  "waterWeight" : 8.716556220199864,
+  "weight" : 999.9999999999999
 }

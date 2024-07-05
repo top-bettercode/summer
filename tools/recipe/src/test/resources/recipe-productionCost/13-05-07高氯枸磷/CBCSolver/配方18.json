@@ -1,5 +1,5 @@
 {
-  "cost" : 1522.971606,
+  "cost" : 1522.9716055336041,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -24,7 +24,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 474.3083,
+    "weight" : 474.3083003952569,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -54,7 +54,7 @@
       "indicators" : {
         "水溶磷" : {
           "id" : "水溶磷",
-          "value" : 1.4
+          "value" : 1.4000000000000001
         },
         "水溶磷率" : {
           "id" : "水溶磷率",
@@ -66,20 +66,20 @@
         },
         "磷" : {
           "id" : "磷",
-          "value" : 14.0
+          "value" : 14.000000000000002
         }
       },
       "name" : "低白肥（14%）",
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 521.428571,
+    "weight" : 521.4285714285716,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
       "水溶磷" : {
         "id" : "水溶磷",
-        "value" : 1.4
+        "value" : 1.4000000000000001
       },
       "水溶磷率" : {
         "id" : "水溶磷率",
@@ -91,7 +91,7 @@
       },
       "磷" : {
         "id" : "磷",
-        "value" : 14.0
+        "value" : 14.000000000000002
       }
     },
     "name" : "低白肥（14%）",
@@ -107,7 +107,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -128,7 +128,7 @@
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -147,49 +147,12 @@
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "EDTA-镁",
-      "index" : 33,
-      "indicators" : {
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 0.5
-        },
-        "镁" : {
-          "id" : "镁",
-          "value" : 6.0
-        }
-      },
-      "name" : "EDTA-镁",
-      "price" : 29.3,
-      "unit" : "吨"
-    },
-    "weight" : 2.286689,
-    "id" : "EDTA-镁",
-    "index" : 33,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 0.5
-      },
-      "镁" : {
-        "id" : "镁",
-        "value" : 6.0
-      }
-    },
-    "name" : "EDTA-镁",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 29.3,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "material" : {
       "id" : "白泥",
       "index" : 53,
       "indicators" : {
         "物料水分" : {
           "id" : "物料水分",
-          "value" : 7.0
+          "value" : 7.000000000000001
         }
       },
       "name" : "白泥",
@@ -202,13 +165,42 @@
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 7.0
+        "value" : 7.000000000000001
       }
     },
     "name" : "白泥",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "material" : {
+      "id" : "1000亿微生物菌",
+      "index" : 69,
+      "indicators" : {
+        "活性菌" : {
+          "id" : "活性菌",
+          "value" : 1000.0
+        }
+      },
+      "name" : "1000亿微生物菌",
+      "price" : 24.0,
+      "unit" : "吨"
+    },
+    "weight" : 2.7916666666669534,
+    "id" : "1000亿微生物菌",
+    "index" : 69,
+    "indicators" : {
+      "活性菌" : {
+        "id" : "活性菌",
+        "value" : 1000.0
+      }
+    },
+    "name" : "1000亿微生物菌",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 24.0,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.001,
@@ -272,10 +264,10 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "CBCSolver-18",
-  "dryWaterWeight" : 178.02356,
-  "materialCost" : 1309.316193,
+  "dryWaterWeight" : 178.52853849049552,
+  "materialCost" : 1309.3162055336038,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 253.0,
-  "waterWeight" : 193.854516,
-  "weight" : 1178.02356
+  "waterWeight" : 193.84308300395261,
+  "weight" : 1178.5285384904955
 }

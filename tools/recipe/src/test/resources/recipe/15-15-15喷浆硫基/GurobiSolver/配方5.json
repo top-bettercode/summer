@@ -1,15 +1,15 @@
 {
-  "cost" : 2593.383249,
+  "cost" : 2593.3832490757586,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
     "material" : {
-      "id" : "氯化铵（干）",
-      "index" : 6,
+      "id" : "氯化铵（湿）",
+      "index" : 5,
       "indicators" : {
         "氮" : {
           "id" : "氮",
-          "value" : 25.3
+          "value" : 23.5
         },
         "氯离子" : {
           "id" : "氯离子",
@@ -17,20 +17,20 @@
         },
         "物料水分" : {
           "id" : "物料水分",
-          "value" : 1.0
+          "value" : 7.000000000000001
         }
       },
-      "name" : "氯化铵（干）",
-      "price" : 1.25,
+      "name" : "氯化铵（湿）",
+      "price" : 1.15,
       "unit" : "吨"
     },
-    "weight" : 29.167729,
-    "id" : "氯化铵（干）",
-    "index" : 6,
+    "weight" : 29.16772863568218,
+    "id" : "氯化铵（湿）",
+    "index" : 5,
     "indicators" : {
       "氮" : {
         "id" : "氮",
-        "value" : 25.3
+        "value" : 23.5
       },
       "氯离子" : {
         "id" : "氯离子",
@@ -38,13 +38,13 @@
       },
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 1.0
+        "value" : 7.000000000000001
       }
     },
-    "name" : "氯化铵（干）",
+    "name" : "氯化铵（湿）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 1.25,
+    "price" : 1.15,
     "unit" : "吨"
   }, {
     "consumes" : {
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 0.2834,
+        "normal" : 0.32639958635666666,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -81,11 +81,11 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 66.642044,
+        "normal" : 66.51766390549486,
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 42.882141,
+        "normal" : 42.45061858146817,
         "overdose" : 0.0
       }
     },
@@ -106,7 +106,7 @@
       "price" : 3.8,
       "unit" : "吨"
     },
-    "weight" : 109.807585,
+    "weight" : 109.2946820733197,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 109.80758499999999,
+    "normalWeight" : 109.29468207331969,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -155,7 +155,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 26.900237,
+    "weight" : 30.98177891888156,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -212,7 +212,7 @@
       "price" : 1.055,
       "unit" : "吨"
     },
-    "weight" : 772.570977,
+    "weight" : 764.7966115830831,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -241,8 +241,8 @@
   }, {
     "consumes" : {
       "喷浆硫基用95氯化钾" : {
-        "normal" : 284.73604,
-        "overdose" : 47.797013
+        "normal" : 284.73604026845703,
+        "overdose" : 47.44209022198089
       }
     },
     "material" : {
@@ -262,7 +262,7 @@
       "price" : 0.22,
       "unit" : "吨"
     },
-    "weight" : 332.533054,
+    "weight" : 332.1781304904379,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -276,8 +276,8 @@
       }
     },
     "name" : "硫酸",
-    "normalWeight" : 284.73604,
-    "overdoseWeight" : 47.797013,
+    "normalWeight" : 284.73604026845703,
+    "overdoseWeight" : 47.44209022198089,
     "price" : 0.22,
     "unit" : "吨"
   }, {
@@ -443,7 +443,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 120.360585,
+    "weight" : 122.14014196439184,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -464,10 +464,10 @@
   } ],
   "minEpsilon" : 0.001,
   "recipeName" : "GurobiSolver-5",
-  "dryWaterWeight" : 633.840167,
-  "materialCost" : 2593.383249,
+  "dryWaterWeight" : 631.0590736657964,
+  "materialCost" : 2593.383249075758,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 645.840167,
-  "weight" : 1633.840167
+  "waterWeight" : 643.0590736657962,
+  "weight" : 1631.0590736657964
 }

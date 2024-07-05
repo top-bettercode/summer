@@ -1,7 +1,52 @@
 {
-  "cost" : 2562.346312,
+  "cost" : 2562.3463116751477,
   "includeProductionCost" : true,
   "materials" : [ {
+    "consumes" : { },
+    "material" : {
+      "id" : "氯化铵（湿）",
+      "index" : 5,
+      "indicators" : {
+        "氮" : {
+          "id" : "氮",
+          "value" : 23.5
+        },
+        "氯离子" : {
+          "id" : "氯离子",
+          "value" : 66.7
+        },
+        "物料水分" : {
+          "id" : "物料水分",
+          "value" : 7.000000000000001
+        }
+      },
+      "name" : "氯化铵（湿）",
+      "price" : 1.19,
+      "unit" : "吨"
+    },
+    "weight" : 106.25402493554846,
+    "id" : "氯化铵（湿）",
+    "index" : 5,
+    "indicators" : {
+      "氮" : {
+        "id" : "氮",
+        "value" : 23.5
+      },
+      "氯离子" : {
+        "id" : "氯离子",
+        "value" : 66.7
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "氯化铵（湿）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.19,
+    "unit" : "吨"
+  }, {
     "consumes" : { },
     "material" : {
       "id" : "氯化铵（干）",
@@ -24,7 +69,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 383.309882,
+    "weight" : 260.5894436108004,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -69,7 +114,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.049477,
+        "normal" : 2.1071463563992645,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -81,7 +126,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.447548,
+        "normal" : 2.5164190140845086,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -106,7 +151,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 4.497025,
+    "weight" : 4.623565370483773,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -120,7 +165,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 4.497025,
+    "normalWeight" : 4.623565370483773,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -155,7 +200,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 283.94761,
+    "weight" : 291.93750000000006,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "indicators" : {
@@ -216,7 +261,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 118.883057,
+    "weight" : 122.22826086956523,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -254,7 +299,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -269,13 +314,13 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 5.572854,
+    "weight" : 30.072882852470492,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -299,7 +344,7 @@
       "indicators" : {
         "物料水分" : {
           "id" : "物料水分",
-          "value" : 7.0
+          "value" : 7.000000000000001
         }
       },
       "name" : "白泥",
@@ -312,7 +357,7 @@
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 7.0
+        "value" : 7.000000000000001
       }
     },
     "name" : "白泥",
@@ -381,7 +426,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 227.76048,
+    "weight" : 203.26045048086283,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -433,7 +478,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 38.705199,
+    "energyFee" : 37.879411139755675,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -445,7 +490,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.739709
+      "value" : 1.6896612811973135
     }, {
       "it" : {
         "id" : "生物质",
@@ -462,13 +507,13 @@
     "minEpsilon" : 0.001,
     "otherFee" : 156.0,
     "taxFee" : 29.04,
-    "totalFee" : 225.98265
+    "totalFee" : 225.14860525115324
   },
   "recipeName" : "GurobiSolver-12",
-  "dryWaterWeight" : 108.970908,
-  "materialCost" : 2336.363661,
+  "dryWaterWeight" : 103.96612811973114,
+  "materialCost" : 2337.1977064239945,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 123.970908,
-  "weight" : 1108.970908
+  "waterWeight" : 118.9661281197312,
+  "weight" : 1103.9661281197311
 }

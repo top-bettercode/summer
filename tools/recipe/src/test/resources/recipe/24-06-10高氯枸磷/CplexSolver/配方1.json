@@ -1,5 +1,5 @@
 {
-  "cost" : 2364.34675,
+  "cost" : 2364.346750300739,
   "includeProductionCost" : false,
   "materials" : [ {
     "consumes" : { },
@@ -61,7 +61,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 296.803574,
+    "weight" : 296.8035744973365,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -114,7 +114,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 84.375,
+    "weight" : 84.37499999999991,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -175,7 +175,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.326087,
+    "weight" : 35.32608695652171,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -213,7 +213,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -234,7 +234,7 @@
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -265,7 +265,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.495339,
+    "weight" : 48.49533854614191,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -321,9 +321,9 @@
   "minEpsilon" : 0.001,
   "recipeName" : "CplexSolver-1",
   "dryWaterWeight" : 0.0,
-  "materialCost" : 2364.34675,
+  "materialCost" : 2364.346750300739,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 403.0,
-  "waterWeight" : 8.71712,
+  "waterWeight" : 8.71711956521739,
   "weight" : 1000.0
 }

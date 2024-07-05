@@ -1,5 +1,5 @@
 {
-  "cost" : 2610.00215,
+  "cost" : 2610.0021503007397,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -61,7 +61,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 296.803574,
+    "weight" : 296.8035744973362,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -114,7 +114,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 84.375,
+    "weight" : 84.37500000000001,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -175,7 +175,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.326087,
+    "weight" : 35.32608695652171,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -213,7 +213,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -234,7 +234,7 @@
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -269,7 +269,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.2003,
+    "weight" : 0.20030045067601968,
     "id" : "七钼酸铵",
     "index" : 46,
     "indicators" : {
@@ -302,7 +302,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.295038,
+    "weight" : 48.29503809546605,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -416,10 +416,10 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "SCIPSolver-11",
-  "dryWaterWeight" : -1.0E-6,
-  "materialCost" : 2396.346678,
+  "dryWaterWeight" : -1.1368683772161603E-13,
+  "materialCost" : 2396.3467503007396,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 403.0,
-  "waterWeight" : 8.716118,
-  "weight" : 999.999999
+  "totalNutrientWeight" : 402.99999999999994,
+  "waterWeight" : 8.716118062964012,
+  "weight" : 999.9999999999999
 }

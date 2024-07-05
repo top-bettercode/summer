@@ -1,5 +1,5 @@
 {
-  "cost" : 2615.00215,
+  "cost" : 2615.0021503007406,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -61,7 +61,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 340.248873,
+    "weight" : 340.2488728649144,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -114,7 +114,7 @@
       "price" : 3.25,
       "unit" : "吨"
     },
-    "weight" : 66.674142,
+    "weight" : 66.6741413203819,
     "id" : "55磷酸一铵（粉）",
     "index" : 9,
     "indicators" : {
@@ -175,7 +175,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 37.863498,
+    "weight" : 37.86349881437033,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -213,7 +213,7 @@
       "indicators" : {
         "水溶磷" : {
           "id" : "水溶磷",
-          "value" : 3.6
+          "value" : 3.5999999999999996
         },
         "水溶磷率" : {
           "id" : "水溶磷率",
@@ -221,7 +221,7 @@
         },
         "物料水分" : {
           "id" : "物料水分",
-          "value" : 7.0
+          "value" : 7.000000000000001
         },
         "磷" : {
           "id" : "磷",
@@ -232,13 +232,13 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 20.213488,
+    "weight" : 20.213487000333377,
     "id" : "中白肥（24%)",
     "index" : 25,
     "indicators" : {
       "水溶磷" : {
         "id" : "水溶磷",
-        "value" : 3.6
+        "value" : 3.5999999999999996
       },
       "水溶磷率" : {
         "id" : "水溶磷率",
@@ -246,7 +246,7 @@
       },
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 7.0
+        "value" : 7.000000000000001
       },
       "磷" : {
         "id" : "磷",
@@ -266,7 +266,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -287,7 +287,7 @@
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -403,10 +403,10 @@
     "totalFee" : 213.6554
   },
   "recipeName" : "COPTSolver-12",
-  "dryWaterWeight" : 1.0E-6,
-  "materialCost" : 2401.346752,
+  "dryWaterWeight" : 0.0,
+  "materialCost" : 2401.3467503007405,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 410.579459,
-  "waterWeight" : 10.308186,
-  "weight" : 1000.000001
+  "totalNutrientWeight" : 410.57945887201123,
+  "waterWeight" : 10.308185621367524,
+  "weight" : 1000.0
 }

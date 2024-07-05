@@ -1,5 +1,5 @@
 {
-  "cost" : 2630.00215,
+  "cost" : 2630.0021503007406,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -20,7 +20,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 383.395426,
+    "weight" : 383.3954260687286,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -61,7 +61,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 343.291817,
+    "weight" : 343.2918167296253,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -114,7 +114,7 @@
       "price" : 3.25,
       "unit" : "吨"
     },
-    "weight" : 53.497942,
+    "weight" : 53.49794238683128,
     "id" : "55磷酸一铵（粉）",
     "index" : 9,
     "indicators" : {
@@ -175,7 +175,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 64.814815,
+    "weight" : 64.81481481481481,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -213,7 +213,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -234,7 +234,7 @@
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -351,9 +351,9 @@
   },
   "recipeName" : "COPTSolver-15",
   "dryWaterWeight" : 0.0,
-  "materialCost" : 2416.34675,
+  "materialCost" : 2416.3467503007405,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 413.749705,
-  "waterWeight" : 9.21615,
+  "totalNutrientWeight" : 413.7497050480786,
+  "waterWeight" : 9.216150441672818,
   "weight" : 1000.0
 }

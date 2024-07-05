@@ -1,5 +1,5 @@
 {
-  "cost" : 2492.546306,
+  "cost" : 2492.546305422064,
   "includeProductionCost" : true,
   "materials" : [ {
     "consumes" : { },
@@ -24,7 +24,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 353.130714,
+    "weight" : 353.1307140029849,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -65,7 +65,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 1.511816,
+        "normal" : 1.5118164158264873,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -73,7 +73,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.859623,
+        "normal" : 2.8596230974820442,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -81,11 +81,11 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 3.5E-4,
+        "normal" : 3.5044320748056634E-4,
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 7.432552,
+        "normal" : 7.432551462043226,
         "overdose" : 0.0
       }
     },
@@ -106,7 +106,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 11.804342,
+    "weight" : 11.804341418559238,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -120,7 +120,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 11.804341,
+    "normalWeight" : 11.804341418559238,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -155,7 +155,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 271.434812,
+    "weight" : 271.4348127289115,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -216,7 +216,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 78.925709,
+    "weight" : 78.92570994388275,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -273,7 +273,7 @@
       "price" : 1.05,
       "unit" : "吨"
     },
-    "weight" : 133.905948,
+    "weight" : 133.90594444880648,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -307,7 +307,7 @@
       "indicators" : {
         "氯离子" : {
           "id" : "氯离子",
-          "value" : 47.7
+          "value" : 47.699999999999996
         },
         "物料水分" : {
           "id" : "物料水分",
@@ -322,13 +322,13 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 233.333333,
+    "weight" : 233.33333333333334,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
-        "value" : 47.7
+        "value" : 47.699999999999996
       },
       "物料水分" : {
         "id" : "物料水分",
@@ -363,7 +363,7 @@
       "price" : 0.295,
       "unit" : "吨"
     },
-    "weight" : 0.001,
+    "weight" : 9.99999999692136E-4,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -467,7 +467,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 1.0E-5
+        "value" : 9.999999996512798E-6
       },
       "DEPRECIATION" : {
         "it" : {
@@ -486,7 +486,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 35.168424,
+    "energyFee" : 35.16841621961885,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -498,7 +498,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.525359
+      "value" : 1.5253585587647784
     }, {
       "it" : {
         "id" : "生物质",
@@ -513,15 +513,15 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.001,
-    "otherFee" : 114.00042,
-    "taxFee" : 25.260038,
-    "totalFee" : 176.17317
+    "otherFee" : 114.00041999999985,
+    "taxFee" : 25.260037799999985,
+    "totalFee" : 176.1731627598149
   },
   "recipeName" : "GurobiSolver-5",
-  "dryWaterWeight" : 102.535858,
-  "materialCost" : 2316.373143,
+  "dryWaterWeight" : 102.53585587647808,
+  "materialCost" : 2316.373142662249,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0,
-  "waterWeight" : 102.535858,
-  "weight" : 1102.535858
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 102.53585587647784,
+  "weight" : 1102.535855876478
 }
