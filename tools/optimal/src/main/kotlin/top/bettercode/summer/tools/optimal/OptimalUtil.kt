@@ -37,4 +37,11 @@ object OptimalUtil {
     val Double.isInt: Boolean
         get() = this.toBigDecimal().compareTo(this.toLong().toBigDecimal()) == 0
 
+    /**
+     * 小数位数
+     */
+    @JvmStatic
+    val Double.scale: Int
+        get() = this.toBigDecimal().scale()
+
 }

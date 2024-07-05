@@ -151,12 +151,29 @@ abstract class Solver(
 
 
     abstract fun IVar.between(lb: Double, ub: Double)
-    abstract fun IVar.between(lb: IVar, ub: IVar)
+
+    open fun IVar.between(lb: IVar, ub: IVar) {
+        ge(lb)
+        le(ub)
+    }
 
     abstract fun Array<out IVar>.between(lb: Double, ub: Double)
     abstract fun Iterable<IVar>.between(lb: Double, ub: Double)
-    abstract fun Array<out IVar>.between(lb: IVar, ub: IVar)
-    abstract fun Iterable<IVar>.between(lb: IVar, ub: IVar)
+
+    /**
+     * lb<=this<=ub
+     * this-lb>=0
+     * this-ub<=0
+     */
+    open fun Array<out IVar>.between(lb: IVar, ub: IVar) {
+        this.ge(lb)
+        this.le(ub)
+    }
+
+    open fun Iterable<IVar>.between(lb: IVar, ub: IVar) {
+        this.ge(lb)
+        this.le(ub)
+    }
 
     open fun IVar.isTrue() {
         eq(1.0)
@@ -177,21 +194,86 @@ abstract class Solver(
         (whole * ub).ge(this)
     }
 
-    abstract fun IVar.geIf(value: Double, bool: IVar)
+    /**
+     * <pre>
+     * bool为1时：var >= value
+     *
+     * value <= var <= dub
+     * dlb*(1-bool) + value*bool <= var <= dub
+     * dlb <= var - value*bool + dlb*bool
+     * dlb <= var - (value-dlb)*bool
+     *
+     * bool为0时：dlb <= var <= dub
+     *
+     * </pre>
+     *
+     */
+    open fun IVar.geIf(value: Double, bool: IVar) {
+        val lb = this.lb
+        arrayOf(this, bool * (-(value - lb))).ge(lb)
+    }
 
     open fun IVar.gtIf(value: Double, bool: IVar) {
         geIf(value + epsilon, bool)
     }
 
-    abstract fun IVar.geIfNot(value: Double, bool: IVar)
+    /**
+     * <pre>
+     * bool为0时：var >= value
+     *
+     * value <= var <= dub
+     * dlb*bool + value*(1-bool) <= var <= dub
+     * value <= var + value*bool - dlb*bool
+     * value <= var + (value-dlb)*bool
+     *
+     * bool为1时：dlb <= var <= dub
+     *
+     * </pre>
+     *
+     */
+    open fun IVar.geIfNot(value: Double, bool: IVar) {
+        arrayOf(this, bool * (value - this.lb)).ge(value)
+    }
 
     open fun IVar.gtIfNot(value: Double, bool: IVar) {
         geIfNot(value + epsilon, bool)
     }
 
-    abstract fun IVar.leIf(value: Double, bool: IVar)
+    /**
+     * <pre>
+     * bool为1时：var <= value
+     *
+     * dlb <= var <= value
+     * dlb <= var <= value*bool + dub*(1-bool)
+     * var <= value*bool + dub*(1-bool)
+     * var - (value-dub)*bool <=  dub
+     *
+     * bool为0时：dlb <= var <= dub
+     *
+     * </pre>
+     *
+     */
+    open fun IVar.leIf(value: Double, bool: IVar) {
+        arrayOf(this, bool * -(value - this.ub)).le(this.ub)
+    }
 
-    abstract fun IVar.leIfNot(value: Double, bool: IVar)
+    /**
+     * <pre>
+     * bool为0时：var <= value
+     *
+     * dlb <= var <= value
+     * dlb <= var <= value*(1-bool) + dub*bool
+     * var + (value-dub)*bool <=  value
+     *
+     * bool为1时：dlb <= var <= dub
+     *
+     * </pre>
+     *
+     */
+    open fun IVar.leIfNot(value: Double, bool: IVar) {
+        arrayOf(this, bool * (value - this.ub)).le(value)
+    }
+
     open fun IVar.ltIf(value: Double, bool: IVar) {
         leIf(value - epsilon, bool)
     }
@@ -200,7 +282,36 @@ abstract class Solver(
         leIfNot(value - epsilon, bool)
     }
 
-    abstract fun IVar.eqIf(value: Double, bool: IVar)
+    /**
+     * <pre>
+     * bool为1时：var == value
+     *           value <= var <= value
+     *           value*bool + dlb*(1-bool) <= var <= value*bool + dub*(1-bool)
+     *           dlb <= var-value*bool + dlb*bool
+     *                  var-value*bool + dub*bool <= dub
+     *           dlb <= var - (value-dlb)*bool
+     *                  var - (value-dub)*bool <=  dub
+     *
+     * bool为0时：dlb <= var <= dub
+     *
+     * </pre>
+     */
+    open fun IVar.eqIf(value: Double, bool: IVar) {
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIf(2.0, bool)
+        geIf(value, bool1)
+        leIf(value, bool2)
+    }
+
+    /**
+     * <pre>
+     * bool为0时：var == value
+     *
+     * bool为1时：dlb <= var <= dub
+     *
+     * </pre>
+     */
     open fun IVar.eqIfNot(value: Double, bool: IVar) {
         val bool1 = boolVar()
         val bool2 = boolVar()
@@ -237,8 +348,38 @@ abstract class Solver(
         ltIf(value, bool2)
     }
 
-    abstract fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar)
-    abstract fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar)
+    /**
+     * <pre>
+     * bool为1时：lb <= var <= ub
+     *
+     * bool为0时：dlb <= var <= dub
+     *
+     * </pre>
+     */
+    open fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIf(2.0, bool)
+        geIf(lb, bool1)
+        leIf(ub, bool2)
+    }
+
+    /**
+     * <pre>
+     * bool为0时：lb <= var <= ub
+     *
+     * bool为1时：dlb <= var <= dub
+     *
+     * </pre>
+     */
+    open fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar) {
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIfNot(2.0, bool)
+        geIf(lb, bool1)
+        leIf(ub, bool2)
+    }
+
     open fun Expr.onlyEnforceIf(condition: Expr): IVar? {
         val boolVar = boolVar()
         val whenVariable = condition.variable

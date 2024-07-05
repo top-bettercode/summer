@@ -210,9 +210,9 @@ data class Recipe(
         }
 
         if (compares.isDiff) {
-            throw IllegalRecipeException("${requirement.productName}-配方不一致\n$result")
+            throw IllegalRecipeException("${requirement.id}:${requirement.productName}-配方不一致\n$result")
         } else if (log.isDebugEnabled) {
-            log.debug("${requirement.productName}-配方一致\n$result")
+            log.debug("${requirement.id}:${requirement.productName}-配方一致\n$result")
         }
     }
 
@@ -426,15 +426,17 @@ data class Recipe(
         // 条件约束，当条件1满足时，条件2必须满足
         val materialConditions = requirement.materialConditionConstraints
         for ((whenCon, thenCon) in materialConditions) {
+            val whenValue = whenCon.condition.value
+            val thenValue = thenCon.condition.value
+
             val whenWeight =
                 materials.filter { whenCon.materials.contains(it.id) }.sumOf { it.weight }
-                    .scale(scale)
+                    .scale(whenValue.scale)
             val thenWeight =
                 materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
-                    .scale(scale)
+                    .scale(whenValue.scale)
             var whenTrue = false
-            val whenValue = whenCon.condition.value.scale(scale)
-            val thenValue = thenCon.condition.value.scale(scale)
+
             when (whenCon.condition.operator) {
                 Operator.EQ -> {
                     whenTrue = whenWeight == whenValue
@@ -466,6 +468,11 @@ data class Recipe(
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
+                                    whenCon.materials,
+                                    RecipeCondition(value = whenWeight)
+                                )
+                            } ${
+                                MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
                                 )
@@ -478,6 +485,11 @@ data class Recipe(
                     if (whenTrue && thenWeight == thenValue) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    whenCon.materials,
+                                    RecipeCondition(value = whenWeight)
+                                )
+                            } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
@@ -492,6 +504,11 @@ data class Recipe(
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
+                                    whenCon.materials,
+                                    RecipeCondition(value = whenWeight)
+                                )
+                            } ${
+                                MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
                                 )
@@ -504,6 +521,11 @@ data class Recipe(
                     if (whenTrue && thenWeight >= thenValue) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    whenCon.materials,
+                                    RecipeCondition(value = whenWeight)
+                                )
+                            } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
@@ -518,6 +540,11 @@ data class Recipe(
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
                                 MaterialCondition(
+                                    whenCon.materials,
+                                    RecipeCondition(value = whenWeight)
+                                )
+                            } ${
+                                MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
                                 )
@@ -530,6 +557,11 @@ data class Recipe(
                     if (whenTrue && thenWeight > thenValue) {
                         throw IllegalRecipeException(
                             "${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                                MaterialCondition(
+                                    whenCon.materials,
+                                    RecipeCondition(value = whenWeight)
+                                )
+                            } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
