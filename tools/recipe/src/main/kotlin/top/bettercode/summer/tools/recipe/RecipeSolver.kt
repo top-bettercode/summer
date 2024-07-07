@@ -23,6 +23,9 @@ object RecipeSolver {
         minEpsilon: Double = OptimalUtil.DEFAULT_EPSILON
     ): Recipe? {
         solver.apply {
+            if (log.isDebugEnabled) {
+                log.debug("${requirement.id}:${requirement.productName} ${solver.name}开始求解...")
+            }
             val s = System.currentTimeMillis()
             val prepareData = PrepareSolveData.of(
                 this,
@@ -34,7 +37,7 @@ object RecipeSolver {
             // 求解
             val solve = prepareData.solve(this, minMaterialNum, minEpsilon = minEpsilon)
             val e = System.currentTimeMillis()
-            log.info("${requirement.id}:${requirement.productName} ${solver.name}求解耗时：" + (e - s) + "ms")
+            log.info("${requirement.id}:${requirement.productName} ${solver.name}求解完成，耗时：" + (e - s) + "ms")
             return solve
         }
     }

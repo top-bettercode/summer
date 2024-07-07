@@ -12,7 +12,7 @@ import kotlin.math.min
 
 /**
  * https://guide.coap.online/copt/zh-doc/
- * https://github.com/COPT-Public/COPT-Release 7.1.0
+ * https://github.com/COPT-Public/COPT-Release 7.1.4
  *
  * without license the size is limited to 2000 variables and 2000 constraints
  * without license LP size is limited to 10000 variables and 10000 constraints

@@ -19,4 +19,8 @@ class CBCSolver @JvmOverloads constructor(
     epsilon = epsilon,
     minEpsilon = minEpsilon,
     name = name
-)
+){
+    init{
+//        solver.setSolverSpecificParametersAsString("integerTolerance=1e-6")
+    }
+}

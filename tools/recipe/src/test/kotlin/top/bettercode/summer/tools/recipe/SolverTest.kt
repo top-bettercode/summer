@@ -32,8 +32,9 @@ class SolverTest {
 //        val epsilon = 1e-3
 //        val require = "cplex-1e-3-notMix"  // eqIfNot方法存在问题，使用自定义eqIfNot解决
 //        val require = "gurobi-1e-3-error" //eqIfNot方法存在问题，使用自定义eqIfNot解决
-        val epsilon = 1e-4
-        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败，未解决
+        val require = "gurobi-1e-3-error2" //未解决
+//        val epsilon = 1e-4
+//        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败，未解决
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
 
@@ -79,16 +80,24 @@ class SolverTest {
 
     @Test
     fun singe() {
-        val epsilon = 1e-3
-        val require = "scip-1e-3-fail" //升级ortools-java:9.10.4067 解决
-//        val require = "gurobi-1e-3-error"
+//        val epsilon = 1e-3
+//        val require = "scip-1e-3-fail" //升级ortools-java:9.10.4067 解决
+//        val epsilon = 1e-2
+//        val require = "scip-1e-2-fail-98" //降级 ortools-java:9.9.3963 解决
+        val epsilon = 1e-4
+//        val require = "cbc-1e-4-fail" //未解决
+//        val require = "scip-1e-4-fail-99" //降级 ortools-java:9.8.3296 解决
+        val require = "copt-1e-4-fail" //未解决
+
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
 
         val requirement = RecipeRequirement.read(
             content
         )
-        val solver = SCIPSolver(epsilon = epsilon, minEpsilon = epsilon)
+//        val solver = SCIPSolver(epsilon = epsilon, minEpsilon = epsilon)
+//        val solver = CBCSolver(epsilon = epsilon, minEpsilon = epsilon)
+        val solver = COPTSolver(epsilon = epsilon, minEpsilon = epsilon)
         val solved = RecipeSolver.solve(
             solver = solver,
             requirement = requirement,

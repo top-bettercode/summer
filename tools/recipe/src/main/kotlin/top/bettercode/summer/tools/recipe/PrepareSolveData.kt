@@ -452,7 +452,7 @@ data class PrepareSolveData(
             val minimize = objectiveVars.minimize()
             solve()
             if (!isOptimal()) {
-                log.warn("$${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
+                log.warn("${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
                 return null
             }
 
