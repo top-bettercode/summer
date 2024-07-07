@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.optimal.copt.COPTSolver
@@ -15,8 +16,8 @@ import java.io.File
  * @author Peter Wu
  */
 class SolverTest {
-    val epsilon = 1e-4
-    val minEpsilon = 0.0
+    val epsilon = 1e-3
+    val minEpsilon = 1e-3
     val solverTypes = listOf(
         SolverType.COPT,
         SolverType.GUROBI,
@@ -27,11 +28,12 @@ class SolverTest {
 
     @Test
     fun compareTo() {
-        //读取 require/cplex-notMix-test.json
-        //eqIfNot方法存在问题，
-//        val require = "cplex-notMix-test"
-//        val require = "gurobi-1e-3-error"
-        val require = "gurobi-1e-4-error"
+        //
+//        val epsilon = 1e-3
+//        val require = "cplex-1e-3-notMix"  // eqIfNot方法存在问题，使用自定义eqIfNot解决
+//        val require = "gurobi-1e-3-error" //eqIfNot方法存在问题，使用自定义eqIfNot解决
+        val epsilon = 1e-4
+        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败，未解决
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
 
@@ -58,11 +60,16 @@ class SolverTest {
             try {
                 solved?.validate()
             } catch (e: Exception) {
-                e.printStackTrace()
-                it.writeLp("${System.getProperty("user.dir")}/src/test/resources/require/$require.lp")
+                it.writeLp("${System.getProperty("user.dir")}/build/$require.lp")
+                throw e
             }
             if (lastSolved != null) {
-                lastSolved!!.compareTo(solved)
+                try {
+                    lastSolved!!.compareTo(solved)
+                } catch (e: Exception) {
+                    it.writeLp("${System.getProperty("user.dir")}/build/$require.lp")
+                    throw e
+                }
             }
             if (solved != null) {
                 lastSolved = solved
@@ -72,8 +79,9 @@ class SolverTest {
 
     @Test
     fun singe() {
-//        val require = "scip-fail-test"
-        val require = "gurobi-1e-3-error"
+        val epsilon = 1e-3
+        val require = "scip-1e-3-fail" //升级ortools-java:9.10.4067 解决
+//        val require = "gurobi-1e-3-error"
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
 
@@ -87,8 +95,8 @@ class SolverTest {
             minMaterialNum = true,
             minEpsilon = minEpsilon
         )
-        solver.writeLp("${System.getProperty("user.dir")}/src/test/resources/require/$require.lp")
+        solver.writeLp("${System.getProperty("user.dir")}/build/$require.lp")
         solved?.validate()
-
+        Assertions.assertNotNull(solved)
     }
 }
