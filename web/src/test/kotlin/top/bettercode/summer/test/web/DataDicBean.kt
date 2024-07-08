@@ -18,13 +18,13 @@ open class DataDicBean {
     var number2: BigDecimal? = null
 
     @JsonDefault(fieldName = "number2")
-    @JsonBigDecimal(scale = 3, reduceFraction = true)
+    @JsonBigDecimal(scale = 3, stripTrailingZeros = true)
     var number22: BigDecimal? = null
 
-    @JsonBigDecimal(scale = 4, toPlainString = true, percent = true, reduceFraction = true)
+    @JsonBigDecimal(scale = 4, toPlainString = true, percent = true, stripTrailingZeros = true)
     var number3: BigDecimal? = null
 
-    @JsonBigDecimal(scale = 4, toPlainString = true, reduceFraction = true)
+    @JsonBigDecimal(scale = 4, toPlainString = true, stripTrailingZeros = true)
     var number4: BigDecimal? = null
     var name: String? = null
     var code: String? = null

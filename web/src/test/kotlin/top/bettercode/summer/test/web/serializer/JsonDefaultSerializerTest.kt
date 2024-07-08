@@ -49,7 +49,7 @@ class JsonDefaultSerializerTest {
                 "{\"number1\":100,\"number22\":null,\"price\":0,\"path\":\"/a.jpg\",\"pathUrl\":\"https://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean = DataDicBean()
-        dicBean.number2 = BigDecimal(10)
+        dicBean.number2 = BigDecimal(10.00000)
         Assertions.assertEquals(
                 "{\"number1\":0,\"number2\":10.000,\"number22\":10,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"https://127.0.0.1/default.jpg\",\"path1\":\"\"}",
                 objectMapper.writeValueAsString(dicBean))

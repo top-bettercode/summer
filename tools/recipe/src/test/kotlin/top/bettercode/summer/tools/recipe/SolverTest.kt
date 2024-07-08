@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.recipe
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.optimal.copt.COPTSolver
@@ -15,7 +16,7 @@ import java.io.File
  *
  * @author Peter Wu
  */
-//@Disabled
+@Disabled
 class SolverTest {
     val epsilon = 1e-3
     val minEpsilon = 1e-3

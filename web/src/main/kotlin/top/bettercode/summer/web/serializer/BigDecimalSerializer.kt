@@ -18,7 +18,7 @@ class BigDecimalSerializer @JvmOverloads constructor(
     private val divisor: BigDecimal? = null,
     private val roundingMode: RoundingMode = RoundingMode.HALF_UP,
     private val toPlainString: Boolean = false,
-    private val reduceFraction: Boolean = false,
+    private val stripTrailingZeros: Boolean = false,
     private val percent: Boolean = false
 ) : StdScalarSerializer<Number>(Number::class.java), ContextualSerializer {
     override fun serialize(value: Number, gen: JsonGenerator, provider: SerializerProvider?) {
@@ -35,20 +35,20 @@ class BigDecimalSerializer @JvmOverloads constructor(
         } else if (content.scale() != scale) {
             content = content.setScale(scale, roundingMode)
         }
-        if (reduceFraction) {
+        if (stripTrailingZeros) {
             content = content.stripTrailingZeros()
         }
         if (toPlainString) {
             gen.writeString(content.toPlainString())
         } else {
-            gen.writeNumber(content)
+            gen.writeNumber(content.toPlainString().toBigDecimal())
         }
         if (percent) {
             val outputContext = gen.outputContext
             val fieldName = outputContext.currentName
             var percent = content.multiply(BigDecimal(100))
                 .setScale(scale - 2, roundingMode)
-            if (reduceFraction) {
+            if (stripTrailingZeros) {
                 percent = percent.stripTrailingZeros()
             }
             gen.writeStringField(fieldName + "Pct", "${percent.toPlainString()}%")
@@ -78,7 +78,7 @@ class BigDecimalSerializer @JvmOverloads constructor(
                 if ("" == divisor) null else BigDecimal(divisor),
                 annotation.roundingMode,
                 annotation.toPlainString,
-                annotation.reduceFraction,
+                annotation.stripTrailingZeros,
                 annotation.percent
             )
         }

@@ -65,7 +65,7 @@ class CustomNullSerializer(
                     if ("" == divisor) null else BigDecimal(divisor),
                     jsonBigDecimal.roundingMode,
                     jsonBigDecimal.toPlainString,
-                    jsonBigDecimal.reduceFraction,
+                    jsonBigDecimal.stripTrailingZeros,
                     jsonBigDecimal.percent
                 ).serialize(
                     `val` as BigDecimal, gen,

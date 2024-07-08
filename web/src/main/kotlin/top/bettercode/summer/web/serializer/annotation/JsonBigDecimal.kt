@@ -25,13 +25,13 @@ annotation class JsonBigDecimal(
          */
         val scale: Int = 2, val roundingMode: RoundingMode = RoundingMode.HALF_UP,
         /**
-         * @return 序列化为字符
+         * @return 非科学计数法显示
          */
         val toPlainString: Boolean = false,
         /**
-         * @return 当小数位为零时，是否精简小数位
+         * @return 是否删除尾部的0(保持数值相等)
          */
-        val reduceFraction: Boolean = false,
+        val stripTrailingZeros: Boolean = false,
         /**
          * @return 扩展序列化百分比字段
          */
