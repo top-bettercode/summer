@@ -221,7 +221,7 @@ data class Recipe(
 
         if (compares.isDiff) {
             if (costEq && productionCostEq) {
-                log.warn("${requirement.id}:${requirement.productName}推优结果相同-配方不一致\n$result")
+                log.warn("${requirement.id}:${requirement.productName}推优成本相同-配方不一致\n$result")
             } else
                 throw IllegalRecipeException("${requirement.id}:${requirement.productName}-配方不一致\n$result")
         } else if (log.isDebugEnabled) {
