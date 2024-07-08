@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.optimal.copt
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.optimal.OutLimitedException
 import top.bettercode.summer.tools.optimal.Solver
 
 /**
@@ -11,6 +12,35 @@ import top.bettercode.summer.tools.optimal.Solver
 open class COPTSolverTest {
 
     open val solver: Solver = COPTSolver(logging = true, epsilon = 1e-7)
+
+    @Test
+    fun readwrite() {
+        solver.use {
+            it.apply {
+                val var1 = numVar(10.0, 10.0)
+                val var2 = numVar(10.0, 10.0)
+                val var3 = numVar(20.0, 20.0)
+                val var4 = var1 + var2 * 2.0 + 10.0 + var3
+                solve()
+                System.err.println(var4.value)
+                Assertions.assertEquals(60.0, var4.value)
+            }
+            it.write("build/test.lp")
+            it.reset()
+            it.read("build/test.lp")
+            it.apply {
+                solve()
+                Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+            }
+            it.write("build/test.mps")
+            it.reset()
+            it.read("build/test.mps")
+            it.apply {
+                solve()
+                Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+            }
+        }
+    }
 
     @Test
     fun operator() {
@@ -790,7 +820,7 @@ open class COPTSolverTest {
     open fun lpNumVariables() {
         solver.use {
             it.lpNumVariables(10000)
-            Assertions.assertThrows(copt.CoptException::class.java) {
+            Assertions.assertThrows(OutLimitedException::class.java) {
                 it.lpNumVariables(10001)
             }
         }
@@ -800,7 +830,7 @@ open class COPTSolverTest {
     open fun numVariables() {
         solver.use {
             it.numVariables(2000)
-            Assertions.assertThrows(copt.CoptException::class.java) {
+            Assertions.assertThrows(OutLimitedException::class.java) {
                 it.numVariables(2001)
             }
         }

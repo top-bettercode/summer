@@ -482,7 +482,10 @@ data class PrepareSolveData(
                     if (log.isDebugEnabled) {
                         log.debug("${solver.name} ${solver.epsilon} find optimal solution:${getResultStatus()}")
                     }
-                    recipe = recipe(recipeName, minEpsilon, recipe.cost)
+                    val minMaterialsCount =
+                        recipeMaterials.filter { it.value.weight.value > 0.0 }.count()
+                    if (materialsCount > minMaterialsCount)
+                        recipe = recipe(recipeName, minEpsilon, recipe.cost)
                 }
             }
             return recipe

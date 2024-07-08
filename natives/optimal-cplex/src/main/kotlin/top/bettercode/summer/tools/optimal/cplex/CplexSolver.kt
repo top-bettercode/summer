@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.optimal.cplex
 
 import ilog.concert.IloLinearNumExpr
 import ilog.concert.IloObjective
+import ilog.cplex.CpxException
 import ilog.cplex.IloCplex
 import ilog.cplex.IloCplex.Param
 import ilog.cplex.IloCplex.Status
@@ -56,7 +57,15 @@ class CplexSolver @JvmOverloads constructor(
         model.setParam(Param.TimeLimit, seconds.toDouble())
     }
 
-    override fun triggerLimit(): Boolean {
+    override fun read(filename: String) {
+        model.importModel(filename)
+    }
+
+    override fun write(filename: String) {
+        model.exportModel(filename)
+    }
+
+    override fun solve() {
         val numVariables = numVariables()
         val numConstraints = numConstraints()
         val nnZs = model.nnZs
@@ -66,24 +75,17 @@ class CplexSolver @JvmOverloads constructor(
             numVariables,
             numConstraints
         )
-        val bool =
-            nnZs > communityLimits || numVariables > communityLimits || numConstraints > communityLimits
-        if (bool) {
-            log.error("$name 变量或约束过多，非零元数量：$nnZs 变量数量：$numVariables 约束数量：$numConstraints")
+        try {
+            model.solve()
+        } catch (e: CpxException) {
+            if (e.status == 1016) {
+                throw OutLimitedException(
+                    "$name 变量或约束过多，非零元数量：$nnZs 变量数量：$numVariables 约束数量：$numConstraints",
+                    e
+                )
+            }
+            throw e
         }
-        return bool
-    }
-
-    override fun writeLp(filename: String) {
-        model.exportModel(filename)
-    }
-
-    override fun writeMps(filename: String) {
-        model.exportModel(filename)
-    }
-
-    override fun solve() {
-        model.solve()
     }
 
     override fun close() {

@@ -57,14 +57,19 @@ open class MPExtSolver @JvmOverloads constructor(
         solver.setTimeLimit(seconds * 1000L)
     }
 
-    override fun writeLp(filename: String) {
-        val lpFormat = solver.exportModelAsLpFormat()
-        File(filename).writeText(lpFormat)
+    override fun read(filename: String) {
+        throw UnsupportedOperationException("不支持")
     }
 
-    override fun writeMps(filename: String) {
-        val mpsFormat = solver.exportModelAsMpsFormat()
-        File(filename).writeText(mpsFormat)
+    override fun write(filename: String) {
+        val lpFormat =
+            if (filename.endsWith(".lp"))
+                solver.exportModelAsLpFormat()
+            else if (filename.endsWith(".mps"))
+                solver.exportModelAsMpsFormat()
+            else
+                throw IllegalArgumentException("不支持的格式")
+        File(filename).writeText(lpFormat)
     }
 
     override fun solve() {

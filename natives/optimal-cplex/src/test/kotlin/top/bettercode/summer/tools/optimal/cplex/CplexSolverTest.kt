@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.optimal.cplex
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.optimal.OutLimitedException
 import top.bettercode.summer.tools.optimal.Solver
 
 /**
@@ -23,6 +24,20 @@ open class CplexSolverTest {
                 solve()
                 System.err.println(var4.value)
                 Assertions.assertEquals(60.0, var4.value)
+            }
+            it.write("build/test.lp")
+            it.reset()
+            it.read("build/test.lp")
+            it.apply {
+                solve()
+                Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+            }
+            it.write("build/test.mps")
+            it.reset()
+            it.read("build/test.mps")
+            it.apply {
+                solve()
+                Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
             }
         }
     }
@@ -798,7 +813,7 @@ open class CplexSolverTest {
      fun lpNumVariables() {
         solver.use {
             it.lpNumVariables(1000)
-            Assertions.assertThrows(ilog.cplex.CpxException::class.java) {
+            Assertions.assertThrows(OutLimitedException::class.java) {
                 it.lpNumVariables(1001)
             }
         }
@@ -808,7 +823,7 @@ open class CplexSolverTest {
      fun numVariables() {
         solver.use {
             it.numVariables(1000)
-            Assertions.assertThrows(ilog.cplex.CpxException::class.java) {
+            Assertions.assertThrows(OutLimitedException::class.java) {
                 it.numVariables(1001)
             }
         }

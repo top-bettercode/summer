@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.optimal.gurobi
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.optimal.OutLimitedException
 import top.bettercode.summer.tools.optimal.Solver
 
 /**
@@ -23,6 +24,20 @@ open class GurobiSolverTest {
                 solve()
                 System.err.println(var4.value)
                 Assertions.assertEquals(60.0, var4.value)
+                it.write("build/test.lp")
+                it.reset()
+                it.read("build/test.lp")
+                it.apply {
+                    solve()
+                    Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+                }
+                it.write("build/test.mps")
+                it.reset()
+                it.read("build/test.mps")
+                it.apply {
+                    solve()
+                    Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
+                }
             }
         }
     }
@@ -790,7 +805,7 @@ open class GurobiSolverTest {
     fun lpNumVariables() {
         solver.use {
             it.lpNumVariables(2000)
-            Assertions.assertThrows(com.gurobi.gurobi.GRBException::class.java) {
+            Assertions.assertThrows(OutLimitedException::class.java) {
                 it.lpNumVariables(2001)
             }
         }
@@ -800,7 +815,7 @@ open class GurobiSolverTest {
     fun numVariables() {
         solver.use {
             it.numVariables(2000)
-            Assertions.assertThrows(com.gurobi.gurobi.GRBException::class.java) {
+            Assertions.assertThrows(OutLimitedException::class.java) {
                 it.numVariables(2001)
             }
         }

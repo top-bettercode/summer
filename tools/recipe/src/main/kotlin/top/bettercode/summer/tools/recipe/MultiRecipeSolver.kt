@@ -43,7 +43,6 @@ object MultiRecipeSolver {
             while ((e - s) / 1000 < requirement.timeout
                 && recipeResult.recipes.size < maxResult
             ) {
-                triggerLimit()
                 // 求解
                 val recipe =
                     prepareData.solve(

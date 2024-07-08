@@ -1,12 +1,10 @@
 package top.bettercode.summer.tools.optimal.copt
 
 import copt.Consts
+import copt.CoptException
 import copt.Var
-import top.bettercode.summer.tools.optimal.IVar
-import top.bettercode.summer.tools.optimal.OptimalUtil
+import top.bettercode.summer.tools.optimal.*
 import top.bettercode.summer.tools.optimal.OptimalUtil.isInt
-import top.bettercode.summer.tools.optimal.Solver
-import top.bettercode.summer.tools.optimal.SolverType
 import kotlin.math.max
 import kotlin.math.min
 
@@ -47,27 +45,29 @@ class COPTSolver @JvmOverloads constructor(
         model.setDblParam("TimeLimit", seconds.toDouble())
     }
 
-    override fun triggerLimit(): Boolean {
-        val numVariables = numVariables()
-        val numConstraints = numConstraints()
-        log.info("$name 变量数量：{},约束数量：{}", numVariables, numConstraints)
-        val bool = numVariables > communityLimits || numConstraints > communityLimits
-        if (bool) {
-            log.error("$name 变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
-        }
-        return bool
+    override fun read(filename: String) {
+        model.read(filename)
     }
 
-    override fun writeLp(filename: String) {
-        model.writeLp(filename)
-    }
-
-    override fun writeMps(filename: String) {
-        model.writeMps(filename)
+    override fun write(filename: String) {
+        model.write(filename)
     }
 
     override fun solve() {
-        model.solve()
+        val numVariables = numVariables()
+        val numConstraints = numConstraints()
+        log.info("$name 变量数量：{},约束数量：{}", numVariables, numConstraints)
+        try {
+            model.solve()
+        } catch (e: CoptException) {
+            if (e.code == 4) {
+                throw OutLimitedException(
+                    "$name 变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints",
+                    e
+                )
+            }
+            throw e
+        }
     }
 
     override fun close() {

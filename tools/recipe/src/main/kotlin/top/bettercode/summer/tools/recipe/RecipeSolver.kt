@@ -32,7 +32,6 @@ object RecipeSolver {
                 requirement = requirement,
                 includeProductionCost = includeProductionCost
             )
-            triggerLimit()
 
             // 求解
             val solve = prepareData.solve(this, minMaterialNum, minEpsilon = minEpsilon)

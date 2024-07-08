@@ -1,11 +1,8 @@
 package top.bettercode.summer.tools.optimal.gurobi
 
 import com.gurobi.gurobi.*
-import top.bettercode.summer.tools.optimal.IVar
-import top.bettercode.summer.tools.optimal.OptimalUtil
+import top.bettercode.summer.tools.optimal.*
 import top.bettercode.summer.tools.optimal.OptimalUtil.isInt
-import top.bettercode.summer.tools.optimal.Solver
-import top.bettercode.summer.tools.optimal.SolverType
 import kotlin.math.max
 import kotlin.math.min
 
@@ -90,27 +87,29 @@ class GurobiSolver @JvmOverloads constructor(
         model.set(GRB.DoubleParam.TimeLimit, seconds.toDouble())
     }
 
-    override fun triggerLimit(): Boolean {
-        val numVariables = numVariables()
-        val numConstraints = numConstraints()
-        log.info("$name 变量数量：{},约束数量：{}", numVariables, numConstraints)
-        val bool = numVariables > communityLimits || numConstraints > communityLimits
-        if (bool) {
-            log.error("$name 变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints")
-        }
-        return bool
+    override fun read(filename: String) {
+        model = GRBModel(env, filename)
     }
 
-    override fun writeLp(filename: String) {
-        model.write(filename)
-    }
-
-    override fun writeMps(filename: String) {
+    override fun write(filename: String) {
         model.write(filename)
     }
 
     override fun solve() {
-        model.optimize()
+        val numVariables = numVariables()
+        val numConstraints = numConstraints()
+        log.info("$name 变量数量：{},约束数量：{}", numVariables, numConstraints)
+        try {
+            model.optimize()
+        } catch (e: GRBException) {
+            if (e.errorCode == 10010) {
+                throw OutLimitedException(
+                    "$name 变量或约束过多，变量数量：$numVariables 约束数量：$numConstraints",
+                    e
+                )
+            }
+            throw e
+        }
     }
 
     override fun close() {
@@ -518,17 +517,17 @@ class GurobiSolver @JvmOverloads constructor(
         model.update()
     }
 
-//    override fun IVar.eqIfNot(value: Double, bool: IVar) {
-//        model.addGenConstrIndicator(
-//            bool.getDelegate(),
-//            0,
-//            this.expr(),
-//            GRB.EQUAL,
-//            value,
-//            "c" + (numConstraints() + 1)
-//        )
-//        model.update()
-//    }
+    override fun IVar.eqIfNot(value: Double, bool: IVar) {
+        model.addGenConstrIndicator(
+            bool.getDelegate(),
+            0,
+            this.expr(),
+            GRB.EQUAL,
+            value,
+            "c" + (numConstraints() + 1)
+        )
+        model.update()
+    }
 
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
         val expr = this.expr()

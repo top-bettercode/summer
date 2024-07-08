@@ -28,12 +28,8 @@ abstract class Solver(
     protected val log: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass)
 
     abstract fun setTimeLimit(seconds: Long)
-    open fun triggerLimit(): Boolean {
-        return false
-    }
-
-    abstract fun writeLp(filename: String)
-    abstract fun writeMps(filename: String)
+    abstract fun read(filename: String)
+    abstract fun write(filename: String)
     abstract fun solve()
     abstract fun reset()
     abstract fun isOptimal(): Boolean

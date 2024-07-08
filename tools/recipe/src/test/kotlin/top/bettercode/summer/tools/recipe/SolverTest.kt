@@ -15,6 +15,7 @@ import java.io.File
  *
  * @author Peter Wu
  */
+//@Disabled
 class SolverTest {
     val epsilon = 1e-3
     val minEpsilon = 1e-3
@@ -31,12 +32,12 @@ class SolverTest {
         //
 //        val epsilon = 1e-3
 //        val require = "cplex-1e-3-notMix"  // eqIfNot方法存在问题，使用自定义eqIfNot解决
-//        val require = "gurobi-1e-3-error" //eqIfNot方法存在问题，使用自定义eqIfNot解决
-//        val require = "gurobi-1e-3-error2" //未解决
-        val epsilon = 1e-4
+        val require = "gurobi-1e-3-error" //eqIfNot方法存在问题，使用自定义eqIfNot解决
+//        val require = "gurobi-1e-3-error2" // 使用原生eqIfNot 解决
+//        val epsilon = 1e-4
 //        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
 //        val require = "cbc-1e-4-fail" //未解决
-        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败，未解决
+//        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败，未解决
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
 
@@ -63,14 +64,14 @@ class SolverTest {
             try {
                 solved?.validate()
             } catch (e: Exception) {
-                it.writeLp("${System.getProperty("user.dir")}/build/$require.lp")
+                it.write("${System.getProperty("user.dir")}/build/$require.lp")
                 throw e
             }
             if (lastSolved != null) {
                 try {
                     lastSolved!!.compareTo(solved)
                 } catch (e: Exception) {
-                    it.writeLp("${System.getProperty("user.dir")}/build/$require.lp")
+                    it.write("${System.getProperty("user.dir")}/build/$require.lp")
                     throw e
                 }
             }
@@ -107,7 +108,7 @@ class SolverTest {
 //            includeProductionCost = false,
             minEpsilon = minEpsilon
         )
-        solver.writeLp("${System.getProperty("user.dir")}/build/$require.lp")
+        solver.write("${System.getProperty("user.dir")}/build/$require.lp")
         solved?.validate()
         Assertions.assertNotNull(solved)
     }

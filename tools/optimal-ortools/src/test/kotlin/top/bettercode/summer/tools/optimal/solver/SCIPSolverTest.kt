@@ -26,6 +26,8 @@ open class SCIPSolverTest {
                 System.err.println(var4.value)
                 Assertions.assertEquals(60.0, var4.value)
             }
+            it.write("build/test.lp")
+            it.write("build/test.mps")
         }
     }
 
