@@ -451,17 +451,22 @@ data class PrepareSolveData(
         solver.apply {
             val minimize = objectiveVars.minimize()
             solve()
+            var recipe: Recipe
             if (!isOptimal()) {
                 log.warn("${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
                 return null
+            } else {
+                if (log.isDebugEnabled) {
+                    log.debug("${solver.name} ${solver.epsilon} find optimal solution:${getResultStatus()}")
+                }
+                recipe = recipe(recipeName, minEpsilon, minimize.value)
             }
 
-            val objectiveValue = minimize.value
             val maxUseMaterialNum = requirement.maxUseMaterialNum
             val materialsCount = recipeMaterials.filter { it.value.weight.value > 0.0 }.count()
-            if ((maxUseMaterialNum == null || maxUseMaterialNum > materialsCount) && minMaterialNum) {
+            if ((maxUseMaterialNum == null || maxUseMaterialNum != materialsCount) && minMaterialNum) {
                 //固定成本
-                objectiveVars.eq(objectiveValue)
+                objectiveVars.eq(recipe.cost)
 
                 //使用最小数量原料
                 recipeMaterials.values.map {
@@ -473,46 +478,58 @@ data class PrepareSolveData(
                 solve()
                 if (!isOptimal()) {
                     log.warn("${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
-                    return null
-                }
-            }
-            val scale = abs(log10(epsilon)).toInt()
-            val materials = recipeMaterials.mapNotNull { (_, u) ->
-                val solverValue = u.weight.value
-                val value = solverValue.scale(scale)
-                if (value != 0.0) {
-                    u.toMaterialValue()
                 } else {
-                    null
+                    if (log.isDebugEnabled) {
+                        log.debug("${solver.name} ${solver.epsilon} find optimal solution:${getResultStatus()}")
+                    }
+                    recipe = recipe(recipeName, minEpsilon, recipe.cost)
                 }
             }
-            return Recipe(
-                recipeName = recipeName ?: defaultRecipeName,
-                requirement = requirement,
-                includeProductionCost = includeProductionCost,
-                optimalProductionCost = requirement.productionCost.computeFee(
-                    materialItems = materialItems?.map {
-                        CarrierValue(
-                            it.it,
-                            it.value.value
-                        )
-                    },
-                    dictItems = dictItems?.mapValues {
-                        CarrierValue(
-                            it.value.it,
-                            it.value.value.value
-                        )
-                    },
-                    scale = scale,
-                    minEpsilon = minEpsilon
-                ),
-                cost = objectiveValue,
-                materials = materials,
-                scale = scale,
-                indicatorScale = requirement.indicatorScale,
-                minEpsilon = minEpsilon
-            )
+            return recipe
         }
+    }
+
+    private fun Solver.recipe(
+        recipeName: String?,
+        minEpsilon: Double,
+        objectiveValue: Double
+    ): Recipe {
+        val scale = abs(log10(epsilon)).toInt()
+        val materials = recipeMaterials.mapNotNull { (_, u) ->
+            val solverValue = u.weight.value
+            val value = solverValue.scale(scale)
+            if (value != 0.0) {
+                u.toMaterialValue()
+            } else {
+                null
+            }
+        }
+        return Recipe(
+            recipeName = recipeName ?: defaultRecipeName,
+            requirement = requirement,
+            includeProductionCost = includeProductionCost,
+            optimalProductionCost = requirement.productionCost.computeFee(
+                materialItems = materialItems?.map {
+                    CarrierValue(
+                        it.it,
+                        it.value.value
+                    )
+                },
+                dictItems = dictItems?.mapValues {
+                    CarrierValue(
+                        it.value.it,
+                        it.value.value.value
+                    )
+                },
+                scale = scale,
+                minEpsilon = minEpsilon
+            ),
+            cost = objectiveValue,
+            materials = materials,
+            scale = scale,
+            indicatorScale = requirement.indicatorScale,
+            minEpsilon = minEpsilon
+        )
     }
 
 }
