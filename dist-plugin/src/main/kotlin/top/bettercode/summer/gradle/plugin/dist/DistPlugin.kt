@@ -183,7 +183,12 @@ class DistPlugin : Plugin<Project> {
                 distribution.contents { copySpec ->
 
                     if (dist.unwrapResources)
-                        copySpec.from(File(project.layout.buildDirectory.get().asFile, "conf").absolutePath) {
+                        copySpec.from(
+                            File(
+                                project.layout.buildDirectory.get().asFile,
+                                "conf"
+                            ).absolutePath
+                        ) {
                             it.into("conf")
                         }
 
@@ -199,7 +204,12 @@ class DistPlugin : Plugin<Project> {
                         distribution.distributionBaseName.set(project.name)
                     }
 
-                    copySpec.from(File(project.layout.buildDirectory.get().asFile, "service").absolutePath)
+                    copySpec.from(
+                        File(
+                            project.layout.buildDirectory.get().asFile,
+                            "service"
+                        ).absolutePath
+                    )
                 }
 
                 if (dist.prevArchiveSrc.isNotBlank()) {
@@ -209,7 +219,8 @@ class DistPlugin : Plugin<Project> {
                         it.group = createTask.group
                         it.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                val dest = project.file("" + project.layout.buildDirectory.get().asFile + "/install")
+                                val dest =
+                                    project.file("" + project.layout.buildDirectory.get().asFile + "/install")
                                 val updateDir = File(dest, "update")
                                 compareUpdate(
                                     project,
@@ -226,7 +237,8 @@ class DistPlugin : Plugin<Project> {
                         it.dependsOn("installDistUpdate")
                         val createTask = project.tasks.getByName("installDistUpdate")
                         it.group = createTask.group
-                        val dest = project.file("" + project.layout.buildDirectory.get().asFile + "/install")
+                        val dest =
+                            project.file("" + project.layout.buildDirectory.get().asFile + "/install")
                         val updateDir = File(dest, "update")
                         it.from(updateDir)
                         it.archiveFileName.set("${project.name}-${project.version}-dist-update.zip")
@@ -289,7 +301,11 @@ class DistPlugin : Plugin<Project> {
                 //    在 MacOS 上，设置环境变量 DYLD_LIBRARY_PATH
                 //    在 Windows 上，设置环境变量 PATH
                 if (Os.isFamily(Os.FAMILY_UNIX))
-                    task.environment("LD_LIBRARY_PATH", dist.nativePath(project))
+                    task.environment("LD_LIBRARY_PATH", dist.nativePath(project).apply {
+                        project.file(this).let {
+                            if (!it.exists()) it.mkdirs()
+                        }
+                    })
 
             }
 
@@ -300,7 +316,11 @@ class DistPlugin : Plugin<Project> {
                     task.jvmArgs = jvmArgs.toList()
 
                 if (Os.isFamily(Os.FAMILY_UNIX))
-                    task.environment("LD_LIBRARY_PATH", dist.nativePath(project))
+                    task.environment("LD_LIBRARY_PATH", dist.nativePath(project).apply {
+                        project.file(this).let {
+                            if (!it.exists()) it.mkdirs()
+                        }
+                    })
             }
 
 
