@@ -134,7 +134,8 @@ data class Recipe(
         //总成本(制造费用+原料成本)
         names.add("总成本(制造费用+原料成本)")
         itValues.add(cost)
-        compares.add((cost - other.cost).scale(scale) in -minEpsilon..minEpsilon)
+        val costEq = (cost - other.cost).scale(scale) in -minEpsilon..minEpsilon
+        compares.add(costEq)
         otherValues.add(other.cost)
         diffValues.add((cost - other.cost))
         separatorIndexs.add(names.size)
@@ -166,6 +167,7 @@ data class Recipe(
         }
 
         //制造费用
+        val productionCostEq: Boolean
         if (optimalProductionCost != null) {
             Assert.notNull(
                 other.optimalProductionCost,
@@ -179,7 +181,15 @@ data class Recipe(
                 otherValues,
                 diffValues
             )
+            productionCostEq =
+                (optimalProductionCost.totalFee - other.optimalProductionCost.totalFee).scale(scale) in -minEpsilon..minEpsilon
             separatorIndexs.addAll(productionCostSeparatorIndexs)
+        } else {
+            Assert.isNull(
+                other.optimalProductionCost,
+                "${requirement.id}:${requirement.productName}-other配方制造费用不为空"
+            )
+            productionCostEq = true
         }
 
         // 计算每一列的最大宽度
@@ -210,7 +220,10 @@ data class Recipe(
         }
 
         if (compares.isDiff) {
-            throw IllegalRecipeException("${requirement.id}:${requirement.productName}-配方不一致\n$result")
+            if (costEq && productionCostEq) {
+                log.warn("${requirement.id}:${requirement.productName}推优结果相同-配方不一致\n$result")
+            } else
+                throw IllegalRecipeException("${requirement.id}:${requirement.productName}-配方不一致\n$result")
         } else if (log.isDebugEnabled) {
             log.debug("${requirement.id}:${requirement.productName}-配方一致\n$result")
         }
