@@ -453,16 +453,6 @@
       "min" : 2.0,
       "minOperator" : "GE"
     }
-  }, {
-    "term" : {
-      "ids" : [ ]
-    },
-    "then" : {
-      "max" : 15.0,
-      "maxOperator" : "LE",
-      "min" : 0.0,
-      "minOperator" : "GE"
-    }
   } ],
   "materialRelationConstraints" : [ {
     "term" : {

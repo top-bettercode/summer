@@ -25,7 +25,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 474.30830039525694,
+    "weight" : 474.3083003952569,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -74,7 +74,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 521.4285714285711,
+    "weight" : 521.4285714285714,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -123,7 +123,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 100.0,
+    "weight" : 99.99999999999999,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -160,7 +160,7 @@
       "price" : 0.35,
       "unit" : "吨"
     },
-    "weight" : 80.0,
+    "weight" : 79.99999999999999,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -238,10 +238,10 @@
   },
   "recipeName" : "CBCSolver-1",
   "scale" : 3,
-  "dryWaterWeight" : 175.7368718238281,
+  "dryWaterWeight" : 175.73687182382832,
   "materialCost" : 1242.3162055335968,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 252.99999999999994,
-  "waterWeight" : 193.84308300395247,
-  "weight" : 1175.736871823828
+  "totalNutrientWeight" : 253.0,
+  "waterWeight" : 193.8430830039526,
+  "weight" : 1175.7368718238283
 }

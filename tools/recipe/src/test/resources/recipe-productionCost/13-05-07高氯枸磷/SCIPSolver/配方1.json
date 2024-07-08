@@ -74,7 +74,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 521.4285714285717,
+    "weight" : 521.4285714285718,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -123,7 +123,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 99.99999999999997,
+    "weight" : 99.99999999999999,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -160,7 +160,7 @@
       "price" : 0.35,
       "unit" : "吨"
     },
-    "weight" : 79.99999999999999,
+    "weight" : 80.0,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -241,7 +241,7 @@
   "dryWaterWeight" : 175.73687182382855,
   "materialCost" : 1242.3162055335968,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 252.99999999999997,
-  "waterWeight" : 193.84308300395267,
+  "totalNutrientWeight" : 253.0,
+  "waterWeight" : 193.8430830039527,
   "weight" : 1175.7368718238286
 }
