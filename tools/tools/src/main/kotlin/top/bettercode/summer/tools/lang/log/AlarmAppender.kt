@@ -17,12 +17,12 @@ import java.util.concurrent.ConcurrentMap
 
 
 abstract class AlarmAppender(
-        private val cyclicBufferSize: Int,
-        private val ignoredWarnLogger: Array<String>,
-        var encoder: PatternLayoutEncoder? = null,
-        private val startedMsg: String = "^Started .*? in .*? seconds \\(.*?\\)$",
-        private val cacheMap: ConcurrentMap<String, Int>,
-        private val timeoutCacheMap: ConcurrentMap<String, Int>
+    private val cyclicBufferSize: Int,
+    private val ignoredWarnLogger: Array<String>,
+    var encoder: PatternLayoutEncoder? = null,
+    private val startedMsg: String = "^Started .*? in .*? seconds \\(.*?\\)$",
+    private val cacheMap: ConcurrentMap<String, Int>,
+    private val timeoutCacheMap: ConcurrentMap<String, Int>
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {
@@ -52,9 +52,9 @@ abstract class AlarmAppender(
                     }
                 }
                 return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
-                        ALARM_LOG_MARKER
+                    ALARM_LOG_MARKER
                 ) == true || event.formattedMessage.matches(Regex(startedMsg))) && (event.marker == null || !event.marker.contains(
-                        NO_ALARM_LOG_MARKER
+                    NO_ALARM_LOG_MARKER
                 ))
             }
         }
@@ -123,7 +123,10 @@ abstract class AlarmAppender(
 
     private fun findAlarmMarker(marker: Marker?): AlarmMarker? {
         if (marker != null) {
-            return marker.iterator().asSequence().findLast { it is AlarmMarker }
+            return if (marker is AlarmMarker) {
+                marker
+            } else
+                marker.iterator().asSequence().findLast { it is AlarmMarker }
                     ?.let { it as AlarmMarker }
         }
         return null
@@ -141,9 +144,9 @@ abstract class AlarmAppender(
             if (i == len - 1) {
                 val tp = e.throwableProxy
                 initialComment = alarmMarker?.initialComment
-                        ?: (if (tp != null) "${tp.className}:${tp.message ?: event.message}" else e.formattedMessage
-                                ?: event.message)
-                                ?: ""
+                    ?: (if (tp != null) "${tp.className}:${tp.message ?: event.message}" else e.formattedMessage
+                        ?: event.message)
+                            ?: ""
             }
         }
 
@@ -175,10 +178,10 @@ abstract class AlarmAppender(
     }
 
     private fun send(
-            timeStamp: Long,
-            initialComment: String,
-            message: List<String>,
-            timeout: Boolean
+        timeStamp: Long,
+        initialComment: String,
+        message: List<String>,
+        timeout: Boolean
     ) {
         if (sendErrorCount > 0)
             Thread.sleep(2 * 1000L)
@@ -194,15 +197,15 @@ abstract class AlarmAppender(
     }
 
     abstract fun sendMessage(
-            timeStamp: Long,
-            initialComment: String,
-            message: List<String>,
-            timeout: Boolean
+        timeStamp: Long,
+        initialComment: String,
+        message: List<String>,
+        timeout: Boolean
     ): Boolean
 
     internal inner class SenderRunnable(
-            private val cyclicBuffer: CyclicBuffer<ILoggingEvent>,
-            private val e: ILoggingEvent
+        private val cyclicBuffer: CyclicBuffer<ILoggingEvent>,
+        private val e: ILoggingEvent
     ) : Runnable {
         override fun run() {
             sendBuffer(cyclicBuffer, e)

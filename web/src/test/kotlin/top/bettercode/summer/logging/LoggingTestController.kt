@@ -2,7 +2,6 @@ package top.bettercode.summer.logging
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MarkerFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import top.bettercode.summer.logging.annotation.NoRequestLogging
 import top.bettercode.summer.logging.annotation.RequestLogging
-import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.web.resolver.NoWrapResp
 
@@ -40,6 +38,12 @@ class TestController {
 
     @RequestMapping("/error/{path}")
     fun error(request: String?): Any {
+        val initialComment = "xx：执行速度慢(2秒)"
+        log.warn(
+            AlarmMarker(initialComment, true),
+            "超时测试"
+        )
+
         log.warn(AlarmMarker("initialComment"), "警告")
         log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
