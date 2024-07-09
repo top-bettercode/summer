@@ -43,7 +43,7 @@ class SolverTest {
         val epsilon = 1e-4
 //        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
 //        val require = "cbc-1e-4-fail" // 求解器eqIf方法修改解决
-//        val require = "cbc-1e-4-error" //
+//        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
 //        val require = "scip-1e-4-fail-99" //降级 ortools-java:9.8.3296 解决
 //        val require = "cbc-1e-4-fail" //未解决
         val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
