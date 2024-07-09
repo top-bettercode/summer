@@ -475,6 +475,7 @@ data class PrepareSolveData(
                         .onlyEnforceIf(it.weight.gtExpr(0.0))
                     intVar
                 }.minimize()
+                setTimeLimit(5)
                 solve()
                 if (!isOptimal()) {
                     log.warn("${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")

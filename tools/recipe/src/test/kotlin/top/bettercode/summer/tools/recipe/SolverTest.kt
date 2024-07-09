@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.optimal.gurobi.GurobiSolver
 import top.bettercode.summer.tools.optimal.ortools.CBCSolver
 import top.bettercode.summer.tools.optimal.ortools.SCIPSolver
 import top.bettercode.summer.tools.recipe.result.Recipe
+import top.bettercode.summer.tools.recipe.result.RecipeResult
 import java.io.File
 
 /**
@@ -19,6 +20,7 @@ import java.io.File
 @Disabled
 class SolverTest {
     val epsilon = 1e-3
+    val openExcel = false
     val minEpsilon = 1e-3
     val solverTypes = listOf(
         SolverType.COPT,
@@ -32,13 +34,13 @@ class SolverTest {
     fun compareTo() {
         //
 //        val epsilon = 1e-3
-//        val require = "cplex-1e-3-notMix"  // eqIfNot方法存在问题，使用自定义eqIfNot解决
-        val require = "gurobi-1e-3-error" //eqIfNot方法存在问题，使用自定义eqIfNot解决
-//        val require = "gurobi-1e-3-error2" // 使用原生eqIfNot 解决
+//        val require = "cplex-1e-3-notMix"  //         model.setParam(Param.MIP.Tolerances.MIPGap, 1e-9) 解决
+//        val require = "cplex-1e-3-error"  //         model.setParam(Param.MIP.Tolerances.MIPGap, 1e-9) 解决
+        val require = "gurobi-1e-3-error" // 取消FeasibilityTol设置解决
 //        val epsilon = 1e-4
 //        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
-//        val require = "cbc-1e-4-fail" //未解决
-//        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败，未解决
+//        val require = "cbc-1e-4-fail" // 求解器ifthen方法修改解决
+//        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败， set(GRB.DoubleParam.OptimalityTol, 1e-9) 解决
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
 
@@ -54,6 +56,10 @@ class SolverTest {
                 SolverType.CPLEX -> CplexSolver(epsilon = epsilon, minEpsilon = epsilon)
             }
         }
+        val outFile = File("build/recipe/推优结果" + System.currentTimeMillis() + ".xlsx")
+        outFile.parentFile.mkdirs()
+        val recipeResult = RecipeResult(requirement)
+        val failMsgs=mutableListOf<String>()
         var lastSolved: Recipe? = null
         solvers.forEach {
             val solved = RecipeSolver.solve(
@@ -66,20 +72,30 @@ class SolverTest {
                 solved?.validate()
             } catch (e: Exception) {
                 it.write("${System.getProperty("user.dir")}/build/$require.lp")
-                throw e
+                failMsgs.add(e.message!!)
             }
             if (lastSolved != null) {
                 try {
                     lastSolved!!.compareTo(solved)
                 } catch (e: Exception) {
                     it.write("${System.getProperty("user.dir")}/build/$require.lp")
-                    throw e
+                    failMsgs.add(e.message!!)
                 }
             }
             if (solved != null) {
+                recipeResult.addRecipe(solved)
                 lastSolved = solved
             }
         }
+        recipeResult.toExcel(outFile)
+        if (openExcel)
+            Runtime.getRuntime().exec(arrayOf("xdg-open", outFile.absolutePath))
+        System.err.println("------------------------------------------------------")
+        failMsgs.forEach {
+            System.err.println(it)
+            System.err.println("------------------------------------------------------")
+        }
+        Assertions.assertTrue(failMsgs.isEmpty())
     }
 
     @Test

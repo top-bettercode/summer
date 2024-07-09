@@ -21,6 +21,6 @@ class CBCSolver @JvmOverloads constructor(
     name = name
 ){
     init{
-//        solver.setSolverSpecificParametersAsString("integerTolerance=1e-6")
+//        solver.setSolverSpecificParametersAsString("integerTolerance=1e-9")
     }
 }

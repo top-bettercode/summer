@@ -17,7 +17,7 @@ import kotlin.math.min
  */
 class GurobiSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    minEpsilon: Double = 1e-5,
+    minEpsilon: Double = 1e-9,
     logging: Boolean = false,
     name: String = "GurobiSolver"
 ) : Solver(
@@ -31,10 +31,9 @@ class GurobiSolver @JvmOverloads constructor(
     private val env = GRBEnv().apply {
         set(GRB.IntParam.OutputFlag, if (logging) 1 else 0)
         set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
-        set(GRB.DoubleParam.IntFeasTol, 1e-6)
-        set(GRB.DoubleParam.FeasibilityTol, 1e-9)
+        set(GRB.DoubleParam.IntFeasTol, 1e-9)
+        set(GRB.DoubleParam.OptimalityTol, 1e-9)
 //        set(GRB.DoubleParam.PerturbValue, 0.0)
-//        set(GRB.DoubleParam.OptimalityTol, 1e-9)
 
         //Cutoff:1.0E100
         //IterationLimit:1.0E100

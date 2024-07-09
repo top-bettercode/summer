@@ -1,31 +1,13 @@
 {
-  "id": "5",
+  "id": "549",
   "indicatorMaterialIDConstraints": {},
   "indicatorRangeConstraints": {
-    "11": {
-      "id": "11",
-      "value": {
-        "max": 0.0,
-        "maxOperator": "LE",
-        "min": 0.0,
-        "minOperator": "GE"
-      }
-    },
     "1": {
       "id": "1",
       "value": {
         "max": 100.0,
         "maxOperator": "LE",
-        "min": 45.3,
-        "minOperator": "GE"
-      }
-    },
-    "12": {
-      "id": "12",
-      "value": {
-        "max": 0.0,
-        "maxOperator": "LE",
-        "min": 0.0,
+        "min": 45.0,
         "minOperator": "GE"
       }
     },
@@ -43,7 +25,7 @@
       "value": {
         "max": 100.0,
         "maxOperator": "LE",
-        "min": 14.0,
+        "min": 12.0,
         "minOperator": "GE"
       }
     },
@@ -59,7 +41,7 @@
     "5": {
       "id": "5",
       "value": {
-        "max": 99.5,
+        "max": 2.5,
         "maxOperator": "LE",
         "min": 0.0,
         "minOperator": "GE"
@@ -68,9 +50,9 @@
     "6": {
       "id": "6",
       "value": {
-        "max": 1.5,
+        "max": 1.2,
         "maxOperator": "LE",
-        "min": 1.5,
+        "min": 1.2,
         "minOperator": "GE"
       }
     },
@@ -502,41 +484,34 @@
       "name": "查看新增指标1",
       "type": "GENERAL",
       "unit": "公斤/吨"
+    },
+    {
+      "id": "64",
+      "index": 62,
+      "name": "缓释氮",
+      "type": "GENERAL",
+      "unit": "%"
     }
   ],
   "keepMaterialConstraints": {
     "ids": []
   },
-  "materialConditionConstraints": [
-    {
-      "term": {
-        "condition": {
-          "operator": "GT",
-          "value": 15.0
-        },
-        "materials": {
-          "ids": [
-            "5",
-            "6",
-            "8"
-          ]
-        }
-      },
-      "then": {
-        "condition": {
-          "operator": "GE",
-          "value": 80.0
-        },
-        "materials": {
-          "ids": [
-            "76"
-          ]
-        }
-      }
-    }
-  ],
+  "materialConditionConstraints": [],
   "materialIDConstraints": [],
   "materialRangeConstraints": [
+    {
+      "term": {
+        "ids": [
+          "129"
+        ]
+      },
+      "then": {
+        "max": 1000.0,
+        "maxOperator": "LE",
+        "min": 0.0,
+        "minOperator": "GT"
+      }
+    },
     {
       "term": {
         "ids": [
@@ -562,15 +537,73 @@
         "min": 2.0,
         "minOperator": "GE"
       }
+    },
+    {
+      "term": {
+        "ids": [
+          "91",
+          "92"
+        ]
+      },
+      "then": {
+        "max": 5.0,
+        "maxOperator": "LE",
+        "min": 5.0,
+        "minOperator": "GE"
+      }
+    },
+    {
+      "term": {
+        "ids": [
+          "9"
+        ]
+      },
+      "then": {
+        "max": 5.0,
+        "maxOperator": "LE",
+        "min": 5.0,
+        "minOperator": "GE"
+      }
     }
   ],
   "materialRelationConstraints": [
     {
       "term": {
         "ids": [
+          "1"
+        ]
+      },
+      "then": [
+        {
+          "term": {
+            "ids": [
+              "45",
+              "128"
+            ]
+          },
+          "then": {
+            "normal": {
+              "max": 1.224671141,
+              "maxOperator": "LE",
+              "min": 1.224671141,
+              "minOperator": "GE"
+            },
+            "overdose": {
+              "max": 0.306167785,
+              "maxOperator": "LE",
+              "min": 0.122467114,
+              "minOperator": "GE"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "term": {
+        "ids": [
           "2"
         ],
-        "replaceRate": 4.7647,
+        "replaceRate": 0.22,
         "replaceIds": {
           "ids": [
             "3"
@@ -578,6 +611,21 @@
         }
       },
       "then": [
+        {
+          "term": {
+            "ids": [
+              "44"
+            ]
+          },
+          "then": {
+            "normal": {
+              "max": 0.055505762,
+              "maxOperator": "LE",
+              "min": 0.049338455,
+              "minOperator": "GE"
+            }
+          }
+        },
         {
           "term": {
             "ids": [
@@ -615,11 +663,81 @@
               "minOperator": "GE"
             }
           }
+        },
+        {
+          "term": {
+            "ids": [
+              "1"
+            ],
+            "relationIds": {
+              "ids": [
+                "45",
+                "128"
+              ]
+            }
+          },
+          "then": {
+            "normal": {
+              "max": 0.175221604,
+              "maxOperator": "LE",
+              "min": 0.175221604,
+              "minOperator": "GE"
+            },
+            "overdoseMaterial": {
+              "normal": {
+                "max": 0.350443208,
+                "maxOperator": "LE",
+                "min": 0.350443208,
+                "minOperator": "GE"
+              }
+            }
+          }
         }
       ]
     }
   ],
   "materials": [
+    {
+      "id": "1",
+      "index": 1,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 3.0
+        },
+        "3": {
+          "id": "3",
+          "value": 5.0
+        }
+      },
+      "name": "硫酸",
+      "price": 0.295,
+      "unit": ""
+    },
+    {
+      "id": "82",
+      "index": 82,
+      "indicators": {},
+      "name": "防结油（白色）",
+      "price": 8.0,
+      "unit": ""
+    },
+    {
+      "id": "83",
+      "index": 83,
+      "indicators": {},
+      "name": "防结粉（白色）",
+      "price": 2.0,
+      "unit": ""
+    },
+    {
+      "id": "251",
+      "index": 132,
+      "indicators": {},
+      "name": "测试原料001",
+      "price": 0.001,
+      "unit": ""
+    },
     {
       "id": "2",
       "index": 2,
@@ -647,53 +765,29 @@
         }
       },
       "name": "碳铵",
-      "price": 1.25,
+      "price": 1.2,
       "unit": ""
     },
     {
-      "id": "5",
-      "index": 5,
+      "id": "180",
+      "index": 3,
       "indicators": {
         "2": {
           "id": "2",
-          "value": 46.0
+          "value": 11.02
         },
-        "7": {
-          "id": "7",
-          "value": 0.5
+        "3": {
+          "id": "3",
+          "value": 11.0
         }
       },
-      "name": "普通尿素",
-      "price": 2.8,
+      "name": "测试原料排序",
+      "price": 0.001,
       "unit": ""
     },
     {
-      "id": "82",
-      "index": 82,
-      "indicators": {},
-      "name": "防结油（白色）",
-      "price": 8.0,
-      "unit": ""
-    },
-    {
-      "id": "83",
-      "index": 83,
-      "indicators": {},
-      "name": "防结粉（白色）",
-      "price": 2.0,
-      "unit": ""
-    },
-    {
-      "id": "12",
-      "index": 12,
-      "indicators": {},
-      "name": "25颗粒氯化铵（黄）",
-      "price": 1.36,
-      "unit": ""
-    },
-    {
-      "id": "8",
-      "index": 8,
+      "id": "9",
+      "index": 9,
       "indicators": {
         "2": {
           "id": "2",
@@ -704,134 +798,8 @@
           "value": 0.5
         }
       },
-      "name": "60天缓释尿素",
-      "price": 3.75,
-      "unit": ""
-    },
-    {
-      "id": "10",
-      "index": 10,
-      "indicators": {
-        "2": {
-          "id": "2",
-          "value": 23.5
-        },
-        "5": {
-          "id": "5",
-          "value": 66.7
-        },
-        "7": {
-          "id": "7",
-          "value": 7.0
-        }
-      },
-      "name": "氯化铵（湿）",
-      "price": 1.19,
-      "unit": ""
-    },
-    {
-      "id": "11",
-      "index": 11,
-      "indicators": {
-        "2": {
-          "id": "2",
-          "value": 25.3
-        },
-        "5": {
-          "id": "5",
-          "value": 66.7
-        },
-        "7": {
-          "id": "7",
-          "value": 1.0
-        }
-      },
-      "name": "氯化铵（干）",
-      "price": 1.25,
-      "unit": ""
-    },
-    {
-      "id": "14",
-      "index": 14,
-      "indicators": {
-        "2": {
-          "id": "2",
-          "value": 20.5
-        },
-        "7": {
-          "id": "7",
-          "value": 1.0
-        },
-        "18": {
-          "id": "18",
-          "value": 23.8
-        }
-      },
-      "name": "焦化硫铵",
-      "price": 1.25,
-      "unit": ""
-    },
-    {
-      "id": "15",
-      "index": 15,
-      "indicators": {
-        "2": {
-          "id": "2",
-          "value": 21.0
-        },
-        "7": {
-          "id": "7",
-          "value": 0.5
-        },
-        "18": {
-          "id": "18",
-          "value": 23.8
-        }
-      },
-      "name": "己内级硫铵",
-      "price": 1.3,
-      "unit": ""
-    },
-    {
-      "id": "17",
-      "index": 17,
-      "indicators": {
-        "2": {
-          "id": "2",
-          "value": 34.5
-        },
-        "7": {
-          "id": "7",
-          "value": 0.6
-        },
-        "10": {
-          "id": "10",
-          "value": 17.3
-        }
-      },
-      "name": "硝铵",
-      "price": 2.161,
-      "unit": ""
-    },
-    {
-      "id": "18",
-      "index": 18,
-      "indicators": {
-        "2": {
-          "id": "2",
-          "value": 22.0
-        },
-        "7": {
-          "id": "7",
-          "value": 0.5
-        },
-        "10": {
-          "id": "10",
-          "value": 22.0
-        }
-      },
-      "name": "硝酸",
-      "price": 1.583,
+      "name": "90天缓释尿素",
+      "price": 3.9,
       "unit": ""
     },
     {
@@ -856,7 +824,7 @@
         }
       },
       "name": "32-4-0硝磷",
-      "price": 2.68,
+      "price": 2.75,
       "unit": ""
     },
     {
@@ -885,7 +853,7 @@
         }
       },
       "name": "55磷酸一铵（粉）",
-      "price": 3.31,
+      "price": 3.28,
       "unit": ""
     },
     {
@@ -914,7 +882,7 @@
         }
       },
       "name": "58磷酸一铵（粉）",
-      "price": 3.51,
+      "price": 3.48,
       "unit": ""
     },
     {
@@ -943,7 +911,7 @@
         }
       },
       "name": "60磷酸一铵（粉）",
-      "price": 3.71,
+      "price": 3.68,
       "unit": ""
     },
     {
@@ -972,7 +940,7 @@
         }
       },
       "name": "8-40-0再浆肥（粉）",
-      "price": 1.8,
+      "price": 2.2,
       "unit": ""
     },
     {
@@ -1001,7 +969,7 @@
         }
       },
       "name": "8-40-0再浆肥（颗料）",
-      "price": 2.32,
+      "price": 2.25,
       "unit": ""
     },
     {
@@ -1088,7 +1056,7 @@
         }
       },
       "name": "64全水溶磷酸一铵",
-      "price": 4.82,
+      "price": 4.75,
       "unit": ""
     },
     {
@@ -1117,7 +1085,7 @@
         }
       },
       "name": "67全水溶磷酸一铵",
-      "price": 5.04,
+      "price": 4.97,
       "unit": ""
     },
     {
@@ -1146,7 +1114,7 @@
         }
       },
       "name": "工业一铵73%",
-      "price": 6.22,
+      "price": 6.15,
       "unit": ""
     },
     {
@@ -1183,7 +1151,7 @@
         }
       },
       "name": "锌工铵",
-      "price": 5.24,
+      "price": 5.17,
       "unit": ""
     },
     {
@@ -1271,6 +1239,31 @@
       },
       "name": "磷酸二氢钾",
       "price": 10.5,
+      "unit": ""
+    },
+    {
+      "id": "39",
+      "index": 39,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 13.5
+        },
+        "4": {
+          "id": "4",
+          "value": 44.5
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "10": {
+          "id": "10",
+          "value": 13.5
+        }
+      },
+      "name": "硝酸钾",
+      "price": 6.15,
       "unit": ""
     },
     {
@@ -1366,6 +1359,31 @@
       "unit": ""
     },
     {
+      "id": "44",
+      "index": 44,
+      "indicators": {
+        "3": {
+          "id": "3",
+          "value": 21.0
+        },
+        "7": {
+          "id": "7",
+          "value": 65.0
+        },
+        "8": {
+          "id": "8",
+          "value": 16.8
+        },
+        "9": {
+          "id": "9",
+          "value": 80.0
+        }
+      },
+      "name": "磷酸",
+      "price": 1.055,
+      "unit": ""
+    },
+    {
       "id": "45",
       "index": 45,
       "indicators": {
@@ -1387,8 +1405,8 @@
       "unit": ""
     },
     {
-      "id": "48",
-      "index": 48,
+      "id": "47",
+      "index": 47,
       "indicators": {
         "4": {
           "id": "4",
@@ -1403,7 +1421,7 @@
           "value": 0.5
         }
       },
-      "name": "95%进口白钾(粉)",
+      "name": "95%进口红钾（粉）",
       "price": 3.7,
       "unit": ""
     },
@@ -1426,6 +1444,31 @@
       },
       "name": "95%红钾（颗粒）",
       "price": 3.8,
+      "unit": ""
+    },
+    {
+      "id": "51",
+      "index": 51,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 50.0
+        },
+        "5": {
+          "id": "5",
+          "value": 1.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 18.4
+        }
+      },
+      "name": "50%硫酸钾（圆颗粒）",
+      "price": 3.85,
       "unit": ""
     },
     {
@@ -1476,6 +1519,48 @@
       },
       "name": "52%曼海姆硫酸钾（粉）",
       "price": 4.25,
+      "unit": ""
+    },
+    {
+      "id": "55",
+      "index": 55,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 50.0
+        },
+        "5": {
+          "id": "5",
+          "value": 3.2
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 18.4
+        }
+      },
+      "name": "50%曼海姆硫酸钾（粉）",
+      "price": 4.1,
+      "unit": ""
+    },
+    {
+      "id": "56",
+      "index": 56,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 6.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-镁",
+      "price": 29.3,
       "unit": ""
     },
     {
@@ -1597,6 +1682,23 @@
       "unit": ""
     },
     {
+      "id": "63",
+      "index": 63,
+      "indicators": {
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "19": {
+          "id": "19",
+          "value": 10.0
+        }
+      },
+      "name": "EDTA-钙",
+      "price": 29.0,
+      "unit": ""
+    },
+    {
       "id": "64",
       "index": 64,
       "indicators": {
@@ -1611,6 +1713,57 @@
       },
       "name": "EDTA-锌",
       "price": 29.5,
+      "unit": ""
+    },
+    {
+      "id": "65",
+      "index": 65,
+      "indicators": {
+        "13": {
+          "id": "13",
+          "value": 13.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-锰",
+      "price": 29.0,
+      "unit": ""
+    },
+    {
+      "id": "66",
+      "index": 66,
+      "indicators": {
+        "15": {
+          "id": "15",
+          "value": 12.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-铁",
+      "price": 29.0,
+      "unit": ""
+    },
+    {
+      "id": "67",
+      "index": 67,
+      "indicators": {
+        "14": {
+          "id": "14",
+          "value": 15.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-铜",
+      "price": 39.5,
       "unit": ""
     },
     {
@@ -1792,6 +1945,19 @@
       "unit": ""
     },
     {
+      "id": "80",
+      "index": 80,
+      "indicators": {
+        "7": {
+          "id": "7",
+          "value": 0.1
+        }
+      },
+      "name": "盐酸",
+      "price": -0.1,
+      "unit": ""
+    },
+    {
       "id": "81",
       "index": 81,
       "indicators": {
@@ -1801,7 +1967,7 @@
         }
       },
       "name": "磷石膏",
-      "price": 0.13,
+      "price": 0.05,
       "unit": ""
     },
     {
@@ -1822,7 +1988,7 @@
         }
       },
       "name": "有机质（褐煤）",
-      "price": 0.62,
+      "price": 0.6,
       "unit": ""
     },
     {
@@ -1927,6 +2093,49 @@
       "unit": ""
     },
     {
+      "id": "124",
+      "index": 124,
+      "indicators": {
+        "24": {
+          "id": "24",
+          "value": 27.0
+        }
+      },
+      "name": "硅肥颗粒",
+      "price": 6.0,
+      "unit": ""
+    },
+    {
+      "id": "125",
+      "index": 125,
+      "indicators": {
+        "12": {
+          "id": "12",
+          "value": 30.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.2
+        }
+      },
+      "name": "颗粒锌肥",
+      "price": 7.5,
+      "unit": ""
+    },
+    {
+      "id": "127",
+      "index": 127,
+      "indicators": {
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "沈阳生态所稳定剂",
+      "price": 11.0,
+      "unit": ""
+    },
+    {
       "id": "128",
       "index": 128,
       "indicators": {
@@ -1946,54 +2155,270 @@
       "name": "喷浆硫基用95氯化钾",
       "price": 3.55,
       "unit": ""
+    },
+    {
+      "id": "129",
+      "index": 129,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 34.5
+        },
+        "7": {
+          "id": "7",
+          "value": 25.0
+        }
+      },
+      "name": "喷浆专用尿素",
+      "price": 2.8,
+      "unit": ""
+    },
+    {
+      "id": "131",
+      "index": 130,
+      "indicators": {
+        "22": {
+          "id": "22",
+          "value": 100.0
+        },
+        "23": {
+          "id": "23",
+          "value": 1.0
+        },
+        "24": {
+          "id": "24",
+          "value": 100.0
+        },
+        "25": {
+          "id": "25",
+          "value": 100.0
+        },
+        "26": {
+          "id": "26",
+          "value": 100.0
+        },
+        "27": {
+          "id": "27",
+          "value": 100.0
+        },
+        "10": {
+          "id": "10",
+          "value": 100.0
+        },
+        "11": {
+          "id": "11",
+          "value": 100.0
+        },
+        "12": {
+          "id": "12",
+          "value": 100.0
+        },
+        "13": {
+          "id": "13",
+          "value": 100.0
+        },
+        "14": {
+          "id": "14",
+          "value": 100.0
+        },
+        "15": {
+          "id": "15",
+          "value": 100.0
+        },
+        "16": {
+          "id": "16",
+          "value": 100.0
+        },
+        "17": {
+          "id": "17",
+          "value": 100.0
+        },
+        "18": {
+          "id": "18",
+          "value": 100.0
+        },
+        "19": {
+          "id": "19",
+          "value": 100.0
+        },
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 50.0
+        },
+        "4": {
+          "id": "4",
+          "value": 30.0
+        },
+        "5": {
+          "id": "5",
+          "value": 100.0
+        },
+        "7": {
+          "id": "7",
+          "value": 100.0
+        },
+        "8": {
+          "id": "8",
+          "value": 100.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        },
+        "20": {
+          "id": "20",
+          "value": 100.0
+        },
+        "21": {
+          "id": "21",
+          "value": 100.0
+        }
+      },
+      "name": "矿源黄腐酸钾",
+      "price": 0.002,
+      "unit": ""
+    },
+    {
+      "id": "255",
+      "index": 133,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 23.0
+        },
+        "3": {
+          "id": "3",
+          "value": 65.0
+        }
+      },
+      "name": "测试原料",
+      "price": 0.001,
+      "unit": ""
+    },
+    {
+      "id": "256",
+      "index": 134,
+      "indicators": {
+        "1": {
+          "id": "1",
+          "value": 14.44
+        },
+        "2": {
+          "id": "2",
+          "value": 5.66
+        },
+        "3": {
+          "id": "3",
+          "value": 3.57
+        }
+      },
+      "name": "Z测试原料007",
+      "price": 0.001,
+      "unit": ""
+    },
+    {
+      "id": "247",
+      "index": 134,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 20.0
+        },
+        "58": {
+          "id": "58",
+          "value": 12.0
+        }
+      },
+      "name": "Z测试原料003-1",
+      "price": 0.001,
+      "unit": ""
+    },
+    {
+      "id": "257",
+      "index": 135,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 23.0
+        },
+        "3": {
+          "id": "3",
+          "value": 45.0
+        }
+      },
+      "name": "Z测试原料008",
+      "price": 0.001,
+      "unit": ""
+    },
+    {
+      "id": "146",
+      "index": 137,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 19.0
+        }
+      },
+      "name": "测试单位",
+      "price": 0.001,
+      "unit": ""
+    },
+    {
+      "id": "258",
+      "index": 141,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 23.0
+        }
+      },
+      "name": "排序",
+      "price": 0.001,
+      "unit": ""
     }
   ],
+  "maxBakeWeight": 2.0,
   "noUseMaterialConstraints": {
-    "ids": []
-  },
-  "notMixMaterialConstraints": [
-    [
-      {
-        "ids": [
-          "5",
-          "6",
-          "8"
-        ]
-      },
-      {
-        "ids": [
-          "17"
-        ]
-      }
-    ],
-    [
-      {
-        "ids": [
-          "5",
-          "6",
-          "8"
-        ]
-      },
-      {
-        "ids": [
-          "42"
-        ]
-      }
+    "ids": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "2",
+      "3",
+      "237",
+      "5",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "126",
+      "129"
     ]
-  ],
+  },
+  "notMixMaterialConstraints": [],
   "packagingMaterials": [
     {
       "id": "4",
       "index": 0,
       "name": "高塔彩袋50公斤",
-      "price": 2.6,
+      "price": 2.8,
       "unit": "",
       "value": 20.05,
-      "cost": 52.13,
+      "cost": 56.14,
       "indicators": {}
     }
   ],
-  "productName": "15-15-15常规氯基-嘉施利(应城)化肥有限公司工厂-1车间1号线",
+  "productName": "15-15-15喷浆硫基-锐展-产线1",
   "productionCost": {
     "changeWhenMaterialUsed": true,
     "changes": [
@@ -2031,23 +2456,83 @@
         "changeItems": [],
         "changeValue": 1.0E-4,
         "type": "OTHER"
+      },
+      {
+        "changeItems": [
+          {
+            "id": "110",
+            "type": "MATERIAL"
+          }
+        ],
+        "changeValue": 0.08,
+        "eachValue": 10.0,
+        "exceedValue": 100.0,
+        "materialId": [
+          "2"
+        ],
+        "type": "OVER"
+      },
+      {
+        "changeItems": [
+          {
+            "id": "225",
+            "type": "MATERIAL"
+          }
+        ],
+        "changeValue": 0.01,
+        "eachValue": 1.0,
+        "exceedValue": 11.0,
+        "materialId": [
+          "132"
+        ],
+        "type": "WATER_OVER"
+      },
+      {
+        "changeItems": [
+          {
+            "id": "110",
+            "type": "MATERIAL"
+          }
+        ],
+        "changeValue": 0.5,
+        "eachValue": 1.0,
+        "exceedValue": 2.0,
+        "materialId": [
+          "2"
+        ],
+        "type": "OVER"
+      },
+      {
+        "changeItems": [
+          {
+            "id": "STAFF",
+            "type": "DICT"
+          }
+        ],
+        "changeValue": 0.5,
+        "eachValue": 50.0,
+        "exceedValue": 100.0,
+        "materialId": [
+          "53"
+        ],
+        "type": "OVER"
       }
     ],
     "dictItems": {
       "STAFF": {
-        "price": 42.0,
-        "value": 1.0,
-        "cost": 42.0
+        "price": 100.0,
+        "value": 5.0,
+        "cost": 500.0
       },
       "DEPRECIATION": {
-        "price": 52.0,
-        "value": 1.0,
-        "cost": 52.0
+        "price": 80.0,
+        "value": 5.0,
+        "cost": 400.0
       },
       "OTHER": {
-        "price": 62.0,
-        "value": 1.0,
-        "cost": 62.0
+        "price": 50.0,
+        "value": 5.0,
+        "cost": 250.0
       }
     },
     "materialItems": [
@@ -2055,27 +2540,68 @@
         "id": "110",
         "index": 0,
         "name": "籽煤",
-        "price": 1640.0,
-        "unit": "",
-        "value": 0.01,
-        "cost": 16.4,
+        "price": 1650.0,
+        "unit": "吨",
+        "value": 2.0,
+        "cost": 3300.0,
         "indicators": {}
       },
       {
         "id": "111",
         "index": 1,
         "name": "生物质",
-        "price": 1000.0,
-        "unit": "",
-        "value": 0.01,
+        "price": 750.0,
+        "unit": "度",
+        "value": 2.0,
+        "cost": 1500.0,
+        "indicators": {}
+      },
+      {
+        "id": "184",
+        "index": 2,
+        "name": "蒸汽费",
+        "price": 2.0,
+        "unit": "立方米",
+        "value": 5.0,
         "cost": 10.0,
+        "indicators": {}
+      },
+      {
+        "id": "185",
+        "index": 3,
+        "name": "天然气费",
+        "price": 2.0,
+        "unit": "立方米",
+        "value": 5.0,
+        "cost": 10.0,
+        "indicators": {}
+      },
+      {
+        "id": "195",
+        "index": 4,
+        "name": "112222",
+        "price": 13.3,
+        "unit": "米",
+        "value": 0.0,
+        "cost": 0.0,
+        "indicators": {}
+      },
+      {
+        "id": "225",
+        "index": 5,
+        "name": "电费",
+        "price": 1.0,
+        "unit": "度",
+        "value": 20.0,
+        "cost": 20.0,
         "indicators": {}
       }
     ],
-    "taxFloat": 15.0,
-    "taxRate": 0.09
+    "taxFloat": 70.0,
+    "taxRate": 0.08
   },
   "targetWeight": 1000.0,
-  "yield": 0.0098,
+  "yield": 0.97,
+  "maxUseMaterialNum": 10,
   "timeout": 30
 }

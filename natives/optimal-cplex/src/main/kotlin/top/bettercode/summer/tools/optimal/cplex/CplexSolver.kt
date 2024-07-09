@@ -51,6 +51,8 @@ class CplexSolver @JvmOverloads constructor(
         }
         model.setParam(Param.MIP.Tolerances.Linearization, epsilon)
         model.setParam(Param.Simplex.Tolerances.Feasibility, 1e-9)
+        model.setParam(Param.MIP.Tolerances.MIPGap, 1e-9)
+
     }
 
     override fun setTimeLimit(seconds: Long) {
@@ -375,35 +377,67 @@ class CplexSolver @JvmOverloads constructor(
 
 
     override fun IVar.geIf(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 1.0), model.ge(expr(this), value)))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 1.0),
+                model.ge(expr(this), value),
+                "c" + (numConstraints() + 1)
+            )
+        )
     }
 
     override fun IVar.geIfNot(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.ge(expr(this), value)))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 0.0), model.ge(expr(this), value),
+                "c" + (numConstraints() + 1)
+            )
+        )
     }
 
     override fun IVar.leIf(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 1.0), model.le(expr(this), value)))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 1.0), model.le(expr(this), value),
+                "c" + (numConstraints() + 1)
+            )
+        )
     }
 
     override fun IVar.leIfNot(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.le(expr(this), value)))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 0.0), model.le(expr(this), value),
+                "c" + (numConstraints() + 1)
+            )
+        )
     }
 
 
     override fun IVar.eqIf(value: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 1.0), model.eq(expr(this), value)))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 1.0), model.eq(expr(this), value),
+                "c" + (numConstraints() + 1)
+            )
+        )
     }
 
-//    override fun IVar.eqIfNot(value: Double, bool: IVar) {
-//        model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.eq(expr(this), value)))
-//    }
+    override fun IVar.eqIfNot(value: Double, bool: IVar) {
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 0.0), model.eq(expr(this), value),
+                "c" + (numConstraints() + 1)
+            )
+        )
+    }
 
     override fun IVar.neIf(value: Double, bool: IVar) {
         model.add(
             model.ifThen(
                 model.eq(bool.getDelegate(), 1.0),
-                model.not(model.eq(expr(this), value))
+                model.not(model.eq(expr(this), value)),
+                "c" + (numConstraints() + 1)
             )
         )
     }
@@ -412,17 +446,28 @@ class CplexSolver @JvmOverloads constructor(
         model.add(
             model.ifThen(
                 model.eq(bool.getDelegate(), 0.0),
-                model.not(model.eq(expr(this), value))
+                model.not(model.eq(expr(this), value)),
+                "c" + (numConstraints() + 1)
             )
         )
     }
 
     override fun IVar.betweenIf(lb: Double, ub: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 1.0), model.range(lb, expr(this), ub)))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 1.0), model.range(lb, expr(this), ub),
+                "c" + (numConstraints() + 1)
+            )
+        )
     }
 
     override fun IVar.betweenIfNot(lb: Double, ub: Double, bool: IVar) {
-        model.add(model.ifThen(model.eq(bool.getDelegate(), 0.0), model.range(lb, expr(this), ub)))
+        model.add(
+            model.ifThen(
+                model.eq(bool.getDelegate(), 0.0), model.range(lb, expr(this), ub),
+                "c" + (numConstraints() + 1)
+            )
+        )
     }
 
     override fun Expr.onlyEnforceIf(condition: Expr): IVar? {
@@ -442,7 +487,12 @@ class CplexSolver @JvmOverloads constructor(
             LE -> model.le(this.variable.getDelegate(), this.value)
             LT -> model.le(this.variable.getDelegate(), this.value - epsilon)
         }
-        model.add(model.ifThen(whenCon, thenCon))
+        model.add(
+            model.ifThen(
+                whenCon, thenCon,
+                "c" + (numConstraints() + 1)
+            )
+        )
         return null
     }
 
@@ -464,7 +514,12 @@ class CplexSolver @JvmOverloads constructor(
                 LE -> model.le(it.variable.getDelegate(), it.value)
                 LT -> model.le(it.variable.getDelegate(), it.value - epsilon)
             }
-            model.add(model.ifThen(whenCon, thenCon))
+            model.add(
+                model.ifThen(
+                    whenCon, thenCon,
+                    "c" + (numConstraints() + 1)
+                )
+            )
         }
     }
 
@@ -486,7 +541,12 @@ class CplexSolver @JvmOverloads constructor(
                 LE -> model.le(it.variable.getDelegate(), it.value)
                 LT -> model.le(it.variable.getDelegate(), it.value - epsilon)
             }
-            model.add(model.ifThen(whenCon, thenCon))
+            model.add(
+                model.ifThen(
+                    whenCon, thenCon,
+                    "c" + (numConstraints() + 1)
+                )
+            )
         }
     }
 
