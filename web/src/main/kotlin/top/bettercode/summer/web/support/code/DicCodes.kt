@@ -7,13 +7,14 @@ import java.io.Serializable
  * @author Peter Wu
  */
 class DicCodes //--------------------------------------------
-(//--------------------------------------------
-        var type: String, var name: String?,
-        var codes: Map<Serializable, String>) : Serializable {
+    (//--------------------------------------------
+    var type: String, var name: String?,
+    var codes: Map<Serializable, String>
+) : Serializable {
 
     //--------------------------------------------
     fun getName(code: Serializable): String {
-        return codes[code] ?: code.toString()
+        return codes[code] ?: codes[code.toString()] ?: code.toString()
     }
 
     fun getCode(name: String): Serializable? {
