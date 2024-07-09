@@ -290,11 +290,8 @@ abstract class Solver(
      * </pre>
      */
     open fun IVar.eqIfNot(value: Double, bool: IVar) {
-        val bool1 = boolVar()
-        val bool2 = boolVar()
-        arrayOf(bool1, bool2).sum().geIfNot(2.0, bool)
-        geIf(value, bool1)
-        leIf(value, bool2)
+        geIfNot(value, bool)
+        leIfNot(value, bool)
     }
 
     /**

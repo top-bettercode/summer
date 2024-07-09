@@ -1,5 +1,5 @@
 {
-  "cost" : 1512.9716055335966,
+  "cost" : 1512.971605533597,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -74,7 +74,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 548.8491275750474,
+    "weight" : 548.8491275750475,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -123,7 +123,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 99.99999999999999,
+    "weight" : 100.0,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -164,7 +164,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.2842710401155001,
+    "weight" : 0.28427104011550197,
     "id" : "七钼酸铵",
     "index" : 45,
     "indicators" : {
@@ -276,9 +276,9 @@
   "recipeName" : "SCIPSolver-16",
   "scale" : 3,
   "dryWaterWeight" : 203.44169901041982,
-  "materialCost" : 1299.3162055335968,
+  "materialCost" : 1299.316205533597,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 256.8388778605066,
-  "waterWeight" : 203.44169901041977,
+  "waterWeight" : 203.4416990104198,
   "weight" : 1203.4416990104198
 }

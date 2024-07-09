@@ -44,9 +44,10 @@ class SolverTest {
 //        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
 //        val require = "cbc-1e-4-fail" // 求解器eqIf方法修改解决
 //        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
+        val require = "cbc-1e-4-error2" // eqIfNot 不使用中间变量解决
 //        val require = "scip-1e-4-fail-99" //降级 ortools-java:9.8.3296 解决
 //        val require = "cbc-1e-4-fail" //未解决
-        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
+//        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
 
 //        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败， set(GRB.DoubleParam.OptimalityTol, 1e-9) 解决
         val content =

@@ -1,5 +1,5 @@
 {
-  "cost" : 1532.9716055335966,
+  "cost" : 1532.9716055335975,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -25,7 +25,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 474.3083003952568,
+    "weight" : 474.30830039525677,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -74,7 +74,7 @@
       "price" : 0.42,
       "unit" : "吨"
     },
-    "weight" : 548.6570094388057,
+    "weight" : 548.6570094388056,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -164,7 +164,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.4097753502231337,
+    "weight" : 0.40977535022314066,
     "id" : "七钼酸铵",
     "index" : 45,
     "indicators" : {
@@ -197,7 +197,7 @@
       "price" : 0.35,
       "unit" : "吨"
     },
-    "weight" : 79.99999999999999,
+    "weight" : 80.0,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -275,10 +275,10 @@
   },
   "recipeName" : "SCIPSolver-20",
   "scale" : 3,
-  "dryWaterWeight" : 203.37508518428558,
-  "materialCost" : 1319.3162055335965,
+  "dryWaterWeight" : 203.37508518428535,
+  "materialCost" : 1319.3162055335977,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 256.81198132143277,
-  "waterWeight" : 203.3750851842857,
-  "weight" : 1203.3750851842856
+  "waterWeight" : 203.37508518428564,
+  "weight" : 1203.3750851842854
 }
