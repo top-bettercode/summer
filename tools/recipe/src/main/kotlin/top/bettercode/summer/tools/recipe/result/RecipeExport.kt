@@ -281,9 +281,10 @@ object RecipeExport {
                 c = startCol
                 cell(r, c++).value("不能混用的原料").height(20.0 * notMixMaterialConstraints.size)
                     .setStyle()
-                val notMixMaterialConstraintsStr = notMixMaterialConstraints.joinToString("\n") { notMix ->
-                    notMix.joinToString("和") { it.toNames(requirement) } + "不能混用"
-                }
+                val notMixMaterialConstraintsStr =
+                    notMixMaterialConstraints.joinToString("\n") { notMix ->
+                        notMix.joinToString("和") { it.toNames(requirement) } + "不能混用"
+                    }
                 cell(r, c).value(notMixMaterialConstraintsStr)
                 range(r, c, r++, columnSize).merge().horizontalAlignment("left").wrapText()
                     .setStyle()
@@ -452,11 +453,17 @@ object RecipeExport {
                 val value = when (indicator.type) {
                     RecipeIndicatorType.TOTAL_NUTRIENT -> ((materials.sumOf { it.totalNutrientWeight }) / requirement.targetWeight)
                     RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight)
-                    RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf {
-                        it.indicatorWeight(
-                            indicator.itId!!
-                        )
-                    } / materials.sumOf { it.indicatorWeight(indicator.otherId!!) })
+                    RecipeIndicatorType.RATE_TO_OTHER -> {
+                        val sumOf = materials.sumOf { it.indicatorWeight(indicator.otherId!!) }
+                        if (sumOf == 0.0) {
+                            0.0
+                        } else
+                            (materials.sumOf {
+                                it.indicatorWeight(
+                                    indicator.itId!!
+                                )
+                            } / sumOf)
+                    }
 
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight)
                 }
