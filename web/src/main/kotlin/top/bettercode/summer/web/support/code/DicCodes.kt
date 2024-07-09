@@ -1,15 +1,20 @@
 package top.bettercode.summer.web.support.code
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.util.Assert
 import java.io.Serializable
 
 /**
  * @author Peter Wu
  */
-class DicCodes //--------------------------------------------
+data class DicCodes //--------------------------------------------
     (//--------------------------------------------
-    var type: String, var name: String?,
-    var codes: Map<Serializable, String>
+    @JsonProperty("type")
+    val type: String,
+    @JsonProperty("name")
+    val name: String?,
+    @JsonProperty("codes")
+    val codes: Map<Serializable, String>
 ) : Serializable {
 
     //--------------------------------------------
