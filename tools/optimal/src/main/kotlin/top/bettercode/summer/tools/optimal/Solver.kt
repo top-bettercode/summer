@@ -276,7 +276,6 @@ abstract class Solver(
     open fun IVar.eqIf(value: Double, bool: IVar) {
         geIf(value, bool)
         leIf(value, bool)
-
     }
 
     /**
@@ -291,8 +290,11 @@ abstract class Solver(
      * </pre>
      */
     open fun IVar.eqIfNot(value: Double, bool: IVar) {
-        geIfNot(value, bool)
-        leIfNot(value, bool)
+        val bool1 = boolVar()
+        val bool2 = boolVar()
+        arrayOf(bool1, bool2).sum().geIfNot(2.0, bool)
+        geIf(value, bool1)
+        leIf(value, bool2)
     }
 
     /**

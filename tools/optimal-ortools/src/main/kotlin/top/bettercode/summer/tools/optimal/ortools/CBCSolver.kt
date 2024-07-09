@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.optimal.SolverType
  */
 class CBCSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    minEpsilon: Double = 1e-4,
+    minEpsilon: Double = 1e-9,
     name: String = "CBCSolver"
 ) : MPExtSolver(
     mpType = MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING,
@@ -19,8 +19,4 @@ class CBCSolver @JvmOverloads constructor(
     epsilon = epsilon,
     minEpsilon = minEpsilon,
     name = name
-){
-    init{
-//        solver.setSolverSpecificParametersAsString("integerTolerance=1e-9")
-    }
-}
+)

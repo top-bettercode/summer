@@ -25,21 +25,29 @@ class SolverTest {
     val solverTypes = listOf(
         SolverType.COPT,
         SolverType.GUROBI,
+        SolverType.CPLEX,
         SolverType.SCIP,
         SolverType.CBC,
-        SolverType.CPLEX,
     )
 
     @Test
     fun compareTo() {
-        //
+//        val epsilon = 1e-2
+//        val require = "scip-1e-2-fail-98" //降级 ortools-java:9.9.3963 解决
+
 //        val epsilon = 1e-3
 //        val require = "cplex-1e-3-notMix"  //         model.setParam(Param.MIP.Tolerances.MIPGap, 1e-9) 解决
 //        val require = "cplex-1e-3-error"  //         model.setParam(Param.MIP.Tolerances.MIPGap, 1e-9) 解决
-        val require = "gurobi-1e-3-error" // 取消FeasibilityTol设置解决
-//        val epsilon = 1e-4
+//        val require = "gurobi-1e-3-error" // 取消FeasibilityTol设置解决
+//        val require = "scip-1e-3-fail" //升级ortools-java:9.10.4067 解决
+        val epsilon = 1e-4
 //        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
-//        val require = "cbc-1e-4-fail" // 求解器ifthen方法修改解决
+//        val require = "cbc-1e-4-fail" // 求解器eqIf方法修改解决
+//        val require = "cbc-1e-4-error" //
+//        val require = "scip-1e-4-fail-99" //降级 ortools-java:9.8.3296 解决
+//        val require = "cbc-1e-4-fail" //未解决
+        val require = "copt-1e-4-fail" //兼容 minMaterialNum失败 解决
+
 //        val require = "gurobi-1e-4-maxUseMaterialNum" //进料口限制失败， set(GRB.DoubleParam.OptimalityTol, 1e-9) 解决
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
@@ -59,7 +67,7 @@ class SolverTest {
         val outFile = File("build/recipe/推优结果" + System.currentTimeMillis() + ".xlsx")
         outFile.parentFile.mkdirs()
         val recipeResult = RecipeResult(requirement)
-        val failMsgs=mutableListOf<String>()
+        val failMsgs = mutableListOf<String>()
         var lastSolved: Recipe? = null
         solvers.forEach {
             val solved = RecipeSolver.solve(
