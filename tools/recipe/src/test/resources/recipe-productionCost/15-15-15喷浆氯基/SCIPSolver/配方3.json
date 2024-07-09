@@ -1,5 +1,5 @@
 {
-  "cost" : 2486.5463054220627,
+  "cost" : 2486.546305422063,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -25,7 +25,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 351.1161175342,
+    "weight" : 351.1161175342001,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -311,7 +311,7 @@
       "price" : 0.295,
       "unit" : "吨"
     },
-    "weight" : 0.0010000000000509601,
+    "weight" : 0.0010000000000474074,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -348,7 +348,7 @@
       "price" : 29.0,
       "unit" : "吨"
     },
-    "weight" : 0.1942830037994203,
+    "weight" : 0.19428300379943064,
     "id" : "EDTA-铁",
     "index" : 47,
     "indicators" : {
@@ -423,7 +423,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 4.126275082969772,
+    "weight" : 4.126275082969656,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -471,7 +471,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 20.45341284391434,
+    "energyFee" : 20.453412843914336,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -483,7 +483,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.6335401723584447
+      "value" : 0.6335401723584445
     }, {
       "it" : {
         "id" : "生物质",
@@ -505,10 +505,10 @@
   },
   "recipeName" : "SCIPSolver-3",
   "scale" : 3,
-  "dryWaterWeight" : 13.354017235844367,
+  "dryWaterWeight" : 13.35401723584448,
   "materialCost" : 2325.235296071709,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 452.99999999999994,
-  "waterWeight" : 13.354017235844484,
-  "weight" : 1013.3540172358444
+  "totalNutrientWeight" : 452.9999999999999,
+  "waterWeight" : 13.354017235844456,
+  "weight" : 1013.3540172358445
 }

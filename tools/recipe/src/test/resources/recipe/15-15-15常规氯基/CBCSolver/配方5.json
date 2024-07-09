@@ -1,5 +1,5 @@
 {
-  "cost" : 2326.9234792993757,
+  "cost" : 2326.9234792993784,
   "includeProductionCost" : false,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -270,7 +270,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 192.29678102774227,
+    "weight" : 192.29678102774224,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
@@ -311,7 +311,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.07499999999999038,
+    "weight" : 0.07500000000000563,
     "id" : "七钼酸铵",
     "index" : 51,
     "indicators" : {
@@ -390,7 +390,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 41.036552305591094,
+    "weight" : 41.03655230559113,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -417,9 +417,9 @@
   "recipeName" : "CBCSolver-5",
   "scale" : 3,
   "dryWaterWeight" : 16.481553223131073,
-  "materialCost" : 2326.923479299376,
+  "materialCost" : 2326.9234792993784,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 31.481553223130923,
+  "waterWeight" : 31.481553223130938,
   "weight" : 1016.4815532231311
 }

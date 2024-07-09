@@ -21,7 +21,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.00000000000006,
+    "weight" : 379.99999999999994,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -62,7 +62,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 296.80357449733805,
+    "weight" : 296.80357449733634,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -115,7 +115,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 84.3749999999438,
+    "weight" : 84.37500000000003,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -176,7 +176,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.32608695654382,
+    "weight" : 35.326086956521706,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -229,7 +229,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 149.99999999999994,
+    "weight" : 149.99999999999997,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 27,
     "indicators" : {
@@ -266,7 +266,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.495338546122866,
+    "weight" : 48.495338546142015,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -322,10 +322,10 @@
   "minEpsilon" : 0.0,
   "recipeName" : "SCIPSolver-1",
   "scale" : 3,
-  "dryWaterWeight" : -5.1386450650170445E-11,
-  "materialCost" : 2364.3467503007005,
+  "dryWaterWeight" : 0.0,
+  "materialCost" : 2364.3467503007387,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 402.99999999998755,
-  "waterWeight" : 8.717119565216205,
-  "weight" : 999.9999999999486
+  "totalNutrientWeight" : 402.99999999999994,
+  "waterWeight" : 8.717119565217391,
+  "weight" : 1000.0
 }

@@ -29,7 +29,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.6168676930353398,
+        "normal" : 1.6168676930353392,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -41,7 +41,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 29.50023026178841,
+        "normal" : 29.500230261788424,
         "overdose" : 0.0
       }
     },
@@ -62,7 +62,7 @@
       "price" : 3.8,
       "unit" : "吨"
     },
-    "weight" : 90.98738471504343,
+    "weight" : 90.98738471504345,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -76,7 +76,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 90.98738471504343,
+    "normalWeight" : 90.98738471504345,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -111,7 +111,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 153.47273556886296,
+    "weight" : 153.4727355688629,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -168,7 +168,7 @@
       "price" : 1.055,
       "unit" : "吨"
     },
-    "weight" : 531.4805036783565,
+    "weight" : 531.4805036783567,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -399,7 +399,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 156.58666531972693,
+    "weight" : 156.58666531972688,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -421,10 +421,10 @@
   "minEpsilon" : 0.0,
   "recipeName" : "COPTSolver-1",
   "scale" : 3,
-  "dryWaterWeight" : 488.2369335772926,
+  "dryWaterWeight" : 488.2369335772928,
   "materialCost" : 2581.383249075759,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 500.2369335772925,
-  "weight" : 1488.2369335772926
+  "totalNutrientWeight" : 453.0000000000001,
+  "waterWeight" : 500.2369335772926,
+  "weight" : 1488.2369335772928
 }

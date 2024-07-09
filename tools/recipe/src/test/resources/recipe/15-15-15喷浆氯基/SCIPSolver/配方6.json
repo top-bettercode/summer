@@ -1,5 +1,5 @@
 {
-  "cost" : 2330.424441672462,
+  "cost" : 2330.4244416724673,
   "includeProductionCost" : false,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -25,7 +25,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 342.3819495588231,
+    "weight" : 337.19674378199187,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -66,7 +66,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 1.954001302759254,
+        "normal" : 2.2963444228976533,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -74,7 +74,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 3.0456932395903418,
+        "normal" : 3.0685187928566013,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -86,7 +86,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 3.2876851033262198,
+        "normal" : 0.3564804954551848,
         "overdose" : 0.0
       }
     },
@@ -107,7 +107,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 8.287379645675816,
+    "weight" : 5.721343711209438,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -121,7 +121,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 8.287379645675816,
+    "normalWeight" : 5.721343711209439,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -156,7 +156,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 289.0965508167312,
+    "weight" : 291.2631474502933,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -217,7 +217,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 102.01036212934339,
+    "weight" : 119.88268678362743,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -274,7 +274,7 @@
       "price" : 1.05,
       "unit" : "吨"
     },
-    "weight" : 59.2314202006408,
+    "weight" : 6.4224052353056384,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -424,10 +424,10 @@
   "minEpsilon" : 0.0,
   "recipeName" : "SCIPSolver-6",
   "scale" : 3,
-  "dryWaterWeight" : 54.34099568454758,
-  "materialCost" : 2330.4244416724614,
+  "dryWaterWeight" : 13.819660295760968,
+  "materialCost" : 2330.4244416724673,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 455.001985148325,
-  "waterWeight" : 54.340995684547806,
-  "weight" : 1054.3409956845476
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 20.083147275581968,
+  "weight" : 1013.819660295761
 }

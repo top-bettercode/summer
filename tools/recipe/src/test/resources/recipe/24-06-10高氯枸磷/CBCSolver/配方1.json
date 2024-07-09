@@ -21,7 +21,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 380.00000000000006,
+    "weight" : 380.0,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -62,7 +62,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 296.80357449733594,
+    "weight" : 296.8035744973361,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -115,7 +115,7 @@
       "price" : 2.2,
       "unit" : "吨"
     },
-    "weight" : 84.37499999999999,
+    "weight" : 84.37499999999997,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 14,
     "indicators" : {
@@ -176,7 +176,7 @@
       "price" : 3.95,
       "unit" : "吨"
     },
-    "weight" : 35.326086956521735,
+    "weight" : 35.32608695652176,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 15,
     "indicators" : {
@@ -266,7 +266,7 @@
       "price" : 0.24,
       "unit" : "吨"
     },
-    "weight" : 48.49533854614227,
+    "weight" : 48.49533854614213,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
     "indicators" : {
@@ -290,7 +290,7 @@
       "price" : 8.0,
       "unit" : "吨"
     },
-    "weight" : 2.0000000000000004,
+    "weight" : 2.0,
     "id" : "防结油（白色）",
     "index" : 58,
     "indicators" : { },
@@ -309,7 +309,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 3.0,
+    "weight" : 2.9999999999999996,
     "id" : "防结粉（白色）",
     "index" : 59,
     "indicators" : { },
@@ -322,10 +322,10 @@
   "minEpsilon" : 0.0,
   "recipeName" : "CBCSolver-1",
   "scale" : 3,
-  "dryWaterWeight" : 1.1368683772161603E-13,
+  "dryWaterWeight" : -1.1368683772161603E-13,
   "materialCost" : 2364.3467503007387,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 402.99999999999994,
-  "waterWeight" : 8.717119565217391,
-  "weight" : 1000.0000000000001
+  "totalNutrientWeight" : 403.0,
+  "waterWeight" : 8.71711956521739,
+  "weight" : 999.9999999999999
 }

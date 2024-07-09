@@ -1,5 +1,5 @@
 {
-  "cost" : 2382.42444167246,
+  "cost" : 2382.4244416724723,
   "includeProductionCost" : false,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -25,7 +25,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 330.3985926644029,
+    "weight" : 336.2894328014834,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -66,7 +66,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.4114210719309823,
+        "normal" : 2.3412737293325163,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -74,7 +74,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 3.1677725658385554,
+        "normal" : 3.075623239436614,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -107,7 +107,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 5.579193637769539,
+    "weight" : 5.416896968769129,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -121,7 +121,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 5.579193637769538,
+    "normalWeight" : 5.41689696876913,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -156,7 +156,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 300.68429435098693,
+    "weight" : 291.93750000000034,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -217,7 +217,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 125.89036478463217,
+    "weight" : 122.22826086956509,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -295,39 +295,39 @@
   }, {
     "consumes" : { },
     "material" : {
-      "id" : "七钼酸铵",
-      "index" : 49,
+      "id" : "EDTA-钙",
+      "index" : 44,
       "indicators" : {
         "物料水分" : {
           "id" : "物料水分",
           "value" : 0.5
         },
-        "钼" : {
-          "id" : "钼",
-          "value" : 54.0
+        "钙" : {
+          "id" : "钙",
+          "value" : 10.0
         }
       },
-      "name" : "七钼酸铵",
-      "price" : 160.0,
+      "name" : "EDTA-钙",
+      "price" : 29.0,
       "unit" : "吨"
     },
-    "weight" : 0.17344137485862876,
-    "id" : "七钼酸铵",
-    "index" : 49,
+    "weight" : 1.7555877834699187,
+    "id" : "EDTA-钙",
+    "index" : 44,
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
         "value" : 0.5
       },
-      "钼" : {
-        "id" : "钼",
-        "value" : 54.0
+      "钙" : {
+        "id" : "钙",
+        "value" : 10.0
       }
     },
-    "name" : "七钼酸铵",
+    "name" : "EDTA-钙",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 160.0,
+    "price" : 29.0,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -408,10 +408,10 @@
   "minEpsilon" : 0.0,
   "recipeName" : "SCIPSolver-18",
   "scale" : 3,
-  "dryWaterWeight" : 16.059220145983545,
-  "materialCost" : 2382.42444167246,
+  "dryWaterWeight" : 10.961011756621133,
+  "materialCost" : 2382.424441672472,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 458.1832855413256,
-  "waterWeight" : 16.059220145983403,
-  "weight" : 1016.0592201459835
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 15.931981389457194,
+  "weight" : 1010.9610117566211
 }

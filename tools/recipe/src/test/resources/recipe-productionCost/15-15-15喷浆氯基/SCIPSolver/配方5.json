@@ -25,7 +25,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 350.67677301424465,
+    "weight" : 350.67677301424476,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -311,7 +311,7 @@
       "price" : 0.295,
       "unit" : "吨"
     },
-    "weight" : 0.0010000000000509601,
+    "weight" : 0.0010000000000474074,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -423,7 +423,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 4.448461064270338,
+    "weight" : 4.44846106427026,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -505,10 +505,10 @@
   },
   "recipeName" : "SCIPSolver-5",
   "scale" : 3,
-  "dryWaterWeight" : 13.431141700988974,
-  "materialCost" : 2331.2224432795897,
+  "dryWaterWeight" : 13.431141700989201,
+  "materialCost" : 2331.2224432795892,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 452.99999999999994,
-  "waterWeight" : 13.43114170098907,
-  "weight" : 1013.431141700989
+  "totalNutrientWeight" : 452.9999999999999,
+  "waterWeight" : 13.431141700989054,
+  "weight" : 1013.4311417009892
 }

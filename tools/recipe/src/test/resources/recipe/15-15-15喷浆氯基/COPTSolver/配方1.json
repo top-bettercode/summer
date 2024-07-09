@@ -25,7 +25,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 349.70615246360387,
+    "weight" : 349.7061524636038,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -66,7 +66,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 1.6768886155184075,
+        "normal" : 1.6768886155184102,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -74,7 +74,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.9705673433147544,
+        "normal" : 2.9705673433147557,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -86,7 +86,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 5.271399746374128,
+        "normal" : 5.27139974637411,
         "overdose" : 0.0
       }
     },
@@ -107,7 +107,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 9.918855705207289,
+    "weight" : 9.918855705207276,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -121,7 +121,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 9.918855705207289,
+    "normalWeight" : 9.918855705207275,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -156,7 +156,7 @@
       "price" : 1.8,
       "unit" : "吨"
     },
-    "weight" : 281.9656168119629,
+    "weight" : 281.965616811963,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -217,7 +217,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 87.54344978074035,
+    "weight" : 87.54344978074049,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -274,7 +274,7 @@
       "price" : 1.05,
       "unit" : "吨"
     },
-    "weight" : 94.9703160765443,
+    "weight" : 94.97031607654397,
     "id" : "磷酸",
     "index" : 29,
     "indicators" : {
@@ -425,9 +425,9 @@
   "recipeName" : "COPTSolver-1",
   "scale" : 3,
   "dryWaterWeight" : 77.43772417139189,
-  "materialCost" : 2315.4244416724637,
+  "materialCost" : 2315.424441672464,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0,
-  "waterWeight" : 77.43772417139216,
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 77.43772417139195,
   "weight" : 1077.437724171392
 }

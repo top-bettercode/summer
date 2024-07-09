@@ -1,5 +1,5 @@
 {
-  "cost" : 1309.3162055336065,
+  "cost" : 1309.3162055336106,
   "includeProductionCost" : false,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -189,7 +189,7 @@
       "price" : 24.0,
       "unit" : "吨"
     },
-    "weight" : 2.7916666666670524,
+    "weight" : 2.79166666666724,
     "id" : "1000亿微生物菌",
     "index" : 69,
     "indicators" : {
@@ -207,10 +207,10 @@
   "minEpsilon" : 0.0,
   "recipeName" : "CBCSolver-18",
   "scale" : 3,
-  "dryWaterWeight" : 178.52853849049507,
-  "materialCost" : 1309.316205533606,
+  "dryWaterWeight" : 178.5285384904953,
+  "materialCost" : 1309.3162055336106,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 252.99999999999994,
   "waterWeight" : 193.84308300395247,
-  "weight" : 1178.528538490495
+  "weight" : 1178.5285384904953
 }
