@@ -599,8 +599,8 @@ open class SCIPSolverTest {
                 System.err.println(numVar1.value)
                 System.err.println(numVar2.value)
                 System.err.println(onlyEnforceIf?.value)
-                Assertions.assertEquals(numVar1.value, 10.0)
-                Assertions.assertEquals(numVar2.value, 20.0)
+                Assertions.assertEquals(numVar1.value.scale(10), 10.0)
+                Assertions.assertEquals(numVar2.value.scale(10), 20.0)
             }
         }
     }
@@ -674,8 +674,8 @@ open class SCIPSolverTest {
                 System.err.println(boolVar.value)
                 System.err.println(numVar1.value)
                 Assertions.assertTrue(isOptimal(), "result:" + getResultStatus())
-                Assertions.assertTrue(numVar1.value in 10.0..20.0, name)
-                Assertions.assertTrue(numVar1.value == 20.0)
+                Assertions.assertTrue(numVar1.value.scale(10) in 10.0..20.0, name)
+                Assertions.assertTrue(numVar1.value.scale(10) == 20.0)
             }
         }
     }
