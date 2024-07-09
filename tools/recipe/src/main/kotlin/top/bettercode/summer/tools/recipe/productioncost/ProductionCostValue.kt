@@ -211,4 +211,80 @@ data class ProductionCostValue(
         return separatorIndexs
     }
 
+    fun toString(names: RecipeColumns, itValues: RecipeColumns): MutableList<Int> {
+        val separatorIndexs = mutableListOf<Int>()
+        separatorIndexs.add(names.size)
+        names.add("能耗费用原料数量")
+        itValues.add(materialItems.size)
+        separatorIndexs.add(names.size)
+
+        materialItems.forEach {
+            val thisVal = (it.it.cost * it.value)
+            names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
+            itValues.add(thisVal)
+        }
+        separatorIndexs.add(names.size)
+
+        names.add("总能耗费用")
+        itValues.add(energyFee)
+        separatorIndexs.add(names.size)
+
+        names.add("其他固定费用数量")
+        itValues.add(dictItems.size)
+        separatorIndexs.add(names.size)
+
+        dictItems.forEach { (key, value) ->
+            val thisVal = (value.it.cost * value.value)
+            names.add("${key.dictName} (${(value.value * 100).scale(2)}%)")
+            itValues.add(thisVal)
+        }
+        separatorIndexs.add(names.size)
+
+        names.add("人工+折旧费+其他费用")
+        itValues.add(otherFee)
+        separatorIndexs.add(names.size)
+
+        names.add("税费")
+        itValues.add(taxFee)
+        separatorIndexs.add(names.size)
+
+        names.add("制造费用合计 (${(allChange * 100).scale(2)}%)")
+        itValues.add(totalFee)
+        separatorIndexs.add(names.size)
+        return separatorIndexs
+    }
+
+    override fun toString(): String {
+        val names = RecipeColumns(scale)
+        val itValues = RecipeColumns(scale)
+        names.add("制造费用项")
+        itValues.add("this")
+
+        val separatorIndexs = toString(
+            names,
+            itValues
+        )
+
+        // 计算每一列的最大宽度
+        val nameWidth = names.width
+        val itValueWidth = itValues.width
+
+        separatorIndexs.forEachIndexed { index, i ->
+            val index1 = index + i
+            names.add(index1, "".padEnd(nameWidth, '-'))
+            itValues.add(index1, "".padEnd(itValueWidth, '-'))
+        }
+
+        val result = StringBuilder()
+
+        for (i in names.indices) {
+            val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
+            val itValue = itValues[i].padStart(itValueWidth)
+            result.appendLine("$name | $itValue")
+        }
+
+        return result.toString()
+    }
+
+
 }

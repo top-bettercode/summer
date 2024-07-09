@@ -273,11 +273,17 @@ data class Recipe(
             val indicatorValue = when (indicator.type) {
                 RecipeIndicatorType.TOTAL_NUTRIENT -> (totalNutrientWeight / targetWeight)
                 RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight)
-                RecipeIndicatorType.RATE_TO_OTHER -> (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / materials.sumOf {
-                    it.indicatorWeight(
-                        indicator.otherId!!
-                    )
-                })
+                RecipeIndicatorType.RATE_TO_OTHER -> {
+                    val sumOf = materials.sumOf {
+                        it.indicatorWeight(
+                            indicator.otherId!!
+                        )
+                    }
+                    if (sumOf == 0.0) {
+                        0.0
+                    } else
+                        (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / sumOf)
+                }
 
                 else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight)
             }
@@ -735,4 +741,59 @@ data class Recipe(
             usedMaxOverdoseWeight
         )
     }
+
+    override fun toString(): String {
+        val separatorIndexs = mutableListOf<Int>()
+        val names = RecipeColumns(scale)
+        val itValues = RecipeColumns(scale)
+        separatorIndexs.add(names.size)
+        names.add("原料/制造费用")
+        itValues.add(this.recipeName)
+        separatorIndexs.add(names.size)
+
+        //总成本(制造费用+原料成本)
+        names.add("总成本(制造费用+原料成本)")
+        itValues.add(cost)
+        separatorIndexs.add(names.size)
+        //原料用量
+        names.add("原料数量")
+        itValues.add(materials.size)
+        separatorIndexs.add(names.size)
+
+        materials.forEach { m ->
+            names.add("${m.name}(${m.id})")
+            itValues.add(m.weight)
+        }
+
+        //制造费用
+        if (optimalProductionCost != null) {
+            val productionCostSeparatorIndexs = optimalProductionCost.toString(
+                names,
+                itValues
+            )
+            separatorIndexs.addAll(productionCostSeparatorIndexs)
+        }
+
+        // 计算每一列的最大宽度
+        // 计算每一列的最大宽度
+        val nameWidth = names.width
+        val itValueWidth = itValues.width
+
+        separatorIndexs.forEachIndexed { index, i ->
+            val index1 = index + i
+            names.add(index1, "".padEnd(nameWidth, '-'))
+            itValues.add(index1, "".padEnd(itValueWidth, '-'))
+        }
+
+        val result = StringBuilder()
+        for (i in names.indices) {
+            val name = names[i].toFullWidth().padEnd(nameWidth, '\u3000')
+            val itValue = itValues[i].padStart(itValueWidth)
+            result.appendLine("$name | $itValue")
+        }
+
+        return result.toString()
+    }
+
+
 }
