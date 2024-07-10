@@ -2,10 +2,11 @@ package top.bettercode.summer.tools.excel
 
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFColor
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.dhatim.fastexcel.*
+import org.dhatim.fastexcel.BorderSide
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.Color
+import org.dhatim.fastexcel.ProtectionOption
+import org.dhatim.fastexcel.StyleSetter
 import java.math.BigDecimal
 import java.util.*
 
@@ -115,7 +116,7 @@ class CellStyle : Cloneable {
         }
 
         @JvmStatic
-        fun PoiCellStyle.style(workbook: XSSFWorkbook, style: CellStyle): PoiCellStyle {
+        fun PoiCellStyle.style(workbook: Workbook, style: CellStyle): PoiCellStyle {
             style.valueFormatting?.let {
                 val dataFormat: DataFormat = workbook.createDataFormat()
                 val currencyFormat = dataFormat.getFormat(it)
@@ -123,7 +124,7 @@ class CellStyle : Cloneable {
             }
             style.fillColor?.let {
                 // 设置背景颜色
-                this.setFillForegroundColor(xssfColor(it))
+                this.setFillForegroundColor(color(it))
                 this.fillPattern = FillPatternType.SOLID_FOREGROUND
             }
 
@@ -131,7 +132,7 @@ class CellStyle : Cloneable {
             val font = this.poiFont ?: workbook.createFont()
             this.poiFont = font
             style.fontColor?.let {
-                font.setColor(xssfColor(it))
+                font.color = color(it).index
             }
             style.fontName?.let { font.fontName = it }
             style.fontSize?.let { font.fontHeightInPoints = it.toShort() }
@@ -139,7 +140,7 @@ class CellStyle : Cloneable {
             style.italic?.let { font.italic = it }
             style.underlined?.let {
                 if (it)
-                    font.setUnderline(FontUnderline.SINGLE)
+                    font.underline = Font.U_SINGLE
             }
             this.setFont(font)
 
@@ -185,14 +186,14 @@ class CellStyle : Cloneable {
                 }
             }
             style.borderColor?.let {
-                val xssfColor = xssfColor(it)
+                val xssfColor = color(it)
                 this.bottomBorderColor = xssfColor.index
                 this.leftBorderColor = xssfColor.index
                 this.rightBorderColor = xssfColor.index
                 this.topBorderColor = xssfColor.index
             }
             style.borderColors?.forEach { (side, borderColor) ->
-                val xssfColor = xssfColor(borderColor)
+                val xssfColor = color(borderColor)
                 when (side) {
                     BorderSide.TOP -> topBorderColor = xssfColor.index
                     BorderSide.LEFT -> leftBorderColor = xssfColor.index
@@ -211,14 +212,14 @@ class CellStyle : Cloneable {
             return this
         }
 
-        fun xssfColor(hexColor: String): XSSFColor {
+        fun color(hexColor: String): XSSFColor {
             // 将字符串表示的十六进制颜色转换为RGB值
             val red: Int = hexColor.substring(0, 2).toInt(16)
             val green: Int = hexColor.substring(2, 4).toInt(16)
             val blue: Int = hexColor.substring(4, 6).toInt(16)
 
-            val xssfColor = XSSFColor(byteArrayOf(red.toByte(), green.toByte(), blue.toByte()))
-            return xssfColor
+            val color = XSSFColor(byteArrayOf(red.toByte(), green.toByte(), blue.toByte()))
+            return color
         }
     }
 

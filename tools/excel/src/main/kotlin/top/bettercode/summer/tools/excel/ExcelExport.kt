@@ -478,9 +478,14 @@ class ExcelExport(val excel: IExcel) {
          */
         @JvmOverloads
         @JvmStatic
-        fun of(filename: String, poi: Boolean = false): ExcelExport {
+        fun of(filename: String, poi: Boolean = false, useSxss: Boolean = true): ExcelExport {
             val outputStream = Files.newOutputStream(Paths.get(filename))
-            return ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
+            return ExcelExport(
+                if (poi) PoiExcel(
+                    outputStream,
+                    useSxss
+                ) else FastExcel(outputStream)
+            )
         }
 
         /**
@@ -495,6 +500,7 @@ class ExcelExport(val excel: IExcel) {
         fun export(
             fileName: String,
             poi: Boolean = false,
+            useSxss: Boolean = true,
             cacheKey: String? = null,
             consumer: Consumer<ExcelExport>
         ) {
@@ -518,7 +524,11 @@ class ExcelExport(val excel: IExcel) {
                     val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
                     Files.newOutputStream(tmpFile.toPath()).use { outputStream ->
                         val excelExport =
-                            ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
+                            ExcelExport(
+                                if (poi) PoiExcel(outputStream, useSxss) else FastExcel(
+                                    outputStream
+                                )
+                            )
                         consumer.accept(excelExport)
                         excelExport.finish()
                     }
@@ -531,7 +541,12 @@ class ExcelExport(val excel: IExcel) {
             } else {
                 val outputStream = response.outputStream
                 val excelExport =
-                    ExcelExport(if (poi) PoiExcel(outputStream) else FastExcel(outputStream))
+                    ExcelExport(
+                        if (poi) PoiExcel(
+                            outputStream,
+                            useSxss
+                        ) else FastExcel(outputStream)
+                    )
                 consumer.accept(excelExport)
                 excelExport.finish()
             }
@@ -549,10 +564,11 @@ class ExcelExport(val excel: IExcel) {
         fun sheet(
             fileName: String,
             poi: Boolean = false,
+            useSxss: Boolean = true,
             cacheKey: String? = null,
             consumer: Consumer<ExcelExport>
         ) {
-            export(fileName = fileName, poi = poi, cacheKey = cacheKey) {
+            export(fileName = fileName, poi = poi, useSxss = useSxss, cacheKey = cacheKey) {
                 it.sheet("sheet1")
                 consumer.accept(it)
             }

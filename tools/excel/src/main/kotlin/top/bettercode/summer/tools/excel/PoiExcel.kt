@@ -1,11 +1,10 @@
 package top.bettercode.summer.tools.excel
 
-import org.apache.poi.ss.usermodel.Comment
-import org.apache.poi.ss.usermodel.CreationHelper
-import org.apache.poi.ss.usermodel.Drawing
+import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellRangeAddressList
-import org.apache.poi.xssf.usermodel.*
+import org.apache.poi.xssf.streaming.SXSSFWorkbook
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.Worksheet
 import top.bettercode.summer.tools.excel.CellStyle.Companion.style
 import java.io.File
@@ -22,16 +21,19 @@ import java.util.*
  *
  * @author Peter Wu
  */
-class PoiExcel(private val outputStream: OutputStream) : IExcel {
+class PoiExcel @JvmOverloads constructor(
+    private val outputStream: OutputStream,
+    useSxss: Boolean = true
+) : IExcel {
 
-    val workbook: XSSFWorkbook = XSSFWorkbook()
+    val workbook: Workbook = if (useSxss) SXSSFWorkbook(1000) else XSSFWorkbook()
 
-    lateinit var sheet: XSSFSheet
+    lateinit var sheet: Sheet
 
-    private fun XSSFRow.cell(column: Int): XSSFCell =
-            this.getCell(column) ?: this.createCell(column)
+    private fun Row.cell(column: Int): Cell =
+        this.getCell(column) ?: this.createCell(column)
 
-    private fun XSSFSheet.row(row: Int): XSSFRow = this.getRow(row) ?: this.createRow(row)
+    private fun Sheet.row(row: Int): Row = this.getRow(row) ?: this.createRow(row)
 
     override fun sheet(sheetname: String) {
         this.sheet = workbook.createSheet(sheetname)
@@ -141,25 +143,28 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
     companion object {
 
         @JvmStatic
-        fun of(outputStream: OutputStream): PoiExcel {
-            return PoiExcel(outputStream)
+        @JvmOverloads
+        fun of(outputStream: OutputStream, useSxss: Boolean = true): PoiExcel {
+            return PoiExcel(outputStream, useSxss)
         }
 
         @JvmStatic
-        fun of(filename: String): PoiExcel {
-            return of(File(filename))
+        @JvmOverloads
+        fun of(filename: String, useSxss: Boolean = true): PoiExcel {
+            return of(File(filename), useSxss)
         }
 
         @JvmStatic
-        fun of(file: File): PoiExcel {
-            return PoiExcel(Files.newOutputStream(file.toPath()))
+        @JvmOverloads
+        fun of(file: File, useSxss: Boolean = true): PoiExcel {
+            return PoiExcel(Files.newOutputStream(file.toPath()), useSxss)
         }
 
         val imageSetter: ((PoiExcel, ExcelFieldCell<*>) -> Unit) = { excel, cell ->
             val workbook = excel.workbook
             val sheet = excel.sheet
             val helper: CreationHelper = workbook.creationHelper
-            val drawing: Drawing<XSSFShape> = sheet.createDrawingPatriarch()
+            val drawing: Drawing<*> = sheet.createDrawingPatriarch()
             if (cell is ExcelFieldRange<*> && cell.excelField.isMerge) {
                 var lastRangeTop = cell.lastRangeTop
                 val rowHeight = cell.lastRangeBottom - lastRangeTop
@@ -167,38 +172,51 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
                     lastRangeTop += rowHeight / 2
                 }
                 if (cell.newRange) {
-                    drawImage(cell.preCellValue, workbook, drawing, helper, cell.column,
-                            lastRangeTop,
-                            lastRangeTop + 1)
+                    drawImage(
+                        cell.preCellValue, workbook, drawing, helper, cell.column,
+                        lastRangeTop,
+                        lastRangeTop + 1
+                    )
                     if (cell.isLastRow) {
-                        drawImage(cell.cellValue, workbook, drawing, helper, cell.column,
-                                cell.row,
-                                cell.row + 1)
+                        drawImage(
+                            cell.cellValue, workbook, drawing, helper, cell.column,
+                            cell.row,
+                            cell.row + 1
+                        )
                     }
                 } else if (cell.isLastRow) {
-                    drawImage(cell.cellValue, workbook, drawing, helper, cell.column,
-                            lastRangeTop,
-                            lastRangeTop + 1)
+                    drawImage(
+                        cell.cellValue, workbook, drawing, helper, cell.column,
+                        lastRangeTop,
+                        lastRangeTop + 1
+                    )
                 }
             } else {
-                drawImage(cell.cellValue, workbook, drawing, helper, cell.column,
-                        cell.row,
-                        cell.row + 1)
+                drawImage(
+                    cell.cellValue, workbook, drawing, helper, cell.column,
+                    cell.row,
+                    cell.row + 1
+                )
             }
         }
 
-        private fun drawImage(cellValue: Any?, wb: XSSFWorkbook, drawing: Drawing<XSSFShape>,
-                              helper: CreationHelper, column: Int, top: Int, bottom: Int) {
+        private fun drawImage(
+            cellValue: Any?, wb: Workbook, drawing: Drawing<*>,
+            helper: CreationHelper, column: Int, top: Int, bottom: Int
+        ) {
             if (cellValue == null || "" == cellValue) {
                 return
             }
             val pictureIdx: Int = when (cellValue) {
                 is ByteArray -> {
-                    wb.addPicture(cellValue as ByteArray?, XSSFWorkbook.PICTURE_TYPE_PNG)
+                    wb.addPicture(cellValue as ByteArray?, Workbook.PICTURE_TYPE_PNG)
                 }
 
                 is InputStream -> {
-                    wb.addPicture(cellValue as InputStream?, XSSFWorkbook.PICTURE_TYPE_PNG)
+                    wb.addPicture(
+                        (cellValue as InputStream?)?.readBytes(),
+                        Workbook.PICTURE_TYPE_PNG
+                    )
                 }
 
                 is ByteArrayPicture -> {
@@ -206,12 +224,13 @@ class PoiExcel(private val outputStream: OutputStream) : IExcel {
                 }
 
                 is InputStreamPicture -> {
-                    wb.addPicture(cellValue.data, cellValue.pictureType)
+                    wb.addPicture(cellValue.data?.readBytes(), cellValue.pictureType)
                 }
 
                 else -> {
                     throw ExcelException(
-                            "图像单元格数据:" + cellValue + "不是有效输入格式（byte[] or InputStream）")
+                        "图像单元格数据:" + cellValue + "不是有效输入格式（byte[] or InputStream）"
+                    )
                 }
             }
             val anchor = helper.createClientAnchor()

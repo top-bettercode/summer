@@ -1,11 +1,10 @@
 package top.bettercode.summer.tools.excel
 
 import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.xssf.usermodel.XSSFCellStyle
-import org.apache.poi.xssf.usermodel.XSSFFont
+import org.apache.poi.ss.usermodel.Font
 
 /**
  *
  * @author Peter Wu
  */
-class PoiCellStyle(val style: XSSFCellStyle, var poiFont: XSSFFont? = null) : CellStyle by style
+class PoiCellStyle(val style: CellStyle, var poiFont: Font? = null) : CellStyle by style
