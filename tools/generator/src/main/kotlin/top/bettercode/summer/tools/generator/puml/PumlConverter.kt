@@ -190,35 +190,41 @@ object PumlConverter {
 
                         //CODETYPE
                         var codeType = ""
+                        val codeTypeRegex = Regex(" CODETYPE +(.+) ")
+                        val codeTypeMatch = codeTypeRegex.find(extra)
+                        if (codeTypeMatch != null) {
+                            codeType = codeTypeMatch.groupValues[1]
+                            extra = extra.replace(codeTypeRegex, " ")
+                        }
+
                         val isCodeType =
                             !asBoolean && remarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
                         if (isCodeType) {
-                            codeType =
-                                if (columnName.contains("_") || logicalDelete || database.extension.commonCodeTypes.any {
-                                        it.equals(
+                            if (codeType.isBlank()) {
+                                codeType =
+                                    if (columnName.contains("_") || logicalDelete || database.extension.commonCodeTypes.any {
+                                            it.equals(
+                                                columnName,
+                                                true
+                                            )
+                                        })
+                                        GeneratorExtension.javaName(columnName)
+                                    else
+                                        database.className(tableName)
+                                            .decapitalized() + GeneratorExtension.javaName(
                                             columnName,
                                             true
                                         )
-                                    })
-                                    GeneratorExtension.javaName(columnName)
-                                else
-                                    database.className(tableName).decapitalized() + GeneratorExtension.javaName(
-                                        columnName,
-                                        true
-                                    )
-
-                            val codeTypeRegex = Regex(" CODETYPE +(.+) ")
-                            val codeTypeMatch = codeTypeRegex.find(extra)
-                            if (codeTypeMatch != null) {
-                                codeType = codeTypeMatch.groupValues[1]
-                                extra = extra.replace(codeTypeRegex, " ")
                             }
+
                             val exist = codeTypeCache[codeType]
                             if (codeTypeCache.containsKey(codeType) && remarks != exist) {
                                 throw IllegalArgumentException("${pumlFile.name}:$tableName:$columnName codeType重复：$codeType,[$remarks]!=[$exist]")
                             } else {
                                 codeTypeCache[codeType] = remarks
                             }
+                        } else {
+                            codeType = ""
                         }
 
                         //IDGENERATOR
