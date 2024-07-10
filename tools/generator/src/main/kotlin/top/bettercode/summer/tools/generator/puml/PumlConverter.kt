@@ -213,8 +213,9 @@ object PumlConverter {
                                 codeType = codeTypeMatch.groupValues[1]
                                 extra = extra.replace(codeTypeRegex, " ")
                             }
-                            if (codeTypeCache.containsKey(codeType) && remarks != codeTypeCache[codeType]) {
-                                throw IllegalArgumentException("${pumlFile.name}:$tableName:$columnName codeType重复：$codeType")
+                            val exist = codeTypeCache[codeType]
+                            if (codeTypeCache.containsKey(codeType) && remarks != exist) {
+                                throw IllegalArgumentException("${pumlFile.name}:$tableName:$columnName codeType重复：$codeType,[$remarks]!=[$exist]")
                             } else {
                                 codeTypeCache[codeType] = remarks
                             }
@@ -407,6 +408,7 @@ object PumlConverter {
         out: File,
         remarksProperties: Properties? = null
     ) {
+        codeTypeCache.clear()
         compile(
             database,
             toTableOrAnys(database, src),
