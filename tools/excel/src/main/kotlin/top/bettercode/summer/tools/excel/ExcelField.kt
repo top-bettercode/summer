@@ -7,6 +7,7 @@ import org.springframework.util.ReflectionUtils
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
+import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.resolver.UnitConverter
 import top.bettercode.summer.web.support.code.CodeServiceHolder
@@ -175,26 +176,28 @@ class ExcelField<T, P : Any?> {
                     } else (cellValue as BigDecimal).toInt()
                 }
 
-                Long::class.javaObjectType, Long::class.java, Long::class.java -> when {
-                    isDateField -> {
-                        when (cellValue) {
-                            is LocalDateTime -> {
-                                of(cellValue).toMillis()
-                            }
+                Long::class.javaObjectType, Long::class.java, Long::class.java -> {
+                    when {
+                        isDateField -> {
+                            when (cellValue) {
+                                is LocalDateTime -> {
+                                    of(cellValue).toMillis()
+                                }
 
-                            else -> {
-                                throw ExcelException("转换为毫秒数失败")
+                                else -> {
+                                    throw ExcelException("转换为毫秒数失败")
+                                }
                             }
                         }
-                    }
 
-                    else -> {
-                        when (cellValue) {
-                            is String -> {
-                                BigDecimal(cellValue).toLong()
+                        else -> {
+                            when (cellValue) {
+                                is String -> {
+                                    BigDecimal(cellValue).toLong()
+                                }
+
+                                else -> (cellValue as BigDecimal).toLong()
                             }
-
-                            else -> (cellValue as BigDecimal).toLong()
                         }
                     }
                 }
@@ -235,6 +238,13 @@ class ExcelField<T, P : Any?> {
                             of(cellValue).toDate()
                         }
 
+                        is String -> {
+                            TimeUtil.parse(
+                                cellValue,
+                                cellStyle.valueFormatting ?: ExcelFieldCell.DEFAULT_DATE_TIME_FORMAT
+                            ).toDate()
+                        }
+
                         else -> {
                             throw ExcelException("转换为时间失败")
                         }
@@ -247,6 +257,13 @@ class ExcelField<T, P : Any?> {
                             cellValue
                         }
 
+                        is String -> {
+                            TimeUtil.parse(
+                                cellValue,
+                                cellStyle.valueFormatting ?: ExcelFieldCell.DEFAULT_DATE_TIME_FORMAT
+                            ).toLocalDateTime()
+                        }
+
                         else -> {
                             throw ExcelException("转换为时间失败")
                         }
@@ -254,14 +271,27 @@ class ExcelField<T, P : Any?> {
                 }
 
                 LocalDate::class.java -> {
-                    if (cellValue is LocalDateTime) {
-                        cellValue.toLocalDate()
-                    } else {
-                        throw ExcelException("转换为日期失败")
+                    when (cellValue) {
+                        is LocalDateTime -> {
+                            cellValue.toLocalDate()
+                        }
+
+                        is String -> {
+                            TimeUtil.parse(
+                                cellValue,
+                                cellStyle.valueFormatting ?: ExcelFieldCell.DEFAULT_DATE_TIME_FORMAT
+                            ).toLocalDate()
+                        }
+
+                        else -> {
+                            throw ExcelException("转换为时间失败")
+                        }
                     }
                 }
 
-                else -> throw IllegalArgumentException("不支持的数据类型:" + propertyType!!.name)
+                else -> {
+                    throw IllegalArgumentException("不支持的数据类型:" + propertyType!!.name)
+                }
             } as P?
         }
     }
