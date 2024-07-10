@@ -1,13 +1,11 @@
 package top.bettercode.summer.data.jpa
 
+import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
+import org.springframework.data.domain.*
 import org.springframework.data.jpa.domain.Specification
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import top.bettercode.summer.web.BaseController
@@ -18,8 +16,8 @@ import java.util.function.Supplier
  * @author Peter Wu
  */
 open class BaseService<T, ID, M : BaseRepository<T, ID>>(
-        @JvmField
-        protected val repository: M
+    @JvmField
+    protected val repository: M
 
 ) : IBaseService<T, ID, M> {
     @JvmField
@@ -36,16 +34,29 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return findAllPageByPage(springDataWebProperties.pageable.maxPageSize, query)
     }
 
-    override fun <E> findAllPageByPage(pageSize: Int, query: (Pageable) -> Page<E>): List<E> {
+    override fun <E> findAllPageByPage(
+        pageSize: Int,
+        query: (Pageable) -> Page<E>
+    ): List<E> {
         val results = mutableListOf<E>()
-        var pageable = Pageable.ofSize(pageSize)
-        var result = query(pageable)
+        val pageable = Pageable.ofSize(pageSize)
+        val result = query(pageable)
         results.addAll(result.content)
-        while (result.hasNext()) {
-            pageable = pageable.next()
-            result = query(pageable)
-            results.addAll(result.content)
+
+        runBlocking {
+            val deferredResults = mutableListOf<Deferred<Pair<Int, List<E>>>>()
+            val customScope = CoroutineScope(Dispatchers.Default)
+            for (i in 1 until result.totalPages) {
+                deferredResults.add(customScope.async {
+                    val content = query(PageRequest.of(i, pageSize)).content
+                    i to content
+                })
+            }
+            deferredResults.awaitAll()
+                .sortedBy { it.first }
+                .forEach { results.addAll(it.second) }
         }
+
         return results
     }
 

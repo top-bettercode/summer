@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.support.UserService
+import top.bettercode.summer.tools.lang.util.StringUtil
 
 /**
  *
@@ -23,7 +24,7 @@ class UserServiceTest {
 
     @BeforeEach
     fun setUp() {
-        for (i in 0..1) {
+        for (i in 0..4) {
             val dave = User("Dave2", "Matthews")
             userService.save(dave)
         }
@@ -69,7 +70,8 @@ class UserServiceTest {
             userService.findAll(it)
         }
         System.err.println(list.size)
-        Assertions.assertEquals(2, list.size)
+        Assertions.assertEquals(5, list.size)
+        System.err.println(StringUtil.json(list,true))
     }
 
     @Test
@@ -78,6 +80,8 @@ class UserServiceTest {
             userService.findAll(it)
         }
         System.err.println(list.size)
-        Assertions.assertEquals(2, list.size)
+        Assertions.assertEquals(5, list.size)
+        System.err.println(StringUtil.json(list,true))
+        Assertions.assertEquals(list, userService.findAll())
     }
 }
