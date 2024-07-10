@@ -2,6 +2,8 @@ package top.bettercode.summer.tools.generator
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
@@ -254,8 +256,9 @@ data class DatabaseConfiguration(
         }
 
         runBlocking {
+            val customScope = CoroutineScope(Dispatchers.Default)
             val deferred = map.values.map {
-                async {
+                customScope.async {
                     use {
                         it.map {
                             try {

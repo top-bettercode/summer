@@ -322,7 +322,7 @@ open class TimeUtil(
                 reGetNtpTime(server, t)
         }
 
-        private fun getNetworkTime(): Long {
+        private fun getNetworkTime(): Pair<String, Long> {
             return runBlocking {
                 val ntpServers = listOf(
                     "http://cn.pool.ntp.org",
@@ -332,7 +332,7 @@ open class TimeUtil(
                     "http://time.google.com",
                 )
                 // 使用单一的 Deferred 对象，用于保存第一个返回的结果
-                val firstResult = CompletableDeferred<Long>()
+                val firstResult = CompletableDeferred<Pair<String, Long>>()
                 val jobs = mutableListOf<Job>()
                 val customScope = CoroutineScope(Dispatchers.Default)
                 for (server in ntpServers) {
@@ -342,7 +342,7 @@ open class TimeUtil(
                         }
                         // 如果第一个协程返回结果，则将结果保存到 Deferred 对象中
                         if (firstResult.isActive) {
-                            firstResult.complete(result)
+                            firstResult.complete(server to result)
                         }
                     }
                     jobs.add(job)
@@ -361,7 +361,7 @@ open class TimeUtil(
         @JvmStatic
         fun checkTime(acceptedDiffSeconds: Int = 5): Boolean {
             var now = Instant.now()
-            val time = getNetworkTime()
+            val (server, time) = getNetworkTime()
             if (time <= 0) {
                 return false
             }
@@ -369,7 +369,7 @@ open class TimeUtil(
             val networkTime = Instant.ofEpochMilli(time)
             val seconds = Duration.between(networkTime, now).seconds
             log.info(
-                "网络时间:{},本地时间:{},相差{}s",
+                "$server 网络时间:{},本地时间:{},相差{}s",
                 of(networkTime).format(),
                 of(now).format(),
                 seconds
@@ -378,7 +378,7 @@ open class TimeUtil(
             val synchronous = diffSeconds < acceptedDiffSeconds
             if (!synchronous) {
                 log.error(
-                    "网络时间和本地时间不一致{}s,网络时间:{},本地时间:{}",
+                    "$server 网络时间和本地时间不一致{}s,网络时间:{},本地时间:{}",
                     seconds,
                     of(networkTime).format(),
                     of(now).format()

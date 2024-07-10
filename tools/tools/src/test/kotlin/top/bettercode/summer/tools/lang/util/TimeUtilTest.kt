@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.lang.util
 
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -58,8 +57,6 @@ class TimeUtilTest {
 
     @Test
     fun checkTime() {
-        runBlocking {
-            TimeUtil.checkTime()
-        }
+        TimeUtil.checkTime()
     }
 }
