@@ -26,6 +26,8 @@ class PoiExcel @JvmOverloads constructor(
     useSxss: Boolean = true
 ) : IExcel {
 
+    private val styleCache = mutableMapOf<CellStyle, PoiCellStyle>()
+
     val workbook: Workbook = if (useSxss) SXSSFWorkbook(1000) else XSSFWorkbook()
 
     lateinit var sheet: Sheet
@@ -44,8 +46,10 @@ class PoiExcel @JvmOverloads constructor(
     }
 
     override fun setStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
-        val poiCellStyle = PoiCellStyle(workbook.createCellStyle())
-        poiCellStyle.style(workbook, cellStyle)
+        val poiCellStyle = styleCache.getOrPut(cellStyle) {
+            PoiCellStyle(workbook.createCellStyle())
+                .style(workbook, cellStyle)
+        }
         for (i in top..bottom) {
             for (j in left..right) {
                 sheet.row(i).cell(j).cellStyle = poiCellStyle.style
@@ -63,7 +67,7 @@ class PoiExcel @JvmOverloads constructor(
     }
 
     override fun formula(row: Int, column: Int, expression: String?) {
-        sheet.row(row).cell(column).setCellFormula(expression)
+        sheet.row(row).cell(column).cellFormula = expression
     }
 
     override fun comment(row: Int, column: Int, commen: String?) {
@@ -76,7 +80,7 @@ class PoiExcel @JvmOverloads constructor(
             val comment: Comment = drawing.createCellComment(anchor)
             val commentText = creationHelper.createRichTextString(commen)
             comment.string = commentText
-            sheet.row(row).cell(column).setCellComment(comment)
+            sheet.row(row).cell(column).cellComment = comment
         }
     }
 

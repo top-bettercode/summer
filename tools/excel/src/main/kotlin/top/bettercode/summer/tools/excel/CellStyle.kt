@@ -1,12 +1,11 @@
 package top.bettercode.summer.tools.excel
 
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFColor
-import org.dhatim.fastexcel.BorderSide
+import org.dhatim.fastexcel.*
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.Color
-import org.dhatim.fastexcel.ProtectionOption
-import org.dhatim.fastexcel.StyleSetter
 import java.math.BigDecimal
 import java.util.*
 
@@ -147,7 +146,9 @@ class CellStyle : Cloneable {
             style.horizontalAlignment?.let {
                 alignment = HorizontalAlignment.valueOf(it.uppercase())
             }
-            style.verticalAlignment?.let { verticalAlignment = VerticalAlignment.valueOf(it.uppercase()) }
+            style.verticalAlignment?.let {
+                verticalAlignment = VerticalAlignment.valueOf(it.uppercase())
+            }
             style.wrapText?.let { this.wrapText = it }
             style.rotation?.let { this.rotation = it.toShort() }
 
@@ -166,7 +167,8 @@ class CellStyle : Cloneable {
                 this.borderTop = borderStyle
             }
             style.borderStyles?.forEach { (side, borderStyle) ->
-                val poiBorderStyle = org.apache.poi.ss.usermodel.BorderStyle.valueOf(borderStyle.name)
+                val poiBorderStyle =
+                    org.apache.poi.ss.usermodel.BorderStyle.valueOf(borderStyle.name)
                 when (side) {
                     BorderSide.TOP -> this.borderTop = poiBorderStyle
                     BorderSide.LEFT -> this.borderLeft = poiBorderStyle
@@ -502,5 +504,58 @@ class CellStyle : Cloneable {
     public override fun clone(): CellStyle {
         return super.clone() as CellStyle
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CellStyle) return false
+
+        if (defaultValueFormatting != other.defaultValueFormatting) return false
+        if (valueFormatting != other.valueFormatting) return false
+        if (fillColor != other.fillColor) return false
+        if (bold != other.bold) return false
+        if (italic != other.italic) return false
+        if (underlined != other.underlined) return false
+        if (fontName != other.fontName) return false
+        if (fontSize != other.fontSize) return false
+        if (fontColor != other.fontColor) return false
+        if (horizontalAlignment != other.horizontalAlignment) return false
+        if (verticalAlignment != other.verticalAlignment) return false
+        if (wrapText != other.wrapText) return false
+        if (rotation != other.rotation) return false
+        if (borderStyle != other.borderStyle) return false
+        if (borderStyleStr != other.borderStyleStr) return false
+        if (borderStyles != other.borderStyles) return false
+        if (borderStyleStrs != other.borderStyleStrs) return false
+        if (borderColor != other.borderColor) return false
+        if (borderColors != other.borderColors) return false
+        if (protectionOptions != other.protectionOptions) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = defaultValueFormatting?.hashCode() ?: 0
+        result = 31 * result + (valueFormatting?.hashCode() ?: 0)
+        result = 31 * result + (fillColor?.hashCode() ?: 0)
+        result = 31 * result + (bold?.hashCode() ?: 0)
+        result = 31 * result + (italic?.hashCode() ?: 0)
+        result = 31 * result + (underlined?.hashCode() ?: 0)
+        result = 31 * result + (fontName?.hashCode() ?: 0)
+        result = 31 * result + (fontSize?.hashCode() ?: 0)
+        result = 31 * result + (fontColor?.hashCode() ?: 0)
+        result = 31 * result + (horizontalAlignment?.hashCode() ?: 0)
+        result = 31 * result + (verticalAlignment?.hashCode() ?: 0)
+        result = 31 * result + (wrapText?.hashCode() ?: 0)
+        result = 31 * result + (rotation ?: 0)
+        result = 31 * result + (borderStyle?.hashCode() ?: 0)
+        result = 31 * result + (borderStyleStr?.hashCode() ?: 0)
+        result = 31 * result + (borderStyles?.hashCode() ?: 0)
+        result = 31 * result + (borderStyleStrs?.hashCode() ?: 0)
+        result = 31 * result + (borderColor?.hashCode() ?: 0)
+        result = 31 * result + (borderColors?.hashCode() ?: 0)
+        result = 31 * result + (protectionOptions?.hashCode() ?: 0)
+        return result
+    }
+
 
 }
