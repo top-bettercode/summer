@@ -39,7 +39,10 @@ import org.springframework.util.ClassUtils
 import top.bettercode.summer.logging.*
 import top.bettercode.summer.logging.LoggingUtil.existProperty
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.logging.feishu.FeishuAppender
+import top.bettercode.summer.logging.feishu.FeishuProperties
 import top.bettercode.summer.logging.slack.SlackAppender
+import top.bettercode.summer.logging.slack.SlackProperties
 import top.bettercode.summer.logging.websocket.WebSocketAppender
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.log.SqlAppender
@@ -159,6 +162,59 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 it.addAppender(sqlAppender)
             }
 
+
+        var logsViewPath = environment.getProperty("summer.logging.files.view-path")
+        val logsPath = environment.getProperty("summer.logging.files.path")
+            ?: logsViewPath ?: "logs"
+        logsViewPath = logsViewPath ?: logsPath
+
+        val managementPath =
+            environment.getProperty("management.endpoints.web.base-path")
+                ?: "/actuator"
+
+        val managementLogPath = "$managementPath/logs${logsPath.substringAfter(logsViewPath)}"
+
+        //feishu log
+        if (existProperty(environment, "summer.logging.feishu.app-id") && existProperty(
+                environment, "summer.logging.feishu.app-secret"
+            ) && existProperty(environment, "summer.logging.feishu.chat")
+        ) {
+            synchronized(context.configurationLock) {
+                val feishuProperties = Binder.get(environment).bind(
+                    "summer.logging.feishu", FeishuProperties::class.java
+                ).get()
+                try {
+                    val cacheMap = Caffeine.newBuilder()
+                        .expireAfterWrite(feishuProperties.cacheSeconds, TimeUnit.SECONDS)
+                        .maximumSize(1000).build<String, Int>().asMap()
+                    val timeoutCacheMap =
+                        Caffeine.newBuilder()
+                            .expireAfterWrite(
+                                feishuProperties.timeoutCacheSeconds,
+                                TimeUnit.SECONDS
+                            )
+                            .maximumSize(1000).build<String, Int>().asMap()
+                    val feishuAppender = FeishuAppender(
+                        feishuProperties,
+                        warnSubject,
+                        logsPath,
+                        managementLogPath,
+                        fileLogPattern,
+                        cacheMap,
+                        timeoutCacheMap
+                    )
+                    feishuAppender.context = context
+                    feishuAppender.start()
+                    feishuProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
+                        .forEach {
+                            it.addAppender(feishuAppender)
+                        }
+                } catch (e: Exception) {
+                    log.error("配置FeishuAppender失败", e)
+                }
+            }
+        }
+
         //slack log
         if (existProperty(environment, "summer.logging.slack.auth-token") && existProperty(
                 environment, "summer.logging.slack.channel"
@@ -169,15 +225,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     "summer.logging.slack", SlackProperties::class.java
                 ).get()
                 try {
-                    var logsViewPath = environment.getProperty("summer.logging.files.view-path")
-                    val logsPath = environment.getProperty("summer.logging.files.path")
-                        ?: logsViewPath ?: "logs"
-                    logsViewPath = logsViewPath ?: logsPath
-
-                    val managementPath =
-                        environment.getProperty("management.endpoints.web.base-path")
-                            ?: "/actuator"
-
                     val cacheMap = Caffeine.newBuilder()
                         .expireAfterWrite(slackProperties.cacheSeconds, TimeUnit.SECONDS)
                         .maximumSize(1000).build<String, Int>().asMap()
@@ -189,7 +236,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                         slackProperties,
                         warnSubject,
                         logsPath,
-                        "$managementPath/logs${logsPath.substringAfter(logsViewPath)}",
+                        managementLogPath,
                         fileLogPattern,
                         cacheMap,
                         timeoutCacheMap

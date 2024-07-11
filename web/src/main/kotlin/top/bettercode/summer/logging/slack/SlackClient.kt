@@ -11,7 +11,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.TimeUtil
@@ -123,15 +122,16 @@ class SlackClient(
         method: HttpMethod = HttpMethod.POST
     ): T? {
         val headers = HttpHeaders()
-        headers.add("Authorization", "Bearer $authToken")
+        headers.setBearerAuth(authToken)
         val requestEntity = HttpEntity(request, headers)
         val response = restTemplate.exchange(api + url, method, requestEntity, responseType)
         return response.body
     }
 
+    /**
+     * https://api.slack.com/methods/conversations.list
+     */
     fun channelsList(): List<Channel>? {
-        val headers = HttpHeaders()
-        headers.setBearerAuth(authToken)
         val result = request(
             url = "conversations.list?types=public_channel,private_channel&exclude_archived=true",
             responseType = ChannelsResult::class.java,
@@ -161,6 +161,8 @@ class SlackClient(
 
 
     /**
+     * https://api.slack.com/methods/chat.postMessage
+     *
      * @param channel channel id or channel name
      */
     fun postMessage(
@@ -170,9 +172,7 @@ class SlackClient(
         initialComment: String,
         message: List<String>
     ): Boolean {
-        val params = LinkedMultiValueMap<String, Any>()
-        params.add("token", authToken)
-        params.add("channel", channel)
+        val params = mutableMapOf<String, Any>("token" to authToken, "channel" to channel)
 
         val actuatorAddress = try {
             top.bettercode.summer.logging.LoggingUtil.actuatorAddress
@@ -216,7 +216,7 @@ class SlackClient(
 
             val result = request(
                 url = "chat.postMessage",
-                responseType = Result::class.java,
+                responseType = SlackResult::class.java,
                 request = params
             )
             if (log.isTraceEnabled) {
@@ -226,6 +226,10 @@ class SlackClient(
         }
     }
 
+    /**
+     * https://api.slack.com/methods/files.upload
+     *
+     */
     fun filesUpload(
         channel: String,
         timeStamp: Long,
@@ -233,19 +237,19 @@ class SlackClient(
         initialComment: String,
         message: List<String>
     ): Boolean {
-        val params = LinkedMultiValueMap<String, Any>()
-        params.add("token", authToken)
-        params.add("channels", channel)
-        params.add("content", message.joinToString("").toByteArray())
-        params.add("filename", "$title-${TimeUtil.format(timeStamp)}.log")
-        params.add("filetype", "text")
+        val params = mutableMapOf<String, Any>()
+        params["token"] = authToken
+        params["channels"] = channel
+        params["content"] = message.joinToString("\n").toByteArray()
+        params["filename"] = "$title-${TimeUtil.format(timeStamp)}.log"
+        params["filetype"] = "text"
         if (title.isNotBlank()) {
-            params.add("title", "$title-${TimeUtil.format(timeStamp)}")
+            params["title"] = "$title-${TimeUtil.format(timeStamp)}"
         }
-        params.add("initial_comment", "$title:\n$initialComment")
+        params["initial_comment"] = "$title:\n$initialComment"
         val result = request(
             url = "files.upload",
-            responseType = Result::class.java,
+            responseType = SlackResult::class.java,
             request = params
         )
         if (log.isTraceEnabled) {

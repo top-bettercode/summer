@@ -11,7 +11,7 @@ import javax.net.ssl.SSLHandshakeException
 @Disabled
 class SlackClientTest {
 
-    private val slackClient = SlackClient(
+    private val client = SlackClient(
         "",
         "./build",
         "/actuator"
@@ -25,11 +25,11 @@ class SlackClientTest {
     @Test
     fun channelsList() {
         val channelsList = try {
-            slackClient.channelsList()
+            client.channelsList()
         } catch (e: Exception) {
             if (e.cause is SSLHandshakeException) {
-                slackClient.useCustomKeyStore = true
-                slackClient.channelsList()
+                client.useCustomKeyStore = true
+                client.channelsList()
             } else throw e
         }
         println(StringUtil.json(channelsList, true))
@@ -37,18 +37,18 @@ class SlackClientTest {
 
     @Test
     fun channelIdByName() {
-        println(StringUtil.json(slackClient.channelIdByName("test"), true))
+        println(StringUtil.json(client.channelIdByName("test"), true))
     }
 
     @Test
     fun channelExist() {
-        val channelExist = slackClient.channelExist("dev")
+        val channelExist = client.channelExist("dev")
         println(StringUtil.json(channelExist, true))
     }
 
     @Test
     fun channelNotExist() {
-        val channelExist = slackClient.channelExist("logging")
+        val channelExist = client.channelExist("logging")
         org.junit.jupiter.api.Assertions.assertFalse(channelExist)
         println(StringUtil.json(channelExist, true))
     }
@@ -57,7 +57,7 @@ class SlackClientTest {
     fun postMessage() {
         println(
             StringUtil.json(
-                slackClient.postMessage(
+                client.postMessage(
                     "dev",
                     System.currentTimeMillis(),
                     "test",
@@ -72,7 +72,7 @@ class SlackClientTest {
     fun filesUpload() {
         println(
             StringUtil.json(
-                slackClient.filesUpload(
+                client.filesUpload(
                     "dev",
                     System.currentTimeMillis(),
                     "title",

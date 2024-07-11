@@ -1,4 +1,4 @@
-package top.bettercode.summer.logging.slack
+package top.bettercode.summer.logging.feishu
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.core.util.OptionHelper
@@ -7,10 +7,9 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
 import java.util.concurrent.ConcurrentMap
-import javax.net.ssl.SSLHandshakeException
 
-open class SlackAppender(
-    private val properties: SlackProperties,
+open class FeishuAppender(
+    private val properties: FeishuProperties,
     private val warnSubject: String,
     logsPath: String,
     managementLogPath: String,
@@ -27,39 +26,24 @@ open class SlackAppender(
     timeoutCacheMap = timeoutCacheMap
 ) {
 
-    private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val client: SlackClient =
-        SlackClient(properties.authToken, logsPath, managementLogPath)
-    private var channelExist: Boolean? = null
+    private val log: Logger = LoggerFactory.getLogger(FeishuAppender::class.java)
+    private val client: FeishuClient =
+        FeishuClient(properties.appId, properties.appSecret, logsPath, managementLogPath)
+    private var chatCache: MutableMap<String, String?> = mutableMapOf()
 
-    private fun channelExist(): Boolean {
-        if (channelExist == null) {
+    private fun chatId(chat: String): String? {
+        return chatCache.computeIfAbsent(chat) {
             try {
-                channelExist = client.channelExist(properties.channel)
+                client.chatIdByName(chat)
             } catch (e: Exception) {
-                if (e.cause is SSLHandshakeException) {
-                    client.useCustomKeyStore = true
-                    try {
-                        channelExist = client.channelExist(properties.channel)
-                    } catch (e: Exception) {
-                        channelExist = false
-                        log.error(
-                            MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                            "slack 查询频道信息失败",
-                            e
-                        )
-                    }
-                } else {
-                    channelExist = false
-                    log.error(
-                        MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                        "slack 查询频道信息失败",
-                        e
-                    )
-                }
+                log.error(
+                    MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                    "获取飞书群聊ID失败",
+                    e
+                )
+                null
             }
         }
-        return channelExist ?: false
     }
 
     override fun sendMessage(
@@ -68,7 +52,9 @@ open class SlackAppender(
         message: List<String>,
         timeout: Boolean
     ): Boolean {
-        return if (channelExist()) {
+        val chat = if (timeout) properties.timeoutChat else properties.chat
+        val chatId = chatId(chat)
+        return if (chatId != null) {
             try {
                 val title =
                     "$warnSubject${
@@ -79,7 +65,7 @@ open class SlackAppender(
                         }
                     }"
                 client.postMessage(
-                    if (timeout) properties.timeoutChannel else properties.channel,
+                    chatId,
                     timeStamp,
                     title,
                     initialComment,
@@ -88,7 +74,7 @@ open class SlackAppender(
             } catch (e: Exception) {
                 log.error(
                     MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                    "slack 发送信息失败",
+                    "feishu 发送信息失败",
                     e
                 )
                 false

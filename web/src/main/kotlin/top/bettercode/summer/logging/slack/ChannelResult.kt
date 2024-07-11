@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ChannelResult(
         val channel: Channel? = null
-) : Result() {
+) : SlackResult() {
     override fun toString(): String {
         return "ChannelResult(channel=$channel)"
     }

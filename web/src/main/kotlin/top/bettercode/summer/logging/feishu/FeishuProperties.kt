@@ -1,4 +1,4 @@
-package top.bettercode.summer.logging
+package top.bettercode.summer.logging.feishu
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
@@ -8,13 +8,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @Suppress("ConfigurationProperties")
-@ConfigurationProperties("summer.logging.slack")
-open class SlackProperties {
+@ConfigurationProperties("summer.logging.feishu")
+open class FeishuProperties {
     var logger = arrayOf("root")
     var ignoredWarnLogger = arrayOf<String>()
-    var authToken: String = ""
-    var channel: String = ""
-    var timeoutChannel = "timeout"
+    var appId: String = ""
+    var appSecret: String = ""
+    var chat: String = ""
+    var timeoutChat = "timeout"
     var cacheSeconds = 5 * 60L
 
     var timeoutCacheSeconds = 2 * 60 * 60L
