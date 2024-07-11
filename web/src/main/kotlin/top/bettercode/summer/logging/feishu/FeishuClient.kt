@@ -2,7 +2,6 @@ package top.bettercode.summer.logging.feishu
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.type.TypeFactory
-import com.github.benmanes.caffeine.cache.Caffeine
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ByteArrayResource
@@ -18,11 +17,12 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
+import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.lang.reflect.Type
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 
 /**
@@ -39,9 +39,7 @@ class FeishuClient(
     private val api = "https://open.feishu.cn/open-apis"
     private val log: Logger = LoggerFactory.getLogger(FeishuClient::class.java)
     private val restTemplate: RestTemplate = RestTemplate()
-    private val tokenCache = Caffeine.newBuilder()
-        .expireAfterWrite(7200, TimeUnit.SECONDS)
-        .maximumSize(1).build<String, String>()
+    private var token: ExpiringValue<String>? = null
 
 
     init {
@@ -63,7 +61,7 @@ class FeishuClient(
     /**
      * https://open.feishu.cn/document/server-docs/authentication-management/access-token/app_access_token_internal
      */
-    private fun requestToken(): String {
+    private fun requestToken(): ExpiringValue<String> {
         val headers = HttpHeaders()
         headers.contentType = MediaType(MediaType.APPLICATION_JSON, Charsets.UTF_8)
         val requestEntity = HttpEntity(mapOf("app_id" to appId, "app_secret" to appSecret), headers)
@@ -73,18 +71,27 @@ class FeishuClient(
             FeishuTokenResult::class
         )
         return if (authToken.isOk()) {
-            authToken.tenantAccessToken!!
+            ExpiringValue(
+                authToken.tenantAccessToken!!,
+                Duration.ofSeconds(authToken.expire!!.toLong())
+            )
         } else {
             throw RuntimeException("获取飞书token失败:${authToken.msg}")
         }
     }
 
     private fun getToken(requestToken: Boolean): String {
-        if (requestToken) {
-            tokenCache.invalidateAll()
+        synchronized(this) {
+            if (requestToken) {
+                token = requestToken()
+            }
+            var value = token?.value
+            if (value == null) {
+                token = requestToken()
+                value = token?.value
+            }
+            return value ?: throw RuntimeException("获取飞书token失败")
         }
-        return tokenCache.get("token") { requestToken() }
-            ?: throw RuntimeException("获取飞书token失败")
     }
 
     private fun <T : FeishuResult> request(
