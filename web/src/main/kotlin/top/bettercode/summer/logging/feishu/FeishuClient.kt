@@ -41,7 +41,7 @@ class FeishuClient(
     private val restTemplate: RestTemplate = RestTemplate()
     private val tokenCache = Caffeine.newBuilder()
         .expireAfterWrite(7200, TimeUnit.SECONDS)
-        .maximumSize(1000).build<String, String>()
+        .maximumSize(1).build<String, String>()
 
 
     init {
