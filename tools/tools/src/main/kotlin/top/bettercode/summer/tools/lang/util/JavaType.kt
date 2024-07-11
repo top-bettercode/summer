@@ -27,6 +27,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
         private set
 
     var isPrimitiveWrapper: Boolean = false
+        private set
 
     var isArray: Boolean = false
         private set
@@ -37,6 +38,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
      * @return Returns the wrapperClass.
      */
     var primitiveTypeWrapper: JavaType? = null
+        private set
 
     val typeArguments: MutableList<JavaType> = ArrayList()
 

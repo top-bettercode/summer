@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.DicCodes
 import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.io.Serializable
 import java.util.*
@@ -81,9 +81,9 @@ class DicCodeGen(
                 }
                 val dicCode = map.computeIfAbsent(codeType) {
                     DicCodes(
-                        codeType,
-                        properties.getProperty(codeType),
-                        JavaType(javaType)
+                        type = codeType,
+                        name = properties.getProperty(codeType),
+                        javaType = JavaType(javaType)
                     )
                 }
                 val codeKey: Serializable =
