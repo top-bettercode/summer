@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.generator.dsl
 
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.TableHolder
+import top.bettercode.summer.tools.generator.puml.PumlConverter
 
 /**
  * 模板脚本
@@ -53,6 +54,7 @@ object Generators {
             generator.preTearDown()
             generator.tearDown()
         }
+        PumlConverter.cleanCache()
     }
 
     fun call(extension: GeneratorExtension, tableHolder: TableHolder) {
@@ -76,5 +78,6 @@ object Generators {
             generator.preTearDown()
             generator.tearDown()
         }
+        PumlConverter.cleanCache()
     }
 }

@@ -281,6 +281,7 @@ class GeneratorPlugin : Plugin<Project> {
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     PumlConverter.reformat(extension)
+                    PumlConverter.cleanCache()
                 }
             })
         }
@@ -290,6 +291,7 @@ class GeneratorPlugin : Plugin<Project> {
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     PumlConverter.toDatabase(extension)
+                    PumlConverter.cleanCache()
                 }
             })
         }
@@ -395,6 +397,7 @@ class GeneratorPlugin : Plugin<Project> {
                                             .exists()
                                     ) project.projectDir else project.rootDir
                                 )
+                                PumlConverter.cleanCache()
                             }
                         })
                     }
@@ -485,6 +488,7 @@ class GeneratorPlugin : Plugin<Project> {
                                         ) project.projectDir else project.rootDir
                                     )
                                 }
+                                PumlConverter.cleanCache()
                             }
                         })
                     }
@@ -564,6 +568,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 } else {
                                     project.logger.lifecycle("不支持puml更新")
                                 }
+                                PumlConverter.cleanCache()
                             }
                         })
                     }

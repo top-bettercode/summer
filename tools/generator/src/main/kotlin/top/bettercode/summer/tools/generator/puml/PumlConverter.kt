@@ -523,5 +523,9 @@ object PumlConverter {
         compile(database, tables, out, remarksProperties)
     }
 
+    fun cleanCache() {
+        codeTypeCache.clear()
+    }
+
 
 }
