@@ -23,7 +23,7 @@ import java.io.File
  */
 //@Disabled
 class SolverTest {
-    val epsilon = 1e-3
+    val epsilon = 1e-4
     val openExcel = false
     val minEpsilon = 1e-3
     val dir = "${System.getProperty("user.dir")}/build/lp"
@@ -37,7 +37,6 @@ class SolverTest {
 
     @Test
     fun compareTo() {
-        val epsilon = 1e-4
         val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
 //        val require = "cbc-1e-4-error2" // eqIfNot 不使用中间变量解决
 
