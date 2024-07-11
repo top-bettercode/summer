@@ -4,6 +4,7 @@ import org.slf4j.MarkerFactory
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.properties.OffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.IWeixinCache
@@ -61,13 +62,13 @@ open class OffiaccountClient(
         }
     }
 
-    private fun getTicket(retries: Int): CachedValue {
+    private fun getTicket(retries: Int): ExpiringValue<String> {
         val result = getForObject<JsapiTicket>(
             "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
             getStableAccessToken()
         )
         return if (result.isOk) {
-            CachedValue(
+            ExpiringValue(
                 result.ticket!!,
                 Duration.ofSeconds(result.expiresIn!!.toLong())
             )

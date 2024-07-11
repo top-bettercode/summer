@@ -7,11 +7,11 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
+import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.weixin.properties.WeixinProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.ApiQuota
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
-import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.StableTokenRequest
 import java.time.Duration
 import java.util.concurrent.Callable
@@ -68,15 +68,16 @@ open class WeixinClient<T : WeixinProperties>(
         cache.evict(STABLE_ACCESS_TOKEN_KEY + ":" + properties.appId)
     }
 
-    protected fun putIfAbsent(key: String, callable: Callable<CachedValue>): String {
+    protected fun putIfAbsent(key: String, callable: Callable<ExpiringValue<String>>): String {
         synchronized(this) {
             val cachedValue = cache.get(key)
-            return if (cachedValue == null || cachedValue.expired()) {
+            val cacheValue = cachedValue?.value
+            return if (cacheValue == null) {
                 val value = callable.call()
                 cache.put(key, value)
-                value.value
+                value.originalValue
             } else {
-                cachedValue.value
+                cacheValue
             }
         }
     }
@@ -111,14 +112,14 @@ open class WeixinClient<T : WeixinProperties>(
         return postForObject<WeixinResponse>("https://api.weixin.qq.com/cgi-bin/clear_quota/v2?appid=${properties.appId}&appsecret=${properties.secret}")
     }
 
-    private fun getToken(retries: Int = 1): CachedValue {
+    private fun getToken(retries: Int = 1): ExpiringValue<String> {
         val accessToken = getForObject<BasicAccessToken>(
             properties.basicAccessTokenUrl,
             properties.appId,
             properties.secret
         )
         return if (accessToken.isOk) {
-            CachedValue(
+            ExpiringValue(
                 accessToken.accessToken!!,
                 Duration.ofSeconds(accessToken.expiresIn!!.toLong())
             )
@@ -140,7 +141,7 @@ open class WeixinClient<T : WeixinProperties>(
     /**
      * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-access-token/getStableAccessToken.html
      */
-    private fun getStableToken(forceRefresh: Boolean, retries: Int = 1): CachedValue {
+    private fun getStableToken(forceRefresh: Boolean, retries: Int = 1): ExpiringValue<String> {
         val accessToken = postForObject<BasicAccessToken>(
             "https://api.weixin.qq.com/cgi-bin/stable_token",
             StableTokenRequest(
@@ -150,7 +151,7 @@ open class WeixinClient<T : WeixinProperties>(
             )
         )
         return if (accessToken.isOk) {
-            CachedValue(
+            ExpiringValue(
                 accessToken.accessToken!!,
                 Duration.ofSeconds(accessToken.expiresIn!!.toLong())
             )

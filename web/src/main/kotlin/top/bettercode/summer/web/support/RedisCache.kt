@@ -32,17 +32,22 @@ import java.util.concurrent.Callable
  */
 class RedisCache @JvmOverloads
 constructor(
-        connectionFactory: RedisConnectionFactory,
-        private val cacheName: String,
-        private val ttl: Duration,
-        private val allowNullValues: Boolean = false,
-        private val usePrefix: Boolean = true,
-        private val keyPrefix: CacheKeyPrefix = CacheKeyPrefix.simple(),
-        private val keySerializationPair: SerializationPair<String> = SerializationPair.fromSerializer(StringRedisSerializer()),
-        private val valueSerializationPair: SerializationPair<Any> = SerializationPair.fromSerializer(JdkSerializationRedisSerializer(RedisCache::class.java.classLoader))
+    connectionFactory: RedisConnectionFactory,
+    private val cacheName: String,
+    private val ttl: Duration,
+    private val allowNullValues: Boolean = false,
+    private val usePrefix: Boolean = true,
+    private val keyPrefix: CacheKeyPrefix = CacheKeyPrefix.simple(),
+    private val keySerializationPair: SerializationPair<String> = SerializationPair.fromSerializer(
+        StringRedisSerializer()
+    ),
+    private val valueSerializationPair: SerializationPair<Any> = SerializationPair.fromSerializer(
+        JdkSerializationRedisSerializer(RedisCache::class.java.classLoader)
+    )
 ) {
     private val binaryNullValue: ByteArray = RedisSerializer.java().serialize(NullValue.INSTANCE)!!
-    private val cacheWriter: RedisCacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
+    private val cacheWriter: RedisCacheWriter =
+        RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
     private val conversionService: ConversionService
 
     init {
@@ -56,11 +61,17 @@ constructor(
 
         require(!(!allowNullValues && cacheValue == null)) {
             String.format(
-                    "Cache '%s' does not allow 'null' values. Avoid storing null via '@Cacheable(unless=\"#result == null\")' or configure RedisCache to allow 'null' via RedisCacheConfiguration.",
-                    cacheName)
+                "Cache '%s' does not allow 'null' values. Avoid storing null via '@Cacheable(unless=\"#result == null\")' or configure RedisCache to allow 'null' via RedisCacheConfiguration.",
+                cacheName
+            )
         }
 
-        cacheWriter.put(cacheName, createAndConvertCacheKey(key), serializeCacheValue(cacheValue!!), ttl)
+        cacheWriter.put(
+            cacheName,
+            createAndConvertCacheKey(key),
+            serializeCacheValue(cacheValue!!),
+            ttl
+        )
     }
 
 
@@ -95,7 +106,11 @@ constructor(
     }
 
     @Synchronized
-    private fun <T : Any> getSynchronized(key: String, valueLoader: Callable<T>, ttl: Duration = this.ttl): T {
+    private fun <T : Any> getSynchronized(
+        key: String,
+        valueLoader: Callable<T>,
+        ttl: Duration = this.ttl
+    ): T {
         val result: Cache.ValueWrapper? = get(key)
         if (result != null) {
             return result.get() as T
@@ -119,7 +134,10 @@ constructor(
     }
 
     fun clear(pattern: String) {
-        cacheWriter.clean(cacheName, conversionService.convert(createCacheKey(pattern), ByteArray::class.java)!!)
+        cacheWriter.clean(
+            cacheName,
+            conversionService.convert(createCacheKey(pattern), ByteArray::class.java)!!
+        )
     }
 
     private fun lookup(key: Any): Any? {
@@ -220,9 +238,12 @@ constructor(
         if (toString != null && Any::class.java != toString.declaringClass) {
             return key.toString()
         }
-        throw IllegalStateException(String.format(
+        throw IllegalStateException(
+            String.format(
                 "Cannot convert cache key %s to String. Please register a suitable Converter via 'RedisCacheConfiguration.configureKeyConverters(...)' or override '%s.toString()'.",
-                source, key.javaClass.simpleName))
+                source, key.javaClass.simpleName
+            )
+        )
     }
 
     /**
@@ -270,7 +291,9 @@ constructor(
             return target.toString()
         } else if (source.isCollection || source.isArray) {
             val sj = StringJoiner(",")
-            val collection = if (source.isCollection) key as Collection<*> else listOf(*ObjectUtils.toObjectArray(key))
+            val collection = if (source.isCollection) key as Collection<*> else listOf(
+                *ObjectUtils.toObjectArray(key)
+            )
             for (`val` in collection) {
                 sj.add(convertKey(`val`!!))
             }

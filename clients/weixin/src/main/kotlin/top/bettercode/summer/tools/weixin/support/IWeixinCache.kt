@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.weixin.support
 
-import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
+import top.bettercode.summer.tools.lang.ExpiringValue
 
 /**
  *
@@ -8,8 +8,8 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
  */
 interface IWeixinCache {
 
-    fun put(key: String, value: CachedValue)
-    fun get(key: String): CachedValue?
+    fun put(key: String, value: ExpiringValue<String>)
+    fun get(key: String): ExpiringValue<String>?
     fun evict(key: String)
     fun clear()
 
