@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MarkerFactory
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -18,9 +19,8 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.lang.ExpiringValue
-import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
 import top.bettercode.summer.tools.lang.util.TimeUtil
-import java.io.File
 import java.lang.reflect.Type
 import java.time.Duration
 
@@ -32,9 +32,7 @@ import java.time.Duration
  */
 class FeishuClient(
     private val appId: String,
-    private val appSecret: String,
-    private val logsPath: String,
-    private val managementLogPath: String
+    private val appSecret: String
 ) {
     private val api = "https://open.feishu.cn/open-apis"
     private val log: Logger = LoggerFactory.getLogger(FeishuClient::class.java)
@@ -144,7 +142,11 @@ class FeishuClient(
             request(url = "/im/v1/chats", responseType = resultType, method = HttpMethod.GET)
 
         if (result?.isOk() != true) {
-            log.error("feishu api request fail:{}", result?.msg)
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "feishu api request fail:{}",
+                result?.msg
+            )
         }
         val chats = result?.data?.items
         if (log.isDebugEnabled) {
@@ -170,59 +172,43 @@ class FeishuClient(
      */
     fun postMessage(
         chatId: String,
-        timeStamp: Long,
         title: String,
+        subTitle: String,
         initialComment: String,
-        message: List<String>
+        logUrl: String,
+        linkTitle: String
     ): Boolean {
-        val params = mutableMapOf(
-            "receive_id" to chatId,
-            "msg_type" to "post"
-        )
-
-        val actuatorAddress = try {
-            top.bettercode.summer.logging.LoggingUtil.actuatorAddress
-        } catch (e: Exception) {
-            null
-        }
-        if (actuatorAddress == null) {
-            return filesUpload(chatId, timeStamp, title, message)
-        } else {
-            val anchor = PrettyMessageHTMLLayout.anchor(message.last())
-            val path = File(logsPath)
-            val namePattern = "all-${TimeUtil.now().format("yyyy-MM-dd")}-"
-            val files =
-                path.listFiles { file -> file.name.startsWith(namePattern) && file.extension == "gz" }
-            files?.sortBy { -it.lastModified() }
-            val existFilename = files?.firstOrNull()?.nameWithoutExtension
-
-            val filename = "$namePattern${
-                if (existFilename != null) {
-                    existFilename.substringAfter(namePattern).toInt() + 1
-                } else {
-                    0
-                }
-            }"
-            val linkTitle = "${filename}.gz#$anchor"
-            val logUrl = actuatorAddress + managementLogPath
-
-            params["content"] =
-                "{\"zh_cn\":{\"title\":\"$title\",\"content\":[[{\"tag\":\"text\",\"text\":\"$initialComment\\n\"},{\"tag\":\"a\",\"href\":\"$logUrl/${linkTitle}\",\"text\":\"$linkTitle\"}]]}}"
-
-            if (log.isTraceEnabled) {
-                log.trace("feishu params:{}", params)
-            }
-
-            val result: FeishuResult? = request(
-                url = "/im/v1/messages?receive_id_type=chat_id",
-                responseType = FeishuResult::class.java,
-                request = params
+        val titles = title.split(Regex(" +"))
+        val mainTitle=titles.first()
+        val tag1=titles.getOrElse(1) { "" }
+        val tag2=titles.getOrElse(2) { "" }
+        val params =
+            mapOf(
+                "receive_id" to chatId,
+                "msg_type" to "interactive",
+                "content" to """{"header":{"template":"yellow","title":{"content":"$mainTitle","tag":"plain_text"},"subtitle":{"tag":"plain_text","content":"$subTitle"},"text_tag_list":[{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag1"},"color":"turquoise"},{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag2"},"color":"green"}]},"card_link": {"url": "$logUrl/$linkTitle"},"elements":[{"tag":"div","text":{"content":"$initialComment","tag":"plain_text"}}]}""".trimIndent(),
             )
-            if (log.isTraceEnabled) {
-                log.trace("feishu result:{}", result)
-            }
-            return result?.isOk() == true
+
+        if (log.isTraceEnabled) {
+            log.trace("feishu params:{}", params)
         }
+
+        val result: FeishuResult? = request(
+            url = "/im/v1/messages?receive_id_type=chat_id",
+            responseType = FeishuResult::class.java,
+            request = params
+        )
+        if (log.isTraceEnabled) {
+            log.trace("feishu result:{}", result)
+        }
+        if (result?.isOk() != true) {
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "feishu api request fail:{}",
+                result?.msg
+            )
+        }
+        return result?.isOk() == true
     }
 
     fun filesUpload(
@@ -251,15 +237,23 @@ class FeishuClient(
             log.trace("feishu result:{}", fileResult)
         }
         if (fileResult?.isOk() != true) {
-            log.error("feishu api request fail:{}", fileResult?.msg)
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "feishu api request fail:{}",
+                fileResult?.msg
+            )
             return false
         }
         val fileKey = fileResult.data?.fileKey
         if (fileKey == null) {
-            log.error("feishu api request fail:{}", fileResult.msg)
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "feishu api request fail:{}",
+                fileResult.msg
+            )
             return false
         }
-        val params = mutableMapOf(
+        val params = mapOf(
             "receive_id" to chatId,
             "msg_type" to "file",
             "content" to "{\"file_key\":\"$fileKey\"}"
@@ -270,9 +264,15 @@ class FeishuClient(
             request = params
         )
 
-
         if (log.isTraceEnabled) {
             log.trace("feishu result:{}", result)
+        }
+        if (result?.isOk() != true) {
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "feishu api request fail:{}",
+                result?.msg
+            )
         }
         return result?.isOk() == true
     }

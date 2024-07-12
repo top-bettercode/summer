@@ -5,6 +5,7 @@ import ch.qos.logback.core.util.OptionHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
+import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.tools.lang.log.AlarmAppender
 import java.util.concurrent.ConcurrentMap
 
@@ -17,6 +18,8 @@ open class FeishuAppender(
     cacheMap: ConcurrentMap<String, Int>,
     timeoutCacheMap: ConcurrentMap<String, Int>
 ) : AlarmAppender(
+    logsPath = logsPath,
+    managementLogPath = managementLogPath,
     cyclicBufferSize = properties.cyclicBufferSize,
     ignoredWarnLogger = properties.ignoredWarnLogger,
     encoder = PatternLayoutEncoder().apply {
@@ -27,8 +30,7 @@ open class FeishuAppender(
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(FeishuAppender::class.java)
-    private val client: FeishuClient =
-        FeishuClient(properties.appId, properties.appSecret, logsPath, managementLogPath)
+    private val client: FeishuClient = FeishuClient(properties.appId, properties.appSecret)
     private var chatCache: MutableMap<String, String?> = mutableMapOf()
 
     private fun chatId(chat: String): String? {
@@ -56,21 +58,34 @@ open class FeishuAppender(
         val chatId = chatId(chat)
         return if (chatId != null) {
             try {
-                val title =
-                    "$warnSubject${
-                        try {
-                            "(${top.bettercode.summer.logging.LoggingUtil.apiAddress})"
-                        } catch (e: Exception) {
-                            ""
-                        }
-                    }"
-                client.postMessage(
-                    chatId,
-                    timeStamp,
-                    title,
-                    initialComment,
-                    message
-                )
+                val actuatorAddress = try {
+                    LoggingUtil.actuatorAddress
+                } catch (e: Exception) {
+                    null
+                }
+                val subTitle = try {
+                    LoggingUtil.apiAddress
+                } catch (e: Exception) {
+                    ""
+                }
+                if (actuatorAddress == null) {
+                    client.filesUpload(
+                        chatId = chatId,
+                        timeStamp = timeStamp,
+                        title = warnSubject + subTitle,
+                        message = message
+                    )
+                } else {
+                    val (logUrl, linkTitle) = logUrl(actuatorAddress, message)
+                    client.postMessage(
+                        chatId = chatId,
+                        title = warnSubject,
+                        subTitle = subTitle,
+                        initialComment = initialComment,
+                        logUrl = logUrl,
+                        linkTitle = linkTitle
+                    )
+                }
             } catch (e: Exception) {
                 log.error(
                     MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),

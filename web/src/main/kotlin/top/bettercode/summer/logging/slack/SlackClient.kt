@@ -3,6 +3,7 @@ package top.bettercode.summer.logging.slack
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MarkerFactory
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -12,9 +13,8 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.web.client.RestTemplate
-import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
 import top.bettercode.summer.tools.lang.util.TimeUtil
-import java.io.File
 import java.net.HttpURLConnection
 import java.security.KeyStore
 import java.security.cert.X509Certificate
@@ -43,9 +43,7 @@ import javax.net.ssl.*
  * @author Peter Wu
  */
 class SlackClient(
-    private val authToken: String,
-    private val logsPath: String,
-    private val managementLogPath: String
+    private val authToken: String
 ) {
 
     private val api = "https://slack.com/api/"
@@ -138,7 +136,11 @@ class SlackClient(
             method = HttpMethod.GET
         )
         if (result?.ok != true) {
-            log.error("slack api request fail:{}", result?.error)
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "slack api request fail:{}",
+                result?.error
+            )
         }
         val channels = result?.channels
         if (log.isDebugEnabled) {
@@ -167,63 +169,43 @@ class SlackClient(
      */
     fun postMessage(
         channel: String,
-        timeStamp: Long,
         title: String,
         initialComment: String,
-        message: List<String>
+        logUrl: String,
+        linkTitle: String
     ): Boolean {
-        val params = mutableMapOf<String, Any>("token" to authToken, "channel" to channel)
-
-        val actuatorAddress = try {
-            top.bettercode.summer.logging.LoggingUtil.actuatorAddress
-        } catch (e: Exception) {
-            null
-        }
-        if (actuatorAddress == null) {
-            return filesUpload(channel, timeStamp, title, initialComment, message)
-        } else {
-            params["text"] = "$title:\n$initialComment"
-
-            val anchor = PrettyMessageHTMLLayout.anchor(message.last())
-            val path = File(logsPath)
-            val namePattern = "all-${TimeUtil.now().format("yyyy-MM-dd")}-"
-            val files =
-                path.listFiles { file -> file.name.startsWith(namePattern) && file.extension == "gz" }
-            files?.sortBy { -it.lastModified() }
-            val existFilename = files?.firstOrNull()?.nameWithoutExtension
-
-            val filename = "$namePattern${
-                if (existFilename != null) {
-                    existFilename.substringAfter(namePattern).toInt() + 1
-                } else {
-                    0
-                }
-            }"
-
-            val linkTitle = "${filename}.gz#$anchor"
-
-            val logUrl = actuatorAddress + managementLogPath
-            params["attachments"] = arrayOf(
+        val params = mapOf(
+            "token" to authToken,
+            "channel" to channel,
+            "text" to "$title:\n$initialComment",
+            "attachments" to arrayOf(
                 mapOf(
                     "title" to linkTitle,
                     "title_link" to "$logUrl/${linkTitle}"
                 )
             )
+        )
 
-            if (log.isTraceEnabled) {
-                log.trace("slack params:{}", params)
-            }
-
-            val result = request(
-                url = "chat.postMessage",
-                responseType = SlackResult::class.java,
-                request = params
-            )
-            if (log.isTraceEnabled) {
-                log.trace("slack result:{}", result)
-            }
-            return result?.ok == true
+        if (log.isTraceEnabled) {
+            log.trace("slack params:{}", params)
         }
+
+        val result = request(
+            url = "chat.postMessage",
+            responseType = SlackResult::class.java,
+            request = params
+        )
+        if (log.isTraceEnabled) {
+            log.trace("slack result:{}", result)
+        }
+        if (result?.ok != true) {
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "slack api request fail:{}",
+                result?.error
+            )
+        }
+        return result?.ok == true
     }
 
     /**
@@ -256,7 +238,11 @@ class SlackClient(
             log.trace("slack result:{}", result)
         }
         if (result?.ok != true) {
-            log.error("slack api request fail:{}", result?.error)
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "slack api request fail:{}",
+                result?.error
+            )
         }
         return result?.ok == true
     }

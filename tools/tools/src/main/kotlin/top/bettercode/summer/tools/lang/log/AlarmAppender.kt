@@ -13,12 +13,17 @@ import ch.qos.logback.core.helpers.CyclicBuffer
 import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
 import org.slf4j.Marker
+import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.util.TimeUtil
+import java.io.File
 import java.util.concurrent.ConcurrentMap
 
 
 abstract class AlarmAppender(
     private val cyclicBufferSize: Int,
     private val ignoredWarnLogger: Array<String>,
+    private val logsPath: String,
+    private val managementLogPath: String,
     var encoder: PatternLayoutEncoder? = null,
     private val startedMsg: String = "^Started .*? in .*? seconds \\(.*?\\)$",
     private val cacheMap: ConcurrentMap<String, Int>,
@@ -194,6 +199,31 @@ abstract class AlarmAppender(
                 stop()
             }
         }
+    }
+
+    protected fun logUrl(
+        actuatorAddress: String,
+        message: List<String>
+    ): Pair<String, String> {
+        val anchor = PrettyMessageHTMLLayout.anchor(message.last())
+        val path = File(logsPath)
+        val namePattern = "all-${TimeUtil.now().format("yyyy-MM-dd")}-"
+        val files =
+            path.listFiles { file -> file.name.startsWith(namePattern) && file.extension == "gz" }
+        files?.sortBy { -it.lastModified() }
+        val existFilename = files?.firstOrNull()?.nameWithoutExtension
+
+        val filename = "$namePattern${
+            if (existFilename != null) {
+                existFilename.substringAfter(namePattern).toInt() + 1
+            } else {
+                0
+            }
+        }"
+
+        val linkTitle = "${filename}.gz#$anchor"
+        val logUrl = actuatorAddress + managementLogPath
+        return Pair(logUrl, linkTitle)
     }
 
     abstract fun sendMessage(

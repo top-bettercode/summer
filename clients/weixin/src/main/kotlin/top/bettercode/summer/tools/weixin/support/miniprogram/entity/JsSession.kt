@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.weixin.support.miniprogram.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.apache.tomcat.util.codec.binary.Base64
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,6 +10,7 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 import java.security.AlgorithmParameters
 import java.security.Security
+import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -51,11 +51,11 @@ data class JsSession(
         Security.addProvider(Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider").getConstructor().newInstance() as BouncyCastleProvider)
 
         //被加密的数据
-        val dataByte = Base64.decodeBase64(data)
+        val dataByte = Base64.getDecoder().decode(data)
         //加密秘钥
-        val keyByte = Base64.decodeBase64(sessionKey)
+        val keyByte = Base64.getDecoder().decode(sessionKey)
         //偏移量
-        val ivByte = Base64.decodeBase64(iv)
+        val ivByte = Base64.getDecoder().decode(iv)
         val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
         val spec = SecretKeySpec(keyByte, "AES")
         val parameters = AlgorithmParameters.getInstance("AES")

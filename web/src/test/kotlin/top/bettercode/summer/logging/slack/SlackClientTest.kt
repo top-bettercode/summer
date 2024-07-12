@@ -11,15 +11,11 @@ import javax.net.ssl.SSLHandshakeException
 @Disabled
 class SlackClientTest {
 
-    private val client = SlackClient(
-        "",
-        "./build",
-        "/actuator"
-    )
+    private val client = SlackClient("")
 
     @Test
     fun errorToken() {
-        println(StringUtil.json(SlackClient("xoxb-", "./build", "/actuator").channelsList(), true))
+        println(StringUtil.json(SlackClient("xoxb-").channelsList(), true))
     }
 
     @Test
@@ -58,11 +54,11 @@ class SlackClientTest {
         println(
             StringUtil.json(
                 client.postMessage(
-                    "dev",
-                    System.currentTimeMillis(),
-                    "test",
-                    "test",
-                    listOf("123testtest")
+                    channel = "dev",
+                    title = "title",
+                    initialComment = "initialComment",
+                    logUrl = "http://localhost:8080/actuator/logs",
+                    linkTitle = "logging"
                 ), true
             )
         )
@@ -73,11 +69,11 @@ class SlackClientTest {
         println(
             StringUtil.json(
                 client.filesUpload(
-                    "dev",
-                    System.currentTimeMillis(),
-                    "title",
-                    "initialComment",
-                    listOf("message")
+                    channel = "dev",
+                    timeStamp = System.currentTimeMillis(),
+                    title = "title",
+                    initialComment = "initialComment",
+                    message = listOf("message")
                 ), true
             )
         )

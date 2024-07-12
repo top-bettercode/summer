@@ -49,8 +49,10 @@ object LoggingUtil {
             return@lazy apiAddress
         }
         val serverPort = properties.port!!
-        printer.printf("%s://%s", RequestConverter.SCHEME_HTTP, properties.address
-                ?: IPAddressUtil.inet4Address)
+        printer.printf(
+            "%s://%s", RequestConverter.SCHEME_HTTP, properties.address
+                ?: IPAddressUtil.inet4Address
+        )
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
@@ -62,17 +64,16 @@ object LoggingUtil {
     }
 
     internal fun warnSubject(environment: Environment): String = environment.getProperty(
-            "summer.logging.warn-subject",
-            "${environment.getProperty("spring.application.name", "")}${
-                if (existProperty(
-                                environment,
-                                "summer.web.project-name"
-                        )
-                ) " " + environment.getProperty("summer.web.project-name") else ""
-            } ${environment.getProperty("spring.profiles.active", "")}"
+        "summer.logging.warn-subject",
+        "${environment.getProperty("spring.application.name", "")}${
+            if (existProperty(environment, "summer.web.project-name"))
+                " ${environment.getProperty("summer.web.project-name")}"
+            else 
+                ""
+        } ${environment.getProperty("spring.profiles.active", "")}"
     )
 
     internal fun existProperty(environment: Environment, key: String) =
-            environment.containsProperty(key) && !environment.getProperty(key).isNullOrBlank()
+        environment.containsProperty(key) && !environment.getProperty(key).isNullOrBlank()
 
 }

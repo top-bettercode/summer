@@ -11,9 +11,7 @@ class FeishuClientTest {
 
     val client = FeishuClient(
         "",
-        "",
-        "./build",
-        "/actuator"
+        ""
     )
 
     @Test
@@ -45,11 +43,12 @@ class FeishuClientTest {
         println(
             StringUtil.json(
                 client.postMessage(
-                    client.chatIdByName("dev") ?: throw RuntimeException("channel not exist"),
-                    System.currentTimeMillis(),
-                    "test",
-                    "test",
-                    listOf("123testtest")
+                    chatId = client.chatIdByName("dev") ?: throw RuntimeException("channel not exist"),
+                    title = "title tag1 tag2",
+                    subTitle = "subtitle",
+                    initialComment = "initialComment",
+                    logUrl = "http://localhost:8080/actuator/logs",
+                    linkTitle = "logging"
                 ), true
             )
         )
@@ -60,10 +59,10 @@ class FeishuClientTest {
         println(
             StringUtil.json(
                 client.filesUpload(
-                    client.chatIdByName("dev") ?: throw RuntimeException("channel not exist"),
-                    System.currentTimeMillis(),
-                    "title",
-                    listOf("message")
+                    chatId = client.chatIdByName("dev") ?: throw RuntimeException("channel not exist"),
+                    timeStamp = System.currentTimeMillis(),
+                    title = "title",
+                    message = listOf("message")
                 ), true
             )
         )

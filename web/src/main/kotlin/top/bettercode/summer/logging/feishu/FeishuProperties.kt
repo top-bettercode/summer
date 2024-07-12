@@ -12,12 +12,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 open class FeishuProperties {
     var logger = arrayOf("root")
     var ignoredWarnLogger = arrayOf<String>()
+
     var appId: String = ""
     var appSecret: String = ""
+
     var chat: String = ""
     var timeoutChat = "timeout"
-    var cacheSeconds = 5 * 60L
 
+    var chatHook: FeishuWebHook? = null
+    var timeoutChatHook: FeishuWebHook? = null
+
+    var cacheSeconds = 5 * 60L
     var timeoutCacheSeconds = 2 * 60 * 60L
     var cyclicBufferSize = 20
 }

@@ -40,6 +40,7 @@ import top.bettercode.summer.logging.*
 import top.bettercode.summer.logging.LoggingUtil.existProperty
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.logging.feishu.FeishuAppender
+import top.bettercode.summer.logging.feishu.FeishuHookAppender
 import top.bettercode.summer.logging.feishu.FeishuProperties
 import top.bettercode.summer.logging.slack.SlackAppender
 import top.bettercode.summer.logging.slack.SlackProperties
@@ -175,9 +176,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val managementLogPath = "$managementPath/logs${logsPath.substringAfter(logsViewPath)}"
 
         //feishu log
-        if (existProperty(environment, "summer.logging.feishu.app-id") && existProperty(
-                environment, "summer.logging.feishu.app-secret"
-            ) && existProperty(environment, "summer.logging.feishu.chat")
+        if (existProperty(environment, "summer.logging.feishu.app-id")
+            && existProperty(environment, "summer.logging.feishu.app-secret")
+            && existProperty(environment, "summer.logging.feishu.chat")
         ) {
             synchronized(context.configurationLock) {
                 val feishuProperties = Binder.get(environment).bind(
@@ -213,12 +214,46 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     log.error("配置FeishuAppender失败", e)
                 }
             }
+        } else if (existProperty(environment, "summer.logging.feishu.chat-hook.webhook")) {
+            synchronized(context.configurationLock) {
+                val feishuProperties = Binder.get(environment).bind(
+                    "summer.logging.feishu", FeishuProperties::class.java
+                ).get()
+                try {
+                    val cacheMap = Caffeine.newBuilder()
+                        .expireAfterWrite(feishuProperties.cacheSeconds, TimeUnit.SECONDS)
+                        .maximumSize(1000).build<String, Int>().asMap()
+                    val timeoutCacheMap =
+                        Caffeine.newBuilder()
+                            .expireAfterWrite(
+                                feishuProperties.timeoutCacheSeconds,
+                                TimeUnit.SECONDS
+                            )
+                            .maximumSize(1000).build<String, Int>().asMap()
+                    val feishuAppender = FeishuHookAppender(
+                        feishuProperties,
+                        warnSubject,
+                        logsPath,
+                        managementLogPath,
+                        fileLogPattern,
+                        cacheMap,
+                        timeoutCacheMap
+                    )
+                    feishuAppender.context = context
+                    feishuAppender.start()
+                    feishuProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
+                        .forEach {
+                            it.addAppender(feishuAppender)
+                        }
+                } catch (e: Exception) {
+                    log.error("配置FeishuAppender失败", e)
+                }
+            }
         }
 
         //slack log
-        if (existProperty(environment, "summer.logging.slack.auth-token") && existProperty(
-                environment, "summer.logging.slack.channel"
-            )
+        if (existProperty(environment, "summer.logging.slack.auth-token")
+            && existProperty(environment, "summer.logging.slack.channel")
         ) {
             synchronized(context.configurationLock) {
                 val slackProperties = Binder.get(environment).bind(
@@ -257,9 +292,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (ClassUtils.isPresent(
                 "org.springframework.web.socket.server.standard.ServerEndpointExporter",
                 Logback2LoggingSystem::class.java.classLoader
-            ) && ("true" == environment.getProperty("summer.logging.websocket.enabled") || environment.getProperty(
-                "summer.logging.websocket.enabled"
-            ).isNullOrBlank())
+            )
+            && ("true" == environment.getProperty("summer.logging.websocket.enabled")
+                    || environment.getProperty("summer.logging.websocket.enabled").isNullOrBlank())
         ) {
             synchronized(context.configurationLock) {
                 try {
@@ -339,7 +374,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         //file log
         if (existProperty(environment, "summer.logging.files.path")) {
-
             var defaultPackage = environment.getProperty("summer.logging.spilt-markers.package")
             if (defaultPackage == null) {
                 var command = environment.getProperty("sun.java.command")
