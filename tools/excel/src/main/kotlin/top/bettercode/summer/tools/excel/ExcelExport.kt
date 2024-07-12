@@ -6,12 +6,14 @@ import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URLEncoder
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -499,9 +501,10 @@ class ExcelExport(val excel: IExcel) {
         @JvmStatic
         fun export(
             fileName: String,
+            cacheKey: String? = null,
+            expiresIn: Duration? = null,
             poi: Boolean = false,
             useSxss: Boolean = true,
-            cacheKey: String? = null,
             consumer: Consumer<ExcelExport>
         ) {
             val requestAttributes = RequestContextHolder
@@ -514,8 +517,16 @@ class ExcelExport(val excel: IExcel) {
                 val tmpPath = System.getProperty("java.io.tmpdir")
                 val file = File(
                     tmpPath,
-                    """summer${File.separator}excel-export${File.separator}$cacheKey.xlsx"""
+                    "summer${File.separator}excel-export${File.separator}$cacheKey.xlsx"
                 )
+                if (expiresIn != null && file.exists()) {
+                    val expiresTime =
+                        TimeUtil.Companion.toLocalDateTime(file.lastModified()).plus(expiresIn)
+                    if (!LocalDateTime.now().isBefore(expiresTime)) {
+                        file.delete()
+                        log.info("删除过期文件：{}", file.absolutePath)
+                    }
+                }
                 if (!file.exists()) {
                     val dir = file.parentFile
                     if (!dir.exists()) {
