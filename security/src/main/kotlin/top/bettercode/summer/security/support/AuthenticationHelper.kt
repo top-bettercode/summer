@@ -14,14 +14,15 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 object AuthenticationHelper {
-    private val authentication: Optional<Authentication>
+
+    val authentication: Optional<Authentication>
         /**
          * @return 授权信息
          */
         get() = Optional.ofNullable(SecurityContextHolder.getContext().authentication)
 
     @JvmStatic
-    val principal: Optional<UserDetails>
+    val userDetails: Optional<UserDetails>
         /**
          * @return 授权信息
          */
@@ -51,8 +52,8 @@ object AuthenticationHelper {
 
     @JvmStatic
     fun hasAuthority(
-            authorities: Collection<GrantedAuthority>,
-            authority: String
+        authorities: Collection<GrantedAuthority>,
+        authority: String
     ): Boolean {
         for (grantedAuthority in authorities) {
             if (grantedAuthority.authority == authority) {
@@ -80,7 +81,9 @@ object AuthenticationHelper {
             header = header.trim()
             if (header.startsWith("Basic", true) && !header.equals("Basic", ignoreCase = true)) {
                 val basicCredentials = String(
-                        decode(header.substring(6).toByteArray(StandardCharsets.UTF_8)), StandardCharsets.UTF_8)
+                    decode(header.substring(6).toByteArray(StandardCharsets.UTF_8)),
+                    StandardCharsets.UTF_8
+                )
                 val clientInfo = basicCredentials.split(":")
                 return Pair(clientInfo[0], clientInfo[1])
             }
@@ -93,7 +96,7 @@ object AuthenticationHelper {
     @JvmStatic
     fun getClientId(request: HttpServletRequest): String {
         return getClientInfo(request).first
-                ?: throw IllegalArgumentException("客户端未授权")
+            ?: throw IllegalArgumentException("客户端未授权")
     }
 
     private fun decode(base64Token: ByteArray): ByteArray {

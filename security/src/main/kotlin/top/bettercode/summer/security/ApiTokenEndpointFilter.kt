@@ -168,7 +168,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                         }
                         val userDetails = storeToken.userDetails
                         val authenticationResult: Authentication =
-                            UserDetailsAuthenticationToken(userDetails)
+                            UserDetailsAuthenticationToken(storeToken.id, userDetails)
                         storeTokenRepository.save(storeToken)
                         val context = SecurityContextHolder.createEmptyContext()
                         context.authentication = authenticationResult
@@ -209,7 +209,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                             val userDetails = storeToken.userDetails
                             apiTokenService.validate(userDetails)
                             val authenticationResult: Authentication =
-                                UserDetailsAuthenticationToken(userDetails)
+                                UserDetailsAuthenticationToken(storeToken.id, userDetails)
                             val context = SecurityContextHolder.createEmptyContext()
                             context.authentication = authenticationResult
                             request.setAttribute(

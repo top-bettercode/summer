@@ -4,13 +4,15 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import top.bettercode.summer.security.authorization.UserDetailsAuthenticationToken
+import top.bettercode.summer.security.token.TokenId
 import top.bettercode.summer.security.userdetails.ClientUserDetailsService
 
 /**
  *
  * @author Peter Wu
  */
-class DefaultTestAuthenticationService(private val userDetailsService: UserDetailsService) : TestAuthenticationService {
+class DefaultTestAuthenticationService(private val userDetailsService: UserDetailsService) :
+    TestAuthenticationService {
 
     override fun loadAuthentication(clientd: String, scope: Set<String>, username: String) {
         val userDetails: UserDetails = if (userDetailsService is ClientUserDetailsService) {
@@ -18,7 +20,12 @@ class DefaultTestAuthenticationService(private val userDetailsService: UserDetai
         } else {
             userDetailsService.loadUserByUsername(username)
         }
-        SecurityContextHolder.getContext().authentication = UserDetailsAuthenticationToken(userDetails)
+        SecurityContextHolder.getContext().authentication =
+            UserDetailsAuthenticationToken(TokenId(
+                clientId = clientd,
+                scope = scope,
+                username = username
+            ), userDetails)
     }
 
 }

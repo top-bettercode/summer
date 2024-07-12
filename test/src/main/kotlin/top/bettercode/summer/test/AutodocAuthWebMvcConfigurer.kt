@@ -4,7 +4,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
+import top.bettercode.summer.security.authorization.UserDetailsAuthenticationToken
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.security.authorize.ClientAuthorize
 import top.bettercode.summer.security.config.ApiSecurityProperties
@@ -18,7 +20,8 @@ import top.bettercode.summer.web.servlet.HandlerMethodContextHolder.getHandler
 @ConditionalOnBean(ApiSecurityProperties::class)
 @Configuration(proxyBeanMethods = false)
 class AutodocAuthWebMvcConfigurer(
-        private val securityProperties: ApiSecurityProperties) : AutoDocRequestHandler {
+    private val securityProperties: ApiSecurityProperties
+) : AutoDocRequestHandler {
 
     @Bean
     fun testAuthenticationService(userDetailsService: UserDetailsService): TestAuthenticationService {
@@ -28,8 +31,16 @@ class AutodocAuthWebMvcConfigurer(
     override fun handle(request: AutoDocHttpServletRequest) {
         val handler = getHandler(request)
         if (handler != null) {
-            val username = AuthenticationHelper.username
-            username.ifPresent { request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, username.get()) }
+            AuthenticationHelper.authentication.map {
+                val principal = it.principal
+                when {
+                    it is UserDetailsAuthenticationToken -> it.id.toString()
+                    principal is UserDetails -> principal.username
+                    else -> principal?.toString()
+                }
+            }.ifPresent {
+                request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, it)
+            }
 
             if (Autodoc.requireAuthorization) {
                 Autodoc.requiredHeaders(HttpHeaders.AUTHORIZATION)
@@ -41,7 +52,8 @@ class AutodocAuthWebMvcConfigurer(
             //set required
             val isClientAuth = hasAnnotation(handler, ClientAuthorize::class.java)
             if (!hasAnnotation(handler, Anonymous::class.java)
-                    && !securityProperties.ignored(url) || isClientAuth) {
+                && !securityProperties.ignored(url) || isClientAuth
+            ) {
                 requiredHeaders = HashSet(requiredHeaders)
                 if (securityProperties.isCompatibleAccessToken) {
                     requiredHeaders.add(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
@@ -58,20 +70,29 @@ class AutodocAuthWebMvcConfigurer(
             }
             if (needAuth) {
                 if (isClientAuth && !Autodoc.requireAuthorization) {
-                    request.header(HttpHeaders.AUTHORIZATION, "Basic " + java.util.Base64.getEncoder().encodeToString( (securityProperties.clientId + ":" + securityProperties.clientSecret).toByteArray()))
+                    request.header(
+                        HttpHeaders.AUTHORIZATION,
+                        "Basic " + java.util.Base64.getEncoder()
+                            .encodeToString((securityProperties.clientId + ":" + securityProperties.clientSecret).toByteArray())
+                    )
                 } else {
                     if (securityProperties.isCompatibleAccessToken) {
                         val authorization = request.getHeader(
-                                SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
+                            SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN
+                        )
                         if (authorization.isNullOrBlank()) {
-                            request.header(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN,
-                                    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+                            request.header(
+                                SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN,
+                                "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                            )
                         }
                     } else {
                         val authorization = request.getHeader(HttpHeaders.AUTHORIZATION)
                         if (authorization.isNullOrBlank()) {
-                            request.header(HttpHeaders.AUTHORIZATION,
-                                    "bearer xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+                            request.header(
+                                HttpHeaders.AUTHORIZATION,
+                                "bearer xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                            )
                         }
                     }
                 }

@@ -24,7 +24,7 @@ class SecurityTestController : BaseController() {
     @EmpAuth
     @RequestMapping(value = ["/testAuth"])
     fun testAuth(): Any {
-        val userDetailsOptional = AuthenticationHelper.principal
+        val userDetailsOptional = AuthenticationHelper.userDetails
         System.err.println("-----------------------${userDetailsOptional.orElse(null)}")
         return ok("success")
     }
