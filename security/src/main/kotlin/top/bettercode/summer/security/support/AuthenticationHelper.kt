@@ -37,6 +37,15 @@ object AuthenticationHelper {
             }
         }
 
+    @Deprecated("use userDetails", ReplaceWith(
+        "userDetails",
+        "top.bettercode.summer.security.support.AuthenticationHelper.userDetails"
+    )
+    )
+    @JvmStatic
+    val principal: Optional<UserDetails>
+        get() = userDetails
+
     @JvmStatic
     val username: Optional<String>
         get() {
