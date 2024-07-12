@@ -514,7 +514,7 @@ class ExcelExport(val excel: IExcel) {
                 val tmpPath = System.getProperty("java.io.tmpdir")
                 val file = File(
                     tmpPath,
-                    """summer${File.separator}excel-export${File.separator}$fileName${File.separator}$cacheKey.xlsx"""
+                    """summer${File.separator}excel-export${File.separator}$cacheKey.xlsx"""
                 )
                 if (!file.exists()) {
                     val dir = file.parentFile
