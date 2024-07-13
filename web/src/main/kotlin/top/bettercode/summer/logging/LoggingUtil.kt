@@ -65,10 +65,12 @@ object LoggingUtil {
 
     internal fun warnSubject(environment: Environment): String = environment.getProperty(
         "summer.logging.warn-subject",
-        "${environment.getProperty("spring.application.name", "")}${
+        "${environment.getProperty("spring.application.name", "").replace(Regex(" +"), "-")}${
             if (existProperty(environment, "summer.web.project-name"))
-                " ${environment.getProperty("summer.web.project-name")}"
-            else 
+                " ${
+                    environment.getProperty("summer.web.project-name", "").replace(Regex(" +"), "-")
+                }"
+            else
                 ""
         } ${environment.getProperty("spring.profiles.active", "")}"
     )
