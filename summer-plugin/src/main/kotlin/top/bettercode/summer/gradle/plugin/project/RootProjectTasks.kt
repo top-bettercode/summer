@@ -245,6 +245,18 @@ object RootProjectTasks {
                                     }
                                 }
                                 +""
+                                +"".padEnd(
+                                    20, when (database.driver) {
+                                        DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                            '#'
+                                        }
+
+                                        else -> {
+                                            '-'
+                                        }
+                                    }
+                                )
+                                +""
                                 project.rootProject.file("database/update-data/v${project.version}$suffix")
                                     .listFiles()
                                     ?.filter { it.isFile }
