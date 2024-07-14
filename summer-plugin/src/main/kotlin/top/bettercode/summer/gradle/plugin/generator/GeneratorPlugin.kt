@@ -1,6 +1,7 @@
 package top.bettercode.summer.gradle.plugin.generator
 
 import isBoot
+import isCloud
 import isCore
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
@@ -172,10 +173,15 @@ class GeneratorPlugin : Plugin<Project> {
             extension.rootPath = project.rootDir
             extension.projectDir = project.projectDir
             extension.dir = findGeneratorProperty(project, "dir") ?: "src/main/java"
-            extension.packageName =
-                (findGeneratorProperty(project, "packageName")
-                    ?: project.findProperty("app.packageName") as String?
-                    ?: "")
+            extension.packageName = (findGeneratorProperty(project, "packageName")
+                ?: project.findProperty("app.packageName") as String? ?: "")
+
+            val coreProject = project.rootProject.subprojects.firstOrNull { it.isCore }
+            if (coreProject != null) {
+                extension.corePackageName = (findGeneratorProperty(coreProject, "packageName")
+                    ?: coreProject.findProperty("app.packageName") as String? ?: "")
+            }
+
             extension.userModule =
                 (findGeneratorProperty(project, "userModule"))?.toBoolean() ?: true
             extension.applicationName = project.findProperty("application.name") as String?
@@ -183,6 +189,7 @@ class GeneratorPlugin : Plugin<Project> {
             extension.projectName =
                 (findGeneratorProperty(project, "projectName") ?: project.name)
             extension.isCore = project.isCore
+            extension.isCloud = project.isCloud
 
             extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
             extension.remarks = findGeneratorProperty(project, "remarks") ?: ""

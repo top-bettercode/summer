@@ -65,7 +65,9 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
                 if (it.javaName == codeType)
                     annotation("@top.bettercode.summer.web.serializer.annotation.JsonCode")
                 else {
-                    import("${(ext.packageName + ".support.dic." + enumClassName(codeType))}Enum")
+                    val dicCodePackageName =
+                        if (ext.isCloud) ext.corePackageName else ext.packageName
+                    import("${(dicCodePackageName + ".support.dic." + enumClassName(codeType))}Enum")
 
                     annotation(
                         "@top.bettercode.summer.web.serializer.annotation.JsonCode(${

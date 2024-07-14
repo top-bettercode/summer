@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.generator.dsl
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.TableHolder
 import top.bettercode.summer.tools.generator.puml.PumlConverter
+import java.io.File
 
 /**
  * 模板脚本
@@ -31,7 +32,9 @@ object Generators {
     /**
      * @param extension 配置
      */
-    fun callInAllModule(extension: GeneratorExtension) {
+    fun callInAllModule(
+        extension: GeneratorExtension, pumlSources: Map<String, List<File>> = extension.pumlSources,
+    ) {
         val generators = extension.generators
         if (generators.isEmpty()) {
             return
@@ -40,7 +43,7 @@ object Generators {
             generator.setUp(extension)
         }
 
-        extension.run { _, tableHolder ->
+        extension.run(pumlSources = pumlSources) { _, tableHolder ->
             tableHolder.tables(
                 checkFound = extension.pumlSources.size <= 1, tableName = extension.tableNames
             ).filter { !it.database.excludeGenTableNames.contains(it.tableName) }.forEach { table ->

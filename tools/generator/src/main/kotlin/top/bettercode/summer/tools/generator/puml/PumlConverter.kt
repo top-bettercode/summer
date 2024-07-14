@@ -9,7 +9,6 @@ import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
-import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.io.File
 import java.util.*
@@ -202,19 +201,11 @@ object PumlConverter {
                         if (isCodeType) {
                             if (codeType.isBlank()) {
                                 codeType =
-                                    if (columnName.contains("_") || logicalDelete || database.extension.commonCodeTypes.any {
-                                            it.equals(
-                                                columnName,
-                                                true
-                                            )
-                                        })
-                                        GeneratorExtension.javaName(columnName)
-                                    else
-                                        database.className(tableName)
-                                            .decapitalized() + GeneratorExtension.javaName(
-                                            columnName,
-                                            true
-                                        )
+                                    database.defaultCodeType(
+                                        columnName = columnName,
+                                        logicalDelete = logicalDelete,
+                                        tableName = tableName
+                                    )
                             }
 
                             val exist = codeTypeCache[codeType]

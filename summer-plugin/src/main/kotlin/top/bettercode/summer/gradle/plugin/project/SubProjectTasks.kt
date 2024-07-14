@@ -65,6 +65,16 @@ object SubProjectTasks {
                         })
                     }
 
+                    project.tasks.create("gen${prefix}Mixin") { task ->
+                        task.group = group
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Mixin())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
+
                     project.tasks.create("gen${prefix}DO") { task ->
                         task.group = group
                         task.doLast(object : Action<Task> {
@@ -104,6 +114,7 @@ object SubProjectTasks {
                                         Entity(),
                                         SerializationViews(),
                                         Form(),
+                                        Mixin(),
                                         Service(),
                                         Controller()
                                     )

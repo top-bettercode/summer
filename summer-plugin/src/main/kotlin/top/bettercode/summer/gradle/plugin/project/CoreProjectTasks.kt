@@ -3,6 +3,7 @@ package top.bettercode.summer.gradle.plugin.project
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
+import isCloud
 import isCore
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -20,6 +21,7 @@ import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
+import java.io.File
 import java.util.*
 
 
@@ -37,6 +39,42 @@ object CoreProjectTasks {
             val ext = project.extensions.getByType(GeneratorExtension::class.java)
             val prefix = "Core"
             val group = "gen $prefix code"
+
+            if (project.isCore) {
+                create("genDicCode") {
+                    it.group = GeneratorPlugin.GEN_GROUP
+                    it.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            if (project.isCloud) {
+                                val pumlSources: MutableMap<String, MutableList<File>> = mutableMapOf()
+                                project.rootProject.subprojects.forEach { sub ->
+                                    val gen =
+                                        sub.extensions.getByType(GeneratorExtension::class.java)
+                                    gen.pumlSources.forEach { (module, sources) ->
+                                        val files = pumlSources.computeIfAbsent(module) {
+                                            sources.toMutableList()
+                                        }
+                                        files.addAll(sources)
+                                    }
+                                }
+                                ext.tableNames = emptyArray()
+                                ext.generators = arrayOf(DicCodeProperties())
+                                Generators.callInAllModule(
+                                    extension = ext,
+                                    pumlSources = pumlSources
+                                )
+                            } else {
+                                //生成 properties
+                                ext.tableNames = emptyArray()
+                                ext.generators = arrayOf(DicCodeProperties())
+                                Generators.callInAllModule(ext)
+                            }
+                            //生成
+                            DicCodeGen(project, ext.packageName).run()
+                        }
+                    })
+                }
+            }
 
             if (ext.hasPuml && project.isCore) {
                 project.tasks.create("gen${prefix}Entity") { task ->
@@ -221,20 +259,6 @@ object CoreProjectTasks {
                         ext.generators = arrayOf(dbDoc)
                         ext.tableNames = emptyArray()
                         Generators.callInAllModule(ext)
-                    }
-                })
-            }
-            create("genDicCode") {
-                it.group = GeneratorPlugin.GEN_GROUP
-                it.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        //生成 properties
-                        ext.tableNames = emptyArray()
-                        ext.generators = arrayOf(DicCodeProperties())
-                        Generators.callInAllModule(ext)
-                        //生成
-                        val packageName = ext.packageName
-                        DicCodeGen(project, packageName).run()
                     }
                 })
             }

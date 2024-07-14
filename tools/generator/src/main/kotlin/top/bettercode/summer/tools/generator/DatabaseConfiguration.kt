@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAUL
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.javaName
 import top.bettercode.summer.tools.generator.database.DatabaseMetaData
 import top.bettercode.summer.tools.generator.database.entity.Table
+import top.bettercode.summer.tools.lang.decapitalized
 import java.sql.Connection
 import java.sql.DriverManager
 import java.util.*
@@ -19,17 +20,17 @@ import java.util.regex.Pattern
 
 @Suppress("ConvertTryFinallyToUseCall")
 data class DatabaseConfiguration(
-        var url: String = "",
-        var catalog: String? = null,
-        val properties: Properties = Properties().apply {
-            set("remarksReporting", "true") //oracle 读取表注释
-            set("useInformationSchema", "true")//mysql 读取表注释
-            set("nullCatalogMeansCurrent", "true")//mysql 读取表
-            set("characterEncoding", "utf8")
-            set("user", "root")
-            set("password", "root")
-            set("tinyInt1isBit", "false")
-        }
+    var url: String = "",
+    var catalog: String? = null,
+    val properties: Properties = Properties().apply {
+        set("remarksReporting", "true") //oracle 读取表注释
+        set("useInformationSchema", "true")//mysql 读取表注释
+        set("nullCatalogMeansCurrent", "true")//mysql 读取表
+        set("characterEncoding", "utf8")
+        set("user", "root")
+        set("password", "root")
+        set("tinyInt1isBit", "false")
+    }
 ) : TableHolder {
 
     private val log = org.slf4j.LoggerFactory.getLogger(DatabaseConfiguration::class.java)
@@ -97,12 +98,33 @@ data class DatabaseConfiguration(
     var sshUsername: String? = null
     var sshPassword: String? = null
 
+
+    fun defaultCodeType(
+        columnName: String,
+        logicalDelete: Boolean,
+        tableName: String,
+    ): String {
+        return if (columnName.contains("_") || logicalDelete || extension.commonCodeTypes.any {
+                it.equals(
+                    columnName,
+                    true
+                )
+            })
+            javaName(columnName)
+        else
+            className(tableName)
+                .decapitalized() + javaName(
+                columnName,
+                true
+            )
+    }
+
     /**
      * ClassName
      */
     fun className(tableName: String): String {
         return javaName(
-                (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + fixTableName(tableName), true
+            (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + fixTableName(tableName), true
         )
     }
 
@@ -126,11 +148,11 @@ data class DatabaseConfiguration(
                         val pattern1 = Regex("jdbc:mysql://[^/]*/(.*)?\\?.+")
                         if (url.matches(pattern1))
                             url.replace(
-                                    pattern1,
-                                    "$1"
-                            ) else url.replace(
-                                Regex("jdbc:mysql://[^/]*/(.*)"),
+                                pattern1,
                                 "$1"
+                            ) else url.replace(
+                            Regex("jdbc:mysql://[^/]*/(.*)"),
+                            "$1"
                         )
                     }
 
@@ -182,7 +204,8 @@ data class DatabaseConfiguration(
     fun sshProxy(run: () -> Unit) {
         if (available) {
             val session: Session? = if (!url.contains("localhost") && sshHost != null &&
-                    sshUsername != null && sshPassword != null) {
+                sshUsername != null && sshPassword != null
+            ) {
                 getDbHostPort(driver, url)?.let {
                     val jsch = JSch()
                     val session: Session = jsch.getSession(sshUsername, sshHost, 22)
@@ -291,15 +314,15 @@ data class DatabaseConfiguration(
         fun getDbHostPort(driver: DatabaseDriver, dbUrl: String): Pair<String, Int>? {
             // 获取数据库主机名或 IP 地址
             val dbHostPortPattern = Pattern.compile(
-                    when (driver) {
-                        DatabaseDriver.MYSQL ->
-                            "jdbc:mysql://(.+?)(:(\\d+))?/.*"
+                when (driver) {
+                    DatabaseDriver.MYSQL ->
+                        "jdbc:mysql://(.+?)(:(\\d+))?/.*"
 
-                        DatabaseDriver.ORACLE ->
-                            "jdbc:oracle:thin:@(.+?)(:(\\d+))?:.*"
+                    DatabaseDriver.ORACLE ->
+                        "jdbc:oracle:thin:@(.+?)(:(\\d+))?:.*"
 
-                        else -> return null
-                    }
+                    else -> return null
+                }
             )
 
             val defaultPort = when (driver) {
@@ -313,7 +336,7 @@ data class DatabaseConfiguration(
                 val dbHost = matcher.group(1)
                 val groupCount = matcher.groupCount()
                 val dbPort = if (groupCount == 2) matcher.group(2)?.toInt()
-                        ?: defaultPort else defaultPort
+                    ?: defaultPort else defaultPort
                 Pair(dbHost, dbPort)
             } else {
                 null

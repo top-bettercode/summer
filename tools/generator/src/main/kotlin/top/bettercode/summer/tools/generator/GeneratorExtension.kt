@@ -61,6 +61,7 @@ open class GeneratorExtension(
      * 生成代码包名
      */
     var packageName: String = "",
+    var corePackageName: String = "",
     /**
      * 使用子模块
      */
@@ -71,6 +72,7 @@ open class GeneratorExtension(
     var projectName: String = "",
 
     var isCore: Boolean = false,
+    var isCloud: Boolean = false,
     /**
      * 注释说明
      */
@@ -143,7 +145,6 @@ open class GeneratorExtension(
             database
         }
     }
-
 
     var useJSR310Types: Boolean = true
         set(value) {
@@ -249,7 +250,11 @@ open class GeneratorExtension(
             ?: emptyMap()
     }
 
-    fun <T> run(dataType: DataType = DataType.PUML, function: (String, TableHolder) -> T): List<T> {
+    fun <T> run(
+        dataType: DataType = DataType.PUML,
+        pumlSources: Map<String, List<File>> = this.pumlSources,
+        function: (String, TableHolder) -> T
+    ): List<T> {
         return when (dataType) {
             DataType.DATABASE -> {
                 databases.map { (module, jdbc) ->

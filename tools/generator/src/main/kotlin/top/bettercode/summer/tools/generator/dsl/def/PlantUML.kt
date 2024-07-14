@@ -52,7 +52,14 @@ class PlantUML(
                 }
 
                 dest.append(
-                    "    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.idgenerator.isBlank()) "" else " ${it.idgenerator}${if (it.idgeneratorParam.isBlank()) "" else "(${it.idgeneratorParam})"}"}${if (it.isPrimary && it.sequence.isNotBlank()) " SEQUENCE ${it.sequence}${if (it.sequenceStartWith != 1L) "(${it.sequenceStartWith})" else ""}" else ""}${it.defaultDesc}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.version) " VERSION" else ""}${if (it.createdDate) " CREATEDDATE" else ""}${if (it.createdBy) " CREATEDBY" else ""}${if (it.lastModifiedDate) " LASTMODIFIEDDATE" else ""}${if (it.lastModifiedBy) " LASTMODIFIEDBY" else ""}${if (it.logicalDelete) " LOGICALDELETE" else ""}${if (it.asBoolean) " ASBOOLEAN" else ""}${if (it.codeType.isNotBlank() && it.codeType != it.javaName) " CODETYPE ${it.codeType}" else ""}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n"
+                    "    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.idgenerator.isBlank()) "" else " ${it.idgenerator}${if (it.idgeneratorParam.isBlank()) "" else "(${it.idgeneratorParam})"}"}${if (it.isPrimary && it.sequence.isNotBlank()) " SEQUENCE ${it.sequence}${if (it.sequenceStartWith != 1L) "(${it.sequenceStartWith})" else ""}" else ""}${it.defaultDesc}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.version) " VERSION" else ""}${if (it.createdDate) " CREATEDDATE" else ""}${if (it.createdBy) " CREATEDBY" else ""}${if (it.lastModifiedDate) " LASTMODIFIEDDATE" else ""}${if (it.lastModifiedBy) " LASTMODIFIEDBY" else ""}${if (it.logicalDelete) " LOGICALDELETE" else ""}${if (it.asBoolean) " ASBOOLEAN" else ""}${
+                        if (it.codeType.isNotBlank() && it.codeType != database.defaultCodeType(
+                                columnName = it.columnName,
+                                logicalDelete = it.logicalDelete,
+                                tableName = tableName
+                            )
+                        ) " CODETYPE ${it.codeType}" else ""
+                    }${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n"
                 )
                 if (it.isForeignKey) {
                     fklines.add("${it.pktableName} ||--o{ $tableName")
