@@ -37,8 +37,8 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
 
     protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    init {
-        val loggingInterceptor = ClientHttpRequestLoggingInterceptor(
+    private val loggingInterceptor: ClientHttpRequestLoggingInterceptor =
+        ClientHttpRequestLoggingInterceptor(
             collectionName = collectionName,
             name = properties.platformName,
             logMarker = marker,
@@ -48,12 +48,19 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
             responseDecrypt = responseDecrypt
         )
 
-        this.requestFactory = InterceptingClientHttpRequestFactory(
-            requestFactory, listOf(loggingInterceptor)
-        )
+    init {
+        this.requestFactory = requestFactory
     }
 
     //--------------------------------------------
+
+    override fun setRequestFactory(requestFactory: ClientHttpRequestFactory) {
+        super.setRequestFactory(
+            InterceptingClientHttpRequestFactory(
+                requestFactory, listOf(loggingInterceptor)
+            )
+        )
+    }
 
     override fun <T : Any?> doExecute(
         url: URI,
