@@ -80,6 +80,11 @@ management:
       post:
         enabled: true
 
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
 
 logging:
   pattern:

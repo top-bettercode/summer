@@ -85,6 +85,7 @@ dependencies {
         api("com.gurobi:gurobi:11.0.2")
 
         api("io.swagger:swagger-annotations:1.6.12")
+        api("io.github.openfeign:feign-core:11.10")
 
         api(project(":env"))
         api(project(":web"))

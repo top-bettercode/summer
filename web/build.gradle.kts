@@ -19,6 +19,7 @@ dependencies {
 
     compileOnly("io.swagger:swagger-annotations")
 
+    compileOnly("io.github.openfeign:feign-core")
     compileOnly("javax.mail:mail")
 
     compileOnly("net.logstash.logback:logstash-logback-encoder")
