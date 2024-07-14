@@ -84,7 +84,7 @@ feign:
   client:
     config:
       default:
-        loggerLevel: full
+        loggerLevel: BASIC
 
 logging:
   pattern:
@@ -121,6 +121,7 @@ logging:
     com.baomidou: warn
     com.netflix: warn
     com.sun: warn
+    feign: warn
     com.wechat.pay: info
     sun.net.www.protocol.http.HttpURLConnection: warn
     reactor.util.Loggers: info

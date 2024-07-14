@@ -26,47 +26,51 @@ class FeignLogger : Logger() {
     private val marginLine = "============================================================"
 
     override fun logRequest(configKey: String, logLevel: Level, request: Request) {
-        val headers = HttpHeaders()
-        request.headers().forEach { (name, values) ->
-            headers.addAll(name, values.toList())
-        }
-        val requestBody = request.body() ?: ByteArray(0)
-        val uri = URI(request.url())
-        headers["Host"] = extractHost(uri)
+        if (Level.FULL == logLevel) {
+            val headers = HttpHeaders()
+            request.headers().forEach { (name, values) ->
+                headers.addAll(name, values.toList())
+            }
+            val requestBody = request.body() ?: ByteArray(0)
+            val uri = URI(request.url())
+            headers["Host"] = extractHost(uri)
 
-        val parameters = Parameters()
+            val parameters = Parameters()
 
-        val restUri = uri.rawPath
-        val remoteUser = "NonSpecificUser"
-        val operationRequest = OperationRequest(
-            uri = uri,
-            restUri = restUri,
-            uriVariables = emptyMap(),
-            method = request.httpMethod().name,
-            headers = headers,
-            cookies = emptyList(),
-            remoteUser = remoteUser,
-            parameters = parameters,
-            parts = emptyList(),
-            content = requestBody,
-            dateTime = LocalDateTime.now()
-        )
-        val stringBuilder = StringBuilder("")
-        stringBuilder.appendLine()
-        stringBuilder.appendLine(marginLine)
-        stringBuilder.appendLine("feign/$configKey")
-        stringBuilder.appendLine("REQUEST    TIME : ${TimeUtil.format(operationRequest.dateTime)}")
-        stringBuilder.appendLine(SEPARATOR_LINE)
-        stringBuilder.append(
-            HttpOperation.toString(
-                operationRequest,
-                RequestConverter.DEFAULT_PROTOCOL,
-                true
+            val restUri = uri.rawPath
+            val remoteUser = "NonSpecificUser"
+            val operationRequest = OperationRequest(
+                uri = uri,
+                restUri = restUri,
+                uriVariables = emptyMap(),
+                method = request.httpMethod().name,
+                headers = headers,
+                cookies = emptyList(),
+                remoteUser = remoteUser,
+                parameters = parameters,
+                parts = emptyList(),
+                content = requestBody,
+                dateTime = LocalDateTime.now()
             )
-        )
-        stringBuilder.appendLine(SEPARATOR_LINE)
+            val stringBuilder = StringBuilder("")
+            stringBuilder.appendLine()
+            stringBuilder.appendLine(marginLine)
+            stringBuilder.appendLine("feign/$configKey")
+            stringBuilder.appendLine("REQUEST    TIME : ${TimeUtil.format(operationRequest.dateTime)}")
+            stringBuilder.appendLine(SEPARATOR_LINE)
+            stringBuilder.append(
+                HttpOperation.toString(
+                    operationRequest,
+                    RequestConverter.DEFAULT_PROTOCOL,
+                    true
+                )
+            )
+            stringBuilder.appendLine(SEPARATOR_LINE)
 
-        log.info(MarkerFactory.getMarker(logMarker), stringBuilder.toString())
+            log.info(MarkerFactory.getMarker(logMarker), stringBuilder.toString())
+        } else {
+            log.info(MarkerFactory.getMarker(logMarker), "feign/$configKey:${request.url()}")
+        }
     }
 
     override fun logAndRebufferResponse(
@@ -75,36 +79,40 @@ class FeignLogger : Logger() {
         response: Response,
         elapsedTime: Long
     ): Response {
-        val headers = HttpHeaders()
-        response.headers().forEach { (name, values) ->
-            headers.addAll(name, values.toList())
-        }
+        if (Level.FULL == logLevel) {
+            val headers = HttpHeaders()
+            response.headers().forEach { (name, values) ->
+                headers.addAll(name, values.toList())
+            }
 
-        val responseBody = response.body().asInputStream()?.readBytes()
+            val responseBody = response.body().asInputStream()?.readBytes()
 
-        val operationResponse = OperationResponse(
-            response.status(),
-            headers, responseBody ?: ByteArray(0)
-        )
-
-        val stringBuilder = StringBuilder("")
-        stringBuilder.appendLine()
-        stringBuilder.appendLine(SEPARATOR_LINE)
-        stringBuilder.appendLine("feign/$configKey")
-        stringBuilder.appendLine("RESPONSE   TIME : ${TimeUtil.format(operationResponse.dateTime)}")
-        stringBuilder.appendLine("DURATION MILLIS : $elapsedTime")
-        stringBuilder.appendLine(SEPARATOR_LINE)
-        stringBuilder.appendLine()
-        stringBuilder.append(
-            HttpOperation.toString(
-                operationResponse,
-                RequestConverter.DEFAULT_PROTOCOL,
-                true
+            val operationResponse = OperationResponse(
+                response.status(),
+                headers, responseBody ?: ByteArray(0)
             )
-        )
-        stringBuilder.appendLine(marginLine)
-        log.info(MarkerFactory.getMarker(logMarker), stringBuilder.toString())
-        return response.toBuilder().body(responseBody).build()
+
+            val stringBuilder = StringBuilder("")
+            stringBuilder.appendLine()
+            stringBuilder.appendLine(SEPARATOR_LINE)
+            stringBuilder.appendLine("feign/$configKey")
+            stringBuilder.appendLine("RESPONSE   TIME : ${TimeUtil.format(operationResponse.dateTime)}")
+            stringBuilder.appendLine("DURATION MILLIS : $elapsedTime")
+            stringBuilder.appendLine(SEPARATOR_LINE)
+            stringBuilder.appendLine()
+            stringBuilder.append(
+                HttpOperation.toString(
+                    operationResponse,
+                    RequestConverter.DEFAULT_PROTOCOL,
+                    true
+                )
+            )
+            stringBuilder.appendLine(marginLine)
+            log.info(MarkerFactory.getMarker(logMarker), stringBuilder.toString())
+            return response.toBuilder().body(responseBody).build()
+        } else {
+            return response
+        }
     }
 
     override fun logIOException(
@@ -113,18 +121,19 @@ class FeignLogger : Logger() {
         ioe: IOException,
         elapsedTime: Long
     ): IOException {
-        val stringBuilder = StringBuilder("")
-        stringBuilder.appendLine()
-        stringBuilder.appendLine(SEPARATOR_LINE)
-        stringBuilder.appendLine("feign/$configKey")
-        val stackTrace = StringUtil.valueOf(ioe)
-        stringBuilder.appendLine(SEPARATOR_LINE)
-        stringBuilder.appendLine("StackTrace:")
-        stringBuilder.appendLine(stackTrace)
-        stringBuilder.appendLine(marginLine)
+        if (Level.FULL == logLevel) {
+            val stringBuilder = StringBuilder("")
+            stringBuilder.appendLine()
+            stringBuilder.appendLine(SEPARATOR_LINE)
+            stringBuilder.appendLine("feign/$configKey")
+            val stackTrace = StringUtil.valueOf(ioe)
+            stringBuilder.appendLine(SEPARATOR_LINE)
+            stringBuilder.appendLine("StackTrace:")
+            stringBuilder.appendLine(stackTrace)
+            stringBuilder.appendLine(marginLine)
 
-        log.info(MarkerFactory.getMarker(logMarker), stringBuilder.toString())
-
+            log.info(MarkerFactory.getMarker(logMarker), stringBuilder.toString())
+        }
         return ioe
     }
 
