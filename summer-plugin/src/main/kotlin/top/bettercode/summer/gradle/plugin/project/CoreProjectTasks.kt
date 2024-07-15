@@ -274,12 +274,13 @@ object CoreProjectTasks {
                                     "auth=权限\n" +
                                     "auth|TYPE=String"
                         )
+                        val codeGen = DicCodeGen(project, ext.packageName)
                         map.forEach { node ->
                             printNode(project, node)
                         }
                         project.logger.lifecycle("======================================")
                         map.forEach { node ->
-                            genNode(project, node)
+                            genNode(project, codeGen, node)
                         }
                     }
                 })
@@ -358,15 +359,15 @@ object CoreProjectTasks {
         }
     }
 
-    private fun genNode(project: Project, node: JsonNode) {
-        genCode(project, node.get("id").asText(), node.get("name").asText())
+    private fun genNode(project: Project, codeGen: DicCodeGen, node: JsonNode) {
+        genCode(project, codeGen, node.get("id").asText(), node.get("name").asText())
         val jsonNode = node.get("children")
         if (!jsonNode.isEmpty) {
-            jsonNode.forEach { genNode(project, it) }
+            jsonNode.forEach { genNode(project, codeGen, it) }
         }
     }
 
-    private fun genCode(project: Project, code: String, name: String) {
+    private fun genCode(project: Project, codeGen: DicCodeGen, code: String, name: String) {
         val directory = try {
             project.rootProject.project(
                 project.findProperty("app.authProject")?.toString()
@@ -381,7 +382,7 @@ object CoreProjectTasks {
         }
 
         val authClassName =
-            "Auth${GeneratorExtension.javaName(DicCodeGen.codeName(name, project), true)}"
+            "Auth${GeneratorExtension.javaName(codeGen.codeName(name), true)}"
         val packageName = project.rootProject.property("app.packageName") as String
         Interface(
             type = JavaType("$packageName.security.auth.$authClassName"),
@@ -406,7 +407,7 @@ object CoreProjectTasks {
             val codeFieldName =
                 (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
                 ) {
-                    DicCodeGen.codeName(name, project)
+                    codeGen.codeName(name)
                 } else if (code.isBlank()) {
                     "BLANK"
                 } else {

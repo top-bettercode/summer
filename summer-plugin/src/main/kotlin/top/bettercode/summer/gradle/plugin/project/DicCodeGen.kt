@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import com.hankcs.hanlp.HanLP
+import com.hankcs.hanlp.dictionary.CustomDictionary
 import org.gradle.api.Project
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
@@ -145,7 +146,7 @@ class DicCodeGen(
                                 if (code is Int || code.toString()
                                         .startsWith("0") && code.toString().length > 1
                                 ) {
-                                    codeName(name, project)
+                                    codeName(name)
                                 } else if (code.toString().isBlank()) {
                                     "BLANK"
                                 } else {
@@ -350,48 +351,77 @@ class DicCodeGen(
         }
     }
 
-    companion object {
+    private val defaultDict = PropertiesSource.of("default-dict")
+    private val dict = PropertiesSource.of("dict")
+    private val dictMap: Map<String, String>
+    private val coreProperties: Map<String, String>
 
-        private val dict = PropertiesSource.of("default-dict", "dict")
+    init {
+        val prefix = "code.dict."
+        dictMap = project.properties.filterKeys { it.startsWith(prefix) }
+            .mapKeys { it.key.substring(prefix.length) }.mapValues { it.value.toString() }
+        dictMap.keys.forEach { key ->
+            CustomDictionary.add(key)
+        }
+        val file = project.file("src/main/resources/core-messages.properties")
+        coreProperties = mutableMapOf()
+        if (file.exists()) {
+            val properties = Properties()
+            properties.load(file.inputStream())
+            val map = properties.map { (t, u) ->
+                val key = u.toString()
+                val value = t.toString()
+                key to value
+            }.groupBy { it.first }
+                .mapValues { pair -> pair.value.minByOrNull { it.second.length }?.second }
+                .filter { it.value != null }
+            map.forEach { (t, u) ->
+                coreProperties[t] = u!!
+                CustomDictionary.add(t)
+            }
+        }
+        dict.source.keys.forEach { key ->
+            CustomDictionary.add(key)
+        }
+    }
 
-        fun codeName(name: String, project: Project): String {
-            val prefix = "code.dict."
-            val dictMap = project.properties.filterKeys { it.startsWith(prefix) }
-                .mapKeys { it.key.substring(prefix.length) }.mapValues { it.value.toString() }
-            var text = name.substringBefore("(").substringBefore("（")
-            val regex = Regex("([a-zA-Z0-9]+)")
-            text = text.replace(regex, "_$1_")
+    fun codeName(name: String): String {
+        var text = name.substringBefore("(").substringBefore("（")
+        val regex = Regex("([a-zA-Z0-9]+)")
+        text = text.replace(regex, "_$1_")
 
-            val result = text.split(Regex("_+")).map { part ->
-                if (regex.matches(part)) {
-                    part
-                } else {
-                    var partText = dictMap[part] ?: dict[part] ?: part
-                    partText = partText.replace(regex, "_$1_")
-                    partText.split(Regex("_+")).joinToString("_") { pp ->
-                        if (regex.matches(pp)) {
-                            pp
-                        } else {
-                            HanLP.segment(pp).joinToString("_") {
-                                val word = it.word
-                                (dictMap[word] ?: dict.getOrDefault(
-                                    word, PinyinHelper.convertToPinyinString(
-                                        word,
-                                        "_",
-                                        PinyinFormat.WITHOUT_TONE
-                                    )
-                                )).replace(" ", "_").replace("-", "_")
-                            }
+        val result = text.split(Regex("_+")).map { part ->
+            if (regex.matches(part)) {
+                part
+            } else {
+                var partText = translator(part) ?: part
+                partText = partText.replace(regex, "_$1_")
+                partText.split(Regex("_+")).joinToString("_") { pp ->
+                    if (regex.matches(pp)) {
+                        pp
+                    } else {
+                        HanLP.segment(pp).joinToString("_") {
+                            val word = it.word
+                            (translator(word)
+                                ?: PinyinHelper.convertToPinyinString(
+                                    word,
+                                    "_",
+                                    PinyinFormat.WITHOUT_TONE
+                                ))
                         }
                     }
                 }
-            }.joinToString("_") {
-                it.trim('_').uppercase()
             }
-
-            return result.trim('_')
+        }.joinToString("_") {
+            it.trim('_').uppercase()
         }
 
+        return result.trim('_')
+    }
+
+    private fun translator(key: String): String? {
+        val result = dictMap[key] ?: coreProperties[key] ?: dict[key] ?: defaultDict[key]
+        return result?.toUnderscore()?.replace(" ", "_")?.replace("-", "_")
     }
 
 }

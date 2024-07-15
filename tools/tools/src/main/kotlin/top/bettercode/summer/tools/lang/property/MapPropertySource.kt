@@ -7,7 +7,7 @@ import java.io.Serializable
 /**
  * @author Peter Wu
  */
-open class MapPropertySource(protected val source: MutableMap<String, String>) : PropertySource {
+open class MapPropertySource(val source: MutableMap<String, String>) : PropertySource {
 
     private val conversionService: ConversionService = DefaultConversionService()
 
