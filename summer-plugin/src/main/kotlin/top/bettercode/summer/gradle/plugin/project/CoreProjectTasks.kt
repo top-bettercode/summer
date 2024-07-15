@@ -73,6 +73,34 @@ object CoreProjectTasks {
                         }
                     })
                 }
+
+                if (project.isCloud)
+                    create("genMsg") {
+                        it.group = GeneratorPlugin.GEN_GROUP
+                        it.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                val pumlSources: MutableMap<String, MutableList<File>> =
+                                    mutableMapOf()
+                                project.rootProject.subprojects.forEach { sub ->
+                                    val gen =
+                                        sub.extensions.getByType(GeneratorExtension::class.java)
+                                    gen.pumlSources.forEach { (module, sources) ->
+                                        val files = pumlSources.computeIfAbsent(module) {
+                                            sources.toMutableList()
+                                        }
+                                        files.addAll(sources)
+                                    }
+                                }
+                                ext.tableNames = emptyArray()
+                                ext.generators = arrayOf(Msg())
+                                Generators.callInAllModule(
+                                    extension = ext,
+                                    pumlSources = pumlSources
+                                )
+                            }
+                        })
+                    }
+
             }
 
             if (ext.hasPuml && project.isCore) {

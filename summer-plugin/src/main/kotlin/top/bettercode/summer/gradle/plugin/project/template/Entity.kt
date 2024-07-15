@@ -9,11 +9,13 @@ import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
 class Entity : ProjectGenerator() {
 
     override fun setUp() {
-        add(properties(msgName, true) { load(ext.projectDir) })
+        if (isCore)
+            add(properties(msgName, true) { load(ext.projectDir) })
     }
 
     override fun content() {
-        msg(this[msgName] as PropertiesUnit)
+        if (isCore)
+            msg(this[msgName] as PropertiesUnit)
 
         //entityClass
         +clazz(entityType, true) {
