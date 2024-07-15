@@ -46,7 +46,8 @@ object CoreProjectTasks {
                     it.doLast(object : Action<Task> {
                         override fun execute(it: Task) {
                             if (project.isCloud) {
-                                val pumlSources: MutableMap<String, MutableList<File>> = mutableMapOf()
+                                val pumlSources: MutableMap<String, MutableList<File>> =
+                                    mutableMapOf()
                                 project.rootProject.subprojects.forEach { sub ->
                                     val gen =
                                         sub.extensions.getByType(GeneratorExtension::class.java)
@@ -380,14 +381,13 @@ object CoreProjectTasks {
                 project.projectDir
             }
         }
-        val authName =
-            PinyinHelper.convertToPinyinString(
-                name,
-                "_",
-                PinyinFormat.WITHOUT_TONE
-            ).split('_').joinToString("") {
-                it.capitalized()
-            }
+        val authName = PinyinHelper.convertToPinyinString(
+            name,
+            "_",
+            PinyinFormat.WITHOUT_TONE
+        ).split('_').joinToString("") {
+            it.capitalized()
+        }
 
         val authClassName = "Auth${authName}"
         val packageName = project.rootProject.property("app.packageName") as String
@@ -414,7 +414,11 @@ object CoreProjectTasks {
             val codeFieldName =
                 (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
                 ) {
-                    "CODE_${code.replace("-", "MINUS_")}"
+                    PinyinHelper.convertToPinyinString(
+                        name.substringBefore("(").substringBefore("（"),
+                        "_",
+                        PinyinFormat.WITHOUT_TONE
+                    ).uppercase()
                 } else if (code.isBlank()) {
                     "BLANK"
                 } else {

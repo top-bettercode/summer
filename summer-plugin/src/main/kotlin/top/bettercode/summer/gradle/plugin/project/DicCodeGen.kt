@@ -2,6 +2,8 @@ package top.bettercode.summer.gradle.plugin.project
 
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
+import com.github.stuxuhai.jpinyin.PinyinFormat
+import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.gradle.api.Project
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
@@ -141,7 +143,11 @@ class DicCodeGen(
                                 if (code is Int || code.toString()
                                         .startsWith("0") && code.toString().length > 1
                                 ) {
-                                    "CODE_${code.toString().replace("-", "MINUS_")}"
+                                    PinyinHelper.convertToPinyinString(
+                                        name.substringBefore("(").substringBefore("（"),
+                                        "_",
+                                        PinyinFormat.WITHOUT_TONE
+                                    ).uppercase()
                                 } else if (code.toString().isBlank()) {
                                     "BLANK"
                                 } else {
