@@ -14,6 +14,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
+import top.bettercode.summer.tools.generator.dsl.DicCodes
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
@@ -303,9 +304,16 @@ object CoreProjectTasks {
                                     "auth|TYPE=String"
                         )
                         val codeGen = DicCodeGen(project, ext.packageName)
+                        val dicCodes = DicCodes(
+                            type = "auth",
+                            name = "权限",
+                            javaType = JavaType.stringInstance,
+                            codes = mutableMapOf()
+                        )
                         map.forEach { node ->
-                            printNode(project, node)
+                            printNode(project, dicCodes, node)
                         }
+                        codeGen.genCode(dicCodes = dicCodes, auth = true)
                         project.logger.lifecycle("======================================")
                         map.forEach { node ->
                             genNode(project, codeGen, node)
@@ -379,11 +387,14 @@ object CoreProjectTasks {
 
     }
 
-    private fun printNode(project: Project, node: JsonNode) {
-        project.logger.lifecycle("auth.${node.get("id").asText()}=${node.get("name").asText()}")
+    private fun printNode(project: Project, dicCodes: DicCodes, node: JsonNode) {
+        val code = node.get("id").asText()
+        val name = node.get("name").asText()
+        project.logger.lifecycle("auth.$code=$name")
+        dicCodes.codes[code] = name
         val jsonNode = node.get("children")
         if (!jsonNode.isEmpty) {
-            jsonNode.forEach { printNode(project, it) }
+            jsonNode.forEach { printNode(project, dicCodes, it) }
         }
     }
 
@@ -432,18 +443,22 @@ object CoreProjectTasks {
             annotation("@java.lang.annotation.Inherited")
             annotation("@java.lang.annotation.Documented")
 
-            val codeFieldName =
-                (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
-                ) {
-                    codeGen.codeName(name)
-                } else if (code.isBlank()) {
-                    "BLANK"
-                } else {
-                    code.replace("-", "_").replace(".", "_").toUnderscore()
+            val codeFieldName = (when {
+                    code.matches(Regex("\\d.*")) -> {
+                        codeGen.codeName(name)
+                    }
+
+                    code.isBlank() -> {
+                        "BLANK"
+                    }
+
+                    else -> {
+                        code.replace("-", "_").replace(".", "_").toUnderscore()
+                    }
                 }
                         ).replace(Regex("_+"), "_")
 
-            import("$packageName.support.dic.AuthEnum.AuthConst")
+            import("$packageName.security.auth.AuthEnum.AuthConst")
             annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(AuthConst.$codeFieldName)")
 
         }.writeTo(directory)
