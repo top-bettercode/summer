@@ -2,6 +2,7 @@
 
 package top.bettercode.summer.web.support
 
+import org.slf4j.LoggerFactory
 import org.springframework.cache.Cache
 import org.springframework.cache.support.NullValue
 import org.springframework.cache.support.SimpleValueWrapper
@@ -45,6 +46,7 @@ constructor(
         JdkSerializationRedisSerializer(RedisCache::class.java.classLoader)
     )
 ) {
+    private val log = LoggerFactory.getLogger(RedisCache::class.java)
     private val binaryNullValue: ByteArray = RedisSerializer.java().serialize(NullValue.INSTANCE)!!
     private val cacheWriter: RedisCacheWriter =
         RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
@@ -275,10 +277,15 @@ constructor(
      * @return can be null.
      */
 
-    private fun deserializeCacheValue(value: ByteArray): Any {
+    private fun deserializeCacheValue(value: ByteArray): Any? {
         return if (allowNullValues && ObjectUtils.nullSafeEquals(value, binaryNullValue)) {
             NullValue.INSTANCE
-        } else valueSerializationPair.read(ByteBuffer.wrap(value))
+        } else try {
+            valueSerializationPair.read(ByteBuffer.wrap(value))
+        } catch (e: Exception) {
+            log.warn("Could not deserialize cache value", e)
+            return null
+        }
     }
 
     private fun convertCollectionLikeOrMapKey(key: Any, source: TypeDescriptor): String {
