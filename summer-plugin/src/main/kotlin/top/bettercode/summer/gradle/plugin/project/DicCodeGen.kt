@@ -145,7 +145,7 @@ class DicCodeGen(
                                 if (code is Int || code.toString()
                                         .startsWith("0") && code.toString().length > 1
                                 ) {
-                                    codeName(name)
+                                    codeName(name, project)
                                 } else if (code.toString().isBlank()) {
                                     "BLANK"
                                 } else {
@@ -354,7 +354,10 @@ class DicCodeGen(
 
         private val dict = PropertiesSource.of("default-dict", "dict")
 
-        fun codeName(name: String): String {
+        fun codeName(name: String, project: Project): String {
+            val prefix = "code.dict."
+            val dictMap = project.properties.filterKeys { it.startsWith(prefix) }
+                .mapKeys { it.key.substring(prefix.length) }.mapValues { it.value.toString() }
             var text = name.substringBefore("(").substringBefore("（")
             val regex = Regex("([a-zA-Z0-9]+)")
             text = text.replace(regex, "_$1_")
@@ -363,7 +366,7 @@ class DicCodeGen(
                 if (regex.matches(part)) {
                     part
                 } else {
-                    var partText = dict[part] ?: part
+                    var partText = dictMap[part] ?: dict[part] ?: part
                     partText = partText.replace(regex, "_$1_")
                     partText.split(Regex("_+")).joinToString("_") { pp ->
                         if (regex.matches(pp)) {
@@ -371,13 +374,13 @@ class DicCodeGen(
                         } else {
                             HanLP.segment(pp).joinToString("_") {
                                 val word = it.word
-                                dict.getOrDefault(
+                                (dictMap[word] ?: dict.getOrDefault(
                                     word, PinyinHelper.convertToPinyinString(
                                         word,
                                         "_",
                                         PinyinFormat.WITHOUT_TONE
                                     )
-                                ).replace(" ", "_").replace("-", "_")
+                                )).replace(" ", "_").replace("-", "_")
                             }
                         }
                     }

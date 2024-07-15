@@ -380,7 +380,8 @@ object CoreProjectTasks {
             }
         }
 
-        val authClassName = "Auth${GeneratorExtension.javaName(DicCodeGen.codeName(name), true)}"
+        val authClassName =
+            "Auth${GeneratorExtension.javaName(DicCodeGen.codeName(name, project), true)}"
         val packageName = project.rootProject.property("app.packageName") as String
         Interface(
             type = JavaType("$packageName.security.auth.$authClassName"),
@@ -405,7 +406,7 @@ object CoreProjectTasks {
             val codeFieldName =
                 (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
                 ) {
-                    DicCodeGen.codeName(name)
+                    DicCodeGen.codeName(name, project)
                 } else if (code.isBlank()) {
                     "BLANK"
                 } else {
