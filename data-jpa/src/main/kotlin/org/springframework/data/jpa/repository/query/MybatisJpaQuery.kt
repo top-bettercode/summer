@@ -109,7 +109,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     repositoryQuery: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(sqlLogId) {
+                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
                         val mybatisQuery = repositoryQuery.createQuery(accessor) as MybatisQuery
                         val total: Long
                         val resultList: List<*>?
@@ -149,7 +149,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     query: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(sqlLogId) {
+                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
                         val result = super.doExecute(query, accessor) as List<*>
                         if (sqlLog.isInfoEnabled) {
                             sqlLog.retrieved(result.size)
@@ -164,7 +164,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     query: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(sqlLogId) {
+                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
                         val result = super.doExecute(query, accessor)
                         if (sqlLog.isInfoEnabled) {
                             sqlLog.affected(result)
@@ -179,7 +179,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     jpaQuery: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(sqlLogId) {
+                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
                         super.doExecute(jpaQuery, accessor)
                     }
                 }
@@ -190,7 +190,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     query: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(sqlLogId) {
+                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
                         super.doExecute(query, accessor)
                     }
                 }
@@ -201,7 +201,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     query: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(sqlLogId) {
+                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
                         val pageable = accessor.pageable
                         val nestedResultMapType = mybatisQueryMethod.nestedResultMapType
                         if (pageable.isPaged && nestedResultMapType != null) {
@@ -233,7 +233,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     query: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any? {
-                    return JpaUtil.mdcId(sqlLogId) {
+                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
                         val result: Any? = try {
                             super.doExecute(query, accessor)
                         } catch (e: NoResultException) {

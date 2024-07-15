@@ -84,7 +84,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                     jpaQuery: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(statementId) {
+                    return JpaUtil.mdcId(statementId, accessor.pageable) {
                         val query = jpaQuery.createQuery(accessor)
                         val resultList = query.resultList
                         val logicalDeletedAttribute = extJpaSupport.logicalDeletedAttribute
@@ -108,7 +108,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                     query: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    return JpaUtil.mdcId(statementId) {
+                    return JpaUtil.mdcId(statementId, accessor.pageable) {
                         super.doExecute(query, accessor)
                     }
                 }

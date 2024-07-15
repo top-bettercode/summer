@@ -21,6 +21,8 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         const val MDC_SQL_RETRIEVED = "SQL_RETRIEVED"
         const val MDC_SQL_AFFECTED = "SQL_AFFECTED"
         const val MDC_SQL_COST = "SQL_COST"
+        const val MDC_SQL_OFFSET = "SQL_OFFSET"
+        const val MDC_SQL_LIMIT = "SQL_LIMIT"
 
         fun Logger.total(total: Number) {
             try {
@@ -52,12 +54,32 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         fun Logger.cost(cost: Long) {
             try {
                 MDC.put(MDC_SQL_COST, cost.toString())
+                MDC.put(MDC_SQL_END, "END")
                 if (cost > 2 * 1000) {
                     warn("cost: {} ms", cost)
                 } else
                     info("cost: {} ms", cost)
             } finally {
                 MDC.remove(MDC_SQL_COST)
+                MDC.remove(MDC_SQL_END)
+            }
+        }
+
+        fun Logger.offset(offset: Long) {
+            try {
+                MDC.put(MDC_SQL_OFFSET, offset.toString())
+                info("offset: {} rows", offset)
+            } finally {
+                MDC.remove(MDC_SQL_OFFSET)
+            }
+        }
+
+        fun Logger.limit(limit: Int) {
+            try {
+                MDC.put(MDC_SQL_LIMIT, limit.toString())
+                info("limit: {} rows", limit)
+            } finally {
+                MDC.remove(MDC_SQL_LIMIT)
             }
         }
     }
@@ -126,6 +148,14 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     val cost = event.mdcPropertyMap[MDC_SQL_COST]
                     if (!cost.isNullOrBlank()) {
                         sqlLogData.cost = cost.toLong()
+                    }
+                    val offset = event.mdcPropertyMap[MDC_SQL_OFFSET]
+                    if (!offset.isNullOrBlank()) {
+                        sqlLogData.offset = offset.toLong()
+                    }
+                    val limit = event.mdcPropertyMap[MDC_SQL_LIMIT]
+                    if (!limit.isNullOrBlank()) {
+                        sqlLogData.limit = limit.toInt()
                     }
                 }
             }

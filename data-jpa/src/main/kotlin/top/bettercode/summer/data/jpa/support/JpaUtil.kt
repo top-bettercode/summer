@@ -3,9 +3,12 @@ package top.bettercode.summer.data.jpa.support
 import org.hibernate.type.spi.TypeConfiguration
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import org.springframework.data.domain.Pageable
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.tools.lang.log.SqlAppender
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.cost
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.limit
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
 import top.bettercode.summer.web.support.ApplicationContextHolder
 
 /**
@@ -33,7 +36,7 @@ object JpaUtil {
         }
     }
 
-    fun <M> mdcId(id: String, run: () -> M): M {
+    fun <M> mdcId(id: String, pageable: Pageable? = null, run: () -> M): M {
         val put = if (MDC.get(SqlAppender.MDC_SQL_ID) == null) {
             MDC.put(SqlAppender.MDC_SQL_ID, id)
             true
@@ -44,12 +47,17 @@ object JpaUtil {
             return if (put) {
                 val s = System.currentTimeMillis()
                 try {
+                    if (pageable != null && pageable.isPaged) {
+                        val pageSize = pageable.pageSize
+                        val offset = pageable.offset
+                        sqlLog.offset(offset)
+                        sqlLog.limit(pageSize)
+                    }
                     run()
                 } catch (e: Exception) {
                     MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
                     throw e
                 } finally {
-                    MDC.put(SqlAppender.MDC_SQL_END, "END")
                     val duration = System.currentTimeMillis() - s
                     sqlLog.cost(duration)
                 }
@@ -58,7 +66,6 @@ object JpaUtil {
             }
         } finally {
             MDC.remove(SqlAppender.MDC_SQL_ERROR)
-            MDC.remove(SqlAppender.MDC_SQL_END)
             if (put) {
                 MDC.remove(SqlAppender.MDC_SQL_ID)
             }

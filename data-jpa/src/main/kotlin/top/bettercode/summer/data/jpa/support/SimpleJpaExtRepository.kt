@@ -80,8 +80,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    private fun <M> mdcId(id: String, run: () -> M): M {
-        return JpaUtil.mdcId(entityInformation.entityName + id, run)
+    private fun <M> mdcId(id: String, pageable: Pageable? = null, run: () -> M): M {
+        return JpaUtil.mdcId(entityInformation.entityName + id, pageable, run)
     }
 
     private fun logflush() {
@@ -548,7 +548,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findAll(pageable: Pageable): Page<T> {
-        return mdcId(".findAll") {
+        return mdcId(".findAll", pageable) {
             val result: Page<T> = if (extJpaSupport.logicalDeletedSupported) {
                 super.findAll(
                     extJpaSupport.logicalDeletedAttribute!!.notDeletedSpecification,
@@ -566,18 +566,20 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findAll(size: Int): List<T> {
-        return mdcId(".findAll") {
+        val pageable = PageRequest.of(0, size)
+        return mdcId(".findAll", pageable) {
             val spec: Specification<T>? =
                 extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
-            findUnpaged(spec, PageRequest.of(0, size))
+            findUnpaged(spec, pageable)
         }
     }
 
     override fun findAll(size: Int, sort: Sort): List<T> {
-        return mdcId(".findAll") {
+        val pageable = PageRequest.of(0, size, sort)
+        return mdcId(".findAll", pageable) {
             val spec: Specification<T>? =
                 extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
-            findUnpaged(spec, PageRequest.of(0, size, sort))
+            findUnpaged(spec, pageable)
         }
     }
 
@@ -617,18 +619,20 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findFirst(sort: Sort): Optional<T> {
-        return mdcId(".findFirst") {
+        val pageable = PageRequest.of(0, 1, sort)
+        return mdcId(".findFirst", pageable) {
             val spec = extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
-            findUnpaged(spec, PageRequest.of(0, 1, sort)).stream().findFirst()
+            findUnpaged(spec, pageable).stream().findFirst()
         }
     }
 
     override fun findFirst(spec: Specification<T>?): Optional<T> {
-        return mdcId(".findFirst") {
+        val pageable = PageRequest.of(0, 1)
+        return mdcId(".findFirst", pageable) {
             var spec1 = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                 ?: spec1
-            findUnpaged(spec1, PageRequest.of(0, 1)).stream().findFirst()
+            findUnpaged(spec1, pageable).stream().findFirst()
         }
     }
 
@@ -655,20 +659,22 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findAll(spec: Specification<T>?, size: Int): List<T> {
-        return mdcId(".findAll") {
+        val pageable = PageRequest.of(0, size)
+        return mdcId(".findAll", pageable) {
             var spec1 = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                 ?: spec1
-            findUnpaged(spec1, PageRequest.of(0, size))
+            findUnpaged(spec1, pageable)
         }
     }
 
     override fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T> {
-        return mdcId(".findAll") {
+        val pageable = PageRequest.of(0, size, sort)
+        return mdcId(".findAll", pageable) {
             var spec1 = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                 ?: spec1
-            findUnpaged(spec1, PageRequest.of(0, size, sort))
+            findUnpaged(spec1, pageable)
         }
     }
 
@@ -687,7 +693,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findPhysicalAll(spec: Specification<T>?, pageable: Pageable): Page<T> {
-        return mdcId(".findPhysicalAll") {
+        return mdcId(".findPhysicalAll", pageable) {
             val all = super.findAll(spec, pageable)
             if (sqlLog.isInfoEnabled) {
                 sqlLog.total(all.totalElements)
@@ -708,7 +714,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findAll(spec: Specification<T>?, pageable: Pageable): Page<T> {
-        return mdcId(".findAll") {
+        return mdcId(".findAll", pageable) {
             var spec1: Specification<T>? = spec
             spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
                 ?: spec1
@@ -735,8 +741,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun <S : T> findFirst(example: Example<S>): Optional<S> {
-        return mdcId(".findFirst") {
-            findUnpaged(example, PageRequest.of(0, 1)).stream().findFirst()
+        val pageable = PageRequest.of(0, 1)
+        return mdcId(".findFirst", pageable) {
+            findUnpaged(example, pageable).stream().findFirst()
         }
     }
 
@@ -786,14 +793,16 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun <S : T> findAll(example: Example<S>, size: Int): List<S> {
-        return mdcId(".findAll") {
-            findUnpaged(example, PageRequest.of(0, size))
+        val pageable = PageRequest.of(0, size)
+        return mdcId(".findAll", pageable) {
+            findUnpaged(example, pageable)
         }
     }
 
     override fun <S : T> findAll(example: Example<S>, size: Int, sort: Sort): List<S> {
-        return mdcId(".findAll") {
-            findUnpaged(example, PageRequest.of(0, size, sort))
+        val pageable = PageRequest.of(0, size, sort)
+        return mdcId(".findAll", pageable) {
+            findUnpaged(example, pageable)
         }
     }
 
@@ -827,7 +836,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun <S : T> findAll(example: Example<S>, pageable: Pageable): Page<S> {
-        return mdcId(".findAll") {
+        return mdcId(".findAll", pageable) {
             extJpaSupport.logicalDeletedAttribute?.restore(example.probe)
             val all = super.findAll(example, pageable)
             if (sqlLog.isInfoEnabled) {
@@ -1000,8 +1009,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findFirstFromRecycleBin(spec: Specification<T>?): Optional<T> {
-        return mdcId(".findFirstFromRecycleBin") {
-            findUnpagedFromRecycleBin(spec, PageRequest.of(0, 1)).stream().findFirst()
+        val pageable = PageRequest.of(0, 1)
+        return mdcId(".findFirstFromRecycleBin", pageable) {
+            findUnpagedFromRecycleBin(spec, pageable).stream().findFirst()
         }
     }
 
@@ -1020,19 +1030,21 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findAllFromRecycleBin(size: Int): List<T> {
-        return mdcId(".findAllFromRecycleBin") {
-            findUnpagedFromRecycleBin(null, PageRequest.of(0, size))
+        val pageable = PageRequest.of(0, size)
+        return mdcId(".findAllFromRecycleBin", pageable) {
+            findUnpagedFromRecycleBin(null, pageable)
         }
     }
 
     override fun findAllFromRecycleBin(size: Int, sort: Sort): List<T> {
-        return mdcId(".findAllFromRecycleBin") {
-            findUnpagedFromRecycleBin(null, PageRequest.of(0, size, sort))
+        val pageable = PageRequest.of(0, size, sort)
+        return mdcId(".findAllFromRecycleBin", pageable) {
+            findUnpagedFromRecycleBin(null, pageable)
         }
     }
 
     override fun findAllFromRecycleBin(pageable: Pageable): Page<T> {
-        return mdcId(".findAllFromRecycleBin") {
+        return mdcId(".findAllFromRecycleBin", pageable) {
             val result: Page<T> = if (extJpaSupport.logicalDeletedSupported) {
                 super.findAll(
                     extJpaSupport.logicalDeletedAttribute!!.deletedSpecification,
@@ -1081,14 +1093,16 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findAllFromRecycleBin(spec: Specification<T>?, size: Int): List<T> {
-        return mdcId(".findAllFromRecycleBin") {
-            findUnpagedFromRecycleBin(spec, PageRequest.of(0, size))
+        val pageable = PageRequest.of(0, size)
+        return mdcId(".findAllFromRecycleBin", pageable) {
+            findUnpagedFromRecycleBin(spec, pageable)
         }
     }
 
     override fun findAllFromRecycleBin(spec: Specification<T>?, size: Int, sort: Sort): List<T> {
-        return mdcId(".findAllFromRecycleBin") {
-            findUnpagedFromRecycleBin(spec, PageRequest.of(0, size, sort))
+        val pageable = PageRequest.of(0, size, sort)
+        return mdcId(".findAllFromRecycleBin", pageable) {
+            findUnpagedFromRecycleBin(spec, pageable)
         }
     }
 
@@ -1106,7 +1120,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     override fun findAllFromRecycleBin(spec: Specification<T>?, pageable: Pageable): Page<T> {
-        return mdcId(".findAllFromRecycleBin") {
+        return mdcId(".findAllFromRecycleBin", pageable) {
             var spec1 = spec
             val result: Page<T>
             if (extJpaSupport.logicalDeletedSupported) {
