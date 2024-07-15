@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
+import com.hankcs.hanlp.HanLP
 import org.gradle.api.Project
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
@@ -13,6 +14,7 @@ import top.bettercode.summer.tools.generator.dsl.DicCodes
 import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.property.PropertiesSource
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.io.Serializable
@@ -143,11 +145,7 @@ class DicCodeGen(
                                 if (code is Int || code.toString()
                                         .startsWith("0") && code.toString().length > 1
                                 ) {
-                                    PinyinHelper.convertToPinyinString(
-                                        name.substringBefore("(").substringBefore("（"),
-                                        "_",
-                                        PinyinFormat.WITHOUT_TONE
-                                    ).uppercase()
+                                    codeName(name)
                                 } else if (code.toString().isBlank()) {
                                     "BLANK"
                                 } else {
@@ -350,6 +348,47 @@ class DicCodeGen(
             +"\n\n"
             +docText.toString()
         }
+    }
+
+    companion object {
+
+        private val dict = PropertiesSource.of("default-dict", "dict")
+
+        fun codeName(name: String): String {
+            var text = name.substringBefore("(").substringBefore("（")
+            val regex = Regex("([a-zA-Z0-9]+)")
+            text = text.replace(regex, "_$1_")
+
+            val result = text.split(Regex("_+")).map { part ->
+                if (regex.matches(part)) {
+                    part
+                } else {
+                    var partText = dict[part] ?: part
+                    partText = partText.replace(regex, "_$1_")
+                    partText.split(Regex("_+")).joinToString("_") { pp ->
+                        if (regex.matches(pp)) {
+                            pp
+                        } else {
+                            HanLP.segment(pp).joinToString("_") {
+                                val word = it.word
+                                dict.getOrDefault(
+                                    word, PinyinHelper.convertToPinyinString(
+                                        word,
+                                        "_",
+                                        PinyinFormat.WITHOUT_TONE
+                                    )
+                                ).replace(" ", "_").replace("-", "_")
+                            }
+                        }
+                    }
+                }
+            }.joinToString("_") {
+                it.trim('_').uppercase()
+            }
+
+            return result.trim('_')
+        }
+
     }
 
 }

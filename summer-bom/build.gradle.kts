@@ -72,6 +72,7 @@ dependencies {
         api("org.atteo:evo-inflector:1.3")
         api("com.github.axet:kaptcha:0.0.9")
         api("com.github.stuxuhai:jpinyin:1.1.8")
+        api("com.hankcs:hanlp:portable-1.8.4")
         api("net.sourceforge.plantuml:plantuml:1.2023.11")
         api("javax.mail:mail:1.4.7")
         api("com.github.easonjim:com.sap.conn.jco.sapjco3:3.0.11")

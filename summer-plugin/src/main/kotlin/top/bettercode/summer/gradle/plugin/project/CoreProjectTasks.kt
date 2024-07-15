@@ -414,11 +414,7 @@ object CoreProjectTasks {
             val codeFieldName =
                 (if (code.toIntOrNull() != null || code.startsWith("0") && code.length > 1
                 ) {
-                    PinyinHelper.convertToPinyinString(
-                        name.substringBefore("(").substringBefore("（"),
-                        "_",
-                        PinyinFormat.WITHOUT_TONE
-                    ).uppercase()
+                    DicCodeGen.codeName(name)
                 } else if (code.isBlank()) {
                     "BLANK"
                 } else {
