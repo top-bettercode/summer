@@ -18,7 +18,7 @@ dependencies {
     api("org.atteo:evo-inflector")
     api("org.dom4j:dom4j")
     api("com.github.stuxuhai:jpinyin")
-    api("com.hankcs:hanlp:portable")
+    api("com.hankcs:hanlp")
 
     api("mysql:mysql-connector-java")
     api("com.oracle.database.jdbc:ojdbc8")

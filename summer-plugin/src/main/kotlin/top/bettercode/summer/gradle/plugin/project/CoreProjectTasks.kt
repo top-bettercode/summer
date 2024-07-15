@@ -1,8 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.github.stuxuhai.jpinyin.PinyinFormat
-import com.github.stuxuhai.jpinyin.PinyinHelper
 import isCloud
 import isCore
 import org.gradle.api.Action
@@ -381,15 +379,8 @@ object CoreProjectTasks {
                 project.projectDir
             }
         }
-        val authName = PinyinHelper.convertToPinyinString(
-            name,
-            "_",
-            PinyinFormat.WITHOUT_TONE
-        ).split('_').joinToString("") {
-            it.capitalized()
-        }
 
-        val authClassName = "Auth${authName}"
+        val authClassName = "Auth${GeneratorExtension.javaName(DicCodeGen.codeName(name), true)}"
         val packageName = project.rootProject.property("app.packageName") as String
         Interface(
             type = JavaType("$packageName.security.auth.$authClassName"),
