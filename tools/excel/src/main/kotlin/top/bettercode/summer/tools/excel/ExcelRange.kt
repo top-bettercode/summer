@@ -98,11 +98,6 @@ class ExcelRange @JvmOverloads constructor(
         return this
     }
 
-    fun rotation(degrees: Int): ExcelRange {
-        style.rotation(degrees)
-        return this
-    }
-
     fun borderStyle(borderStyle: BorderStyle?): ExcelRange {
         style.borderStyle(borderStyle)
         return this

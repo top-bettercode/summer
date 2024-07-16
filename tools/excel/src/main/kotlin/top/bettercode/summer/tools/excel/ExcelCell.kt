@@ -160,11 +160,6 @@ class ExcelCell(
         return this
     }
 
-    fun rotation(degrees: Int): ExcelCell {
-        style.rotation(degrees)
-        return this
-    }
-
     fun borderStyle(borderStyle: BorderStyle?): ExcelCell {
         style.borderStyle(borderStyle)
         return this

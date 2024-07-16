@@ -70,12 +70,6 @@ class CellStyle : Cloneable {
      */
     var wrapText: Boolean? = null
 
-    /**
-     * Text rotation in degrees
-     */
-    var rotation: Int? = null
-
-
     var borderStyle: BorderStyle? = null
     var borderStyleStr: String? = null
     var borderStyles: MutableMap<BorderSide, BorderStyle>? = null
@@ -103,7 +97,6 @@ class CellStyle : Cloneable {
             style.horizontalAlignment?.let { horizontalAlignment(it) }
             style.verticalAlignment?.let { verticalAlignment(it) }
             style.wrapText?.let { wrapText(it) }
-            style.rotation?.let { rotation(it) }
             style.borderStyle?.let { borderStyle(it) }
             style.borderStyleStr?.let { borderStyle(it) }
             style.borderStyles?.forEach { (side, borderStyle) -> borderStyle(side, borderStyle) }
@@ -150,7 +143,6 @@ class CellStyle : Cloneable {
                 verticalAlignment = VerticalAlignment.valueOf(it.uppercase())
             }
             style.wrapText?.let { this.wrapText = it }
-            style.rotation?.let { this.rotation = it.toShort() }
 
             style.borderStyle?.let {
                 val borderStyle = org.apache.poi.ss.usermodel.BorderStyle.valueOf(it.name)
@@ -245,7 +237,6 @@ class CellStyle : Cloneable {
         style.horizontalAlignment?.let { this.horizontalAlignment = it }
         style.verticalAlignment?.let { this.verticalAlignment = it }
         style.wrapText?.let { this.wrapText = it }
-        style.rotation?.let { this.rotation = it }
         style.borderStyle?.let { this.borderStyle = it }
         style.borderStyleStr?.let { this.borderStyleStr = it }
         style.borderStyles?.let { this.borderStyles = it }
@@ -390,18 +381,6 @@ class CellStyle : Cloneable {
     }
 
     /**
-     * Set cell text rotation in degrees.
-     *
-     * @param degrees rotation of text in cell
-     * @return This style setter
-     */
-    fun rotation(degrees: Int): CellStyle {
-        rotation = degrees
-        return this
-    }
-
-
-    /**
      * Apply cell border style on all sides, except diagonal.
      *
      * @param borderStyle Border style.
@@ -521,7 +500,6 @@ class CellStyle : Cloneable {
         if (horizontalAlignment != other.horizontalAlignment) return false
         if (verticalAlignment != other.verticalAlignment) return false
         if (wrapText != other.wrapText) return false
-        if (rotation != other.rotation) return false
         if (borderStyle != other.borderStyle) return false
         if (borderStyleStr != other.borderStyleStr) return false
         if (borderStyles != other.borderStyles) return false
@@ -546,7 +524,6 @@ class CellStyle : Cloneable {
         result = 31 * result + (horizontalAlignment?.hashCode() ?: 0)
         result = 31 * result + (verticalAlignment?.hashCode() ?: 0)
         result = 31 * result + (wrapText?.hashCode() ?: 0)
-        result = 31 * result + (rotation ?: 0)
         result = 31 * result + (borderStyle?.hashCode() ?: 0)
         result = 31 * result + (borderStyleStr?.hashCode() ?: 0)
         result = 31 * result + (borderStyles?.hashCode() ?: 0)
