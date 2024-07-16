@@ -1,6 +1,8 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.stuxuhai.jpinyin.PinyinFormat
+import com.github.stuxuhai.jpinyin.PinyinHelper
 import isCloud
 import isCore
 import org.gradle.api.Action
@@ -19,7 +21,6 @@ import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil
-import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.io.File
 import java.util.*
 
@@ -315,8 +316,41 @@ object CoreProjectTasks {
                         }
                         codeGen.genCode(dicCodes = dicCodes, auth = true)
                         project.logger.lifecycle("======================================")
+                        val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
+                        val authProject = try {
+                            project.rootProject.project(
+                                project.findProperty("app.authProject")?.toString()
+                                    ?: "admin"
+                            )
+                        } catch (e: UnknownProjectException) {
+                            try {
+                                project.rootProject.project("app")
+                            } catch (e: UnknownProjectException) {
+                                project
+                            }
+                        }
+                        val packageName = project.property("app.packageName") as String
+                        authProject.file(
+                            "src/main/java/${
+                                packageName.replace(
+                                    ".",
+                                    "/"
+                                )
+                            }/security/auth"
+                        ).deleteRecursively()
                         map.forEach { node ->
-                            genNode(project, codeGen, node)
+                            genNode(authProject, codeGen, node, replaceCodeNames)
+                        }
+
+                        if (project.findProperty("app.update") == "true") {
+                            project.logger.lifecycle("更新代码")
+
+                            replaceCodeNames["AuthenticationHelper.getPrincipal()"] =
+                                "AuthenticationHelper.getUserDetails()"
+                            replaceCodeNames["com.cdwintech.app.support.dic.AuthEnum"] =
+                                "com.cdwintech.app.security.auth.AuthEnum"
+                            codeGen.replaceOld(replaceCodeNames)
+                            project.logger.lifecycle("更新代码完成")
                         }
                     }
                 })
@@ -398,31 +432,46 @@ object CoreProjectTasks {
         }
     }
 
-    private fun genNode(project: Project, codeGen: DicCodeGen, node: JsonNode) {
-        genCode(project, codeGen, node.get("id").asText(), node.get("name").asText())
+    private fun genNode(
+        project: Project,
+        codeGen: DicCodeGen,
+        node: JsonNode,
+        replaceCodeNames: MutableMap<String, String>
+    ) {
+        genCode(
+            project,
+            codeGen,
+            replaceCodeNames,
+            node.get("id").asText(),
+            node.get("name").asText()
+        )
         val jsonNode = node.get("children")
         if (!jsonNode.isEmpty) {
-            jsonNode.forEach { genNode(project, codeGen, it) }
+            jsonNode.forEach { genNode(project, codeGen, it, replaceCodeNames) }
         }
     }
 
-    private fun genCode(project: Project, codeGen: DicCodeGen, code: String, name: String) {
-        val directory = try {
-            project.rootProject.project(
-                project.findProperty("app.authProject")?.toString()
-                    ?: "admin"
-            ).projectDir
-        } catch (e: UnknownProjectException) {
-            try {
-                project.rootProject.project("app").projectDir
-            } catch (e: UnknownProjectException) {
-                project.projectDir
+    private fun genCode(
+        project: Project,
+        codeGen: DicCodeGen,
+        replaceCodeNames: MutableMap<String, String>,
+        code: String,
+        name: String
+    ) {
+        val oldAuthName = "Auth${
+            PinyinHelper.convertToPinyinString(
+                name,
+                "_",
+                PinyinFormat.WITHOUT_TONE
+            ).split('_').joinToString("") {
+                it.capitalized()
             }
-        }
+        }"
 
         val authClassName =
-            "Auth${GeneratorExtension.javaName(codeGen.codeName(name), true)}"
-        val packageName = project.rootProject.property("app.packageName") as String
+            "Auth${GeneratorExtension.javaName(codeGen.codeName(code, name), true)}"
+        replaceCodeNames[oldAuthName] = authClassName
+        val packageName = project.property("app.packageName") as String
         Interface(
             type = JavaType("$packageName.security.auth.$authClassName"),
             overwrite = true
@@ -443,25 +492,11 @@ object CoreProjectTasks {
             annotation("@java.lang.annotation.Inherited")
             annotation("@java.lang.annotation.Documented")
 
-            val codeFieldName = (when {
-                    code.matches(Regex("\\d.*")) -> {
-                        codeGen.codeName(name)
-                    }
-
-                    code.isBlank() -> {
-                        "BLANK"
-                    }
-
-                    else -> {
-                        code.replace("-", "_").replace(".", "_").toUnderscore()
-                    }
-                }
-                        ).replace(Regex("_+"), "_")
-
+            val codeFieldName = codeGen.codeName(code, name)
             import("$packageName.security.auth.AuthEnum.AuthConst")
             annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(AuthConst.$codeFieldName)")
 
-        }.writeTo(directory)
+        }.writeTo(project.projectDir)
 
     }
 

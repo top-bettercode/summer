@@ -27,7 +27,8 @@ import java.util.*
  */
 class DicCodeGen(
     private val project: Project,
-    private val packageName: String
+    private val packageName: String,
+    private val replaceCodeNames: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
 ) {
 
     private fun codeTypes(): Map<String, DicCodes> {
@@ -107,6 +108,8 @@ class DicCodeGen(
     fun run() {
         docFile = FileUnit("doc/v1.0/编码类型.adoc")
 
+        project.file("src/main/java/${packageName.replace(".", "/")}/support/dic")
+            .deleteRecursively()
         docFile.apply {
             +"== 编码类型"
             +""
@@ -130,6 +133,19 @@ class DicCodeGen(
             +"\n\n"
             +docText.toString()
         }
+        if (project.findProperty("app.update") == "true") {
+            project.logger.lifecycle("更新代码")
+            val replaces: MutableMap<String, String> = mutableMapOf()
+            replaceCodeNames.forEach { (className, u) ->
+                u.forEach { (oldCodeName, codeName) ->
+                    replaces["${className}Enum.$oldCodeName"] = "${className}Enum.$codeName"
+                    replaces["${className}Const.$oldCodeName"] = "${className}Const.$codeName"
+                }
+            }
+            replaceOld(replaces)
+            project.logger.lifecycle("更新代码完成")
+        }
+
     }
 
     fun genCode(dicCodes: DicCodes, auth: Boolean = false) {
@@ -147,42 +163,67 @@ class DicCodeGen(
         codeEnum.apply {
             javadoc {
                 +"/**"
-                +" * ${codeTypeName.replace("@", "\\@")}"
+                +" * ${
+                    codeTypeName.replace(
+                        "@",
+                        "\\@"
+                    )
+                }(${dicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
                 +" */"
             }
-            val innerInterface = InnerInterface(JavaType("${className}Const"))
+            val innerInterface = InnerInterface(JavaType("${className}Const")).apply {
+                javadoc {
+                    +"/**"
+                    +" * ${
+                        codeTypeName.replace(
+                            "@",
+                            "\\@"
+                        )
+                    }(${dicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
+                    +" */"
+                }
+                visibility = JavaVisibility.PUBLIC
+            }
             innerInterface(innerInterface)
+            val codeFieldNames = mutableSetOf<String>()
             dicCodes.codes.forEach { (code, name) ->
                 docText.appendLine("|$code|$name")
 
-                val codeFieldName = (
-                        when {
-                            code is Number || code.toString().matches(Regex("\\d.*")) -> {
-                                codeName(name)
-                            }
+                var codeFieldName = codeName(code, name)
+                if (codeFieldNames.contains(codeFieldName)) {
+                    codeFieldName += "_" + code.toString().replace("-", "_").replace(".", "_")
+                        .toUnderscore()
+                }
+                codeFieldNames.add(codeFieldName)
 
-                            code.toString().isBlank() -> {
-                                "BLANK"
-                            }
-
-                            else -> {
-                                (code as String).replace("-", "_").replace(".", "_")
-                                    .toUnderscore()
-                            }
+                val oldCodeName = (
+                        if (code is Int || code.toString()
+                                .startsWith("0") && code.toString().length > 1
+                        ) {
+                            "CODE_${code.toString().replace("-", "MINUS_")}"
+                        } else if (code.toString().isBlank()) {
+                            "BLANK"
+                        } else {
+                            (code as String).replace("-", "_").replace(".", "_")
+                                .toUnderscore()
                         }
                         ).replace(Regex("_+"), "_")
+                if (oldCodeName != codeFieldName) {
+                    val map = replaceCodeNames.computeIfAbsent(className) {
+                        mutableMapOf()
+                    }
+                    map[oldCodeName] = codeFieldName
+                }
+
                 innerInterface.apply {
-                    visibility = JavaVisibility.PUBLIC
-                    val initializationString =
-                        when (fieldType) {
+                    field(
+                        name = codeFieldName,
+                        type = fieldType,
+                        initializationString = when (fieldType) {
                             JavaType.stringInstance -> "\"$code\""
                             JavaType.char -> "(char) $code"
                             else -> code.toString()
                         }
-                    field(
-                        codeFieldName,
-                        fieldType,
-                        initializationString
                     ) {
                         visibility = JavaVisibility.DEFAULT
                         javadoc {
@@ -196,7 +237,7 @@ class DicCodeGen(
                 enumConstant("${codeFieldName}(${className}Const.${codeFieldName})") {
                     javadoc {
                         +"/**"
-                        +" * ${name.replace("@", "\\@")}"
+                        +" * $code : ${name.replace("@", "\\@")}"
                         +" */"
                     }
                 }
@@ -362,23 +403,46 @@ class DicCodeGen(
         codeEnum.writeTo(project.projectDir)
     }
 
+    fun codeName(code: Serializable, name: String) = (
+            when {
+                code is Number || code.toString().matches(Regex("\\d.*")) -> {
+                    codeName(name)
+                }
+
+                code.toString().isBlank() -> {
+                    "BLANK"
+                }
+
+                else -> {
+                    (code as String).replace("-", "_").replace(".", "_")
+                        .toUnderscore()
+                }
+            }
+            ).replace(Regex("_+"), "_")
+
     private val defaultDict = PropertiesSource.of("default-dict")
     private val dict = PropertiesSource.of("dict")
     private val dictMap: Map<String, String>
     private val coreProperties: Map<String, String>
 
     init {
-        val prefix = "code.dict."
-        dictMap = project.properties.filterKeys { it.startsWith(prefix) }
-            .mapKeys { it.key.substring(prefix.length) }.mapValues { it.value.toString() }
-        dictMap.keys.forEach { key ->
-            CustomDictionary.add(key)
-        }
-        val file = project.file("src/main/resources/core-messages.properties")
-        coreProperties = mutableMapOf()
-        if (file.exists()) {
+        val dictFile = project.rootProject.file("puml/dict.properties")
+        dictMap = mutableMapOf()
+        if (dictFile.exists()) {
             val properties = Properties()
-            properties.load(file.inputStream())
+            properties.load(dictFile.inputStream())
+            properties.forEach { (t, u) ->
+                dictMap[t.toString()] = u.toString()
+            }
+            dictMap.keys.forEach { key ->
+                CustomDictionary.add(key)
+            }
+        }
+        val coreMsgfile = project.file("src/main/resources/core-messages.properties")
+        coreProperties = mutableMapOf()
+        if (coreMsgfile.exists()) {
+            val properties = Properties()
+            properties.load(coreMsgfile.inputStream())
             val map = properties.map { (t, u) ->
                 val key = u.toString()
                 val value = t.toString()
@@ -397,11 +461,13 @@ class DicCodeGen(
     }
 
     fun codeName(name: String): String {
-        var text = name.substringBefore("(").substringBefore("（")
+        var text =
+            name.substringBefore("(").substringBefore("（").substringBefore(",").substringBefore("，")
+                .replace("/", "or")
         val regex = Regex("([a-zA-Z0-9]+)")
         text = text.replace(regex, "_$1_")
 
-        val result = text.split(Regex("_+")).map { part ->
+        var result = text.split(Regex("_+")).filter { it.isNotBlank() }.map { part ->
             if (regex.matches(part)) {
                 part
             } else {
@@ -426,15 +492,54 @@ class DicCodeGen(
         }.joinToString("_") {
             it.trim('_').uppercase()
         }
-
-        return result.trim('_')
+        if (result.startsWith("UN_")) {
+            return "UN${result.substringAfter("UN_")}"
+        }
+        if (result.startsWith("ALREADY_")) {
+            result = result.substringAfter("ALREADY_")
+            return result.split("_").mapIndexed { index: Int, s: String ->
+                if (index == 0) {
+                    "${s}ED"
+                } else {
+                    s
+                }
+            }.joinToString("_")
+        }
+        if (result.endsWith("_ING")) {
+            result = result.substringBeforeLast("_ING") + "ING"
+        }
+        if (result.contains("_ING_")) {
+            result = result.replace("_ING_", "ING_")
+        }
+        return result
     }
 
     private fun translator(key: String): String? {
-        val result = dictMap[key] ?: coreProperties[key] ?: dict[key] ?: defaultDict[key]
-        return result?.toUnderscore()?.replace(" ", "_")?.replace("-", "_")
+        val result = dictMap[key] ?: dict[key] ?: coreProperties[key] ?: defaultDict[key]
+        return result?.toUnderscore()?.replace(" ", "_")?.replace("-", "_")?.replace("'", "")
     }
 
+    fun replaceOld(replaceCodeNames: MutableMap<String, String>) {
+        project.rootDir.walkTopDown()
+            .filter { it.isFile && (it.extension == "java" || it.extension == "kt") }
+            .forEach { file ->
+                val texts = file.readLines()
+                file.writeText(texts.joinToString("\n") { line ->
+                    var text = line
+                    replaceCodeNames.forEach { (old, new) ->
+                        val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
+                        if (text.matches(".*${regex}.*".toRegex())) {
+                            print(".")
+                            text = text.replace(
+                                regex.toRegex(),
+                                "$1${new}$2"
+                            )
+                        }
+                    }
+                    text
+                })
+            }
+    }
 }
 
 
