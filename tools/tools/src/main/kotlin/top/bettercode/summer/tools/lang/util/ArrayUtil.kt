@@ -13,7 +13,7 @@ object ArrayUtil {
      * @return 是否包含
      */
     @JvmStatic
-    fun contains(array: Array<Any>?, objectToFind: Any): Boolean {
+    fun contains(array: Array<Any>?, objectToFind: Any?): Boolean {
         return array?.contains(objectToFind) == true
     }
 
@@ -23,7 +23,7 @@ object ArrayUtil {
      * @return 内容所在索引
      */
     @JvmStatic
-    fun indexOf(array: Array<Any>?, objectToFind: Any): Int {
+    fun indexOf(array: Array<Any>?, objectToFind: Any?): Int {
         return array?.indexOf(objectToFind) ?: -1
     }
 
