@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.security.web.util.matcher.OrRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.util.Assert
 import org.springframework.web.filter.OncePerRequestFilter
@@ -43,8 +44,26 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
     private val revokeTokenService: IRevokeTokenService?,
     private val objectMapper: ObjectMapper,
     private val formkeyService: IFormkeyService,
-    tokenEndpointUri: String? = DEFAULT_TOKEN_ENDPOINT_URI
+    tokenEndpointUri: String = DEFAULT_TOKEN_ENDPOINT_URI,
+    revokeTokenEndpointUri: String = DEFAULT_REVOKE_TOKEN_ENDPOINT_URI
 ) : OncePerRequestFilter() {
+
+    companion object {
+        /**
+         * The default endpoint `URI` for access token requests.
+         */
+        private const val DEFAULT_TOKEN_ENDPOINT_URI = "/oauth/token"
+        private const val DEFAULT_REVOKE_TOKEN_ENDPOINT_URI = "/oauth/revokeToken"
+        fun needClientAuthorize(request: HttpServletRequest?): Boolean {
+            //ClientAuthorize
+            val handler = getHandler(request!!)
+            return if (handler != null) {
+                hasAnnotation(handler, ClientAuthorize::class.java)
+            } else false
+        }
+    }
+
+
     private val tokenEndpointMatcher: RequestMatcher
     private val revokeTokenEndpointMatcher: RequestMatcher
 
@@ -53,9 +72,15 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
     init {
         Assert.hasText(tokenEndpointUri, "tokenEndpointUri cannot be empty")
         tokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name)
-        revokeTokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri, HttpMethod.DELETE.name)
+        revokeTokenEndpointMatcher = OrRequestMatcher(
+            listOf(
+                AntPathRequestMatcher(tokenEndpointUri, HttpMethod.DELETE.name),
+                AntPathRequestMatcher(revokeTokenEndpointUri, HttpMethod.GET.name)
+            )
+        )
         bearerTokenResolver.setCompatibleAccessToken(apiTokenService.securityProperties.isCompatibleAccessToken)
     }
+
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -287,18 +312,4 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         return clientId
     }
 
-
-    companion object {
-        /**
-         * The default endpoint `URI` for access token requests.
-         */
-        private const val DEFAULT_TOKEN_ENDPOINT_URI = "/oauth/token"
-        fun needClientAuthorize(request: HttpServletRequest?): Boolean {
-            //ClientAuthorize
-            val handler = getHandler(request!!)
-            return if (handler != null) {
-                hasAnnotation(handler, ClientAuthorize::class.java)
-            } else false
-        }
-    }
 }

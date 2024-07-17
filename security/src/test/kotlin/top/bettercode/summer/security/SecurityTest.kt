@@ -34,7 +34,11 @@ import top.bettercode.summer.web.RespEntity
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [TestApplication::class], properties = ["summer.web.ok-enable=false"], webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    classes = [TestApplication::class],
+    properties = ["summer.web.ok-enable=false"],
+    webEnvironment = WebEnvironment.RANDOM_PORT
+)
 class SecurityTest {
     @Autowired
     lateinit var restTemplate: TestRestTemplate
@@ -52,8 +56,10 @@ class SecurityTest {
     fun setUp() {
         collectionName = "登录授权"
         requiredHeaders(HttpHeaders.AUTHORIZATION)
-        clientRestTemplate = restTemplate.withBasicAuth(apiSecurityProperties!!.clientId,
-                apiSecurityProperties!!.clientSecret)
+        clientRestTemplate = restTemplate.withBasicAuth(
+            apiSecurityProperties!!.clientId,
+            apiSecurityProperties!!.clientSecret
+        )
     }
 
     private fun getAccessToken(tag: String?): AccessToken {
@@ -67,12 +73,15 @@ class SecurityTest {
             headers.add("tag", tag)
         }
         val entity = clientRestTemplate
-                .postForEntity("/oauth/token", HttpEntity(params, headers), String::class.java)
+            .postForEntity("/oauth/token", HttpEntity(params, headers), String::class.java)
         val body = entity.body
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
         val resp = objectMapper
-                .readValue<RespEntity<AccessToken>>(body, TypeFactory.defaultInstance().constructParametricType(
-                        RespEntity::class.java, AccessToken::class.java))
+            .readValue<RespEntity<AccessToken>>(
+                body, TypeFactory.defaultInstance().constructParametricType(
+                    RespEntity::class.java, AccessToken::class.java
+                )
+            )
         return resp.data!!
     }
 
@@ -100,7 +109,7 @@ class SecurityTest {
         name = "刷新accessToken"
         requiredParameters("grant_type", "scope", "refresh_token")
         val entity2 = clientRestTemplate
-                .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
+            .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
 //        Thread.sleep(1000)
     }
@@ -113,9 +122,11 @@ class SecurityTest {
         name = "撤销accessToken"
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer $accessToken"
-        val entity2 = restTemplate.exchange("/oauth/token",
-                HttpMethod.DELETE, HttpEntity<Any>(httpHeaders),
-                String::class.java)
+        val entity2 = restTemplate.exchange(
+            "/oauth/token",
+            HttpMethod.DELETE, HttpEntity<Any>(httpHeaders),
+            String::class.java
+        )
         Assertions.assertEquals(HttpStatus.NO_CONTENT, entity2.statusCode)
     }
 
@@ -127,11 +138,27 @@ class SecurityTest {
         params.add("revoke_token", getAccessToken("revokeToken2").accessToken)
         enable()
         name = "撤销accessToken"
-        requiredParameters("grant_type",  "revokeToken")
+        requiredParameters("grant_type", "revokeToken")
         val entity2 = clientRestTemplate
-                .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
+            .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
         Assertions.assertEquals(HttpStatus.NO_CONTENT, entity2.statusCode)
 //        Thread.sleep(1000)
+    }
+
+    @Test
+    fun revokeToken3() {
+        disable()
+        val accessToken = getAccessToken("revokeToken").accessToken
+        enable()
+        name = "撤销accessToken"
+        val httpHeaders = HttpHeaders()
+        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer $accessToken"
+        val entity2 = restTemplate.exchange(
+            "/oauth/revokeToken",
+            HttpMethod.GET, HttpEntity<Any>(httpHeaders),
+            String::class.java
+        )
+        Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
     }
 
     @Test
@@ -139,7 +166,12 @@ class SecurityTest {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("auth").accessToken
         val entity = restTemplate
-                .exchange("/testDefaultAuth", HttpMethod.POST, HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange(
+                "/testDefaultAuth",
+                HttpMethod.POST,
+                HttpEntity<Any>(httpHeaders),
+                String::class.java
+            )
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
 
@@ -147,9 +179,11 @@ class SecurityTest {
     fun authInParam() {
         val httpHeaders = HttpHeaders()
         val entity = restTemplate
-                .exchange("/testDefaultAuth?access_token=" + getAccessToken("authInParam").accessToken,
-                        HttpMethod.GET,
-                        HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange(
+                "/testDefaultAuth?access_token=" + getAccessToken("authInParam").accessToken,
+                HttpMethod.GET,
+                HttpEntity<Any>(httpHeaders), String::class.java
+            )
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
 
@@ -158,7 +192,7 @@ class SecurityTest {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("authority").accessToken
         val entity = restTemplate
-                .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
 
@@ -166,9 +200,10 @@ class SecurityTest {
     fun noauthority() {
         username = "peter"
         val httpHeaders = HttpHeaders()
-        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("noauthority").accessToken
+        httpHeaders[HttpHeaders.AUTHORIZATION] =
+            "bearer " + getAccessToken("noauthority").accessToken
         val entity = restTemplate
-                .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.FORBIDDEN, entity.statusCode)
     }
 
@@ -176,7 +211,7 @@ class SecurityTest {
     fun unauthority() {
         val httpHeaders = HttpHeaders()
         val entity = restTemplate
-                .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange("/testAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, entity.statusCode)
     }
 
@@ -189,9 +224,15 @@ class SecurityTest {
     @Test
     fun testNoAuthWithToken() {
         val httpHeaders = HttpHeaders()
-        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("testNoAuthWithToken").accessToken
+        httpHeaders[HttpHeaders.AUTHORIZATION] =
+            "bearer " + getAccessToken("testNoAuthWithToken").accessToken
         val entity = restTemplate
-                .exchange("/testNoAuth", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange(
+                "/testNoAuth",
+                HttpMethod.GET,
+                HttpEntity<Any>(httpHeaders),
+                String::class.java
+            )
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
 
@@ -200,7 +241,12 @@ class SecurityTest {
         val httpHeaders = HttpHeaders()
         //    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
         val entity = restTemplate
-                .exchange("/test2.json", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange(
+                "/test2.json",
+                HttpMethod.GET,
+                HttpEntity<Any>(httpHeaders),
+                String::class.java
+            )
         System.err.println(entity.body)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
@@ -210,7 +256,12 @@ class SecurityTest {
         val httpHeaders = HttpHeaders()
         //    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
         val entity = restTemplate
-                .exchange("/test.json", HttpMethod.GET, HttpEntity<Any>(httpHeaders), String::class.java)
+            .exchange(
+                "/test.json",
+                HttpMethod.GET,
+                HttpEntity<Any>(httpHeaders),
+                String::class.java
+            )
         System.err.println(entity.body)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }

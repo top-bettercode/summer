@@ -33,7 +33,11 @@ import java.util.*
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [TestApplication::class], properties = ["summer.web.wrap-enable=false"], webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    classes = [TestApplication::class],
+    properties = ["summer.web.wrap-enable=false"],
+    webEnvironment = WebEnvironment.RANDOM_PORT
+)
 class Security200Test {
     @Autowired
     lateinit var restTemplate: TestRestTemplate
@@ -51,8 +55,10 @@ class Security200Test {
     fun setUp() {
         collectionName = "登录授权"
         requiredHeaders(HttpHeaders.AUTHORIZATION)
-        clientRestTemplate = restTemplate.withBasicAuth(apiSecurityProperties!!.clientId,
-                apiSecurityProperties!!.clientSecret)
+        clientRestTemplate = restTemplate.withBasicAuth(
+            apiSecurityProperties!!.clientId,
+            apiSecurityProperties!!.clientSecret
+        )
     }
 
     private fun getAccessToken(tag: String?): AccessToken {
@@ -66,7 +72,7 @@ class Security200Test {
             headers.add("tag", tag)
         }
         val entity = clientRestTemplate
-                .postForEntity("/oauth/token", HttpEntity(params, headers), String::class.java)
+            .postForEntity("/oauth/token", HttpEntity(params, headers), String::class.java)
         val body = entity.body
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
         return objectMapper.readValue(body, AccessToken::class.java)
@@ -96,7 +102,7 @@ class Security200Test {
         name = "刷新accessToken"
         requiredParameters("grant_type", "scope", "refresh_token")
         val entity2 = clientRestTemplate
-                .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
+            .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
 //        Thread.sleep(1000)
     }
@@ -109,11 +115,14 @@ class Security200Test {
         name = "撤销accessToken"
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer $accessToken"
-        val entity2 = restTemplate.exchange("/oauth/token",
-                HttpMethod.DELETE, HttpEntity<Any>(httpHeaders),
-                String::class.java)
+        val entity2 = restTemplate.exchange(
+            "/oauth/token",
+            HttpMethod.DELETE, HttpEntity<Any>(httpHeaders),
+            String::class.java
+        )
         Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
     }
+
     @Test
     fun revokeToken2() {
         disable()
@@ -122,11 +131,27 @@ class Security200Test {
         params.add("revoke_token", getAccessToken("revokeToken2").accessToken)
         enable()
         name = "撤销accessToken"
-        requiredParameters("grant_type",  "revokeToken")
+        requiredParameters("grant_type", "revokeToken")
         val entity2 = clientRestTemplate
-                .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
+            .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
 //        Thread.sleep(1000)
+    }
+
+    @Test
+    fun revokeToken3() {
+        disable()
+        val accessToken = getAccessToken("revokeToken").accessToken
+        enable()
+        name = "撤销accessToken"
+        val httpHeaders = HttpHeaders()
+        httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer $accessToken"
+        val entity2 = restTemplate.exchange(
+            "/oauth/revokeToken",
+            HttpMethod.GET, HttpEntity<Any>(httpHeaders),
+            String::class.java
+        )
+        Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
     }
 
     @Test
@@ -134,8 +159,10 @@ class Security200Test {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getAccessToken("auth").accessToken
         val entity = restTemplate
-                .exchange("/testDefaultAuth", HttpMethod.POST,
-                        HttpEntity(Collections.singletonMap("aa", "xxx"), httpHeaders), String::class.java)
+            .exchange(
+                "/testDefaultAuth", HttpMethod.POST,
+                HttpEntity(Collections.singletonMap("aa", "xxx"), httpHeaders), String::class.java
+            )
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
 }

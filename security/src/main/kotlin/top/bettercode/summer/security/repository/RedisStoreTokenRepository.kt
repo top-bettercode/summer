@@ -12,7 +12,10 @@ import java.lang.reflect.Method
 import java.nio.charset.StandardCharsets
 import kotlin.math.max
 
-class RedisStoreTokenRepository @JvmOverloads constructor(private val connectionFactory: RedisConnectionFactory, prefix: String = "") : StoreTokenRepository {
+class RedisStoreTokenRepository @JvmOverloads constructor(
+    private val connectionFactory: RedisConnectionFactory,
+    prefix: String = ""
+) : StoreTokenRepository {
     private val log = LoggerFactory.getLogger(RedisStoreTokenRepository::class.java)
     private var keyPrefix: String? = null
     private val jdkSerializationSerializer = JdkSerializationSerializer()
@@ -31,7 +34,8 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
 
     private fun loadredisconnectionmethods20() {
         redisconnectionset20 = ReflectionUtils.findMethod(
-                RedisConnection::class.java, "set", ByteArray::class.java, ByteArray::class.java)
+            RedisConnection::class.java, "set", ByteArray::class.java, ByteArray::class.java
+        )
     }
 
     private val connection: RedisConnection
@@ -56,17 +60,22 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
             val auth = jdkSerializationSerializer.serialize(storeToken)
             val accessKey = serializeKey(ACCESS_TOKEN + storeToken.accessToken.tokenValue)
             val refreshKey = serializeKey(
-                    REFRESH_TOKEN + storeToken.refreshToken.tokenValue)
-            val idKey = serializeKey(ID + id)
+                REFRESH_TOKEN + storeToken.refreshToken.tokenValue
+            )
+            val key = ID + id
+            log.info("save : $key")
+            val idKey = serializeKey(key)
             connection.use { conn ->
                 val exist = getStoreToken(idKey, conn)
                 conn.openPipeline()
                 //删除已存在
                 if (exist != null) {
                     val existAccessKey = serializeKey(
-                            ACCESS_TOKEN + exist.accessToken.tokenValue)
+                        ACCESS_TOKEN + exist.accessToken.tokenValue
+                    )
                     val existRefreshKey = serializeKey(
-                            REFRESH_TOKEN + exist.refreshToken.tokenValue)
+                        REFRESH_TOKEN + exist.refreshToken.tokenValue
+                    )
                     if (!existAccessKey.contentEquals(accessKey)) {
                         conn.keyCommands().del(existAccessKey)
                     }
@@ -105,8 +114,11 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
             val id = storeToken.toString()
             val accessKey = serializeKey(ACCESS_TOKEN + storeToken.accessToken.tokenValue)
             val refreshKey = serializeKey(
-                    REFRESH_TOKEN + storeToken.refreshToken.tokenValue)
-            val idKey = serializeKey(ID + id)
+                REFRESH_TOKEN + storeToken.refreshToken.tokenValue
+            )
+            val key = ID + id
+            log.info("remove : $key")
+            val idKey = serializeKey(key)
             connection.use { conn ->
                 conn.openPipeline()
                 conn.keyCommands().del(accessKey)
@@ -122,15 +134,19 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
     override fun remove(tokenId: TokenId) {
         try {
             val id = tokenId.toString()
-            val idKey = serializeKey(ID + id)
+            val key = ID + id
+            log.info("remove : $key")
+            val idKey = serializeKey(key)
             connection.use { conn ->
                 val storeToken = getStoreToken(idKey, conn)
                 if (storeToken != null) {
                     conn.openPipeline()
                     val accessKey = serializeKey(
-                            ACCESS_TOKEN + storeToken.accessToken.tokenValue)
+                        ACCESS_TOKEN + storeToken.accessToken.tokenValue
+                    )
                     val refreshKey = serializeKey(
-                            REFRESH_TOKEN + storeToken.refreshToken.tokenValue)
+                        REFRESH_TOKEN + storeToken.refreshToken.tokenValue
+                    )
                     conn.keyCommands().del(accessKey)
                     conn.keyCommands().del(refreshKey)
                     conn.keyCommands().del(idKey)
@@ -148,7 +164,9 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
 
     override fun findById(tokenId: TokenId): StoreToken? {
         val id = tokenId.toString()
-        val idKey = serializeKey(ID + id)
+        val key = ID + id
+        val idKey = serializeKey(key)
+        log.info("findById : $key")
         return findByIdKey(idKey)
     }
 
@@ -180,7 +198,9 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
 
     override fun findByAccessToken(accessToken: String): StoreToken? {
         try {
-            val accessKey = serializeKey(ACCESS_TOKEN + accessToken)
+            val key = ACCESS_TOKEN + accessToken
+            val accessKey = serializeKey(key)
+            log.info("findByRefreshToken : $key")
             return connection.use { conn ->
                 val bytes = conn.stringCommands()[accessKey]
                 return@use if (JdkSerializationSerializer.isEmpty(bytes)) {
@@ -194,7 +214,9 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
 
     override fun findByRefreshToken(refreshToken: String): StoreToken? {
         try {
-            val refreshKey = serializeKey(REFRESH_TOKEN + refreshToken)
+            val key = REFRESH_TOKEN + refreshToken
+            val refreshKey = serializeKey(key)
+            log.info("findByRefreshToken : $key")
             return connection.use { conn ->
                 val bytes = conn.stringCommands()[refreshKey]
                 return@use if (JdkSerializationSerializer.isEmpty(bytes)) {
@@ -212,7 +234,8 @@ class RedisStoreTokenRepository @JvmOverloads constructor(private val connection
         private const val ACCESS_TOKEN = "access_token:"
         private const val REFRESH_TOKEN = "refresh_token:"
         private val springdataredis20 = ClassUtils.isPresent(
-                "org.springframework.data.redis.connection.RedisStandaloneConfiguration",
-                RedisStoreTokenRepository::class.java.classLoader)
+            "org.springframework.data.redis.connection.RedisStandaloneConfiguration",
+            RedisStoreTokenRepository::class.java.classLoader
+        )
     }
 }
