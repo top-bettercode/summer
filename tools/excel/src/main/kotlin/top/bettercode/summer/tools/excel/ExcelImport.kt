@@ -66,6 +66,14 @@ class ExcelImport private constructor(`is`: InputStream) {
         log.debug("Initialize success.")
     }
 
+    /**
+     * @param validateGroups 验证 groups
+     * @return ExcelImport this
+     */
+    fun validateGroups(vararg validateGroups: Class<*>): ExcelImport {
+        this.validateGroups = validateGroups.toList().toTypedArray()
+        return this
+    }
 
     /**
      * @param row 行号，从0开始
@@ -110,13 +118,18 @@ class ExcelImport private constructor(`is`: InputStream) {
         return this
     }
 
-    /**
-     * @param validateGroups 验证 groups
-     * @return ExcelImport this
-     */
-    fun validateGroups(vararg validateGroups: Class<*>): ExcelImport {
-        this.validateGroups = validateGroups.toList().toTypedArray()
-        return this
+    fun getRows(): List<Row> {
+        workbook.use {
+            if (sheet == null) {
+                throw RuntimeException("文档中未找到相应工作表!")
+            } else {
+                sheet!!.openStream().use {
+                    return it.asSequence()
+                        .filter { row: Row? -> row != null && row.rowNum > this.row }
+                        .toList()
+                }
+            }
+        }
     }
 
     /**
@@ -162,23 +175,13 @@ class ExcelImport private constructor(`is`: InputStream) {
         cls: Class<F> = getEntityType(excelFields),
         converter: ((F) -> E)? = null
     ): List<E> {
-        workbook.use {
-            if (sheet == null) {
-                throw RuntimeException("文档中未找到相应工作表!")
-            } else {
-                sheet!!.openStream().use {
-                    return it.asSequence()
-                        .filter { row: Row? -> row != null && row.rowNum > this.row }
-                        .mapNotNull { row ->
-                            readRow(
-                                row = row,
-                                cls = cls,
-                                excelFields = excelFields,
-                                converter = converter
-                            )
-                        }.toList()
-                }
-            }
+        return getRows().mapNotNull { row ->
+            readRow(
+                row = row,
+                cls = cls,
+                excelFields = excelFields,
+                converter = converter
+            )
         }
     }
 
