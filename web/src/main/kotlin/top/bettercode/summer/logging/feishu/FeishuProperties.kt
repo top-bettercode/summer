@@ -17,7 +17,7 @@ open class FeishuProperties {
     var appSecret: String = ""
 
     var chat: String = ""
-    var timeoutChat = "timeout"
+    var timeoutChat: String = "timeout"
 
     var chatHook: FeishuWebHook? = null
     var timeoutChatHook: FeishuWebHook? = null

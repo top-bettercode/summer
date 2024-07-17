@@ -54,7 +54,8 @@ open class FeishuAppender(
         message: List<String>,
         timeout: Boolean
     ): Boolean {
-        val chat = if (timeout) properties.timeoutChat else properties.chat
+        val chat =
+            if (timeout) properties.timeoutChat.ifBlank { properties.chat } else properties.chat
         val chatId = chatId(chat)
         return if (chatId != null) {
             try {

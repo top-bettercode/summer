@@ -38,7 +38,7 @@ open class FeishuHookAppender(
         timeoutChatClient = if (timeoutChatHook != null) {
             val webhook = timeoutChatHook.webhook
             val secret = timeoutChatHook.secret
-            if (webhook == null) {
+            if (webhook.isNullOrBlank()) {
                 null
             } else
                 FeishuHookClient(webhook, secret)
