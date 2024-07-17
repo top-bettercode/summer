@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.Worksheet
 import top.bettercode.summer.tools.excel.CellStyle.Companion.style
@@ -26,9 +27,18 @@ class PoiExcel @JvmOverloads constructor(
     useSxss: Boolean = true
 ) : IExcel {
 
-    private val styleCache = mutableMapOf<CellStyle, PoiCellStyle>()
+    private val styleCache = mutableMapOf<CellStyle, XSSFCellStyle>()
 
-    val workbook: Workbook = if (useSxss) SXSSFWorkbook(1000) else XSSFWorkbook()
+    val workbook: Workbook = if (useSxss)
+        SXSSFWorkbook(1000)
+    else
+        XSSFWorkbook()
+
+    val xssfWorkbook: XSSFWorkbook = if (useSxss)
+        (this.workbook as SXSSFWorkbook).xssfWorkbook
+    else
+        this.workbook as XSSFWorkbook
+
 
     lateinit var sheet: Sheet
 
@@ -47,12 +57,12 @@ class PoiExcel @JvmOverloads constructor(
 
     override fun setStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
         val poiCellStyle = styleCache.getOrPut(cellStyle) {
-            PoiCellStyle(workbook.createCellStyle())
-                .style(workbook, cellStyle)
+            (xssfWorkbook.createCellStyle()).style(xssfWorkbook, cellStyle)
         }
         for (i in top..bottom) {
             for (j in left..right) {
-                sheet.row(i).cell(j).cellStyle = poiCellStyle.style
+                val cell = sheet.row(i).cell(j)
+                cell.cellStyle = poiCellStyle
             }
         }
 

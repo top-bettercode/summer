@@ -25,14 +25,12 @@ class ExcelPoiTest {
                 val text = "Hello, World!"
                 // 创建字体
                 val sheet = excel.sheet
-                val xssfCell = excel.sheet.getRow(cell.row).getCell(cell.column)
+                val poiCell = sheet.getRow(cell.row).getCell(cell.column)
                 // 创建字体
-                val boldFont: Font = sheet.workbook.createFont()
+                val boldFont = excel.xssfWorkbook.createFont()
                 boldFont.bold = true
                 boldFont.color = Font.COLOR_RED
                 boldFont.fontHeight = 120
-
-                // 创建样式
 
                 // 创建样式
 //                    val boldStyle = workbook.createCellStyle()
@@ -44,7 +42,7 @@ class ExcelPoiTest {
                 val richText: RichTextString = XSSFRichTextString(text)
                 richText.applyFont(0, 5, boldFont) // 应用样式到部分文本
 
-                xssfCell.setCellValue(richText)
+                poiCell.setCellValue(richText)
 
             }).mergeBy { obj: DataBean -> obj.intCode },
         )
@@ -62,7 +60,7 @@ class ExcelPoiTest {
         list.add(DataBean(25))
         val s = System.currentTimeMillis()
         val filename = "build/testMergeExportWithPoi.xlsx"
-        ExcelExport.of(filename, true).sheet("表格")
+        ExcelExport.of(filename = filename, poi = true, useSxss = false).sheet("表格")
             .setMergeData(list, excelMergeFields)
             .finish()
         val e = System.currentTimeMillis()

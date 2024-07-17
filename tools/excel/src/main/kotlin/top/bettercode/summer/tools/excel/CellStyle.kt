@@ -1,11 +1,13 @@
 package top.bettercode.summer.tools.excel
 
-import org.apache.poi.ss.usermodel.*
-import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.FillPatternType
+import org.apache.poi.ss.usermodel.Font
+import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.usermodel.VerticalAlignment
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFColor
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.*
-import org.dhatim.fastexcel.BorderStyle
-import org.dhatim.fastexcel.Color
 import java.math.BigDecimal
 import java.util.*
 
@@ -108,9 +110,9 @@ class CellStyle : Cloneable {
         }
 
         @JvmStatic
-        fun PoiCellStyle.style(workbook: Workbook, style: CellStyle): PoiCellStyle {
+        fun XSSFCellStyle.style(workbook: XSSFWorkbook, style: CellStyle): XSSFCellStyle {
             style.valueFormatting?.let {
-                val dataFormat: DataFormat = workbook.createDataFormat()
+                val dataFormat = workbook.createDataFormat()
                 val currencyFormat = dataFormat.getFormat(it)
                 this.dataFormat = currencyFormat
             }
@@ -121,10 +123,9 @@ class CellStyle : Cloneable {
             }
 
             // 设置字体样式
-            val font = this.poiFont ?: workbook.createFont()
-            this.poiFont = font
+            val font = workbook.createFont()
             style.fontColor?.let {
-                font.color = color(it).index
+                font.setColor(color(it))
             }
             style.fontName?.let { font.fontName = it }
             style.fontSize?.let { font.fontHeightInPoints = it.toShort() }
@@ -180,19 +181,19 @@ class CellStyle : Cloneable {
                 }
             }
             style.borderColor?.let {
-                val xssfColor = color(it)
-                this.bottomBorderColor = xssfColor.index
-                this.leftBorderColor = xssfColor.index
-                this.rightBorderColor = xssfColor.index
-                this.topBorderColor = xssfColor.index
+                val color = color(it)
+                setLeftBorderColor(color)
+                setTopBorderColor(color)
+                setRightBorderColor(color)
+                setBottomBorderColor(color)
             }
             style.borderColors?.forEach { (side, borderColor) ->
-                val xssfColor = color(borderColor)
+                val color = color(borderColor)
                 when (side) {
-                    BorderSide.TOP -> topBorderColor = xssfColor.index
-                    BorderSide.LEFT -> leftBorderColor = xssfColor.index
-                    BorderSide.BOTTOM -> bottomBorderColor = xssfColor.index
-                    BorderSide.RIGHT -> rightBorderColor = xssfColor.index
+                    BorderSide.LEFT -> setLeftBorderColor(color)
+                    BorderSide.TOP -> setTopBorderColor(color)
+                    BorderSide.RIGHT -> setRightBorderColor(color)
+                    BorderSide.BOTTOM -> setBottomBorderColor(color)
                     else -> {}
                 }
             }
