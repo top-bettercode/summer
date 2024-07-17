@@ -4,20 +4,14 @@ import org.dhatim.fastexcel.reader.*
 import org.slf4j.LoggerFactory
 import org.springframework.web.multipart.MultipartFile
 import top.bettercode.summer.tools.excel.ExcelImportException.CellError
-import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-import java.util.stream.Collectors
 import javax.validation.Validation
 import javax.validation.groups.Default
+import kotlin.streams.asSequence
 
 /**
  * 导入Excel文件
@@ -104,14 +98,14 @@ class ExcelImport private constructor(`is`: InputStream) {
 
     fun sheet(sheetIndex: Int): ExcelImport {
         sheet = workbook.getSheet(sheetIndex)
-                .orElseThrow { ExcelException("未找到第" + (sheetIndex + 1) + "张表") }
+            .orElseThrow { ExcelException("未找到第" + (sheetIndex + 1) + "张表") }
         setRowAndColumn(1, 0)
         return this
     }
 
     fun sheet(sheetName: String): ExcelImport {
         sheet = workbook.findSheet(sheetName)
-                .orElseThrow { ExcelException("未找到表：$sheetName") }
+            .orElseThrow { ExcelException("未找到表：$sheetName") }
         setRowAndColumn(1, 0)
         return this
     }
@@ -123,35 +117,6 @@ class ExcelImport private constructor(`is`: InputStream) {
     fun validateGroups(vararg validateGroups: Class<*>): ExcelImport {
         this.validateGroups = validateGroups.toList().toTypedArray()
         return this
-    }
-
-    @JvmOverloads
-    fun <F, E> getData(excelFields: Array<ExcelField<F, *>>, converter: (F) -> E = { o: F ->
-        @Suppress("UNCHECKED_CAST")
-        o as E
-    }): List<E> {
-        return getData(excelFields.asIterable(), converter)
-    }
-
-    /**
-     * 获取导入数据列表
-     *
-     * @param converter   F 转换为E
-     * @param <F>         F
-     * @param <E>         E
-     * @param excelFields excelFields
-     * @return List
-     * @throws IOException            IOException
-     * @throws IllegalAccessException IllegalAccessException
-     * @throws ExcelImportException   ExcelImportException
-     * @throws InstantiationException InstantiationException
-    </E></F> */
-    @JvmOverloads
-    fun <F, E> getData(excelFields: Iterable<ExcelField<F, *>>, converter: (F) -> E = { o: F ->
-        @Suppress("UNCHECKED_CAST")
-        o as E
-    }): List<E> {
-        return getData(getEntityType(excelFields), excelFields, converter)
     }
 
     /**
@@ -169,59 +134,110 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws InstantiationException InstantiationException
     </E></F> */
     @JvmOverloads
-    fun <F, E> getData(cls: Class<F>?, excelFields: Iterable<ExcelField<F, *>>,
-                       converter: (F) -> E = { o: F ->
-                           @Suppress("UNCHECKED_CAST")
-                           o as E
-                       }): List<E> {
-        if (sheet == null) {
-            throw RuntimeException("文档中未找到相应工作表!")
-        }
-        val dataList: MutableList<E> = ArrayList()
-        for (row in sheet!!.openStream().filter { row: Row -> row.rowNum > this.row }
-                .collect(Collectors.toList())) {
-            if (row != null) {
-                val e = readRow(cls, excelFields, row, converter)
-                if (e != null) {
-                    dataList.add(e)
+    fun <F, E> getData(
+        excelFields: Array<ExcelField<F, *>>,
+        cls: Class<F> = getEntityType(excelFields.asIterable()),
+        converter: ((F) -> E)? = null
+    ): List<E> {
+        return getData(excelFields = excelFields.asIterable(), cls = cls, converter = converter)
+    }
+
+    /**
+     * 获取导入数据列表
+     *
+     * @param cls         实体类型
+     * @param excelFields excelFields
+     * @param converter   F 转换为E
+     * @param <F>         F
+     * @param <E>         E
+     * @return List
+     * @throws IOException            IOException
+     * @throws IllegalAccessException IllegalAccessException
+     * @throws ExcelImportException   ExcelImportException
+     * @throws InstantiationException InstantiationException
+    </E></F> */
+    @JvmOverloads
+    fun <F, E> getData(
+        excelFields: Iterable<ExcelField<F, *>>,
+        cls: Class<F> = getEntityType(excelFields),
+        converter: ((F) -> E)? = null
+    ): List<E> {
+        workbook.use {
+            if (sheet == null) {
+                throw RuntimeException("文档中未找到相应工作表!")
+            } else {
+                sheet!!.openStream().use {
+                    return it.asSequence()
+                        .filter { row: Row? -> row != null && row.rowNum > this.row }
+                        .mapNotNull { row ->
+                            readRow(
+                                row = row,
+                                cls = cls,
+                                excelFields = excelFields,
+                                converter = converter
+                            )
+                        }.toList()
                 }
             }
         }
-        return dataList
     }
 
-    fun <F, E> readRow(cls: Class<F>?, excelFields: Iterable<ExcelField<F, *>>, row: Row, converter: (F) -> E): E? {
+    @JvmOverloads
+    fun <F, E> readRow(
+        row: Row,
+        excelFields: Iterable<ExcelField<F, *>>,
+        cls: Class<F> = getEntityType(excelFields),
+        converter: ((F) -> E)? = null
+    ): E? {
         var notAllBlank = false
-        val o = cls!!.getDeclaredConstructor().newInstance()
+
+        val entity = cls.getDeclaredConstructor().newInstance()
+
         val rowErrors: MutableList<CellError> = ArrayList()
+
         this.row = row.rowNum
-        val validators = mutableListOf<ExcelField<F, *>>()
-        for ((index, excelField) in excelFields.withIndex()) {
+
+        val validators = mutableMapOf<ExcelField<F, *>, Pair<Int, Any?>>()
+        excelFields.forEachIndexed { index, excelField ->
             if (excelField.isIndexColumn) {
-                continue
+                return@forEachIndexed
             }
             val column = this.column + index
-            val cellValue = getCellValue(excelField, row, column)
+            val cellValue = row.getCellValue(column, excelField.isDateField)
             notAllBlank = notAllBlank || !excelField.isEmptyCell(cellValue)
             try {
-                excelField.setProperty(o, cellValue, validator, validateGroups)
+                excelField.setProperty(entity, cellValue, validator, validateGroups)
             } catch (e: Exception) {
-                rowErrors.add(CellError(this.row, column, excelField.title, getValue(excelField.propertyType, cellValue), e))
+                rowErrors.add(
+                    CellError(
+                        row = this.row,
+                        column = column,
+                        excelField = excelField,
+                        value = cellValue,
+                        exception = e
+                    )
+                )
             }
             val validator = excelField.validator
             if (validator != null) {
-                validators.add(excelField)
+                validators[excelField] = column to cellValue
             }
         }
         //validator
-        for ((index, excelField) in validators.withIndex()) {
+        validators.forEach { (excelField, pair) ->
             val validator = excelField.validator
             try {
-                validator?.accept(o)
+                validator?.accept(entity)
             } catch (e: Exception) {
-                val column = this.column + index
-                val cellValue = getCellValue(excelField, row, column)
-                rowErrors.add(CellError(this.row, column, excelField.title, getValue(excelField.propertyType, cellValue), e))
+                rowErrors.add(
+                    CellError(
+                        row = this.row,
+                        column = pair.first,
+                        excelField = excelField,
+                        value = pair.second,
+                        exception = e
+                    )
+                )
             }
         }
         return if (notAllBlank) {
@@ -229,41 +245,13 @@ class ExcelImport private constructor(`is`: InputStream) {
                 val exception = rowErrors[0].exception
                 throw ExcelImportException(exception.message, rowErrors, exception)
             }
-            converter(o)
+            @Suppress("UNCHECKED_CAST")
+            converter?.invoke(entity) ?: (entity as E)
         } else {
             null
         }
     }
 
-    private fun getValue(propertyType: Class<*>?, cellValue: Any?) = when (cellValue) {
-        is LocalDateTime -> {
-            when (propertyType) {
-                LocalDate::class.java -> {
-                    cellValue.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                }
-
-                else -> {
-                    cellValue.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                }
-            }
-        }
-
-        is LocalDate -> {
-            cellValue.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        }
-
-        is Date -> {
-            TimeUtil.of(cellValue).format("yyyy-MM-dd HH:mm:ss")
-        }
-
-        is ZonedDateTime -> {
-            cellValue.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        }
-
-        else -> {
-            cellValue?.toString()
-        }
-    }
 
     /**
      * 获取单元格值
@@ -272,31 +260,25 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @param column 获取单元格列号
      * @return 单元格值
      */
-    private fun getCellValue(excelField: ExcelField<*, *>, row: Row, column: Int): Any? {
-        try {
-            val cell = row.getCell(column)
-            if (cell != null) {
-                return when (cell.type!!) {
-                    CellType.STRING -> row.getCellAsString(column).orElse(null)
-                    CellType.NUMBER -> if (excelField.isDateField) {
-                        row.getCellAsDate(column).orElse(null)
-                    } else {
-                        row.getCellAsNumber(column).orElse(null)
-                    }
-
-                    CellType.BOOLEAN -> row.getCellAsBoolean(column).orElse(null)
-                    CellType.FORMULA, CellType.EMPTY, CellType.ERROR -> row.getCell(column).value
+    fun Row.getCellValue(column: Int, isDateField: Boolean): Any? {
+        return getOptionalCell(column).map {
+            when (it.type) {
+                CellType.STRING -> it.asString()
+                CellType.NUMBER -> if (isDateField) {
+                    it.asDate()
+                } else {
+                    it.asNumber()
                 }
+
+                CellType.BOOLEAN -> it.asBoolean()
+                else -> it.value
             }
-        } catch (ignored: IndexOutOfBoundsException) {
-        }
-        return null
+        }.orElse(null)
     }
 
     companion object {
         private val log = LoggerFactory.getLogger(ExcelImport::class.java)
-        private val validator = Validation.buildDefaultValidatorFactory()
-                .validator
+        private val validator = Validation.buildDefaultValidatorFactory().validator
 
         /**
          * @param fileName 导入文件
@@ -338,13 +320,14 @@ class ExcelImport private constructor(`is`: InputStream) {
             return ExcelImport(`is`)
         }
 
-        private fun <F> getEntityType(excelFields: Iterable<ExcelField<F, *>>): Class<F>? {
+        private fun <F> getEntityType(excelFields: Iterable<ExcelField<F, *>>): Class<F> {
             for (excelField in excelFields) {
-                if (!excelField.isIndexColumn) {
-                    return excelField.entityType
+                val entityType = excelField.entityType
+                if (entityType != null) {
+                    return entityType
                 }
             }
-            throw ExcelException("只有索引列？")
+            throw ExcelException("识别表单类型失败")
         }
     }
 }

@@ -495,11 +495,17 @@ class ExcelField<T, P : Any?> {
 
 
     //--------------------------------------------
+    /**
+     * 从实体获取属性字段值
+     */
     fun getter(propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
         this.propertyGetter = propertyGetter
         return this
     }
 
+    /**
+     * 向实体设置属性字段值
+     */
     fun setter(propertySetter: ExcelCellSetter<T, P?>): ExcelField<T, P> {
         this.propertySetter = propertySetter
         return this
@@ -513,16 +519,6 @@ class ExcelField<T, P : Any?> {
         return this
     }
 
-    fun cellSetter(cellSetter: (PoiExcel, ExcelFieldCell<T>) -> Unit): ExcelField<T, P> {
-        this.cellSetter = cellSetter
-        return this
-    }
-
-    fun validator(validator: Consumer<T>): ExcelField<T, P> {
-        this.validator = validator
-        return this
-    }
-
     /**
      * 属性字段值转单元格值
      */
@@ -531,9 +527,172 @@ class ExcelField<T, P : Any?> {
         return this
     }
 
+    /**
+     * poi 自定义 单元格值
+     */
+    fun cellSetter(cellSetter: (PoiExcel, ExcelFieldCell<T>) -> Unit): ExcelField<T, P> {
+        this.cellSetter = cellSetter
+        return this
+    }
+
+    /**
+     * 设置默认空值
+     */
     fun none(nullValue: String): ExcelField<T, P> {
         this.nullValue = nullValue
         return this
+    }
+
+    /**
+     * 设置默认值
+     */
+    fun defaultValue(defaultValue: P): ExcelField<T, P> {
+        this.defaultValue = defaultValue
+        return this
+    }
+    //--------------------------------------------
+    fun propertyName(propertyName: String?): ExcelField<T, P> {
+        this.propertyName = propertyName
+        return this
+    }
+
+    fun comment(comment: String): ExcelField<T, P> {
+        this.comment = comment
+        return this
+    }
+
+    fun validator(validator: Consumer<T>): ExcelField<T, P> {
+        this.validator = validator
+        return this
+    }
+
+    fun dataValidation(vararg dataValidation: String): ExcelField<T, P> {
+        this.dataValidation = dataValidation
+        return this
+    }
+
+    fun style(styleSetter: BiConsumer<CellStyle, T>?): ExcelField<T, P> {
+        this.styleSetter = styleSetter
+        return this
+    }
+
+    /**
+     * @param format 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
+     * 示例：yyyy年m月d日 hh时mm分ss秒
+     * @return this
+     */
+    fun format(format: String?): ExcelField<T, P> {
+        this.cellStyle.format(format)
+        return this
+    }
+
+    /**
+     * 导出字段水平对齐方式
+     *
+     *
+     * Define horizontal alignment. [here](https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx).
+     */
+    fun align(align: Alignment): ExcelField<T, P> {
+        this.cellStyle.horizontalAlignment(align.value)
+        return this
+    }
+
+    fun wrapText(wrapText: Boolean): ExcelField<T, P> {
+        this.cellStyle.wrapText(wrapText)
+        return this
+    }
+
+    fun width(width: Double): ExcelField<T, P> {
+        this.width = width
+        return this
+    }
+
+    fun height(height: Double): ExcelField<T, P> {
+        this.height = height
+        return this
+    }
+
+    /**
+     * 设为需要合并
+     *
+     * @param mergeGetter 以此获取的值为合并依据，连续相同的值自动合并
+     * @return ExcelField
+     */
+    fun mergeBy(mergeGetter: (T) -> Any?): ExcelField<T, P> {
+        this.mergeGetter = mergeGetter
+        return this
+    }
+
+    //--------------------------------------------
+    /**
+     * @param obj 实体对象
+     * @return 单元格值
+     */
+    fun getMergeId(obj: T): Any? {
+        return mergeGetter!!(obj)
+    }
+
+    /**
+     * @param obj 实体对象
+     * @return 单元格值
+     */
+    fun toCellValue(obj: T): Any? {
+        return if (isFormula) {
+            nullValue
+        } else {
+            var property = propertyGetter.convert(obj)
+            if (property == null) {
+                property = defaultValue
+            }
+            if (property == null) {
+                nullValue
+            } else {
+                (cellConverter ?: defaultCellConverter)(property)
+            }
+        }
+    }
+
+    /**
+     * @param obj            实体对象
+     * @param cellValue      单元格值
+     * @param validator      参数验证
+     * @param validateGroups 参数验证组
+     */
+    fun setProperty(
+        obj: T,
+        cellValue: Any?,
+        validator: Validator,
+        validateGroups: Array<Class<*>>
+    ) {
+        val property: P? = if (isEmptyCell(cellValue)) {
+            defaultValue
+        } else {
+            (propertyConverter ?: defaultPropertyConverter)(cellValue!!)
+        }
+        propertySetter?.let { it[obj] = property }
+        if (propertyName != null) {
+            val constraintViolations =
+                validator.validateProperty<Any>(obj, propertyName, *validateGroups)
+            if (constraintViolations.isNotEmpty()) {
+                throw ConstraintViolationException(constraintViolations)
+            }
+        }
+    }
+
+    fun isEmptyCell(cellValue: Any?): Boolean {
+        return cellValue == null || cellValue is CharSequence && (cellValue as CharSequence?).isNullOrBlank()
+    }
+
+    //--------------------------------------------
+
+    private fun resolvePropertyName(methodName: String): String {
+        var name = methodName
+        if (name.startsWith("get")) {
+            name = name.substring(3)
+        } else if (name.startsWith("is")) {
+            name = name.substring(2)
+        }
+        return name.decapitalized()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -623,150 +782,6 @@ class ExcelField<T, P : Any?> {
             propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
 
         this.cellStyle.defaultValueFormatting = defaultFormat
-    }
-
-    //--------------------------------------------
-    fun propertyName(propertyName: String?): ExcelField<T, P> {
-        this.propertyName = propertyName
-        return this
-    }
-
-    fun comment(comment: String): ExcelField<T, P> {
-        this.comment = comment
-        return this
-    }
-
-    fun dataValidation(vararg dataValidation: String): ExcelField<T, P> {
-        this.dataValidation = dataValidation
-        return this
-    }
-
-    fun defaultValue(defaultValue: P): ExcelField<T, P> {
-        this.defaultValue = defaultValue
-        return this
-    }
-
-    fun style(styleSetter: BiConsumer<CellStyle, T>?): ExcelField<T, P> {
-        this.styleSetter = styleSetter
-        return this
-    }
-
-    /**
-     * @param format 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
-     * 示例：yyyy年m月d日 hh时mm分ss秒
-     * @return this
-     */
-    fun format(format: String?): ExcelField<T, P> {
-        this.cellStyle.format(format)
-        return this
-    }
-
-    /**
-     * 导出字段水平对齐方式
-     *
-     *
-     * Define horizontal alignment. [here](https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx).
-     */
-    fun align(align: Alignment): ExcelField<T, P> {
-        this.cellStyle.horizontalAlignment(align.value)
-        return this
-    }
-
-    fun wrapText(wrapText: Boolean): ExcelField<T, P> {
-        this.cellStyle.wrapText(wrapText)
-        return this
-    }
-
-    fun width(width: Double): ExcelField<T, P> {
-        this.width = width
-        return this
-    }
-
-    fun height(height: Double): ExcelField<T, P> {
-        this.height = height
-        return this
-    }
-
-    /**
-     * 设为需要合并
-     *
-     * @param mergeGetter 以此获取的值为合并依据，连续相同的值自动合并
-     * @return ExcelField
-     */
-    fun mergeBy(mergeGetter: (T) -> Any?): ExcelField<T, P> {
-        this.mergeGetter = mergeGetter
-        return this
-    }
-    //--------------------------------------------
-    /**
-     * @param obj 实体对象
-     * @return 单元格值
-     */
-    fun getMergeId(obj: T): Any? {
-        return mergeGetter!!(obj)
-    }
-
-    /**
-     * @param obj 实体对象
-     * @return 单元格值
-     */
-    fun toCellValue(obj: T): Any? {
-        return if (isFormula) {
-            nullValue
-        } else {
-            var property = propertyGetter.convert(obj)
-            if (property == null) {
-                property = defaultValue
-            }
-            if (property == null) {
-                nullValue
-            } else {
-                (cellConverter ?: defaultCellConverter)(property)
-            }
-        }
-    }
-
-    /**
-     * @param obj            实体对象
-     * @param cellValue      单元格值
-     * @param validator      参数验证
-     * @param validateGroups 参数验证组
-     */
-    fun setProperty(
-        obj: T,
-        cellValue: Any?,
-        validator: Validator,
-        validateGroups: Array<Class<*>>
-    ) {
-        val property: P? = if (isEmptyCell(cellValue)) {
-            defaultValue
-        } else {
-            (propertyConverter ?: defaultPropertyConverter)(cellValue!!)
-        }
-        propertySetter?.let { it[obj] = property }
-        if (propertyName != null) {
-            val constraintViolations =
-                validator.validateProperty<Any>(obj, propertyName, *validateGroups)
-            if (constraintViolations.isNotEmpty()) {
-                throw ConstraintViolationException(constraintViolations)
-            }
-        }
-    }
-
-    fun isEmptyCell(cellValue: Any?): Boolean {
-        return cellValue == null || cellValue is CharSequence && (cellValue as CharSequence?).isNullOrBlank()
-    }
-
-    //--------------------------------------------
-
-    private fun resolvePropertyName(methodName: String): String {
-        var name = methodName
-        if (name.startsWith("get")) {
-            name = name.substring(3)
-        } else if (name.startsWith("is")) {
-            name = name.substring(2)
-        }
-        return name.decapitalized()
     }
 
     //--------------------------------------------

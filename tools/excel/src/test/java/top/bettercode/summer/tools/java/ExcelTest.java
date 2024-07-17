@@ -106,6 +106,7 @@ public class ExcelTest {
             .getData(excelFields);
     System.out.println(StringUtil.json(list, true));
     System.err.println(list.size());
+    Assertions.assertEquals(3, list.size());
   }
 
   @Order(0)

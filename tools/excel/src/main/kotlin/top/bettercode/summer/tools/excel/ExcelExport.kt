@@ -183,9 +183,9 @@ class ExcelExport(val excel: IExcel) {
             return
         // Create header
         run {
-            for (excelField in excelFields) {
+            excelFields.forEach { excelField ->
                 if (this.excel !is PoiExcel && excelField.cellSetter != null) {
-                    continue
+                    return@forEach
                 }
                 val t = excelField.title
                 excel.value(row, column, t)
