@@ -524,20 +524,22 @@ class DicCodeGen(
             .filter { it.isFile && (it.extension == "java" || it.extension == "kt") }
             .forEach { file ->
                 val texts = file.readLines()
-                file.writeText(texts.joinToString("\n") { line ->
-                    var text = line
-                    replaceCodeNames.forEach { (old, new) ->
-                        val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
-                        if (text.matches(".*${regex}.*".toRegex())) {
-                            print(".")
-                            text = text.replace(
-                                regex.toRegex(),
-                                "$1${new}$2"
-                            )
+                file.bufferedWriter().use { pt ->
+                    texts.forEach { line ->
+                        var text = line
+                        replaceCodeNames.forEach { (old, new) ->
+                            val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
+                            if (text.matches(".*${regex}.*".toRegex())) {
+                                print(".")
+                                text = text.replace(
+                                    regex.toRegex(),
+                                    "$1${new}$2"
+                                )
+                            }
                         }
+                        pt.appendLine(text)
                     }
-                    text
-                })
+                }
             }
     }
 }

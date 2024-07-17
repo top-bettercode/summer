@@ -36,7 +36,7 @@ class PackageInfo(
         get() = {
             val sb = StringBuilder()
             addFormattedJavadoc(sb, 0)
-            sb.append("package ${type.packageName}${if (DirectorySet.JAVA == directorySet) ";" else ""}")
+            sb.appendLine("package ${type.packageName}${if (DirectorySet.JAVA == directorySet) ";" else ""}")
             val content = sb.toString()
             if (content != it) {
                 printWriter().use { writer -> writer.print(content) }
