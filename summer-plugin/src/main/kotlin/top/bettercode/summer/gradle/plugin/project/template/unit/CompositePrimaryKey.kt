@@ -1,11 +1,11 @@
 package top.bettercode.summer.gradle.plugin.project.template.unit
 
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.Parameter
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.JavaType
 
 /**
  *
@@ -36,7 +36,11 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
         //constructor no args
-        constructor { }
+        constructor {
+            javadoc {
+                +"//--------------------------------------------"
+            }
+        }
 
         constructor {
             primaryKeys.forEach { column ->
@@ -48,21 +52,24 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         if (!isFullComposite) {
             import("top.bettercode.summer.web.support.EmbeddedIdConverter")
             method("of", type, Parameter(primaryKeyName, JavaType.stringInstance)) {
+                javadoc {
+                    +"//--------------------------------------------"
+                }
                 isStatic = true
                 +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, ${type.shortName}.class);"
             }
             method(
-                    "of",
-                    type,
-                    Parameter(primaryKeyName, JavaType.stringInstance),
-                    Parameter("delimiter", JavaType.stringInstance)
+                "of",
+                type,
+                Parameter(primaryKeyName, JavaType.stringInstance),
+                Parameter("delimiter", JavaType.stringInstance)
             ) {
                 isStatic = true
                 +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, delimiter, ${type.shortName}.class);"
             }
         }
 
-        primaryKeys.forEach {
+        primaryKeys.forEachIndexed { index, it ->
             //field
             field(it.javaName, it.javaType) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
@@ -80,6 +87,11 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //getter
             method("get${it.javaName.capitalized()}", it.javaType) {
+                if (index == 0) {
+                    javadoc {
+                        +"//--------------------------------------------"
+                    }
+                }
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
@@ -107,10 +119,13 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //equals
         method(
-                "equals",
-                JavaType.boolean,
-                Parameter("o", JavaType.objectInstance)
+            "equals",
+            JavaType.boolean,
+            Parameter("o", JavaType.objectInstance)
         ) {
+            javadoc{
+                +"//--------------------------------------------"
+            }
             annotation("@Override")
             +"if (this == o) {"
             +"return true;"

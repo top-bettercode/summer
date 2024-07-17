@@ -125,7 +125,8 @@ object SubProjectTasks {
                             task.dependsOn(":core:genCoreEntity")
                             task.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
-                                    ext.generators = arrayOf(Form(), Service(), Controller())
+                                    ext.generators =
+                                        arrayOf(Form(), Mixin(), Service(), Controller())
                                     Generators.call(ext, tableHolder)
                                 }
                             })

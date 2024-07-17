@@ -36,6 +36,9 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         //创建实例
         method("matching", type) {
             this.isStatic = true
+            javadoc{
+                +"//--------------------------------------------"
+            }
             javadoc {
                 +"/**"
                 +" * 创建 SpecMatcher 实例"
@@ -94,6 +97,9 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 primaryKeyType,
                 entityType, type
         )) {
+            javadoc{
+                +"//--------------------------------------------"
+            }
             javadoc {
                 +"/**"
                 +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"

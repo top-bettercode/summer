@@ -1,11 +1,11 @@
 package top.bettercode.summer.gradle.plugin.project.template.unit
 
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
-import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.Parameter
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.JavaType
 import java.util.*
 
 /**
@@ -36,6 +36,10 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         //constructor no args
         constructor {
+            javadoc {
+                +"//--------------------------------------------"
+            }
+
             if (isCompositePrimaryKey)
                 +"this.$primaryKeyName = new ${primaryKeyClassName}();"
         }
@@ -56,9 +60,13 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         if (defaultColumns.isNotEmpty()) {
             method(
-                    "withDefaults",
-                    entityType
+                "withDefaults",
+                entityType
             ) {
+                javadoc {
+                    +"//--------------------------------------------"
+                }
+
                 isStatic = true
                 javadoc {
                     +"/**"
@@ -73,8 +81,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             method(
-                    "nullWithDefaults",
-                    entityType
+                "nullWithDefaults",
+                entityType
             ) {
                 javadoc {
                     +"/** 如果属性为null，设置默认值 */"
@@ -84,7 +92,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         +"if (this.${primaryKeyName}.get${it.javaName.capitalized()}() == null) {"
                         +"this.${primaryKeyName}.set${it.javaName.capitalized()}(${
                             it.initializationString(
-                                    this@apply
+                                this@apply
                             )
                         });"
                         +"}"
@@ -99,8 +107,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         method(
-                "nullFrom",
-                entityType
+            "nullFrom",
+            entityType
         ) {
             javadoc {
                 +"/**"
@@ -125,8 +133,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         method(
-                "from",
-                entityType
+            "from",
+            entityType
         ) {
             javadoc {
                 +"/** 从form表单对象更新实体属性 */"
@@ -140,6 +148,10 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         //primaryKey
         field(primaryKeyName, primaryKeyType) {
+            javadoc {
+                +"//--------------------------------------------"
+            }
+
             if (primaryKeys.size == 1) {
                 if (primaryKey.remark.isNotBlank() || primaryKey.columnDef != null)
                     javadoc {
@@ -151,11 +163,11 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
                 } else if (primaryKey.idgenerator.isNotBlank()) {
                     val generatorStrategy =
-                            (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as String?)
-                                    ?: "uuid2"
+                        (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as String?)
+                            ?: "uuid2"
                     val generator = generatorStrategy.substringAfterLast(".")
-                            .substringBeforeLast("Generator")
-                            .capitalized()
+                        .substringBeforeLast("Generator")
+                        .capitalized()
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                     if (primaryKey.idgeneratorParam.isNotBlank()) {
                         import("org.hibernate.annotations.Parameter")
@@ -177,9 +189,13 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //primaryKey getter
         method(
-                "get${primaryKeyName.capitalized()}",
-                primaryKeyType
+            "get${primaryKeyName.capitalized()}",
+            primaryKeyType
         ) {
+            javadoc {
+                +"//--------------------------------------------"
+            }
+
             javadoc {
                 +"/** ${remarks}主键 */"
             }
@@ -187,9 +203,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //primaryKey setter
         method(
-                "set${primaryKeyName.capitalized()}",
-                entityType,
-                Parameter(primaryKeyName, primaryKeyType)
+            "set${primaryKeyName.capitalized()}",
+            entityType,
+            Parameter(primaryKeyName, primaryKeyType)
         ) {
             javadoc {
                 +"/**"
@@ -207,8 +223,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             primaryKeys.forEach {
                 //getter
                 method(
-                        "get${it.javaName.capitalized()}",
-                        it.javaType
+                    "get${it.javaName.capitalized()}",
+                    it.javaType
                 ) {
                     if (it.remark.isNotBlank() || it.columnDef != null)
                         javadoc {
@@ -220,9 +236,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 //setter
                 method(
-                        "set${it.javaName.capitalized()}",
-                        entityType,
-                        Parameter(it.javaName, it.javaType)
+                    "set${it.javaName.capitalized()}",
+                    entityType,
+                    Parameter(it.javaName, it.javaType)
                 ) {
                     javadoc {
                         +"/**"
@@ -271,8 +287,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //getter
             method(
-                    "get${it.javaName.capitalized()}",
-                    it.javaType
+                "get${it.javaName.capitalized()}",
+                it.javaType
             ) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
@@ -284,9 +300,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
             //setter
             method(
-                    "set${it.javaName.capitalized()}",
-                    entityType,
-                    Parameter(it.javaName, it.javaType)
+                "set${it.javaName.capitalized()}",
+                entityType,
+                Parameter(it.javaName, it.javaType)
             ) {
                 javadoc {
                     +"/**"
@@ -301,10 +317,14 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         //equals
         method(
-                "equals",
-                JavaType.boolean,
-                Parameter("o", JavaType.objectInstance)
+            "equals",
+            JavaType.boolean,
+            Parameter("o", JavaType.objectInstance)
         ) {
+            javadoc {
+                +"//--------------------------------------------"
+            }
+
             annotation("@Override")
             +"if (this == o) {"
             +"return true;"
@@ -353,7 +373,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             if (isCompositePrimaryKey) {
                 +"return Objects.hash(${
                     (listOf(primaryKeyName) + otherColumns.map { it.javaName }).joinToString(
-                            ", "
+                        ", "
                     )
                 });"
             } else {
