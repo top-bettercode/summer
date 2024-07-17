@@ -158,7 +158,7 @@ class SecurityTest {
             HttpMethod.GET, HttpEntity<Any>(httpHeaders),
             String::class.java
         )
-        Assertions.assertEquals(HttpStatus.OK, entity2.statusCode)
+        Assertions.assertEquals(HttpStatus.NO_CONTENT, entity2.statusCode)
     }
 
     @Test
