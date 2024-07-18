@@ -5,20 +5,19 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.template
-import top.bettercode.summer.tools.lang.util.IPAddressUtil
 
-open class FeishuHookAppender(
-    properties: FeishuProperties,
+open class FeishuHookAppender @JvmOverloads constructor(
+    properties: FeishuProperties = FeishuProperties(),
 ) : AlarmAppender<FeishuProperties>(properties) {
 
     private val log: Logger = LoggerFactory.getLogger(FeishuHookAppender::class.java)
-    private val chatClient: FeishuHookClient =
-        FeishuHookClient(properties.chatHook!!.webhook!!, properties.chatHook!!.secret)
-    private val timeoutChatClient: FeishuHookClient?
+    private val chatClient: FeishuHookClient by lazy {
+        FeishuHookClient(this.properties.chatHook!!.webhook!!, this.properties.chatHook!!.secret)
+    }
 
-    init {
-        val timeoutChatHook = properties.timeoutChatHook
-        timeoutChatClient = if (timeoutChatHook != null) {
+    private val timeoutChatClient: FeishuHookClient? by lazy {
+        val timeoutChatHook = this.properties.timeoutChatHook
+        if (timeoutChatHook != null) {
             val webhook = timeoutChatHook.webhook
             val secret = timeoutChatHook.secret
             if (webhook.isNullOrBlank()) {
@@ -38,11 +37,7 @@ open class FeishuHookAppender(
         timeout: Boolean
     ): Boolean {
         val chat = if (timeout) timeoutChatClient ?: chatClient else chatClient
-        return if (!IPAddressUtil.isPortConnectable(
-                properties.managementHostName,
-                properties.managementPort
-            )
-        ) {
+        return if (!isPortConnectable()) {
             chat.postMessage(
                 title = properties.warnTitle,
                 subTitle = properties.apiAddress,

@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.weather
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.type.TypeFactory
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -60,21 +60,12 @@ open class WeatherClient(
      * <a href="https://www.nowapi.com/api/weather.wtype">天气类型</a>
      */
     open fun type(): Map<String, WeatherType> {
-        val defaultInstance = TypeFactory.defaultInstance()
-        val javaType = defaultInstance.constructParametricType(
-            WeatherResponse::class.java,
-            defaultInstance.constructMapType(
-                Map::class.java,
-                String::class.java,
-                WeatherType::class.java
-            )
-        )
         val entity: ResponseEntity<WeatherResponse<Map<String, WeatherType>>> =
-            execute(
+            exchange(
                 properties.url + "/?app=weather.wtype&appkey={0}&sign={1}&format=json",
                 HttpMethod.GET,
                 null,
-                this.responseEntityExtractor(javaType),
+                object : ParameterizedTypeReference<WeatherResponse<Map<String, WeatherType>>>() {},
                 properties.appKey,
                 properties.sign
             ) ?: throw clientException()
@@ -85,15 +76,12 @@ open class WeatherClient(
      * <a href="https://www.nowapi.com/api/weather.realtime">天气接口文档</a>
      */
     open fun query(ip: String): WeatherResult {
-        val javaType = TypeFactory.defaultInstance().constructParametricType(
-            WeatherResponse::class.java, WeatherResult::class.java
-        )
         val entity: ResponseEntity<WeatherResponse<WeatherResult>> =
-            execute(
+            exchange(
                 properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&cityIp={2}",
                 HttpMethod.GET,
                 null,
-                responseEntityExtractor(javaType),
+                object : ParameterizedTypeReference<WeatherResponse<WeatherResult>>() {},
                 properties.appKey,
                 properties.sign,
                 ip
@@ -107,15 +95,12 @@ open class WeatherClient(
      * <a href="https://www.nowapi.com/api/weather.realtime">天气接口文档</a>
      */
     open fun query(longitude: Double, latitude: Double): WeatherResult {
-        val javaType = TypeFactory.defaultInstance().constructParametricType(
-            WeatherResponse::class.java, WeatherResult::class.java
-        )
         val entity: ResponseEntity<WeatherResponse<WeatherResult>> =
-            execute(
+            exchange(
                 properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&wgs84ll={2},{3}",
                 HttpMethod.GET,
                 null,
-                this.responseEntityExtractor(javaType),
+                object : ParameterizedTypeReference<WeatherResponse<WeatherResult>>() {},
                 properties.appKey,
                 properties.sign,
                 longitude,

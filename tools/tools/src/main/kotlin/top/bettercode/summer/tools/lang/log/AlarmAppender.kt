@@ -15,9 +15,11 @@ import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import org.slf4j.LoggerFactory
 import org.slf4j.Marker
+import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
-import top.bettercode.summer.tools.lang.util.IPAddressUtil.inet4Address
+import top.bettercode.summer.tools.lang.util.IPAddressUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.lang.management.ManagementFactory
@@ -27,7 +29,7 @@ import javax.management.Query
 
 
 abstract class AlarmAppender<T : AlarmProperties>(
-    val properties: T,
+    var properties: T,
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {
@@ -37,7 +39,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
 
 
         fun getServerAddress(): String {
-            val host = inet4Address
+            val host = IPAddressUtil.inet4Address
             var port = ""
             try {
                 val beanServer = ManagementFactory.getPlatformMBeanServer()
@@ -53,7 +55,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
 
     }
 
-
+    private val log = LoggerFactory.getLogger(AlarmAppender::class.java)
     private var eventEvaluator: EventEvaluator<ILoggingEvent>? = null
     private val discriminator = DefaultDiscriminator<ILoggingEvent>()
     private var cbTracker: CyclicBufferTracker<ILoggingEvent>? = null
@@ -63,15 +65,21 @@ abstract class AlarmAppender<T : AlarmProperties>(
     private var delayBetweenStatusMessages = 300 * CoreConstants.MILLIS_IN_ONE_SECOND
     private var errorCount = 0
     private var asynchronousSending = true
-    private var encoder: PatternLayoutEncoder = PatternLayoutEncoder().apply {
-        pattern = OptionHelper.substVars(properties.logPattern, context)
+    private val encoder: PatternLayoutEncoder by lazy {
+        PatternLayoutEncoder().apply {
+            pattern = OptionHelper.substVars(properties.logPattern, context)
+        }
     }
-    private val cache: Cache<String, Int> = Caffeine.newBuilder()
-        .expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
-        .maximumSize(1000).build()
-    private val timeoutCache: Cache<String, Int> = Caffeine.newBuilder()
-        .expireAfterWrite(properties.timeoutCacheSeconds, TimeUnit.SECONDS)
-        .maximumSize(1000).build()
+    private val cache: Cache<String, Int> by lazy {
+        Caffeine.newBuilder()
+            .expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
+            .maximumSize(1000).build()
+    }
+    private val timeoutCache: Cache<String, Int> by lazy {
+        Caffeine.newBuilder()
+            .expireAfterWrite(properties.timeoutCacheSeconds, TimeUnit.SECONDS)
+            .maximumSize(1000).build()
+    }
 
     override fun start() {
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
@@ -218,13 +226,21 @@ abstract class AlarmAppender<T : AlarmProperties>(
         if (sendErrorCount > 0)
             Thread.sleep(2 * 1000L)
 
-        if (sendMessage(timeStamp, initialComment, message, level, timeout)) {
-            sendErrorCount = 0
-        } else {
-            sendErrorCount++
-            if (sendErrorCount > 15) {
-                stop()
+        try {
+            if (sendMessage(timeStamp, initialComment, message, level, timeout)) {
+                sendErrorCount = 0
+            } else {
+                sendErrorCount++
+                if (sendErrorCount > 15) {
+                    stop()
+                }
             }
+        } catch (e: Exception) {
+            log.error(
+                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                "发送信息失败",
+                e
+            )
         }
     }
 
@@ -251,6 +267,13 @@ abstract class AlarmAppender<T : AlarmProperties>(
         val linkTitle = "${filename}.gz#$anchor"
         val logUrl = actuatorAddress + properties.managementLogPath
         return Pair(logUrl, linkTitle)
+    }
+
+    fun isPortConnectable(): Boolean {
+        return IPAddressUtil.isPortConnectable(
+            properties.managementHostName.ifBlank { IPAddressUtil.inet4Address },
+            properties.managementPort
+        )
     }
 
     abstract fun sendMessage(

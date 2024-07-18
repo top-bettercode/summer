@@ -31,7 +31,7 @@ open class AlarmProperties {
     /**
      * 缓存日志条数
      */
-    var cyclicBufferSize = 20
+    var cyclicBufferSize = 1
 
     /**
      * 启动日志

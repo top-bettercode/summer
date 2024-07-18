@@ -2,10 +2,10 @@ package top.bettercode.summer.tools.lang.log.feishu
 
 import ch.qos.logback.classic.Level
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.type.TypeFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -63,7 +63,8 @@ class FeishuClient(
      */
     private fun requestToken(): ExpiringValue<String> {
         val headers = HttpHeaders()
-        headers.contentType = MediaType(MediaType.APPLICATION_JSON, Charsets.UTF_8)
+        headers.contentType =
+            MediaType(MediaType.APPLICATION_JSON, mapOf("charset" to Charsets.UTF_8.name()))
         val requestEntity = HttpEntity(mapOf("app_id" to appId, "app_secret" to appSecret), headers)
         val authToken: FeishuTokenResult = restTemplate.postForObject(
             "$api/auth/v3/tenant_access_token/internal",
@@ -96,14 +97,14 @@ class FeishuClient(
 
     private fun <T : FeishuResult> request(
         url: String,
-        responseType: Type,
         request: Any? = null,
         method: HttpMethod = HttpMethod.POST,
         contentType: MediaType? = null,
-        requestToken: Boolean = false
+        requestToken: Boolean = false,
+        responseType: Type,
     ): T? {
         val headers = HttpHeaders()
-        headers.setBearerAuth(getToken(requestToken))
+        headers.set("Authorization", "Bearer ${getToken(requestToken)}")
         if (contentType != null) {
             headers.contentType = contentType
         }
@@ -135,13 +136,13 @@ class FeishuClient(
      * https://open.feishu.cn/document/server-docs/group/chat/list
      */
     fun chatList(): List<FeishuChat>? {
-        val type = TypeFactory.defaultInstance()
-            .constructParametricType(FeishuPageData::class.java, FeishuChat::class.java)
-        val resultType = TypeFactory.defaultInstance()
-            .constructParametricType(FeishuDataResult::class.java, type)
-
         val result: FeishuDataResult<FeishuPageData<FeishuChat>>? =
-            request(url = "/im/v1/chats", responseType = resultType, method = HttpMethod.GET)
+            request(
+                url = "/im/v1/chats",
+                responseType = object :
+                    ParameterizedTypeReference<FeishuDataResult<FeishuPageData<FeishuChat>>>() {}.type,
+                method = HttpMethod.GET
+            )
 
         if (result?.isOk() != true) {
             log.error(
@@ -233,13 +234,11 @@ class FeishuClient(
         val resource = ByteArrayResource(message.joinToString("\n").toByteArray())
         body.add("file", resource)
 
-        val type = TypeFactory.defaultInstance()
-            .constructParametricType(FeishuDataResult::class.java, FeishuFile::class.java)
-
         //https://open.feishu.cn/document/server-docs/im-v1/file/create
         val fileResult: FeishuDataResult<FeishuFile>? = request(
             url = "/im/v1/files",
-            responseType = type,
+            responseType = object :
+                ParameterizedTypeReference<FeishuDataResult<FeishuFile>>() {}.type,
             request = body,
             contentType = MediaType.MULTIPART_FORM_DATA
         )

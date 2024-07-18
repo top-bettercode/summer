@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.sms.b2m
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.type.TypeFactory
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
@@ -112,20 +112,11 @@ open class SimpleB2mSmsTemplate(
         //    params.put("timerTime", "");
 //    params.put("customSmsId", "");
 //    params.put("extendedCode", "");
-        val javaType = TypeFactory.defaultInstance().constructParametricType(
-            B2mResponse::class.java, B2mRespData::class.java
-        )
-        val requestCallback = this.httpEntityCallback<B2mResponse<B2mRespData>>(
-            HttpEntity(params, null),
-            javaType
-        )
-        val responseEntityExtractor =
-            this.responseEntityExtractor<B2mResponse<B2mRespData>>(javaType)
         val entity: ResponseEntity<B2mResponse<B2mRespData>> =
-            execute(
+            exchange(
                 properties.url + "/simpleinter/sendPersonalitySMS", HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor
+                HttpEntity(params, null),
+                object : ParameterizedTypeReference<B2mResponse<B2mRespData>>() {}
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }
@@ -155,20 +146,12 @@ open class SimpleB2mSmsTemplate(
             )
         )
         params["number"] = number.toString()
-        val javaType = TypeFactory.defaultInstance().constructParametricType(
-            B2mResponse::class.java, B2mSendReport::class.java
-        )
-        val requestCallback = this.httpEntityCallback<B2mResponse<B2mSendReport>>(
-            HttpEntity(params, null),
-            javaType
-        )
-        val responseEntityExtractor =
-            this.responseEntityExtractor<B2mResponse<B2mSendReport>>(javaType)
+
         val entity: ResponseEntity<B2mResponse<B2mSendReport>> =
-            execute(
+            exchange(
                 properties.url + "/simpleinter/getReport", HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor
+                HttpEntity(params, null),
+                object : ParameterizedTypeReference<B2mResponse<B2mSendReport>>() {}
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
 
@@ -207,15 +190,12 @@ open class SimpleB2mSmsTemplate(
         params["startTime"] = startTime.format(timeFormatter)
         params["endTime"] = endTime.format(timeFormatter)
         params["smsId"] = smsId
-        val requestCallback = this.httpEntityCallback<String>(
-            HttpEntity(params, null),
-            String::class.java
-        )
+
         val entity: ResponseEntity<String> = try {
-            execute(
+            exchange(
                 properties.url + "/report/retrieveReport", HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(String::class.java)
+                HttpEntity(params, null),
+                String::class.java
             )
         } catch (e: Exception) {
             throw clientException(e)

@@ -5,15 +5,16 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
-import top.bettercode.summer.tools.lang.util.IPAddressUtil
 import javax.net.ssl.SSLHandshakeException
 
-open class SlackAppender(
-    properties: SlackProperties,
+open class SlackAppender @JvmOverloads constructor(
+    properties: SlackProperties = SlackProperties(),
 ) : AlarmAppender<SlackProperties>(properties) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val client: SlackClient = SlackClient(properties.authToken)
+    private val client: SlackClient by lazy {
+        SlackClient(this.properties.authToken)
+    }
     private var channelExist: Boolean? = null
 
     private fun channelExist(): Boolean {
@@ -54,38 +55,25 @@ open class SlackAppender(
         timeout: Boolean
     ): Boolean {
         return if (channelExist()) {
-            try {
-                val channel = if (timeout) properties.timeoutChannel else properties.channel
-                val title = "${properties.warnTitle}(${properties.apiAddress})"
-                if (!IPAddressUtil.isPortConnectable(
-                        properties.managementHostName,
-                        properties.managementPort
-                    )
-                ) {
-                    client.filesUpload(
-                        channel = channel,
-                        timeStamp = timeStamp,
-                        title = title,
-                        initialComment = initialComment,
-                        message = message
-                    )
-                } else {
-                    val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
-                    client.postMessage(
-                        channel = channel,
-                        title = title,
-                        initialComment = initialComment,
-                        logUrl = logUrl,
-                        linkTitle = linkTitle
-                    )
-                }
-            } catch (e: Exception) {
-                log.error(
-                    MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                    "slack 发送信息失败",
-                    e
+            val channel = if (timeout) properties.timeoutChannel else properties.channel
+            val title = "${properties.warnTitle}(${properties.apiAddress})"
+            if (!isPortConnectable()) {
+                client.filesUpload(
+                    channel = channel,
+                    timeStamp = timeStamp,
+                    title = title,
+                    initialComment = initialComment,
+                    message = message
                 )
-                false
+            } else {
+                val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
+                client.postMessage(
+                    channel = channel,
+                    title = title,
+                    initialComment = initialComment,
+                    logUrl = logUrl,
+                    linkTitle = linkTitle
+                )
             }
         } else {
             false

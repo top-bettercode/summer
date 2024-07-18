@@ -120,7 +120,7 @@ class SlackClient(
         method: HttpMethod = HttpMethod.POST
     ): T? {
         val headers = HttpHeaders()
-        headers.setBearerAuth(authToken)
+        headers.set("Authorization", "Bearer $authToken")
         val requestEntity = HttpEntity(request, headers)
         val response = restTemplate.exchange(api + url, method, requestEntity, responseType)
         return response.body
