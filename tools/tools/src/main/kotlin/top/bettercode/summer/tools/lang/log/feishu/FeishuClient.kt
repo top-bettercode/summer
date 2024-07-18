@@ -175,18 +175,19 @@ class FeishuClient(
         title: String,
         subTitle: String,
         initialComment: String,
-        logUrl: String,
-        linkTitle: String
+        logUrl: String? = null,
+        linkTitle: String? = null,
+        message: String? = null
     ): Boolean {
         val titles = title.split(Regex(" +"))
-        val mainTitle=titles.first()
-        val tag1=titles.getOrElse(1) { "" }
-        val tag2=titles.getOrElse(2) { "" }
+        val mainTitle = titles.first()
+        val tag1 = titles.getOrElse(1) { "" }
+        val tag2 = titles.getOrElse(2) { "" }
         val params =
             mapOf(
                 "receive_id" to chatId,
                 "msg_type" to "interactive",
-                "content" to """{"header":{"template":"yellow","title":{"content":"$mainTitle","tag":"plain_text"},"subtitle":{"tag":"plain_text","content":"$subTitle"},"text_tag_list":[{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag1"},"color":"turquoise"},{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag2"},"color":"green"}]},"card_link": {"url": "$logUrl/$linkTitle"},"elements":[{"tag":"div","text":{"content":"$initialComment","tag":"plain_text"}}]}""".trimIndent(),
+                "content" to """{"header":{"template":"yellow","title":{"content":"$mainTitle","tag":"plain_text"},"subtitle":{"tag":"plain_text","content":"$subTitle"},"text_tag_list":[{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag1"},"color":"turquoise"},{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag2"},"color":"green"}]},"card_link": ${if (message == null) """{"url": "$logUrl/$linkTitle"}""" else "{}"},"elements":[{"tag":"div","text":{"content":"$initialComment","tag":"plain_text"}${if (message != null) """,{"tag":"div","text":{"content":"$message","tag":"plain_text"}""" else ""}}]}""".trimIndent(),
             )
 
         if (log.isTraceEnabled) {

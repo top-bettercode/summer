@@ -40,13 +40,17 @@ open class FeishuAppender(
         val chatId = chatId(chat)
         return if (chatId != null) {
             try {
-                if (!IPAddressUtil.isPortConnectable(properties.managementHostName, properties.managementPort)) {
-                    client.filesUpload(
+                if (!IPAddressUtil.isPortConnectable(
+                        properties.managementHostName,
+                        properties.managementPort
+                    )
+                ) {
+                    client.postMessage(
                         chatId = chatId,
-                        timeStamp = timeStamp,
-                        title =
-                        "${properties.warnTitle}(${properties.apiAddress})".replace("/", "／"),
-                        message = message
+                        title = properties.warnTitle,
+                        subTitle = properties.apiAddress,
+                        initialComment = initialComment,
+                        message = message.last()
                     )
                 } else {
                     val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
