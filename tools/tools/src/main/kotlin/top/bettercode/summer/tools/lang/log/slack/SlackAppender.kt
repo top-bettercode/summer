@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.lang.log.slack
 
+import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
@@ -49,6 +50,7 @@ open class SlackAppender(
         timeStamp: Long,
         initialComment: String,
         message: List<String>,
+        level: Level,
         timeout: Boolean
     ): Boolean {
         return if (channelExist()) {

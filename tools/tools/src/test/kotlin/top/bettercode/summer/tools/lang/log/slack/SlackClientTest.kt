@@ -1,8 +1,7 @@
-package top.bettercode.summer.logging.slack
+package top.bettercode.summer.tools.lang.log.slack
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.lang.log.slack.SlackClient
 import top.bettercode.summer.tools.lang.util.StringUtil
 import javax.net.ssl.SSLHandshakeException
 
@@ -13,6 +12,7 @@ import javax.net.ssl.SSLHandshakeException
 class SlackClientTest {
 
     private val client = SlackClient("")
+    private val channel = "test"
 
     @Test
     fun errorToken() {
@@ -32,20 +32,21 @@ class SlackClientTest {
         println(StringUtil.json(channelsList, true))
     }
 
+
     @Test
     fun channelIdByName() {
-        println(StringUtil.json(client.channelIdByName("test"), true))
+        println(StringUtil.json(client.channelIdByName(channel), true))
     }
 
     @Test
     fun channelExist() {
-        val channelExist = client.channelExist("dev")
+        val channelExist = client.channelExist(channel)
         println(StringUtil.json(channelExist, true))
     }
 
     @Test
     fun channelNotExist() {
-        val channelExist = client.channelExist("logging")
+        val channelExist = client.channelExist("noExist")
         org.junit.jupiter.api.Assertions.assertFalse(channelExist)
         println(StringUtil.json(channelExist, true))
     }
@@ -55,7 +56,7 @@ class SlackClientTest {
         println(
             StringUtil.json(
                 client.postMessage(
-                    channel = "dev",
+                    channel = channel,
                     title = "title",
                     initialComment = "initialComment",
                     logUrl = "http://localhost:8080/actuator/logs",
@@ -70,7 +71,7 @@ class SlackClientTest {
         println(
             StringUtil.json(
                 client.filesUpload(
-                    channel = "dev",
+                    channel = channel,
                     timeStamp = System.currentTimeMillis(),
                     title = "title",
                     initialComment = "initialComment",

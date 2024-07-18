@@ -14,6 +14,6 @@ open class FeishuProperties : AlarmProperties() {
     var chat: String = ""
     var timeoutChat: String = "timeout"
 
-    var chatHook: FeishuWebHook? = null
-    var timeoutChatHook: FeishuWebHook? = null
+    open var chatHook: FeishuWebHook? = null
+    open var timeoutChatHook: FeishuWebHook? = null
 }

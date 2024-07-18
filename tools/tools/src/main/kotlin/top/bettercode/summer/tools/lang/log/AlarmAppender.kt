@@ -189,14 +189,15 @@ abstract class AlarmAppender<T : AlarmProperties>(
         }
 
         if (needSend) {
+            val level = event.level
             val timeout = alarmMarker?.timeout == true
             if (timeout) {
                 if (timeoutCache.getIfPresent(initialComment) == null) {
                     timeoutCache.put(initialComment, 1)
-                    send(timeStamp, initialComment, message, true)
+                    send(timeStamp, initialComment, message, level, true)
                 }
             } else {
-                send(timeStamp, initialComment, message, false)
+                send(timeStamp, initialComment, message, level, false)
             }
         }
     }
@@ -211,12 +212,13 @@ abstract class AlarmAppender<T : AlarmProperties>(
         timeStamp: Long,
         initialComment: String,
         message: List<String>,
+        level: Level,
         timeout: Boolean
     ) {
         if (sendErrorCount > 0)
             Thread.sleep(2 * 1000L)
 
-        if (sendMessage(timeStamp, initialComment, message, timeout)) {
+        if (sendMessage(timeStamp, initialComment, message, level, timeout)) {
             sendErrorCount = 0
         } else {
             sendErrorCount++
@@ -255,6 +257,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
         timeStamp: Long,
         initialComment: String,
         message: List<String>,
+        level: Level,
         timeout: Boolean
     ): Boolean
 

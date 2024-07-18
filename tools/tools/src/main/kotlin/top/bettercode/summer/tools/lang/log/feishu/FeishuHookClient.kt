@@ -15,6 +15,7 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
+import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.params
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.crypto.Mac
@@ -61,73 +62,21 @@ class FeishuHookClient(
         title: String,
         subTitle: String,
         initialComment: String,
+        template: Array<String>,
         message: String? = null,
         logUrl: String? = null,
         linkTitle: String? = null
     ): Boolean {
-        val titles = title.split(Regex(" +"))
-        val mainTitle = titles.first()
-        val tag1 = titles.getOrElse(1) { "" }
-        val tag2 = titles.getOrElse(2) { "" }
         val params = mutableMapOf(
             "msg_type" to "interactive",
-            "card" to mapOf(
-                "header" to mapOf(
-                    "template" to "yellow",
-                    "title" to mapOf(
-                        "content" to mainTitle,
-                        "tag" to "plain_text"
-                    ),
-                    "subtitle" to mapOf(
-                        "tag" to "plain_text",
-                        "content" to subTitle
-                    ),
-                    "text_tag_list" to listOf(
-                        mapOf(
-                            "tag" to "text_tag",
-                            "text" to mapOf(
-                                "tag" to "plain_text",
-                                "content" to tag1
-                            ),
-                            "color" to "turquoise"
-                        ),
-                        mapOf(
-                            "tag" to "text_tag",
-                            "text" to mapOf(
-                                "tag" to "plain_text",
-                                "content" to tag2
-                            ),
-                            "color" to "green"
-                        )
-                    )
-                ),
-                "card_link" to if (message == null) mapOf(
-                    "url" to "$logUrl/$linkTitle"
-                ) else mapOf(),
-                "elements" to if (message == null) listOf(
-                    mapOf(
-                        "tag" to "div",
-                        "text" to mapOf(
-                            "content" to initialComment,
-                            "tag" to "plain_text"
-                        )
-                    )
-                ) else listOf(
-                    mapOf(
-                        "tag" to "div",
-                        "text" to mapOf(
-                            "content" to initialComment,
-                            "tag" to "plain_text"
-                        )
-                    ),
-                    mapOf(
-                        "tag" to "div",
-                        "text" to mapOf(
-                            "content" to message,
-                            "tag" to "plain_text"
-                        )
-                    )
-                )
+            "card" to params(
+                title = title,
+                subTitle = subTitle,
+                initialComment = initialComment,
+                template = template,
+                message = message,
+                logUrl = logUrl,
+                linkTitle = linkTitle,
             )
         )
         secret?.let {

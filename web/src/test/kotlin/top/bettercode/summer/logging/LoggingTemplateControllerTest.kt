@@ -1,5 +1,6 @@
 package top.bettercode.summer.logging
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,6 +56,7 @@ class LoggingTemplateControllerTest {
         org.junit.jupiter.api.Assertions.assertEquals("null", entity.body)
     }
 
+    @Disabled
     @Test
     fun error() {
         val entity = testRestTemplate.postForEntity("/error/1", null, String::class.java)

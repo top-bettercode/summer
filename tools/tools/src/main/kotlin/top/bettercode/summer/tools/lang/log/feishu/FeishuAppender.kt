@@ -1,10 +1,14 @@
 package top.bettercode.summer.tools.lang.log.feishu
 
+import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
+import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.template
 import top.bettercode.summer.tools.lang.util.IPAddressUtil
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 open class FeishuAppender(
     properties: FeishuProperties,
@@ -12,7 +16,7 @@ open class FeishuAppender(
 
     private val log: Logger = LoggerFactory.getLogger(FeishuAppender::class.java)
     private val client: FeishuClient = FeishuClient(properties.appId, properties.appSecret)
-    private var chatCache: MutableMap<String, String?> = mutableMapOf()
+    private var chatCache: ConcurrentMap<String, String?> = ConcurrentHashMap()
 
     private fun chatId(chat: String): String? {
         return chatCache.computeIfAbsent(chat) {
@@ -33,6 +37,7 @@ open class FeishuAppender(
         timeStamp: Long,
         initialComment: String,
         message: List<String>,
+        level: Level,
         timeout: Boolean
     ): Boolean {
         val chat =
@@ -50,6 +55,7 @@ open class FeishuAppender(
                         title = properties.warnTitle,
                         subTitle = properties.apiAddress,
                         initialComment = initialComment,
+                        template = template(level),
                         message = message.last()
                     )
                 } else {
@@ -59,6 +65,7 @@ open class FeishuAppender(
                         title = properties.warnTitle,
                         subTitle = properties.apiAddress,
                         initialComment = initialComment,
+                        template = template(level),
                         logUrl = logUrl,
                         linkTitle = linkTitle
                     )

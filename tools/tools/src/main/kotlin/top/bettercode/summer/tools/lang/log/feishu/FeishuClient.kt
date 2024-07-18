@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.lang.log.feishu
 
+import ch.qos.logback.classic.Level
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.slf4j.Logger
@@ -20,6 +21,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.lang.reflect.Type
 import java.time.Duration
@@ -175,19 +177,26 @@ class FeishuClient(
         title: String,
         subTitle: String,
         initialComment: String,
+        template: Array<String>,
+        message: String? = null,
         logUrl: String? = null,
-        linkTitle: String? = null,
-        message: String? = null
+        linkTitle: String? = null
     ): Boolean {
-        val titles = title.split(Regex(" +"))
-        val mainTitle = titles.first()
-        val tag1 = titles.getOrElse(1) { "" }
-        val tag2 = titles.getOrElse(2) { "" }
         val params =
             mapOf(
                 "receive_id" to chatId,
                 "msg_type" to "interactive",
-                "content" to """{"header":{"template":"yellow","title":{"content":"$mainTitle","tag":"plain_text"},"subtitle":{"tag":"plain_text","content":"$subTitle"},"text_tag_list":[{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag1"},"color":"turquoise"},{"tag":"text_tag","text":{"tag":"plain_text","content":"$tag2"},"color":"green"}]},"card_link": ${if (message == null) """{"url": "$logUrl/$linkTitle"}""" else "{}"},"elements":[{"tag":"div","text":{"content":"$initialComment","tag":"plain_text"}${if (message != null) """,{"tag":"div","text":{"content":"$message","tag":"plain_text"}""" else ""}}]}""".trimIndent(),
+                "content" to StringUtil.json(
+                    params(
+                        title = title,
+                        subTitle = subTitle,
+                        initialComment = initialComment,
+                        template = template,
+                        message = message,
+                        logUrl = logUrl,
+                        linkTitle = linkTitle,
+                    )
+                ),
             )
 
         if (log.isTraceEnabled) {
@@ -278,4 +287,125 @@ class FeishuClient(
         return result?.isOk() == true
     }
 
+    companion object {
+
+        fun template(level: Level): Array<String> {
+            when {
+                level.levelInt >= Level.ERROR_INT -> {
+                    return arrayOf(
+                        "red",
+                        "orange",
+                        "carmine",
+                        "more-close_outlined",
+                        "red"
+                    )
+                }
+
+                level == Level.WARN -> {
+                    return arrayOf(
+                        "orange",
+                        "yellow",
+                        "red",
+                        "warning_outlined",
+                        "orange"
+                    )
+                }
+
+                else -> {
+                    return arrayOf(
+                        "green",
+                        "lime",
+                        "turquoise",
+                        "info_outlined",
+                        "green"
+                    )
+                }
+            }
+
+        }
+
+        fun params(
+            title: String,
+            subTitle: String,
+            initialComment: String,
+            template: Array<String>,
+            message: String?,
+            logUrl: String?,
+            linkTitle: String?,
+        ): Map<String, Any> {
+            val titles = title.split(Regex(" +"))
+            val mainTitle = titles.first()
+            val tag1 = titles.getOrElse(1) { "" }
+            val tag2 = titles.getOrElse(2) { "" }
+            val params = mapOf(
+                "config" to mapOf(
+                    "width_mode" to "fill"
+                ),
+                "header" to mapOf(
+                    "template" to template[0],
+                    "title" to mapOf(
+                        "content" to mainTitle,
+                        "tag" to "plain_text"
+                    ),
+                    "subtitle" to mapOf(
+                        "tag" to "plain_text",
+                        "content" to subTitle
+                    ),
+                    "text_tag_list" to listOf(
+                        mapOf(
+                            "tag" to "text_tag",
+                            "text" to mapOf(
+                                "tag" to "plain_text",
+                                "content" to tag1
+                            ),
+                            "color" to template[1]
+                        ),
+                        mapOf(
+                            "tag" to "text_tag",
+                            "text" to mapOf(
+                                "tag" to "plain_text",
+                                "content" to tag2
+                            ),
+                            "color" to template[2]
+                        )
+                    ),
+                    "ud_icon" to mapOf(
+                        "token" to template[3],
+                        "style" to mapOf(
+                            "color" to template[4]
+                        )
+                    )
+                ),
+                "card_link" to if (message == null) mapOf(
+                    "url" to "$logUrl/$linkTitle"
+                ) else mapOf(),
+                "elements" to if (message == null) listOf(
+                    mapOf(
+                        "tag" to "div",
+                        "text" to mapOf(
+                            "content" to initialComment,
+                            "tag" to "plain_text"
+                        )
+                    )
+                ) else listOf(
+                    mapOf(
+                        "tag" to "div",
+                        "text" to mapOf(
+                            "content" to initialComment,
+                            "tag" to "plain_text"
+                        )
+                    ),
+                    mapOf(
+                        "tag" to "div",
+                        "text" to mapOf(
+                            "content" to message,
+                            "tag" to "plain_text",
+                        )
+                    )
+                )
+            )
+            return params
+        }
+
+    }
 }

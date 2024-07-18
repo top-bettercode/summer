@@ -1,8 +1,10 @@
-package top.bettercode.summer.logging.feishu
+package top.bettercode.summer.tools.lang.log.feishu
 
+import ch.qos.logback.classic.Level
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.lang.log.feishu.FeishuClient
+import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.template
 import top.bettercode.summer.tools.lang.util.StringUtil
+
 
 /**
  *
@@ -14,6 +16,7 @@ class FeishuClientTest {
         "",
         ""
     )
+    private val chat = "self"
 
     @Test
     fun chatList() {
@@ -23,12 +26,12 @@ class FeishuClientTest {
 
     @Test
     fun chatIdByName() {
-        println(StringUtil.json(client.chatIdByName("dev"), true))
+        println(StringUtil.json(client.chatIdByName(chat), true))
     }
 
     @Test
     fun chatExist() {
-        val chatExist = client.chatExist("dev")
+        val chatExist = client.chatExist(chat)
         println(StringUtil.json(chatExist, true))
     }
 
@@ -44,10 +47,11 @@ class FeishuClientTest {
         println(
             StringUtil.json(
                 client.postMessage(
-                    chatId = client.chatIdByName("dev") ?: throw RuntimeException("channel not exist"),
+                    chatId = client.chatIdByName(chat) ?: throw RuntimeException("channel not exist"),
                     title = "title tag1 tag2",
                     subTitle = "subtitle",
                     initialComment = "initialComment",
+                    template = template(Level.ERROR),
                     logUrl = "http://localhost:8080/actuator/logs",
                     linkTitle = "logging"
                 ), true
@@ -60,7 +64,7 @@ class FeishuClientTest {
         println(
             StringUtil.json(
                 client.filesUpload(
-                    chatId = client.chatIdByName("dev") ?: throw RuntimeException("channel not exist"),
+                    chatId = client.chatIdByName(chat) ?: throw RuntimeException("channel not exist"),
                     timeStamp = System.currentTimeMillis(),
                     title = "title",
                     message = listOf("message")

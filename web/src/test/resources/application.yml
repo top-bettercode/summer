@@ -7,6 +7,8 @@ logging:
     _org: warn
     sun: warn
 summer:
+  web:
+    project-name: app
   logging:
     #  smtp:
     #    host:
@@ -34,9 +36,14 @@ summer:
       path: build/logs
       rollover-on-start: true
 
+
 spring:
   application:
     name: test项目
+  profiles:
+    active: dev
+
+
 
 #  socket:
 #    queue-size: 1
