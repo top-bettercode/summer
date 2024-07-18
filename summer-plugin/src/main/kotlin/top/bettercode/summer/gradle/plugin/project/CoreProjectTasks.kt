@@ -297,25 +297,6 @@ object CoreProjectTasks {
                 it.doLast(object : Action<Task> {
                     override fun execute(t: Task) {
                         val file = project.rootProject.file("conf/auth.json")
-                        val map = StringUtil.readJsonTree(file.readText())
-                        project.logger.lifecycle("======================================")
-                        project.logger.lifecycle(
-                            "#auth\n" +
-                                    "auth=权限\n" +
-                                    "auth|TYPE=String"
-                        )
-                        val codeGen = DicCodeGen(project, ext.packageName)
-                        val dicCodes = DicCodes(
-                            type = "auth",
-                            name = "权限",
-                            javaType = JavaType.stringInstance,
-                            codes = mutableMapOf()
-                        )
-                        map.forEach { node ->
-                            printNode(project, dicCodes, node)
-                        }
-                        codeGen.genCode(dicCodes = dicCodes, auth = true)
-                        project.logger.lifecycle("======================================")
                         val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
                         val authProject = try {
                             project.rootProject.project(
@@ -329,17 +310,31 @@ object CoreProjectTasks {
                                 project
                             }
                         }
+                        val codeGen = DicCodeGen(project, ext.packageName)
                         val packageName = project.property("app.packageName") as String
-                        authProject.file(
-                            "src/main/java/${
-                                packageName.replace(
-                                    ".",
-                                    "/"
-                                )
-                            }/security/auth"
-                        ).deleteRecursively()
-                        map.forEach { node ->
-                            genNode(authProject, codeGen, node, replaceCodeNames)
+                        if (file.exists()) {
+                            val map = StringUtil.readJsonTree(file.readText())
+                            project.logger.lifecycle("======================================")
+                            project.logger.lifecycle(
+                                "#auth\n" +
+                                        "auth=权限\n" +
+                                        "auth|TYPE=String"
+                            )
+                            val dicCodes = DicCodes(
+                                type = "auth",
+                                name = "权限",
+                                javaType = JavaType.stringInstance,
+                                codes = mutableMapOf()
+                            )
+                            map.forEach { node ->
+                                printNode(project, dicCodes, node)
+                            }
+                            authProject.file( "src/main/java/${ packageName.replace( ".", "/" ) }/security/auth" ).deleteRecursively()
+                            codeGen.genCode(dicCodes = dicCodes, auth = true)
+                            project.logger.lifecycle("======================================")
+                            map.forEach { node ->
+                                genNode(authProject, codeGen, node, replaceCodeNames)
+                            }
                         }
 
                         if (project.findProperty("app.update") == "true") {

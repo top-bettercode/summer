@@ -462,7 +462,7 @@ class DicCodeGen(
 
     fun codeName(name: String): String {
         var text =
-            name.substringBefore("(").substringBefore("（").substringBefore(",").substringBefore("，")
+            name.substringBefore("(").substringBefore("（").substringBefore(",").substringBefore("，").substringBefore("。")
                 .replace("/", "or")
         val regex = Regex("([a-zA-Z0-9]+)")
         text = text.replace(regex, "_$1_")
