@@ -2,6 +2,7 @@ package top.bettercode.summer.logging.slack
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.lang.log.slack.SlackClient
 import top.bettercode.summer.tools.lang.util.StringUtil
 import javax.net.ssl.SSLHandshakeException
 

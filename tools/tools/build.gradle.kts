@@ -12,6 +12,7 @@ dependencies {
     testImplementation("org.springframework:spring-webmvc")
     compileOnly("javax.servlet:javax.servlet-api")
 
+    compileOnly("com.github.ben-manes.caffeine:caffeine")
     compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
     compileOnly("com.squareup.okhttp3:okhttp")

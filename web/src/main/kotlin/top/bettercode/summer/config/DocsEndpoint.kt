@@ -73,7 +73,7 @@ class DocsEndpoint(
             }
         }
         var reqResource: Resource? = if (resource.exists()) resource else null
-        val apiAddress = LoggingUtil.apiAddress
+        val apiAddress = LoggingUtil.apiAddress.first
         if (reqResource != null) {
             val urlPath = reqResource.url.path
             if (urlPath.endsWith(".html") || urlPath.endsWith(".postman_collection.json")) {

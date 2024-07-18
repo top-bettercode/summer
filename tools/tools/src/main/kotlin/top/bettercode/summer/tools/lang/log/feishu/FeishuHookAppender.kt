@@ -1,32 +1,13 @@
-package top.bettercode.summer.logging.feishu
+package top.bettercode.summer.tools.lang.log.feishu
 
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder
-import ch.qos.logback.core.util.OptionHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.tools.lang.log.AlarmAppender
-import java.util.concurrent.ConcurrentMap
+import top.bettercode.summer.tools.lang.util.IPAddressUtil
 
 open class FeishuHookAppender(
-    private val properties: FeishuProperties,
-    private val warnSubject: String,
-    logsPath: String,
-    managementLogPath: String,
-    logPattern: String,
-    cacheMap: ConcurrentMap<String, Int>,
-    timeoutCacheMap: ConcurrentMap<String, Int>
-) : AlarmAppender(
-    logsPath = logsPath,
-    managementLogPath = managementLogPath,
-    cyclicBufferSize = properties.cyclicBufferSize,
-    ignoredWarnLogger = properties.ignoredWarnLogger,
-    encoder = PatternLayoutEncoder().apply {
-        pattern = OptionHelper.substVars(logPattern, context)
-    },
-    cacheMap = cacheMap,
-    timeoutCacheMap = timeoutCacheMap
-) {
+    properties: FeishuProperties,
+) : AlarmAppender<FeishuProperties>(properties) {
 
     private val log: Logger = LoggerFactory.getLogger(FeishuHookAppender::class.java)
     private val chatClient: FeishuHookClient =
@@ -54,28 +35,18 @@ open class FeishuHookAppender(
         timeout: Boolean
     ): Boolean {
         val chat = if (timeout) timeoutChatClient ?: chatClient else chatClient
-        val actuatorAddress = try {
-            LoggingUtil.actuatorAddress
-        } catch (e: Exception) {
-            null
-        }
-        val subTitle = try {
-            LoggingUtil.apiAddress
-        } catch (e: Exception) {
-            ""
-        }
-        return if (actuatorAddress == null) {
+        return if (!IPAddressUtil.isPortConnectable(properties.managementHostName, properties.managementPort)) {
             chat.postMessage(
-                title = warnSubject,
-                subTitle = subTitle,
+                title = properties.warnTitle,
+                subTitle = properties.apiAddress,
                 initialComment = initialComment,
                 message = message.last()
             )
         } else {
-            val (logUrl, linkTitle) = logUrl(actuatorAddress, message)
+            val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
             chat.postMessage(
-                title = warnSubject,
-                subTitle = subTitle,
+                title = properties.warnTitle,
+                subTitle = properties.apiAddress,
                 initialComment = initialComment,
                 logUrl = logUrl,
                 linkTitle = linkTitle

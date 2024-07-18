@@ -62,25 +62,19 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             } finally {
                 MDC.remove(MDC_SQL_COST)
                 MDC.remove(MDC_SQL_END)
+                MDC.remove(MDC_SQL_OFFSET)
+                MDC.remove(MDC_SQL_LIMIT)
             }
         }
 
         fun Logger.offset(offset: Long) {
-            try {
-                MDC.put(MDC_SQL_OFFSET, offset.toString())
-                info("offset: {} rows", offset)
-            } finally {
-                MDC.remove(MDC_SQL_OFFSET)
-            }
+            MDC.put(MDC_SQL_OFFSET, offset.toString())
+            info("offset: {} rows", offset)
         }
 
         fun Logger.limit(limit: Int) {
-            try {
-                MDC.put(MDC_SQL_LIMIT, limit.toString())
-                info("limit: {} rows", limit)
-            } finally {
-                MDC.remove(MDC_SQL_LIMIT)
-            }
+            MDC.put(MDC_SQL_LIMIT, limit.toString())
+            info("limit: {} rows", limit)
         }
     }
 

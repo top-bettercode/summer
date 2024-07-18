@@ -1,12 +1,12 @@
-package top.bettercode.summer.logging.slack
+package top.bettercode.summer.tools.lang.log.feishu
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 /**
+ *
  * @author Peter Wu
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Channel(
-        var id: String? = null,
-        var name: String? = null
-)
+class FeishuDataResult<T> : FeishuResult() {
+    var data: T? = null
+}

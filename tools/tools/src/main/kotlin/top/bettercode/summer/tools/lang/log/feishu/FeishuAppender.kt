@@ -1,33 +1,14 @@
-package top.bettercode.summer.logging.feishu
+package top.bettercode.summer.tools.lang.log.feishu
 
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder
-import ch.qos.logback.core.util.OptionHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
-import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.tools.lang.log.AlarmAppender
-import java.util.concurrent.ConcurrentMap
+import top.bettercode.summer.tools.lang.util.IPAddressUtil
 
 open class FeishuAppender(
-    private val properties: FeishuProperties,
-    private val warnSubject: String,
-    logsPath: String,
-    managementLogPath: String,
-    logPattern: String,
-    cacheMap: ConcurrentMap<String, Int>,
-    timeoutCacheMap: ConcurrentMap<String, Int>
-) : AlarmAppender(
-    logsPath = logsPath,
-    managementLogPath = managementLogPath,
-    cyclicBufferSize = properties.cyclicBufferSize,
-    ignoredWarnLogger = properties.ignoredWarnLogger,
-    encoder = PatternLayoutEncoder().apply {
-        pattern = OptionHelper.substVars(logPattern, context)
-    },
-    cacheMap = cacheMap,
-    timeoutCacheMap = timeoutCacheMap
-) {
+    properties: FeishuProperties,
+) : AlarmAppender<FeishuProperties>(properties) {
 
     private val log: Logger = LoggerFactory.getLogger(FeishuAppender::class.java)
     private val client: FeishuClient = FeishuClient(properties.appId, properties.appSecret)
@@ -59,29 +40,20 @@ open class FeishuAppender(
         val chatId = chatId(chat)
         return if (chatId != null) {
             try {
-                val actuatorAddress = try {
-                    LoggingUtil.actuatorAddress
-                } catch (e: Exception) {
-                    null
-                }
-                val subTitle = try {
-                    LoggingUtil.apiAddress
-                } catch (e: Exception) {
-                    ""
-                }
-                if (actuatorAddress == null) {
+                if (!IPAddressUtil.isPortConnectable(properties.managementHostName, properties.managementPort)) {
                     client.filesUpload(
                         chatId = chatId,
                         timeStamp = timeStamp,
-                        title = warnSubject + subTitle,
+                        title =
+                        "${properties.warnTitle}(${properties.apiAddress})".replace("/", "／"),
                         message = message
                     )
                 } else {
-                    val (logUrl, linkTitle) = logUrl(actuatorAddress, message)
+                    val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
                     client.postMessage(
                         chatId = chatId,
-                        title = warnSubject,
-                        subTitle = subTitle,
+                        title = properties.warnTitle,
+                        subTitle = properties.apiAddress,
                         initialComment = initialComment,
                         logUrl = logUrl,
                         linkTitle = linkTitle

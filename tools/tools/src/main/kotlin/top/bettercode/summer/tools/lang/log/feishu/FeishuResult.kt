@@ -1,4 +1,4 @@
-package top.bettercode.summer.logging.feishu
+package top.bettercode.summer.tools.lang.log.feishu
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

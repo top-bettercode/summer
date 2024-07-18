@@ -1,4 +1,4 @@
-package top.bettercode.summer.logging.slack
+package top.bettercode.summer.tools.lang.log.slack
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

@@ -12,28 +12,45 @@ import ch.qos.logback.core.boolex.EventEvaluatorBase
 import ch.qos.logback.core.helpers.CyclicBuffer
 import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
+import ch.qos.logback.core.util.OptionHelper
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import org.slf4j.Marker
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.util.IPAddressUtil.inet4Address
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
-import java.util.concurrent.ConcurrentMap
+import java.lang.management.ManagementFactory
+import java.util.concurrent.TimeUnit
+import javax.management.ObjectName
+import javax.management.Query
 
 
-abstract class AlarmAppender(
-    private val cyclicBufferSize: Int,
-    private val ignoredWarnLogger: Array<String>,
-    private val logsPath: String,
-    private val managementLogPath: String,
-    var encoder: PatternLayoutEncoder? = null,
-    private val startedMsg: String = "^Started .*? in .*? seconds \\(.*?\\)$",
-    private val cacheMap: ConcurrentMap<String, Int>,
-    private val timeoutCacheMap: ConcurrentMap<String, Int>
+abstract class AlarmAppender<T : AlarmProperties>(
+    val properties: T,
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
         const val ALARM_LOG_MARKER = "alarm"
         const val NO_ALARM_LOG_MARKER = "no_alarm"
+
+
+        fun getServerAddress(): String {
+            val host = inet4Address
+            var port = ""
+            try {
+                val beanServer = ManagementFactory.getPlatformMBeanServer()
+                val objectNames = beanServer.queryNames(
+                    ObjectName("*:type=Connector,*"),
+                    Query.match(Query.attr("protocol"), Query.value("HTTP/1.1"))
+                )
+                port = ":" + objectNames.iterator().next().getKeyProperty("port")
+            } catch (ignored: Exception) {
+            }
+            return "http://$host$port"
+        }
+
     }
 
 
@@ -46,19 +63,28 @@ abstract class AlarmAppender(
     private var delayBetweenStatusMessages = 300 * CoreConstants.MILLIS_IN_ONE_SECOND
     private var errorCount = 0
     private var asynchronousSending = true
+    private var encoder: PatternLayoutEncoder = PatternLayoutEncoder().apply {
+        pattern = OptionHelper.substVars(properties.logPattern, context)
+    }
+    private val cacheMap: Cache<String, Int> = Caffeine.newBuilder()
+        .expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
+        .maximumSize(1000).build()
+    private val timeoutCacheMap: Cache<String, Int> = Caffeine.newBuilder()
+        .expireAfterWrite(properties.timeoutCacheSeconds, TimeUnit.SECONDS)
+        .maximumSize(1000).build()
 
     override fun start() {
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
             override fun evaluate(event: ILoggingEvent): Boolean {
                 val loggerName = event.loggerName
-                for (l in ignoredWarnLogger) {
+                for (l in properties.ignoredWarnLogger) {
                     if (loggerName.startsWith(l)) {
                         return false
                     }
                 }
                 return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
                     ALARM_LOG_MARKER
-                ) == true || event.formattedMessage.matches(Regex(startedMsg))) && (event.marker == null || !event.marker.contains(
+                ) == true || event.formattedMessage.matches(Regex(properties.startedMsg))) && (event.marker == null || !event.marker.contains(
                     NO_ALARM_LOG_MARKER
                 ))
             }
@@ -67,13 +93,12 @@ abstract class AlarmAppender(
         alarmEvaluator.name = "onAlarm"
         alarmEvaluator.start()
         eventEvaluator = alarmEvaluator
-        if (encoder != null) {
-            encoder!!.context = context
-            encoder!!.start()
-        }
+        encoder.context = context
+        encoder.start()
         if (cbTracker == null) {
             cbTracker = CyclicBufferTracker()
-            cbTracker!!.bufferSize = if (cyclicBufferSize > 0) cyclicBufferSize else 1
+            cbTracker!!.bufferSize =
+                if (properties.cyclicBufferSize > 0) properties.cyclicBufferSize else 1
         }
         super.start()
     }
@@ -145,7 +170,7 @@ abstract class AlarmAppender(
         val alarmMarker: AlarmMarker? = findAlarmMarker(event.marker)
         for (i in 0 until len) {
             val e = cbClone.get()
-            message.add(String(encoder!!.encode(e)))
+            message.add(String(encoder.encode(e)))
             if (i == len - 1) {
                 val tp = e.throwableProxy
                 initialComment = alarmMarker?.initialComment
@@ -156,8 +181,8 @@ abstract class AlarmAppender(
         }
 
         val timeStamp = event.timeStamp
-        val needSend = if (!cacheMap.containsKey(initialComment)) {
-            cacheMap[initialComment] = 1
+        val needSend = if (cacheMap.getIfPresent(initialComment) == null) {
+            cacheMap.put(initialComment, 1)
             true
         } else {
             false
@@ -166,8 +191,8 @@ abstract class AlarmAppender(
         if (needSend) {
             val timeout = alarmMarker?.timeout == true
             if (timeout) {
-                if (!timeoutCacheMap.containsKey(initialComment)) {
-                    timeoutCacheMap[initialComment] = 1
+                if (timeoutCacheMap.getIfPresent(initialComment) == null) {
+                    timeoutCacheMap.put(initialComment, 1)
                     send(timeStamp, initialComment, message, true)
                 }
             } else {
@@ -206,7 +231,7 @@ abstract class AlarmAppender(
         message: List<String>
     ): Pair<String, String> {
         val anchor = PrettyMessageHTMLLayout.anchor(message.last())
-        val path = File(logsPath)
+        val path = File(properties.logsPath)
         val namePattern = "all-${TimeUtil.now().format("yyyy-MM-dd")}-"
         val files =
             path.listFiles { file -> file.name.startsWith(namePattern) && file.extension == "gz" }
@@ -222,7 +247,7 @@ abstract class AlarmAppender(
         }"
 
         val linkTitle = "${filename}.gz#$anchor"
-        val logUrl = actuatorAddress + managementLogPath
+        val logUrl = actuatorAddress + properties.managementLogPath
         return Pair(logUrl, linkTitle)
     }
 

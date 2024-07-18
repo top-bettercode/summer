@@ -209,7 +209,7 @@ class RequestLoggingFilter(
                         Markers.appendRaw(
                             OPERATION_MARKER,
                             operation.toString(config.copy(format = false))
-                        ).and(Markers.append("title", LoggingUtil.warnSubject(environment)))
+                        ).and(Markers.append("title", LoggingUtil.warnTitle(environment)))
                     )
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }

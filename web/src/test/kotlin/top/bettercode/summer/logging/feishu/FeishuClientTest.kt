@@ -1,6 +1,7 @@
 package top.bettercode.summer.logging.feishu
 
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.lang.log.feishu.FeishuClient
 import top.bettercode.summer.tools.lang.util.StringUtil
 
 /**

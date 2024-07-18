@@ -2,8 +2,8 @@ package top.bettercode.summer.logging
 
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.autoconfigure.web.ServerProperties
+import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.core.env.Environment
-import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.operation.RequestConverter
 import top.bettercode.summer.tools.lang.util.IPAddressUtil
 import top.bettercode.summer.web.support.ApplicationContextHolder
@@ -16,55 +16,68 @@ import java.io.StringWriter
  */
 object LoggingUtil {
 
-    val apiAddress: String by lazy {
-        apiAddress(RequestConverter.SCHEME_HTTP)
+
+    val apiAddress: Pair<String, Pair<String,Int>> by lazy {
+        ApplicationContextHolder.environment?.let {
+            apiAddress(it, RequestConverter.SCHEME_HTTP)
+        } ?: throw RuntimeException("environment 未初始化")
     }
 
-    val apiAddressWs: String by lazy {
-        apiAddress("ws")
+    val apiAddressWs: Pair<String, Pair<String,Int>> by lazy {
+        ApplicationContextHolder.environment?.let {
+            apiAddress(it, "ws")
+        } ?: throw RuntimeException("environment 未初始化")
     }
 
-    fun apiAddress(scheme: String = RequestConverter.SCHEME_HTTP): String {
+
+    fun apiAddress(
+        environment: Environment,
+        scheme: String = RequestConverter.SCHEME_HTTP
+    ): Pair<String, Pair<String,Int>> {
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
-        val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
-        Assert.notNull(serverProperties, "serverProperties must not be null")
-        val serverPort = serverProperties!!.port ?: 8080
-        printer.printf("%s://%s", scheme, IPAddressUtil.inet4Address)
+
+        val serverProperties = Binder.get(environment).bind(
+            "server", ServerProperties::class.java
+        ).get()
+        val serverPort = serverProperties.port ?: 8080
+        val host = IPAddressUtil.inet4Address
+        printer.printf("%s://%s", scheme, host)
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
         val contextPath = serverProperties.servlet?.contextPath ?: "/"
         if ("/" != contextPath)
             printer.print(contextPath)
-        return uriWriter.toString()
+        return uriWriter.toString() to  (host to serverPort)
     }
 
-    val actuatorAddress: String by lazy {
+    fun actuatorAddress(environment: Environment): Pair<String, Pair<String,Int>>
+    {
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
-        val properties = ApplicationContextHolder.getBean(ManagementServerProperties::class.java)
-        Assert.notNull(properties, "ManagementServerProperties must not be null")
-        if (properties!!.port == null) {
-            return@lazy apiAddress
+        val managementServerProperties = Binder.get(environment).bind(
+            "management.server", ManagementServerProperties::class.java
+        ).orElse(ManagementServerProperties())
+
+        if (managementServerProperties.port == null) {
+            return apiAddress(environment)
         }
-        val serverPort = properties.port!!
-        printer.printf(
-            "%s://%s", RequestConverter.SCHEME_HTTP, properties.address
-                ?: IPAddressUtil.inet4Address
-        )
+        val host = (managementServerProperties.address?.hostName ?: IPAddressUtil.inet4Address)
+        val serverPort = managementServerProperties.port!!
+        printer.printf("%s://%s", RequestConverter.SCHEME_HTTP, host)
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
-        val contextPath = properties.basePath ?: ""
+        val contextPath = managementServerProperties.basePath ?: ""
         if (contextPath.isNotBlank() && "/" != contextPath)
             printer.print(contextPath)
 
-        uriWriter.toString()
+        return uriWriter.toString() to  (host to serverPort)
     }
 
-    internal fun warnSubject(environment: Environment): String = environment.getProperty(
-        "summer.logging.warn-subject",
+    internal fun warnTitle(environment: Environment): String = environment.getProperty(
+        "summer.logging.warn-title",
         "${environment.getProperty("spring.application.name", "").replace(Regex(" +"), "-")}${
             if (existProperty(environment, "summer.web.project-name"))
                 " ${

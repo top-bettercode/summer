@@ -14,6 +14,25 @@ import javax.servlet.http.HttpServletRequest
  */
 object IPAddressUtil {
 
+
+    private val log = org.slf4j.LoggerFactory.getLogger(IPAddressUtil::class.java)
+
+    /**
+     * 端口是否可连接
+     */
+    @JvmStatic
+    fun isPortConnectable(host: String, port: Int): Boolean {
+        return try {
+            val socket = java.net.Socket()
+            socket.connect(java.net.InetSocketAddress(host, port), 1000)
+            socket.close()
+            true
+        } catch (e: Exception) {
+            log.info("$host:$port 端口不可连接", e)
+            false
+        }
+    }
+
     /**
      * 获取本机IP
      * @return ip
@@ -23,9 +42,9 @@ object IPAddressUtil {
         get() {
             val interfaces = NetworkInterface.getNetworkInterfaces()
             return interfaces.toList().filter { !it.isLoopback && it.isUp && !it.isVirtual }
-                    .minByOrNull { it.index }?.inetAddresses?.toList()
-                    ?.filterIsInstance<Inet4Address>()?.firstOrNull()?.let { return it.hostAddress }
-                    ?: "127.0.0.1"
+                .minByOrNull { it.index }?.inetAddresses?.toList()
+                ?.filterIsInstance<Inet4Address>()?.firstOrNull()?.let { return it.hostAddress }
+                ?: "127.0.0.1"
         }
 
     /**
@@ -71,9 +90,9 @@ object IPAddressUtil {
             throw IllegalArgumentException("ipAddress 不能为空")
         }
         return !ipAddress.matches(
-                ("(127\\.0\\.0\\.1)|" + "(localhost)|" + "(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|"
-                        + "(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|"
-                        + "(192\\.168\\.\\d{1,3}\\.\\d{1,3})").toRegex()
+            ("(127\\.0\\.0\\.1)|" + "(localhost)|" + "(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|"
+                    + "(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|"
+                    + "(192\\.168\\.\\d{1,3}\\.\\d{1,3})").toRegex()
         )
     }
 
@@ -109,11 +128,11 @@ object IPAddressUtil {
         }
 
         return (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5) + ":" + strMAC.substring(
-                6,
-                8
+            6,
+            8
         ) + ":"
                 + strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC
-                .substring(15, 17))
+            .substring(15, 17))
     }
 
 }

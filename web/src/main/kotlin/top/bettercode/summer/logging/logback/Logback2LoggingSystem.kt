@@ -22,7 +22,6 @@ import ch.qos.logback.core.spi.FilterReply
 import ch.qos.logback.core.spi.LifeCycle
 import ch.qos.logback.core.util.FileSize
 import ch.qos.logback.core.util.OptionHelper
-import com.github.benmanes.caffeine.cache.Caffeine
 import net.logstash.logback.appender.LogstashTcpSocketAppender
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger
@@ -39,20 +38,20 @@ import org.springframework.util.ClassUtils
 import top.bettercode.summer.logging.*
 import top.bettercode.summer.logging.LoggingUtil.existProperty
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.logging.feishu.FeishuAppender
-import top.bettercode.summer.logging.feishu.FeishuHookAppender
-import top.bettercode.summer.logging.feishu.FeishuProperties
-import top.bettercode.summer.logging.slack.SlackAppender
-import top.bettercode.summer.logging.slack.SlackProperties
 import top.bettercode.summer.logging.websocket.WebSocketAppender
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.log.AlarmProperties
 import top.bettercode.summer.tools.lang.log.SqlAppender
+import top.bettercode.summer.tools.lang.log.feishu.FeishuAppender
+import top.bettercode.summer.tools.lang.log.feishu.FeishuHookAppender
+import top.bettercode.summer.tools.lang.log.feishu.FeishuProperties
+import top.bettercode.summer.tools.lang.log.slack.SlackAppender
+import top.bettercode.summer.tools.lang.log.slack.SlackProperties
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -109,7 +108,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         start(context, sqlFilter)
 
-        val warnSubject = LoggingUtil.warnSubject(environment)
+        val warnTitle = LoggingUtil.warnTitle(environment)
         //smtp log
         if (existProperty(environment, "summer.logging.smtp.host")) {
             synchronized(context.configurationLock) {
@@ -119,13 +118,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 val levelMailAppender = mailAppender(
                     context,
                     smtpProperties,
-                    warnSubject
+                    warnTitle
                 )
                 val mailMarker = smtpProperties.marker
                 val markerMailAppender = if (!mailMarker.isNullOrBlank()) mailAppender(
                     context,
                     smtpProperties,
-                    warnSubject,
+                    warnTitle,
                     mailMarker
                 )
                 else null
@@ -143,7 +142,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     "summer.logging.files", FilesProperties::class.java
                 ).get() else FilesProperties()
 
-        val fileLogPattern = environment.getProperty("logging.pattern.file", LOG_PATTERN)
+        val fileLogPattern =
+            environment.getProperty("logging.pattern.file", AlarmProperties.DEFAULT_LOG_PATTERN)
         //sql log
         val timeoutAlarmSeconds =
             if (environment.activeProfiles.any { it.contains("test") || it.contains("dev") }) environment.getProperty(
@@ -173,9 +173,12 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             environment.getProperty("management.endpoints.web.base-path")
                 ?: "/actuator"
 
+        val actuatorAddressInfo = LoggingUtil.actuatorAddress(environment)
+        val apiAddress = LoggingUtil.apiAddress(environment)
         val managementLogPath = "$managementPath/logs${logsPath.substringAfter(logsViewPath)}"
-
         //feishu log
+        val actuatorAddress = actuatorAddressInfo.first
+        val address = actuatorAddressInfo.second
         if (existProperty(environment, "summer.logging.feishu.app-id")
             && existProperty(environment, "summer.logging.feishu.app-secret")
             && existProperty(environment, "summer.logging.feishu.chat")
@@ -185,24 +188,17 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     "summer.logging.feishu", FeishuProperties::class.java
                 ).get()
                 try {
-                    val cacheMap = Caffeine.newBuilder()
-                        .expireAfterWrite(feishuProperties.cacheSeconds, TimeUnit.SECONDS)
-                        .maximumSize(1000).build<String, Int>().asMap()
-                    val timeoutCacheMap =
-                        Caffeine.newBuilder()
-                            .expireAfterWrite(
-                                feishuProperties.timeoutCacheSeconds,
-                                TimeUnit.SECONDS
-                            )
-                            .maximumSize(1000).build<String, Int>().asMap()
+                    feishuProperties.logsPath = logsPath
+                    feishuProperties.actuatorAddress = actuatorAddress
+                    feishuProperties.managementHostName= address.first
+                    feishuProperties.managementPort = address.second
+                    feishuProperties.apiAddress = apiAddress.first
+                    feishuProperties.managementLogPath = managementLogPath
+                    feishuProperties.logPattern = fileLogPattern
+                    feishuProperties.warnTitle = warnTitle
+
                     val feishuAppender = FeishuAppender(
-                        feishuProperties,
-                        warnSubject,
-                        logsPath,
-                        managementLogPath,
-                        fileLogPattern,
-                        cacheMap,
-                        timeoutCacheMap
+                        properties = feishuProperties
                     )
                     feishuAppender.context = context
                     feishuAppender.start()
@@ -220,24 +216,17 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     "summer.logging.feishu", FeishuProperties::class.java
                 ).get()
                 try {
-                    val cacheMap = Caffeine.newBuilder()
-                        .expireAfterWrite(feishuProperties.cacheSeconds, TimeUnit.SECONDS)
-                        .maximumSize(1000).build<String, Int>().asMap()
-                    val timeoutCacheMap =
-                        Caffeine.newBuilder()
-                            .expireAfterWrite(
-                                feishuProperties.timeoutCacheSeconds,
-                                TimeUnit.SECONDS
-                            )
-                            .maximumSize(1000).build<String, Int>().asMap()
+                    feishuProperties.logsPath = logsPath
+                    feishuProperties.actuatorAddress = actuatorAddress
+                    feishuProperties.managementHostName= address.first
+                    feishuProperties.managementPort = address.second
+                    feishuProperties.apiAddress = apiAddress.first
+                    feishuProperties.managementLogPath = managementLogPath
+                    feishuProperties.logPattern = fileLogPattern
+                    feishuProperties.warnTitle = warnTitle
+
                     val feishuAppender = FeishuHookAppender(
-                        feishuProperties,
-                        warnSubject,
-                        logsPath,
-                        managementLogPath,
-                        fileLogPattern,
-                        cacheMap,
-                        timeoutCacheMap
+                        properties = feishuProperties
                     )
                     feishuAppender.context = context
                     feishuAppender.start()
@@ -260,21 +249,17 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     "summer.logging.slack", SlackProperties::class.java
                 ).get()
                 try {
-                    val cacheMap = Caffeine.newBuilder()
-                        .expireAfterWrite(slackProperties.cacheSeconds, TimeUnit.SECONDS)
-                        .maximumSize(1000).build<String, Int>().asMap()
-                    val timeoutCacheMap =
-                        Caffeine.newBuilder()
-                            .expireAfterWrite(slackProperties.timeoutCacheSeconds, TimeUnit.SECONDS)
-                            .maximumSize(1000).build<String, Int>().asMap()
+                    slackProperties.logsPath = logsPath
+                    slackProperties.actuatorAddress = actuatorAddress
+                    slackProperties.managementHostName= address.first
+                    slackProperties.managementPort = address.second
+                    slackProperties.apiAddress = apiAddress.first
+                    slackProperties.managementLogPath = managementLogPath
+                    slackProperties.logPattern = fileLogPattern
+                    slackProperties.warnTitle = warnTitle
+
                     val slackAppender = SlackAppender(
-                        slackProperties,
-                        warnSubject,
-                        logsPath,
-                        managementLogPath,
-                        fileLogPattern,
-                        cacheMap,
-                        timeoutCacheMap
+                        properties = slackProperties
                     )
                     slackAppender.context = context
                     slackAppender.start()
@@ -357,7 +342,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         encoder.charset = Charset.forName("utf-8")
         encoder.pattern =
             OptionHelper.substVars(
-                environment.getProperty("logging.pattern.console", LOG_PATTERN),
+                environment.getProperty(
+                    "logging.pattern.console",
+                    AlarmProperties.DEFAULT_LOG_PATTERN
+                ),
                 context
             )
         start(context, encoder)
@@ -701,7 +689,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     private fun mailAppender(
         context: LoggerContext,
         smtpProperties: SmtpProperties,
-        warnSubject: String,
+        warnTitle: String,
         mailMarker: String? = null
     ): Appender<ILoggingEvent> {
         val appender = SMTPAppender()
@@ -723,7 +711,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             isSSL = smtpProperties.isSsl
             isSessionViaJNDI = smtpProperties.isSessionViaJNDI
             charsetEncoding = smtpProperties.charsetEncoding
-            subject = warnSubject
+            subject = warnTitle
 
             val htmlLayout = PrettyMessageHTMLLayout()
             start(context, htmlLayout)
@@ -874,8 +862,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
 
     companion object {
-        const val LOG_PATTERN =
-            "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:%5p} [%-6.6t] %-40.40logger{39} %20file:%-3line %X{traceid}: %m%n\${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
         private val packageScanClassResolver = PackageScanClassResolver()
         fun defaultSpiltMarkers(defaultPackageName: String? = null): List<String> {
             var packageNames = arrayOf("top.bettercode.summer")

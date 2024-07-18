@@ -11,7 +11,7 @@ open class LoggingProperties {
     /**
      * 日志报警标题.
      */
-    var warnSubject = "\${spring.application.name} \${summer.web.project-name:} \${spring.profiles.active}"
+    var warnTitle = "\${spring.application.name} \${summer.web.project-name:} \${spring.profiles.active}"
 
     /**
      * Log levels severity mapping. Use 'root' for the root logger.Stored in different files,

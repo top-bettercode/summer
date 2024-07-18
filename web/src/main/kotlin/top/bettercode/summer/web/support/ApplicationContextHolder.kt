@@ -3,6 +3,7 @@ package top.bettercode.summer.web.support
 import org.springframework.context.ApplicationContext
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.support.DefaultConversionService
+import org.springframework.core.env.Environment
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.util.*
@@ -14,7 +15,6 @@ object ApplicationContextHolder {
 
     @JvmStatic
     var applicationContext: ApplicationContext? = null
-
 
     @JvmStatic
     fun <T> getBean(s: String, clazz: Class<T>): T? {
@@ -52,6 +52,10 @@ object ApplicationContextHolder {
     }
 
     @JvmStatic
+    val environment: Environment?
+        get() = applicationContext?.environment
+
+    @JvmStatic
     val activeProfiles: Array<String>
         get() = applicationContext?.environment?.activeProfiles ?: emptyArray()
 
@@ -66,13 +70,13 @@ object ApplicationContextHolder {
     @JvmStatic
     val conversionService: ConversionService
         get() = applicationContext?.getBean(ConversionService::class.java)
-                ?: DefaultConversionService()
+            ?: DefaultConversionService()
 
     @JvmStatic
     val requestAttributes: Optional<ServletRequestAttributes>
         get() {
             val requestAttributes = RequestContextHolder
-                    .getRequestAttributes() as ServletRequestAttributes
+                .getRequestAttributes() as ServletRequestAttributes
             return Optional.ofNullable(requestAttributes)
         }
 

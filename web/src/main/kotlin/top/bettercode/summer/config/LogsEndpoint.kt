@@ -46,7 +46,7 @@ class LogsEndpoint(
 
     private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
-    private val appName: String = LoggingUtil.warnSubject(env)
+    private val appName: String = LoggingUtil.warnTitle(env)
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
         "org.springframework.web.socket.server.standard.ServerEndpointExporter",
@@ -301,7 +301,7 @@ class LogsEndpoint(
   } else {
     console.info("连接...")
     
-    websocket = new WebSocket("${LoggingUtil.apiAddressWs}${"/websocket/logging"}?token=${websocketProperties.token}");
+    websocket = new WebSocket("${LoggingUtil.apiAddressWs.first}${"/websocket/logging"}?token=${websocketProperties.token}");
     
     //连接发生错误的回调方法
     websocket.onerror = function () {
