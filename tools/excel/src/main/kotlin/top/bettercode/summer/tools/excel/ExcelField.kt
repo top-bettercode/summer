@@ -457,37 +457,36 @@ class ExcelField<T, P : Any?> {
 
     fun code(codeServiceRef: String, codeType: String): ExcelField<T, P> {
         return cell { property: P ->
-            val codeService = CodeServiceHolder[codeServiceRef]
+            val dicCodes = CodeServiceHolder.get(codeServiceRef, codeType)
             if (property is String) {
                 val separator = ","
                 if (property.contains(separator)) {
                     val split =
                         property.split(separator).filter { it.isNotBlank() }.map { it.trim() }
                     return@cell split.joinToString(separator) { s: String ->
-                        codeService.getDicCodes(
-                            codeType
-                        )!!.getName(s)
+                        dicCodes?.getName(s) ?: s
                     }
                 } else {
-                    return@cell codeService.getDicCodes(codeType)!!.getName(property)
+                    return@cell dicCodes?.getName(property) ?: property
                 }
             } else {
-                return@cell codeService.getDicCodes(codeType)!!.getName((property as Serializable))
+                val code = property as Serializable
+                return@cell dicCodes?.getName(code) ?: code
             }
         }.property { cellValue: Any ->
-            val codeService = CodeServiceHolder[codeServiceRef]
             val separator = ","
             val value = cellValue.toString()
+            val dicCodes = CodeServiceHolder.get(codeServiceRef, codeType)
             @Suppress("UNCHECKED_CAST")
             return@property if (value.contains(separator)) {
                 val split = value.split(separator).filter { it.isNotBlank() }.map { it.trim() }
 
                 split.joinToString(separator) { s: String ->
-                    codeService.getDicCodes(codeType)!!.getCode(s)?.toString()
+                    dicCodes?.getCode(s)?.toString()
                         ?: throw IllegalArgumentException("无\"$s\"对应的类型")
                 }
             } else {
-                codeService.getDicCodes(codeType)!!.getCode(value)
+                dicCodes?.getCode(value)
                     ?: throw IllegalArgumentException("无\"$cellValue\"对应的类型")
             } as P?
         }
@@ -550,6 +549,7 @@ class ExcelField<T, P : Any?> {
         this.defaultValue = defaultValue
         return this
     }
+
     //--------------------------------------------
     fun propertyName(propertyName: String?): ExcelField<T, P> {
         this.propertyName = propertyName

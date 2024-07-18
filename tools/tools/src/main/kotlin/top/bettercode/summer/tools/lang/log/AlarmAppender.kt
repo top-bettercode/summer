@@ -66,10 +66,10 @@ abstract class AlarmAppender<T : AlarmProperties>(
     private var encoder: PatternLayoutEncoder = PatternLayoutEncoder().apply {
         pattern = OptionHelper.substVars(properties.logPattern, context)
     }
-    private val cacheMap: Cache<String, Int> = Caffeine.newBuilder()
+    private val cache: Cache<String, Int> = Caffeine.newBuilder()
         .expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
         .maximumSize(1000).build()
-    private val timeoutCacheMap: Cache<String, Int> = Caffeine.newBuilder()
+    private val timeoutCache: Cache<String, Int> = Caffeine.newBuilder()
         .expireAfterWrite(properties.timeoutCacheSeconds, TimeUnit.SECONDS)
         .maximumSize(1000).build()
 
@@ -181,8 +181,8 @@ abstract class AlarmAppender<T : AlarmProperties>(
         }
 
         val timeStamp = event.timeStamp
-        val needSend = if (cacheMap.getIfPresent(initialComment) == null) {
-            cacheMap.put(initialComment, 1)
+        val needSend = if (cache.getIfPresent(initialComment) == null) {
+            cache.put(initialComment, 1)
             true
         } else {
             false
@@ -191,8 +191,8 @@ abstract class AlarmAppender<T : AlarmProperties>(
         if (needSend) {
             val timeout = alarmMarker?.timeout == true
             if (timeout) {
-                if (timeoutCacheMap.getIfPresent(initialComment) == null) {
-                    timeoutCacheMap.put(initialComment, 1)
+                if (timeoutCache.getIfPresent(initialComment) == null) {
+                    timeoutCache.put(initialComment, 1)
                     send(timeStamp, initialComment, message, true)
                 }
             } else {

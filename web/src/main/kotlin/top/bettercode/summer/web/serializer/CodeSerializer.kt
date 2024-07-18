@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import top.bettercode.summer.web.serializer.annotation.JsonCode
 import top.bettercode.summer.web.support.code.CodeServiceHolder
-import top.bettercode.summer.web.support.code.ICodeService
 import java.io.Serializable
 
 /**
@@ -19,11 +18,17 @@ import java.io.Serializable
  * @author Peter Wu
  */
 @JacksonStdImpl
-class CodeSerializer(codeServiceRef: String?, private val codeType: String, private val useExtensionField: Boolean) : StdScalarSerializer<Serializable>(Serializable::class.java, false), ContextualSerializer {
-    private val codeService: ICodeService = CodeServiceHolder[codeServiceRef!!]
-
+class CodeSerializer(
+    private val codeServiceRef: String?,
+    private val codeType: String,
+    private val useExtensionField: Boolean
+) : StdScalarSerializer<Serializable>(Serializable::class.java, false), ContextualSerializer {
     @JvmOverloads
-    constructor(codeType: String = "", useExtensionField: Boolean = true) : this("", codeType, useExtensionField)
+    constructor(codeType: String = "", useExtensionField: Boolean = true) : this(
+        "",
+        codeType,
+        useExtensionField
+    )
 
     override fun serialize(value: Serializable, gen: JsonGenerator, provider: SerializerProvider) {
         val outputContext = gen.outputContext
@@ -46,7 +51,7 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
     }
 
     private fun getName(codeType: String, code: Serializable): String {
-        return codeService.getDicCodes(codeType)!!.getName(code)
+        return CodeServiceHolder.get(codeServiceRef, codeType)?.getName(code) ?: code.toString()
     }
 
     private fun getCodeType(fieldName: String): String {
@@ -55,7 +60,10 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
         } else codeType
     }
 
-    override fun createContextual(prov: SerializerProvider, property: BeanProperty?): JsonSerializer<*> {
+    override fun createContextual(
+        prov: SerializerProvider,
+        property: BeanProperty?
+    ): JsonSerializer<*> {
         if (property != null) {
             val annotation = property.getAnnotation(JsonCode::class.java)
             var codeType = annotation.value
@@ -65,9 +73,11 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
         return prov.findNullValueSerializer(null)
     }
 
-    override fun serializeWithType(value: Serializable, gen: JsonGenerator,
-                                   provider: SerializerProvider,
-                                   typeSer: TypeSerializer) {
+    override fun serializeWithType(
+        value: Serializable, gen: JsonGenerator,
+        provider: SerializerProvider,
+        typeSer: TypeSerializer
+    ) {
         serialize(value, gen, provider)
     }
 
