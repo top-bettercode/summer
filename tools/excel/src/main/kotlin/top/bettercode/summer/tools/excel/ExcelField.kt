@@ -762,19 +762,14 @@ class ExcelField<T, P : Any?> {
         this.cellStyle.format(ExcelFieldCell.DEFAULT_FORMAT)
     }
 
-    @JvmOverloads
     constructor(
         title: String,
-        propertyType: Class<P>,
-        propertyGetter: ExcelConverter<T, P?>,
-        isIndexColumn: Boolean = false,
-        isFormula: Boolean = false
+        propertyType: Class<P>
     ) {
         this.title = title
         this.propertyType = propertyType
-        this.propertyGetter = propertyGetter
-        this.isIndexColumn = isIndexColumn
-        this.isFormula = isFormula
+        this.isIndexColumn = false
+        this.isFormula = false
 
         Assert.notNull(propertyType, "propertyType 不能为空")
 
@@ -814,15 +809,11 @@ class ExcelField<T, P : Any?> {
         }
 
         @JvmStatic
-        @JvmOverloads
         fun <T, P> of(
             title: String,
-            propertyType: Class<P>,
-            propertyGetter: ExcelConverter<T, P?>,
-            isIndexColumn: Boolean = false,
-            isFormula: Boolean = false
+            propertyType: Class<P>
         ): ExcelField<T, P> {
-            return ExcelField(title, propertyType, propertyGetter, isIndexColumn, isFormula)
+            return ExcelField(title, propertyType)
         }
 
         @JvmStatic

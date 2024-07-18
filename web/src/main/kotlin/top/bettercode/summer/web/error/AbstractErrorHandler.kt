@@ -65,13 +65,18 @@ abstract class AbstractErrorHandler(
         respEntity.message = message
     }
 
-    protected fun invalidValue(invalidValue: Any?): String {
-        return if (invalidValue == null
-            || (invalidValue is String && invalidValue.isBlank())
-            || (invalidValue is Array<*> && invalidValue.isEmpty())
-            || (invalidValue is Collection<*> && invalidValue.isEmpty())
-        ) {
-            ""
-        } else "[${StringUtil.subStringWithEllipsis("$invalidValue", 20)}]"
+    companion object {
+        fun invalidValue(invalidValue: Any?): String {
+            return when {
+                invalidValue == null
+                        || invalidValue is String && invalidValue.isBlank()
+                        || invalidValue is Array<*> && invalidValue.isEmpty()
+                        || invalidValue is Collection<*> && invalidValue.isEmpty() -> {
+                    "[]"
+                }
+
+                else -> "[${StringUtil.subStringWithEllipsis("$invalidValue", 20)}]"
+            }
+        }
     }
 }
