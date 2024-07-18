@@ -14,6 +14,7 @@ import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
 import top.bettercode.summer.data.jpa.support.JpaUtil
+import top.bettercode.summer.data.jpa.support.Size
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.affected
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
@@ -47,9 +48,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         val metadata = metadataCache.getMetadata(sortedQueryString, query)
         // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
         // parameters in the query do not change.
-        if (mybatisQueryMethod.querySize != null) {
-            query.setFirstResult(0)
-            query.setMaxResults(mybatisQueryMethod.querySize)
+        if (mybatisQueryMethod.querySize != null && size == null) {
+            mybatisParam.size = Size.of(mybatisQueryMethod.querySize)
         }
         val countQuery: Query? =
             if (accessor.pageable.isPaged) {

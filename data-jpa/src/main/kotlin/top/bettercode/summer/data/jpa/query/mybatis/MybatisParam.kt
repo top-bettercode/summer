@@ -8,5 +8,5 @@ import top.bettercode.summer.data.jpa.support.Size
  */
 class MybatisParam(
         val boundSql: BoundSql, val parameterObject: Any?,
-        val size: Size?
+        var size: Size?
 )

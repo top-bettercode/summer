@@ -8,11 +8,13 @@ import org.apache.ibatis.reflection.ParamNameResolver
 import org.apache.ibatis.session.Configuration
 import org.apache.ibatis.type.TypeException
 import org.apache.ibatis.type.TypeHandlerRegistry
+import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.BindableQuery
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.ErrorHandling
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.support.Size
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.limit
 import java.util.*
 import javax.persistence.Query
 
@@ -20,34 +22,40 @@ import javax.persistence.Query
  * @author Peter Wu
  */
 internal class MybatisParameterBinder(
-        private val parameters: JpaParameters,
-        private val paramed: Boolean,
-        private val mappedStatement: MappedStatement
+    private val parameters: JpaParameters,
+    private val paramed: Boolean,
+    private val mappedStatement: MappedStatement
 ) : ParameterBinder(parameters, emptyList()) {
-    private val typeHandlerRegistry: TypeHandlerRegistry = mappedStatement.configuration.typeHandlerRegistry
+    private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
+    private val typeHandlerRegistry: TypeHandlerRegistry =
+        mappedStatement.configuration.typeHandlerRegistry
     private val configuration: Configuration = mappedStatement.configuration
 
-    override fun <T : Query> bind(jpaQuery: T, metadata: QueryParameterSetter.QueryMetadata, accessor: JpaParametersParameterAccessor): T {
+    override fun <T : Query> bind(
+        jpaQuery: T,
+        metadata: QueryParameterSetter.QueryMetadata,
+        accessor: JpaParametersParameterAccessor
+    ): T {
         return jpaQuery
     }
 
     @Deprecated("")
     override fun bind(
-            query: BindableQuery, accessor: JpaParametersParameterAccessor,
-            errorHandling: ErrorHandling
+        query: BindableQuery, accessor: JpaParametersParameterAccessor,
+        errorHandling: ErrorHandling
     ) {
     }
 
     public override fun bindAndPrepare(
-            query: Query, metadata: QueryParameterSetter.QueryMetadata,
-            accessor: JpaParametersParameterAccessor
+        query: Query, metadata: QueryParameterSetter.QueryMetadata,
+        accessor: JpaParametersParameterAccessor
     ): Query {
         return query
     }
 
     fun bind(query: BindableQuery, mybatisParam: MybatisParam) {
         ErrorContext.instance().activity("setting parameters")
-                .`object`(mappedStatement.parameterMap.id)
+            .`object`(mappedStatement.parameterMap.id)
         val errorHandling = ErrorHandling.STRICT
         val boundSql = mybatisParam.boundSql
         val parameterObject = mybatisParam.parameterObject
@@ -76,7 +84,8 @@ internal class MybatisParameterBinder(
                         }
                     } catch (e: Exception) {
                         throw TypeException(
-                                "Could not set parameters for mapping: $parameterMapping. Cause: $e", e)
+                            "Could not set parameters for mapping: $parameterMapping. Cause: $e", e
+                        )
                     }
                 }
             }
@@ -84,15 +93,16 @@ internal class MybatisParameterBinder(
     }
 
     fun bindAndPrepare(
-            query: Query, metadata: QueryParameterSetter.QueryMetadata,
-            accessor: JpaParametersParameterAccessor,
-            mybatisParam: MybatisParam
+        query: Query, metadata: QueryParameterSetter.QueryMetadata,
+        accessor: JpaParametersParameterAccessor,
+        mybatisParam: MybatisParam
     ): Query {
         bind(metadata.withQuery(query), mybatisParam)
         val size = mybatisParam.size
         if (size != null) {
             query.setFirstResult(0)
             query.setMaxResults(size.size)
+            sqlLog.limit(size.size)
         }
         if (!parameters.hasPageableParameter() || accessor.pageable.isUnpaged) {
             return query
@@ -108,7 +118,7 @@ internal class MybatisParameterBinder(
         var bindableSize = 0
         val paramMap: MutableMap<String?, Any?> = ParamMap()
         val names = this.parameters.map { p: JpaParameter -> p.name.orElse(null) }
-                .filter { obj: String? -> Objects.nonNull(obj) }.toSet()
+            .filter { obj: String? -> Objects.nonNull(obj) }.toSet()
         var params: Any? = null
         for (parameter in this.parameters.bindableParameters) {
             val parameterType = parameter.type
