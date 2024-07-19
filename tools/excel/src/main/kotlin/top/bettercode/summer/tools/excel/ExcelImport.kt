@@ -206,7 +206,8 @@ class ExcelImport private constructor(`is`: InputStream) {
                 return@forEachIndexed
             }
             val column = this.column + index
-            val cellValue = excelField.apply { row.getCellValue(column) }
+            val cellValue = excelField.run {
+                row.getCellValue(column) }
             notAllBlank = notAllBlank || !excelField.isEmptyCell(cellValue)
             try {
                 excelField.setProperty(entity, cellValue, validator, validateGroups)
