@@ -453,11 +453,11 @@ data class PrepareSolveData(
             solve()
             var recipe: Recipe
             if (!isOptimal()) {
-                log.warn("${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
+                log.warn("${requirement.id}:${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
                 return null
             } else {
                 if (log.isDebugEnabled) {
-                    log.debug("${solver.name} ${solver.epsilon} find optimal solution:${getResultStatus()}")
+                    log.debug("${requirement.id}:${solver.name} ${solver.epsilon} find optimal solution:${getResultStatus()}")
                 }
                 recipe = recipe(recipeName, minEpsilon, minimize.value)
             }
@@ -478,10 +478,10 @@ data class PrepareSolveData(
                 setTimeLimit(5)
                 solve()
                 if (!isOptimal()) {
-                    log.warn("${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
+                    log.warn("${requirement.id}:${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
                 } else {
                     if (log.isDebugEnabled) {
-                        log.debug("${solver.name} ${solver.epsilon} find optimal solution:${getResultStatus()}")
+                        log.debug("${requirement.id}:${solver.name} ${solver.epsilon} find optimal solution:${getResultStatus()}")
                     }
                     val minMaterialsCount =
                         recipeMaterials.filter { it.value.weight.value > 0.0 }.count()

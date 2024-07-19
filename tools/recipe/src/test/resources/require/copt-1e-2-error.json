@@ -1,0 +1,1987 @@
+{
+  "id": "5",
+  "indicatorMaterialIDConstraints": {},
+  "indicatorRangeConstraints": {
+    "1": {
+      "id": "1",
+      "value": {
+        "max": 100.0,
+        "maxOperator": "LE",
+        "min": 25.0,
+        "minOperator": "GE"
+      }
+    },
+    "2": {
+      "id": "2",
+      "value": {
+        "max": 100.0,
+        "maxOperator": "LE",
+        "min": 11.5,
+        "minOperator": "GE"
+      }
+    },
+    "3": {
+      "id": "3",
+      "value": {
+        "max": 100.0,
+        "maxOperator": "LE",
+        "min": 4.0,
+        "minOperator": "GE"
+      }
+    },
+    "4": {
+      "id": "4",
+      "value": {
+        "max": 100.0,
+        "maxOperator": "LE",
+        "min": 5.5,
+        "minOperator": "GE"
+      }
+    },
+    "5": {
+      "id": "5",
+      "value": {
+        "max": 100.0,
+        "maxOperator": "LE",
+        "min": 30.0,
+        "minOperator": "GE"
+      }
+    },
+    "6": {
+      "id": "6",
+      "value": {
+        "max": 5.0,
+        "maxOperator": "LE",
+        "min": 0.0,
+        "minOperator": "GE"
+      }
+    },
+    "7": {
+      "id": "7",
+      "value": {
+        "max": 50.0,
+        "maxOperator": "LE",
+        "min": 0.0,
+        "minOperator": "GE"
+      }
+    }
+  },
+  "indicatorScale": 4,
+  "indicators": [
+    {
+      "id": "1",
+      "index": 1,
+      "name": "总养分",
+      "type": "TOTAL_NUTRIENT",
+      "unit": "%"
+    },
+    {
+      "id": "2",
+      "index": 2,
+      "name": "氮含量",
+      "type": "NUTRIENT",
+      "unit": "%"
+    },
+    {
+      "id": "3",
+      "index": 3,
+      "name": "磷含量",
+      "type": "NUTRIENT",
+      "unit": "%"
+    },
+    {
+      "id": "4",
+      "index": 4,
+      "name": "钾含量",
+      "type": "NUTRIENT",
+      "unit": "%"
+    },
+    {
+      "id": "5",
+      "index": 5,
+      "name": "氯离子",
+      "type": "SPECIAL",
+      "unit": "%"
+    },
+    {
+      "id": "6",
+      "index": 6,
+      "name": "产品水分",
+      "type": "PRODUCT_WATER",
+      "unit": "%"
+    },
+    {
+      "id": "7",
+      "index": 7,
+      "name": "系统物料水分",
+      "type": "WATER",
+      "unit": "%"
+    },
+    {
+      "id": "8",
+      "index": 8,
+      "name": "水溶磷",
+      "type": "SPECIAL",
+      "unit": "%"
+    },
+    {
+      "id": "9",
+      "index": 9,
+      "itId": "8",
+      "name": "水溶磷率",
+      "otherId": "3",
+      "type": "RATE_TO_OTHER",
+      "unit": "%"
+    },
+    {
+      "id": "10",
+      "index": 10,
+      "name": "硝态氮",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "11",
+      "index": 11,
+      "name": "硼",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "12",
+      "index": 12,
+      "name": "锌",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "13",
+      "index": 13,
+      "name": "锰",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "14",
+      "index": 14,
+      "name": "铜",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "15",
+      "index": 15,
+      "name": "铁",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "16",
+      "index": 16,
+      "name": "钼",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "17",
+      "index": 17,
+      "name": "镁",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "18",
+      "index": 18,
+      "name": "硫",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "19",
+      "index": 19,
+      "name": "钙",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "20",
+      "index": 20,
+      "name": "有机质",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "21",
+      "index": 21,
+      "name": "腐植酸",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "22",
+      "index": 22,
+      "name": "黄腐酸",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "23",
+      "index": 23,
+      "name": "活性菌",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "24",
+      "index": 24,
+      "name": "硅",
+      "type": "GENERAL",
+      "unit": "%"
+    },
+    {
+      "id": "25",
+      "index": 25,
+      "name": "砷",
+      "type": "GENERAL",
+      "unit": "%"
+    }
+  ],
+  "keepMaterialConstraints": {
+    "ids": []
+  },
+  "materialConditionConstraints": [],
+  "materialIDConstraints": [],
+  "materialRangeConstraints": [
+    {
+      "term": {
+        "ids": [
+          "385"
+        ]
+      },
+      "then": {
+        "max": 150.0,
+        "maxOperator": "LE",
+        "min": 90.0,
+        "minOperator": "GE"
+      }
+    }
+  ],
+  "materialRelationConstraints": [],
+  "materials": [
+    {
+      "id": "3",
+      "index": 3,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 17.0
+        },
+        "7": {
+          "id": "7",
+          "value": 81.0
+        }
+      },
+      "name": "碳铵",
+      "price": 0.91,
+      "unit": ""
+    },
+    {
+      "id": "291",
+      "index": 29,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 46.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "大颗粒尿素（2.0-4.75mm≥90%)",
+      "price": 2.355,
+      "unit": ""
+    },
+    {
+      "id": "298",
+      "index": 36,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 23.5
+        },
+        "5": {
+          "id": "5",
+          "value": 66.7
+        },
+        "7": {
+          "id": "7",
+          "value": 7.0
+        }
+      },
+      "name": "氯化铵（湿）",
+      "price": 0.5,
+      "unit": ""
+    },
+    {
+      "id": "299",
+      "index": 37,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 25.0
+        },
+        "5": {
+          "id": "5",
+          "value": 66.7
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        }
+      },
+      "name": "氯化铵（干）",
+      "price": 0.55,
+      "unit": ""
+    },
+    {
+      "id": "303",
+      "index": 41,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 20.5
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "18": {
+          "id": "18",
+          "value": 23.8
+        }
+      },
+      "name": "焦化硫铵",
+      "price": 1.05,
+      "unit": ""
+    },
+    {
+      "id": "304",
+      "index": 42,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 21.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 23.8
+        }
+      },
+      "name": "己内级硫铵",
+      "price": 1.1,
+      "unit": ""
+    },
+    {
+      "id": "307",
+      "index": 45,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 34.5
+        },
+        "7": {
+          "id": "7",
+          "value": 0.6
+        },
+        "10": {
+          "id": "10",
+          "value": 17.3
+        }
+      },
+      "name": "硝铵",
+      "price": 2.1,
+      "unit": ""
+    },
+    {
+      "id": "308",
+      "index": 46,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 31.5
+        },
+        "3": {
+          "id": "3",
+          "value": 4.5
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "8": {
+          "id": "8",
+          "value": 3.38
+        },
+        "9": {
+          "id": "9",
+          "value": 75.0
+        },
+        "10": {
+          "id": "10",
+          "value": 15.5
+        }
+      },
+      "name": "32-4-0硝磷",
+      "price": 2.2,
+      "unit": ""
+    },
+    {
+      "id": "309",
+      "index": 47,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 10.0
+        },
+        "3": {
+          "id": "3",
+          "value": 45.0
+        },
+        "7": {
+          "id": "7",
+          "value": 2.0
+        },
+        "8": {
+          "id": "8",
+          "value": 33.75
+        },
+        "9": {
+          "id": "9",
+          "value": 75.0
+        }
+      },
+      "name": "55磷酸一铵（粉）",
+      "price": 3.4,
+      "unit": ""
+    },
+    {
+      "id": "310",
+      "index": 48,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 10.0
+        },
+        "3": {
+          "id": "3",
+          "value": 48.0
+        },
+        "7": {
+          "id": "7",
+          "value": 2.0
+        },
+        "8": {
+          "id": "8",
+          "value": 38.4
+        },
+        "9": {
+          "id": "9",
+          "value": 80.0
+        }
+      },
+      "name": "58磷酸一铵（粉）",
+      "price": 3.6,
+      "unit": ""
+    },
+    {
+      "id": "314",
+      "index": 52,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 10.0
+        },
+        "3": {
+          "id": "3",
+          "value": 50.0
+        },
+        "25": {
+          "id": "25",
+          "value": 50.0
+        },
+        "7": {
+          "id": "7",
+          "value": 2.0
+        },
+        "8": {
+          "id": "8",
+          "value": 40.0
+        },
+        "9": {
+          "id": "9",
+          "value": 80.0
+        }
+      },
+      "name": "60磷酸一铵（云天化）",
+      "price": 3.8,
+      "unit": ""
+    },
+    {
+      "id": "315",
+      "index": 53,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 8.0
+        },
+        "3": {
+          "id": "3",
+          "value": 40.0
+        },
+        "7": {
+          "id": "7",
+          "value": 2.0
+        },
+        "8": {
+          "id": "8",
+          "value": 19.2
+        },
+        "9": {
+          "id": "9",
+          "value": 48.0
+        }
+      },
+      "name": "8-40-0再浆肥（粉）",
+      "price": 2.8,
+      "unit": ""
+    },
+    {
+      "id": "316",
+      "index": 54,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 8.0
+        },
+        "3": {
+          "id": "3",
+          "value": 40.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 19.2
+        },
+        "9": {
+          "id": "9",
+          "value": 48.0
+        }
+      },
+      "name": "8-40-0再浆肥（颗粒）",
+      "price": 2.85,
+      "unit": ""
+    },
+    {
+      "id": "320",
+      "index": 58,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 18.0
+        },
+        "3": {
+          "id": "3",
+          "value": 46.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 39.1
+        },
+        "9": {
+          "id": "9",
+          "value": 85.0
+        }
+      },
+      "name": "64磷酸二铵（颗粒）",
+      "price": 3.8,
+      "unit": ""
+    },
+    {
+      "id": "321",
+      "index": 59,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 53.0
+        },
+        "25": {
+          "id": "25",
+          "value": 50.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "18": {
+          "id": "18",
+          "value": 2.0
+        },
+        "8": {
+          "id": "8",
+          "value": 53.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "64全水溶磷酸一铵",
+      "price": 5.2,
+      "unit": ""
+    },
+    {
+      "id": "322",
+      "index": 60,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 53.0
+        },
+        "25": {
+          "id": "25",
+          "value": 10.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "8": {
+          "id": "8",
+          "value": 53.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "64全水溶磷酸一铵（低砷）",
+      "price": 5.25,
+      "unit": ""
+    },
+    {
+      "id": "323",
+      "index": 61,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 56.0
+        },
+        "25": {
+          "id": "25",
+          "value": 50.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 56.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "67全水溶磷酸一铵",
+      "price": 5.45,
+      "unit": ""
+    },
+    {
+      "id": "324",
+      "index": 62,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 56.0
+        },
+        "25": {
+          "id": "25",
+          "value": 10.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 56.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "67全水溶磷酸一铵（低砷）",
+      "price": 5.5,
+      "unit": ""
+    },
+    {
+      "id": "325",
+      "index": 63,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 62.0
+        },
+        "25": {
+          "id": "25",
+          "value": 50.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 62.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "工业一铵73%",
+      "price": 6.3,
+      "unit": ""
+    },
+    {
+      "id": "326",
+      "index": 64,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 62.0
+        },
+        "25": {
+          "id": "25",
+          "value": 10.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 62.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "工业一铵73%（低砷）",
+      "price": 6.35,
+      "unit": ""
+    },
+    {
+      "id": "327",
+      "index": 65,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 0.15
+        },
+        "12": {
+          "id": "12",
+          "value": 0.35
+        },
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 51.0
+        },
+        "25": {
+          "id": "25",
+          "value": 50.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 51.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "62%锌工铵",
+      "price": 5.27,
+      "unit": ""
+    },
+    {
+      "id": "328",
+      "index": 66,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 0.15
+        },
+        "12": {
+          "id": "12",
+          "value": 0.35
+        },
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 53.0
+        },
+        "25": {
+          "id": "25",
+          "value": 50.0
+        },
+        "8": {
+          "id": "8",
+          "value": 53.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "64%锌工铵",
+      "price": 5.42,
+      "unit": ""
+    },
+    {
+      "id": "329",
+      "index": 67,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 0.15
+        },
+        "12": {
+          "id": "12",
+          "value": 0.35
+        },
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 54.0
+        },
+        "25": {
+          "id": "25",
+          "value": 50.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 54.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "65锌工铵",
+      "price": 5.5,
+      "unit": ""
+    },
+    {
+      "id": "330",
+      "index": 68,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 0.15
+        },
+        "12": {
+          "id": "12",
+          "value": 0.35
+        },
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 51.0
+        },
+        "25": {
+          "id": "25",
+          "value": 10.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 51.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "62%锌工铵（低砷）",
+      "price": 5.32,
+      "unit": ""
+    },
+    {
+      "id": "331",
+      "index": 69,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 0.15
+        },
+        "12": {
+          "id": "12",
+          "value": 0.35
+        },
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 53.0
+        },
+        "25": {
+          "id": "25",
+          "value": 10.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 53.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "64%锌工铵（低砷）",
+      "price": 5.47,
+      "unit": ""
+    },
+    {
+      "id": "332",
+      "index": 70,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 0.15
+        },
+        "12": {
+          "id": "12",
+          "value": 0.35
+        },
+        "2": {
+          "id": "2",
+          "value": 11.0
+        },
+        "3": {
+          "id": "3",
+          "value": 54.0
+        },
+        "25": {
+          "id": "25",
+          "value": 10.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 54.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "65%锌工铵（低砷）",
+      "price": 5.55,
+      "unit": ""
+    },
+    {
+      "id": "333",
+      "index": 71,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 17.0
+        },
+        "3": {
+          "id": "3",
+          "value": 44.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 35.2
+        },
+        "9": {
+          "id": "9",
+          "value": 80.0
+        }
+      },
+      "name": "磷酸脲",
+      "price": 6.9,
+      "unit": ""
+    },
+    {
+      "id": "334",
+      "index": 72,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 23.0
+        },
+        "3": {
+          "id": "3",
+          "value": 44.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 35.2
+        },
+        "9": {
+          "id": "9",
+          "value": 80.0
+        }
+      },
+      "name": "67聚磷酸铵",
+      "price": 8.1,
+      "unit": ""
+    },
+    {
+      "id": "336",
+      "index": 74,
+      "indicators": {
+        "3": {
+          "id": "3",
+          "value": 52.0
+        },
+        "4": {
+          "id": "4",
+          "value": 34.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "8": {
+          "id": "8",
+          "value": 52.0
+        },
+        "9": {
+          "id": "9",
+          "value": 100.0
+        }
+      },
+      "name": "磷酸二氢钾",
+      "price": 8.8,
+      "unit": ""
+    },
+    {
+      "id": "338",
+      "index": 76,
+      "indicators": {
+        "2": {
+          "id": "2",
+          "value": 13.5
+        },
+        "4": {
+          "id": "4",
+          "value": 44.5
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "10": {
+          "id": "10",
+          "value": 13.5
+        }
+      },
+      "name": "硝酸钾",
+      "price": 4.95,
+      "unit": ""
+    },
+    {
+      "id": "339",
+      "index": 77,
+      "indicators": {
+        "3": {
+          "id": "3",
+          "value": 24.0
+        },
+        "7": {
+          "id": "7",
+          "value": 7.0
+        },
+        "8": {
+          "id": "8",
+          "value": 3.6
+        },
+        "9": {
+          "id": "9",
+          "value": 15.0
+        }
+      },
+      "name": "中白肥（24%)",
+      "price": 0.72,
+      "unit": ""
+    },
+    {
+      "id": "340",
+      "index": 78,
+      "indicators": {
+        "3": {
+          "id": "3",
+          "value": 14.0
+        },
+        "7": {
+          "id": "7",
+          "value": 35.0
+        },
+        "8": {
+          "id": "8",
+          "value": 1.4
+        },
+        "9": {
+          "id": "9",
+          "value": 10.0
+        }
+      },
+      "name": "低白肥（14%）",
+      "price": 0.5,
+      "unit": ""
+    },
+    {
+      "id": "341",
+      "index": 79,
+      "indicators": {
+        "3": {
+          "id": "3",
+          "value": 12.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "8": {
+          "id": "8",
+          "value": 7.8
+        },
+        "9": {
+          "id": "9",
+          "value": 65.0
+        }
+      },
+      "name": "过钙（12%）",
+      "price": 0.62,
+      "unit": ""
+    },
+    {
+      "id": "343",
+      "index": 81,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 57.0
+        },
+        "5": {
+          "id": "5",
+          "value": 47.7
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        }
+      },
+      "name": "90%烘干氯化钾",
+      "price": 2.35,
+      "unit": ""
+    },
+    {
+      "id": "344",
+      "index": 82,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 60.0
+        },
+        "5": {
+          "id": "5",
+          "value": 47.7
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        }
+      },
+      "name": "95%氯化钾烘干粉（国产）",
+      "price": 2.55,
+      "unit": ""
+    },
+    {
+      "id": "346",
+      "index": 84,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 61.0
+        },
+        "5": {
+          "id": "5",
+          "value": 47.7
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "95%进口红钾（粉）",
+      "price": 2.65,
+      "unit": ""
+    },
+    {
+      "id": "348",
+      "index": 86,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 61.89
+        },
+        "5": {
+          "id": "5",
+          "value": 47.7
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "98%进口白钾(粉)",
+      "price": 2.83,
+      "unit": ""
+    },
+    {
+      "id": "353",
+      "index": 91,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 52.0
+        },
+        "5": {
+          "id": "5",
+          "value": 1.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 18.4
+        }
+      },
+      "name": "52%罗布泊硫酸钾（粉）",
+      "price": 3.65,
+      "unit": ""
+    },
+    {
+      "id": "354",
+      "index": 92,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 52.0
+        },
+        "5": {
+          "id": "5",
+          "value": 2.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 18.4
+        }
+      },
+      "name": "52%曼海姆硫酸钾（粉）",
+      "price": 3.85,
+      "unit": ""
+    },
+    {
+      "id": "355",
+      "index": 93,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 50.0
+        },
+        "5": {
+          "id": "5",
+          "value": 3.2
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 18.4
+        }
+      },
+      "name": "50%曼海姆硫酸钾（粉）",
+      "price": 3.75,
+      "unit": ""
+    },
+    {
+      "id": "356",
+      "index": 94,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 51.0
+        },
+        "5": {
+          "id": "5",
+          "value": 3.2
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 18.4
+        }
+      },
+      "name": "51%自产曼海姆硫酸钾（粉）",
+      "price": 3.95,
+      "unit": ""
+    },
+    {
+      "id": "357",
+      "index": 95,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 52.0
+        },
+        "5": {
+          "id": "5",
+          "value": 8.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 18.4
+        }
+      },
+      "name": "52%自备袋硫酸钾（G）",
+      "price": 3.88,
+      "unit": ""
+    },
+    {
+      "id": "359",
+      "index": 97,
+      "indicators": {
+        "4": {
+          "id": "4",
+          "value": 60.0
+        },
+        "5": {
+          "id": "5",
+          "value": 47.7
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "95%进口白钾(老挝)",
+      "price": 2.6,
+      "unit": ""
+    },
+    {
+      "id": "362",
+      "index": 100,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 6.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-镁",
+      "price": 18.5,
+      "unit": ""
+    },
+    {
+      "id": "363",
+      "index": 101,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 17.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 23.0
+        }
+      },
+      "name": "一水硫酸镁",
+      "price": 2.17,
+      "unit": ""
+    },
+    {
+      "id": "364",
+      "index": 102,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 20.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 26.0
+        }
+      },
+      "name": "无水硫酸镁",
+      "price": 2.35,
+      "unit": ""
+    },
+    {
+      "id": "365",
+      "index": 103,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 10.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 13.0
+        }
+      },
+      "name": "七水硫酸镁",
+      "price": 0.65,
+      "unit": ""
+    },
+    {
+      "id": "366",
+      "index": 104,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 8.3
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "18": {
+          "id": "18",
+          "value": 11.0
+        }
+      },
+      "name": "七水黄镁",
+      "price": 0.65,
+      "unit": ""
+    },
+    {
+      "id": "367",
+      "index": 105,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 48.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "80氧化镁",
+      "price": 1.0,
+      "unit": ""
+    },
+    {
+      "id": "368",
+      "index": 106,
+      "indicators": {
+        "17": {
+          "id": "17",
+          "value": 51.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "85氧化镁",
+      "price": 1.05,
+      "unit": ""
+    },
+    {
+      "id": "369",
+      "index": 107,
+      "indicators": {
+        "7": {
+          "id": "7",
+          "value": 0.5
+        },
+        "19": {
+          "id": "19",
+          "value": 10.0
+        }
+      },
+      "name": "EDTA-钙",
+      "price": 18.5,
+      "unit": ""
+    },
+    {
+      "id": "370",
+      "index": 108,
+      "indicators": {
+        "12": {
+          "id": "12",
+          "value": 15.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-锌",
+      "price": 18.5,
+      "unit": ""
+    },
+    {
+      "id": "371",
+      "index": 109,
+      "indicators": {
+        "13": {
+          "id": "13",
+          "value": 13.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-锰",
+      "price": 18.5,
+      "unit": ""
+    },
+    {
+      "id": "372",
+      "index": 110,
+      "indicators": {
+        "15": {
+          "id": "15",
+          "value": 12.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-铁",
+      "price": 18.5,
+      "unit": ""
+    },
+    {
+      "id": "373",
+      "index": 111,
+      "indicators": {
+        "14": {
+          "id": "14",
+          "value": 15.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "EDTA-铜",
+      "price": 28.5,
+      "unit": ""
+    },
+    {
+      "id": "374",
+      "index": 112,
+      "indicators": {
+        "16": {
+          "id": "16",
+          "value": 54.0
+        },
+        "7": {
+          "id": "7",
+          "value": 0.5
+        }
+      },
+      "name": "七钼酸铵",
+      "price": 28.5,
+      "unit": ""
+    },
+    {
+      "id": "375",
+      "index": 113,
+      "indicators": {
+        "12": {
+          "id": "12",
+          "value": 34.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "18": {
+          "id": "18",
+          "value": 17.88
+        }
+      },
+      "name": "一水硫酸锌",
+      "price": 7.3,
+      "unit": ""
+    },
+    {
+      "id": "376",
+      "index": 114,
+      "indicators": {
+        "12": {
+          "id": "12",
+          "value": 22.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "18": {
+          "id": "18",
+          "value": 11.15
+        }
+      },
+      "name": "七水硫酸锌",
+      "price": 4.5,
+      "unit": ""
+    },
+    {
+      "id": "380",
+      "index": 118,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 11.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        }
+      },
+      "name": "硼砂",
+      "price": 4.4,
+      "unit": ""
+    },
+    {
+      "id": "381",
+      "index": 119,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 17.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        }
+      },
+      "name": "硼酸",
+      "price": 7.2,
+      "unit": ""
+    },
+    {
+      "id": "382",
+      "index": 120,
+      "indicators": {
+        "11": {
+          "id": "11",
+          "value": 21.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        }
+      },
+      "name": "四水八硼酸钠",
+      "price": 14.0,
+      "unit": ""
+    },
+    {
+      "id": "383",
+      "index": 121,
+      "indicators": {
+        "14": {
+          "id": "14",
+          "value": 25.6
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "18": {
+          "id": "18",
+          "value": 12.8
+        }
+      },
+      "name": "五水硫酸铜",
+      "price": 21.0,
+      "unit": ""
+    },
+    {
+      "id": "384",
+      "index": 122,
+      "indicators": {
+        "13": {
+          "id": "13",
+          "value": 32.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "18": {
+          "id": "18",
+          "value": 18.93
+        }
+      },
+      "name": "一水硫酸锰",
+      "price": 3.6,
+      "unit": ""
+    },
+    {
+      "id": "385",
+      "index": 123,
+      "indicators": {
+        "7": {
+          "id": "7",
+          "value": 7.0
+        }
+      },
+      "name": "白泥",
+      "price": 0.33,
+      "unit": ""
+    },
+    {
+      "id": "386",
+      "index": 124,
+      "indicators": {
+        "7": {
+          "id": "7",
+          "value": 1.0
+        }
+      },
+      "name": "石粉",
+      "price": 0.19,
+      "unit": ""
+    },
+    {
+      "id": "388",
+      "index": 126,
+      "indicators": {
+        "5": {
+          "id": "5",
+          "value": 30.0
+        },
+        "7": {
+          "id": "7",
+          "value": 1.0
+        },
+        "18": {
+          "id": "18",
+          "value": 9.0
+        }
+      },
+      "name": "元明粉",
+      "price": 0.4,
+      "unit": ""
+    },
+    {
+      "id": "423",
+      "index": 145,
+      "indicators": {},
+      "name": "YJ防结块剂粉",
+      "price": 2.0,
+      "unit": ""
+    }
+  ],
+  "maxBakeWeight": 50.0,
+  "noUseMaterialConstraints": {
+    "ids": []
+  },
+  "notMixMaterialConstraints": [],
+  "packagingMaterials": [
+    {
+      "id": "36",
+      "index": 0,
+      "name": "常规彩袋50公斤",
+      "price": 3.0,
+      "unit": "",
+      "value": 20.0,
+      "cost": 60.0,
+      "indicators": {}
+    }
+  ],
+  "productName": "25%13-05-07高氯枸磷白色-眉山公司-常规转鼓",
+  "productionCost": {
+    "changeWhenMaterialUsed": true,
+    "changes": [],
+    "dictItems": {
+      "STAFF": {
+        "price": 40.0,
+        "value": 1.0,
+        "cost": 40.0
+      },
+      "DEPRECIATION": {
+        "price": 31.0,
+        "value": 1.0,
+        "cost": 31.0
+      },
+      "OTHER": {
+        "price": 36.0,
+        "value": 1.0,
+        "cost": 36.0
+      }
+    },
+    "materialItems": [
+      {
+        "id": "491",
+        "index": 0,
+        "name": "籽煤",
+        "price": 1120.0,
+        "unit": "吨",
+        "value": 27.0,
+        "cost": 30240.0,
+        "indicators": {}
+      },
+      {
+        "id": "492",
+        "index": 1,
+        "name": "电单价",
+        "price": 0.75,
+        "unit": "度",
+        "value": 32.0,
+        "cost": 24.0,
+        "indicators": {}
+      },
+      {
+        "id": "493",
+        "index": 2,
+        "name": "蒸汽单价",
+        "price": 180.0,
+        "unit": "吨",
+        "value": 0.05,
+        "cost": 9.0,
+        "indicators": {}
+      }
+    ],
+    "taxFloat": 0.0,
+    "taxRate": 0.09
+  },
+  "targetWeight": 1000.0,
+  "yield": 0.985,
+  "maxUseMaterialNum": 9,
+  "timeout": 30
+}
