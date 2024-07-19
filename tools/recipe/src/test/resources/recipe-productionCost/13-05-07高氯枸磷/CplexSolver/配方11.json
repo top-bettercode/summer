@@ -21,7 +21,7 @@
       "price" : 2.822,
       "unit" : "吨"
     },
-    "weight" : 22.895664792563654,
+    "weight" : 22.895664792563647,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -62,7 +62,7 @@
       "price" : 1.35,
       "unit" : "吨"
     },
-    "weight" : 432.679818954232,
+    "weight" : 432.6798189542321,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -111,7 +111,7 @@
       "price" : 0.75,
       "unit" : "吨"
     },
-    "weight" : 304.16666666666674,
+    "weight" : 304.1666666666668,
     "id" : "中白肥（24%)",
     "index" : 24,
     "indicators" : {
@@ -307,7 +307,7 @@
   "dryWaterWeight" : 0.0,
   "materialCost" : 1274.316205533597,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 253.0,
+  "totalNutrientWeight" : 253.00000000000003,
   "waterWeight" : 32.93552167603719,
   "weight" : 1000.0
 }

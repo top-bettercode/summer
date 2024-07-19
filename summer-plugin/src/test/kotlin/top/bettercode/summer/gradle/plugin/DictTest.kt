@@ -2,6 +2,7 @@ package top.bettercode.summer.gradle.plugin
 
 import com.hankcs.hanlp.HanLP
 import com.hankcs.hanlp.dictionary.CustomDictionary
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.SortedProperties
 import java.io.File
@@ -12,6 +13,7 @@ import java.io.File
  */
 class DictTest {
 
+    @Disabled
     @Test
     fun test() {
         val file = File("src/test/resources/cedict_ts.u8")

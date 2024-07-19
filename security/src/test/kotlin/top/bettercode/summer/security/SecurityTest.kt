@@ -148,7 +148,7 @@ class SecurityTest {
     @Test
     fun revokeToken3() {
         disable()
-        val accessToken = getAccessToken("revokeToken").accessToken
+        val accessToken = getAccessToken("revokeToken3").accessToken
         enable()
         name = "撤销accessToken"
         val httpHeaders = HttpHeaders()

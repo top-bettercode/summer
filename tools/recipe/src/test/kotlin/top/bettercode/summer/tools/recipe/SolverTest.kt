@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.recipe
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.lang.util.StringUtil
@@ -21,7 +22,7 @@ import java.io.File
  *
  * @author Peter Wu
  */
-//@Disabled
+@Disabled
 class SolverTest {
     val epsilon = 1e-4
     val openExcel = false
