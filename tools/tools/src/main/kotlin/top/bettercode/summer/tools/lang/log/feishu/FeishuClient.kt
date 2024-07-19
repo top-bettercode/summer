@@ -132,6 +132,9 @@ class FeishuClient(
         return body
     }
 
+    private val feishuChatType = object :
+        ParameterizedTypeReference<FeishuDataResult<FeishuPageData<FeishuChat>>>() {}.type
+
     /**
      * https://open.feishu.cn/document/server-docs/group/chat/list
      */
@@ -139,8 +142,7 @@ class FeishuClient(
         val result: FeishuDataResult<FeishuPageData<FeishuChat>>? =
             request(
                 url = "/im/v1/chats",
-                responseType = object :
-                    ParameterizedTypeReference<FeishuDataResult<FeishuPageData<FeishuChat>>>() {}.type,
+                responseType = feishuChatType,
                 method = HttpMethod.GET
             )
 
@@ -222,6 +224,9 @@ class FeishuClient(
         return result?.isOk() == true
     }
 
+    private val feishuFileType = object :
+        ParameterizedTypeReference<FeishuDataResult<FeishuFile>>() {}.type
+
     fun filesUpload(
         chatId: String,
         timeStamp: Long,
@@ -237,8 +242,7 @@ class FeishuClient(
         //https://open.feishu.cn/document/server-docs/im-v1/file/create
         val fileResult: FeishuDataResult<FeishuFile>? = request(
             url = "/im/v1/files",
-            responseType = object :
-                ParameterizedTypeReference<FeishuDataResult<FeishuFile>>() {}.type,
+            responseType = feishuFileType,
             request = body,
             contentType = MediaType.MULTIPART_FORM_DATA
         )

@@ -56,6 +56,9 @@ open class WeatherClient(
         return properties.nightStartTime.hour <= time.hour && time.hour <= properties.nightEndTime.hour
     }
 
+    private val weatherTypeType =
+        object : ParameterizedTypeReference<WeatherResponse<Map<String, WeatherType>>>() {}
+
     /**
      * <a href="https://www.nowapi.com/api/weather.wtype">天气类型</a>
      */
@@ -65,12 +68,15 @@ open class WeatherClient(
                 properties.url + "/?app=weather.wtype&appkey={0}&sign={1}&format=json",
                 HttpMethod.GET,
                 null,
-                object : ParameterizedTypeReference<WeatherResponse<Map<String, WeatherType>>>() {},
+                weatherTypeType,
                 properties.appKey,
                 properties.sign
             ) ?: throw clientException()
         return entity.body?.result ?: throw clientException(entity.body?.msg)
     }
+
+    private val weatherResultType =
+        object : ParameterizedTypeReference<WeatherResponse<WeatherResult>>() {}
 
     /**
      * <a href="https://www.nowapi.com/api/weather.realtime">天气接口文档</a>
@@ -81,7 +87,7 @@ open class WeatherClient(
                 properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&cityIp={2}",
                 HttpMethod.GET,
                 null,
-                object : ParameterizedTypeReference<WeatherResponse<WeatherResult>>() {},
+                weatherResultType,
                 properties.appKey,
                 properties.sign,
                 ip
@@ -100,7 +106,7 @@ open class WeatherClient(
                 properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&wgs84ll={2},{3}",
                 HttpMethod.GET,
                 null,
-                object : ParameterizedTypeReference<WeatherResponse<WeatherResult>>() {},
+                weatherResultType,
                 properties.appKey,
                 properties.sign,
                 longitude,

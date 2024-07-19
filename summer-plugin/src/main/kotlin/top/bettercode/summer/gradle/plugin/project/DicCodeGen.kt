@@ -435,7 +435,7 @@ class DicCodeGen(
                 dictMap[t.toString()] = u.toString()
             }
             dictMap.keys.forEach { key ->
-                CustomDictionary.add(key)
+                addCustomDictionary(key)
             }
         }
         val coreMsgfile = project.file("src/main/resources/core-messages.properties")
@@ -452,17 +452,26 @@ class DicCodeGen(
                 .filter { it.value != null }
             map.forEach { (t, u) ->
                 coreProperties[t] = u!!
-                CustomDictionary.add(t)
+                addCustomDictionary(t)
             }
         }
         dict.source.keys.forEach { key ->
+            addCustomDictionary(key)
+        }
+    }
+
+    private fun addCustomDictionary(key: String) {
+        try {
             CustomDictionary.add(key)
+        } catch (e: Exception) {
+            project.logger.warn("$key 添加到CustomDictionary失败", e)
         }
     }
 
     fun codeName(name: String): String {
         var text =
-            name.substringBefore("(").substringBefore("（").substringBefore(",").substringBefore("，").substringBefore("。")
+            name.substringBefore("(").substringBefore("（").substringBefore(",").substringBefore("，")
+                .substringBefore("。")
                 .replace("/", "or")
         val regex = Regex("([a-zA-Z0-9]+)")
         text = text.replace(regex, "_$1_")
@@ -523,22 +532,23 @@ class DicCodeGen(
         project.rootDir.walkTopDown()
             .filter { it.isFile && (it.extension == "java" || it.extension == "kt") }
             .forEach { file ->
-                val texts = file.readLines()
-                file.bufferedWriter().use { pt ->
-                    texts.forEach { line ->
-                        var text = line
-                        replaceCodeNames.forEach { (old, new) ->
-                            val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
-                            if (text.matches(".*${regex}.*".toRegex())) {
-                                print(".")
-                                text = text.replace(
-                                    regex.toRegex(),
-                                    "$1${new}$2"
-                                )
-                            }
+                val lines = file.readLines()
+                var changed = false
+                val newLines = mutableListOf<String>()
+                lines.forEach { line ->
+                    var newLine = line
+                    replaceCodeNames.forEach { (old, new) ->
+                        val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
+                        if (newLine.matches(".*${regex}.*".toRegex())) {
+                            project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
+                            newLine = newLine.replace(regex.toRegex(), "$1${new}$2")
+                            changed = true
                         }
-                        pt.appendLine(text)
                     }
+                    newLines.add(newLine)
+                }
+                if (changed) {
+                    file.writeText(newLines.joinToString("\n") + "\n")
                 }
             }
     }

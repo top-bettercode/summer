@@ -11,6 +11,7 @@ import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.operation.*
 import top.bettercode.summer.tools.lang.operation.RequestConverter.extractHost
 import top.bettercode.summer.tools.lang.util.StringUtil
+import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 
 /**
@@ -154,9 +155,15 @@ class ClientHttpRequestLoggingInterceptor(
     }
 
     fun convert(response: ClientHttpResponseWrapper): OperationResponse {
+        val statusCode = try {
+            response.statusCode.value()
+        } catch (e: SocketTimeoutException) {
+            0
+        }
+        val content = response.content
         return OperationResponse(
-            response.statusCode.value(),
-            response.headers, response.content
+            statusCode,
+            response.headers, content
         )
     }
 

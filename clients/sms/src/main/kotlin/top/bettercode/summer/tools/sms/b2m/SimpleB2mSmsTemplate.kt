@@ -74,6 +74,9 @@ open class SimpleB2mSmsTemplate(
         return simpleSendSms(Collections.singletonMap(cell, content), mock)
     }
 
+    private val b2mRespDataType =
+        object : ParameterizedTypeReference<B2mResponse<B2mRespData>>() {}
+
     /**
      * 个性短信接口
      *
@@ -116,10 +119,12 @@ open class SimpleB2mSmsTemplate(
             exchange(
                 properties.url + "/simpleinter/sendPersonalitySMS", HttpMethod.POST,
                 HttpEntity(params, null),
-                object : ParameterizedTypeReference<B2mResponse<B2mRespData>>() {}
+                b2mRespDataType
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }
+
+    private val b2mSendReportType = object : ParameterizedTypeReference<B2mResponse<B2mSendReport>>() {}
 
     /**
      *
@@ -151,7 +156,7 @@ open class SimpleB2mSmsTemplate(
             exchange(
                 properties.url + "/simpleinter/getReport", HttpMethod.POST,
                 HttpEntity(params, null),
-                object : ParameterizedTypeReference<B2mResponse<B2mSendReport>>() {}
+                b2mSendReportType
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
 
