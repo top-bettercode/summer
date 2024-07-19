@@ -206,7 +206,7 @@ class ExcelImport private constructor(`is`: InputStream) {
                 return@forEachIndexed
             }
             val column = this.column + index
-            val cellValue = row.getCellValue(column, excelField.isDateField)
+            val cellValue = excelField.apply { row.getCellValue(column) }
             notAllBlank = notAllBlank || !excelField.isEmptyCell(cellValue)
             try {
                 excelField.setProperty(entity, cellValue, validator, validateGroups)
@@ -255,29 +255,6 @@ class ExcelImport private constructor(`is`: InputStream) {
         }
     }
 
-
-    /**
-     * 获取单元格值
-     *
-     * @param row    获取的行
-     * @param column 获取单元格列号
-     * @return 单元格值
-     */
-    fun Row.getCellValue(column: Int, isDateField: Boolean): Any? {
-        return getOptionalCell(column).map {
-            when (it.type) {
-                CellType.STRING -> it.asString()
-                CellType.NUMBER -> if (isDateField) {
-                    it.asDate()
-                } else {
-                    it.asNumber()
-                }
-
-                CellType.BOOLEAN -> it.asBoolean()
-                else -> it.value
-            }
-        }.orElse(null)
-    }
 
     companion object {
         private val log = LoggerFactory.getLogger(ExcelImport::class.java)

@@ -1,6 +1,8 @@
 package top.bettercode.summer.tools.excel
 
 import javassist.bytecode.SignatureAttribute
+import org.dhatim.fastexcel.reader.CellType
+import org.dhatim.fastexcel.reader.Row
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
@@ -664,11 +666,7 @@ class ExcelField<T, P : Any?> {
         validator: Validator,
         validateGroups: Array<Class<*>>
     ) {
-        val property: P? = if (isEmptyCell(cellValue)) {
-            defaultValue
-        } else {
-            (propertyConverter ?: defaultPropertyConverter)(cellValue!!)
-        }
+        val property: P? = toProperty(cellValue)
         propertySetter?.let { it[obj] = property }
         if (propertyName != null) {
             val constraintViolations =
@@ -683,6 +681,33 @@ class ExcelField<T, P : Any?> {
         return cellValue == null || cellValue is CharSequence && (cellValue as CharSequence?).isNullOrBlank()
     }
 
+    fun Row.getValue(column: Int): P? {
+        val cellValue = getCellValue(column)
+        return toProperty(cellValue)
+    }
+
+    private fun toProperty(cellValue: Any?) = if (isEmptyCell(cellValue)) {
+        defaultValue
+    } else {
+        (propertyConverter ?: defaultPropertyConverter)(cellValue!!)
+    }
+
+    fun Row.getCellValue(column: Int): Any? {
+        val value = getOptionalCell(column).map {
+            when (it.type) {
+                CellType.STRING -> it.asString()
+                CellType.NUMBER -> if (isDateField) {
+                    it.asDate()
+                } else {
+                    it.asNumber()
+                }
+
+                CellType.BOOLEAN -> it.asBoolean()
+                else -> it.value
+            }
+        }.orElse(null)
+        return value
+    }
     //--------------------------------------------
 
     private fun resolvePropertyName(methodName: String): String {
@@ -809,11 +834,13 @@ class ExcelField<T, P : Any?> {
         }
 
         @JvmStatic
-        fun <T, P> of(
-            title: String,
-            propertyType: Class<P>
-        ): ExcelField<T, P> {
+        fun <T, P> of(title: String, propertyType: Class<P>): ExcelField<T, P> {
             return ExcelField(title, propertyType)
+        }
+
+        @JvmStatic
+        fun <T, P> of(propertyType: Class<P>): ExcelField<T, P> {
+            return ExcelField("", propertyType)
         }
 
         @JvmStatic
