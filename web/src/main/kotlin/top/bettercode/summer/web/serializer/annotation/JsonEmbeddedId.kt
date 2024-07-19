@@ -10,13 +10,14 @@ import top.bettercode.summer.web.serializer.EmbeddedIdSerializer
  * @author Peter Wu
  * @since 0.1.15
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.FIELD
+)
 @Retention(AnnotationRetention.RUNTIME)
 @JacksonAnnotationsInside
 @JsonSerialize(using = EmbeddedIdSerializer::class)
 @JsonDeserialize(using = EmbeddedIdDeserializer::class)
-annotation class JsonEmbeddedId(
-        /**
-         * @return serialization delimiter
-         */
-        val value: String = "")
+annotation class JsonEmbeddedId
