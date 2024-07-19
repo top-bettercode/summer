@@ -24,8 +24,10 @@ class StringToSetDeserializer @JvmOverloads constructor(
         private val useExtensionField: Boolean = true,
         private val separator: String = ",") : StdScalarDeserializer<Set<String>>(Set::class.java), ContextualDeserializer {
 
+    private val valueType = TypeFactory.defaultInstance().constructType(String::class.java)
+
     override fun getValueType(): JavaType {
-        return TypeFactory.defaultInstance().constructType(String::class.java)
+        return valueType
     }
 
 

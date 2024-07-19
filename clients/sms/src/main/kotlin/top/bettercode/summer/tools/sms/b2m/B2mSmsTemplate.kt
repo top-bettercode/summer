@@ -76,6 +76,10 @@ open class B2mSmsTemplate(
         return sendSms(Collections.singletonMap(cell, content), mock)
     }
 
+    private val b2mRespDataType = TypeFactory.defaultInstance().constructCollectionType(
+        MutableList::class.java, B2mRespData::class.java
+    )
+
     /**
      * 安全接口 个性短信接口【全属性个性】
      *
@@ -134,9 +138,7 @@ open class B2mSmsTemplate(
             respData = ungzip(respData)
             val datas: List<B2mRespData> = readJson<MutableList<B2mRespData>>(
                 respData,
-                TypeFactory.defaultInstance().constructCollectionType(
-                    MutableList::class.java, B2mRespData::class.java
-                )
+                b2mRespDataType
             )
             B2mResponse(datas)
         } else {
@@ -144,6 +146,10 @@ open class B2mSmsTemplate(
             throw clientSysException(message)
         }
     }
+
+    private val b2mSendReportType = TypeFactory.defaultInstance().constructCollectionType(
+        MutableList::class.java, B2mSendReport::class.java
+    )
 
     /**
      *
@@ -186,9 +192,7 @@ open class B2mSmsTemplate(
             respData = ungzip(respData)
             readJson(
                 respData,
-                TypeFactory.defaultInstance().constructCollectionType(
-                    MutableList::class.java, B2mSendReport::class.java
-                )
+                b2mSendReportType
             )
         } else {
             val message = B2mResponse.getMessage(code)

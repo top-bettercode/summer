@@ -31,6 +31,9 @@ class DicCodeGen(
     private val replaceCodeNames: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
 ) {
 
+    private val fieldCollectionType = TypeFactory.defaultInstance()
+        .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
+
     private fun codeTypes(): Map<String, DicCodes> {
         val properties = Properties()
         val defaultDicCodeFile = project.file("src/main/resources/default-dic-code.properties")
@@ -42,8 +45,7 @@ class DicCodeGen(
 
             val props = Properties()
             props.load(dicCodeFile.inputStream())
-            val collectionType = TypeFactory.defaultInstance()
-                .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
+            val collectionType = fieldCollectionType
             addFields("doc/request.parameters.yml", props, collectionType)
             addFields("doc/response.content.yml", props, collectionType)
         }
