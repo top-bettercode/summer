@@ -5,7 +5,10 @@ summer:
     websocket:
       enabled: false
     slack:
-      channel:
+      channel: ''
+    feishu:
+      chat: ''
+
     request:
       timeout-alarm-seconds: -1
 
