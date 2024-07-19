@@ -15,7 +15,7 @@ object CodeServiceHolder {
     private val CODE_SERVICE_MAP: ConcurrentMap<String, ICodeService> = ConcurrentHashMap()
     private val cache: Cache<String, DicCodes> = Caffeine.newBuilder()
         .expireAfterWrite(1, TimeUnit.MINUTES)
-        .maximumSize(200).build()
+        .maximumSize(100).build()
 
     val PROPERTIES_CODESERVICE: ICodeService = CodeService(dicCode)
     const val DEFAULT_BEAN_NAME = "defaultCodeService"

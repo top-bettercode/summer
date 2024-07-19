@@ -73,12 +73,12 @@ abstract class AlarmAppender<T : AlarmProperties>(
     private val cache: Cache<String, Int> by lazy {
         Caffeine.newBuilder()
             .expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
-            .maximumSize(1000).build()
+            .maximumSize(100).build()
     }
     private val timeoutCache: Cache<String, Int> by lazy {
         Caffeine.newBuilder()
             .expireAfterWrite(properties.timeoutCacheSeconds, TimeUnit.SECONDS)
-            .maximumSize(1000).build()
+            .maximumSize(100).build()
     }
 
     override fun start() {
