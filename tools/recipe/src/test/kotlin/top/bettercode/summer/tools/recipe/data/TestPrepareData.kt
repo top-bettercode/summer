@@ -3,8 +3,9 @@ package top.bettercode.summer.tools.recipe.data
 import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.core.io.ClassPathResource
-import top.bettercode.summer.tools.excel.ExcelField
-import top.bettercode.summer.tools.excel.ExcelImport
+import top.bettercode.summer.tools.excel.read.CellGetter
+import top.bettercode.summer.tools.excel.read.ExcelReader
+import top.bettercode.summer.tools.excel.read.RowGetter
 import top.bettercode.summer.tools.optimal.Operator
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
@@ -527,71 +528,72 @@ object TestPrepareData {
 
     /** 获取原料成份,key: 原料名称 value: 原料成份  */
     private fun readMaterials(materialPrices: Map<String, Double?>): List<RecipeMaterial> {
-        val excelFields: Array<ExcelField<MaterialForm, *>> =
-            arrayOf(
-                ExcelField.of("大类", MaterialForm::category),
-                ExcelField.of("原料名称", MaterialForm::name),
-                ExcelField.of("原料形态", MaterialForm::form),
-                ExcelField.of("氮含量", MaterialForm::nitrogen).defaultValue(0.0),
-                ExcelField.of("磷含量", MaterialForm::phosphorus).defaultValue(0.0),
-                ExcelField.of("钾含量", MaterialForm::potassium).defaultValue(0.0),
-                ExcelField.of("氯离子", MaterialForm::chlorine).defaultValue(0.0),
-                ExcelField.of("水分", MaterialForm::water).defaultValue(0.0),
-                ExcelField.of("水溶磷率", MaterialForm::waterSolublePhosphorusRate)
-                    .defaultValue(0.0),
-                ExcelField.of("水溶磷", MaterialForm::waterSolublePhosphorus)
-                    .defaultValue(0.0),
-                ExcelField.of("硝态氮", MaterialForm::nitrateNitrogen).defaultValue(0.0),
-                ExcelField.of("硼", MaterialForm::boron).defaultValue(0.0),
-                ExcelField.of("锌", MaterialForm::zinc).defaultValue(0.0),
-                ExcelField.of("锰", MaterialForm::manganese).defaultValue(0.0),
-                ExcelField.of("铜", MaterialForm::copper).defaultValue(0.0),
-                ExcelField.of("铁", MaterialForm::iron).defaultValue(0.0),
-                ExcelField.of("钼", MaterialForm::molybdenum).defaultValue(0.0),
-                ExcelField.of("镁", MaterialForm::magnesium).defaultValue(0.0),
-                ExcelField.of("硫", MaterialForm::sulfur).defaultValue(0.0),
-                ExcelField.of("钙", MaterialForm::calcium).defaultValue(0.0),
-                ExcelField.of("有机质（%）", MaterialForm::organicMatter).defaultValue(0.0),
-                ExcelField.of("腐植酸", MaterialForm::humicAcid).defaultValue(0.0),
-                ExcelField.of("黄腐酸", MaterialForm::fulvicAcid).defaultValue(0.0),
-                ExcelField.of("活性菌", MaterialForm::activeBacteria).defaultValue(0.0),
-                ExcelField.of("硅", MaterialForm::silicon).defaultValue(0.0),
-                ExcelField.of("指标23", MaterialForm::index23).defaultValue(0.0),
-                ExcelField.of("指标24", MaterialForm::index24).defaultValue(0.0),
-                ExcelField.of("指标25", MaterialForm::index25).defaultValue(0.0),
-                ExcelField.of("指标26", MaterialForm::index26).defaultValue(0.0),
-                ExcelField.of("指标27", MaterialForm::index27).defaultValue(0.0),
-                ExcelField.of("指标28", MaterialForm::index28).defaultValue(0.0),
-                ExcelField.of("指标29", MaterialForm::index29).defaultValue(0.0),
-                ExcelField.of("指标30", MaterialForm::index30).defaultValue(0.0),
-                ExcelField.of("指标31", MaterialForm::index31).defaultValue(0.0),
-                ExcelField.of("指标32", MaterialForm::index32).defaultValue(0.0),
-                ExcelField.of("指标33", MaterialForm::index33).defaultValue(0.0),
-                ExcelField.of("指标34", MaterialForm::index34).defaultValue(0.0),
-                ExcelField.of("指标35", MaterialForm::index35).defaultValue(0.0),
-                ExcelField.of("指标36", MaterialForm::index36).defaultValue(0.0),
-                ExcelField.of("指标37", MaterialForm::index37).defaultValue(0.0),
-                ExcelField.of("指标38", MaterialForm::index38).defaultValue(0.0),
-                ExcelField.of("指标39", MaterialForm::index39).defaultValue(0.0),
-                ExcelField.of("指标40", MaterialForm::index40).defaultValue(0.0),
-                ExcelField.of("指标41", MaterialForm::index41).defaultValue(0.0),
-                ExcelField.of("指标42", MaterialForm::index42).defaultValue(0.0),
-                ExcelField.of("指标43", MaterialForm::index43).defaultValue(0.0),
-                ExcelField.of("指标44", MaterialForm::index44).defaultValue(0.0),
-                ExcelField.of("指标45", MaterialForm::index45).defaultValue(0.0),
-                ExcelField.of("指标46", MaterialForm::index46).defaultValue(0.0),
-                ExcelField.of("指标47", MaterialForm::index47).defaultValue(0.0),
-                ExcelField.of("指标48", MaterialForm::index48).defaultValue(0.0),
-                ExcelField.of("指标49", MaterialForm::index49).defaultValue(0.0),
-                ExcelField.of("指标50", MaterialForm::index50).defaultValue(0.0)
-            )
+        val rowGetter = RowGetter.of(
+            CellGetter.of("大类", MaterialForm::category),
+            CellGetter.of("原料名称", MaterialForm::name),
+            CellGetter.of("原料形态", MaterialForm::form),
+            CellGetter.of("氮含量", MaterialForm::nitrogen).defaultValue(0.0),
+            CellGetter.of("磷含量", MaterialForm::phosphorus).defaultValue(0.0),
+            CellGetter.of("钾含量", MaterialForm::potassium).defaultValue(0.0),
+            CellGetter.of("氯离子", MaterialForm::chlorine).defaultValue(0.0),
+            CellGetter.of("水分", MaterialForm::water).defaultValue(0.0),
+            CellGetter.of("水溶磷率", MaterialForm::waterSolublePhosphorusRate)
+                .defaultValue(0.0),
+            CellGetter.of("水溶磷", MaterialForm::waterSolublePhosphorus)
+                .defaultValue(0.0),
+            CellGetter.of("硝态氮", MaterialForm::nitrateNitrogen).defaultValue(0.0),
+            CellGetter.of("硼", MaterialForm::boron).defaultValue(0.0),
+            CellGetter.of("锌", MaterialForm::zinc).defaultValue(0.0),
+            CellGetter.of("锰", MaterialForm::manganese).defaultValue(0.0),
+            CellGetter.of("铜", MaterialForm::copper).defaultValue(0.0),
+            CellGetter.of("铁", MaterialForm::iron).defaultValue(0.0),
+            CellGetter.of("钼", MaterialForm::molybdenum).defaultValue(0.0),
+            CellGetter.of("镁", MaterialForm::magnesium).defaultValue(0.0),
+            CellGetter.of("硫", MaterialForm::sulfur).defaultValue(0.0),
+            CellGetter.of("钙", MaterialForm::calcium).defaultValue(0.0),
+            CellGetter.of("有机质（%）", MaterialForm::organicMatter).defaultValue(0.0),
+            CellGetter.of("腐植酸", MaterialForm::humicAcid).defaultValue(0.0),
+            CellGetter.of("黄腐酸", MaterialForm::fulvicAcid).defaultValue(0.0),
+            CellGetter.of("活性菌", MaterialForm::activeBacteria).defaultValue(0.0),
+            CellGetter.of("硅", MaterialForm::silicon).defaultValue(0.0),
+            CellGetter.of("指标23", MaterialForm::index23).defaultValue(0.0),
+            CellGetter.of("指标24", MaterialForm::index24).defaultValue(0.0),
+            CellGetter.of("指标25", MaterialForm::index25).defaultValue(0.0),
+            CellGetter.of("指标26", MaterialForm::index26).defaultValue(0.0),
+            CellGetter.of("指标27", MaterialForm::index27).defaultValue(0.0),
+            CellGetter.of("指标28", MaterialForm::index28).defaultValue(0.0),
+            CellGetter.of("指标29", MaterialForm::index29).defaultValue(0.0),
+            CellGetter.of("指标30", MaterialForm::index30).defaultValue(0.0),
+            CellGetter.of("指标31", MaterialForm::index31).defaultValue(0.0),
+            CellGetter.of("指标32", MaterialForm::index32).defaultValue(0.0),
+            CellGetter.of("指标33", MaterialForm::index33).defaultValue(0.0),
+            CellGetter.of("指标34", MaterialForm::index34).defaultValue(0.0),
+            CellGetter.of("指标35", MaterialForm::index35).defaultValue(0.0),
+            CellGetter.of("指标36", MaterialForm::index36).defaultValue(0.0),
+            CellGetter.of("指标37", MaterialForm::index37).defaultValue(0.0),
+            CellGetter.of("指标38", MaterialForm::index38).defaultValue(0.0),
+            CellGetter.of("指标39", MaterialForm::index39).defaultValue(0.0),
+            CellGetter.of("指标40", MaterialForm::index40).defaultValue(0.0),
+            CellGetter.of("指标41", MaterialForm::index41).defaultValue(0.0),
+            CellGetter.of("指标42", MaterialForm::index42).defaultValue(0.0),
+            CellGetter.of("指标43", MaterialForm::index43).defaultValue(0.0),
+            CellGetter.of("指标44", MaterialForm::index44).defaultValue(0.0),
+            CellGetter.of("指标45", MaterialForm::index45).defaultValue(0.0),
+            CellGetter.of("指标46", MaterialForm::index46).defaultValue(0.0),
+            CellGetter.of("指标47", MaterialForm::index47).defaultValue(0.0),
+            CellGetter.of("指标48", MaterialForm::index48).defaultValue(0.0),
+            CellGetter.of("指标49", MaterialForm::index49).defaultValue(0.0),
+            CellGetter.of("指标50", MaterialForm::index50).defaultValue(0.0)
+        )
 
         // 读取 Excel
         var materialForms =
-            ExcelImport.of(ClassPathResource("配方报价管理系统需求清单.xlsx").inputStream)
-                .sheet("原料成分表")
-                .setColumn(1)
-                .getData<MaterialForm, MaterialForm>(excelFields)
+            ExcelReader.of(ClassPathResource("配方报价管理系统需求清单.xlsx").inputStream).use {
+                it
+                    .sheet("原料成分表")
+                    .column(1)
+                    .getData<MaterialForm, MaterialForm>(rowGetter)
+            }
 
         // 转换为Map
         materialForms = materialForms.filter { c: MaterialForm -> !c.name.isNullOrBlank() }
@@ -927,28 +929,30 @@ object TestPrepareData {
         specialPrices: Map<String, Double>
     ): Map<String, Double?> {
         // 读取原料价格:原料名称 荆州 宜城 应城 宁陵 平原 眉山 新疆 铁岭 肇东 佳木斯
-        val excelFields: Array<ExcelField<MaterialFactoryPriceForm, *>> = arrayOf(
-            ExcelField.of("原料名称", MaterialFactoryPriceForm::name),
-            ExcelField.of("报价日期", MaterialFactoryPriceForm::name)
-                .setter { _: MaterialFactoryPriceForm, _: String? -> },
-            ExcelField.of("荆州", MaterialFactoryPriceForm::jingzhou),
-            ExcelField.of("宜城", MaterialFactoryPriceForm::yicheng),
-            ExcelField.of("应城", MaterialFactoryPriceForm::yingcheng),
-            ExcelField.of("宁陵", MaterialFactoryPriceForm::ningling),
-            ExcelField.of("平原", MaterialFactoryPriceForm::pingyuan),
-            ExcelField.of("眉山", MaterialFactoryPriceForm::meishan),
-            ExcelField.of("新疆", MaterialFactoryPriceForm::xinjiang),
-            ExcelField.of("铁岭", MaterialFactoryPriceForm::tieling),
-            ExcelField.of("肇东", MaterialFactoryPriceForm::zhaodong),
-            ExcelField.of("佳木斯", MaterialFactoryPriceForm::jiamusi)
+        val rowGetter = RowGetter.of(
+            CellGetter.of("原料名称", MaterialFactoryPriceForm::name),
+            CellGetter.of(
+                "报价日期",
+                String::class.java
+            ) { _: MaterialFactoryPriceForm, _: String? -> },
+            CellGetter.of("荆州", MaterialFactoryPriceForm::jingzhou),
+            CellGetter.of("宜城", MaterialFactoryPriceForm::yicheng),
+            CellGetter.of("应城", MaterialFactoryPriceForm::yingcheng),
+            CellGetter.of("宁陵", MaterialFactoryPriceForm::ningling),
+            CellGetter.of("平原", MaterialFactoryPriceForm::pingyuan),
+            CellGetter.of("眉山", MaterialFactoryPriceForm::meishan),
+            CellGetter.of("新疆", MaterialFactoryPriceForm::xinjiang),
+            CellGetter.of("铁岭", MaterialFactoryPriceForm::tieling),
+            CellGetter.of("肇东", MaterialFactoryPriceForm::zhaodong),
+            CellGetter.of("佳木斯", MaterialFactoryPriceForm::jiamusi)
         )
 
         // 读取 Excel
         val materialPriceForms =
-            ExcelImport.of(ClassPathResource("配方报价管理系统需求清单.xlsx").inputStream)
+            ExcelReader.of(ClassPathResource("配方报价管理系统需求清单.xlsx").inputStream)
                 .sheet("原料价格表")
-                .setColumn(2)
-                .getData<MaterialFactoryPriceForm, MaterialFactoryPriceForm>(excelFields)
+                .column(2)
+                .getData<MaterialFactoryPriceForm, MaterialFactoryPriceForm>(rowGetter)
 
         // 转换为Map  获取原料价格 key: 原料名称 value: 原料价格
         val materialPriceMap: Map<String, Double?> = materialPriceForms.stream()

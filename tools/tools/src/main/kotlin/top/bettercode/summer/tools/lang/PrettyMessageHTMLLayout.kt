@@ -9,6 +9,7 @@ import ch.qos.logback.core.pattern.Converter
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
 import java.util.*
 
 /**
@@ -122,7 +123,10 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             else -> buf.append("Message")
         }
         buf.append("\"><pre>")
-        buf.append("${TimeUtil.format(event.timeStamp)} ")
+        buf.append("${TimeUtil.format(
+            timeStamp = event.timeStamp,
+            pattern = DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
+        )} ")
         buf.append("${event.level} ")
         buf.append("[${event.threadName}] ")
         buf.append("${event.loggerName} :")

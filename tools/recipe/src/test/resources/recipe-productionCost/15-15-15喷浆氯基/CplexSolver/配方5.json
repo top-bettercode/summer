@@ -1,5 +1,5 @@
 {
-  "cost" : 2492.5463054220654,
+  "cost" : 2492.546305422066,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -66,7 +66,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.3412737293325177,
+        "normal" : 2.3412737293325185,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -107,7 +107,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 5.417247411976707,
+    "weight" : 5.417247411976708,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -121,7 +121,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 5.417247411976707,
+    "normalWeight" : 5.417247411976708,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -217,7 +217,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 122.22826086956519,
+    "weight" : 122.22826086956525,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -348,7 +348,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.07412770968729854,
+    "weight" : 0.0741277096872981,
     "id" : "七钼酸铵",
     "index" : 49,
     "indicators" : {
@@ -423,7 +423,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 3.927017553566902,
+    "weight" : 3.9270175535668557,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -471,7 +471,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 20.44554267214999,
+    "energyFee" : 20.445542672149983,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -483,7 +483,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.6330631922515144
+      "value" : 0.6330631922515142
     }, {
       "it" : {
         "id" : "生物质",
@@ -501,14 +501,14 @@
     "otherFee" : 114.00041999999999,
     "scale" : 3,
     "taxFee" : 25.2600378,
-    "totalFee" : 161.30306047687148
+    "totalFee" : 161.30306047687145
   },
   "recipeName" : "CplexSolver-5",
   "scale" : 3,
   "dryWaterWeight" : 13.306319225151583,
   "materialCost" : 2331.243244945194,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 13.306319225151427,
+  "totalNutrientWeight" : 453.0,
+  "waterWeight" : 13.306319225151416,
   "weight" : 1013.3063192251516
 }

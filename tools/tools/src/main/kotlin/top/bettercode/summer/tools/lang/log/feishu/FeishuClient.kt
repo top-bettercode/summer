@@ -23,6 +23,7 @@ import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
 import java.lang.reflect.Type
 import java.time.Duration
 
@@ -235,7 +236,10 @@ class FeishuClient(
     ): Boolean {
         val body: MultiValueMap<String, Any> = LinkedMultiValueMap()
         body.add("file_type", "stream")
-        body.add("file_name", "$title-${TimeUtil.format(timeStamp)}.txt")
+        body.add(
+            "file_name",
+            "$title-${TimeUtil.format(timeStamp, DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN)}.txt"
+        )
         val resource = ByteArrayResource(message.joinToString("\n").toByteArray())
         body.add("file", resource)
 

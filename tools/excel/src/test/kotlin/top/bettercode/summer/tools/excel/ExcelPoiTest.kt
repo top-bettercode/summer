@@ -4,6 +4,9 @@ import org.apache.poi.ss.usermodel.Font
 import org.apache.poi.ss.usermodel.RichTextString
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.excel.write.CellSetter
+import top.bettercode.summer.tools.excel.write.ExcelWriter
+import top.bettercode.summer.tools.excel.write.RowSetter
 
 /**
  * @author Peter Wu
@@ -12,15 +15,15 @@ import org.junit.jupiter.api.Test
 class ExcelPoiTest {
     @Test
     fun testRichText() {
-        val excelMergeFields: Array<ExcelField<DataBean, *>> = arrayOf(
-            ExcelField.index<DataBean, Int?>("序号"),
-            ExcelField.of("编码") { obj: DataBean -> obj.intCode }
+        val excelMergeFields = RowSetter.of(
+            CellSetter.index<DataBean, Int?>("序号"),
+            CellSetter.of("编码") { obj: DataBean -> obj.intCode }
                 .mergeBy { obj: DataBean -> obj.intCode },
-            ExcelField.of("编码B") { obj: DataBean -> obj.integer }
+            CellSetter.of("编码B") { obj: DataBean -> obj.integer }
                 .mergeBy { obj: DataBean -> obj.integer },
-            ExcelField.of("名称") { _: DataBean -> arrayOf("abc", "1") },
-            ExcelField.of("描述") { obj: DataBean -> obj.name },
-            ExcelField.poi("描述C", { obj: DataBean -> obj.date }, { excel, cell ->
+            CellSetter.of("名称") { _: DataBean -> arrayOf("abc", "1") },
+            CellSetter.of("描述") { obj: DataBean -> obj.name },
+            CellSetter.of("描述C") { obj: DataBean -> obj.date }.setter { excel, cell ->
                 // 设置文本
                 val text = "Hello, World!"
                 // 创建字体
@@ -44,7 +47,7 @@ class ExcelPoiTest {
 
                 poiCell.setCellValue(richText)
 
-            }).mergeBy { obj: DataBean -> obj.intCode },
+            }.mergeBy { obj: DataBean -> obj.intCode },
         )
         val list: MutableList<DataBean> = ArrayList()
         for (i in 0..21) {
@@ -60,9 +63,10 @@ class ExcelPoiTest {
         list.add(DataBean(25))
         val s = System.currentTimeMillis()
         val filename = "build/testMergeExportWithPoi.xlsx"
-        ExcelExport.of(filename = filename, poi = true, useSxss = false).sheet("表格")
-            .setMergeData(list, excelMergeFields)
-            .finish()
+        ExcelWriter.of(filename = filename, poi = true, useSxss = false).use {
+            it.sheet("表格")
+                .setData(list, excelMergeFields)
+        }
         val e = System.currentTimeMillis()
         System.err.println(e - s)
         ExcelTestUtil.openExcel(filename)

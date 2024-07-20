@@ -139,7 +139,7 @@ open class TimeUtil(
     }
 
     @JvmOverloads
-    fun format(dateTimeFormatter: DateTimeFormatter = dateFormatter): String {
+    fun format(dateTimeFormatter: DateTimeFormatter = DEFAULT_DATE_TIME_FORMATTER): String {
         return localDateTime.format(dateTimeFormatter)
     }
 
@@ -150,22 +150,26 @@ open class TimeUtil(
     companion object {
         private val log: Logger = LoggerFactory.getLogger(TimeUtil::class.java)
         val DEFAULT_ZONE_ID: ZoneId = ZoneId.systemDefault()
-        private const val DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS"
-        private val dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)
+        const val DEFAULT_DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss"
+        const val DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS"
+        val DEFAULT_DATE_TIME_FORMATTER: DateTimeFormatter =
+            DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT_PATTERN)
+        val DEFAULT_DATE_TIME_SSS_FORMATTER: DateTimeFormatter =
+            DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN)
 
+        @JvmOverloads
         @JvmStatic
-        fun format(localDateTime: LocalDateTime): String {
-            return localDateTime.format(dateFormatter)
-        }
-
-        @JvmStatic
-        fun format(localDateTime: LocalDateTime, pattern: String): String {
+        fun format(
+            localDateTime: LocalDateTime,
+            pattern: String = DEFAULT_DATE_TIME_FORMAT_PATTERN
+        ): String {
             return localDateTime.format(DateTimeFormatter.ofPattern(pattern))
         }
 
+        @JvmOverloads
         @JvmStatic
-        fun format(timeStamp: Long): String {
-            return of(timeStamp).format(dateFormatter)
+        fun format(timeStamp: Long, pattern: String = DEFAULT_DATE_TIME_FORMAT_PATTERN): String {
+            return of(timeStamp).format(DateTimeFormatter.ofPattern(pattern))
         }
 
         @JvmStatic
@@ -370,8 +374,8 @@ open class TimeUtil(
             val seconds = Duration.between(networkTime, now).seconds
             log.info(
                 "$server 网络时间:{},本地时间:{},相差{}s",
-                of(networkTime).format(),
-                of(now).format(),
+                of(networkTime).format(DEFAULT_DATE_TIME_SSS_FORMATTER),
+                of(now).format(DEFAULT_DATE_TIME_SSS_FORMATTER),
                 seconds
             )
             val diffSeconds = seconds.absoluteValue
@@ -380,8 +384,8 @@ open class TimeUtil(
                 log.error(
                     "$server 网络时间和本地时间不一致{}s,网络时间:{},本地时间:{}",
                     seconds,
-                    of(networkTime).format(),
-                    of(now).format()
+                    of(networkTime).format(DEFAULT_DATE_TIME_SSS_FORMATTER),
+                    of(now).format(DEFAULT_DATE_TIME_SSS_FORMATTER)
                 )
             }
             return synchronous

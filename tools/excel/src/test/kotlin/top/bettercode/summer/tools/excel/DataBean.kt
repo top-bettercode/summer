@@ -7,6 +7,7 @@ import java.util.*
 class DataBean {
     var intCode: Int
     var integer: Int
+    var integer2: Int
     var longl: Long
     var doublel: Double
 
@@ -19,6 +20,7 @@ class DataBean {
     constructor() {
         intCode = 1
         integer = 1
+        integer2 = 1
         longl = Date().time
         doublel = 4.4
         floatl = 5.5f
@@ -28,8 +30,9 @@ class DataBean {
     }
 
     constructor(index: Int) {
-        intCode = 1 + index / 3
+        intCode = 1 + index / 5
         integer = 1 + index / 2
+        integer2 = 1 + index
         longl = Date().time + index * 10000
         doublel = 4.4 + index
         floatl = 5.5f + index

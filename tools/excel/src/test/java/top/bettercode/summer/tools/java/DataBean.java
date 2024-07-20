@@ -8,6 +8,7 @@ public class DataBean {
 
   private Integer intCode;
   private Integer integer;
+  private Integer integer2;
   private Long longl;
   private Double doublel;
   private Float floatl;
@@ -18,6 +19,7 @@ public class DataBean {
   public DataBean() {
     intCode = 1;
     integer = 1;
+    integer2 = 1;
     longl = new Date().getTime();
     doublel = 4.4;
     floatl = 5.5f;
@@ -29,12 +31,21 @@ public class DataBean {
   public DataBean(Integer index) {
     intCode = 1 + index / 3;
     integer = 1 + index / 2;
+    integer2 = 1 + index;
     longl = new Date().getTime() + index * 10000;
     doublel = 4.4 + index;
     floatl = 5.5f + index;
     num = new BigDecimal("0." + index);
     name = "名称" + index;
     date = new Date();
+  }
+
+  public Integer getInteger2() {
+    return integer2;
+  }
+
+  public void setInteger2(Integer integer2) {
+    this.integer2 = integer2;
   }
 
   public BigDecimal getNum() {

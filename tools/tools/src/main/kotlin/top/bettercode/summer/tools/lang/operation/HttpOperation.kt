@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
 import java.io.PrintWriter
 import java.io.StringWriter
 import kotlin.random.Random
@@ -45,8 +46,22 @@ object HttpOperation {
             stringBuilder.appendLine("${output.collectionName}/${output.name}")
         }
         stringBuilder.appendLine("USERNAME        : ${output.request.remoteUser}")
-        stringBuilder.appendLine("REQUEST    TIME : ${TimeUtil.format(output.request.dateTime)}")
-        stringBuilder.appendLine("RESPONSE   TIME : ${TimeUtil.format(output.response.dateTime)}")
+        stringBuilder.appendLine(
+            "REQUEST    TIME : ${
+                TimeUtil.format(
+                    output.request.dateTime,
+                    DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
+                )
+            }"
+        )
+        stringBuilder.appendLine(
+            "RESPONSE   TIME : ${
+                TimeUtil.format(
+                    output.response.dateTime,
+                    DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
+                )
+            }"
+        )
         stringBuilder.appendLine("DURATION MILLIS : ${output.duration}")
         stringBuilder.appendLine(SEPARATOR_LINE)
         stringBuilder.append(toString(output.request, output.protocol, format, requestDecrypt))

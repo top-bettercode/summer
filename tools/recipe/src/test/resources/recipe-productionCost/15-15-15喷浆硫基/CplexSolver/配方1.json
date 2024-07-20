@@ -1,5 +1,5 @@
 {
-  "cost" : 2946.2922566005345,
+  "cost" : 2946.292256600535,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -21,7 +21,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 3.4524804314310553,
+        "normal" : 3.4524804314310558,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -111,7 +111,7 @@
       "price" : 2.0,
       "unit" : "吨"
     },
-    "weight" : 225.2242446865109,
+    "weight" : 225.22424468651087,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -172,7 +172,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 180.23978722912116,
+    "weight" : 180.2397872291212,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -407,7 +407,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 105.29130854582374,
+    "weight" : 105.2913085458238,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -455,7 +455,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 42.03648859654677,
+    "energyFee" : 42.036488596546775,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -467,7 +467,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.9416053694876827
+      "value" : 1.9416053694876831
     }, {
       "it" : {
         "id" : "生物质",
@@ -489,10 +489,10 @@
   },
   "recipeName" : "CplexSolver-1",
   "scale" : 3,
-  "dryWaterWeight" : 132.16053694876814,
-  "materialCost" : 2618.361554208049,
+  "dryWaterWeight" : 132.16053694876837,
+  "materialCost" : 2618.3615542080493,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 144.16053694876828,
-  "weight" : 1132.1605369487681
+  "waterWeight" : 144.1605369487683,
+  "weight" : 1132.1605369487684
 }

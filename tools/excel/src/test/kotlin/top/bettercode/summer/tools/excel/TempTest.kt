@@ -9,6 +9,7 @@ class TempTest {
 
     @Test
     fun name1() {
+        System.err.println(Boolean::class.javaPrimitiveType == Boolean::class.java)
         System.err.println(Int::class.java.name)
         System.err.println("0." + String.format("%0" + 2 + "d", 0))
     }

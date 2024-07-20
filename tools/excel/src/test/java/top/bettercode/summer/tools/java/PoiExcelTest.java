@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import top.bettercode.summer.tools.excel.ExcelExport;
+import top.bettercode.summer.tools.excel.write.ExcelWriter;
 
 /**
  * @author Peter Wu
@@ -15,8 +15,8 @@ public class PoiExcelTest extends ExcelTest {
 
   @NotNull
   @Override
-  protected ExcelExport getExcelExport(String filename) {
-    return ExcelExport.of(filename, true);
+  protected ExcelWriter getExcelWriter(String filename) {
+    return ExcelWriter.of(filename, true);
   }
 
   @Test

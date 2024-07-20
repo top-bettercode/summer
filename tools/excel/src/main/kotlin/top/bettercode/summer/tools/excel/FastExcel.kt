@@ -3,7 +3,8 @@ package top.bettercode.summer.tools.excel
 import org.dhatim.fastexcel.AbsoluteListDataValidation
 import org.dhatim.fastexcel.Workbook
 import org.dhatim.fastexcel.Worksheet
-import top.bettercode.summer.tools.excel.CellStyle.Companion.style
+import top.bettercode.summer.tools.excel.write.style.CellStyle
+import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.style
 import java.io.File
 import java.io.OutputStream
 import java.nio.file.Files
@@ -16,7 +17,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-class FastExcel(outputStream: OutputStream) : IExcel {
+class FastExcel(outputStream: OutputStream) : Excel {
 
     companion object {
 
@@ -126,7 +127,7 @@ class FastExcel(outputStream: OutputStream) : IExcel {
         this.sheet.range(top, left, bottom, right).merge()
     }
 
-    override fun finish() {
-        this.workbook.finish()
+    override fun close() {
+        this.workbook.close()
     }
 }

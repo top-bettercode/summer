@@ -1,11 +1,10 @@
 package top.bettercode.summer.tools.java;
 
+import static top.bettercode.summer.tools.excel.ExcelTestUtil.numberImage;
+
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -13,12 +12,10 @@ import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
-import top.bettercode.summer.tools.excel.ExcelConverter;
-import top.bettercode.summer.tools.excel.ExcelExport;
-import top.bettercode.summer.tools.excel.ExcelField;
 import top.bettercode.summer.tools.excel.ExcelTestUtil;
-import top.bettercode.summer.tools.lang.util.ArrayUtil;
+import top.bettercode.summer.tools.excel.write.CellSetter;
+import top.bettercode.summer.tools.excel.write.ExcelWriter;
+import top.bettercode.summer.tools.excel.write.RowSetter;
 
 /**
  * @author Peter Wu
@@ -46,12 +43,10 @@ public class ExcelImageTest {
     anchor.setRow2(3); // Row 4
 
     // FileInputStream obtains input bytes from the image file
-    InputStream inputStream = new ClassPathResource("ico.jpeg").getInputStream();
     // Get the contents of an InputStream as a byte[].
-    byte[] bytes = IOUtils.toByteArray(inputStream);
+    byte[] bytes = numberImage(1);
     // Adds a picture to the workbook
     // close the input stream
-    inputStream.close();
     int pictureIdx = wb.addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_PNG);
 
     // Creates a picture
@@ -84,51 +79,46 @@ public class ExcelImageTest {
   @Test
   public void testMergeExportWithImage() {
 
-    ExcelConverter<top.bettercode.summer.tools.java.DataBean, InputStream> excelConverter =
-        from -> {
-          try {
-            return new ClassPathResource("ico.jpeg").getInputStream();
-          } catch (IOException ex) {
-            throw new RuntimeException(ex);
-          }
-        };
-    ExcelField<top.bettercode.summer.tools.java.DataBean, ?>[] excelMergeFields =
-        ArrayUtil.of(
-            ExcelField.<top.bettercode.summer.tools.java.DataBean, Integer>index("序号"),
-            ExcelField.of("编码", top.bettercode.summer.tools.java.DataBean::getIntCode)
-                .mergeBy(top.bettercode.summer.tools.java.DataBean::getIntCode),
-            ExcelField.of("编码B", top.bettercode.summer.tools.java.DataBean::getInteger)
-                .mergeBy(top.bettercode.summer.tools.java.DataBean::getInteger),
-            ExcelField.of("名称", from -> new String[]{"abc", "1"}),
-            ExcelField.of("描述", top.bettercode.summer.tools.java.DataBean::getName),
-            ExcelField.of("描述C", top.bettercode.summer.tools.java.DataBean::getDate),
-            ExcelField.image("图片1", excelConverter)
-                .mergeBy(top.bettercode.summer.tools.java.DataBean::getIntCode)
+    RowSetter<DataBean> rowSetter = RowSetter.of(
+            CellSetter.<DataBean, Integer>index("序号").height(40),
+            CellSetter.of("编码", DataBean::getIntCode)
+                .mergeBy(DataBean::getIntCode),
+            CellSetter.of("编码B", DataBean::getInteger)
+                .mergeBy(DataBean::getInteger),
+            CellSetter.of("名称", from -> new String[]{"abc", "1"}),
+            CellSetter.of("描述", DataBean::getName),
+            CellSetter.of("描述C", DataBean::getDate),
+            CellSetter.<DataBean, byte[]>image("图片1",
+                    from -> numberImage(from.getIntCode()))
+                .mergeBy(DataBean::getIntCode)
                 .width(10),
-            ExcelField.image("图片2", excelConverter).width(10).height(40));
+            CellSetter.<DataBean, byte[]>image("图片2",
+                from -> numberImage(from.getInteger2())).width(10));
 
-    List<top.bettercode.summer.tools.java.DataBean> list = new ArrayList<>();
+    List<DataBean> list = new ArrayList<>();
     for (int i = 0; i < 22; i++) {
-      top.bettercode.summer.tools.java.DataBean bean =
-          new top.bettercode.summer.tools.java.DataBean(i);
+      DataBean bean =
+          new DataBean(i);
       list.add(bean);
     }
     for (int i = 22; i < 25; i++) {
-      top.bettercode.summer.tools.java.DataBean bean =
-          new top.bettercode.summer.tools.java.DataBean();
+      DataBean bean =
+          new DataBean();
       bean.setIntCode(i);
       list.add(bean);
     }
-    list.add(new top.bettercode.summer.tools.java.DataBean(25));
+    list.add(new DataBean(25));
     list.add(new DataBean(25));
     long s = System.currentTimeMillis();
 
     String filename = "build/testMergeExportWithImage.xlsx";
 
-    ExcelExport.of(filename, true)
-        .sheet("表格")
-        .setMergeData(list, excelMergeFields)
-        .finish();
+    try (ExcelWriter writer = ExcelWriter.of(filename, true)) {
+      writer
+          .sheet("表格")
+          .setData(list, rowSetter)
+      ;
+    }
     long e = System.currentTimeMillis();
 
     System.err.println(e - s);

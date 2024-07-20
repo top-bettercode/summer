@@ -30,15 +30,8 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     private val specPredicates: MultiValueMap<String, SpecPredicate<T, M>> = LinkedMultiValueMap()
     private var append = false
     private val orders: MutableList<Sort.Order> = ArrayList()
-    private val typed: M
     override var idAttribute: SingularAttributeValue<T, *>? = null
     override var versionAttribute: SingularAttributeValue<T, *>? = null
-
-    //--------------------------------------------
-    init {
-        @Suppress("UNCHECKED_CAST", "LeakingThis")
-        typed = this as M
-    }
 
     override fun toPredicate(
         root: Root<T>,
@@ -173,13 +166,14 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 
     fun append(): M {
         append = true
-        return typed
+        @Suppress("UNCHECKED_CAST")
+        return this as M
     }
 
     fun <P> path(propertyName: String): SpecPath<P, T, M> {
         Assert.hasText(propertyName, "propertyName can not be blank.")
-        val predicate = if (append) {
-            val p = SpecPath<P, T, M>(typed, propertyName)
+        @Suppress("UNCHECKED_CAST") val predicate = if (append) {
+            val p = SpecPath<P, T, M>(this as M, propertyName)
             specPredicates.add(propertyName, p)
             append = false
             p
@@ -187,9 +181,10 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
             specPredicates.computeIfAbsent(
                 propertyName
             ) { s: String ->
+                @Suppress("UNCHECKED_CAST")
                 return@computeIfAbsent mutableListOf<SpecPredicate<T, M>>(
                     SpecPath<P, T, M>(
-                        typed,
+                        this as M,
                         s
                     )
                 )
@@ -204,13 +199,14 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     }
 
     fun all(other: T?, matcher: (M) -> M): M {
-        val constructor = typed.javaClass.declaredConstructors[0]
+        val constructor = this.javaClass.declaredConstructors[0]
         constructor.isAccessible = true
         @Suppress("UNCHECKED_CAST") val otherMatcher =
             constructor.newInstance(SpecMatcherMode.ALL, other) as M
         matcher(otherMatcher)
         specPredicates["all" + UUID.randomUUID().toString()] = otherMatcher
-        return typed
+        @Suppress("UNCHECKED_CAST")
+        return this as M
     }
 
     fun any(matcher: (M) -> M): M {
@@ -218,13 +214,14 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     }
 
     fun any(other: T?, matcher: (M) -> M): M {
-        val constructor = typed.javaClass.declaredConstructors[0]
+        val constructor = this.javaClass.declaredConstructors[0]
         constructor.isAccessible = true
         @Suppress("UNCHECKED_CAST") val otherMatcher =
             constructor.newInstance(SpecMatcherMode.ANY, other) as M
         matcher(otherMatcher)
         specPredicates["any" + UUID.randomUUID().toString()] = otherMatcher
-        return typed
+        @Suppress("UNCHECKED_CAST")
+        return this as M
     }
 
     //--------------------------------------------
@@ -232,7 +229,8 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         orders.addAll(propertyName //
             .map { it: String -> Sort.Order(direction, it) } //
         )
-        return typed
+        @Suppress("UNCHECKED_CAST")
+        return this as M
     }
 
     fun asc(vararg propertyName: String): M {
@@ -249,7 +247,8 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 
     fun <P> criteria(propertyName: String, criteria: P?): M {
         path<P>(propertyName).criteria(criteria)
-        return typed
+        @Suppress("UNCHECKED_CAST")
+        return this as M
     }
 
     fun <P> criteria(propertyName: String, criteria: P?, matcher: PathMatcher): M {

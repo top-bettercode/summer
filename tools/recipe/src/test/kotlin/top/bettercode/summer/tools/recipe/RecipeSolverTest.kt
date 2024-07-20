@@ -61,23 +61,24 @@ internal class RecipeSolverTest {
         val results = solveList(solveTimes)
         val file = File("build/excel/time-${System.currentTimeMillis()}.xlsx")
         file.parentFile.mkdirs()
-        FastExcel.of(file).apply {
-            sheet("sheet1")
-            var r = 0
-            var c = 0
-            cell(r++, c).value("产品").headerStyle().width(20.0).setStyle()
-            results.forEach { (product, value) ->
-                c = 0
-                cell(r, c).value(product).headerStyle().setStyle()
-                value.forEach { (solverType, time) ->
-                    c++
-                    if (r == 1)
-                        cell(0, c).value(solverType.name).headerStyle().setStyle()
-                    cell(r, c).value(time).setStyle()
+        FastExcel.of(file).use {
+            it.apply {
+                sheet("sheet1")
+                var r = 0
+                var c = 0
+                cell(r++, c).value("产品").headerStyle().width(20.0).setStyle()
+                results.forEach { (product, value) ->
+                    c = 0
+                    cell(r, c).value(product).headerStyle().setStyle()
+                    value.forEach { (solverType, time) ->
+                        c++
+                        if (r == 1)
+                            cell(0, c).value(solverType.name).headerStyle().setStyle()
+                        cell(r, c).value(time).setStyle()
+                    }
+                    r++
                 }
-                r++
             }
-            finish()
         }
 //        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
     }

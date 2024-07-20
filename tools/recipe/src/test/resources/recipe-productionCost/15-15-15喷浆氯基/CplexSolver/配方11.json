@@ -25,7 +25,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 351.10844950179893,
+    "weight" : 351.1084495017989,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -66,7 +66,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.3412737293325177,
+        "normal" : 2.3412737293325185,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -107,7 +107,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 5.417247411976707,
+    "weight" : 5.417247411976708,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -121,7 +121,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 5.417247411976707,
+    "normalWeight" : 5.417247411976708,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -217,7 +217,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 122.22826086956519,
+    "weight" : 122.22826086956525,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -423,7 +423,7 @@
       "price" : 2.8,
       "unit" : "吨"
     },
-    "weight" : 4.131898306730552,
+    "weight" : 4.1318983067305055,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
@@ -471,7 +471,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 20.45363494712419,
+    "energyFee" : 20.453634947124186,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -483,7 +483,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.6335536331590418
+      "value" : 0.6335536331590417
     }, {
       "it" : {
         "id" : "生物质",
@@ -505,10 +505,10 @@
   },
   "recipeName" : "CplexSolver-11",
   "scale" : 3,
-  "dryWaterWeight" : 13.355363315904242,
+  "dryWaterWeight" : 13.355363315904128,
   "materialCost" : 2351.2350717474706,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 13.355363315904171,
-  "weight" : 1013.3553633159042
+  "waterWeight" : 13.355363315904158,
+  "weight" : 1013.3553633159041
 }

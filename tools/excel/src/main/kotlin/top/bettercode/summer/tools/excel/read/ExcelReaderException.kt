@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.excel
+package top.bettercode.summer.tools.excel.read
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -13,7 +13,7 @@ import java.util.*
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class ExcelImportException(
+class ExcelReaderException(
     message: String?,
     val errors: List<CellError>, e: Throwable?
 ) : RuntimeException(
@@ -25,40 +25,40 @@ class ExcelImportException(
     /**
      * @param row       行号
      * @param column    列号
-     * @param excelField    excelField
+     * @param cellGetter    excelField
      * @param value     表格单元格值
      * @param exception 异常
      */(
         val row: Int,
         val column: Int,
-        val excelField: ExcelField<*, *>,
+        val cellGetter: CellGetter<*, *>,
         value: Any?,
         val exception: Exception
     ) {
 
         val title: String by lazy {
-            excelField.title
+            cellGetter.title
         }
 
-        private val formatting by lazy { excelField.cellStyle.valueFormatting!! }
+        private val dateFormat by lazy { cellGetter.dateFormat }
 
         val value: String? by lazy {
             value?.let {
                 when (it) {
                     is LocalDateTime -> {
-                        it.format(DateTimeFormatter.ofPattern(formatting))
+                        it.format(DateTimeFormatter.ofPattern(dateFormat))
                     }
 
                     is LocalDate -> {
-                        it.format(DateTimeFormatter.ofPattern(formatting))
+                        it.format(DateTimeFormatter.ofPattern(dateFormat))
                     }
 
                     is Date -> {
-                        TimeUtil.of(it).format(formatting)
+                        TimeUtil.of(it).format(dateFormat)
                     }
 
                     is ZonedDateTime -> {
-                        it.toLocalDateTime().format(DateTimeFormatter.ofPattern(formatting))
+                        it.toLocalDateTime().format(DateTimeFormatter.ofPattern(dateFormat))
                     }
 
                     else -> {

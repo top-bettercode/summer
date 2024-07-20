@@ -6,21 +6,20 @@ import okhttp3.Request.Builder
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.lang.client.OkHttpLoggingInterceptor
 
-
 class OkHttpClientTest {
 
     @Test
     fun log() {
         // 创建 OkHttpClient 实例
         val client = OkHttpClient.Builder()
-                .addInterceptor(OkHttpLoggingInterceptor("第三方服务", "测试", "test")) // 添加日志拦截器
-                .build()
+            .addInterceptor(OkHttpLoggingInterceptor("第三方服务", "测试", "test")) // 添加日志拦截器
+            .build()
 
         // 创建一个 Request 对象，表示要发送的请求
         val request: Request = Builder()
-                .url("https://jsonplaceholder.typicode.com:443/posts/1") // 请求的URL
+            .url("https://jsonplaceholder.typicode.com:443/posts/1") // 请求的URL
 //                .post("{}".toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull()))
-                .build()
+            .build()
 
         // 使用 OkHttpClient 执行请求
         val call = client.newCall(request)

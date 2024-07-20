@@ -10,11 +10,13 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.core.io.ClassPathResource;
-import top.bettercode.summer.tools.excel.ExcelExport;
-import top.bettercode.summer.tools.excel.ExcelField;
-import top.bettercode.summer.tools.excel.ExcelImport;
 import top.bettercode.summer.tools.excel.ExcelTestUtil;
-import top.bettercode.summer.tools.lang.util.ArrayUtil;
+import top.bettercode.summer.tools.excel.read.CellGetter;
+import top.bettercode.summer.tools.excel.read.ExcelReader;
+import top.bettercode.summer.tools.excel.read.RowGetter;
+import top.bettercode.summer.tools.excel.write.CellSetter;
+import top.bettercode.summer.tools.excel.write.ExcelWriter;
+import top.bettercode.summer.tools.excel.write.RowSetter;
 import top.bettercode.summer.tools.lang.util.StringUtil;
 
 /**
@@ -32,97 +34,114 @@ public class ExcelTest {
 
   @Test
   void testPrimitive() {
-    Class<?> aClass = ExcelField.Companion.getPrimitiveWrapperTypeMap().get(Double.class);
+    Class<?> aClass = CellGetter.getPrimitiveWrapperTypeMap().get(Double.class);
     System.err.println(aClass);
     Assertions.assertEquals(double.class, aClass);
   }
 
-  private final ExcelField<DataBean, ?>[] excelFields =
-      ArrayUtil.of(
-          ExcelField.index("序号"),
-          ExcelField.of("编码1", DataBean::getIntCode).height(20),
-          ExcelField.of("编码2", DataBean::getInteger).comment("批注"),
-          ExcelField.of("编码3", DataBean::getLongl),
-          ExcelField.of("编码4", DataBean::getDoublel).comment("批注2"),
-          ExcelField.of("编码5", DataBean::getFloatl),
-          ExcelField.of("编码6", DataBean::getName),
-          ExcelField.of("编码7", DataBean::getDate),
-          ExcelField.of("编码8", DataBean::getNum));
+  private final RowSetter<DataBean> rowSetter = RowSetter.of(
+          CellSetter.index("序号"),
+          CellSetter.of("编码1", DataBean::getIntCode).height(20),
+          CellSetter.of("编码2", DataBean::getInteger).comment("批注"),
+          CellSetter.of("编码3", DataBean::getLongl),
+          CellSetter.of("编码4", DataBean::getDoublel).comment("批注2"),
+          CellSetter.of("编码5", DataBean::getFloatl),
+          CellSetter.of("编码6", DataBean::getName),
+          CellSetter.of("编码7", DataBean::getDate),
+          CellSetter.of("编码8", DataBean::getNum));
 
   @Test
   public void testExport() {
 
-    List<top.bettercode.summer.tools.java.DataBean> list = new ArrayList<>();
+    List<DataBean> list = new ArrayList<>();
     for (int i = 0; i < 8; i++) {
-      top.bettercode.summer.tools.java.DataBean bean =
-          new top.bettercode.summer.tools.java.DataBean(i);
+      DataBean bean =
+          new DataBean(i);
       list.add(bean);
     }
     long s = System.currentTimeMillis();
     String filename = "build/testExport" + nameSuff + ".xlsx";
-    getExcelExport(filename).sheet("表格").setData(list, excelFields).finish();
+    try (ExcelWriter excelWriter = getExcelWriter(filename)) {
+      excelWriter.sheet("表格")
+          .setData(list, rowSetter);
+    }
     long e = System.currentTimeMillis();
     System.err.println(e - s);
     ExcelTestUtil.openExcel(filename);
   }
 
-  private final ExcelField<top.bettercode.summer.tools.java.DataBean, ?>[] excelMergeFields =
-      ArrayUtil.of(
-          ExcelField.<top.bettercode.summer.tools.java.DataBean, Integer>index("序号")
-              .mergeBy(top.bettercode.summer.tools.java.DataBean::getIntCode),
-          ExcelField.of("编码", top.bettercode.summer.tools.java.DataBean::getIntCode)
-              .mergeBy(top.bettercode.summer.tools.java.DataBean::getIntCode),
-          ExcelField.of("编码B", top.bettercode.summer.tools.java.DataBean::getInteger)
-              .mergeBy(top.bettercode.summer.tools.java.DataBean::getInteger),
-          ExcelField.of("名称", from -> new String[]{"abc", "1"}),
-          ExcelField.of("描述", top.bettercode.summer.tools.java.DataBean::getName),
-          ExcelField.of("描述C", top.bettercode.summer.tools.java.DataBean::getDate));
+  private final RowSetter<DataBean> excelMergeFields =
+      RowSetter.of(
+          CellSetter.<DataBean, Integer>index("序号")
+              .mergeBy(DataBean::getIntCode),
+          CellSetter.of("编码", DataBean::getIntCode)
+              .mergeBy(DataBean::getIntCode),
+          CellSetter.of("编码B", DataBean::getInteger)
+              .mergeBy(DataBean::getInteger),
+          CellSetter.of("名称", from -> new String[]{"abc", "1"}),
+          CellSetter.of("描述", DataBean::getName),
+          CellSetter.of("描述C", DataBean::getDate));
 
   @Test
   public void testMergeExport() {
-    List<top.bettercode.summer.tools.java.DataBean> list = new ArrayList<>();
+    List<DataBean> list = new ArrayList<>();
     for (int i = 0; i < 22; i++) {
-      top.bettercode.summer.tools.java.DataBean bean =
-          new top.bettercode.summer.tools.java.DataBean(i);
+      DataBean bean =
+          new DataBean(i);
       list.add(bean);
     }
     long s = System.currentTimeMillis();
     String filename = "build/testMergeExport" + nameSuff + ".xlsx";
-    getExcelExport(filename)
-        .sheet("表格")
-        .setMergeData(list, excelMergeFields)
-        .finish();
+    try (ExcelWriter excelWriter = getExcelWriter(filename)) {
+      excelWriter.sheet("表格")
+          .setData(list, excelMergeFields);
+    }
     long e = System.currentTimeMillis();
     System.err.println(e - s);
     ExcelTestUtil.openExcel(filename);
   }
+
+  private final RowGetter<DataBean> rowGetter = RowGetter.of(
+      CellGetter.of("编码1", DataBean::getIntCode),
+      CellGetter.of("编码2", DataBean::getInteger),
+      CellGetter.of("编码3", DataBean::getLongl),
+      CellGetter.of("编码4", DataBean::getDoublel),
+      CellGetter.of("编码5", DataBean::getFloatl),
+      CellGetter.of("编码6", DataBean::getName),
+      CellGetter.of("编码7", DataBean::getDate),
+      CellGetter.of("编码8", DataBean::getNum));
+
 
   @Order(1)
   @Test
   public void testImport() throws Exception {
     //    testExport();
-    List<DataBean> list =
-        ExcelImport.of(new ClassPathResource("template.xlsx").getInputStream())
-            .getData(excelFields);
-    System.out.println(StringUtil.json(list, true));
-    System.err.println(list.size());
-    Assertions.assertEquals(3, list.size());
+    try (ExcelReader excelReader = ExcelReader.of(
+        new ClassPathResource("template.xlsx").getInputStream())) {
+      excelReader.column(1);
+      List<DataBean> list = excelReader.getData(rowGetter);
+      System.out.println(StringUtil.json(list, true));
+      System.err.println(list.size());
+      Assertions.assertEquals(3, list.size());
+    }
   }
 
   @Order(0)
   @Test
   public void testTemplate() {
     String filename = "build/template" + nameSuff + ".xlsx";
-    getExcelExport(filename)
-        .sheet("表格1")
-        .dataValidation(1, "1", "2", "3")
-        .template(excelFields)
-        .finish();
+    try (ExcelWriter writer = getExcelWriter(filename)) {
+      writer
+          .sheet("表格1")
+          .dataValidation(1, "1", "2", "3")
+          .template(rowSetter)
+      ;
+    }
     ExcelTestUtil.openExcel(filename);
   }
 
   @NotNull
-  protected ExcelExport getExcelExport(String filename) {
-    return ExcelExport.of(filename);
+  protected ExcelWriter getExcelWriter(String filename) {
+    return ExcelWriter.of(filename);
   }
 }

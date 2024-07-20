@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.excel
 
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.excel.write.ExcelWriter
 
 /**
  *
@@ -9,8 +10,8 @@ import org.junit.jupiter.api.Test
 class PoiExcelTest : ExcelTest() {
     override var nameSuff: String = "2"
 
-    override fun excelExport(filename: String): ExcelExport {
-        return ExcelExport.of(filename, true)
+    override fun excelExport(filename: String): ExcelWriter {
+        return ExcelWriter.of(filename, true)
     }
 
     @Test

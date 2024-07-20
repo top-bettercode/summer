@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.excel
+package top.bettercode.summer.tools.excel.read
 
 import java.io.Serializable
 
@@ -9,7 +9,7 @@ import java.io.Serializable
  * @param <P> 属性
 </P></T> */
 @FunctionalInterface
-fun interface ExcelCellSetter<T, P> : Serializable {
+fun interface PropertySetter<T, P> : Serializable {
 
     operator fun set(entity: T, property: P?)
 

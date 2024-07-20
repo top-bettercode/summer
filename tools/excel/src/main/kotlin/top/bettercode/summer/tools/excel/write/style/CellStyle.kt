@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.excel
+package top.bettercode.summer.tools.excel.write.style
 
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.Font
@@ -9,18 +9,12 @@ import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.*
 import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 
-class CellStyle : Cloneable {
-
-    var defaultValueFormatting: String? = null
-
-    /**
-     * Value formatting.
-     */
-    var valueFormatting: String? = null
-        get() = field ?: defaultValueFormatting
+class CellStyle(var valueFormatting: String = DEFAULT_FORMAT) : Cloneable {
 
     /**
      * RGB fill color.
@@ -88,7 +82,7 @@ class CellStyle : Cloneable {
 
         @JvmStatic
         fun StyleSetter.style(style: CellStyle): StyleSetter {
-            style.valueFormatting?.let { format(it) }
+            format(style.valueFormatting)
             style.fillColor?.let { fillColor(it) }
             style.fontColor?.let { fontColor(it) }
             style.fontName?.let { fontName(it) }
@@ -111,7 +105,7 @@ class CellStyle : Cloneable {
 
         @JvmStatic
         fun XSSFCellStyle.style(workbook: XSSFWorkbook, style: CellStyle): XSSFCellStyle {
-            style.valueFormatting?.let {
+            style.valueFormatting.let {
                 val dataFormat = workbook.createDataFormat()
                 val currencyFormat = dataFormat.getFormat(it)
                 this.dataFormat = currencyFormat
@@ -216,10 +210,62 @@ class CellStyle : Cloneable {
             val color = XSSFColor(byteArrayOf(red.toByte(), green.toByte(), blue.toByte()))
             return color
         }
+
+        /**
+         * 默认日期格式
+         */
+        const val DEFAULT_DATE_FORMAT = "yyyy-m-dd"
+
+        /**
+         * 默认时间格式
+         */
+        const val DEFAULT_DATE_TIME_FORMAT = "yyyy-m-dd hh:mm"
+
+        /**
+         * 默认格式
+         */
+        const val DEFAULT_FORMAT = "@"
+
+        /**
+         * 浅灰色
+         */
+        const val LIGHT_GRAY = "d9d9d9"
+
+        fun defaultFormat(propertyType: Class<*>?): String {
+            return when (propertyType) {
+                Int::class.javaObjectType, Int::class.java, Int::class.java -> {
+                    "0"
+                }
+
+                Long::class.javaObjectType, Long::class.java, Long::class.java -> {
+                    "0"
+                }
+
+                Double::class.javaObjectType, Double::class.java, Double::class.java -> {
+                    "0.00"
+                }
+
+                Float::class.javaObjectType, Float::class.java, Float::class.java -> {
+                    "0.00"
+                }
+
+                LocalDate::class.java -> {
+                    DEFAULT_DATE_FORMAT
+                }
+
+                Date::class.java, LocalDateTime::class.java -> {
+                    DEFAULT_DATE_TIME_FORMAT
+                }
+
+                else -> {
+                    DEFAULT_FORMAT
+                }
+            }
+        }
     }
 
     @JvmOverloads
-    fun headerStyle(headerStyle: Pair<String, String> = "d9d9d9" to Color.BLACK): CellStyle {
+    fun headerStyle(headerStyle: Pair<String, String> = LIGHT_GRAY to Color.BLACK): CellStyle {
         fillColor(headerStyle.first)
         fontColor(headerStyle.second)
         bold()
@@ -227,7 +273,7 @@ class CellStyle : Cloneable {
     }
 
     fun style(style: CellStyle): CellStyle {
-        style.valueFormatting?.let { this.valueFormatting = it }
+        style.valueFormatting.let { this.valueFormatting = it }
         style.fillColor?.let { this.fillColor = it }
         style.fontColor?.let { this.fontColor = it }
         style.fontName?.let { this.fontName = it }
@@ -256,7 +302,7 @@ class CellStyle : Cloneable {
  * page](https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/ee857658(v=office.14)?redirectedfrom=MSDN).
      * @return This style setter.
      */
-    fun format(numberingFormat: String?): CellStyle {
+    fun format(numberingFormat: String): CellStyle {
         valueFormatting = numberingFormat
         return this
     }
@@ -489,7 +535,6 @@ class CellStyle : Cloneable {
         if (this === other) return true
         if (other !is CellStyle) return false
 
-        if (defaultValueFormatting != other.defaultValueFormatting) return false
         if (valueFormatting != other.valueFormatting) return false
         if (fillColor != other.fillColor) return false
         if (bold != other.bold) return false
@@ -513,8 +558,7 @@ class CellStyle : Cloneable {
     }
 
     override fun hashCode(): Int {
-        var result = defaultValueFormatting?.hashCode() ?: 0
-        result = 31 * result + (valueFormatting?.hashCode() ?: 0)
+        var result = valueFormatting.hashCode()
         result = 31 * result + (fillColor?.hashCode() ?: 0)
         result = 31 * result + (bold?.hashCode() ?: 0)
         result = 31 * result + (italic?.hashCode() ?: 0)

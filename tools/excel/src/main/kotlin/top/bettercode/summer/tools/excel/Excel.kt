@@ -2,6 +2,9 @@ package top.bettercode.summer.tools.excel
 
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.Color
+import top.bettercode.summer.tools.excel.write.style.Alignment
+import top.bettercode.summer.tools.excel.write.style.CellStyle
+import java.io.Closeable
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -11,7 +14,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-interface IExcel {
+interface Excel : Closeable {
 
     companion object {
         val defaultStyle: CellStyle
@@ -29,22 +32,22 @@ interface IExcel {
 
     //--------------------------------------------
 
-    fun cell(row: Int, column: Int): ExcelCell {
-        return ExcelCell(this, defaultStyle, row, column)
+    fun cell(row: Int, column: Int): Cell {
+        return Cell(this, defaultStyle, row, column)
     }
 
-    fun cell(row: Int, column: Int, style: CellStyle): ExcelCell {
-        return ExcelCell(this, style, row, column)
+    fun cell(row: Int, column: Int, style: CellStyle): Cell {
+        return Cell(this, style, row, column)
     }
 
     //--------------------------------------------
 
-    fun range(top: Int, left: Int, bottom: Int, right: Int): ExcelRange {
-        return ExcelRange(this, defaultStyle, top, left, bottom, right)
+    fun range(top: Int, left: Int, bottom: Int, right: Int): Range {
+        return Range(this, defaultStyle, top, left, bottom, right)
     }
 
-    fun range(top: Int, left: Int, bottom: Int, right: Int, style: CellStyle): ExcelRange {
-        return ExcelRange(this, style, top, left, bottom, right)
+    fun range(top: Int, left: Int, bottom: Int, right: Int, style: CellStyle): Range {
+        return Range(this, style, top, left, bottom, right)
     }
 
     //--------------------------------------------
@@ -81,5 +84,4 @@ interface IExcel {
     //--------------------------------------------
 
     fun keepInActiveTab()
-    fun finish()
 }

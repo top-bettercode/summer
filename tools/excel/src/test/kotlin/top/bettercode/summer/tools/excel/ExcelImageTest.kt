@@ -1,14 +1,15 @@
 package top.bettercode.summer.tools.excel
 
-import org.apache.commons.io.IOUtils
 import org.apache.poi.ss.usermodel.CreationHelper
 import org.apache.poi.ss.usermodel.Drawing
 import org.apache.poi.xssf.usermodel.XSSFShape
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.junit.jupiter.api.Test
-import org.springframework.core.io.ClassPathResource
+import top.bettercode.summer.tools.excel.ExcelTestUtil.numberImage
+import top.bettercode.summer.tools.excel.write.CellSetter
+import top.bettercode.summer.tools.excel.write.ExcelWriter
+import top.bettercode.summer.tools.excel.write.RowSetter
 import java.io.FileOutputStream
-import java.io.IOException
 
 /**
  * @author Peter Wu
@@ -35,12 +36,10 @@ class ExcelImageTest {
         anchor.row2 = 3 //Row 4
 
         //FileInputStream obtains input bytes from the image file
-        val inputStream = ClassPathResource("ico.jpeg").inputStream
         //Get the contents of an InputStream as a byte[].
-        val bytes = IOUtils.toByteArray(inputStream)
+        val bytes = numberImage(1)
         //Adds a picture to the workbook
         //close the input stream
-        inputStream.close()
         val pictureIdx = wb.addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_PNG)
 
         //Creates a picture
@@ -71,22 +70,19 @@ class ExcelImageTest {
 
     @Test
     fun testMergeExportWithImage() {
-        val excelConverter = ExcelConverter { _: DataBean ->
-            try {
-                ClassPathResource("ico.jpeg").inputStream
-            } catch (ex: IOException) {
-                throw RuntimeException(ex)
-            }
-        }
-        val excelMergeFields = arrayOf(
-                ExcelField.index<DataBean, Int?>("序号"),
-                ExcelField.of("编码") { obj: DataBean -> obj.intCode }.mergeBy { obj: DataBean -> obj.intCode },
-                ExcelField.of("编码B") { obj: DataBean -> obj.integer }.mergeBy { obj: DataBean -> obj.integer },
-                ExcelField.of("名称") { _: DataBean -> arrayOf("abc", "1") },
-                ExcelField.of("描述") { obj: DataBean -> obj.name },
-                ExcelField.of("描述C") { obj: DataBean -> obj.date },
-                ExcelField.image("图片1", excelConverter).mergeBy { obj: DataBean -> obj.intCode }.width(10.0),
-                ExcelField.image("图片2", excelConverter).width(10.0).height(40.0)
+        val rowSetter = RowSetter.of(
+            CellSetter.index<DataBean, Int?>("序号").height(40.0),
+            CellSetter.of("编码") { obj: DataBean -> obj.intCode }
+                .mergeBy { obj: DataBean -> obj.intCode },
+            CellSetter.of("编码B") { obj: DataBean -> obj.integer }
+                .mergeBy { obj: DataBean -> obj.integer },
+            CellSetter.of("名称") { _: DataBean -> arrayOf("abc", "1") },
+            CellSetter.of("描述") { obj: DataBean -> obj.name },
+            CellSetter.of("描述C") { obj: DataBean -> obj.date },
+            CellSetter.image("图片1") { obj: DataBean -> numberImage(obj.intCode) }
+                .mergeBy { obj: DataBean -> obj.intCode }
+                .width(10.0),
+            CellSetter.image("图片2") { obj: DataBean -> numberImage(obj.integer2) }.width(10.0)
         )
         val list: MutableList<DataBean> = ArrayList()
         for (i in 0..21) {
@@ -96,15 +92,16 @@ class ExcelImageTest {
         for (i in 22..24) {
             val bean = DataBean()
             bean.intCode = i
+            bean.integer2 = i
             list.add(bean)
         }
         list.add(DataBean(25))
         list.add(DataBean(25))
         val s = System.currentTimeMillis()
         val filename = "build/testMergeExportWithImage.xlsx"
-        ExcelExport.of(filename, true).sheet("表格")
-                .setMergeData(list, excelMergeFields)
-                .finish()
+        ExcelWriter.of(filename, true).use {
+            it.sheet("表格").setData(list, rowSetter)
+        }
         val e = System.currentTimeMillis()
         System.err.println(e - s)
         ExcelTestUtil.openExcel(filename)

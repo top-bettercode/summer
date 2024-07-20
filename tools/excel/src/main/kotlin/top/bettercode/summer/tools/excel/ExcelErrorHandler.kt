@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.excel
 
 import org.springframework.context.MessageSource
+import top.bettercode.summer.tools.excel.read.ExcelReaderException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
 import java.time.format.DateTimeParseException
@@ -15,7 +16,7 @@ class ExcelErrorHandler(messageSource: MessageSource,
                         request: HttpServletRequest?) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(error: Throwable, respEntity: RespEntity<*>,
                                   errors: MutableMap<String?, String?>, separator: String) {
-        if (error is ExcelImportException) {
+        if (error is ExcelReaderException) {
             val cellErrors = error.errors
             for (cellError in cellErrors) {
                 val key = cellError.columnName + cellError.row

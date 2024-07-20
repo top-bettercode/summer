@@ -11,6 +11,7 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation.SEPARATOR_LINE
 import top.bettercode.summer.tools.lang.operation.RequestConverter.extractHost
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
 import java.io.IOException
 import java.net.URI
 import java.time.LocalDateTime
@@ -56,7 +57,14 @@ class FeignLogger : Logger() {
             stringBuilder.appendLine()
             stringBuilder.appendLine(marginLine)
             stringBuilder.appendLine("feign/$configKey")
-            stringBuilder.appendLine("REQUEST    TIME : ${TimeUtil.format(operationRequest.dateTime)}")
+            stringBuilder.appendLine(
+                "REQUEST    TIME : ${
+                    TimeUtil.format(
+                        operationRequest.dateTime,
+                        DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
+                    )
+                }"
+            )
             stringBuilder.appendLine(SEPARATOR_LINE)
             stringBuilder.append(
                 HttpOperation.toString(
@@ -96,7 +104,14 @@ class FeignLogger : Logger() {
             stringBuilder.appendLine()
             stringBuilder.appendLine(SEPARATOR_LINE)
             stringBuilder.appendLine("feign/$configKey")
-            stringBuilder.appendLine("RESPONSE   TIME : ${TimeUtil.format(operationResponse.dateTime)}")
+            stringBuilder.appendLine(
+                "RESPONSE   TIME : ${
+                    TimeUtil.format(
+                        operationResponse.dateTime,
+                        DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
+                    )
+                }"
+            )
             stringBuilder.appendLine("DURATION MILLIS : $elapsedTime")
             stringBuilder.appendLine(SEPARATOR_LINE)
             stringBuilder.appendLine()

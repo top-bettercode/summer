@@ -15,6 +15,7 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
 import java.net.HttpURLConnection
 import java.security.KeyStore
 import java.security.cert.X509Certificate
@@ -223,10 +224,12 @@ class SlackClient(
         params["token"] = authToken
         params["channels"] = channel
         params["content"] = message.joinToString("\n").toByteArray()
-        params["filename"] = "$title-${TimeUtil.format(timeStamp)}.log"
+        params["filename"] =
+            "$title-${TimeUtil.format(timeStamp, DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN)}.log"
         params["filetype"] = "text"
         if (title.isNotBlank()) {
-            params["title"] = "$title-${TimeUtil.format(timeStamp)}"
+            params["title"] =
+                "$title-${TimeUtil.format(timeStamp, DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN)}"
         }
         params["initial_comment"] = "$title:\n$initialComment"
         val result = request(
