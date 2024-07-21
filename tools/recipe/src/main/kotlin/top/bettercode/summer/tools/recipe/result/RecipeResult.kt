@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.result
 
+import top.bettercode.summer.tools.excel.Excel
 import top.bettercode.summer.tools.excel.FastExcel
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.result.RecipeExport.exportMaterial
@@ -29,23 +30,28 @@ class RecipeResult @JvmOverloads constructor(
     }
 
     fun toExcel(outFile: File) {
-        FastExcel.of(outFile).use { excel ->
-            excel.apply {
-                val productName = requirement.id
-                sheet("最终候选原料-$productName")
-                exportMaterial(requirement)
-                sheet("配方要求-$productName")
-                exportRequirement(requirement)
+        FastExcel.of(outFile).use {
+            toExcel()
+        }
+    }
 
-                for ((index, recipe) in recipes.withIndex()) {
-                    val sheetname = "配方${recipe.recipeName}-$productName"
-                    sheet(sheetname)
-                    if (index == 0) {
-                        keepInActiveTab()
-                    }
-                    val row = exportRecipe(recipe, true)
-                    exportProductionCost(recipe = recipe, row + 1)
+    // 输出 Excel
+    fun Excel.toExcel() {
+        this.use {
+            val productName = requirement.id
+            sheet("最终候选原料-$productName")
+            exportMaterial(requirement)
+            sheet("配方要求-$productName")
+            exportRequirement(requirement)
+
+            for ((index, recipe) in recipes.withIndex()) {
+                val sheetname = "配方${recipe.recipeName}-$productName"
+                sheet(sheetname)
+                if (index == 0) {
+                    keepInActiveTab()
                 }
+                val row = exportRecipe(recipe, true)
+                exportProductionCost(recipe = recipe, row + 1)
             }
         }
     }

@@ -283,6 +283,33 @@ object CoreProjectTasks {
                 })
             }
 
+            create("updateCode") {
+                it.group = GeneratorPlugin.GEN_GROUP
+                it.doLast(object : Action<Task> {
+                    override fun execute(t: Task) {
+                        val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
+                        val codeGen = DicCodeGen(project, ext.packageName)
+                        project.logger.lifecycle("更新代码")
+
+                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelImport"] = "top.bettercode.summer.tools.excel.read.ExcelReader"
+                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelExport"] = "top.bettercode.summer.tools.excel.write.ExcelWriter"
+                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelField"] = "top.bettercode.summer.tools.excel.write.CellSetter"
+                        replaceCodeNames["ExcelImport"] = "ExcelReader"
+                        replaceCodeNames["excelImport.setRow"] = "reader.row"
+                        replaceCodeNames["excelImport"] = "reader"
+                        replaceCodeNames["|||val excelFields: Array<ExcelField<"] = "val rowSetter"
+                        replaceCodeNames["ExcelExport.export"] = "ExcelWriter.write"
+                        replaceCodeNames["ExcelExport"] = "ExcelWriter"
+                        replaceCodeNames["|||, ?>[] excelFields = ArrayUtil.of("] = "> rowSetter = RowSetter.of("
+                        replaceCodeNames["ExcelField"] = "CellSetter"
+                        replaceCodeNames["excelFields"] = "rowSetter"
+                        replaceCodeNames["IExcel"] = "Excel"
+                        codeGen.replaceOld(replaceCodeNames)
+                        project.logger.lifecycle("更新代码完成")
+                    }
+                })
+            }
+
             create("genAuthCode") {
                 it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
@@ -320,7 +347,14 @@ object CoreProjectTasks {
                             map.forEach { node ->
                                 printNode(project, dicCodes, node)
                             }
-                            authProject.file( "src/main/java/${ packageName.replace( ".", "/" ) }/security/auth" ).deleteRecursively()
+                            authProject.file(
+                                "src/main/java/${
+                                    packageName.replace(
+                                        ".",
+                                        "/"
+                                    )
+                                }/security/auth"
+                            ).deleteRecursively()
                             codeGen.genCode(dicCodes = dicCodes, auth = true)
                             project.logger.lifecycle("======================================")
                             map.forEach { node ->

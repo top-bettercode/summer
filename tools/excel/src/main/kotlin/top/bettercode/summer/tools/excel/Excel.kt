@@ -28,6 +28,12 @@ interface Excel : Closeable {
             }
     }
 
+    fun use(block: Excel.() -> Unit) {
+        this.use { it ->
+            it.block()
+        }
+    }
+
     fun sheet(sheetname: String)
 
     //--------------------------------------------

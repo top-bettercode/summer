@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.recipe.result
 
-import top.bettercode.summer.tools.excel.FastExcel
+import top.bettercode.summer.tools.excel.Excel
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
@@ -16,7 +16,7 @@ import kotlin.math.max
  */
 object RecipeExport {
 
-    fun FastExcel.exportMaterial(requirement: RecipeRequirement) {
+    fun Excel.exportMaterial(requirement: RecipeRequirement) {
         val materials = requirement.materials.toSortedSet()
         val indicators = if (materials.isEmpty()) {
             return
@@ -56,7 +56,7 @@ object RecipeExport {
         }
     }
 
-    fun FastExcel.exportRequirement(requirement: RecipeRequirement) {
+    fun Excel.exportRequirement(requirement: RecipeRequirement) {
         requirement.apply {
             val startCol = 0
             val startRow = 0
@@ -314,7 +314,7 @@ object RecipeExport {
         }
     }
 
-    fun FastExcel.exportProductionCost(recipe: Recipe, row: Int = 0) {
+    fun Excel.exportProductionCost(recipe: Recipe, row: Int = 0) {
         recipe.productionCost.apply {
             var r = row
             var c = 0
@@ -387,7 +387,7 @@ object RecipeExport {
         }
     }
 
-    fun FastExcel.exportRecipe(recipe: Recipe, showRate: Boolean = false): Int {
+    fun Excel.exportRecipe(recipe: Recipe, showRate: Boolean = false): Int {
         val requirement = recipe.requirement
         RecipeExt(recipe).apply {
             val titles =
@@ -469,7 +469,7 @@ object RecipeExport {
                 }
                 val minEpsilon = recipe.minEpsilon
                 val valid =
-                    value - min >= -minEpsilon && value - max <= minEpsilon
+                    (value - min).scale(recipe.scale) >= -minEpsilon && (value - max).scale(recipe.scale) <= minEpsilon
                 cell(r++, c).value(value).bold()
                     .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()

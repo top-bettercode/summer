@@ -540,11 +540,20 @@ class DicCodeGen(
                 lines.forEach { line ->
                     var newLine = line
                     replaceCodeNames.forEach { (old, new) ->
-                        val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
-                        if (newLine.matches(".*${regex}.*".toRegex())) {
-                            project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
-                            newLine = newLine.replace(regex.toRegex(), "$1${new}$2")
-                            changed = true
+                        if (old.startsWith("|||")) {
+                            val oldStr = old.substring(3)
+                            if(newLine.contains(oldStr)){
+                                project.logger.warn("${file.name} $oldStr 替换为 $new")
+                                newLine = newLine.replace(oldStr, new)
+                                changed = true
+                            }
+                        } else {
+                            val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
+                            if (newLine.matches(".*${regex}.*".toRegex())) {
+                                project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
+                                newLine = newLine.replace(regex.toRegex(), "$1${new}$2")
+                                changed = true
+                            }
                         }
                     }
                     newLines.add(newLine)

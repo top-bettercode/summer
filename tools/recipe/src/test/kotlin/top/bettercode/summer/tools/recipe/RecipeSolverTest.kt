@@ -52,7 +52,7 @@ internal class RecipeSolverTest {
     val materialUnchanged = true
     val minMaterialNum = true
     val solveTimes = 1
-    val toExcel = false
+    val toExcel = true
     val epsilon = 1e-3
     val minEpsilon = 0.0
 
@@ -62,22 +62,20 @@ internal class RecipeSolverTest {
         val file = File("build/excel/time-${System.currentTimeMillis()}.xlsx")
         file.parentFile.mkdirs()
         FastExcel.of(file).use {
-            it.apply {
-                sheet("sheet1")
-                var r = 0
-                var c = 0
-                cell(r++, c).value("产品").headerStyle().width(20.0).setStyle()
-                results.forEach { (product, value) ->
-                    c = 0
-                    cell(r, c).value(product).headerStyle().setStyle()
-                    value.forEach { (solverType, time) ->
-                        c++
-                        if (r == 1)
-                            cell(0, c).value(solverType.name).headerStyle().setStyle()
-                        cell(r, c).value(time).setStyle()
-                    }
-                    r++
+            sheet("sheet1")
+            var r = 0
+            var c = 0
+            cell(r++, c).value("产品").headerStyle().width(20.0).setStyle()
+            results.forEach { (product, value) ->
+                c = 0
+                cell(r, c).value(product).headerStyle().setStyle()
+                value.forEach { (solverType, time) ->
+                    c++
+                    if (r == 1)
+                        cell(0, c).value(solverType.name).headerStyle().setStyle()
+                    cell(r, c).value(time).setStyle()
                 }
+                r++
             }
         }
 //        Runtime.getRuntime().exec(arrayOf("xdg-open", file.absolutePath))
