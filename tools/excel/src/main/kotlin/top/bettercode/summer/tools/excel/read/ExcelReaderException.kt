@@ -21,26 +21,14 @@ class ExcelReaderException(
     e
 ) {
 
-    class CellError
-    /**
-     * @param row       行号
-     * @param column    列号
-     * @param cellGetter    excelField
-     * @param value     表格单元格值
-     * @param exception 异常
-     */(
+    class CellError (
         val row: Int,
         val column: Int,
-        val cellGetter: CellGetter<*, *>,
+        val title: String,
+        private val dateFormat:String,
         value: Any?,
         val exception: Exception
     ) {
-
-        val title: String by lazy {
-            cellGetter.title
-        }
-
-        private val dateFormat by lazy { cellGetter.dateFormat }
 
         val value: String? by lazy {
             value?.let {

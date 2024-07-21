@@ -162,10 +162,10 @@ class ExcelReader private constructor(`is`: InputStream) : Closeable {
         row = this.rowNum
 
         val validators = mutableMapOf<CellGetter<F, *>, Pair<Int, Any?>>()
-        rowGetter.forEachIndexed { index, excelCell ->
-            excelCell.run {
+        rowGetter.forEachIndexed { index, cellGetter ->
+            cellGetter.run {
                 val column = column + index
-                val cellValue = this@read.value(column, excelCell.isDate)
+                val cellValue = this@read.value(column, cellGetter.isDate)
                 notAllBlank = notAllBlank || !cellValue.isNullOrBlank()
                 try {
                     entity.setProperty(cellValue, ExcelReader.validator, validateGroups)
@@ -174,21 +174,22 @@ class ExcelReader private constructor(`is`: InputStream) : Closeable {
                         CellError(
                             row = row,
                             column = column,
-                            cellGetter = excelCell,
+                            title = cellGetter.title,
+                            dateFormat = cellGetter.dateFormat,
                             value = cellValue,
                             exception = e
                         )
                     )
                 }
-                val validator = excelCell.validator
+                val validator = cellGetter.validator
                 if (validator != null) {
-                    validators[excelCell] = column to cellValue
+                    validators[cellGetter] = column to cellValue
                 }
             }
         }
         //validator
-        validators.forEach { (excelField, pair) ->
-            val validator = excelField.validator
+        validators.forEach { (cellGetter, pair) ->
+            val validator = cellGetter.validator
             try {
                 validator?.accept(entity)
             } catch (e: Exception) {
@@ -196,7 +197,8 @@ class ExcelReader private constructor(`is`: InputStream) : Closeable {
                     CellError(
                         row = row,
                         column = pair.first,
-                        cellGetter = excelField,
+                        title = cellGetter.title,
+                        dateFormat = cellGetter.dateFormat,
                         value = pair.second,
                         exception = e
                     )
