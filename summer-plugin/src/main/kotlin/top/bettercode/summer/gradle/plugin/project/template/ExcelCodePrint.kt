@@ -16,13 +16,12 @@ open class ExcelCodePrint : ProjectGenerator() {
             val filterColumns =
                 columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
 
-            import("top.bettercode.summer.tools.lang.util.ArrayUtil")
             field(
-                "excelFields",
-                JavaType("top.bettercode.util.excel.ExcelField<${excelClassName}, ?>[]"),
+                "rowSetter",
+                JavaType("top.bettercode.summer.tools.excel.write.RowSetter<${if (isFullComposite) primaryKeyClassName else className}>"),
                 isFinal = true
             ) {
-                initializationString = "ArrayUtil.of(\n"
+                initializationString = "RowSetter.of(\n"
                 val size = filterColumns.size
                 filterColumns.forEachIndexed { i, it ->
                     val code =
@@ -37,9 +36,10 @@ open class ExcelCodePrint : ProjectGenerator() {
                         } else {
                             ""
                         }
+                    import("top.bettercode.summer.tools.excel.write.CellSetter")
                     val propertyGetter =
                         "${excelClassName}::get${it.javaName.capitalized()}"
-                    initializationString += "      ExcelField.of(\"${
+                    initializationString += "      CellSetter.of(\"${
                         it.remark.split(
                             Regex(
                                 "[:：,， (（]"
@@ -50,6 +50,7 @@ open class ExcelCodePrint : ProjectGenerator() {
 
                 initializationString += "  )"
             }
+
             //export
             method("export", JavaType.void) {
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
@@ -67,11 +68,11 @@ open class ExcelCodePrint : ProjectGenerator() {
                 +"${matcherType.shortName} matcher = ${matcherType.shortName}.matching(${entityName});"
                 +"List<$className> results = ${projectEntityName}Service.findAll(matcher, sort);"
                 import("top.bettercode.util.excel.ExcelExport")
-                +"ExcelExport.sheet(\"$remarks\", excelExport -> excelExport.setData(${
+                +"ExcelWriter.sheet(\"$remarks\", writer -> writer.setData(${
                     if (isFullComposite) {
                         "results.stream().map($className::get$primaryKeyClassName).collect(Collectors.toList())"
                     } else "results"
-                }, excelFields));"
+                }, rowSetter));"
             }
 
             //template
@@ -80,21 +81,58 @@ open class ExcelCodePrint : ProjectGenerator() {
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/template.xlsx\", name = \"导入模板\")")
 
                 import("top.bettercode.util.excel.ExcelExport")
-                +"ExcelExport.sheet(\"${remarks}导入模板\", excelExport -> excelExport.template(excelFields));"
+                +"ExcelWriter.sheet(\"${remarks}导入模板\", writer -> writer.template(rowSetter));"
+            }
+
+            field(
+                "rowGetter",
+                JavaType("top.bettercode.summer.tools.excel.read.RowGetter<${if (isFullComposite) primaryKeyClassName else className}>"),
+                isFinal = true
+            ) {
+                initializationString = "RowGetter.of(\n"
+                val size = filterColumns.size
+                filterColumns.forEachIndexed { i, it ->
+                    val code =
+                        if (it.isCodeField) {
+                            if (it.javaName == it.codeType) ".code()" else ".code(${
+                                it.codeType.capitalized()
+                            }Enum.ENUM_NAME).dataValidation(${
+                                it.dicCodes()!!.codes.values.joinToString(
+                                    ", "
+                                ) { s -> "\"$s\"" }
+                            })"
+                        } else {
+                            ""
+                        }
+                    import("top.bettercode.summer.tools.excel.read.CellGetter")
+                    val propertyGetter =
+                        "${excelClassName}::get${it.javaName.capitalized()}"
+                    initializationString += "      CellGetter.of(\"${
+                        it.remark.split(
+                            Regex(
+                                "[:：,， (（]"
+                            )
+                        )[0]
+                    }\", $propertyGetter)${code}${if (i == size - 1) "" else ","}\n"
+                }
+
+                initializationString += "  )"
             }
 
             //import
             method("importTemplate", JavaType.objectInstance) {
+                annotation("@org.springframework.transaction.annotation.Transactional")
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeRequestBody = false, ignoredTimeout = true)")
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/import\", name = \"导入\")")
                 parameter {
                     type = JavaType("org.springframework.web.multipart.MultipartFile")
                     name = "file"
                 }
-
-                +"List<$excelClassName> list = ExcelImport.of(file).validateGroups(Default.class, CreateConstraint.class).getData(excelFields);"
-                +"for (UserAdminForm form : list) {"
-                +"create(form);"
+                +"try(ExcelReader reader = ExcelReader.of(file)){"
+                2 + "List<${formType.shortName}> list = reader.validateGroups(Default.class, CreateConstraint.class).getData(rowGetter);"
+                2 + "for (${formType.shortName} form : list) {"
+                2 + "create(form);"
+                2 + "}"
                 +"}"
                 +"return noContent();"
             }

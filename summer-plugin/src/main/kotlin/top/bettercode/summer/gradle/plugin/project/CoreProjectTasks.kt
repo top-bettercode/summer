@@ -186,15 +186,6 @@ object CoreProjectTasks {
                 })
             }
 
-            create("printExcelCode") {
-                it.group = GeneratorPlugin.PRINT_GROUP
-                it.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ext.generators = arrayOf(ExcelCodePrint())
-                        Generators.callInAllModule(ext)
-                    }
-                })
-            }
             create("printOldExcelCode") {
                 it.group = GeneratorPlugin.PRINT_GROUP
                 it.doLast(object : Action<Task> {
@@ -245,7 +236,7 @@ object CoreProjectTasks {
                                     val readName = findReadName(readLines, i)
                                     //ExcelField.of("商品分类名称", OrderReceivablesCusto::getCommoTyName),
                                     codes[sort] = ("""
-                    ExcelField.of("$title", $className::${readName})${
+                    CellSetter.of("$title", $className::${readName})${
                                         if (isYuanConverter || isMoneyToConverter) {
                                             ".yuan()"
                                         } else if (isCodeConverter) {
@@ -268,7 +259,7 @@ object CoreProjectTasks {
                             if (codes.isNotEmpty()) {
                                 project.logger.lifecycle("======================================")
                                 var code =
-                                    "private final ExcelField<$className, ?>[] excelFields = ArrayUtil.of(\n"
+                                    "private final RowSetter<$className> rowSetter = RowSetter.of(\n"
                                 codes.keys.sorted().forEach { c ->
                                     code += codes[c] + "\n"
                                 }

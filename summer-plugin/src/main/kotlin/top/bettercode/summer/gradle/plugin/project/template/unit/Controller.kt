@@ -66,15 +66,17 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         val excel = enable("excel", false)
         if (excel) {
-            import("top.bettercode.summer.tools.lang.util.ArrayUtil")
+            val filterColumns =
+                columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
+
             field(
-                "excelFields",
-                JavaType("top.bettercode.summer.tools.excel.ExcelField<${if (isFullComposite) primaryKeyClassName else className}, ?>[]"),
+                "rowSetter",
+                JavaType("top.bettercode.summer.tools.excel.write.RowSetter<${if (isFullComposite) primaryKeyClassName else className}>"),
                 isFinal = true
             ) {
-                initializationString = "ArrayUtil.of(\n"
-                val size = columns.size
-                columns.forEachIndexed { i, it ->
+                initializationString = "RowSetter.of(\n"
+                val size = filterColumns.size
+                filterColumns.forEachIndexed { i, it ->
                     val code =
                         if (it.isCodeField) {
                             if (it.javaName == it.codeType) ".code()" else ".code(${
@@ -83,9 +85,10 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         } else {
                             ""
                         }
+                    import("top.bettercode.summer.tools.excel.write.CellSetter")
                     val propertyGetter =
                         "${if (isFullComposite) primaryKeyClassName else className}::get${it.javaName.capitalized()}"
-                    initializationString += "      ExcelField.of(\"${
+                    initializationString += "      CellSetter.of(\"${
                         it.remark.split(
                             Regex(
                                 "[:：,， (（]"
@@ -114,13 +117,13 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +""
                 import("java.util.List")
                 +"List<$className> results = ${projectEntityName}Service.findAll(matcher, sort);"
-                import("top.bettercode.summer.tools.excel.ExcelExport")
-                +"ExcelExport.sheet(\"$remarks\", excelExport -> excelExport.setData(${
+                import("top.bettercode.summer.tools.excel.write.ExcelWriter")
+                +"ExcelWriter.sheet(\"$remarks\", writer -> writer.setData(${
                     if (isFullComposite) {
                         import("java.util.stream.Collectors")
                         "results.stream().map($className::get$primaryKeyClassName).collect(Collectors.toList())"
                     } else "results"
-                }, excelFields));"
+                }, rowSetter));"
             }
         }
 

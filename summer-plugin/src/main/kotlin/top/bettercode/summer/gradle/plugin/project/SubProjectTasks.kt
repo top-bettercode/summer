@@ -9,6 +9,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
+import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dsl.Generators
@@ -134,6 +135,16 @@ object SubProjectTasks {
                     }
 
                 }
+            }
+
+            create("printExcelCode") {
+                it.group = GeneratorPlugin.PRINT_GROUP
+                it.doLast(object : Action<Task> {
+                    override fun execute(it: Task) {
+                        ext.generators = arrayOf(ExcelCodePrint())
+                        Generators.callInAllModule(ext)
+                    }
+                })
             }
 
             if (project.isBoot) {
