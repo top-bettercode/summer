@@ -7,8 +7,7 @@ import java.io.Serializable
 /**
  * @author Peter Wu
  */
-data class DicCodes //--------------------------------------------
-    (//--------------------------------------------
+data class DicCodes(
     @JsonProperty("type")
     val type: String,
     @JsonProperty("name")

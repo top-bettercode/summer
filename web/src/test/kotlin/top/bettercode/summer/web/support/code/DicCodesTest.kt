@@ -10,9 +10,10 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 class DicCodesTest {
 
     @Test
-    fun name() {
+    fun json() {
         val dicCodes = DicCodes("test", "test", mapOf("a" to "b"))
         val json = StringUtil.json(dicCodes, true)
+        System.err.println(json)
         val readJson = StringUtil.readJson(json, DicCodes::class.java)
         System.err.println(readJson)
     }
