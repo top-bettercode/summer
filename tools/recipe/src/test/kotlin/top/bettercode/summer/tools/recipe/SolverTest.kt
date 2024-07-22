@@ -22,12 +22,22 @@ import java.io.File
  *
  * @author Peter Wu
  */
-@Disabled
 class SolverTest {
-    val epsilon = 1e-2
+    val epsilon = 1e-4
     val openExcel = false
-    val minEpsilon = 1e-3
-    val dir = "${System.getProperty("user.dir")}/build/lp"
+    val minEpsilon = epsilon
+    val requiresJson = "p_optimal_line_require.json"
+
+    //        val requiresJson = "p_optimal_line_require_realse.json"
+    private fun filter(lineId: Long) = arrayOf(
+        529L,
+        555L,
+        530L,
+        556L
+    ).contains(lineId)
+//    private fun filter(lineId: Long) = true
+
+
     val solverTypes = listOf(
         SolverType.COPT,
         SolverType.GUROBI,
@@ -36,10 +46,11 @@ class SolverTest {
         SolverType.CBC,
     )
 
+    @Disabled
     @Test
     fun compareTo() {
-        val require = "copt-1e-2-error" // eqIfNot 使用中间变量解决
-//        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
+//        val require = "copt-1e-2-error" // eqIfNot 使用中间变量解决
+        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
 //        val require = "cbc-1e-4-error2" // eqIfNot 不使用中间变量解决
 
         val content =
@@ -51,16 +62,20 @@ class SolverTest {
         solve(requirement)
     }
 
+    @Disabled
     @Test
     fun all() {
-        val inputStream = ClassPathResource("p_optimal_line_require.json").inputStream
+        val inputStream = ClassPathResource(requiresJson).inputStream
         val type = TypeFactory.defaultInstance()
             .constructCollectionType(List::class.java, OptimalLineRequire::class.java)
         val requires: List<OptimalLineRequire> = StringUtil.readJson(inputStream.readBytes(), type)
-        requires.map { RecipeRequirement.read(it.requirement!!) }.forEach {
-            solve(it)
-        }
+        requires.sortedBy { it.optimalLineId }
+            .filter { filter(it.optimalLineId!!) }
+            .map { RecipeRequirement.read(it.requirement!!) }.forEach {
+                solve(it)
+            }
     }
+
 
     private fun solve(
         requirement: RecipeRequirement
@@ -83,21 +98,21 @@ class SolverTest {
             val solved = RecipeSolver.solve(
                 solver = it,
                 requirement = requirement,
-                minMaterialNum = true,
+                minMaterialNum = false,
                 minEpsilon = minEpsilon
             )
             try {
                 solved?.validate()
             } catch (e: Exception) {
                 it.write("$dir/${requirement.id}.lp")
-                failMsgs.add(e.message!!)
+                failMsgs.add("${it.name} " + e.message!!)
             }
             if (lastSolved != null) {
                 try {
                     lastSolved!!.compareTo(solved)
                 } catch (e: Exception) {
                     it.write("$dir/${requirement.id}.lp")
-                    failMsgs.add(e.message!!)
+                    failMsgs.add("${it.name} " + e.message!!)
                 }
             }
             if (solved != null) {
@@ -115,6 +130,8 @@ class SolverTest {
         }
         Assertions.assertTrue(failMsgs.isEmpty())
     }
+
+    val dir = "${System.getProperty("user.dir")}/build/lp"
 
     @BeforeEach
     fun setUp() {

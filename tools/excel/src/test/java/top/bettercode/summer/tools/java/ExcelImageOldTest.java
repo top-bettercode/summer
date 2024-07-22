@@ -3,10 +3,8 @@ package top.bettercode.summer.tools.java;
 import static top.bettercode.summer.tools.excel.ExcelTestUtil.numberImage;
 
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -14,7 +12,6 @@ import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 import top.bettercode.summer.tools.excel.ExcelExport;
 import top.bettercode.summer.tools.excel.ExcelField;
 import top.bettercode.summer.tools.excel.ExcelTestUtil;
@@ -46,12 +43,10 @@ public class ExcelImageOldTest {
     anchor.setRow2(3); // Row 4
 
     // FileInputStream obtains input bytes from the image file
-    InputStream inputStream = new ClassPathResource("ico.jpeg").getInputStream();
     // Get the contents of an InputStream as a byte[].
-    byte[] bytes = IOUtils.toByteArray(inputStream);
+    byte[] bytes = numberImage(1);
     // Adds a picture to the workbook
     // close the input stream
-    inputStream.close();
     int pictureIdx = wb.addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_PNG);
 
     // Creates a picture

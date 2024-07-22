@@ -217,7 +217,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 122.22826086956523,
+    "weight" : 122.22826086956525,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -353,7 +353,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 37.16606564002356,
+    "weight" : 37.166065640023554,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -443,6 +443,6 @@
   "materialCost" : 2315.0805777700257,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0,
-  "waterWeight" : 29.659969427696254,
+  "waterWeight" : 29.659969427696247,
   "weight" : 1014.6599694276964
 }
