@@ -9,5 +9,6 @@ import top.bettercode.summer.tools.optimal.ortools.CBCSolver
  */
 class CBCSolverTest : SCIPSolverTest() {
 
-    override val solver: Solver = CBCSolver(epsilon = 1e-4)
+    val epsilon = 1e-4
+    override val solver: Solver = CBCSolver(epsilon = epsilon, minEpsilon = epsilon)
 }
