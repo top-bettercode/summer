@@ -293,17 +293,18 @@ object CoreProjectTasks {
 
                         replaceCodeNames["top.bettercode.summer.tools.excel.ExcelImport"] = "top.bettercode.summer.tools.excel.read.ExcelReader"
                         replaceCodeNames["top.bettercode.summer.tools.excel.ExcelExport"] = "top.bettercode.summer.tools.excel.write.ExcelWriter"
-                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelField"] = "top.bettercode.summer.tools.excel.write.CellSetter"
+                        replaceCodeNames["|||import top.bettercode.summer.tools.excel.ExcelField;"] = "import top.bettercode.summer.tools.excel.write.CellSetter;\n" +
+                                "import top.bettercode.summer.tools.excel.write.RowSetter;"
                         replaceCodeNames["ExcelImport"] = "ExcelReader"
                         replaceCodeNames["excelImport.setRow"] = "reader.row"
                         replaceCodeNames["excelImport"] = "reader"
-                        replaceCodeNames["|||val excelFields: Array<ExcelField<"] = "val rowSetter"
                         replaceCodeNames["ExcelExport.export"] = "ExcelWriter.write"
                         replaceCodeNames["ExcelExport"] = "ExcelWriter"
-                        replaceCodeNames["|||, ?>[] excelFields = ArrayUtil.of("] = "> rowSetter = RowSetter.of("
+                        replaceCodeNames["***ExcelField<(.*?), \\?>\\[\\] (.*?) = ArrayUtil\\.of\\("] = "RowSetter<\$1> \$2 = RowSetter.of("
                         replaceCodeNames["ExcelField"] = "CellSetter"
                         replaceCodeNames["excelFields"] = "rowSetter"
                         replaceCodeNames["IExcel"] = "Excel"
+                        replaceCodeNames["|||).cell("] = ").converter("
                         codeGen.replaceOld(replaceCodeNames)
                         project.logger.lifecycle("更新代码完成")
                     }

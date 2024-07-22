@@ -542,9 +542,16 @@ class DicCodeGen(
                     replaceCodeNames.forEach { (old, new) ->
                         if (old.startsWith("|||")) {
                             val oldStr = old.substring(3)
-                            if(newLine.contains(oldStr)){
+                            if (newLine.contains(oldStr)) {
                                 project.logger.warn("${file.name} $oldStr 替换为 $new")
                                 newLine = newLine.replace(oldStr, new)
+                                changed = true
+                            }
+                        } else if (old.startsWith("***")) {
+                            val regex = old.substring(3)
+                            if (newLine.matches(".*${regex}.*".toRegex())) {
+                                project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
+                                newLine = newLine.replace(regex.toRegex(), new)
                                 changed = true
                             }
                         } else {

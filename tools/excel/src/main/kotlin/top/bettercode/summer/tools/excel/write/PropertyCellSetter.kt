@@ -8,6 +8,8 @@ import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.DEFAULT
 import top.bettercode.summer.web.resolver.UnitConverter
 import top.bettercode.summer.web.support.code.CodeServiceHolder
 import java.io.Serializable
+import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.math.log10
 
 /**
@@ -115,6 +117,22 @@ class PropertyCellSetter<E, P>(
                 return@converter dicCodes?.getName(code) ?: code
             }
         }
+    }
+
+    fun stripTrailingZeros(): PropertyCellSetter<E, P> {
+        converter { property: P ->
+            when (property) {
+                is BigDecimal -> property
+                is Double -> property.toBigDecimal()
+                is Float -> property.toBigDecimal()
+                is Int -> property.toBigDecimal()
+                is Long -> property.toBigDecimal()
+                is String -> property.toBigDecimal()
+                is BigInteger -> property.toBigDecimal()
+                else -> return@converter property
+            }.stripTrailingZeros().toPlainString()
+        }
+        return this
     }
 
     /**

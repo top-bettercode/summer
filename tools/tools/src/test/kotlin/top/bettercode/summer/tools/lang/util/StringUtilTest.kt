@@ -4,11 +4,19 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.lang.util.StringUtil.objectMapper
 import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
+import java.math.BigDecimal
 
 /**
  * @author Peter Wu
  */
 class StringUtilTest {
+
+    @Test
+    fun stripTrailingZeros() {
+        val stripTrailingZeros = BigDecimal("123.000").stripTrailingZeros()
+        System.err.println(stripTrailingZeros)
+        Assertions.assertEquals("123", stripTrailingZeros.toString())
+    }
 
     @Test
     fun jsonNode() {

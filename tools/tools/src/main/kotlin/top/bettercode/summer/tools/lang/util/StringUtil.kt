@@ -590,8 +590,8 @@ object StringUtil {
     }
 
     @JvmStatic
-    fun String.trimFractionTrailing(): String {
-        return if (this.contains(".")) this.trimEnd('0').trimEnd('.') else this
+    fun String.stripTrailingZeros(): String {
+        return toBigDecimal().stripTrailingZeros().toPlainString()
     }
 
     internal val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")

@@ -12,8 +12,6 @@ import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
-import top.bettercode.summer.tools.excel.ExcelExport;
-import top.bettercode.summer.tools.excel.ExcelField;
 import top.bettercode.summer.tools.excel.ExcelTestUtil;
 import top.bettercode.summer.tools.lang.util.ArrayUtil;
 
@@ -21,6 +19,7 @@ import top.bettercode.summer.tools.lang.util.ArrayUtil;
  * @author Peter Wu
  * @since 0.0.1
  */
+@Deprecated
 public class ExcelImageOldTest {
 
   @Test
@@ -79,21 +78,21 @@ public class ExcelImageOldTest {
   @Test
   public void testMergeExportWithImage() {
 
-    ExcelField<DataBean, ?>[] excelMergeFields =
+    top.bettercode.summer.tools.excel.ExcelField<DataBean, ?>[] excelMergeFields =
         ArrayUtil.of(
-            ExcelField.<DataBean, Integer>index("序号"),
-            ExcelField.of("编码", DataBean::getIntCode)
+            top.bettercode.summer.tools.excel.ExcelField.<DataBean, Integer>index("序号"),
+            top.bettercode.summer.tools.excel.ExcelField.of("编码", DataBean::getIntCode)
                 .mergeBy(DataBean::getIntCode),
-            ExcelField.of("编码B", DataBean::getInteger)
+            top.bettercode.summer.tools.excel.ExcelField.of("编码B", DataBean::getInteger)
                 .mergeBy(DataBean::getInteger),
-            ExcelField.of("名称", from -> new String[]{"abc", "1"}),
-            ExcelField.of("描述", DataBean::getName),
-            ExcelField.of("描述C", DataBean::getDate),
-            ExcelField.<DataBean, byte[]>image("图片1",
+            top.bettercode.summer.tools.excel.ExcelField.of("名称", from -> new String[]{"abc", "1"}),
+            top.bettercode.summer.tools.excel.ExcelField.of("描述", DataBean::getName),
+            top.bettercode.summer.tools.excel.ExcelField.of("描述C", DataBean::getDate),
+            top.bettercode.summer.tools.excel.ExcelField.<DataBean, byte[]>image("图片1",
                     from -> numberImage(from.getIntCode()))
                 .mergeBy(DataBean::getIntCode)
                 .width(10),
-            ExcelField.<DataBean, byte[]>image("图片2",
+            top.bettercode.summer.tools.excel.ExcelField.<DataBean, byte[]>image("图片2",
                 from -> numberImage(from.getInteger2())).width(10).height(40.0));
 
     List<DataBean> list = new ArrayList<>();
@@ -114,7 +113,7 @@ public class ExcelImageOldTest {
 
     String filename = "build/testMergeExportWithImage.xlsx";
 
-    ExcelExport.of(filename, true)
+    top.bettercode.summer.tools.excel.ExcelExport.of(filename, true)
         .sheet("表格")
         .setMergeData(list, excelMergeFields)
         .finish();
