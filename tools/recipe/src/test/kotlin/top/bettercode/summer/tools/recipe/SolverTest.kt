@@ -28,7 +28,7 @@ class SolverTest {
     val minEpsilon = epsilon
     val requiresJson = "p_optimal_line_require.json"
 
-    //        val requiresJson = "p_optimal_line_require_realse.json"
+    //            val requiresJson = "p_optimal_line_require_realse.json"
     private fun filter(lineId: Long) = arrayOf(
         529L,
         555L,
@@ -49,9 +49,9 @@ class SolverTest {
     @Disabled
     @Test
     fun compareTo() {
-//        val require = "copt-1e-2-error" // eqIfNot 使用中间变量解决
         val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
 //        val require = "cbc-1e-4-error2" // eqIfNot 不使用中间变量解决
+//        val require = "cbc-1e-4-fail" //
 
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
