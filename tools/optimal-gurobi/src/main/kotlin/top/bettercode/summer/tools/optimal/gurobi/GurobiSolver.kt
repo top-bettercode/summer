@@ -17,7 +17,7 @@ import kotlin.math.min
  */
 class GurobiSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    minEpsilon: Double = 1e-9,
+    minEpsilon: Double = 1e-5,
     logging: Boolean = false,
     name: String = "GurobiSolver"
 ) : Solver(

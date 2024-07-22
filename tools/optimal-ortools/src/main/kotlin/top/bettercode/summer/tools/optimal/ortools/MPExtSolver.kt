@@ -40,7 +40,7 @@ open class MPExtSolver @JvmOverloads constructor(
         }
     }
 
-    private val parameters = MPSolverParameters()
+    val parameters = MPSolverParameters()
     var solver: MPSolver = MPSolver(name, mpType)
 
     var resultStatus: MPSolver.ResultStatus = MPSolver.ResultStatus.NOT_SOLVED

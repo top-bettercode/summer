@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.optimal.SolverType
  */
 class CBCSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
-    minEpsilon: Double = 1e-9,
+    minEpsilon: Double = 1e-4,
     name: String = "CBCSolver"
 ) : MPExtSolver(
     mpType = MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING,
