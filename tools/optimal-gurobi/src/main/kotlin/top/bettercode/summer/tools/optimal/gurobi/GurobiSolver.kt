@@ -33,7 +33,8 @@ class GurobiSolver @JvmOverloads constructor(
         set(GRB.IntParam.LogToConsole, if (logging) 1 else 0)
         set(GRB.DoubleParam.IntFeasTol, 1e-9)
         set(GRB.DoubleParam.OptimalityTol, 1e-9)
-//        set(GRB.DoubleParam.PerturbValue, 0.0)
+        set(GRB.DoubleParam.FeasibilityTol, 1e-9)
+        set(GRB.DoubleParam.MIPGap, 1e-9)
 
         //Cutoff:1.0E100
         //IterationLimit:1.0E100

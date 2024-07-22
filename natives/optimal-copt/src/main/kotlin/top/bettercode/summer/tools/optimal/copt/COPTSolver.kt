@@ -39,6 +39,10 @@ class COPTSolver @JvmOverloads constructor(
         model.setIntParam(copt.IntParam.Logging, if (logging) 1 else 0)
         model.setIntParam(copt.IntParam.LogToConsole, if (logging) 1 else 0)
         model.setDblParam(copt.DblParam.FeasTol, 1e-9)
+        model.setDblParam(copt.DblParam.RelGap, 1e-9)
+        model.setDblParam(copt.DblParam.DualTol, 1e-9)
+        model.setDblParam(copt.DblParam.IntTol, 1e-9)
+        model.setDblParam(copt.DblParam.AbsGap, 1e-9)
     }
 
     override fun setTimeLimit(seconds: Long) {
