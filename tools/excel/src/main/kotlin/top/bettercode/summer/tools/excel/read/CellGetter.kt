@@ -64,7 +64,7 @@ class CellGetter<E, P> {
     /**
      * 设置实体属性
      */
-    private val setter: PropertySetter<E, P?>
+    private val propertySetter: PropertySetter<E, P?>
 
     /**
      * 单元格值转属性字段值
@@ -92,19 +92,19 @@ class CellGetter<E, P> {
     private var defaultValue: P? = null
 
     //--------------------------------------------
-    constructor(title: String, propertyType: Class<P>, setter: PropertySetter<E, P?>) {
+    constructor(title: String, propertyType: Class<P>, propertySetter: PropertySetter<E, P?>) {
         this.title = title
         this.propertyType = propertyType
         this.entityType = null
         this.propertyName = null
-        this.setter = setter
+        this.propertySetter = propertySetter
     }
 
     constructor(title: String, propertyGetter: Converter<E, P?>) {
         var propertyType: Class<P>? = null
         var propertyName: String? = null
         var entityType: Class<E>? = null
-        var setter: PropertySetter<E, P?>? = null
+        var propertySetter: PropertySetter<E, P?>? = null
         try {
             val javaClass = propertyGetter::class.java
             val declaredFields = javaClass.declaredFields
@@ -134,7 +134,7 @@ class CellGetter<E, P> {
                                 throw e
                             }
                         }
-                        setter = PropertySetter { entity, property ->
+                        propertySetter = PropertySetter { entity, property ->
                             ReflectionUtils.invokeMethod(writeMethod, entity, property)
                         }
                     }
@@ -173,7 +173,7 @@ class CellGetter<E, P> {
                             throw e
                         }
                     }
-                    setter = PropertySetter { entity, property ->
+                    propertySetter = PropertySetter { entity, property ->
                         ReflectionUtils.invokeMethod(writeMethod, entity, property)
                     }
                 } else {
@@ -187,7 +187,7 @@ class CellGetter<E, P> {
         this.propertyName = propertyName
         this.propertyType = propertyType
         this.entityType = entityType
-        this.setter = setter ?: throw ExcelException("属性set方法解析错误")
+        this.propertySetter = propertySetter ?: throw ExcelException("属性set方法解析错误")
         isDate =
             propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
     }
@@ -310,7 +310,7 @@ class CellGetter<E, P> {
             isDate = isDate,
             converter = converter
         ) ?: defaultValue
-        setter.let { it[this] = property }
+        propertySetter.let { it[this] = property }
         if (propertyName != null) {
             val constraintViolations =
                 validator.validateProperty<Any>(this, propertyName, *validateGroups)
