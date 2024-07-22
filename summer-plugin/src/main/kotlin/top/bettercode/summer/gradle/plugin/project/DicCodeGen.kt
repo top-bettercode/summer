@@ -28,6 +28,7 @@ import java.util.*
 class DicCodeGen(
     private val project: Project,
     private val packageName: String,
+    private val updateCode: Boolean,
     private val replaceCodeNames: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
 ) {
 
@@ -110,8 +111,10 @@ class DicCodeGen(
     fun run() {
         docFile = FileUnit("doc/v1.0/编码类型.adoc")
 
-        project.file("src/main/java/${packageName.replace(".", "/")}/support/dic")
-            .deleteRecursively()
+        if (updateCode) {
+            project.file("src/main/java/${packageName.replace(".", "/")}/support/dic")
+                .deleteRecursively()
+        }
         docFile.apply {
             +"== 编码类型"
             +""
@@ -144,7 +147,7 @@ class DicCodeGen(
                     replaces["${className}Const.$oldCodeName"] = "${className}Const.$codeName"
                 }
             }
-            replaceOld(replaces)
+            replaceOld(project, replaces)
             project.logger.lifecycle("更新代码完成")
         }
 
@@ -530,45 +533,48 @@ class DicCodeGen(
         return result?.toUnderscore()?.replace(" ", "_")?.replace("-", "_")?.replace("'", "")
     }
 
-    fun replaceOld(replaceCodeNames: MutableMap<String, String>) {
-        project.rootDir.walkTopDown()
-            .filter { it.isFile && (it.extension == "java" || it.extension == "kt") }
-            .forEach { file ->
-                val lines = file.readLines()
-                var changed = false
-                val newLines = mutableListOf<String>()
-                lines.forEach { line ->
-                    var newLine = line
-                    replaceCodeNames.forEach { (old, new) ->
-                        if (old.startsWith("|||")) {
-                            val oldStr = old.substring(3)
-                            if (newLine.contains(oldStr)) {
-                                project.logger.warn("${file.name} $oldStr 替换为 $new")
-                                newLine = newLine.replace(oldStr, new)
-                                changed = true
-                            }
-                        } else if (old.startsWith("***")) {
-                            val regex = old.substring(3)
-                            if (newLine.matches(".*${regex}.*".toRegex())) {
-                                project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
-                                newLine = newLine.replace(regex.toRegex(), new)
-                                changed = true
-                            }
-                        } else {
-                            val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
-                            if (newLine.matches(".*${regex}.*".toRegex())) {
-                                project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
-                                newLine = newLine.replace(regex.toRegex(), "$1${new}$2")
-                                changed = true
+    companion object {
+
+        fun replaceOld(project: Project, replaceCodeNames: MutableMap<String, String>) {
+            project.rootDir.walkTopDown()
+                .filter { it.isFile && (it.extension == "java" || it.extension == "kt") }
+                .forEach { file ->
+                    val lines = file.readLines()
+                    var changed = false
+                    val newLines = mutableListOf<String>()
+                    lines.forEach { line ->
+                        var newLine = line
+                        replaceCodeNames.forEach { (old, new) ->
+                            if (old.startsWith("|||")) {
+                                val oldStr = old.substring(3)
+                                if (newLine.contains(oldStr)) {
+                                    project.logger.warn("${file.name} $oldStr 替换为 $new")
+                                    newLine = newLine.replace(oldStr, new)
+                                    changed = true
+                                }
+                            } else if (old.startsWith("***")) {
+                                val regex = old.substring(3)
+                                if (newLine.matches(".*${regex}.*".toRegex())) {
+                                    project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
+                                    newLine = newLine.replace(regex.toRegex(), new)
+                                    changed = true
+                                }
+                            } else {
+                                val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
+                                if (newLine.matches(".*${regex}.*".toRegex())) {
+                                    project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
+                                    newLine = newLine.replace(regex.toRegex(), "$1${new}$2")
+                                    changed = true
+                                }
                             }
                         }
+                        newLines.add(newLine)
                     }
-                    newLines.add(newLine)
+                    if (changed) {
+                        file.writeText(newLines.joinToString("\n") + "\n")
+                    }
                 }
-                if (changed) {
-                    file.writeText(newLines.joinToString("\n") + "\n")
-                }
-            }
+        }
     }
 }
 

@@ -83,12 +83,10 @@ open class Generator {
 
 
     val projectClassName
-        get() =
-            if (enable(
-                    "projectClassName",
-                    true
-                )
-            ) table.className + shortProjectName else table.className
+        get() = if (enable("projectClassName", true))
+            table.className + shortProjectName
+        else
+            table.className
 
     val shortProjectName
         get() =
@@ -225,7 +223,7 @@ open class Generator {
         return ext.setting(key, default)
     }
 
-    fun enable(key: String, default: Boolean = true): Boolean {
+    fun enable(key: String, default: Boolean = false): Boolean {
         return ext.enable(key, default)
     }
 

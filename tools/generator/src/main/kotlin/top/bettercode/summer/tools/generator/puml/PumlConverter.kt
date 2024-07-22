@@ -19,7 +19,7 @@ import java.util.*
  */
 object PumlConverter {
 
-    private val codeTypeCache = mutableMapOf<String, String?>()
+    private val codeTypeCache = mutableMapOf<String, String>()
 
     fun toTables(
         database: DatabaseConfiguration,
@@ -209,7 +209,7 @@ object PumlConverter {
                             }
 
                             val exist = codeTypeCache[codeType]
-                            if (codeTypeCache.containsKey(codeType) && remarks != exist) {
+                            if (exist != null && remarks != exist) {
                                 throw IllegalArgumentException("${pumlFile.name}:$tableName:$columnName codeType重复：$codeType,[$remarks]!=[$exist]")
                             } else {
                                 codeTypeCache[codeType] = remarks

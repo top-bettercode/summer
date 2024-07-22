@@ -71,7 +71,7 @@ object CoreProjectTasks {
                                 Generators.callInAllModule(ext)
                             }
                             //生成
-                            DicCodeGen(project, ext.packageName).run()
+                            DicCodeGen(project, ext.packageName, ext.enable("update")).run()
                         }
                     })
                 }
@@ -288,24 +288,27 @@ object CoreProjectTasks {
                 it.doLast(object : Action<Task> {
                     override fun execute(t: Task) {
                         val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
-                        val codeGen = DicCodeGen(project, ext.packageName)
                         project.logger.lifecycle("更新代码")
 
-                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelImport"] = "top.bettercode.summer.tools.excel.read.ExcelReader"
-                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelExport"] = "top.bettercode.summer.tools.excel.write.ExcelWriter"
-                        replaceCodeNames["|||import top.bettercode.summer.tools.excel.ExcelField;"] = "import top.bettercode.summer.tools.excel.write.CellSetter;\n" +
-                                "import top.bettercode.summer.tools.excel.write.RowSetter;"
+                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelImport"] =
+                            "top.bettercode.summer.tools.excel.read.ExcelReader"
+                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelExport"] =
+                            "top.bettercode.summer.tools.excel.write.ExcelWriter"
+                        replaceCodeNames["|||import top.bettercode.summer.tools.excel.ExcelField;"] =
+                            "import top.bettercode.summer.tools.excel.write.CellSetter;\n" +
+                                    "import top.bettercode.summer.tools.excel.write.RowSetter;"
                         replaceCodeNames["ExcelImport"] = "ExcelReader"
                         replaceCodeNames["excelImport.setRow"] = "reader.row"
                         replaceCodeNames["excelImport"] = "reader"
                         replaceCodeNames["ExcelExport.export"] = "ExcelWriter.write"
                         replaceCodeNames["ExcelExport"] = "ExcelWriter"
-                        replaceCodeNames["***ExcelField<(.*?), \\?>\\[\\] (.*?) = ArrayUtil\\.of\\("] = "RowSetter<\$1> \$2 = RowSetter.of("
+                        replaceCodeNames["***ExcelField<(.*?), \\?>\\[\\] (.*?) = ArrayUtil\\.of\\("] =
+                            "RowSetter<\$1> \$2 = RowSetter.of("
                         replaceCodeNames["ExcelField"] = "CellSetter"
                         replaceCodeNames["excelFields"] = "rowSetter"
                         replaceCodeNames["IExcel"] = "Excel"
                         replaceCodeNames["|||).cell("] = ").converter("
-                        codeGen.replaceOld(replaceCodeNames)
+                        DicCodeGen.replaceOld(project, replaceCodeNames)
                         project.logger.lifecycle("更新代码完成")
                     }
                 })
@@ -315,6 +318,7 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(t: Task) {
+                        val update = ext.enable("update")
                         val file = project.rootProject.file("conf/auth.json")
                         val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
                         val authProject = try {
@@ -329,7 +333,7 @@ object CoreProjectTasks {
                                 project
                             }
                         }
-                        val codeGen = DicCodeGen(project, ext.packageName)
+                        val codeGen = DicCodeGen(project, ext.packageName, update)
                         val packageName = project.property("app.packageName") as String
                         if (file.exists()) {
                             val map = StringUtil.readJsonTree(file.readText())
@@ -348,14 +352,15 @@ object CoreProjectTasks {
                             map.forEach { node ->
                                 printNode(project, dicCodes, node)
                             }
-                            authProject.file(
-                                "src/main/java/${
-                                    packageName.replace(
-                                        ".",
-                                        "/"
-                                    )
-                                }/security/auth"
-                            ).deleteRecursively()
+                            if (update)
+                                authProject.file(
+                                    "src/main/java/${
+                                        packageName.replace(
+                                            ".",
+                                            "/"
+                                        )
+                                    }/security/auth"
+                                ).deleteRecursively()
                             codeGen.genCode(dicCodes = dicCodes, auth = true)
                             project.logger.lifecycle("======================================")
                             map.forEach { node ->
@@ -363,14 +368,14 @@ object CoreProjectTasks {
                             }
                         }
 
-                        if (project.findProperty("app.update") == "true") {
+                        if (update) {
                             project.logger.lifecycle("更新代码")
 
                             replaceCodeNames["AuthenticationHelper.getPrincipal()"] =
                                 "AuthenticationHelper.getUserDetails()"
                             replaceCodeNames["com.cdwintech.app.support.dic.AuthEnum"] =
                                 "com.cdwintech.app.security.auth.AuthEnum"
-                            codeGen.replaceOld(replaceCodeNames)
+                            DicCodeGen.replaceOld(project, replaceCodeNames)
                             project.logger.lifecycle("更新代码完成")
                         }
                     }
