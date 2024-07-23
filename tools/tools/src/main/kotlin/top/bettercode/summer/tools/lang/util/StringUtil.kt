@@ -10,10 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateDeserializer
-import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateSerializer
-import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateTimeDeserializer
-import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateTimeSerializer
+import com.fasterxml.jackson.datatype.jsr310.ser.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -95,7 +92,9 @@ object StringUtil {
 
         module.addDeserializer(
             LocalDate::class.java,
-            MillisLocalDateDeserializer(writeDatesAsTimestamps)
+            PlusDaysMillisLocalDateDeserializer(
+                MillisLocalDateDeserializer(writeDatesAsTimestamps)
+            )
         )
         module.addDeserializer(
             LocalDateTime::class.java,

@@ -7,7 +7,6 @@ import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 
 /**
  * @author Peter Wu
@@ -68,24 +67,35 @@ class StringUtilTest {
 
     @Test
     fun jsonDate() {
-        System.err.println(StringUtil.json(Date()))
-        val localDateJson = StringUtil.json(LocalDate.now())
+        val of = TimeUtil.of(2024, 7, 7)
+        val millis = of.toMillis().toString()
+        val dateJson = StringUtil.json(of.toDate())
+        System.err.println(dateJson)
+        Assertions.assertEquals(millis, dateJson)
+        val localDateJson = StringUtil.json(of.toLocalDate())
         System.err.println(localDateJson)
-        val localDateTimeJson = StringUtil.json(LocalDateTime.now())
+        Assertions.assertEquals(millis, localDateJson)
+        val localDateTimeJson = StringUtil.json(of.toLocalDate())
         System.err.println(localDateTimeJson)
+        Assertions.assertEquals(millis, localDateTimeJson)
 
         val localDate = StringUtil.readJson(localDateJson, LocalDate::class.java)
         System.err.println(localDate)
+        Assertions.assertEquals(of.toLocalDate(), localDate)
         val localDateTime = StringUtil.readJson(localDateTimeJson, LocalDateTime::class.java)
         System.err.println(localDateTime)
+        Assertions.assertEquals(of.toLocalDateTime(), localDateTime)
     }
 
     @Test
     fun jsonDateData() {
-        val dateData = DateData(Date(), LocalDate.now(), LocalDateTime.now())
+        val of = TimeUtil.of(2024, 7, 7)
+        val dateData = DateData(of.toDate(), of.toLocalDate(), of.toLocalDateTime())
+        Assertions.assertEquals(of.toLocalDate(), dateData.localDate)
         val json = StringUtil.json(dateData)
         System.err.println(json)
         val dateData1 = StringUtil.readJson(json, DateData::class.java)
+        Assertions.assertEquals(of.toLocalDate().plusDays(1), dateData1.localDate)
         System.err.println(StringUtil.json(dateData1))
     }
 
