@@ -99,7 +99,7 @@ internal class MybatisParameterBinder(
     ): Query {
         bind(metadata.withQuery(query), mybatisParam)
         val size = mybatisParam.size
-        if (size != null) {
+        if (size != null && !size.isUnlimited()) {
             query.setFirstResult(0)
             query.setMaxResults(size.size)
             sqlLog.limit(size.size)
