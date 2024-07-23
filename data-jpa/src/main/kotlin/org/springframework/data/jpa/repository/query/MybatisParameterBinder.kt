@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.query.QueryParameterSetter.ErrorH
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.support.Size
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.limit
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
 import java.util.*
 import javax.persistence.Query
 
@@ -102,6 +103,7 @@ internal class MybatisParameterBinder(
         if (size != null && !size.isUnlimited()) {
             query.setFirstResult(0)
             query.setMaxResults(size.size)
+            sqlLog.offset(0)
             sqlLog.limit(size.size)
         }
         if (!parameters.hasPageableParameter() || accessor.pageable.isUnpaged) {
