@@ -1,12 +1,14 @@
 package top.bettercode.summer.web.support.code
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import org.springframework.util.Assert
 import java.io.Serializable
 
 /**
  * @author Peter Wu
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 data class DicCodes(
     @JsonProperty("type")
     val type: String,
