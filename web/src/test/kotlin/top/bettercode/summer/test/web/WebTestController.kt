@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.util.Assert
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import top.bettercode.summer.tools.lang.property.Settings.dicCode
@@ -24,9 +25,23 @@ import java.util.*
 @RestController
 @Validated
 class WebTestController : BaseController() {
+
+
+    @RequestMapping(value = ["/testDate"])
+    fun testDate(@RequestBody data: DateData?): Any {
+        System.err.println(data)
+        return ok(data)
+    }
+
+
     @FormDuplicateCheck
     @RequestMapping(value = ["/webtest"])
-    fun test(@Validated form: DataDicBean, @Unit cent: Long?, a: Date?, @ChinaCell cell: String?): Any {
+    fun test(
+        @Validated form: DataDicBean,
+        @Unit cent: Long?,
+        a: Date?,
+        @ChinaCell cell: String?
+    ): Any {
         System.err.println(a)
         System.err.println(cent)
         Assert.isTrue(cent == 2200L, "cent != 2200")

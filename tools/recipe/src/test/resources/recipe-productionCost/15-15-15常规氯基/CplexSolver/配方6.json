@@ -1,5 +1,5 @@
 {
-  "cost" : 2540.346311675152,
+  "cost" : 2540.346311675153,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -25,7 +25,7 @@
       "price" : 1.25,
       "unit" : "吨"
     },
-    "weight" : 359.2838936497487,
+    "weight" : 359.28389364974885,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -70,7 +70,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.107146356399265,
+        "normal" : 2.1071463563992645,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -107,7 +107,7 @@
       "price" : 4.2,
       "unit" : "吨"
     },
-    "weight" : 4.623565370483774,
+    "weight" : 4.623565370483773,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -121,7 +121,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 4.623565370483774,
+    "normalWeight" : 4.623565370483773,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -217,7 +217,7 @@
       "price" : 3.85,
       "unit" : "吨"
     },
-    "weight" : 122.22826086956528,
+    "weight" : 122.22826086956523,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -270,7 +270,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 168.01263897655986,
+    "weight" : 168.0126389765598,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
@@ -311,7 +311,7 @@
       "price" : 160.0,
       "unit" : "吨"
     },
-    "weight" : 0.06428186989510198,
+    "weight" : 0.06428186989510865,
     "id" : "七钼酸铵",
     "index" : 51,
     "indicators" : {
@@ -382,7 +382,7 @@
       "price" : 0.08,
       "unit" : "吨"
     },
-    "weight" : 18.529164906973776,
+    "weight" : 18.529164906973538,
     "id" : "青石",
     "index" : 98,
     "indicators" : {
@@ -419,7 +419,7 @@
       "price" : 3.55,
       "unit" : "吨"
     },
-    "weight" : 65.3206943567735,
+    "weight" : 65.32069435677361,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {
@@ -506,9 +506,9 @@
   "recipeName" : "CplexSolver-6",
   "scale" : 3,
   "dryWaterWeight" : 35.0,
-  "materialCost" : 2326.6909116751517,
+  "materialCost" : 2326.690911675153,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0000000000001,
-  "waterWeight" : 50.0,
+  "waterWeight" : 49.99999999999996,
   "weight" : 1035.0
 }

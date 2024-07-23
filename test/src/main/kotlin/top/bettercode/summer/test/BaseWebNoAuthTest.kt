@@ -4,8 +4,6 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -29,6 +27,7 @@ import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.test.autodoc.Autodoc
 import top.bettercode.summer.test.autodoc.Autodoc.requiredParameters
+import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.properties.SummerWebProperties
@@ -73,9 +72,6 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     @Autowired
     protected lateinit var requestLoggingProperties: RequestLoggingProperties
 
-    @JvmField
-    protected final val objectMapper: ObjectMapper = ObjectMapper()
-
     @BeforeEach
     fun setup() {
         //--------------------------------------------
@@ -108,9 +104,9 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
 
     protected fun mockMvcBuilder(): DefaultMockMvcBuilder {
         return MockMvcBuilders.webAppContextSetup(context)
-                .addFilter<DefaultMockMvcBuilder>(autoDocFilter)
-                .addFilter<DefaultMockMvcBuilder>(requestLoggingFilter)
-                .addFilter(TestErrorPageFilter(errorController, webProperties))
+            .addFilter<DefaultMockMvcBuilder>(autoDocFilter)
+            .addFilter<DefaultMockMvcBuilder>(requestLoggingFilter)
+            .addFilter(TestErrorPageFilter(errorController, webProperties))
     }
 
     protected fun contentStatusIsOk(): ResultMatcher {
@@ -124,7 +120,12 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     protected fun contentStatus(status: Int): ResultMatcher {
-        return ResultMatcher { result: MvcResult -> Assertions.assertEquals(contentAsJsonNode(result)["status"]?.asInt(), status) }
+        return ResultMatcher { result: MvcResult ->
+            Assertions.assertEquals(
+                contentAsJsonNode(result)["status"]?.asInt(),
+                status
+            )
+        }
     }
 
     protected fun contentAsJsonNode(result: MvcResult): JsonNode {
@@ -134,7 +135,10 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     private fun getFileName(result: MvcResult): String? {
         var contentDisposition = result.response.getHeader("Content-Disposition")
         return if (contentDisposition != null) {
-            contentDisposition = URLDecoder.decode(contentDisposition.replace("UTF-8''", "").replace(".*filename\\*?=(.*?)".toRegex(), "$1").trim('"'), "UTF-8")
+            contentDisposition = URLDecoder.decode(
+                contentDisposition.replace("UTF-8''", "")
+                    .replace(".*filename\\*?=(.*?)".toRegex(), "$1").trim('"'), "UTF-8"
+            )
             "build/$contentDisposition"
         } else {
             null
@@ -142,7 +146,8 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     protected fun perform(requestBuilder: RequestBuilder): ResultActions {
-        return mockMvc.perform(requestBuilder
+        return mockMvc.perform(
+            requestBuilder
         ).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(contentStatusIsOk())
     }
 
@@ -158,20 +163,29 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         var name = fileName
         val result = perform.andExpect(MockMvcResultMatchers.status().isOk()).andReturn()
         val contentType = result.response.contentType
-        if (contentType != null && MediaType.APPLICATION_JSON.isCompatibleWith(MediaType.valueOf(contentType))) {
+        if (contentType != null && MediaType.APPLICATION_JSON.isCompatibleWith(
+                MediaType.valueOf(
+                    contentType
+                )
+            )
+        ) {
             return
         }
         if (name == null) {
             name = getFileName(result)
         }
         if (name == null) return
-        StreamUtils.copy(result.response.contentAsByteArray,
-                Files.newOutputStream(Paths.get(name)))
+        StreamUtils.copy(
+            result.response.contentAsByteArray,
+            Files.newOutputStream(Paths.get(name))
+        )
         try {
             val filePath = System.getProperty("user.dir") + File.separator + name
-            if (System.getProperties().getProperty("os.name").lowercase(Locale.getDefault()).startsWith("win")) {
+            if (System.getProperties().getProperty("os.name").lowercase(Locale.getDefault())
+                    .startsWith("win")
+            ) {
                 Runtime.getRuntime()
-                        .exec(arrayOf("rundll32", "url.dll,FileProtocolHandler", filePath))
+                    .exec(arrayOf("rundll32", "url.dll,FileProtocolHandler", filePath))
             } else {
                 Runtime.getRuntime().exec(arrayOf("xdg-open", filePath))
             }
@@ -181,25 +195,56 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
 
     protected fun file(name: String, classPath: String): MockMultipartFile {
         val classPathResource = ClassPathResource(classPath)
-        return MockMultipartFile(name, classPathResource.filename, null,
-                classPathResource.inputStream)
+        return MockMultipartFile(
+            name, classPathResource.filename, null,
+            classPathResource.inputStream
+        )
     }
 
     @JvmOverloads
-    protected fun jsonAlways(`object`: Any?, writeDatesAsTimestamps: Boolean = true, pretty: Boolean = true): String {
-        return json(`object` = `object`, serializationView = null, incl = JsonInclude.Include.ALWAYS, writeDatesAsTimestamps = writeDatesAsTimestamps, pretty = pretty)
+    protected fun jsonAlways(
+        `object`: Any?,
+        serializationView: Class<*>? = null,
+        pretty: Boolean = true,
+        writeDatesAsTimestamps: Boolean = try {
+            ApplicationContextHolder.getProperty(
+                "spring.jackson.serialization.WRITE_DATES_AS_TIMESTAMPS",
+                Boolean::class.java
+            ) ?: true
+        } catch (e: Exception) {
+            true
+        },
+    ): String {
+        return json(
+            `object` = `object`,
+            serializationView = serializationView,
+            incl = JsonInclude.Include.ALWAYS,
+            writeDatesAsTimestamps = writeDatesAsTimestamps,
+            pretty = pretty
+        )
     }
 
     @JvmOverloads
-    protected fun json(`object`: Any?, serializationView: Class<*>? = null, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL, writeDatesAsTimestamps: Boolean = true, pretty: Boolean = true): String {
-        val objectMapper = objectMapper.setSerializationInclusion(incl)
-        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, pretty)
-        if (writeDatesAsTimestamps) {
-            objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            objectMapper.registerModule(StringUtil.timeModule)
-        } else {
-            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        }
+    protected fun json(
+        `object`: Any?,
+        serializationView: Class<*>? = null,
+        pretty: Boolean = true,
+        incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL,
+        writeDatesAsTimestamps: Boolean = try {
+            ApplicationContextHolder.getProperty(
+                "spring.jackson.serialization.WRITE_DATES_AS_TIMESTAMPS",
+                Boolean::class.java
+            ) ?: true
+        } catch (e: Exception) {
+            true
+        },
+    ): String {
+        val objectMapper = StringUtil.objectMapper(
+            pretty,
+            false,
+            writeDatesAsTimestamps,
+            incl ?: JsonInclude.Include.USE_DEFAULTS
+        )
         return if (serializationView != null) {
             objectMapper.writerWithView(serializationView).writeValueAsString(`object`)
         } else
@@ -219,7 +264,8 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         @AfterAll
         fun logAfterAll() {
             (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger(
-                    "org.hibernate.SQL").level = Level.OFF
+                "org.hibernate.SQL"
+            ).level = Level.OFF
         }
     }
 }

@@ -1,13 +1,19 @@
 package top.bettercode.summer.tools.lang.util
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.json.JsonWriteFeature
-import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.JavaType
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateDeserializer
+import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateSerializer
+import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateTimeDeserializer
+import com.fasterxml.jackson.datatype.jsr310.ser.MillisLocalDateTimeSerializer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -43,14 +49,21 @@ object StringUtil {
     fun objectMapper(
         format: Boolean = false,
         escapeNonAscii: Boolean = false,
+        writeDatesAsTimestamps: Boolean = true,
         include: JsonInclude.Include = JsonInclude.Include.USE_DEFAULTS
     ): ObjectMapper {
-        val key = "$format:$escapeNonAscii"
+        val key = "$format:$escapeNonAscii:$writeDatesAsTimestamps:$include"
         return cacheObjectMapper.getOrPut(key) {
             val objectMapper = ObjectMapper()
             objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 
-            objectMapper.registerModule(timeModule)
+            objectMapper.registerModule(timeModule(writeDatesAsTimestamps))
+            val value = JsonFormat.Value.forShape(
+                JsonFormat.Shape.NUMBER
+            ).withLenient(true)
+            objectMapper.configOverride(LocalDate::class.java).format = value
+            objectMapper.configOverride(LocalDateTime::class.java).format = value
+
 
             val serializationConfig = objectMapper.serializationConfig
             var config = serializationConfig
@@ -69,55 +82,27 @@ object StringUtil {
 
     }
 
-    val timeModule: SimpleModule by lazy {
-        val module = SimpleModule()
+    fun timeModule(writeDatesAsTimestamps: Boolean): SimpleModule {
+        val module = JavaTimeModule()
         module.addSerializer(
             LocalDate::class.java,
-            object : JsonSerializer<LocalDate>() {
-                override fun serialize(
-                    value: LocalDate,
-                    gen: JsonGenerator,
-                    serializers: SerializerProvider
-                ) {
-                    gen.writeNumber(TimeUtil.of(value).toMillis())
-                }
-            })
-        module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-            override fun serialize(
-                value: LocalDateTime, gen: JsonGenerator,
-                serializers: SerializerProvider?
-            ) {
-                gen.writeNumber(TimeUtil.of(value).toMillis())
-            }
-        })
+            MillisLocalDateSerializer(writeDatesAsTimestamps)
+        )
+        module.addSerializer(
+            LocalDateTime::class.java,
+            MillisLocalDateTimeSerializer(writeDatesAsTimestamps)
+        )
 
         module.addDeserializer(
             LocalDate::class.java,
-            object : JsonDeserializer<LocalDate?>() {
-                override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
-                    val valueAsString = p.valueAsString
-                    return if (valueAsString.isNullOrBlank())
-                        null
-                    else
-                        TimeUtil.toLocalDate(valueAsString.toLong())
-                }
-            })
-
+            MillisLocalDateDeserializer(writeDatesAsTimestamps)
+        )
         module.addDeserializer(
             LocalDateTime::class.java,
-            object : JsonDeserializer<LocalDateTime?>() {
-                override fun deserialize(
-                    p: JsonParser,
-                    ctxt: DeserializationContext
-                ): LocalDateTime? {
-                    val valueAsString = p.valueAsString
-                    return if (valueAsString.isNullOrBlank())
-                        null
-                    else
-                        return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
-                }
-            })
-        module
+            MillisLocalDateTimeDeserializer(writeDatesAsTimestamps)
+        )
+
+        return module
     }
 
 
@@ -236,8 +221,17 @@ object StringUtil {
 
     @JvmOverloads
     @JvmStatic
-    fun json(`object`: Any?, format: Boolean = false, escapeNonAscii: Boolean = false): String {
-        return objectMapper(format, escapeNonAscii).writeValueAsString(`object`)
+    fun json(
+        `object`: Any?,
+        format: Boolean = false,
+        escapeNonAscii: Boolean = false,
+        writeDatesAsTimestamps: Boolean = true
+    ): String {
+        return objectMapper(
+            format = format,
+            escapeNonAscii = escapeNonAscii,
+            writeDatesAsTimestamps = writeDatesAsTimestamps
+        ).writeValueAsString(`object`)
     }
 
     @JvmOverloads
@@ -245,9 +239,14 @@ object StringUtil {
     fun jsonBytes(
         `object`: Any?,
         format: Boolean = false,
-        escapeNonAscii: Boolean = false
+        escapeNonAscii: Boolean = false,
+        writeDatesAsTimestamps: Boolean = true
     ): ByteArray {
-        return objectMapper(format, escapeNonAscii).writeValueAsBytes(`object`)
+        return objectMapper(
+            format = format,
+            escapeNonAscii = escapeNonAscii,
+            writeDatesAsTimestamps = writeDatesAsTimestamps
+        ).writeValueAsBytes(`object`)
     }
 
     @JvmStatic

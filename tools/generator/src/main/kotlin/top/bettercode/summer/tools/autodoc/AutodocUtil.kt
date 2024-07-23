@@ -51,8 +51,8 @@ object AutodocUtil {
         objectMapper.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
         objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
         objectMapper.registerKotlinModule()
-                .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-        objectMapper.registerModule(StringUtil.timeModule)
+            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+        objectMapper.registerModule(StringUtil.timeModule(true))
     }
 
     fun Any.toJsonString(prettyPrint: Boolean = true): String {
@@ -71,9 +71,9 @@ object AutodocUtil {
             return try {
                 val
                         collectionType = TypeFactory.defaultInstance()
-                        .constructCollectionType(LinkedHashSet::class.java, clazz)
+                    .constructCollectionType(LinkedHashSet::class.java, clazz)
                 val set = yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType)
-                        .filterNot { it == null }
+                    .filterNot { it == null }
                 LinkedHashSet(set)
             } catch (e: Exception) {
                 log.warn("$this>>${e.message}")
@@ -96,8 +96,8 @@ object AutodocUtil {
             } else if (ClassUtils.isPrimitiveOrWrapper(this::class.java)) {
                 return this::class.java.simpleName
             } else if (this::class.java.isArray || (Collection::class.java.isAssignableFrom(this::class.java) && !Map::class.java.isAssignableFrom(
-                            this::class.java
-                    ))
+                    this::class.java
+                ))
             ) {
                 return "Array"
             }
@@ -165,12 +165,12 @@ object AutodocUtil {
     }
 
     private fun isEmpty(value: Any?) =
-            value == null || (value is Collection<*> && value.isEmpty()) || (value is Array<*> && value.isEmpty())
+        value == null || (value is Collection<*> && value.isEmpty()) || (value is Array<*> && value.isEmpty())
 
     internal fun File.readCollections(): LinkedHashSet<DocCollection> {
         return if (exists() && length() > 0) yamlMapper.readValue(
-                this.inputStream(),
-                DocCollections::class.java
+            this.inputStream(),
+            DocCollections::class.java
         ).mapTo(linkedSetOf()) { (k, v) ->
             DocCollection(k, LinkedHashSet(v), File(this.parentFile, "collection/${k}"))
         } else linkedSetOf()

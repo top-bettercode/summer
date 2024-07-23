@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     api("org.slf4j:slf4j-api")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 

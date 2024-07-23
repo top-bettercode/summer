@@ -21,6 +21,7 @@ import top.bettercode.summer.tools.lang.util.StringUtil;
  * @author Peter Wu
  * @since 0.0.1
  */
+@Deprecated
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ExcelOldTest {
 
