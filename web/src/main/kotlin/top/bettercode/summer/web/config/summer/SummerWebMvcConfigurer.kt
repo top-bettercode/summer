@@ -11,6 +11,7 @@ import org.springframework.format.FormatterRegistry
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import top.bettercode.summer.tools.lang.serializer.PlusDays
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.deprecated.DeprecatedAPIInterceptor
 import top.bettercode.summer.web.form.FormDuplicateCheckInterceptor
@@ -18,7 +19,9 @@ import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
+
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
@@ -43,9 +46,9 @@ class SummerWebMvcConfigurer(
         registry.addConverter(genericConverter(
             sourceType = String::class.java,
             targetType = Date::class.java
-        ) {
-            if (legalDate(it)) {
-                Date(it.toLong())
+        ) { source, _, _ ->
+            if (legalDate(source)) {
+                Date(source.toLong())
             } else {
                 null
             }
@@ -54,9 +57,13 @@ class SummerWebMvcConfigurer(
             genericConverter(
                 sourceType = String::class.java,
                 targetType = LocalDate::class.java
-            ) { source ->
+            ) { source, sourceType, _ ->
                 if (legalDate(source)) {
-                    of(source.toLong()).toLocalDate()
+                    val localDate = of(source.toLong()).toLocalDate()
+                    val plusDays = sourceType.getAnnotation(PlusDays::class.java)
+                    plusDays?.let {
+                        localDate.plusDays(it.value)
+                    } ?: localDate
                 } else {
                     null
                 }
@@ -65,7 +72,7 @@ class SummerWebMvcConfigurer(
             genericConverter(
                 sourceType = String::class.java,
                 targetType = LocalDateTime::class.java
-            ) { source ->
+            ) { source, _, _ ->
                 if (legalDate(source)) {
                     of(source.toLong()).toLocalDateTime()
                 } else {
@@ -77,24 +84,62 @@ class SummerWebMvcConfigurer(
             genericConverter(
                 sourceType = Date::class.java,
                 targetType = String::class.java
-            ) { source ->
+            ) { source, _, _ ->
                 source.time.toString()
             })
         registry.addConverter(
             genericConverter(
                 sourceType = LocalDate::class.java,
                 targetType = String::class.java
-            ) { source -> of(source).toMillis().toString() })
+            ) { source, _, _ -> of(source).toMillis().toString() })
         registry.addConverter(
             genericConverter(
                 sourceType = LocalDateTime::class.java,
                 targetType = String::class.java
-            ) { source -> of(source).toMillis().toString() })
+            ) { source, _, _ -> of(source).toMillis().toString() })
+
+
+        registry.addConverter(
+            object : ConditionalGenericConverter {
+                override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
+                    return setOf(
+                        GenericConverter.ConvertiblePair(
+                            String::class.java,
+                            LocalDate::class.java
+                        )
+                    )
+                }
+
+                override fun convert(
+                    source: Any?,
+                    sourceType: TypeDescriptor,
+                    targetType: TypeDescriptor
+                ): Any? {
+                    source as String?
+                    if (source.isNullOrBlank()) {
+                        return null
+                    } else {
+                        val dateTimeFormat = targetType.getAnnotation(DateTimeFormat::class.java)!!
+                        val plusDays = targetType.getAnnotation(PlusDays::class.java)!!
+                        val formatter = DateTimeFormatter.ofPattern(dateTimeFormat.pattern)
+                        val date = LocalDate.parse(source, formatter)
+                        return date.plusDays(plusDays.value)
+                    }
+                }
+
+                override fun matches(
+                    sourceType: TypeDescriptor,
+                    targetType: TypeDescriptor
+                ): Boolean {
+                    return targetType.hasAnnotation(DateTimeFormat::class.java) &&
+                            targetType.hasAnnotation(PlusDays::class.java)
+                }
+            })
     }
 
     private fun <S, T> genericConverter(
         sourceType: Class<S>, targetType: Class<T>,
-        convert: (S) -> T?
+        convert: (S, TypeDescriptor, TypeDescriptor) -> T?
     ) = object : ConditionalGenericConverter {
 
         override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
@@ -108,7 +153,7 @@ class SummerWebMvcConfigurer(
         ): Any? {
             if (source == null) return null
             @Suppress("UNCHECKED_CAST")
-            return convert(source as S)
+            return convert(source as S, sourceType, targetType)
         }
 
         override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {

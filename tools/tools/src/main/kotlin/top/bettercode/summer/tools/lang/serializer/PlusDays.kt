@@ -2,8 +2,11 @@ package top.bettercode.summer.tools.lang.serializer
 
 import com.fasterxml.jackson.annotation.JacksonAnnotation
 import java.lang.annotation.Inherited
+import java.time.LocalDate
 
 /**
+ *
+ * PlusDays [LocalDate].
  *
  * @author Peter Wu
  */
@@ -12,6 +15,7 @@ import java.lang.annotation.Inherited
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER,
     AnnotationTarget.FIELD,
+    AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.ANNOTATION_CLASS
 )
 @Retention(AnnotationRetention.RUNTIME)

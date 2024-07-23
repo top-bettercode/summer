@@ -7,25 +7,33 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.toLocalDate
 import java.io.IOException
 import java.time.LocalDate
 
 /**
  * Deserializer for Java 8 temporal [LocalDate]s.
  */
-class PlusDaysMillisLocalDateDeserializer(
-    private val delegate: MillisLocalDateDeserializer,
-    private val daysToAdd: Long = 0L
+class MillisLocalDateDeserializer(
+    private val delegate: LocalDateDeserializer,
+    private val writeDatesAsTimestamps: Boolean
 ) : StdDeserializer<LocalDate>(LocalDate::class.java), ContextualDeserializer {
 
     @Throws(IOException::class)
     override fun deserialize(parser: JsonParser, context: DeserializationContext): LocalDate? {
-        val localDate = delegate.deserialize(parser, context)
-        return if (daysToAdd != 0L) {
-            localDate?.plusDays(daysToAdd)
-        } else {
-            localDate
+        try {
+            if (writeDatesAsTimestamps) {
+                val valueAsString = parser.valueAsString
+                return if (valueAsString.isNullOrBlank()) {
+                    null
+                } else {
+                    toLocalDate(parser.longValue)
+                }
+            }
+        } catch (ignored: Exception) {
         }
+        return delegate.deserialize(parser, context)
     }
 
     @Throws(JsonMappingException::class)
@@ -34,17 +42,9 @@ class PlusDaysMillisLocalDateDeserializer(
         property: BeanProperty?
     ): JsonDeserializer<*> {
         val contextual = delegate.createContextual(ctxt, property)
-        if (property == null) {
-            return contextual
-        }
-        val annotation = property.getAnnotation(PlusDays::class.java)
-        return if (annotation == null) {
-            contextual
-        } else {
-            PlusDaysMillisLocalDateDeserializer(
-                contextual as MillisLocalDateDeserializer,
-                annotation.value
-            )
-        }
+        return MillisLocalDateDeserializer(
+            contextual as LocalDateDeserializer,
+            writeDatesAsTimestamps
+        )
     }
 }

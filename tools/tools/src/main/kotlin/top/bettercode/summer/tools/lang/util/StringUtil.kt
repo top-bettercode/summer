@@ -10,7 +10,11 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.datatype.jsr310.ser.*
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import top.bettercode.summer.tools.lang.serializer.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -83,22 +87,25 @@ object StringUtil {
         val module = JavaTimeModule()
         module.addSerializer(
             LocalDate::class.java,
-            MillisLocalDateSerializer(writeDatesAsTimestamps)
+            MillisLocalDateSerializer(LocalDateSerializer.INSTANCE, writeDatesAsTimestamps)
         )
         module.addSerializer(
             LocalDateTime::class.java,
-            MillisLocalDateTimeSerializer(writeDatesAsTimestamps)
+            MillisLocalDateTimeSerializer(LocalDateTimeSerializer.INSTANCE, writeDatesAsTimestamps)
         )
 
         module.addDeserializer(
             LocalDate::class.java,
             PlusDaysMillisLocalDateDeserializer(
-                MillisLocalDateDeserializer(writeDatesAsTimestamps)
+                MillisLocalDateDeserializer(LocalDateDeserializer.INSTANCE, writeDatesAsTimestamps)
             )
         )
         module.addDeserializer(
             LocalDateTime::class.java,
-            MillisLocalDateTimeDeserializer(writeDatesAsTimestamps)
+            MillisLocalDateTimeDeserializer(
+                LocalDateTimeDeserializer.INSTANCE,
+                writeDatesAsTimestamps
+            )
         )
 
         return module
