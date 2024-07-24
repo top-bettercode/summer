@@ -24,7 +24,8 @@ import java.io.File
  */
 class SolverTest {
     val epsilon = 1e-4
-    val openExcel = false
+    val openExcel = true
+//    val openExcel = false
     val minEpsilon = epsilon
     val requiresJson = "p_optimal_line_require.json"
 
@@ -49,9 +50,10 @@ class SolverTest {
     @Disabled
     @Test
     fun compareTo() {
-        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
+//        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
 //        val require = "cbc-1e-4-error2" // eqIfNot 不使用中间变量解决
 //        val require = "cbc-1e-4-fail" //
+        val require = "test"
 
         val content =
             File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()

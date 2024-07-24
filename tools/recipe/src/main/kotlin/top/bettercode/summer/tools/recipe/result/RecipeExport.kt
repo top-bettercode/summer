@@ -34,7 +34,8 @@ object RecipeExport {
         //原料
         var r = 0
         for (matrial in materials) {
-            val matrialName = matrial.name
+            val matrialName =
+                "${matrial.name}${if (matrial.name != matrial.id) "(${matrial.id})" else ""}"
             var c = 0
             // 原料名称
             cell(++r, c++).value(matrialName).setStyle()
@@ -556,7 +557,7 @@ object RecipeExport {
                         .format("0.00").setStyle()
                     for (i in 0..columnSize) {
                         if (i !in 1..4) {
-                            range(r, i, r1, i).merge().setStyle()
+                            range(r, i, r1, i).merge()
                         }
                     }
                     r++
