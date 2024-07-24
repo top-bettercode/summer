@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.lang.util
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.JavaType
@@ -59,12 +58,6 @@ object StringUtil {
             objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 
             objectMapper.registerModule(timeModule(writeDatesAsTimestamps))
-            val value = JsonFormat.Value.forShape(
-                JsonFormat.Shape.NUMBER
-            ).withLenient(true)
-            objectMapper.configOverride(LocalDate::class.java).format = value
-            objectMapper.configOverride(LocalDateTime::class.java).format = value
-
 
             val serializationConfig = objectMapper.serializationConfig
             var config = serializationConfig

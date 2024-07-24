@@ -1,6 +1,5 @@
 package top.bettercode.summer.web.config.summer
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.slf4j.LoggerFactory
@@ -9,20 +8,16 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.core.annotation.AnnotatedElementUtils
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.properties.JacksonExtProperties
 import top.bettercode.summer.web.serializer.MixIn
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.lang.reflect.ParameterizedType
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 @Configuration(proxyBeanMethods = false)
@@ -31,19 +26,6 @@ import java.time.LocalDateTime
 class ObjectMapperBuilderCustomizer {
 
     private val log = LoggerFactory.getLogger(ObjectMapperBuilderCustomizer::class.java)
-
-    @Bean
-    fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
-        return Jackson2ObjectMapperBuilderCustomizer { builder: Jackson2ObjectMapperBuilder ->
-            builder.postConfigurer {
-                val value = JsonFormat.Value.forShape( JsonFormat.Shape.NUMBER ).withLenient(true)
-
-                it.configOverride(LocalDate::class.java).format = value
-                it.configOverride(LocalDateTime::class.java).format = value
-            }
-        }
-    }
-
 
     @Bean
     fun timeModule(@Value("\${spring.jackson.serialization.WRITE_DATES_AS_TIMESTAMPS:true}") writeDatesAsTimestamps: Boolean): Module {

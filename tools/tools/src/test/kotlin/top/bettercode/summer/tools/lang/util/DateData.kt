@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.lang.util
 
-import top.bettercode.summer.tools.lang.serializer.PlusDays
+import top.bettercode.summer.tools.lang.serializer.EndOfDay
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -13,7 +13,7 @@ class DateData(
 
     var date: Date? = null,
 
-    @PlusDays
+    @field:EndOfDay
     var localDate: LocalDate? = null,
 
     var localDateTime: LocalDateTime? = null,
