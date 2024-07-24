@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.generator.dom.unit
 
-import top.bettercode.summer.tools.generator.SortedProperties
+import top.bettercode.summer.tools.generator.LinkedProperties
 import java.io.File
 
 /**
@@ -8,14 +8,14 @@ import java.io.File
  * @author Peter Wu
  */
 open class PropertiesUnit(
-        override val name: String,
-        override var overwrite: Boolean = false,
-        override val sourceSet: SourceSet = SourceSet.MAIN,
-        override val directorySet: DirectorySet = DirectorySet.RESOURCES
+    override val name: String,
+    override var overwrite: Boolean = false,
+    override val sourceSet: SourceSet = SourceSet.MAIN,
+    override val directorySet: DirectorySet = DirectorySet.RESOURCES
 ) : GenUnit {
-    private val properties: SortedProperties = SortedProperties(true)
+    private val properties: LinkedProperties = LinkedProperties(true)
     override var write: File.(String) -> Boolean = {
-        if (!properties.isEmpty || it.isNotBlank()) {
+        if (properties.isNotEmpty() || it.isNotBlank()) {
             properties.store(this.outputStream(), null)
             readText() != it
         } else {

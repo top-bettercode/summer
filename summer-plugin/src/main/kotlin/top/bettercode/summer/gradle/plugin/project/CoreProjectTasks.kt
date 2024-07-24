@@ -347,7 +347,6 @@ object CoreProjectTasks {
                                 type = "auth",
                                 name = "权限",
                                 javaType = JavaType.stringInstance,
-                                codes = mutableMapOf()
                             )
                             map.forEach { node ->
                                 printNode(project, dicCodes, node)

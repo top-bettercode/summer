@@ -7,8 +7,8 @@ import java.io.Serializable
  * @author Peter Wu
  */
 class DicCodes(
-        val type: String,
-        val name: String,
-        var javaType: JavaType,
-        val codes: MutableMap<Serializable, String> = mutableMapOf()
+    val type: String,
+    val name: String,
+    var javaType: JavaType,
+    val codes: LinkedHashMap<Serializable, String> = linkedMapOf()
 ) : Serializable

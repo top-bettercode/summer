@@ -9,6 +9,7 @@ import com.hankcs.hanlp.dictionary.CustomDictionary
 import org.gradle.api.Project
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
+import top.bettercode.summer.tools.generator.LinkedProperties
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.DicCodes
@@ -36,7 +37,7 @@ class DicCodeGen(
         .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
 
     private fun codeTypes(): Map<String, DicCodes> {
-        val properties = Properties()
+        val properties = LinkedProperties()
         val defaultDicCodeFile = project.file("src/main/resources/default-dic-code.properties")
         if (defaultDicCodeFile.exists())
             properties.load(defaultDicCodeFile.inputStream())
@@ -44,7 +45,7 @@ class DicCodeGen(
         if (dicCodeFile.exists()) {
             properties.load(dicCodeFile.inputStream())
 
-            val props = Properties()
+            val props = LinkedProperties()
             props.load(dicCodeFile.inputStream())
             val collectionType = fieldCollectionType
             addFields("doc/request.parameters.yml", props, collectionType)
@@ -69,13 +70,8 @@ class DicCodeGen(
     }
 
     private fun convert(properties: Properties): MutableMap<String, DicCodes> {
-        val map = TreeMap<String, DicCodes>()
-        val keys = properties.keys.sortedBy {
-            if (it.toString().contains(".")) {
-                val s = it.toString().substringAfter(".")
-                s.toIntOrNull() ?: s.hashCode()
-            } else -1
-        }
+        val map = linkedMapOf<String, DicCodes>()
+        val keys = properties.keys
         for (key in keys) {
             key as String
             val codeType: String
@@ -88,16 +84,16 @@ class DicCodeGen(
                 } else if (javaType == "String") {
                     javaType = JavaType.stringInstance.fullyQualifiedNameWithoutTypeParameters
                 }
+                val type = JavaType(javaType)
                 val dicCode = map.computeIfAbsent(codeType) {
                     DicCodes(
                         type = codeType,
                         name = properties.getProperty(codeType),
-                        javaType = JavaType(javaType)
+                        javaType = type
                     )
                 }
                 val codeKey: Serializable =
-                    if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
-                        ?: code)
+                    if (JavaType.stringInstance == type) code else code.toInt()
                 dicCode.codes[codeKey] = properties.getProperty(key)
             }
         }

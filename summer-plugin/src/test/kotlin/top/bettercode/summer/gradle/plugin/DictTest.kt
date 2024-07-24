@@ -4,7 +4,7 @@ import com.hankcs.hanlp.HanLP
 import com.hankcs.hanlp.dictionary.CustomDictionary
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.generator.SortedProperties
+import top.bettercode.summer.tools.generator.LinkedProperties
 import java.io.File
 
 /**
@@ -17,7 +17,7 @@ class DictTest {
     @Test
     fun test() {
         val file = File("src/test/resources/cedict_ts.u8")
-        val properties = SortedProperties()
+        val properties = LinkedProperties()
         file.readLines().forEach { line ->
             if (line.startsWith("#")) {
                 return@forEach
