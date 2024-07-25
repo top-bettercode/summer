@@ -63,7 +63,7 @@ class Jenkins(private val url: String, auth: String) {
         val response: String =
             restTemplate.postForObject("$url/job/${job}/config.xml", HttpEntity(config, headers))
                 ?: "成功"
-        log.warn("更新$job 配置结果:$response")
+        log.warn("更新[$job]配置结果:$response")
     }
 
     fun currentBranch(): String? {
@@ -110,7 +110,7 @@ class Jenkins(private val url: String, auth: String) {
         transformer.transform(source, result)
 
         updateConfig(job, outputStream.toByteArray())
-        log.warn("修改$job 代码分支为：$branch")
+        log.warn("修改[$job]代码分支为：$branch")
     }
 
     fun description(job: String): String {
@@ -125,7 +125,7 @@ class Jenkins(private val url: String, auth: String) {
         }
 
         restTemplate.postForEntity("$url/job/${jobName}/build", null, String::class.java)
-        log.warn("已发送build请求...")
+        log.warn("\n已发送build请求...")
         val description = description(jobName)
         if (description.isNotBlank()) {
             log.warn("job 描述信息：")
@@ -136,7 +136,7 @@ class Jenkins(private val url: String, auth: String) {
             "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
             ""
         ).capitalized()
-        log.warn("如需查看最新build信息，请运行:lastBuildInfo$envName$jobTaskName 任务")
+        log.warn("\n如需查看最新build信息，请运行:[lastBuildInfo$envName$jobTaskName]任务")
     }
 
     fun buildInfo(job: String, id: String = "lastBuild", startIndex: Int = 0) {
