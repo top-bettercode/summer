@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 
 
 /**
@@ -22,62 +23,56 @@ object RootProjectTasks {
         project.tasks.apply {
 
             val prefix = "jenkins"
-            val entries =
-                project.properties.filter { it.key.startsWith("$prefix.") && it.key.endsWith(".jobs") }
-
-            val jobs = ((if (project.properties.containsKey("$prefix.jobs")) mapOf(
-                "" to entries["$prefix.jobs"]
-            ) else emptyMap()) + entries.filter { it.key.split('.').size == 3 }.mapKeys {
-                it.key.substringAfter("$prefix.").substringBefore(".")
-            }).mapValues {
-                it.value.toString().split(",")
-                    .filter { s -> s.isNotBlank() }.distinct()
-            }
-
             val jenkinsServer = project.findProperty("$prefix.server")?.toString()
             val jenkinsAuth = project.findProperty("$prefix.auth")?.toString()
-            if (jobs.isNotEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
-                val jenkins = Jenkins(jenkinsServer, jenkinsAuth)
-                create("buildAll") {
-                    it.group = prefix
-                    it.doLast(object : Action<Task> {
-                        override fun execute(it: Task) {
-                            jobs.forEach { (env, jobNames) ->
-                                jobNames.forEach { jobName ->
-                                    jenkins.build(jobName, env)
-                                }
-                            }
-                        }
-                    })
-                }
-                jobs.forEach { (env, jobNames) ->
-                    val group = if (env.isBlank()) prefix else "$prefix $env"
-                    if (env.isNotBlank()) {
-                        create("build${env.capitalized()}") {
-                            it.group = group
-                            it.doLast(object : Action<Task> {
-                                override fun execute(it: Task) {
-                                    jobNames.forEach { jobName ->
+            if (!jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
+
+                val entries =
+                    project.properties.filter {
+                        it.key.startsWith("$prefix.jobs.")
+                                && it.key.split(".").size == 4
+                    }
+
+                val jobs = (entries.mapKeys {
+                    val key = it.key.substringAfter("$prefix.jobs.")
+                    val split = key.split(".")
+                    split.first() to split.last().toCamelCase(true)
+                }).mapValues {
+                    it.value.toString()
+                }.entries.groupBy { it.key.first }
+                    .mapValues { it.value.map { entry -> entry.key.second to entry.value } }
+
+                if (jobs.isNotEmpty()) {
+                    val jenkins = Jenkins(jenkinsServer, jenkinsAuth)
+                    create("buildAll") {
+                        it.group = prefix
+                        it.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                jobs.forEach { (env, jobPairs) ->
+                                    jobPairs.forEach { (_, jobName) ->
                                         jenkins.build(jobName, env)
                                     }
                                 }
-                            })
-                        }
+                            }
+                        })
                     }
-                    if (env in arrayOf(
-                            "",
-                            "dev",
-                            "test",
-                            "other"
-                        ) || env.startsWith("test") || env.startsWith("dev")
-                    ) {
+                    jobs.forEach { (env, jobNames) ->
+                        val group = if (env.isBlank()) prefix else "$prefix $env"
+                        if (env.isNotBlank()) {
+                            create("build${env.capitalized()}") {
+                                it.group = group
+                                it.doLast(object : Action<Task> {
+                                    override fun execute(it: Task) {
+                                        jobNames.forEach { (_, jobName) ->
+                                            jenkins.build(jobName, env)
+                                        }
+                                    }
+                                })
+                            }
+                        }
                         val envName = env.capitalized()
-                        jobNames.forEach { jobName ->
-                            val jobTaskName = jobName.replace(
-                                "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
-                                ""
-                            ).replace(env, "", true).trim('-', '_').capitalized()
-                            create("build$envName$jobTaskName") {
+                        jobNames.forEach { (projectName, jobName) ->
+                            create("build$envName$projectName") {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
@@ -85,7 +80,7 @@ object RootProjectTasks {
                                     }
                                 })
                             }
-                            create("last$envName$jobTaskName") {
+                            create("last$envName$projectName") {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
@@ -93,7 +88,7 @@ object RootProjectTasks {
                                     }
                                 })
                             }
-                            create("info$envName$jobTaskName") {
+                            create("info$envName$projectName") {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
