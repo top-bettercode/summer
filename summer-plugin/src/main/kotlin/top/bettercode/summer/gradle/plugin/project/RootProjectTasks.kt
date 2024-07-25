@@ -71,19 +71,6 @@ object RootProjectTasks {
                         ) || env.startsWith("test") || env.startsWith("dev")
                     ) {
                         val envName = if (env == "default") "" else env.capitalized()
-                        val branch = project.findProperty("$prefix.branch")?.toString()
-                        if (!branch.isNullOrBlank())
-                            create("changeBranch$envName") {
-                                it.group = prefix
-                                it.doLast(object : Action<Task> {
-                                    override fun execute(it: Task) {
-                                        jobNames.forEach { jobName ->
-                                            jenkins.changeBranch(jobName, branch)
-                                        }
-                                    }
-                                })
-                            }
-
                         jobNames.forEach { jobName ->
                             val jobTaskName = jobName.replace(
                                 "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),

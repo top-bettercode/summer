@@ -14,7 +14,10 @@ import org.w3c.dom.Element
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.client.ClientProperties
+import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import javax.xml.parsers.DocumentBuilderFactory
@@ -63,6 +66,21 @@ class Jenkins(private val url: String, auth: String) {
         log.warn("更新$job 配置结果:$response")
     }
 
+    fun currentBranch(): String? {
+        val processBuilder = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD")
+        processBuilder.directory(File("./"))
+
+        return try {
+            val process = processBuilder.start()
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            val branch = reader.readText().trim()
+            process.waitFor()
+            branch
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun changeBranch(job: String, branch: String) {
         val config = config(job)
         if (config.isNullOrBlank()) {
@@ -92,6 +110,7 @@ class Jenkins(private val url: String, auth: String) {
         transformer.transform(source, result)
 
         updateConfig(job, outputStream.toByteArray())
+        log.warn("修改$job 代码分支为：$branch")
     }
 
     fun description(job: String): String {
@@ -99,6 +118,12 @@ class Jenkins(private val url: String, auth: String) {
     }
 
     fun build(jobName: String, env: String = "default") {
+
+        currentBranch()?.let { branch ->
+            log.warn("当前分支：$branch")
+            changeBranch(jobName, branch)
+        }
+
         restTemplate.postForEntity("$url/job/${jobName}/build", null, String::class.java)
         log.warn("已发送build请求...")
         val description = description(jobName)
