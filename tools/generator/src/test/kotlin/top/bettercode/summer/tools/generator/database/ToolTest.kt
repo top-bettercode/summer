@@ -47,11 +47,6 @@ class ToolTest {
     }
 
     @Test
-    fun javaName() {
-        println(GeneratorExtension.javaName("activity_event"))
-    }
-
-    @Test
     fun annotation() {
         val regex = Annotations.regex
         val groups = regex.find("@Test")?.groupValues

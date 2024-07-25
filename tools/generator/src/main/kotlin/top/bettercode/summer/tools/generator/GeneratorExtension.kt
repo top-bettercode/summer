@@ -2,11 +2,8 @@ package top.bettercode.summer.tools.generator
 
 import top.bettercode.summer.tools.generator.dom.java.element.JavaElement
 import top.bettercode.summer.tools.generator.dsl.Generator
-import top.bettercode.summer.tools.lang.capitalized
-import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.io.File
-import java.util.*
 
 
 /**
@@ -313,21 +310,6 @@ open class GeneratorExtension(
 
 
         const val DEFAULT_MODULE_NAME: String = "app"
-
-        /**
-         * javaName
-         */
-        var javaName: (String) -> String = {
-            javaName(it, false)
-        }
-
-        @JvmStatic
-        fun javaName(str: String, capitalize: Boolean = false): String {
-            val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
-                s.lowercase(Locale.getDefault()).capitalized()
-            }
-            return if (capitalize) s else s.decapitalized()
-        }
 
         fun isDefaultModule(moduleName: String): Boolean {
             return DEFAULT_MODULE_NAME == moduleName

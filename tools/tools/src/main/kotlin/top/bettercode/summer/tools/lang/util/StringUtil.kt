@@ -13,6 +13,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.serializer.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -662,6 +664,14 @@ object StringUtil {
             val result = regex.replace(this) { "_${it.value}" }
             return result.removePrefix("_").uppercase()
         } else return this
+    }
+
+    @JvmStatic
+    fun String.toCamelCase(capitalize: Boolean = false): String {
+        val s = this.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
+            s.lowercase(Locale.getDefault()).capitalized()
+        }
+        return if (capitalize) s else s.decapitalized()
     }
 
     @JvmStatic

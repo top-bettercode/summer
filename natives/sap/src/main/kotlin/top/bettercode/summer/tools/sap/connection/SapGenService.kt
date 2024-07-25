@@ -5,10 +5,6 @@ import com.sap.conn.jco.JCoField
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
 import org.springframework.util.CollectionUtils
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.javaName
-import top.bettercode.summer.tools.lang.util.JavaType
-import top.bettercode.summer.tools.lang.util.JavaType.Companion.dateInstance
-import top.bettercode.summer.tools.lang.util.JavaType.Companion.stringInstance
 import top.bettercode.summer.tools.generator.dom.java.element.Field
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.Method
@@ -16,6 +12,10 @@ import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.SourceSet
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
+import top.bettercode.summer.tools.lang.util.JavaType
+import top.bettercode.summer.tools.lang.util.JavaType.Companion.dateInstance
+import top.bettercode.summer.tools.lang.util.JavaType.Companion.stringInstance
+import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -39,9 +39,12 @@ class SapGenService(private val sapService: SapService) {
             log.info(modifyContent(function.toXML()))
         }
         val classType = JavaType(
-                javaName("SAP_" + pojoName + "_Service", true))
-        val topLevelClass = TopLevelClass(classType, true, SourceSet.ROOT,
-                JavaVisibility.PUBLIC)
+            ("SAP_" + pojoName + "_Service").toCamelCase(true)
+        )
+        val topLevelClass = TopLevelClass(
+            classType, true, SourceSet.ROOT,
+            JavaVisibility.PUBLIC
+        )
         var field = Field()
         field.name = pojoName.uppercase() + "_FUNCTION_NAME"
         field.isStatic = true
@@ -105,60 +108,79 @@ class SapGenService(private val sapService: SapService) {
         val properties = Properties()
         genClass(pojoName, "Req", "", false, inputTables, properties)
         genClass(pojoName, "Resp", "", false, outputTables, properties)
-        genClass(pojoName, if (CollectionUtils.isEmpty(outputTables)) "Resp" else "Tables", "", false,
-                tables, properties)
+        genClass(
+            pojoName, if (CollectionUtils.isEmpty(outputTables)) "Resp" else "Tables", "", false,
+            tables, properties
+        )
         val file = File(outputDir, "$pojoName.properties")
         properties.store(Files.newBufferedWriter(file.toPath()), "SAP POJO properties")
         log.info("生成：" + file.name)
     }
 
-    private fun genClass(pojoName: String, name: String, desc: String, exist: Boolean,
-                         jCoFields: Iterable<JCoField?>?, properties: Properties) {
+    private fun genClass(
+        pojoName: String, name: String, desc: String, exist: Boolean,
+        jCoFields: Iterable<JCoField?>?, properties: Properties
+    ) {
         if (jCoFields == null || !jCoFields.iterator().hasNext()) {
             return
         }
         val classType = JavaType(
-                (if (exist) "pojo." else "") + javaName(pojoName + "_" + name, true))
+            (if (exist) "pojo." else "") + (pojoName + "_" + name).toCamelCase(true)
+        )
         val topLevelClass = TopLevelClass(
-                classType, true, SourceSet.ROOT, JavaVisibility.PUBLIC)
+            classType, true, SourceSet.ROOT, JavaVisibility.PUBLIC
+        )
         var write = false
         loop@ for (jCoField in jCoFields) {
             val jcoFieldName = jCoField!!.name
             val description = jCoField.description
-            var fieldName = javaName(jcoFieldName, false)
+            var fieldName = jcoFieldName.toCamelCase()
             properties.setProperty(fieldName, description)
             var annotation: String
             var initializationString: String? = null
             var type: JavaType?
             val javaType = JavaType(
-                    javaName(pojoName + "_" + jcoFieldName, true))
+                (pojoName + "_" + jcoFieldName).toCamelCase(true)
+            )
             if (jCoField.isStructure) {
-                annotation = "@top.bettercode.summer.tools.sap.annotation.SapStructure(\"$jcoFieldName\")"
+                annotation =
+                    "@top.bettercode.summer.tools.sap.annotation.SapStructure(\"$jcoFieldName\")"
                 when (jcoFieldName) {
                     "IS_ZSCRM2_CONTROL" -> {
-                        genClass(pojoName, jcoFieldName, description, true, jCoField.structure,
-                                properties)
+                        genClass(
+                            pojoName, jcoFieldName, description, true, jCoField.structure,
+                            properties
+                        )
                         type = JavaType("top.bettercode.summer.tools.sap.connection.pojo.SapHead")
                         fieldName = "head"
                     }
 
                     "ES_MESSAGE" -> {
-                        genClass(pojoName, jcoFieldName, description, true, jCoField.structure,
-                                properties)
-                        topLevelClass.superClass(JavaType(
-                                "top.bettercode.summer.tools.sap.connection.pojo.SapReturn").typeArgument(
-                                "top.bettercode.summer.tools.sap.connection.pojo.RkEsMessage"))
+                        genClass(
+                            pojoName, jcoFieldName, description, true, jCoField.structure,
+                            properties
+                        )
+                        topLevelClass.superClass(
+                            JavaType(
+                                "top.bettercode.summer.tools.sap.connection.pojo.SapReturn"
+                            ).typeArgument(
+                                "top.bettercode.summer.tools.sap.connection.pojo.RkEsMessage"
+                            )
+                        )
                         continue@loop
                     }
 
                     else -> {
                         type = javaType
-                        genClass(pojoName, jcoFieldName, description, false, jCoField.structure,
-                                properties)
+                        genClass(
+                            pojoName, jcoFieldName, description, false, jCoField.structure,
+                            properties
+                        )
                     }
                 }
             } else if (jCoField.isTable) {
-                annotation = "@top.bettercode.summer.tools.sap.annotation.SapTable(\"$jcoFieldName\")"
+                annotation =
+                    "@top.bettercode.summer.tools.sap.annotation.SapTable(\"$jcoFieldName\")"
                 if ("ET_RETURN" == jcoFieldName) {
                     topLevelClass.superClass("top.bettercode.summer.tools.sap.connection.pojo.EtReturns")
                     genClass(pojoName, jcoFieldName, description, true, jCoField.table, properties)
@@ -168,7 +190,8 @@ class SapGenService(private val sapService: SapService) {
                     genClass(pojoName, jcoFieldName, description, false, jCoField.table, properties)
                 }
             } else {
-                annotation = "@top.bettercode.summer.tools.sap.annotation.SapField(\"$jcoFieldName\")"
+                annotation =
+                    "@top.bettercode.summer.tools.sap.annotation.SapField(\"$jcoFieldName\")"
                 var value: Any? = null
                 try {
                     value = jCoField.value
@@ -202,8 +225,10 @@ class SapGenService(private val sapService: SapService) {
                     16 -> type = JavaType("com.sap.conn.jco.rt.DefaultAbapObject")
                     17 -> type = JavaType("com.sap.conn.jco.rt.DefaultStructure")
                     99 -> type = JavaType("com.sap.conn.jco.rt.DefaultTable")
-                    else -> throw ConversionException(jcoFieldName + " unsupported type: " + jCoFieldType + "("
-                            + jCoField.typeAsString + ")")
+                    else -> throw ConversionException(
+                        jcoFieldName + " unsupported type: " + jCoFieldType + "("
+                                + jCoField.typeAsString + ")"
+                    )
                 }
             }
             write = true
@@ -221,7 +246,14 @@ class SapGenService(private val sapService: SapService) {
             val setMethod = Method()
             setMethod.visibility = JavaVisibility.PUBLIC
             setMethod.name = "set" + fieldName.capitalized()
-            setMethod.javadoc("/**", " * 设置$description", " *", " * @param $fieldName $description", " * @return " + desc.ifBlank { classType.shortName }, " */")
+            setMethod.javadoc(
+                "/**",
+                " * 设置$description",
+                " *",
+                " * @param $fieldName $description",
+                " * @return " + desc.ifBlank { classType.shortName },
+                " */"
+            )
             setMethod.bodyLine("this.$fieldName = $fieldName;")
             setMethod.bodyLine("return this;")
             getMethod.returnType = type
@@ -240,7 +272,7 @@ class SapGenService(private val sapService: SapService) {
             toStringMethod.annotation("@Override")
             toStringMethod.bodyLine("return StringUtil.json(this);")
             topLevelClass.importedTypes
-                    .add(JavaType("top.bettercode.summer.tools.lang.util.StringUtil"))
+                .add(JavaType("top.bettercode.summer.tools.lang.util.StringUtil"))
             topLevelClass.method(toStringMethod)
             topLevelClass.writeTo(outputDir)
         }

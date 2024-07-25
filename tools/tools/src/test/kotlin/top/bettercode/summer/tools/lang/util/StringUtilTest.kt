@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.lang.util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.lang.util.StringUtil.objectMapper
+import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -104,5 +105,11 @@ class StringUtilTest {
         System.err.println("javaName".toUnderscore())
         System.err.println("JAVA_NAME".toUnderscore())
     }
+
+    @Test
+    fun toCamelCase() {
+        println("activity-event".toCamelCase())
+    }
+
 
 }

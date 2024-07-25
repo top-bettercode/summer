@@ -1,8 +1,8 @@
 package top.bettercode.summer.tools.generator.database.entity
 
-import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.ColumnJavaTypeResolver
 import top.bettercode.summer.tools.lang.util.JavaType
+import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import java.math.RoundingMode
 import java.util.*
 
@@ -118,7 +118,7 @@ data class Column(
             by lazy { ColumnJavaTypeResolver.calculateJavaType(this) }
 
 
-    val javaName: String = GeneratorExtension.javaName(this.columnName)
+    val javaName: String = this.columnName.toCamelCase()
 
     val defaultDesc: String by lazy {
         val isString = JavaType.stringInstance == javaType

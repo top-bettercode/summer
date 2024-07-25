@@ -21,6 +21,7 @@ import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import java.io.File
 import java.util.*
 
@@ -494,7 +495,7 @@ object CoreProjectTasks {
         }"
 
         val authClassName =
-            "Auth${GeneratorExtension.javaName(codeGen.codeName(code, name), true)}"
+            "Auth${codeGen.codeName(code, name).toCamelCase(true)}"
         replaceCodeNames[oldAuthName] = authClassName
         val packageName = project.property("app.packageName") as String
         Interface(

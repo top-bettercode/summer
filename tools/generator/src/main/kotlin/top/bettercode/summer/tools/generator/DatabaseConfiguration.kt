@@ -7,10 +7,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.javaName
 import top.bettercode.summer.tools.generator.database.DatabaseMetaData
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import java.sql.Connection
 import java.sql.DriverManager
 import java.util.*
@@ -110,21 +110,18 @@ data class DatabaseConfiguration(
                     true
                 )
             })
-            javaName(columnName)
+            columnName.toCamelCase()
         else
             className(tableName)
-                .decapitalized() + javaName(
-                columnName,
-                true
-            )
+                .decapitalized() + columnName.toCamelCase(true)
     }
 
     /**
      * ClassName
      */
     fun className(tableName: String): String {
-        return javaName(
-            (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + fixTableName(tableName), true
+        return ((if (entityPrefix.isBlank()) "" else entityPrefix + "_") + fixTableName(tableName)).toCamelCase(
+            true
         )
     }
 
