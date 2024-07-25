@@ -36,7 +36,9 @@ object RootProjectTasks {
                 val jobs = (entries.mapKeys {
                     val key = it.key.substringAfter("$prefix.jobs.")
                     val split = key.split(".")
-                    split.first() to split.last().toCamelCase(true)
+                    val projectName = split.first()
+                    val jobName = "[${split.last().toCamelCase(true)}]"
+                    projectName to jobName
                 }).mapValues {
                     it.value.toString()
                 }.entries.groupBy { it.key.first }
