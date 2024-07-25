@@ -117,7 +117,7 @@ class Jenkins(private val url: String, auth: String) {
         return restTemplate.getForObject("$url/job/${job}/description") ?: ""
     }
 
-    fun build(jobName: String, env: String = "default") {
+    fun build(jobName: String, env: String = "") {
 
         currentBranch()?.let { branch ->
             log.warn("当前分支：$branch")
@@ -131,7 +131,7 @@ class Jenkins(private val url: String, auth: String) {
             log.warn("job 描述信息：")
             log.warn(description)
         }
-        val envName = if (env == "default") "" else env.capitalized()
+        val envName = env.capitalized()
         val jobTaskName = jobName.replace(
             "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
             ""

@@ -26,7 +26,7 @@ object RootProjectTasks {
                 project.properties.filter { it.key.startsWith("$prefix.") && it.key.endsWith(".jobs") }
 
             val jobs = ((if (project.properties.containsKey("$prefix.jobs")) mapOf(
-                "default" to entries["$prefix.jobs"]
+                "" to entries["$prefix.jobs"]
             ) else emptyMap()) + entries.filter { it.key.split('.').size == 3 }.mapKeys {
                 it.key.substringAfter("$prefix.").substringBefore(".")
             }).mapValues {
@@ -51,9 +51,10 @@ object RootProjectTasks {
                     })
                 }
                 jobs.forEach { (env, jobNames) ->
-                    if (env != "default") {
+                    val group = if (env.isBlank()) prefix else "$prefix $env"
+                    if (env.isNotBlank()) {
                         create("build${env.capitalized()}") {
-                            it.group = prefix
+                            it.group = group
                             it.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
                                     jobNames.forEach { jobName ->
@@ -64,36 +65,36 @@ object RootProjectTasks {
                         }
                     }
                     if (env in arrayOf(
-                            "default",
+                            "",
                             "dev",
                             "test",
                             "other"
                         ) || env.startsWith("test") || env.startsWith("dev")
                     ) {
-                        val envName = if (env == "default") "" else env.capitalized()
+                        val envName = env.capitalized()
                         jobNames.forEach { jobName ->
                             val jobTaskName = jobName.replace(
                                 "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
                                 ""
-                            ).capitalized()
+                            ).replace(env, "", true).trim('-', '_').capitalized()
                             create("build$envName$jobTaskName") {
-                                it.group = prefix
+                                it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
                                         jenkins.build(jobName, env)
                                     }
                                 })
                             }
-                            create("lastBuildInfo$envName$jobTaskName") {
-                                it.group = prefix
+                            create("last$envName$jobTaskName") {
+                                it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
                                         jenkins.buildInfo(jobName)
                                     }
                                 })
                             }
-                            create("description$envName$jobTaskName") {
-                                it.group = prefix
+                            create("info$envName$jobTaskName") {
+                                it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
                                         val description = jenkins.description(jobName)
