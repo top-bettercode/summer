@@ -37,23 +37,23 @@ object AsciidocGenerator {
                 val htmlFile = autodoc.htmlFile(pyname)
                 html(adocFile, htmlFile)
                 htmlFile.writeText(
-                        htmlFile.readText()
-                                .replace(
-                                        "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700",
-                                        "static/Open+Sans.css"
-                                )
-                                .replace(
-                                        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
-                                        "static/font-awesome.min.css"
-                                )
-                                .replace(
-                                        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js",
-                                        "static/highlight.min.js"
-                                )
-                                .replace(
-                                        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css",
-                                        "static/github.min.css"
-                                )
+                    htmlFile.readText()
+                        .replace(
+                            "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700",
+                            "static/Open+Sans.css"
+                        )
+                        .replace(
+                            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+                            "static/font-awesome.min.css"
+                        )
+                        .replace(
+                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js",
+                            "static/highlight.min.js"
+                        )
+                        .replace(
+                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css",
+                            "static/github.min.css"
+                        )
                 )
             }
         }
@@ -94,13 +94,13 @@ object AsciidocGenerator {
             optionsBuilder.backend("pdf")
 //asciidoctor-pdf -a scripts=cjk -a pdf-theme=./themes/cjk-theme.yml -a pdf-fontsdir=./themes document.adoc
             optionsBuilder.attributes(
-                    Attributes.builder().attributes(
-                            mapOf(
-                                    "scripts" to "cjk",
-                                    "pdf-fontsdir" to "uri:classloader:/themes;GEM_FONTS_DIR;",
-                                    "pdf-theme" to "uri:classloader:/themes/cjk-theme.yml"
-                            )
-                    ).build()
+                Attributes.builder().attributes(
+                    mapOf(
+                        "scripts" to "cjk",
+                        "pdf-fontsdir" to "uri:classloader:/themes;GEM_FONTS_DIR;",
+                        "pdf-theme" to "uri:classloader:/themes/cjk-theme.yml"
+                    )
+                ).build()
             )
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
@@ -109,12 +109,12 @@ object AsciidocGenerator {
                 asciidoctor.requireLibrary("asciidoctor-diagram")
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
                 log.warn(
-                        "${if (outFile.exists()) "覆盖" else "生成"}：${
-                            if (prefixPath == null) outFile.path else
-                                outFile.absolutePath.substringAfter(
-                                        prefixPath.absolutePath + File.separator
-                                )
-                        }"
+                    "${if (outFile.exists()) "覆盖" else "生成"}：${
+                        if (prefixPath == null) outFile.path else
+                            outFile.absolutePath.substringAfter(
+                                prefixPath.absolutePath + File.separator
+                            )
+                    }"
                 )
             } catch (e: Exception) {
                 log.error(e.message, e)
@@ -127,16 +127,17 @@ object AsciidocGenerator {
     }
 
     private fun moduleToc(
-            autodoc: AutodocExtension,
-            currentName: String,
-            pynames: MutableMap<String, Int>
+        autodoc: AutodocExtension,
+        currentName: String,
+        pynames: MutableMap<String, Int>
     ): String {
         val pw = StringBuilder()
+        pw.appendLine("== 其他版本")
         autodoc.listModuleNames { name, pyname ->
             if (name != currentName) {
                 pw.appendLine()
                 pw.appendLine("[[_${pynames.pyname(name)}]]")
-                pw.appendLine("== link:$pyname.html[$name]")
+                pw.appendLine("* link:$pyname.html[$name]")
             }
         }
         return pw.toString()
@@ -176,7 +177,7 @@ object AsciidocGenerator {
     fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
-                ?: autodoc.source.absolutePath) + File.separator
+            ?: autodoc.source.absolutePath) + File.separator
         val commonAdocs = autodoc.commonAdocs()
         autodoc.listModules { module, pyname ->
             module.clean()
@@ -197,7 +198,7 @@ object AsciidocGenerator {
                         }
                     } else {
                         out.println(
-                                """:doctype: book
+                            """:doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
@@ -213,17 +214,17 @@ object AsciidocGenerator {
                 }
                 if (!pdf) {
                     out.print(
-                            moduleToc(
-                                    autodoc,
-                                    module.name,
-                                    pynames
-                            )
+                        moduleToc(
+                            autodoc,
+                            module.name,
+                            pynames
+                        )
                     )
                     out.print(
-                            postmanLink(
-                                    autodoc,
-                                    pyname
-                            )
+                        postmanLink(
+                            autodoc,
+                            pyname
+                        )
                     )
                 }
                 if (autodoc.readme.exists()) {
@@ -239,7 +240,7 @@ object AsciidocGenerator {
                 val properties = autodoc.properties
                 (commonAdocs + autodoc.commonAdocs(module)).sortedWith { o1, o2 ->
                     if (o1.name == "README.adoc") -1 else o1.name.compareTo(
-                            o2.name
+                        o2.name
                     )
                 }.forEach {
                     out.println()
@@ -274,7 +275,7 @@ object AsciidocGenerator {
                     collection.operations.forEach { operation ->
                         out.println()
                         val operationPath =
-                                operation.operationFile.absolutePath.substringAfter(sourcePath)
+                            operation.operationFile.absolutePath.substringAfter(sourcePath)
                         val operationName = operation.name.replace(AutodocUtil.REPLACE_CHAR, "/")
                         out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
@@ -290,112 +291,112 @@ object AsciidocGenerator {
                             out.println(".1+.^|方法 6+.^|${method}")
 
                             out.println(
-                                    ".1+.^|地址 6+.^|link:{apiAddress}${
-                                        str(
-                                                HttpOperation.getRestRequestPath(
-                                                        request
-                                                )
+                                ".1+.^|地址 6+.^|link:{apiAddress}${
+                                    str(
+                                        HttpOperation.getRestRequestPath(
+                                            request
                                         )
-                                    }[{apiAddress}++$restUri++]"
+                                    )
+                                }[{apiAddress}++$restUri++]"
                             )
 
                             if (uriVariablesExt.isNotEmpty()) {
                                 val uriFields =
-                                        uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
+                                    uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
                                 out.println(".${uriFields.size + 1}+.^|URL")
                                 out.println("h|名称 h|类型 3+h|描述 h|示例")
                                 uriFields.forEach {
                                     out.print(
-                                            "|${
-                                                str(
-                                                        it.name
-                                                )
-                                            }"
+                                        "|${
+                                            str(
+                                                it.name
+                                            )
+                                        }"
                                     )
                                     out.print(
-                                            "|${
-                                                str(
-                                                        it.type
-                                                )
-                                            }"
+                                        "|${
+                                            str(
+                                                it.type
+                                            )
+                                        }"
                                     )
                                     out.print(
-                                            " 3+|${
-                                                str(
-                                                        it.description,
-                                                        true
-                                                )
-                                            }"
+                                        " 3+|${
+                                            str(
+                                                it.description,
+                                                true
+                                            )
+                                        }"
                                     )
                                     out.print(
-                                            "|${
-                                                str(
-                                                        it.value
-                                                )
-                                            }"
+                                        "|${
+                                            str(
+                                                it.value
+                                            )
+                                        }"
                                     )
                                     out.println()
                                 }
                             }
                             if (headersExt.isNotEmpty()) {
                                 val headerFields =
-                                        headersExt.checkBlank("$operationPath:request.headersExt")
+                                    headersExt.checkBlank("$operationPath:request.headersExt")
                                 out.println(".${headerFields.size + 1}+.^|请求头")
                                 out.println("h|名称 h|类型 h|必填 2+h|描述 h|示例")
                                 headerFields.forEach {
                                     out.print(
-                                            "|${
-                                                str(
-                                                        it.name
-                                                )
-                                            }"
+                                        "|${
+                                            str(
+                                                it.name
+                                            )
+                                        }"
                                     )
                                     out.print(
-                                            "|${
-                                                str(
-                                                        it.type
-                                                )
-                                            }"
+                                        "|${
+                                            str(
+                                                it.type
+                                            )
+                                        }"
                                     )
                                     out.print(
-                                            "|${
-                                                str(
-                                                        it.requiredDescription
-                                                )
-                                            }"
+                                        "|${
+                                            str(
+                                                it.requiredDescription
+                                            )
+                                        }"
                                     )
                                     out.print(
-                                            " 2+|${
-                                                str(
-                                                        it.description,
-                                                        true
-                                                )
-                                            }"
+                                        " 2+|${
+                                            str(
+                                                it.description,
+                                                true
+                                            )
+                                        }"
                                     )
                                     out.print(
-                                            "|${
-                                                str(
-                                                        it.value
-                                                )
-                                            }"
+                                        "|${
+                                            str(
+                                                it.value
+                                            )
+                                        }"
                                     )
                                     out.println()
                                 }
                             }
 
                             val parameterFields =
-                                    parametersExt.checkBlank("$operationPath:request.parametersExt")
+                                parametersExt.checkBlank("$operationPath:request.parametersExt")
                             val partsFields = partsExt.checkBlank("$operationPath:request.partsExt")
                             val contentFields =
-                                    contentExt.checkBlank("$operationPath:request.contentExt")
+                                contentExt.checkBlank("$operationPath:request.contentExt")
                             val parameterBuilder = StringBuilder()
                             val size =
-                                    writeParameters(
-                                            parameterBuilder,
-                                            parameterFields,
-                                            partsFields,
-                                            contentFields
-                                    )
+                                writeParameters(
+                                    parameterBuilder,
+                                    parameterFields,
+                                    partsFields,
+                                    contentFields
+                                )
 
                             out.println(".${size + 1}+.^|请求")
                             if (size == 0) {
@@ -408,13 +409,13 @@ object AsciidocGenerator {
                         val response = operation.response as DocOperationResponse
                         response.apply {
                             val contentFields =
-                                    contentExt.checkBlank("$operationPath:response.contentExt")
+                                contentExt.checkBlank("$operationPath:response.contentExt")
                             val responseBuilder = StringBuilder()
                             val size =
-                                    writeResponse(
-                                            responseBuilder,
-                                            contentFields
-                                    )
+                                writeResponse(
+                                    responseBuilder,
+                                    contentFields
+                                )
                             out.println(".${size + 1}+.^|响应")
                             if (size == 0) {
                                 out.println("6+|无")
@@ -428,15 +429,15 @@ object AsciidocGenerator {
                             out.println("[source,http,options=\"nowrap\"]")
                             out.println("----")
                             out.println(
-                                    HttpOperation.toString(
-                                            operation.request,
-                                            operation.protocol,
-                                            true
-                                    ).replace("|", "\\|")
+                                HttpOperation.toString(
+                                    operation.request,
+                                    operation.protocol,
+                                    true
+                                ).replace("|", "\\|")
                             )
                             out.println(
-                                    HttpOperation.toString(response, operation.protocol, true)
-                                            .replace("|", "\\|")
+                                HttpOperation.toString(response, operation.protocol, true)
+                                    .replace("|", "\\|")
                             )
                             out.println("----")
                         }
@@ -460,10 +461,10 @@ object AsciidocGenerator {
     }
 
     private fun writeParameters(
-            out: StringBuilder,
-            parameterFields: Set<Field>,
-            partsFields: Set<Field>,
-            contentFields: Set<Field>
+        out: StringBuilder,
+        parameterFields: Set<Field>,
+        partsFields: Set<Field>,
+        contentFields: Set<Field>
     ): Int {
         var size = 0
         parameterFields.forEach {
@@ -480,20 +481,20 @@ object AsciidocGenerator {
 
     private fun writeResp(out: StringBuilder, field: Field, depth: Int = 0): Int {
         out.append(
-                "|${fillBlank(depth)}${
-                    str(
-                            field.name
-                    )
-                }"
+            "|${fillBlank(depth)}${
+                str(
+                    field.name
+                )
+            }"
         )
         out.append("|${str(field.type)}")
         out.append(
-                " 3+|${
-                    str(
-                            field.description,
-                            true
-                    )
-                }"
+            " 3+|${
+                str(
+                    field.description,
+                    true
+                )
+            }"
         )
 
         out.append("|${str(if (field.children.isNotEmpty()) "" else field.value)}")
@@ -501,9 +502,9 @@ object AsciidocGenerator {
         var size = 1
         field.children.forEach {
             size += writeResp(
-                    out,
-                    it,
-                    depth + 1
+                out,
+                it,
+                depth + 1
             )
         }
         return size
@@ -511,21 +512,21 @@ object AsciidocGenerator {
 
     private fun writeParam(out: StringBuilder, field: Field, depth: Int = 0): Int {
         out.append(
-                "|${fillBlank(depth)}${
-                    str(
-                            field.name
-                    )
-                }"
+            "|${fillBlank(depth)}${
+                str(
+                    field.name
+                )
+            }"
         )
         out.append("|${str(field.type)}")
         out.append("|${str(field.requiredDescription)}")
         out.append(
-                "|${
-                    str(
-                            field.description,
-                            true
-                    )
-                }"
+            "|${
+                str(
+                    field.description,
+                    true
+                )
+            }"
         )
         out.append("|${str(field.defaultVal)}")
         out.append("|${str(field.value)}")
@@ -533,9 +534,9 @@ object AsciidocGenerator {
         var size = 1
         field.children.forEach {
             size += writeParam(
-                    out,
-                    it,
-                    depth + 1
+                out,
+                it,
+                depth + 1
             )
         }
         return size
@@ -646,7 +647,7 @@ object AsciidocGenerator {
 
     private fun copy(ext: AutodocExtension, path: String) {
         AutodocExtension::class.java.getResourceAsStream("/$path")
-                ?.copyTo(File(ext.outputFile, path).apply { parentFile.mkdirs() }.outputStream())
+            ?.copyTo(File(ext.outputFile, path).apply { parentFile.mkdirs() }.outputStream())
     }
 
 }
