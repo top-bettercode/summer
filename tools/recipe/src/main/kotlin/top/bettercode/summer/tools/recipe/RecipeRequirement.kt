@@ -230,8 +230,8 @@ data class RecipeRequirement(
         if (maxUseMaterialNum != null && maxUseMaterialNum <= 0) {
             throw IllegalArgumentException("maxUseMaterialNum must be greater than 0")
         }
-        if (maxBakeWeight != null && maxBakeWeight <= 0) {
-            throw IllegalArgumentException("maxBakeWeight must be greater than 0")
+        if (maxBakeWeight != null && maxBakeWeight < 0) {//不能小于0
+            throw IllegalArgumentException("maxBakeWeight 不能小于0")
         }
 
         indicatorMaterialIDConstraints.init(indicatorMap)
