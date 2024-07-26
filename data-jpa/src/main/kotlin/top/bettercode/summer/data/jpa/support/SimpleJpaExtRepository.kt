@@ -15,7 +15,6 @@ import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.tools.lang.util.BeanUtil.nullFrom
-import java.lang.reflect.Method
 import java.util.*
 import java.util.function.Function
 import javax.persistence.EntityManager
@@ -27,7 +26,7 @@ import javax.persistence.criteria.Root
 /**
  * @author Peter Wu
  */
-class SimpleJpaExtRepository<T : Any, ID>(
+class SimpleJpaExtRepository<T : Any, ID : Any>(
     jpaExtProperties: JpaExtProperties,
     auditorAware: AuditorAware<*>,
     private val entityInformation: JpaEntityInformation<T, ID>,
@@ -37,7 +36,6 @@ class SimpleJpaExtRepository<T : Any, ID>(
     private val extJpaSupport: ExtJpaSupport<T> =
         DefaultExtJpaSupport(jpaExtProperties, entityManager, auditorAware, domainClass)
     private val escapeCharacter = EscapeCharacter.DEFAULT
-    var advices: Map<Method, LogAdvice>? = null
 
     private fun <S : T> isNew(entity: S, dynamicSave: Boolean): Boolean {
         val idType = entityInformation.idType
@@ -340,7 +338,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return super.findById(id)
     }
 
-    @Deprecated("")
+    @Deprecated("", ReplaceWith("getById(id)"))
     override fun getOne(id: ID): T {
         return getById(id)
     }
@@ -529,7 +527,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return super.findOne(example)
     }
 
-    override fun <S : T, R> findBy(
+    override fun <S : T, R : Any> findBy(
         example: Example<S>,
         queryFunction: Function<FetchableFluentQuery<S>, R>
     ): R {

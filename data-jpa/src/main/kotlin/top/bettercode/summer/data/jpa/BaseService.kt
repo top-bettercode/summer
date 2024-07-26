@@ -15,7 +15,7 @@ import java.util.function.Supplier
 /**
  * @author Peter Wu
  */
-open class BaseService<T, ID, M : BaseRepository<T, ID>>(
+open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
     @JvmField
     protected val repository: M
 

@@ -18,7 +18,7 @@ import org.springframework.data.querydsl.QuerydslUtils
 import org.springframework.data.querydsl.SimpleEntityPathResolver
 import org.springframework.data.repository.core.RepositoryInformation
 import org.springframework.data.repository.core.RepositoryMetadata
-import org.springframework.data.repository.core.support.LogAdviceParse
+import org.springframework.data.repository.core.support.ExecutorLogMethodInterceptor
 import org.springframework.data.repository.core.support.QueryCreationListener
 import org.springframework.data.repository.core.support.RepositoryComposition.RepositoryFragments
 import org.springframework.data.repository.core.support.RepositoryFactorySupport
@@ -26,6 +26,7 @@ import org.springframework.data.repository.core.support.SurroundingTransactionDe
 import org.springframework.data.repository.query.QueryLookupStrategy
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider
 import org.springframework.util.Assert
+import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.querydsl.QuerydslJpaExtPredicateExecutor
@@ -34,6 +35,7 @@ import java.io.Serializable
 import java.util.*
 import java.util.stream.Stream
 import javax.persistence.EntityManager
+
 
 /**
  * implementation of a custom [JpaRepositoryFactory] to use a custom repository base class.
@@ -99,10 +101,17 @@ class JpaExtRepositoryFactory(
         fragments: RepositoryFragments
     ): T {
         val repository = super.getRepository(repositoryInterface, fragments)
-        LogAdviceParse.parse(repositoryInterface, repository)
-        return repository
+        val proxyFactory = ProxyFactory(repository)
+        proxyFactory.addAdvice(
+            ExecutorLogMethodInterceptor(
+                repositoryInterface,
+                repository,
+                entityManager
+            )
+        )
+        @Suppress("UNCHECKED_CAST")
+        return proxyFactory.getProxy(ClassUtils.getDefaultClassLoader()) as T
     }
-
 
     override fun getTargetRepository(
         information: RepositoryInformation

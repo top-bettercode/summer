@@ -13,7 +13,8 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-class QuerydslServiceImpl<T, ID, M : QuerydslRepository<T, ID>>(repository: M) : BaseService<T, ID, M>(repository), IQuerydslService<T, ID, M> {
+class QuerydslServiceImpl<T : Any, ID : Any, M : QuerydslRepository<T, ID>>(repository: M) :
+    BaseService<T, ID, M>(repository), IQuerydslService<T, ID, M> {
 
     override fun findOne(predicate: Predicate): Optional<T> {
         return repository.findOne(predicate)
@@ -27,7 +28,10 @@ class QuerydslServiceImpl<T, ID, M : QuerydslRepository<T, ID>>(repository: M) :
         return repository.findAll(predicate, sort)
     }
 
-    override fun findAll(predicate: Predicate, vararg orderSpecifiers: OrderSpecifier<*>?): Iterable<T> {
+    override fun findAll(
+        predicate: Predicate,
+        vararg orderSpecifiers: OrderSpecifier<*>?
+    ): Iterable<T> {
         return repository.findAll(predicate, *orderSpecifiers)
     }
 
@@ -40,21 +44,29 @@ class QuerydslServiceImpl<T, ID, M : QuerydslRepository<T, ID>>(repository: M) :
     }
 
     override fun findAll(
-            predicate: Predicate, pageable: Pageable,
-            vararg defaultOrderSpecifiers: OrderSpecifier<*>?
+        predicate: Predicate, pageable: Pageable,
+        vararg defaultOrderSpecifiers: OrderSpecifier<*>?
     ): Page<T> {
         return repository
-                .findAll(predicate, PageRequest.of(pageable.pageNumber, pageable.pageSize,
-                        pageable.getSortOr(QSort.by(*defaultOrderSpecifiers))))
+            .findAll(
+                predicate, PageRequest.of(
+                    pageable.pageNumber, pageable.pageSize,
+                    pageable.getSortOr(QSort.by(*defaultOrderSpecifiers))
+                )
+            )
     }
 
     override fun findAll(
-            pageable: Pageable,
-            vararg defaultOrderSpecifiers: OrderSpecifier<*>?
+        pageable: Pageable,
+        vararg defaultOrderSpecifiers: OrderSpecifier<*>?
     ): Page<T> {
         return repository
-                .findAll(PageRequest.of(pageable.pageNumber, pageable.pageSize,
-                        pageable.getSortOr(QSort.by(*defaultOrderSpecifiers))))
+            .findAll(
+                PageRequest.of(
+                    pageable.pageNumber, pageable.pageSize,
+                    pageable.getSortOr(QSort.by(*defaultOrderSpecifiers))
+                )
+            )
     }
 
     override fun count(predicate: Predicate): Long {

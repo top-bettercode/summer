@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable
  *
  * @author Peter Wu
  */
-data class LogAdvice(
+data class LoggerInfo(
     val sqlId: String,
     val annoPageable: Pageable?,
     val pageableIndex: Int,
