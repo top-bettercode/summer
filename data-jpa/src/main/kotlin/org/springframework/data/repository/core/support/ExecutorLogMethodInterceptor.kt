@@ -162,8 +162,7 @@ class ExecutorLogMethodInterceptor(
                     MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
                     throw e
                 } finally {
-                    //? 自动提交，对性能的影响
-                    if (modify) {
+                    if (modify && SqlAppender.isAutoFlush()) {
                         if (entityManager.isJoinedToTransaction) {
                             val flushMethod = repositoryClass.getMethod("flush")
                             flushMethod.invoke(repository)

@@ -16,6 +16,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
     companion object {
         const val MDC_SQL_ERROR = "SQL_ERROR"
         const val MDC_SQL_ID = "SQL_ID"
+        const val MDC_SQL_DISABLE_AUTO_FLUSH = "SQL_DISABLE_AUTO_FLUSH"
         const val MDC_SQL_END = "SQL_END"
         const val MDC_SQL_TOTAL = "SQL_TOTAL"
         const val MDC_SQL_RESULT = "SQL_RESULT"
@@ -25,6 +26,16 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         const val MDC_SQL_OFFSET = "SQL_OFFSET"
         const val MDC_SQL_LIMIT = "SQL_LIMIT"
 
+        fun disableAutoFlush() {
+            MDC.put(MDC_SQL_DISABLE_AUTO_FLUSH, "true")
+        }
+
+        fun enableAutoFlush() {
+            MDC.remove(MDC_SQL_DISABLE_AUTO_FLUSH)
+        }
+
+        fun isAutoFlush() = MDC.get(MDC_SQL_DISABLE_AUTO_FLUSH) == null
+
         fun Logger.total(total: Number) {
             try {
                 MDC.put(MDC_SQL_TOTAL, total.toString())
@@ -33,6 +44,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 MDC.remove(MDC_SQL_TOTAL)
             }
         }
+
         fun Logger.result(result: Number) {
             try {
                 MDC.put(MDC_SQL_RESULT, result.toString())
