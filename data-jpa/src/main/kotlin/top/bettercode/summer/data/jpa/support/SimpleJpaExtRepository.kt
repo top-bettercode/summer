@@ -30,7 +30,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     jpaExtProperties: JpaExtProperties,
     auditorAware: AuditorAware<*>,
     private val entityInformation: JpaEntityInformation<T, ID>,
-    @Suppress("RedundantModalityModifier")
+    @Suppress("RedundantModalityfindListFromRecycleBinModifier")
     final override val entityManager: EntityManager,
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
     private val extJpaSupport: ExtJpaSupport<T> =
@@ -416,17 +416,27 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     }
 
     override fun findAll(size: Int): List<T> {
-        val pageable = PageRequest.of(0, size)
         val spec: Specification<T>? =
             extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
-        return findUnpaged(spec, pageable)
+        return findList(spec, 0, size)
+    }
+
+    override fun findAll(offset: Long, size: Int): List<T> {
+        val spec: Specification<T>? =
+            extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
+        return findList(spec, offset, size)
     }
 
     override fun findAll(size: Int, sort: Sort): List<T> {
-        val pageable = PageRequest.of(0, size, sort)
         val spec: Specification<T>? =
             extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
-        return findUnpaged(spec, pageable)
+        return findList(spec, 0, size, sort)
+    }
+
+    override fun findAll(offset: Long, size: Int, sort: Sort): List<T> {
+        val spec: Specification<T>? =
+            extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
+        return findList(spec, offset, size, sort)
     }
 
     override fun count(spec: Specification<T>?): Long {
@@ -450,17 +460,15 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     }
 
     override fun findFirst(sort: Sort): Optional<T> {
-        val pageable = PageRequest.of(0, 1, sort)
         val spec = extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
-        return findUnpaged(spec, pageable).stream().findFirst()
+        return findList(spec, 0, 1).stream().findFirst()
     }
 
     override fun findFirst(spec: Specification<T>?): Optional<T> {
-        val pageable = PageRequest.of(0, 1)
         var spec1 = spec
         spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
             ?: spec1
-        return findUnpaged(spec1, pageable).stream().findFirst()
+        return findList(spec1, 0, 1).stream().findFirst()
     }
 
     override fun findOne(spec: Specification<T>?): Optional<T> {
@@ -478,25 +486,42 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     }
 
     override fun findAll(spec: Specification<T>?, size: Int): List<T> {
-        val pageable = PageRequest.of(0, size)
         var spec1 = spec
         spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
             ?: spec1
-        return findUnpaged(spec1, pageable)
+        return findList(spec1, 0, size)
+    }
+
+    override fun findAll(spec: Specification<T>?, offset: Long, size: Int): List<T> {
+        var spec1 = spec
+        spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
+            ?: spec1
+        return findList(spec1, offset, size)
     }
 
     override fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T> {
-        val pageable = PageRequest.of(0, size, sort)
         var spec1 = spec
         spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
             ?: spec1
-        return findUnpaged(spec1, pageable)
+        return findList(spec1, 0, size, sort)
     }
 
-    private fun findUnpaged(spec: Specification<T>?, pageable: Pageable): List<T> {
-        val query = getQuery(spec, pageable)
-        query.setFirstResult(0)
-        query.setMaxResults(pageable.pageSize)
+    override fun findAll(spec: Specification<T>?, offset: Long, size: Int, sort: Sort): List<T> {
+        var spec1 = spec
+        spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
+            ?: spec1
+        return findList(spec1, offset, size, sort)
+    }
+
+    private fun findList(
+        spec: Specification<T>?,
+        offset: Long,
+        size: Int,
+        sort: Sort = Sort.unsorted()
+    ): List<T> {
+        val query = getQuery(spec, sort)
+        query.setFirstResult(offset.toInt())
+        query.setMaxResults(size)
         return query.resultList
     }
 
@@ -670,8 +695,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     }
 
     override fun findFirstFromRecycleBin(spec: Specification<T>?): Optional<T> {
-        val pageable = PageRequest.of(0, 1)
-        return findUnpagedFromRecycleBin(spec, pageable).stream().findFirst()
+        return findListFromRecycleBin(spec, 0, 1).stream().findFirst()
     }
 
     override fun findAllFromRecycleBin(): List<T> {
@@ -683,13 +707,11 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     }
 
     override fun findAllFromRecycleBin(size: Int): List<T> {
-        val pageable = PageRequest.of(0, size)
-        return findUnpagedFromRecycleBin(null, pageable)
+        return findListFromRecycleBin(null, 0, size)
     }
 
     override fun findAllFromRecycleBin(size: Int, sort: Sort): List<T> {
-        val pageable = PageRequest.of(0, size, sort)
-        return findUnpagedFromRecycleBin(null, pageable)
+        return findListFromRecycleBin(null, 0, size, sort)
     }
 
     override fun findAllFromRecycleBin(pageable: Pageable): Page<T> {
@@ -721,20 +743,23 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     }
 
     override fun findAllFromRecycleBin(spec: Specification<T>?, size: Int): List<T> {
-        val pageable = PageRequest.of(0, size)
-        return findUnpagedFromRecycleBin(spec, pageable)
+        return findListFromRecycleBin(spec, 0, size)
     }
 
     override fun findAllFromRecycleBin(spec: Specification<T>?, size: Int, sort: Sort): List<T> {
-        val pageable = PageRequest.of(0, size, sort)
-        return findUnpagedFromRecycleBin(spec, pageable)
+        return findListFromRecycleBin(spec, 0, size, sort)
     }
 
-    private fun findUnpagedFromRecycleBin(spec: Specification<T>?, pageable: Pageable): List<T> {
+    private fun findListFromRecycleBin(
+        spec: Specification<T>?,
+        offset: Long,
+        size: Int,
+        sort: Sort = Sort.unsorted()
+    ): List<T> {
         return if (extJpaSupport.logicalDeletedSupported) {
             var spec1 = spec
             spec1 = extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec1)
-            findUnpaged(spec1, pageable)
+            findList(spec1, offset, size, sort)
         } else {
             Collections.emptyList()
         }

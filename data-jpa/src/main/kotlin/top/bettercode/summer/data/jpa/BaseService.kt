@@ -30,25 +30,26 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
         return repository
     }
 
-    override fun <E> findAllPageByPage(query: (Pageable) -> Page<E>): List<E> {
-        return findAllPageByPage(springDataWebProperties.pageable.maxPageSize, query)
+    override fun <E> findAllPageByPage(totalPages: Int, query: (Pageable) -> List<E>): List<E> {
+        return findAllPageByPage(springDataWebProperties.pageable.maxPageSize, totalPages, query)
     }
 
     override fun <E> findAllPageByPage(
         pageSize: Int,
-        query: (Pageable) -> Page<E>
+        totalPages: Int,
+        query: (Pageable) -> List<E>
     ): List<E> {
         val results = mutableListOf<E>()
         val pageable = Pageable.ofSize(pageSize)
         val result = query(pageable)
-        results.addAll(result.content)
+        results.addAll(result)
 
         runBlocking {
             val deferredResults = mutableListOf<Deferred<Pair<Int, List<E>>>>()
             val customScope = CoroutineScope(Dispatchers.Default)
-            for (i in 1 until result.totalPages) {
+            for (i in 1 until totalPages) {
                 deferredResults.add(customScope.async {
-                    val content = query(PageRequest.of(i, pageSize)).content
+                    val content = query(PageRequest.of(i, pageSize))
                     i to content
                 })
             }
@@ -106,16 +107,33 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
         return repository.findAll(size)
     }
 
+    override fun findAll(offset: Long, size: Int): List<T> {
+        return repository.findAll(offset, size)
+    }
+
     override fun findAll(size: Int, sort: Sort): List<T> {
         return repository.findAll(size, sort)
+    }
+
+    override fun findAll(offset: Long, size: Int, sort: Sort): List<T> {
+        return repository.findAll(offset, size, sort)
     }
 
     override fun findAll(spec: Specification<T>?, size: Int): List<T> {
         return repository.findAll(spec, size)
     }
 
+    override fun findAll(spec: Specification<T>?, offset: Long, size: Int): List<T> {
+
+        return repository.findAll(spec, offset, size)
+    }
+
     override fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T> {
         return repository.findAll(spec, size, sort)
+    }
+
+    override fun findAll(spec: Specification<T>?, offset: Long, size: Int, sort: Sort): List<T> {
+        return repository.findAll(spec, offset, size, sort)
     }
 
     override fun findAll(): List<T> {

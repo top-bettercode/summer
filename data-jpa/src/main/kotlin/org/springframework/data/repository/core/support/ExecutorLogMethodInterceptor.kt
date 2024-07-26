@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.query.JpaExtQueryMethod
 import org.springframework.data.repository.query.RepositoryQuery
 import top.bettercode.summer.data.jpa.support.LoggerInfo
+import top.bettercode.summer.data.jpa.support.PageInfo
 import top.bettercode.summer.data.jpa.support.QuerySize
 import top.bettercode.summer.data.jpa.support.Size
 import top.bettercode.summer.tools.lang.log.SqlAppender
@@ -72,25 +73,29 @@ class ExecutorLogMethodInterceptor(
                         }${if (param.type.isArray) "[]" else ""}"
                     }
                 })"
-            val annoPageable: Pageable?
+            val annoPageInfo: PageInfo?
             val declaringClass = method.declaringClass
             val currentClass = declaringClass == repositoryInterface
             if (currentClass) {
                 val querySize = AnnotationUtils.getAnnotation(method, QuerySize::class.java)
-                annoPageable = if (querySize != null) Pageable.ofSize(querySize.value) else null
+                annoPageInfo = if (querySize != null) PageInfo(size = querySize.value) else null
             } else {
-                annoPageable = null
+                annoPageInfo = null
             }
             var pageableIndex: Int
-            if (annoPageable != null) {
+            var offsetIndex = -1
+            if (annoPageInfo != null) {
                 pageableIndex = -1
             } else {
                 pageableIndex = parameters.indexOfFirst { it.type == Pageable::class.java }
                 if (pageableIndex < 0)
                     pageableIndex = parameters.indexOfFirst { it.type == Size::class.java }
-                if (pageableIndex < 0 && !currentClass)
+                if (pageableIndex < 0 && !currentClass) {
                     pageableIndex =
                         parameters.indexOfFirst { it.name == "size" && (it.type == Int::class.java || it.type == Int::class.javaObjectType) }
+                    offsetIndex =
+                        parameters.indexOfFirst { it.name == "offset" && (it.type == Long::class.java || it.type == Long::class.javaObjectType) }
+                }
             }
             val isModify: Boolean
             val repositoryQuery = queries[method] as RepositoryQuery?
@@ -106,8 +111,9 @@ class ExecutorLogMethodInterceptor(
             }
             LoggerInfo(
                 sqlId = sqlId,
-                annoPageable = annoPageable,
+                annoPageInfo = annoPageInfo,
                 pageableIndex = pageableIndex,
+                offsetIndex = offsetIndex,
                 isModify = isModify
             )
         }
@@ -120,16 +126,14 @@ class ExecutorLogMethodInterceptor(
             val logAdice = loggerInfos[method] as LoggerInfo
             val sqlId = logAdice.sqlId
             MDC.put(SqlAppender.MDC_SQL_ID, sqlId)
-            val pageable = logAdice.pageable(invocation.arguments)
+            val pageInfo = logAdice.pageable(invocation.arguments)
             val modify = logAdice.isModify
             try {
                 val startMillis = System.currentTimeMillis()
                 try {
-                    if (pageable != null && pageable.isPaged) {
-                        val pageSize = pageable.pageSize
-                        val offset = pageable.offset
-                        sqlLog.offset(offset)
-                        sqlLog.limit(pageSize)
+                    if (pageInfo != null) {
+                        sqlLog.offset(pageInfo.offset)
+                        sqlLog.limit(pageInfo.size)
                     }
                     val result = invocation.proceed()
                     when (result) {

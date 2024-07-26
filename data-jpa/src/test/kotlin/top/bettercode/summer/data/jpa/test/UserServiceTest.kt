@@ -66,22 +66,22 @@ class UserServiceTest {
 
     @Test
     fun findAllPageByPageDefault() {
-        val list = userService.findAllPageByPage {
-            userService.findAll(it)
+        val list = userService.findAllPageByPage(5) {
+            userService.findAll(it.offset, it.pageSize)
         }
         System.err.println(list.size)
         Assertions.assertEquals(5, list.size)
-        System.err.println(StringUtil.json(list,true))
+        System.err.println(StringUtil.json(list, true))
     }
 
     @Test
     fun findAllPageByPage() {
-        val list = userService.findAllPageByPage(1) {
-            userService.findAll(it)
+        val list = userService.findAllPageByPage(1, 5) {
+            userService.findAll(it.offset, it.pageSize)
         }
         System.err.println(list.size)
         Assertions.assertEquals(5, list.size)
-        System.err.println(StringUtil.json(list,true))
+        System.err.println(StringUtil.json(list, true))
         Assertions.assertEquals(list, userService.findAll())
     }
 }
