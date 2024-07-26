@@ -11,11 +11,11 @@ import javax.persistence.criteria.CriteriaBuilder.Trimspec
  * @author Peter Wu
  */
 class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
-        private val specMatcher: M,
-        /**
-         * name of the attribute
-         */
-        val propertyName: String
+    private val specMatcher: M,
+    /**
+     * name of the attribute
+     */
+    val propertyName: String
 ) : SpecPredicate<T, M> {
     /**
      * 忽略大小写
@@ -91,11 +91,15 @@ class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
             when (matcher) {
                 PathMatcher.IS_EMPTY -> return criteriaBuilder.equal(path, "")
                 PathMatcher.IS_NOT_EMPTY -> return criteriaBuilder.notEqual(path, "")
-                PathMatcher.IS_NULL_OR_EMPTY -> return criteriaBuilder.or(criteriaBuilder.isNull(path),
-                        criteriaBuilder.equal(path, ""))
+                PathMatcher.IS_NULL_OR_EMPTY -> return criteriaBuilder.or(
+                    criteriaBuilder.isNull(path),
+                    criteriaBuilder.equal(path, "")
+                )
 
-                PathMatcher.IS_NOT_NULL_OR_EMPTY -> return criteriaBuilder.and(criteriaBuilder.isNotNull(path),
-                        criteriaBuilder.notEqual(path, ""))
+                PathMatcher.IS_NOT_NULL_OR_EMPTY -> return criteriaBuilder.and(
+                    criteriaBuilder.isNotNull(path),
+                    criteriaBuilder.notEqual(path, "")
+                )
 
                 else -> {}
             }
@@ -106,13 +110,33 @@ class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
         if (criteria != null) {
             when (matcher) {
                 PathMatcher.BETWEEN -> {
-                    return criteriaBuilder.between(path as Expression<Comparable<Comparable<*>>>, criteria as Comparable<Comparable<*>>, criteria2 as Comparable<Comparable<*>>)
+                    return criteriaBuilder.between(
+                        path as Expression<Comparable<Comparable<*>>>,
+                        criteria as Comparable<Comparable<*>>,
+                        criteria2 as Comparable<Comparable<*>>
+                    )
                 }
 
-                PathMatcher.GT -> return criteriaBuilder.greaterThan(path as Expression<Comparable<Comparable<*>>>, criteria as Comparable<Comparable<*>>)
-                PathMatcher.GE -> return criteriaBuilder.greaterThanOrEqualTo(path as Expression<Comparable<Comparable<*>>>, criteria as Comparable<Comparable<*>>)
-                PathMatcher.LT -> return criteriaBuilder.lessThan(path as Expression<Comparable<Comparable<*>>>, criteria as Comparable<Comparable<*>>)
-                PathMatcher.LE -> return criteriaBuilder.lessThanOrEqualTo(path as Expression<Comparable<Comparable<*>>>, criteria as Comparable<Comparable<*>>)
+                PathMatcher.GT -> return criteriaBuilder.greaterThan(
+                    path as Expression<Comparable<Comparable<*>>>,
+                    criteria as Comparable<Comparable<*>>
+                )
+
+                PathMatcher.GE -> return criteriaBuilder.greaterThanOrEqualTo(
+                    path as Expression<Comparable<Comparable<*>>>,
+                    criteria as Comparable<Comparable<*>>
+                )
+
+                PathMatcher.LT -> return criteriaBuilder.lessThan(
+                    path as Expression<Comparable<Comparable<*>>>,
+                    criteria as Comparable<Comparable<*>>
+                )
+
+                PathMatcher.LE -> return criteriaBuilder.lessThanOrEqualTo(
+                    path as Expression<Comparable<Comparable<*>>>,
+                    criteria as Comparable<Comparable<*>>
+                )
+
                 else -> {}
             }
         }
@@ -135,6 +159,51 @@ class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
                         else -> {}
                     }
                 }
+                criteria as Any
+
+                when (matcher) {
+                    PathMatcher.LIKE -> return criteriaBuilder.like(
+                        stringExpression,
+                        criteria as String
+                    )
+
+                    PathMatcher.NOT_LIKE -> return criteriaBuilder.notLike(
+                        stringExpression,
+                        criteria as String
+                    )
+
+                    PathMatcher.STARTING -> return criteriaBuilder.like(
+                        stringExpression,
+                        criteria.starting()
+                    )
+
+                    PathMatcher.NOT_STARTING -> return criteriaBuilder.notLike(
+                        stringExpression,
+                        criteria.starting()
+                    )
+
+                    PathMatcher.ENDING -> return criteriaBuilder.like(
+                        stringExpression,
+                        criteria.ending()
+                    )
+
+                    PathMatcher.NOT_ENDING -> return criteriaBuilder.notLike(
+                        stringExpression,
+                        criteria.ending()
+                    )
+
+                    PathMatcher.CONTAINING -> return criteriaBuilder.like(
+                        stringExpression,
+                        criteria.containing()
+                    )
+
+                    PathMatcher.NOT_CONTAINING -> return criteriaBuilder.notLike(
+                        stringExpression,
+                        criteria.containing()
+                    )
+
+                    else -> {}
+                }
             }
             when (matcher) {
                 PathMatcher.EQ -> return criteriaBuilder.equal(stringExpression, criteria)
@@ -142,31 +211,24 @@ class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
                 PathMatcher.IN -> {
                     Assert.notNull(criterias, "IN matcher with wrong criteria")
                     val collect = criterias!!
-                            .map { s: P -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
+                        .map { s: P ->
+                            if (ignoreCase) s.toString()
+                                .lowercase(Locale.getDefault()) else s.toString()
+                        }
                     return stringExpression.`in`(collect)
                 }
 
                 PathMatcher.NOT_IN -> {
                     Assert.notNull(criterias, "IN matcher with wrong criteria")
                     val notInCollect = criterias!!
-                            .map { s: P -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
+                        .map { s: P ->
+                            if (ignoreCase) s.toString()
+                                .lowercase(Locale.getDefault()) else s.toString()
+                        }
                     return criteriaBuilder.not(stringExpression.`in`(notInCollect))
                 }
 
                 else -> {}
-            }
-            if (criteria != null) {
-                when (matcher) {
-                    PathMatcher.LIKE -> return criteriaBuilder.like(stringExpression, criteria as String)
-                    PathMatcher.NOT_LIKE -> return criteriaBuilder.notLike(stringExpression, criteria as String)
-                    PathMatcher.STARTING -> return criteriaBuilder.like(stringExpression, starting(criteria))
-                    PathMatcher.NOT_STARTING -> return criteriaBuilder.notLike(stringExpression, starting(criteria))
-                    PathMatcher.ENDING -> return criteriaBuilder.like(stringExpression, ending(criteria))
-                    PathMatcher.NOT_ENDING -> return criteriaBuilder.notLike(stringExpression, ending(criteria))
-                    PathMatcher.CONTAINING -> return criteriaBuilder.like(stringExpression, containing(criteria))
-                    PathMatcher.NOT_CONTAINING -> return criteriaBuilder.notLike(stringExpression, containing(criteria))
-                    else -> {}
-                }
             }
         } else {
             when (matcher) {
@@ -427,16 +489,16 @@ class SpecPath<P, T : Any?, M : SpecMatcher<T, M>>(
         private val log = LoggerFactory.getLogger(SpecPath::class.java)
 
         //--------------------------------------------
-        fun containing(criteria: Any): String {
-            return "%$criteria%"
+        fun Any.containing(): String {
+            return "%$this%"
         }
 
-        fun ending(criteria: Any): String {
-            return "%$criteria"
+        fun Any.ending(): String {
+            return "%$this"
         }
 
-        fun starting(criteria: Any): String {
-            return "$criteria%"
+        fun Any.starting(): String {
+            return "$this%"
         }
 
         fun <T> toPath(root: Root<T>, propertyName: String): Path<*> {
