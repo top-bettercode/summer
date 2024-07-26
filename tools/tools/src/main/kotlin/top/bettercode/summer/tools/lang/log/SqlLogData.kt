@@ -34,11 +34,14 @@ class SqlLogData(val id: String? = null) {
 
     override fun toString(): String {
         var sql = sql?.trim()
-        if (!sql.isNullOrBlank() && params.isNotEmpty()) {
-            val params = params.sortedBy { it.index }
-            for (i in params.indices) {
-                sql = sql!!.replaceFirst("?", params[i].toString())
+        if (!sql.isNullOrBlank()) {
+            if (params.isNotEmpty()) {
+                val params = params.sortedBy { it.index }
+                for (i in params.indices) {
+                    sql = sql!!.replaceFirst("?", params[i].toString())
+                }
             }
+
             //limit ? offset ?
             if (sql!!.contains("limit ?") && limit != null) {
                 sql = sql.replaceFirst("limit ?", "limit #${limit}")
@@ -62,8 +65,8 @@ class SqlLogData(val id: String? = null) {
             if (sql.contains("fetch next ?") && limit != null) {
                 sql = sql.replaceFirst("fetch next ?", "fetch next #${limit}")
             }
-
         }
+
         val resultInfo = "${
             if (affected != null) "affected:${affected} rows; " else ""
         }${

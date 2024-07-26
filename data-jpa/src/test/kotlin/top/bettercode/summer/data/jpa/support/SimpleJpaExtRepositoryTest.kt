@@ -17,6 +17,7 @@ import top.bettercode.summer.data.jpa.domain.UserMatcher
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher
 import top.bettercode.summer.data.jpa.query.SpecMatcher
 import top.bettercode.summer.data.jpa.repository.UserRepository
+import top.bettercode.summer.data.jpa.support.PageNoCount.Companion.noCount
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.*
 import java.util.function.Consumer
@@ -319,8 +320,9 @@ class SimpleJpaExtRepositoryTest {
 //    Assertions .assertEquals(3, repository.findAll(PageRequest.of(0, 5)).getContent().size());
 //    Assertions .assertEquals(2, repository.findAll(spec,PageRequest.of(0, 2)).getContent().size());
 //    Assertions .assertEquals(3, repository.findAll(spec,PageRequest.of(0, 5)).getContent().size());
-        Assertions.assertEquals(2, repository.findAll(2).size)
-        Assertions.assertEquals(3, repository.findAll(5).size)
+        Assertions.assertEquals(2, repository.findAll(PageRequest.of(0, 2).noCount()).size)
+        val findAll = repository.findAll(PageRequest.of(0, 5).noCount())
+        Assertions.assertEquals(3, findAll.content.size)
     }
 
     @Test

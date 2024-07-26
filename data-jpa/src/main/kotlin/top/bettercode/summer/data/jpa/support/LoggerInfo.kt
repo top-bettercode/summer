@@ -10,7 +10,6 @@ data class LoggerInfo(
     val sqlId: String,
     val annoPageInfo: PageInfo?,
     val pageableIndex: Int,
-    val offsetIndex: Int,
     val isModify: Boolean,
 ) {
     fun pageable(args: Array<Any?>): PageInfo? {
@@ -27,11 +26,6 @@ data class LoggerInfo(
             )
 
             is Size -> PageInfo(size = pageArg.size)
-            is Int -> if (offsetIndex < 0) PageInfo(size = pageArg) else PageInfo(
-                offset = args[offsetIndex] as Long,
-                size = pageArg
-            )
-
             else -> null
         }
     }

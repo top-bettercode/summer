@@ -31,13 +31,9 @@ interface RecycleExecutor<T, ID> {
     fun findFirstFromRecycleBin(spec: Specification<T>?): Optional<T>
 
     fun findAllFromRecycleBin(): List<T>
-    fun findAllFromRecycleBin(size: Int): List<T>
-    fun findAllFromRecycleBin(size: Int, sort: Sort): List<T>
     fun findAllFromRecycleBin(pageable: Pageable): Page<T>
     fun findAllFromRecycleBin(sort: Sort): List<T>
     fun findAllFromRecycleBin(spec: Specification<T>?): List<T>
-    fun findAllFromRecycleBin(spec: Specification<T>?, size: Int): List<T>
-    fun findAllFromRecycleBin(spec: Specification<T>?, size: Int, sort: Sort): List<T>
     fun findAllFromRecycleBin(spec: Specification<T>?, pageable: Pageable): Page<T>
     fun findAllFromRecycleBin(spec: Specification<T>?, sort: Sort): List<T>
 }

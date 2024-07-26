@@ -8,6 +8,7 @@ import org.apache.ibatis.reflection.ParamNameResolver
 import org.apache.ibatis.session.Configuration
 import org.apache.ibatis.type.TypeException
 import org.apache.ibatis.type.TypeHandlerRegistry
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.BindableQuery
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.ErrorHandling
@@ -90,8 +91,9 @@ internal class MybatisParameterBinder(
     }
 
     fun bindAndPrepare(
-        query: Query, metadata: QueryParameterSetter.QueryMetadata,
-        accessor: JpaParametersParameterAccessor,
+        query: Query,
+        metadata: QueryParameterSetter.QueryMetadata,
+        pageable: Pageable,
         mybatisParam: MybatisParam
     ): Query {
         bind(metadata.withQuery(query), mybatisParam)
@@ -100,11 +102,11 @@ internal class MybatisParameterBinder(
             query.setFirstResult(0)
             query.setMaxResults(size.size)
         }
-        if (!parameters.hasPageableParameter() || accessor.pageable.isUnpaged) {
+        if (!parameters.hasPageableParameter() || pageable.isUnpaged) {
             return query
         }
-        query.setFirstResult(accessor.pageable.offset.toInt())
-        query.setMaxResults(accessor.pageable.pageSize)
+        query.setFirstResult(pageable.offset.toInt())
+        query.setMaxResults(pageable.pageSize)
         return query
     }
 

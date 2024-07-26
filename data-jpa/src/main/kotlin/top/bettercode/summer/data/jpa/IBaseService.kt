@@ -11,13 +11,13 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-interface IBaseService<T:Any, ID:Any, M : BaseRepository<T, ID>> {
+interface IBaseService<T : Any, ID : Any, M : BaseRepository<T, ID>> {
 
     fun getRepository(): M
 
-    fun <E> findAllPageByPage(totalPages: Int, query: (Pageable) -> List<E>): List<E>
+    fun <E> findAllPageByPage(query: (Pageable) -> Page<E>): List<E>
 
-    fun <E> findAllPageByPage(pageSize: Int, totalPages: Int, query: (Pageable) -> List<E>): List<E>
+    fun <E> findAllPageByPage(pageSize: Int, query: (Pageable) -> Page<E>): List<E>
 
     fun <S : T> save(s: S): S
 
@@ -53,11 +53,6 @@ interface IBaseService<T:Any, ID:Any, M : BaseRepository<T, ID>> {
     fun findAll(): List<T>
     fun findAllById(ids: Iterable<ID>): List<T>
 
-    fun findAll(size: Int): List<T>
-    fun findAll(offset: Long, size: Int): List<T>
-    fun findAll(size: Int, sort: Sort): List<T>
-    fun findAll(offset: Long, size: Int, sort: Sort): List<T>
-
     fun findAll(pageable: Pageable): Page<T>
     fun findAll(sort: Sort): List<T>
     fun count(spec: Specification<T>?): Long
@@ -66,11 +61,6 @@ interface IBaseService<T:Any, ID:Any, M : BaseRepository<T, ID>> {
     fun findFirst(spec: Specification<T>?): Optional<T>
 
     fun findAll(spec: Specification<T>?): List<T>
-
-    fun findAll(spec: Specification<T>?, size: Int): List<T>
-    fun findAll(spec: Specification<T>?, offset: Long, size: Int): List<T>
-    fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T>
-    fun findAll(spec: Specification<T>?, offset: Long, size: Int, sort: Sort): List<T>
 
     fun findAll(spec: Specification<T>?, pageable: Pageable): Page<T>
     fun findAll(spec: Specification<T>?, sort: Sort): List<T>

@@ -3,15 +3,16 @@ package org.springframework.data.jpa.repository.query
 import org.springframework.data.domain.AuditorAware
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter
-import org.springframework.data.jpa.repository.query.JpaQueryExecution.DeleteExecution
-import org.springframework.data.jpa.repository.query.JpaQueryExecution.ExistsExecution
+import org.springframework.data.jpa.repository.query.JpaQueryExecution.*
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryMetadataCache
 import org.springframework.data.repository.query.ReturnedType
 import org.springframework.data.repository.query.parser.Part
 import org.springframework.data.repository.query.parser.PartTree
+import org.springframework.data.support.PageableExecutionUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
+import top.bettercode.summer.data.jpa.support.PageNoCount
 import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery
@@ -45,34 +46,68 @@ internal class PartTreeJpaExtQuery internal constructor(
             validate(tree, parameters, method.toString())
             countQuery = CountQueryPreparer(recreationRequired)
             query = if (tree.isCountProjection) countQuery else QueryPreparer(recreationRequired)
-            queryExecution = if (tree.isDelete) {
-                object : DeleteExecution(entityManager) {
-                    override fun doExecute(
-                        jpaQuery: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor
-                    ): Any {
-                        val query = jpaQuery.createQuery(accessor)
-                        val resultList = query.resultList
-                        val logicalDeletedAttribute = extJpaSupport.logicalDeletedAttribute
-                        if (logicalDeletedAttribute != null) {
-                            for (o in resultList) {
-                                logicalDeletedAttribute.delete(o!!)
-                                entityManager.merge(o)
-                            }
-                        } else {
-                            for (o in resultList) {
-                                entityManager.remove(o)
+            queryExecution = when {
+                method.isPageQuery -> {
+                    object : PagedExecution() {
+                        override fun doExecute(
+                            repositoryQuery: AbstractJpaQuery,
+                            accessor: JpaParametersParameterAccessor
+                        ): Any {
+                            val query = repositoryQuery.createQuery(accessor)
+
+                            val pageable = accessor.pageable
+                            val resultList = query.resultList
+                            return PageableExecutionUtils.getPage(
+                                resultList, pageable
+                            ) {
+                                if (pageable is PageNoCount) {
+                                    resultList.size.toLong()
+                                } else {
+                                    val totals =
+                                        repositoryQuery.createCountQuery(accessor).resultList
+                                    (if (totals.size == 1) MybatisJpaQuery.CONVERSION_SERVICE.convert(
+                                        totals[0],
+                                        Long::class.java
+                                    ) ?: 0 else totals.size.toLong())
+                                }
                             }
                         }
-                        val result: Any =
-                            if (jpaQuery.queryMethod.isCollectionQuery) resultList else resultList.size
-                        return result
                     }
                 }
-            } else if (tree.isExistsProjection) {
-                ExistsExecution()
-            } else {
-                super.getExecution()
+
+                tree.isDelete -> {
+                    object : DeleteExecution(entityManager) {
+                        override fun doExecute(
+                            jpaQuery: AbstractJpaQuery,
+                            accessor: JpaParametersParameterAccessor
+                        ): Any {
+                            val query = jpaQuery.createQuery(accessor)
+                            val resultList = query.resultList
+                            val logicalDeletedAttribute = extJpaSupport.logicalDeletedAttribute
+                            if (logicalDeletedAttribute != null) {
+                                for (o in resultList) {
+                                    logicalDeletedAttribute.delete(o!!)
+                                    entityManager.merge(o)
+                                }
+                            } else {
+                                for (o in resultList) {
+                                    entityManager.remove(o)
+                                }
+                            }
+                            val result: Any =
+                                if (jpaQuery.queryMethod.isCollectionQuery) resultList else resultList.size
+                            return result
+                        }
+                    }
+                }
+
+                tree.isExistsProjection -> {
+                    ExistsExecution()
+                }
+
+                else -> {
+                    super.getExecution()
+                }
             }
         } catch (e: Exception) {
             throw IllegalArgumentException(

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.support.UserService
@@ -39,6 +40,13 @@ class UserServiceTest {
     }
 
     @Test
+    fun findAll() {
+        val findAll = userService.findAll(PageRequest.of(0, 2))
+        System.err.println(findAll.totalElements)
+//        repository.findAll(PageRequest.of(0, 10))
+    }
+
+    @Test
     fun findSave() {
         userService.findSave()
     }
@@ -66,8 +74,8 @@ class UserServiceTest {
 
     @Test
     fun findAllPageByPageDefault() {
-        val list = userService.findAllPageByPage(5) {
-            userService.findAll(it.offset, it.pageSize)
+        val list = userService.findAllPageByPage {
+            userService.findAll(it)
         }
         System.err.println(list.size)
         Assertions.assertEquals(5, list.size)
@@ -76,8 +84,8 @@ class UserServiceTest {
 
     @Test
     fun findAllPageByPage() {
-        val list = userService.findAllPageByPage(1, 5) {
-            userService.findAll(it.offset, it.pageSize)
+        val list = userService.findAllPageByPage(1) {
+            userService.findAll(it)
         }
         System.err.println(list.size)
         Assertions.assertEquals(5, list.size)

@@ -106,8 +106,5 @@ class UserRepositoryTest {
         }
     }
 
-    @Test
-    fun findAll() {
-        repository.findAll(10)
-    }
+
 }

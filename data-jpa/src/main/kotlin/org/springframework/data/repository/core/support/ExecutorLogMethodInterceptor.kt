@@ -83,19 +83,12 @@ class ExecutorLogMethodInterceptor(
                 annoPageInfo = null
             }
             var pageableIndex: Int
-            var offsetIndex = -1
             if (annoPageInfo != null) {
                 pageableIndex = -1
             } else {
                 pageableIndex = parameters.indexOfFirst { it.type == Pageable::class.java }
                 if (pageableIndex < 0)
                     pageableIndex = parameters.indexOfFirst { it.type == Size::class.java }
-                if (pageableIndex < 0 && !currentClass) {
-                    pageableIndex =
-                        parameters.indexOfFirst { it.name == "size" && (it.type == Int::class.java || it.type == Int::class.javaObjectType) }
-                    offsetIndex =
-                        parameters.indexOfFirst { it.name == "offset" && (it.type == Long::class.java || it.type == Long::class.javaObjectType) }
-                }
             }
             val isModify: Boolean
             val repositoryQuery = queries[method] as RepositoryQuery?
@@ -113,7 +106,6 @@ class ExecutorLogMethodInterceptor(
                 sqlId = sqlId,
                 annoPageInfo = annoPageInfo,
                 pageableIndex = pageableIndex,
-                offsetIndex = offsetIndex,
                 isModify = isModify
             )
         }
@@ -147,7 +139,7 @@ class ExecutorLogMethodInterceptor(
 
                         is Page<*> -> {
                             sqlLog.total(result.totalElements)
-                            sqlLog.retrieved(result.size)
+                            sqlLog.retrieved(result.content.size)
                         }
 
                         is Collection<*> -> {

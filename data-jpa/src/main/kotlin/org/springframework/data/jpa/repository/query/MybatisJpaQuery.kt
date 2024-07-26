@@ -12,7 +12,9 @@ import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.data.util.ParsingUtils
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
+import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
+import top.bettercode.summer.data.jpa.support.PageNoCount
 import top.bettercode.summer.data.jpa.support.Size
 import java.util.regex.Pattern
 import javax.persistence.EntityManager
@@ -39,26 +41,23 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     repositoryQuery: AbstractJpaQuery,
                     accessor: JpaParametersParameterAccessor
                 ): Any {
-                    val mybatisQuery = repositoryQuery.createQuery(accessor) as MybatisQuery
-                    val total: Long
-                    val resultList: List<*>?
-                    if (accessor.pageable.isPaged) {
-                        val countQuery = mybatisQuery.countQuery!!
-                        val totals = countQuery.resultList
-                        total = if (totals.size == 1) CONVERSION_SERVICE.convert(
-                            totals[0],
-                            Long::class.java
-                        ) ?: 0 else totals.size.toLong()
-                        resultList = if (total > 0 && total > accessor.pageable.offset) {
-                            mybatisQuery.resultList
+                    val query = repositoryQuery.createQuery(accessor) as MybatisQuery
+
+                    val pageable = accessor.pageable
+                    val resultList = query.resultList
+                    return PageableExecutionUtils.getPage(
+                        resultList, pageable
+                    ) {
+                        if (pageable is PageNoCount) {
+                            resultList.size.toLong()
                         } else {
-                            emptyList<Any>()
+                            val totals = doCreateCountQuery(query.mybatisParam).resultList
+                            (if (totals.size == 1) CONVERSION_SERVICE.convert(
+                                totals[0],
+                                Long::class.java
+                            ) ?: 0 else totals.size.toLong())
                         }
-                    } else {
-                        resultList = mybatisQuery.resultList
-                        total = resultList.size.toLong()
                     }
-                    return PageableExecutionUtils.getPage(resultList, accessor.pageable) { total }
                 }
             }
         } else if (method.isCollectionQuery) {
@@ -133,29 +132,28 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         if (mybatisQueryMethod.querySize != null && size == null) {
             mybatisParam.size = Size.of(mybatisQueryMethod.querySize)
         }
-        val countQuery: Query? =
-            if (accessor.pageable.isPaged) {
-                val countMappedStatement = mybatisQueryMethod.countMappedStatement
-                val countQueryString: String = if (countMappedStatement != null) {
-                    val countBoundSql =
-                        countMappedStatement.getBoundSql(mybatisParam.parameterObject)
-                    countBoundSql.sql
-                } else {
-                    CountSqlParser.getSmartCountSql(queryString)
-                }
-                val countQuery = entityManager.createNativeQuery(countQueryString)
-                val countMmetadata = metadataCache.getMetadata(countQueryString, countQuery)
-                parameterBinder.bind(countMmetadata.withQuery(countQuery), mybatisParam)
-                if (queryMethod.applyHintsToCountQuery()) applyHints(
-                    countQuery,
-                    queryMethod
-                ) else countQuery
-            } else null
+        return parameterBinder.bindAndPrepare(MybatisQuery(query, mybatisParam), metadata, accessor.pageable, mybatisParam)
+    }
 
-        return parameterBinder.bindAndPrepare(
-            MybatisQuery(query, countQuery),
-            metadata, accessor, mybatisParam
-        )
+    private fun doCreateCountQuery(mybatisParam: MybatisParam): Query {
+        val parameterBinder = parameterBinder.get() as MybatisParameterBinder
+        val queryString = mybatisParam.boundSql.sql
+
+        val countMappedStatement = mybatisQueryMethod.countMappedStatement
+        val countQueryString: String = if (countMappedStatement != null) {
+            val countBoundSql =
+                countMappedStatement.getBoundSql(mybatisParam.parameterObject)
+            countBoundSql.sql
+        } else {
+            CountSqlParser.getSmartCountSql(queryString)
+        }
+        val countQuery = entityManager.createNativeQuery(countQueryString)
+        val countMmetadata = metadataCache.getMetadata(countQueryString, countQuery)
+        parameterBinder.bind(countMmetadata.withQuery(countQuery), mybatisParam)
+        return if (queryMethod.applyHintsToCountQuery()) applyHints(
+            countQuery,
+            queryMethod
+        ) else countQuery
     }
 
     override fun doCreateCountQuery(accessor: JpaParametersParameterAccessor): Query {
@@ -172,7 +170,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
 
     companion object {
 
-        private val CONVERSION_SERVICE: ConversionService
+        val CONVERSION_SERVICE: ConversionService
 
         init {
             val conversionService = DefaultConversionService()

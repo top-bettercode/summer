@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.domain.Specification
+import top.bettercode.summer.data.jpa.support.PageNoCount.Companion.noCount
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import top.bettercode.summer.web.BaseController
 import java.util.*
@@ -30,14 +31,13 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
         return repository
     }
 
-    override fun <E> findAllPageByPage(totalPages: Int, query: (Pageable) -> List<E>): List<E> {
-        return findAllPageByPage(springDataWebProperties.pageable.maxPageSize, totalPages, query)
+    override fun <E> findAllPageByPage(query: (Pageable) -> Page<E>): List<E> {
+        return findAllPageByPage(springDataWebProperties.pageable.maxPageSize, query)
     }
 
     override fun <E> findAllPageByPage(
         pageSize: Int,
-        totalPages: Int,
-        query: (Pageable) -> List<E>
+        query: (Pageable) -> Page<E>
     ): List<E> {
         val results = mutableListOf<E>()
         val pageable = Pageable.ofSize(pageSize)
@@ -47,9 +47,9 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
         runBlocking {
             val deferredResults = mutableListOf<Deferred<Pair<Int, List<E>>>>()
             val customScope = CoroutineScope(Dispatchers.Default)
-            for (i in 1 until totalPages) {
+            for (i in 1 until result.totalPages) {
                 deferredResults.add(customScope.async {
-                    val content = query(PageRequest.of(i, pageSize))
+                    val content = query(PageRequest.of(i, pageSize).noCount()).content
                     i to content
                 })
             }
@@ -101,39 +101,6 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
 
     override fun findFirst(spec: Specification<T>?): Optional<T> {
         return repository.findFirst(spec)
-    }
-
-    override fun findAll(size: Int): List<T> {
-        return repository.findAll(size)
-    }
-
-    override fun findAll(offset: Long, size: Int): List<T> {
-        return repository.findAll(offset, size)
-    }
-
-    override fun findAll(size: Int, sort: Sort): List<T> {
-        return repository.findAll(size, sort)
-    }
-
-    override fun findAll(offset: Long, size: Int, sort: Sort): List<T> {
-        return repository.findAll(offset, size, sort)
-    }
-
-    override fun findAll(spec: Specification<T>?, size: Int): List<T> {
-        return repository.findAll(spec, size)
-    }
-
-    override fun findAll(spec: Specification<T>?, offset: Long, size: Int): List<T> {
-
-        return repository.findAll(spec, offset, size)
-    }
-
-    override fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T> {
-        return repository.findAll(spec, size, sort)
-    }
-
-    override fun findAll(spec: Specification<T>?, offset: Long, size: Int, sort: Sort): List<T> {
-        return repository.findAll(spec, offset, size, sort)
     }
 
     override fun findAll(): List<T> {

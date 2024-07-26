@@ -85,13 +85,4 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, JpaSpecificationExecut
      */
     fun findPhysicalAllById(ids: Iterable<ID>): List<T>
 
-    fun findAll(size: Int): List<T>
-    fun findAll(offset: Long, size: Int): List<T>
-    fun findAll(size: Int, sort: Sort): List<T>
-    fun findAll(offset: Long, size: Int, sort: Sort): List<T>
-    fun findAll(spec: Specification<T>?, size: Int): List<T>
-    fun findAll(spec: Specification<T>?, offset: Long, size: Int): List<T>
-    fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T>
-    fun findAll(spec: Specification<T>?, offset: Long, size: Int, sort: Sort): List<T>
-
 }
