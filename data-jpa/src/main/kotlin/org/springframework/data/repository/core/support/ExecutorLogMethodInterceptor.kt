@@ -164,6 +164,7 @@ class ExecutorLogMethodInterceptor(
                     sqlLog.cost(duration)
                 }
             } finally {
+                SqlAppender.enableAutoFlush()
                 MDC.remove(SqlAppender.MDC_SQL_ERROR)
                 MDC.remove(SqlAppender.MDC_SQL_ID)
             }
