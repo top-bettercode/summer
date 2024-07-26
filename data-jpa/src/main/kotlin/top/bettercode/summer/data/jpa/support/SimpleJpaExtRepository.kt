@@ -33,11 +33,12 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     jpaExtProperties: JpaExtProperties,
     auditorAware: AuditorAware<*>,
     private val entityInformation: JpaEntityInformation<T, ID>,
-    @Suppress("RedundantModalityfindListFromRecycleBinModifier")
-    final override val entityManager: EntityManager,
+    override val entityManager: EntityManager,
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
-    private val extJpaSupport: ExtJpaSupport<T> =
+    private val extJpaSupport: ExtJpaSupport<T> by lazy {
         DefaultExtJpaSupport(jpaExtProperties, entityManager, auditorAware, domainClass)
+    }
+
     private val escapeCharacter = EscapeCharacter.DEFAULT
 
     private fun <S : T> isNew(entity: S, dynamicSave: Boolean): Boolean {
