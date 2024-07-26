@@ -11,7 +11,7 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
+interface IBaseService<T:Any, ID:Any, M : BaseRepository<T, ID>> {
 
     fun getRepository(): M
 
@@ -28,7 +28,7 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
      * @param <S> 类型
      * @return 结果
     </S> */
-    fun <S : T> dynamicSave(s: S): S
+    fun <S : T> saveDynamic(s: S): S
 
     fun <S : T> saveAll(entities: Iterable<S>): List<S>
 
