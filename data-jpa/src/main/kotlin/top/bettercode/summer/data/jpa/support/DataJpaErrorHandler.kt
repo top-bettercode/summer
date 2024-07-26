@@ -61,8 +61,10 @@ class DataJpaErrorHandler(
                 respEntity.message = "JpaSystemException"
             }
         } else if (error is InvalidDataAccessApiUsageException) {
-            if (error.message != null && error.message!!.contains("detached entity passed to persist")) {
+            if (error.message?.contains("detached entity passed to persist") == true) {
                 respEntity.message = "theUpdatedDataDoesNotExistInTheDatabase"
+            }else if(error.message?.contains("The given id must not be null") == true){
+                respEntity.message = "IdCannotBeNull"
             }
         } else if (error is org.hibernate.NonUniqueResultException) {
             if (error.message != null && error.message!!.matches(".*query did not return a unique result:.*".toRegex())) {

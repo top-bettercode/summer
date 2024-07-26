@@ -116,7 +116,7 @@ class DefaultErrorHandler(
             respEntity.message = "MediaType not Acceptable!Must ACCEPT:" + error
                 .supportedMediaTypes
         } else if (error is HttpMessageNotWritableException) {
-            if (error.message != null && error.message!!.contains("Session is closed")) {
+            if (error.message?.contains("Session is closed") == true) {
                 respEntity.httpStatusCode = HttpStatus.REQUEST_TIMEOUT.value()
                 respEntity.message = "request.timeout"
             }
