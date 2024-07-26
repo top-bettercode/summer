@@ -17,32 +17,7 @@ class MybatisResultTransformer(
     var autoCloseResultSet = true
 
     override fun transformTuple(tuple: Array<Any?>, aliases: Array<String>): Any {
-        val tupleImpl = NativeTupleImpl(tuple, aliases)
-        if (isStreamQuery) {
-            val tuples = listOf(tupleImpl)
-            val resultSetMetaData: TupleResultSetMetaData
-            if (this.resultSetMetaData == null) {
-                synchronized(this) {
-                    if (this.resultSetMetaData == null) {
-                        resultSetMetaData = TupleResultSetMetaData(tuples)
-                        if (resultSetMetaData.complete) {
-                            this.resultSetMetaData = resultSetMetaData
-                        }
-                    } else {
-                        resultSetMetaData = this.resultSetMetaData!!
-                    }
-                }
-            } else {
-                resultSetMetaData = this.resultSetMetaData!!
-            }
-            val resultSet = TupleResultSet(tuples, resultSetMetaData)
-            return MybatisResultSetHandler(mappedStatement, autoCloseResultSet).handleResultSets(
-                resultSet,
-                Int.MAX_VALUE
-            ).first()!!
-        } else {
-            return tupleImpl
-        }
+        return NativeTupleImpl(tuple, aliases)
     }
 
     @Suppress("UNCHECKED_CAST")
