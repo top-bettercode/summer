@@ -11,6 +11,7 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
+import top.bettercode.summer.gradle.plugin.project.update.JpaUpdate
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
@@ -288,29 +289,7 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(t: Task) {
-                        val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
-                        project.logger.lifecycle("更新代码")
-
-                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelImport"] =
-                            "top.bettercode.summer.tools.excel.read.ExcelReader"
-                        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelExport"] =
-                            "top.bettercode.summer.tools.excel.write.ExcelWriter"
-                        replaceCodeNames["|||import top.bettercode.summer.tools.excel.ExcelField;"] =
-                            "import top.bettercode.summer.tools.excel.write.CellSetter;\n" +
-                                    "import top.bettercode.summer.tools.excel.write.RowSetter;"
-                        replaceCodeNames["ExcelImport"] = "ExcelReader"
-                        replaceCodeNames["excelImport.setRow"] = "reader.row"
-                        replaceCodeNames["excelImport"] = "reader"
-                        replaceCodeNames["ExcelExport.export"] = "ExcelWriter.write"
-                        replaceCodeNames["ExcelExport"] = "ExcelWriter"
-                        replaceCodeNames["***ExcelField<(.*?), \\?>\\[\\] (.*?) = ArrayUtil\\.of\\("] =
-                            "RowSetter<\$1> \$2 = RowSetter.of("
-                        replaceCodeNames["ExcelField"] = "CellSetter"
-                        replaceCodeNames["excelFields"] = "rowSetter"
-                        replaceCodeNames["IExcel"] = "Excel"
-                        replaceCodeNames["|||).cell("] = ").converter("
-                        DicCodeGen.replaceOld(project, replaceCodeNames)
-                        project.logger.lifecycle("更新代码完成")
+                        JpaUpdate().update(project)
                     }
                 })
             }
