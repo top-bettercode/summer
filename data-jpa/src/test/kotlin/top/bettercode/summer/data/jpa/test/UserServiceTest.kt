@@ -35,7 +35,7 @@ class UserServiceTest {
     fun tearDown() {
         System.err.println("--------------------------------------------------------")
         userService.deleteAll()
-        userService.getRepository().cleanRecycleBin()
+        userService.getRepository().deleteAllRecycleBin()
     }
 
     @Test

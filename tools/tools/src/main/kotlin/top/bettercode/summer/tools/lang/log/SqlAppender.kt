@@ -18,6 +18,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         const val MDC_SQL_ID = "SQL_ID"
         const val MDC_SQL_END = "SQL_END"
         const val MDC_SQL_TOTAL = "SQL_TOTAL"
+        const val MDC_SQL_RESULT = "SQL_RESULT"
         const val MDC_SQL_RETRIEVED = "SQL_RETRIEVED"
         const val MDC_SQL_AFFECTED = "SQL_AFFECTED"
         const val MDC_SQL_COST = "SQL_COST"
@@ -30,6 +31,14 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 info("total: {} rows", total)
             } finally {
                 MDC.remove(MDC_SQL_TOTAL)
+            }
+        }
+        fun Logger.result(result: Number) {
+            try {
+                MDC.put(MDC_SQL_RESULT, result.toString())
+                info("result: {}", result)
+            } finally {
+                MDC.remove(MDC_SQL_RESULT)
             }
         }
 
@@ -45,7 +54,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         fun Logger.affected(affected: Any) {
             try {
                 MDC.put(MDC_SQL_AFFECTED, affected.toString())
-                info("affected: {} rows", affected)
+                debug("affected: {} rows", affected)
             } finally {
                 MDC.remove(MDC_SQL_AFFECTED)
             }
@@ -69,12 +78,12 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
 
         fun Logger.offset(offset: Long) {
             MDC.put(MDC_SQL_OFFSET, offset.toString())
-            info("offset: {} rows", offset)
+            debug("offset: {} rows", offset)
         }
 
         fun Logger.limit(limit: Int) {
             MDC.put(MDC_SQL_LIMIT, limit.toString())
-            info("limit: {} rows", limit)
+            debug("limit: {} rows", limit)
         }
     }
 
@@ -89,7 +98,6 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             val traceid = event.mdcPropertyMap[HttpOperation.MDC_TRACEID]
                 ?: event.threadName
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
-            val error = event.mdcPropertyMap[MDC_SQL_ERROR]
             val end = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
             val key = "$traceid:$id"
             var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
@@ -128,6 +136,11 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     if (!total.isNullOrBlank()) {
                         sqlLogData.total = total.toLong()
                     }
+                    //result: {}
+                    val result = event.mdcPropertyMap[MDC_SQL_RESULT]
+                    if (!result.isNullOrBlank()) {
+                        sqlLogData.result = result.toLong()
+                    }
                     //{} rows retrieved
                     val retrieved = event.mdcPropertyMap[MDC_SQL_RETRIEVED]
                     if (!retrieved.isNullOrBlank()) {
@@ -151,11 +164,12 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     if (!limit.isNullOrBlank()) {
                         sqlLogData.limit = limit.toInt()
                     }
+                    val error = event.mdcPropertyMap[MDC_SQL_ERROR]
+                    if (!error.isNullOrBlank())
+                        sqlLogData.error = error
                 }
             }
             if (end) {
-                if (!error.isNullOrBlank())
-                    sqlLogData.error = error
                 log(sqlLogData)
                 sqlCache.remove(key)
             }

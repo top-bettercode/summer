@@ -60,7 +60,7 @@ class JpaMybatisTest {
         System.err.println("take seconds:" + (System.currentTimeMillis() - s))
         System.err.println("--------------------------------------------------------")
         repository.deleteAll()
-        repository.cleanRecycleBin()
+        repository.deleteAllRecycleBin()
     }
 
     @Test
@@ -457,6 +457,7 @@ class JpaMybatisTest {
         Assertions.assertEquals(1, peter!!.size)
     }
 
+//    @javax.transaction.Transactional
     @Test
     fun update() {
         val update = repository.update(carterId, "Peter")

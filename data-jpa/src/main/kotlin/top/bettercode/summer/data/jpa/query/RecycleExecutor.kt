@@ -14,17 +14,22 @@ import java.util.*
  * @author Peter Wu
 </ID></T> */
 interface RecycleExecutor<T, ID> {
-    fun cleanRecycleBin(): Int
+
+    fun deleteAllRecycleBin(): Long
     fun deleteFromRecycleBin(id: ID)
-    fun deleteAllByIdFromRecycleBin(ids: Iterable<ID>)
-    fun deleteFromRecycleBin(spec: Specification<T>?)
+    fun deleteAllByIdFromRecycleBin(ids: Iterable<ID>): Long
+    fun deleteFromRecycleBin(spec: Specification<T>?): Long
+
     fun countRecycleBin(): Long
     fun countRecycleBin(spec: Specification<T>?): Long
     fun existsInRecycleBin(spec: Specification<T>?): Boolean
+
     fun findByIdFromRecycleBin(id: ID): Optional<T>
     fun findAllByIdFromRecycleBin(ids: Iterable<ID>): List<T>
+
     fun findOneFromRecycleBin(spec: Specification<T>?): Optional<T>
     fun findFirstFromRecycleBin(spec: Specification<T>?): Optional<T>
+
     fun findAllFromRecycleBin(): List<T>
     fun findAllFromRecycleBin(size: Int): List<T>
     fun findAllFromRecycleBin(size: Int, sort: Sort): List<T>

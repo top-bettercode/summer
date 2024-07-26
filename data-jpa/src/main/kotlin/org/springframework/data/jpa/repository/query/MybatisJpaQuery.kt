@@ -13,21 +13,103 @@ import org.springframework.data.util.ParsingUtils
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
-import top.bettercode.summer.data.jpa.support.JpaUtil
 import top.bettercode.summer.data.jpa.support.Size
-import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.affected
-import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
-import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
 import java.util.regex.Pattern
 import javax.persistence.EntityManager
 import javax.persistence.NoResultException
 import javax.persistence.Query
 
 class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJpaQuery(method, em) {
-    private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
+    private val sqlLog = LoggerFactory.getLogger(MybatisJpaQuery::class.java)
 
     private val metadataCache = QueryMetadataCache()
     private val mybatisQueryMethod: MybatisQueryMethod = method.mybatisQueryMethod!!
+    private val mybatisParameterBinder: MybatisParameterBinder by lazy {
+        MybatisParameterBinder(
+            queryMethod.parameters,
+            mybatisQueryMethod.paramed,
+            mybatisQueryMethod.mappedStatement
+        )
+    }
+    private val queryExecution: JpaQueryExecution by lazy {
+        val sqlLogId = mybatisQueryMethod.mappedStatement.id
+        if (method.isPageQuery) {
+            object : PagedExecution() {
+                override fun doExecute(
+                    repositoryQuery: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
+                ): Any {
+                    val mybatisQuery = repositoryQuery.createQuery(accessor) as MybatisQuery
+                    val total: Long
+                    val resultList: List<*>?
+                    if (accessor.pageable.isPaged) {
+                        val countQuery = mybatisQuery.countQuery!!
+                        val totals = countQuery.resultList
+                        total = if (totals.size == 1) CONVERSION_SERVICE.convert(
+                            totals[0],
+                            Long::class.java
+                        ) ?: 0 else totals.size.toLong()
+                        resultList = if (total > 0 && total > accessor.pageable.offset) {
+                            mybatisQuery.resultList
+                        } else {
+                            emptyList<Any>()
+                        }
+                    } else {
+                        resultList = mybatisQuery.resultList
+                        total = resultList.size.toLong()
+                    }
+                    return PageableExecutionUtils.getPage(resultList, accessor.pageable) { total }
+                }
+            }
+        } else if (method.isCollectionQuery) {
+            CollectionExecution()
+        } else if (mybatisQueryMethod.isModifyingQuery || method.isModifyingQuery) {
+            ModifyingExecution(method, entityManager)
+        } else if (method.isProcedureQuery) {
+            ProcedureExecution()
+        } else if (method.isStreamQuery) {
+            StreamExecution()
+        } else if (method.isSliceQuery) {
+            object : SlicedExecution() {
+                override fun doExecute(
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
+                ): Any {
+                    val pageable = accessor.pageable
+                    val nestedResultMapType = mybatisQueryMethod.nestedResultMapType
+                    if (pageable.isPaged && nestedResultMapType != null) {
+                        if (nestedResultMapType.isCollection) {
+                            throw UnsupportedOperationException(
+                                nestedResultMapType.nestedResultMapId
+                                        + " collection resultmap not support page query"
+                            )
+                        } else {
+                            sqlLog.info(
+                                "{} may return incorrect paginated data. Please check result maps definition {}.",
+                                sqlLogId, nestedResultMapType.nestedResultMapId
+                            )
+                        }
+                    }
+                    return super.doExecute(query, accessor) as SliceImpl<*>
+                }
+            }
+        } else {
+            object : SingleEntityExecution() {
+                @Suppress("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE")
+                override fun doExecute(
+                    query: AbstractJpaQuery,
+                    accessor: JpaParametersParameterAccessor
+                ): Any? {
+                    val result: Any? = try {
+                        super.doExecute(query, accessor)
+                    } catch (e: NoResultException) {
+                        null
+                    }
+                    return result
+                }
+            }
+        }
+    }
 
     public override fun doCreateQuery(accessor: JpaParametersParameterAccessor): Query {
         val parameterBinder = parameterBinder.get() as MybatisParameterBinder
@@ -81,175 +163,26 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
     }
 
     override fun createBinder(): ParameterBinder {
-        return MybatisParameterBinder(
-            queryMethod.parameters,
-            mybatisQueryMethod.paramed,
-            mybatisQueryMethod.mappedStatement
-        )
+        return mybatisParameterBinder
     }
 
     override fun getExecution(): JpaQueryExecution {
-        val method = queryMethod
-        val sqlLogId = mybatisQueryMethod.mappedStatement.id
-        return if (method.isPageQuery) {
-            object : PagedExecution() {
-                private val CONVERSION_SERVICE: ConversionService
-
-                init {
-                    val conversionService = DefaultConversionService()
-
-                    conversionService.addConverter(JpaResultConverters.BlobToByteArrayConverter.INSTANCE)
-                    conversionService.removeConvertible(Collection::class.java, Object::class.java)
-                    potentiallyRemoveOptionalConverter(conversionService)
-
-                    CONVERSION_SERVICE = conversionService
-                }
-
-                override fun doExecute(
-                    repositoryQuery: AbstractJpaQuery,
-                    accessor: JpaParametersParameterAccessor
-                ): Any {
-                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
-                        val mybatisQuery = repositoryQuery.createQuery(accessor) as MybatisQuery
-                        val total: Long
-                        val resultList: List<*>?
-                        if (accessor.pageable.isPaged) {
-                            val countQuery = mybatisQuery.countQuery!!
-                            val totals = countQuery.resultList
-                            total = if (totals.size == 1) CONVERSION_SERVICE.convert(
-                                totals[0],
-                                Long::class.java
-                            )
-                                ?: 0 else totals.size.toLong()
-                            if (sqlLog.isInfoEnabled) {
-                                sqlLog.total(total)
-                            }
-                            if (total > 0 && total > accessor.pageable.offset) {
-                                resultList = mybatisQuery.resultList
-                                if (sqlLog.isInfoEnabled) {
-                                    sqlLog.retrieved(resultList.size)
-                                }
-                            } else {
-                                resultList = emptyList<Any>()
-                            }
-                        } else {
-                            resultList = mybatisQuery.resultList
-                            if (sqlLog.isInfoEnabled) {
-                                sqlLog.retrieved(resultList.size)
-                            }
-                            total = resultList.size.toLong()
-                        }
-                        PageableExecutionUtils.getPage(resultList, accessor.pageable) { total }
-                    }
-                }
-            }
-        } else if (method.isCollectionQuery) {
-            object : CollectionExecution() {
-                override fun doExecute(
-                    query: AbstractJpaQuery,
-                    accessor: JpaParametersParameterAccessor
-                ): Any {
-                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
-                        val result = super.doExecute(query, accessor) as List<*>
-                        if (sqlLog.isInfoEnabled) {
-                            sqlLog.retrieved(result.size)
-                        }
-                        result
-                    }
-                }
-            }
-        } else if (mybatisQueryMethod.isModifyingQuery || method.isModifyingQuery) {
-            object : ModifyingExecution(method, entityManager) {
-                override fun doExecute(
-                    query: AbstractJpaQuery,
-                    accessor: JpaParametersParameterAccessor
-                ): Any {
-                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
-                        val result = super.doExecute(query, accessor)
-                        if (sqlLog.isInfoEnabled) {
-                            sqlLog.affected(result)
-                        }
-                        result
-                    }
-                }
-            }
-        } else if (method.isProcedureQuery) {
-            object : ProcedureExecution() {
-                override fun doExecute(
-                    jpaQuery: AbstractJpaQuery,
-                    accessor: JpaParametersParameterAccessor
-                ): Any {
-                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
-                        super.doExecute(jpaQuery, accessor)
-                    }
-                }
-            }
-        } else if (method.isStreamQuery) {
-            object : StreamExecution() {
-                override fun doExecute(
-                    query: AbstractJpaQuery,
-                    accessor: JpaParametersParameterAccessor
-                ): Any {
-                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
-                        super.doExecute(query, accessor)
-                    }
-                }
-            }
-        } else if (method.isSliceQuery) {
-            object : SlicedExecution() {
-                override fun doExecute(
-                    query: AbstractJpaQuery,
-                    accessor: JpaParametersParameterAccessor
-                ): Any {
-                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
-                        val pageable = accessor.pageable
-                        val nestedResultMapType = mybatisQueryMethod.nestedResultMapType
-                        if (pageable.isPaged && nestedResultMapType != null) {
-                            if (nestedResultMapType.isCollection) {
-                                throw UnsupportedOperationException(
-                                    nestedResultMapType.nestedResultMapId
-                                            + " collection resultmap not support page query"
-                                )
-                            } else {
-                                sqlLog.info(
-                                    "{} may return incorrect paginated data. Please check result maps definition {}.",
-                                    sqlLogId, nestedResultMapType.nestedResultMapId
-                                )
-                            }
-                        }
-                        val result = super.doExecute(query, accessor) as SliceImpl<*>
-                        if (sqlLog.isInfoEnabled) {
-                            sqlLog.total(result.numberOfElements)
-                            sqlLog.retrieved(result.size)
-                        }
-                        result
-                    }
-                }
-            }
-        } else {
-            object : SingleEntityExecution() {
-                @Suppress("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE")
-                override fun doExecute(
-                    query: AbstractJpaQuery,
-                    accessor: JpaParametersParameterAccessor
-                ): Any? {
-                    return JpaUtil.mdcId(sqlLogId, accessor.pageable) {
-                        val result: Any? = try {
-                            super.doExecute(query, accessor)
-                        } catch (e: NoResultException) {
-                            null
-                        }
-                        if (sqlLog.isInfoEnabled) {
-                            sqlLog.retrieved(if (result == null) 0 else 1)
-                        }
-                        result
-                    }
-                }
-            }
-        }
+        return queryExecution
     }
 
     companion object {
+
+        private val CONVERSION_SERVICE: ConversionService
+
+        init {
+            val conversionService = DefaultConversionService()
+
+            conversionService.addConverter(JpaResultConverters.BlobToByteArrayConverter.INSTANCE)
+            conversionService.removeConvertible(Collection::class.java, Object::class.java)
+            potentiallyRemoveOptionalConverter(conversionService)
+
+            CONVERSION_SERVICE = conversionService
+        }
 
         fun convertOrderBy(sort: Sort?): String? {
             return if (sort == null || !sort.isSorted) {

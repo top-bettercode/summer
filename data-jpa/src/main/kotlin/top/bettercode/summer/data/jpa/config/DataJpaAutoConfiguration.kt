@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.AuditorAware
+import top.bettercode.summer.data.jpa.support.RepositoryLoggingAspect
 import top.bettercode.summer.data.jpa.support.DataJpaErrorHandler
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -45,5 +46,10 @@ class DataJpaAutoConfiguration {
         request: HttpServletRequest
     ): DataJpaErrorHandler {
         return DataJpaErrorHandler(messageSource, request)
+    }
+
+    @Bean
+    fun repositoryLoggingAspect(): RepositoryLoggingAspect {
+        return RepositoryLoggingAspect()
     }
 }

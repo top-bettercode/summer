@@ -59,7 +59,7 @@ class JpaMybatisTupleTest {
         System.err.println("take seconds:" + (System.currentTimeMillis() - s))
         System.err.println("--------------------------------------------------------")
         repository.deleteAll()
-        repository.cleanRecycleBin()
+        repository.deleteAllRecycleBin()
     }
 
     @Test

@@ -60,7 +60,7 @@ class SimpleJpaExtRepositoryTest {
     fun tearDown() {
         System.err.println("--------------------------------------------------------")
         repository.deleteAll()
-        repository.cleanRecycleBin()
+        repository.deleteAllRecycleBin()
     }
 
     @Test
@@ -160,7 +160,7 @@ class SimpleJpaExtRepositoryTest {
         val update = User()
         update.id = id
         update.firstName = "Dave22"
-        repository.dynamicSave(update)
+        repository.saveDynamic(update)
         val optionalUser = repository.findById(id)
         optionalUser.ifPresent { x: User? -> System.err.println(x) }
         Assertions.assertTrue(optionalUser.isPresent)

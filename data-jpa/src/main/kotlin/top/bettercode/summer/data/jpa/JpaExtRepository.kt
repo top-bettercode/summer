@@ -1,6 +1,5 @@
 package top.bettercode.summer.data.jpa
 
-import org.springframework.data.domain.Example
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -8,7 +7,6 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.NoRepositoryBean
-import org.springframework.data.repository.query.QueryByExampleExecutor
 import top.bettercode.summer.data.jpa.query.RecycleExecutor
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
@@ -20,22 +18,28 @@ import javax.persistence.EntityManager
  * @author Peter Wu
 </ID></T> */
 @NoRepositoryBean
-interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor<T>, JpaSpecificationExecutor<T>, RecycleExecutor<T, ID> {
+interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, JpaSpecificationExecutor<T>,
+    RecycleExecutor<T, ID> {
+
     val entityManager: EntityManager
 
-    fun detach(entity: Any)
+    fun detach(entity: Any) {
+        entityManager.detach(entity)
+    }
 
-    fun clear()
+    fun clear() {
+        entityManager.clear()
+    }
 
-    fun lowLevelUpdate(spec: UpdateSpecification<T>): Long
+    fun updateLowLevel(spec: UpdateSpecification<T>): Long
 
-    fun physicalUpdate(spec: UpdateSpecification<T>): Long
+    fun updatePhysical(spec: UpdateSpecification<T>): Long
 
     fun update(spec: UpdateSpecification<T>): Long
 
-    fun <S : T> lowLevelUpdate(s: S?, spec: UpdateSpecification<T>): Long
+    fun <S : T> updateLowLevel(s: S?, spec: UpdateSpecification<T>): Long
 
-    fun <S : T> physicalUpdate(s: S?, spec: UpdateSpecification<T>): Long
+    fun <S : T> updatePhysical(s: S?, spec: UpdateSpecification<T>): Long
 
     fun <S : T> update(s: S?, spec: UpdateSpecification<T>): Long
 
@@ -46,16 +50,15 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
      * @param <S> 类型
      * @return 结果
     </S> */
-    fun <S : T> dynamicSave(s: S): S
+    fun <S : T> saveDynamic(s: S): S
     fun delete(spec: Specification<T>): Long
-    fun physicalDelete(spec: Specification<T>): Long
+    fun deletePhysical(spec: Specification<T>): Long
 
     fun exists(spec: Specification<T>): Boolean
     fun existsPhysical(spec: Specification<T>?): Boolean
     fun countPhysical(spec: Specification<T>?): Long
     fun findFirst(sort: Sort): Optional<T>
     fun findFirst(spec: Specification<T>?): Optional<T>
-    fun <S : T> findFirst(example: Example<S>): Optional<S>
 
     /**
      * 根据ID查询数据，包括已逻辑删除的数据
@@ -85,7 +88,5 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     fun findAll(size: Int, sort: Sort): List<T>
     fun findAll(spec: Specification<T>?, size: Int): List<T>
     fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T>
-    fun <S : T> findAll(example: Example<S>, size: Int): List<S>
-    fun <S : T> findAll(example: Example<S>, size: Int, sort: Sort): List<S>
 
 }

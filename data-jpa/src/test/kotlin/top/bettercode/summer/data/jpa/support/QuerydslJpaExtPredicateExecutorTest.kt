@@ -45,7 +45,7 @@ class QuerydslJpaExtPredicateExecutorTest {
     @AfterEach
     fun tearDown() {
         repository.deleteAll()
-        repository.cleanRecycleBin()
+        repository.deleteAllRecycleBin()
     }
 
     @Test

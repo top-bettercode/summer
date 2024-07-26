@@ -8,14 +8,11 @@ import org.apache.ibatis.reflection.ParamNameResolver
 import org.apache.ibatis.session.Configuration
 import org.apache.ibatis.type.TypeException
 import org.apache.ibatis.type.TypeHandlerRegistry
-import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.BindableQuery
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.ErrorHandling
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.support.Size
-import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.limit
-import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
 import java.util.*
 import javax.persistence.Query
 
@@ -27,7 +24,6 @@ internal class MybatisParameterBinder(
     private val paramed: Boolean,
     private val mappedStatement: MappedStatement
 ) : ParameterBinder(parameters, emptyList()) {
-    private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
     private val typeHandlerRegistry: TypeHandlerRegistry =
         mappedStatement.configuration.typeHandlerRegistry
     private val configuration: Configuration = mappedStatement.configuration
@@ -103,8 +99,6 @@ internal class MybatisParameterBinder(
         if (size != null && !size.isUnlimited()) {
             query.setFirstResult(0)
             query.setMaxResults(size.size)
-            sqlLog.offset(0)
-            sqlLog.limit(size.size)
         }
         if (!parameters.hasPageableParameter() || accessor.pageable.isUnpaged) {
             return query

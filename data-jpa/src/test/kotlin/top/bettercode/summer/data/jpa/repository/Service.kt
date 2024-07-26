@@ -30,15 +30,18 @@ class Service {
         val dave = User("Dave", "Matthews")
         repository.save(dave)
         val users1 = sqlSession
-                .selectList<Any>(UserRepository::class.java.name + ".selectMybatisAll")
+            .selectList<Any>(UserRepository::class.java.name + ".selectMybatisAll")
         System.err.println(users1.size)
+        //开启日志后，自动flush
+//        Assert.isTrue(users1.size == 4, "查询结果不对")
         all = repository.findAll()
         val size2 = all.size
         System.err.println(size2)
+        //开启日志后，自动flush
+//        Assert.isTrue(size2 != users1.size, "查询结果不一致")
         byMybatis = repository.selectMybatisAll()
         val size3 = byMybatis!!.size
         System.err.println(size3)
         Assert.isTrue(size2 == size3, "查询结果不一致")
-        Assert.isTrue(size2 == users1.size, "查询结果不一致")
     }
 }

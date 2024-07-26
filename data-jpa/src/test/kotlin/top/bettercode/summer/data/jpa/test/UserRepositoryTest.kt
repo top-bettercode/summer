@@ -16,7 +16,7 @@ import javax.sql.DataSource
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
-class DynamicSaveTest {
+class UserRepositoryTest {
     @Autowired
     lateinit var repository: UserRepository
 
@@ -38,7 +38,7 @@ class DynamicSaveTest {
         System.err.println("--------------------------------------------------------")
     }
 
-    @Deprecated("")
+    //    @Transactional
     @Test
     fun dynamicSaveTest() {
         var dave = User("Wu", "Matthews")
@@ -54,7 +54,7 @@ class DynamicSaveTest {
         dave = User()
         dave.id = id
         dave.lastName = "MM"
-        repository.dynamicSave(dave)
+        repository.saveDynamic(dave)
         optionalUser = repository.findById(id)
         Assertions.assertTrue(optionalUser.isPresent)
         optionalUser.ifPresent { user: User? ->
@@ -67,9 +67,10 @@ class DynamicSaveTest {
     fun dynamicSaveForm() {
         val dave = UserForm()
         dave.lastName = "Form"
-        repository.dynamicSave(dave)
+        repository.saveDynamic(dave)
     }
 
+    //    @Transactional
     @Test
     fun staticSaveTest() {
         var dave = StaticUser(null, "Matthews")
@@ -80,5 +81,33 @@ class DynamicSaveTest {
             System.err.println(user)
             Assertions.assertNull(user?.firstName)
         }
+    }
+
+    @Test
+    fun setFixedFirstnameFor() {
+        val dave = User("Wu", "Matthews")
+        repository.save(dave)
+        repository.setFixedFirstnameFor("Wu2", "Matthews")
+    }
+
+    @Test
+    fun saveAll() {
+        val all = listOf(User("Wu1", "Matthews"), User("Wu2", "Matthews"))
+        val result = repository.saveAll(all)
+        System.err.println(result)
+    }
+
+
+    @Test
+    fun run() {
+        repository.run {
+            repository.save(User("Wu1", "Matthews"))
+            repository.save(User("Wu2", "Matthews"))
+        }
+    }
+
+    @Test
+    fun findAll() {
+        repository.findAll(10)
     }
 }

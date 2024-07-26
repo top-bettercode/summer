@@ -18,6 +18,7 @@ import org.springframework.data.querydsl.QuerydslUtils
 import org.springframework.data.querydsl.SimpleEntityPathResolver
 import org.springframework.data.repository.core.RepositoryInformation
 import org.springframework.data.repository.core.RepositoryMetadata
+import org.springframework.data.repository.core.support.LogAdviceParse
 import org.springframework.data.repository.core.support.QueryCreationListener
 import org.springframework.data.repository.core.support.RepositoryComposition.RepositoryFragments
 import org.springframework.data.repository.core.support.RepositoryFactorySupport
@@ -93,6 +94,16 @@ class JpaExtRepositoryFactory(
         this.queryMethodFactory = queryMethodFactory
     }
 
+    override fun <T : Any> getRepository(
+        repositoryInterface: Class<T>,
+        fragments: RepositoryFragments
+    ): T {
+        val repository = super.getRepository(repositoryInterface, fragments)
+        LogAdviceParse.parse(repositoryInterface, repository)
+        return repository
+    }
+
+
     override fun getTargetRepository(
         information: RepositoryInformation
     ): JpaRepositoryImplementation<*, *> {
@@ -109,12 +120,13 @@ class JpaExtRepositoryFactory(
         val entityInformation: JpaEntityInformation<*, Serializable> = getEntityInformation(
             information.domainType
         )
+
         val repository = getTargetRepositoryViaReflection<Any>(
             information,
             jpaExtProperties,
             auditorAware,
             entityInformation,
-            entityManager
+            entityManager,
         )
         Assert.isInstanceOf(SimpleJpaExtRepository::class.java, repository)
         return repository as JpaRepositoryImplementation<*, *>

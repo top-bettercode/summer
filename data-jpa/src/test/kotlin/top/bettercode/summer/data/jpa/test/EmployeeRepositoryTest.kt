@@ -64,9 +64,9 @@ class EmployeeRepositoryTest {
     fun tearDown() {
         System.err.println("--------------------------------------------------------")
         userRepository.deleteAll()
-        userRepository.cleanRecycleBin()
+        userRepository.deleteAllRecycleBin()
         employeeRepository.deleteAll()
-        employeeRepository.cleanRecycleBin()
+        employeeRepository.deleteAllRecycleBin()
     }
 
     @Test

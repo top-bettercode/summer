@@ -53,9 +53,9 @@ class LogicalDeleteTest {
     fun tearDown() {
         System.err.println("--------------------------------------------------------")
         repository.deleteAll()
-        repository.cleanRecycleBin()
+        repository.deleteAllRecycleBin()
         physicalUserRepository!!.deleteAll()
-        physicalUserRepository!!.cleanRecycleBin()
+        physicalUserRepository!!.deleteAllRecycleBin()
     }
 
     @Test

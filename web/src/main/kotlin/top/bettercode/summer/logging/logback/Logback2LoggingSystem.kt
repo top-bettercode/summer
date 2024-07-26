@@ -93,18 +93,17 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val context = loggerContext
 
         val environment = initializationContext.environment
-        val rootLevel = environment.getProperty("logging.level.root")
+        val rootLevel = environment.getProperty("logging.level.root")?.run { Level.toLevel(this) }
 
         context.getLogger("org.jboss").level = Level.WARN
         context.getLogger("org.hibernate").level = Level.WARN
-        val sqlLevel = (environment.getProperty("logging.level.org.hibernate.SQL") ?: rootLevel)
-            ?.run { Level.toLevel(this) } ?: Level.DEBUG
+        val sqlLevel = environment.getProperty("logging.level.org.hibernate.SQL")
+            ?.run { Level.toLevel(this) } ?: rootLevel ?: Level.DEBUG
         showSql = Level.DEBUG == sqlLevel
-        val sqlLogger = context.getLogger("org.hibernate.SQL")
-        sqlLogger.level = sqlLevel
+        context.getLogger("org.hibernate.SQL").level = sqlLevel
         context.getLogger("top.bettercode.summer.SQL").level = sqlLevel
         context.getLogger("org.hibernate.type.descriptor.sql.BasicBinder").level =
-            if (showSql) Level.TRACE else rootLevel?.run { Level.toLevel(this) } ?: Level.DEBUG
+            if (showSql) Level.TRACE else rootLevel ?: Level.DEBUG
 
         start(context, sqlFilter)
 
@@ -190,7 +189,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 try {
                     feishuProperties.logsPath = logsPath
                     feishuProperties.actuatorAddress = actuatorAddress
-                    feishuProperties.managementHostName= address.first
+                    feishuProperties.managementHostName = address.first
                     feishuProperties.managementPort = address.second
                     feishuProperties.apiAddress = apiAddress.first
                     feishuProperties.managementLogPath = managementLogPath
@@ -218,7 +217,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 try {
                     feishuProperties.logsPath = logsPath
                     feishuProperties.actuatorAddress = actuatorAddress
-                    feishuProperties.managementHostName= address.first
+                    feishuProperties.managementHostName = address.first
                     feishuProperties.managementPort = address.second
                     feishuProperties.apiAddress = apiAddress.first
                     feishuProperties.managementLogPath = managementLogPath
@@ -251,7 +250,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 try {
                     slackProperties.logsPath = logsPath
                     slackProperties.actuatorAddress = actuatorAddress
-                    slackProperties.managementHostName= address.first
+                    slackProperties.managementHostName = address.first
                     slackProperties.managementPort = address.second
                     slackProperties.apiAddress = apiAddress.first
                     slackProperties.managementLogPath = managementLogPath
@@ -285,7 +284,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 try {
                     val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
                     if (rootLevel != null) {
-                        logger.level = Level.toLevel(rootLevel)
+                        logger.level = rootLevel
                     }
                     val appender = WebSocketAppender().apply { addFilter(sqlFilter) }
                     start(context, appender)
@@ -355,7 +354,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         start(context, consoleAppender)
         val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
         if (rootLevel != null) {
-            logger.level = Level.toLevel(rootLevel)
+            logger.level = rootLevel
         }
         logger.detachAppender("CONSOLE")
         logger.addAppender(consoleAppender)
@@ -371,7 +370,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 defaultPackage = command?.substringBeforeLast('.')
             }
             val spilts = bind(environment, "summer.logging.spilt")
-            val defaultLevel = rootLevel ?: "debug"
+            val defaultLevel = (rootLevel ?: Level.DEBUG).levelStr
             val markers =
                 defaultSpiltMarkers(defaultPackage).associateWith { defaultLevel }.toMutableMap()
             markers[HttpOperation.REQUEST_LOG_MARKER] = defaultLevel
@@ -413,7 +412,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         context: LoggerContext,
         fileLogPattern: String,
         filesProperties: FilesProperties,
-        rootLevel: String?,
+        rootLevel: Level?,
         logFile: LogFile?
     ) {
         val appender = RollingFileAppender<ILoggingEvent>()
@@ -454,7 +453,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         synchronized(context.configurationLock) {
             val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
             if (rootLevel != null) {
-                logger.level = Level.toLevel(rootLevel)
+                logger.level = rootLevel
             }
             val asyncAppender = AsyncAppender()
             asyncAppender.context = context

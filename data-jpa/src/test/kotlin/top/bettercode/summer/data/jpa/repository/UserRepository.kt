@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.SelectProvider
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import org.springframework.data.repository.query.Param
@@ -19,12 +20,18 @@ import top.bettercode.summer.data.jpa.support.Size
 import java.util.stream.Stream
 import javax.transaction.Transactional
 
+
 interface UserRepository : BaseRepository<User, Int>, QuerydslPredicateExecutor<User>, RecycleQuerydslPredicateExecutor<User> {
     fun findByLastName(lastName: String?): List<User?>?
     fun findByFirstName(lastName: String?, pageable: Pageable?): Page<User?>?
 
     @Query(value = "select * from t_user where first_name = ?1", nativeQuery = true)
     fun selectNativeSql(@Suppress("LocalVariableName") first_name: String?, pageable: Pageable?): Page<User?>
+
+    @Transactional
+    @Modifying
+    @Query("update User u set u.firstName = ?1 where u.lastName = ?2")
+    fun setFixedFirstnameFor(firstname: String?, lastname: String?): Int
 
     @Transactional
     fun deleteByLastName(lastName: String?)

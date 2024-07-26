@@ -8,12 +8,18 @@ import top.bettercode.summer.tools.lang.util.JavaTypeResolver
  */
 class SqlLogData(val id: String? = null) {
     var sql: String? = null
+        set(value) {
+            field = value
+            paramCount = value?.count { it == '?' } ?: 0
+        }
+    var paramCount: Int = 0
     var slowSql: MutableList<String> = mutableListOf()
     var params: MutableList<SqlLogParam> = mutableListOf()
     var cost: Long? = null
     var affected: Int? = null
     var retrieved: Int? = null
     var total: Long? = null
+    var result: Long? = null
     var offset: Long? = null
     var limit: Int? = null
     var error: String? = null
@@ -64,6 +70,8 @@ class SqlLogData(val id: String? = null) {
             if (retrieved != null) "retrieved:${retrieved} rows; " else ""
         }${
             if (total != null) "total:${total} rows; " else ""
+        }${
+            if (result != null) "result:${result}; " else ""
         }${
             if (cost != null) "cost:${cost} ms;" else ""
         }"
