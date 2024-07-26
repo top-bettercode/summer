@@ -26,14 +26,17 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         const val MDC_SQL_OFFSET = "SQL_OFFSET"
         const val MDC_SQL_LIMIT = "SQL_LIMIT"
 
+        @JvmStatic
         fun disableAutoFlush() {
             MDC.put(MDC_SQL_DISABLE_AUTO_FLUSH, "true")
         }
 
+        @JvmStatic
         fun enableAutoFlush() {
             MDC.remove(MDC_SQL_DISABLE_AUTO_FLUSH)
         }
 
+        @JvmStatic
         fun isAutoFlush() = MDC.get(MDC_SQL_DISABLE_AUTO_FLUSH) == null
 
         fun Logger.total(total: Number) {
