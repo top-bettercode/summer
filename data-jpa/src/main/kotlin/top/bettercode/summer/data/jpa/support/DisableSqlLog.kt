@@ -1,6 +1,6 @@
-package top.bettercode.summer.logging.async
+package top.bettercode.summer.data.jpa.support
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-annotation class Loggable
+annotation class DisableSqlLog

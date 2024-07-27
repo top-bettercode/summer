@@ -1,16 +1,15 @@
 package top.bettercode.summer.tools.lang.log
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.slf4j.MDC
-import org.slf4j.MarkerFactory
+import org.slf4j.*
+import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-
 
 class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent>() {
     companion object {
@@ -26,12 +25,70 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         const val MDC_SQL_OFFSET = "SQL_OFFSET"
         const val MDC_SQL_LIMIT = "SQL_LIMIT"
 
+        val loggerContext: LoggerContext by lazy {
+            val factory = LoggerFactory.getILoggerFactory()
+            Assert.isInstanceOf(
+                LoggerContext::class.java, factory,
+                String.format(
+                    "LoggerFactory is not a Logback LoggerContext but Logback is on "
+                            + "the classpath. Either remove Logback or the competing "
+                            + "implementation (%s loaded from %s). If you are using "
+                            + "WebLogic you will need to add 'org.slf4j' to "
+                            + "prefer-application-packages in WEB-INF/weblogic.xml",
+                    factory.javaClass, getLocation(factory)
+                )
+            )
+            factory as LoggerContext
+        }
+
+        private fun getLocation(factory: ILoggerFactory): Any {
+            try {
+                val protectionDomain = factory.javaClass.protectionDomain
+                val codeSource = protectionDomain.codeSource
+                if (codeSource != null) {
+                    return codeSource.location
+                }
+            } catch (ex: SecurityException) {
+                // Unable to determine location
+            }
+
+            return "unknown location"
+        }
+
+        fun setSqlLevel(
+            level: Level,
+            defaultLevel: Level = loggerContext.getLogger("ROOT").level
+        ): Level? {
+            val showSql = Level.DEBUG == level
+            val sqlLogger = loggerContext.getLogger("org.hibernate.SQL")
+            val lastLevel = sqlLogger.level
+            sqlLogger.level = level
+            loggerContext.getLogger("top.bettercode.summer.SQL").level = level
+            loggerContext.getLogger("org.hibernate.type.descriptor.sql.BasicBinder").level =
+                if (showSql) Level.TRACE else defaultLevel
+            return lastLevel
+        }
+
         @JvmStatic
         fun disableLog(runnable: Runnable) {
+            val sqlLevel = setSqlLevel(Level.INFO)
             try {
                 MDC.put(MDC_SQL_DISABLE_LOG, "true")
                 runnable.run()
             } finally {
+                sqlLevel?.let { setSqlLevel(it) }
+                MDC.remove(MDC_SQL_DISABLE_LOG)
+            }
+        }
+
+        @JvmStatic
+        fun <T> disableLog(runnable: () -> T): T {
+            val sqlLevel = setSqlLevel(Level.INFO)
+            return try {
+                MDC.put(MDC_SQL_DISABLE_LOG, "true")
+                runnable()
+            } finally {
+                sqlLevel?.let { setSqlLevel(it) }
                 MDC.remove(MDC_SQL_DISABLE_LOG)
             }
         }

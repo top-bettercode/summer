@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.AuditorAware
 import top.bettercode.summer.data.jpa.support.DataJpaErrorHandler
+import top.bettercode.summer.data.jpa.support.DisableSqlLogAspect
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
@@ -47,4 +48,8 @@ class DataJpaAutoConfiguration {
         return DataJpaErrorHandler(messageSource, request)
     }
 
+    @Bean
+    fun disableSqlLogAspect(): DisableSqlLogAspect {
+        return DisableSqlLogAspect()
+    }
 }

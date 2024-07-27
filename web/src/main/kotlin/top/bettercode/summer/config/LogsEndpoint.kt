@@ -1,8 +1,5 @@
 package top.bettercode.summer.config
 
-import ch.qos.logback.classic.LoggerContext
-import org.slf4j.ILoggerFactory
-import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
@@ -11,12 +8,12 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.lang.Nullable
-import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.web.bind.annotation.RequestHeader
 import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.loggerContext
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
@@ -53,35 +50,6 @@ class LogsEndpoint(
     ) && ("true" == env.getProperty("summer.logging.websocket.enabled") || env.getProperty(
         "summer.logging.websocket.enabled"
     ).isNullOrBlank())
-    private val loggerContext: LoggerContext by lazy {
-        val factory = LoggerFactory.getILoggerFactory()
-        Assert.isInstanceOf(
-            LoggerContext::class.java, factory,
-            String.format(
-                "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                        + "the classpath. Either remove Logback or the competing "
-                        + "implementation (%s loaded from %s). If you are using "
-                        + "WebLogic you will need to add 'org.slf4j' to "
-                        + "prefer-application-packages in WEB-INF/weblogic.xml",
-                factory.javaClass, getLocation(factory)
-            )
-        )
-        factory as LoggerContext
-    }
-
-    private fun getLocation(factory: ILoggerFactory): Any {
-        try {
-            val protectionDomain = factory.javaClass.protectionDomain
-            val codeSource = protectionDomain.codeSource
-            if (codeSource != null) {
-                return codeSource.location
-            }
-        } catch (ex: SecurityException) {
-            // Unable to determine location
-        }
-
-        return "unknown location"
-    }
 
     @ReadOperation
     fun root() {

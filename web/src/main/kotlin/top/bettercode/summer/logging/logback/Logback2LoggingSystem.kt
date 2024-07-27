@@ -33,7 +33,6 @@ import org.springframework.boot.logging.LoggingInitializationContext
 import org.springframework.boot.logging.LoggingSystem
 import org.springframework.boot.logging.logback.LogbackLoggingSystem
 import org.springframework.core.env.Environment
-import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.logging.*
 import top.bettercode.summer.logging.LoggingUtil.existProperty
@@ -42,6 +41,7 @@ import top.bettercode.summer.logging.websocket.WebSocketAppender
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.log.AlarmProperties
 import top.bettercode.summer.tools.lang.log.SqlAppender
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.loggerContext
 import top.bettercode.summer.tools.lang.log.feishu.FeishuAppender
 import top.bettercode.summer.tools.lang.log.feishu.FeishuHookAppender
 import top.bettercode.summer.tools.lang.log.feishu.FeishuProperties
@@ -65,19 +65,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
     private val log: Logger = LoggerFactory.getLogger(Logback2LoggingSystem::class.java)
     private var showSql = false
-    private val loggerContext: LoggerContext by lazy {
-        val factory = LoggerFactory.getILoggerFactory()
-        Assert.isInstanceOf(
-            LoggerContext::class.java, factory
-        ) {
-            String.format(
-                "LoggerFactory is not a Logback LoggerContext but Logback is on the classpath. Either remove Logback or the competing implementation (%s loaded from %s). If you are using WebLogic you will need to add 'org.slf4j' to prefer-application-packages in WEB-INF/weblogic.xml",
-                factory.javaClass,
-                getLocation(factory)
-            )
-        }
-        factory as LoggerContext
-    }
+
 
     override fun reinitialize(initializationContext: LoggingInitializationContext?) {
         super.reinitialize(initializationContext)
@@ -99,11 +87,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         context.getLogger("org.hibernate").level = Level.WARN
         val sqlLevel = environment.getProperty("logging.level.org.hibernate.SQL")
             ?.run { Level.toLevel(this) } ?: rootLevel ?: Level.DEBUG
-        showSql = Level.DEBUG == sqlLevel
-        context.getLogger("org.hibernate.SQL").level = sqlLevel
-        context.getLogger("top.bettercode.summer.SQL").level = sqlLevel
-        context.getLogger("org.hibernate.type.descriptor.sql.BasicBinder").level =
-            if (showSql) Level.TRACE else rootLevel ?: Level.DEBUG
+        SqlAppender.setSqlLevel(sqlLevel, rootLevel ?: Level.DEBUG)
 
         start(context, sqlFilter)
 
@@ -862,6 +846,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
     companion object {
         private val packageScanClassResolver = PackageScanClassResolver()
+
         fun defaultSpiltMarkers(defaultPackageName: String? = null): List<String> {
             var packageNames = arrayOf("top.bettercode.summer")
             if (defaultPackageName != null) {
