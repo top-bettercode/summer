@@ -55,6 +55,10 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             return "unknown location"
         }
 
+        fun isShowSql(): Boolean {
+            return loggerContext.getLogger("org.hibernate.SQL").level == Level.DEBUG
+        }
+
         fun setSqlLevel(
             level: Level,
             defaultLevel: Level = loggerContext.getLogger("ROOT").level
@@ -71,25 +75,33 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
 
         @JvmStatic
         fun disableLog(runnable: Runnable) {
-            val sqlLevel = setSqlLevel(Level.INFO)
-            try {
-                MDC.put(MDC_SQL_DISABLE_LOG, "true")
+            if (isShowSql()) {
+                val sqlLevel = setSqlLevel(Level.INFO)
+                try {
+                    MDC.put(MDC_SQL_DISABLE_LOG, "true")
+                    runnable.run()
+                } finally {
+                    sqlLevel?.let { setSqlLevel(it) }
+                    MDC.remove(MDC_SQL_DISABLE_LOG)
+                }
+            } else {
                 runnable.run()
-            } finally {
-                sqlLevel?.let { setSqlLevel(it) }
-                MDC.remove(MDC_SQL_DISABLE_LOG)
             }
         }
 
         @JvmStatic
         fun <T> disableLog(runnable: () -> T): T {
-            val sqlLevel = setSqlLevel(Level.INFO)
-            return try {
-                MDC.put(MDC_SQL_DISABLE_LOG, "true")
+            return if (isShowSql()) {
+                val sqlLevel = setSqlLevel(Level.INFO)
+                try {
+                    MDC.put(MDC_SQL_DISABLE_LOG, "true")
+                    runnable()
+                } finally {
+                    sqlLevel?.let { setSqlLevel(it) }
+                    MDC.remove(MDC_SQL_DISABLE_LOG)
+                }
+            } else {
                 runnable()
-            } finally {
-                sqlLevel?.let { setSqlLevel(it) }
-                MDC.remove(MDC_SQL_DISABLE_LOG)
             }
         }
 
