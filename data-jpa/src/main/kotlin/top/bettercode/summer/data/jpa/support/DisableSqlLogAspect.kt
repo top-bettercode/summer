@@ -1,11 +1,17 @@
 package top.bettercode.summer.data.jpa.support
 
+import ch.qos.logback.classic.Level
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.tools.lang.log.SqlAppender
+import org.slf4j.MDC
+import org.springframework.transaction.support.TransactionSynchronization
+import org.springframework.transaction.support.TransactionSynchronizationManager
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.MDC_SQL_DISABLE_LOG
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.setSqlLevel
+
 
 @Aspect
 class DisableSqlLogAspect {
@@ -16,8 +22,23 @@ class DisableSqlLogAspect {
     @Around("@annotation(top.bettercode.summer.data.jpa.support.DisableSqlLog)")
     @Throws(Throwable::class)
     fun logProceed(joinPoint: ProceedingJoinPoint): Any? {
-        return SqlAppender.disableLog {
+        val sqlLevel = setSqlLevel(Level.INFO)
+        return try {
+            MDC.put(MDC_SQL_DISABLE_LOG, "true")
             joinPoint.proceed()
+        } finally {
+            if (TransactionSynchronizationManager.isActualTransactionActive()) {
+                TransactionSynchronizationManager.registerSynchronization(object :
+                    TransactionSynchronization {
+                    override fun afterCommit() {
+                        sqlLevel?.let { setSqlLevel(it) }
+                        MDC.remove(MDC_SQL_DISABLE_LOG)
+                    }
+                })
+            } else {
+                sqlLevel?.let { setSqlLevel(it) }
+                MDC.remove(MDC_SQL_DISABLE_LOG)
+            }
         }
     }
 }
