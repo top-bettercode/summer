@@ -20,11 +20,16 @@ class MethodLoggingAspect {
     fun logProceed(joinPoint: ProceedingJoinPoint): Any? {
         val methodName = joinPoint.signature.toShortString()
         try {
+            val startTime = System.currentTimeMillis()
             val traceid = HttpOperation.traceid()
             MDC.put(HttpOperation.MDC_TRACEID, traceid)
             logger.info("==={} started===", methodName)
             val result = joinPoint.proceed()
-            logger.info("==={} finished===", methodName)
+            logger.info(
+                "==={} finished cost: {} ms===",
+                methodName,
+                System.currentTimeMillis() - startTime
+            )
             return result
         } catch (e: Throwable) {
             logger.error(MarkerFactory.getMarker(NO_ALARM_LOG_MARKER), "===$methodName error===", e)
