@@ -282,13 +282,13 @@ class RequestLoggingFilter(
                 timeoutAlarmSeconds = properties.timeoutAlarmSeconds
             }
             RequestLoggingConfig(
-                includeRequestBody = !isMultipart && (properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false || properties.isForceRecord),
-                includeResponseBody = !isFile && (properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false || properties.isForceRecord),
-                includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false || properties.isForceRecord,
+                includeRequestBody = !isMultipart && (properties.isForceRecord || properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody ?: true),
+                includeResponseBody = !isFile && (properties.isForceRecord || properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody ?: true),
+                includeTrace = properties.isForceRecord || properties.isIncludeTrace && requestLoggingAnno?.includeTrace ?: true,
                 encryptHeaders = encryptHeaders,
                 encryptParameters = encryptParameters,
-                format = properties.isFormat,
-                ignoredTimeout = isMultipart || isFile || requestLoggingAnno?.ignoredTimeout == true,
+                format = requestLoggingAnno?.format ?: properties.isFormat,
+                ignoredTimeout = isMultipart || isFile || requestLoggingAnno?.ignoredTimeout ?: false,
                 timeoutAlarmSeconds = timeoutAlarmSeconds,
                 logMarker = requestLoggingAnno?.logMarker ?: REQUEST_LOG_MARKER,
                 collectionName = collectionName,

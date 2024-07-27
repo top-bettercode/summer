@@ -121,7 +121,7 @@ class ExecutorLogMethodInterceptor(
     }
 
     override fun invoke(invocation: MethodInvocation): Any? {
-        if (sqlLog.isDebugEnabled) {
+        if (sqlLog.isDebugEnabled && SqlAppender.isLogEnabled()) {
             val logAdice = loggerInfos[invocation.method]
             if (logAdice == null) {
                 return invocation.proceed()
@@ -163,17 +163,14 @@ class ExecutorLogMethodInterceptor(
                         MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
                         throw e
                     } finally {
-                        if (modify && SqlAppender.isAutoFlush()) {
-                            if (entityManager.isJoinedToTransaction) {
-                                val flushMethod = repositoryClass.getMethod("flush")
-                                flushMethod.invoke(repository)
-                            }
+                        if (modify && entityManager.isJoinedToTransaction) {
+                            val flushMethod = repositoryClass.getMethod("flush")
+                            flushMethod.invoke(repository)
                         }
                         val duration = System.currentTimeMillis() - startMillis
                         sqlLog.cost(duration)
                     }
                 } finally {
-                    SqlAppender.enableAutoFlush()
                     MDC.remove(SqlAppender.MDC_SQL_ERROR)
                     MDC.remove(SqlAppender.MDC_SQL_ID)
                 }

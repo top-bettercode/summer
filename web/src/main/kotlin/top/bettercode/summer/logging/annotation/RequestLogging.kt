@@ -10,6 +10,7 @@ import java.lang.annotation.Inherited
 annotation class RequestLogging(
         val includeRequestBody: Boolean = true,
         val includeResponseBody: Boolean = true,
+        val format:Boolean = true,
         val includeTrace: Boolean = true,
         val encryptHeaders: Array<String> = [],
         val encryptParameters: Array<String> = [],
