@@ -106,5 +106,8 @@ class UserRepositoryTest {
         }
     }
 
-
+    @Test
+    fun flush() {
+       repository.flush()
+    }
 }

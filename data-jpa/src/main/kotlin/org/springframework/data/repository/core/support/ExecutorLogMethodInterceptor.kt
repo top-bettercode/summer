@@ -19,6 +19,7 @@ import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.affected
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.cost
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.limit
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
 import java.lang.reflect.Method
@@ -58,7 +59,14 @@ class ExecutorLogMethodInterceptor(
         val queries = queriesProperty.getter.call(queryExecutorMethodInterceptor) as Map<*, *>
 
         val className = repositoryInterface.simpleName
-        val methods = repositoryInterface.methods
+        val methods = repositoryInterface.methods.filter {
+            !arrayOf(
+                "clear",
+                "detach",
+                "flush",
+                "getEntityManager"
+            ).contains(it.name)
+        }
         loggerInfos = methods.associateWith { method ->
             val parameters = method.parameters
             val sqlId =
@@ -114,59 +122,61 @@ class ExecutorLogMethodInterceptor(
 
     override fun invoke(invocation: MethodInvocation): Any? {
         if (sqlLog.isDebugEnabled) {
-            val method: Method = invocation.method
-            val logAdice = loggerInfos[method] as LoggerInfo
-            val sqlId = logAdice.sqlId
-            MDC.put(SqlAppender.MDC_SQL_ID, sqlId)
-            val pageInfo = logAdice.pageable(invocation.arguments)
-            val modify = logAdice.isModify
-            try {
-                val startMillis = System.currentTimeMillis()
+            val logAdice = loggerInfos[invocation.method]
+            if (logAdice == null) {
+                return invocation.proceed()
+            } else {
+                MDC.put(SqlAppender.MDC_SQL_ID, logAdice.sqlId)
+                val modify = logAdice.isModify
                 try {
-                    if (pageInfo != null) {
-                        sqlLog.offset(pageInfo.offset)
-                        sqlLog.limit(pageInfo.size)
-                    }
-                    val result = invocation.proceed()
-                    when (result) {
-                        is Number -> {
-                            if (modify) {
-                                sqlLog.affected(result)
-                            } else {
-                                sqlLog.total(result)
+                    val startMillis = System.currentTimeMillis()
+                    try {
+                        val pageInfo = logAdice.pageable(invocation.arguments)
+                        if (pageInfo != null) {
+                            sqlLog.offset(pageInfo.offset)
+                            sqlLog.limit(pageInfo.size)
+                        }
+                        val result = invocation.proceed()
+                        when (result) {
+                            is Number -> {
+                                if (modify) {
+                                    sqlLog.affected(result)
+                                } else {
+                                    sqlLog.result(result)
+                                }
+                            }
+
+                            is Page<*> -> {
+                                sqlLog.total(result.totalElements)
+                                sqlLog.retrieved(result.content.size)
+                            }
+
+                            is Collection<*> -> {
+                                sqlLog.retrieved(result.size)
+                            }
+
+                            else -> {
                             }
                         }
-
-                        is Page<*> -> {
-                            sqlLog.total(result.totalElements)
-                            sqlLog.retrieved(result.content.size)
+                        return result
+                    } catch (e: Exception) {
+                        MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
+                        throw e
+                    } finally {
+                        if (modify && SqlAppender.isAutoFlush()) {
+                            if (entityManager.isJoinedToTransaction) {
+                                val flushMethod = repositoryClass.getMethod("flush")
+                                flushMethod.invoke(repository)
+                            }
                         }
-
-                        is Collection<*> -> {
-                            sqlLog.retrieved(result.size)
-                        }
-
-                        else -> {
-                        }
+                        val duration = System.currentTimeMillis() - startMillis
+                        sqlLog.cost(duration)
                     }
-                    return result
-                } catch (e: Exception) {
-                    MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
-                    throw e
                 } finally {
-                    if (modify && SqlAppender.isAutoFlush()) {
-                        if (entityManager.isJoinedToTransaction) {
-                            val flushMethod = repositoryClass.getMethod("flush")
-                            flushMethod.invoke(repository)
-                        }
-                    }
-                    val duration = System.currentTimeMillis() - startMillis
-                    sqlLog.cost(duration)
+                    SqlAppender.enableAutoFlush()
+                    MDC.remove(SqlAppender.MDC_SQL_ERROR)
+                    MDC.remove(SqlAppender.MDC_SQL_ID)
                 }
-            } finally {
-                SqlAppender.enableAutoFlush()
-                MDC.remove(SqlAppender.MDC_SQL_ERROR)
-                MDC.remove(SqlAppender.MDC_SQL_ID)
             }
         } else {
             return invocation.proceed()
