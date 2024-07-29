@@ -46,21 +46,23 @@ object RootProjectTasks {
 
                 if (jobs.isNotEmpty()) {
                     val jenkins = Jenkins(jenkinsServer, jenkinsAuth)
-                    create("buildAll") {
-                        it.group = prefix
-                        it.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                jobs.forEach { (env, jobPairs) ->
-                                    jobPairs.forEach { (_, jobName) ->
-                                        jenkins.build(jobName, env)
+                    if (jobs.keys.size > 1) {
+                        create("buildAll") {
+                            it.group = prefix
+                            it.doLast(object : Action<Task> {
+                                override fun execute(it: Task) {
+                                    jobs.forEach { (env, jobPairs) ->
+                                        jobPairs.forEach { (_, jobName) ->
+                                            jenkins.build(jobName, env)
+                                        }
                                     }
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
                     jobs.forEach { (env, jobNames) ->
-                        val group = if (env.isBlank()) prefix else "$prefix $env"
-                        if (env.isNotBlank()) {
+                        val group = "$prefix $env"
+                        if (jobNames.size > 1) {
                             create("build${env.capitalized()}") {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
