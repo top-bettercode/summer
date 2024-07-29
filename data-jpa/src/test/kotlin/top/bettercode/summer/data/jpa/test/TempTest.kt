@@ -13,17 +13,6 @@ class TempTest {
     val sqlValReplacement = " \\\\:="
 
     @Test
-    fun whenTest() {
-        val num=1
-        when (num) {
-            1 -> println("1")
-            is Number -> println("0")
-            2 -> println("2")
-            else -> println("else")
-        }
-    }
-
-    @Test
     fun test() {
         val bef = """select first_name,
                last_name,
