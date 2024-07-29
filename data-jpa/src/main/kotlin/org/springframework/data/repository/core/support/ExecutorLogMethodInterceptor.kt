@@ -138,13 +138,6 @@ class ExecutorLogMethodInterceptor(
                         }
                         val result = invocation.proceed()
                         when (result) {
-                            is Number -> {
-                                if (modify) {
-                                    sqlLog.affected(result)
-                                } else {
-                                    sqlLog.result(result)
-                                }
-                            }
 
                             is Page<*> -> {
                                 sqlLog.total(result.totalElements)
@@ -153,6 +146,18 @@ class ExecutorLogMethodInterceptor(
 
                             is Collection<*> -> {
                                 sqlLog.retrieved(result.size)
+                            }
+
+                            is Number -> {
+                                if (modify) {
+                                    sqlLog.affected(result)
+                                } else {
+                                    sqlLog.result(result.toString())
+                                }
+                            }
+
+                            is Boolean -> {
+                                sqlLog.result(result.toString())
                             }
 
                             else -> {

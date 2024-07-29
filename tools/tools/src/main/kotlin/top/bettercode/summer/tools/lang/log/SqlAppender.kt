@@ -117,9 +117,9 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             }
         }
 
-        fun Logger.result(result: Number) {
+        fun Logger.result(result: String) {
             try {
-                MDC.put(MDC_SQL_RESULT, result.toString())
+                MDC.put(MDC_SQL_RESULT, result)
                 info("result: {}", result)
             } finally {
                 MDC.remove(MDC_SQL_RESULT)
@@ -223,7 +223,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     //result: {}
                     val result = event.mdcPropertyMap[MDC_SQL_RESULT]
                     if (!result.isNullOrBlank()) {
-                        sqlLogData.result = result.toLong()
+                        sqlLogData.result = result
                     }
                     //{} rows retrieved
                     val retrieved = event.mdcPropertyMap[MDC_SQL_RETRIEVED]
