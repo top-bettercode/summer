@@ -77,6 +77,14 @@ class ExcelWriter(val excel: Excel) : Closeable {
         return this.excel.cell(row, column, style)
     }
 
+    fun headerCell(
+        row: Int = this.row,
+        column: Int = this.column
+    ): Cell {
+        return this.excel.cell(row, column, this.headerStyle.clone())
+    }
+
+
     @JvmOverloads
     fun range(
         top: Int,
@@ -86,6 +94,15 @@ class ExcelWriter(val excel: Excel) : Closeable {
         style: CellStyle = this.cellStyle.clone()
     ): Range {
         return this.excel.range(top, left, bottom, right, style)
+    }
+
+    fun headerRange(
+        top: Int,
+        left: Int,
+        bottom: Int = top,
+        right: Int = left,
+    ): Range {
+        return this.excel.range(top, left, bottom, right, this.headerStyle.clone())
     }
 
     fun blankHeaderStyle(): ExcelWriter {
