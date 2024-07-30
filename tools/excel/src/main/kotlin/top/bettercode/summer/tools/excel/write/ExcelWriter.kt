@@ -138,7 +138,7 @@ class ExcelWriter(val excel: Excel) : Closeable {
      * @param row    行号，从0开始
      * @param column 列号，从0开始
      */
-    fun cell(row: Int, column: Int): ExcelWriter {
+    fun setCell(row: Int, column: Int): ExcelWriter {
         this.row = row
         this.column = column
         return this
