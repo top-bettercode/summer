@@ -11,6 +11,7 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
+import top.bettercode.summer.gradle.plugin.project.update.ExcelUpdate
 import top.bettercode.summer.gradle.plugin.project.update.JpaUpdate
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
@@ -289,6 +290,7 @@ object CoreProjectTasks {
                 it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(t: Task) {
+                        ExcelUpdate().update(project)
                         JpaUpdate().update(project)
                     }
                 })

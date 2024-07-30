@@ -134,7 +134,7 @@ class DicCodeGen(
             +"\n\n"
             +docText.toString()
         }
-        if (project.findProperty("app.update") == "true") {
+        if (updateCode) {
             project.logger.lifecycle("更新代码")
             val replaces: MutableMap<String, String> = mutableMapOf()
             replaceCodeNames.forEach { (className, u) ->
@@ -470,6 +470,8 @@ class DicCodeGen(
     }
 
     fun codeName(name: String): String {
+        if (name.isBlank())
+            return "BLANK"
         var text =
             name.substringBefore("(").substringBefore("（").substringBefore(",").substringBefore("，")
                 .substringBefore("。")
