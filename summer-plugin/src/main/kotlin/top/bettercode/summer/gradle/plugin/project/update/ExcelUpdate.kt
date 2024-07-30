@@ -13,18 +13,23 @@ class ExcelUpdate {
         val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
         project.logger.lifecycle("更新代码")
 
+
         replaceCodeNames["AuthenticationHelper.getPrincipal()"] =
             "AuthenticationHelper.getUserDetails()"
         replaceCodeNames["com.cdwintech.app.support.dic.AuthEnum"] =
             "com.cdwintech.app.security.auth.AuthEnum"
 
-        replaceCodeNames["setMergeData"] = "setData"
 
         replaceCodeNames["IWeixinProperties"] = "WeixinProperties"
         replaceCodeNames["SmsTemplate.LOG_MARKER"] = "B2mSmsTemplate.MARKER"
         replaceCodeNames["top.bettercode.summer.tools.sms.SmsTemplate"] =
             "top.bettercode.summer.tools.sms.b2m.B2mSmsTemplate"
 
+        replaceCodeNames["top.bettercode.summer.tools.excel.ExcelImportException"] =
+            "top.bettercode.summer.tools.excel.read.ExcelReaderException"
+        replaceCodeNames["top.bettercode.summer.tools.excel.Alignment"] =
+            "top.bettercode.summer.tools.excel.write.style.Alignment"
+        replaceCodeNames["setMergeData"] = "setData"
         replaceCodeNames["top.bettercode.summer.tools.excel.ExcelImport"] =
             "top.bettercode.summer.tools.excel.read.ExcelReader"
         replaceCodeNames["top.bettercode.summer.tools.excel.ExcelExport"] =
