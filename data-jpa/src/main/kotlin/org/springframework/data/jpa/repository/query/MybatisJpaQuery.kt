@@ -14,7 +14,7 @@ import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.query.mybatis.CountSqlParser
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisParam
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisQuery
-import top.bettercode.summer.data.jpa.support.PageNoCount
+import top.bettercode.summer.data.jpa.support.PageSize
 import top.bettercode.summer.data.jpa.support.Size
 import java.util.regex.Pattern
 import javax.persistence.EntityManager
@@ -48,7 +48,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                     return PageableExecutionUtils.getPage(
                         resultList, pageable
                     ) {
-                        if (pageable is PageNoCount) {
+                        if (pageable is PageSize) {
                             resultList.size.toLong()
                         } else {
                             val totals = doCreateCountQuery(query.mybatisParam).resultList

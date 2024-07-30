@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
-import top.bettercode.summer.data.jpa.support.PageNoCount.Companion.noCount
+import top.bettercode.summer.data.jpa.support.PageSize.Companion.size
 import top.bettercode.summer.tools.lang.util.BeanUtil.nullFrom
 import java.util.*
 import java.util.function.Function
@@ -441,14 +441,14 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
 
     override fun findFirst(sort: Sort): Optional<T> {
         val spec = extJpaSupport.logicalDeletedAttribute?.notDeletedSpecification
-        return super.findAll(spec, PageRequest.of(0, 1).noCount()).stream().findFirst()
+        return super.findAll(spec, PageRequest.of(0, 1).size()).stream().findFirst()
     }
 
     override fun findFirst(spec: Specification<T>?): Optional<T> {
         var spec1 = spec
         spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1)
             ?: spec1
-        return super.findAll(spec1, PageRequest.of(0, 1).noCount()).stream().findFirst()
+        return super.findAll(spec1, PageRequest.of(0, 1).size()).stream().findFirst()
     }
 
     override fun findOne(spec: Specification<T>?): Optional<T> {
@@ -636,7 +636,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     override fun findFirstFromRecycleBin(spec: Specification<T>?): Optional<T> {
         return if (extJpaSupport.logicalDeletedSupported) {
             val spec1 = extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec)
-            super.findAll(spec1, PageRequest.of(0, 1).noCount()).stream().findFirst()
+            super.findAll(spec1, PageRequest.of(0, 1).size()).stream().findFirst()
         } else {
             Optional.empty()
         }
@@ -711,7 +711,7 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
 
         val resultList = query.resultList
         return PageableExecutionUtils.getPage(resultList, pageable) {
-            if (pageable is PageNoCount) {
+            if (pageable is PageSize) {
                 resultList.size.toLong()
             } else {
                 val countQuery = getCountQuery(spec, domainClass)

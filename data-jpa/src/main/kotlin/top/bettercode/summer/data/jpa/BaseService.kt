@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.domain.Specification
-import top.bettercode.summer.data.jpa.support.PageNoCount.Companion.noCount
+import top.bettercode.summer.data.jpa.support.PageSize.Companion.size
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import top.bettercode.summer.web.BaseController
 import java.util.*
@@ -49,7 +49,7 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
             val customScope = CoroutineScope(Dispatchers.Default)
             for (i in 1 until result.totalPages) {
                 deferredResults.add(customScope.async {
-                    val content = query(PageRequest.of(i, pageSize).noCount()).content
+                    val content = query(PageRequest.of(i, pageSize).size()).content
                     i to content
                 })
             }

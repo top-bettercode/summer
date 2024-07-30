@@ -12,7 +12,7 @@ import org.springframework.data.support.PageableExecutionUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 import top.bettercode.summer.data.jpa.support.ExtJpaSupport
-import top.bettercode.summer.data.jpa.support.PageNoCount
+import top.bettercode.summer.data.jpa.support.PageSize
 import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery
@@ -60,7 +60,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                             return PageableExecutionUtils.getPage(
                                 resultList, pageable
                             ) {
-                                if (pageable is PageNoCount) {
+                                if (pageable is PageSize) {
                                     resultList.size.toLong()
                                 } else {
                                     val totals =

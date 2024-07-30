@@ -6,27 +6,23 @@ import org.springframework.data.domain.Pageable
  *
  * @author Peter Wu
  */
-class PageNoCount(
+class PageSize(
     val pageable: Pageable
 ) : Pageable by pageable {
-
-    fun ofCount(): Pageable {
-        return pageable
-    }
 
     companion object {
 
         @JvmStatic
-        fun ofSize(size: Int): Pageable {
-            return PageNoCount(Pageable.ofSize(size))
+        fun of(size: Int): Pageable {
+            return PageSize(Pageable.ofSize(size))
         }
 
         @JvmStatic
-        fun Pageable.noCount(): PageNoCount {
-            return if (this is PageNoCount) {
+        fun Pageable.size(): Pageable {
+            return if (this is PageSize) {
                 this
             } else {
-                PageNoCount(this)
+                PageSize(this)
             }
         }
     }
