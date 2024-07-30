@@ -15,6 +15,13 @@ class PageNoCount(
     }
 
     companion object {
+
+        @JvmStatic
+        fun ofSize(size: Int): Pageable {
+            return PageNoCount(Pageable.ofSize(size))
+        }
+
+        @JvmStatic
         fun Pageable.noCount(): PageNoCount {
             return if (this is PageNoCount) {
                 this
