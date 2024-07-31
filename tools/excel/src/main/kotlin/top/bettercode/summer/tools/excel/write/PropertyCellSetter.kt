@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.excel.write
 import org.springframework.util.Assert
 import top.bettercode.summer.tools.excel.Converter
 import top.bettercode.summer.tools.excel.PoiExcel
+import top.bettercode.summer.tools.excel.read.CellGetter
 import top.bettercode.summer.tools.excel.write.style.CellStyle
 import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.DEFAULT_DATE_TIME_FORMAT
 import top.bettercode.summer.web.resolver.UnitConverter
@@ -64,6 +65,11 @@ class PropertyCellSetter<E, P>(
     var setter: ((PoiExcel, CellData<E>) -> Unit)? = null
 
     //--------------------------------------------
+    var codeServiceRef: String? = null
+    var codeType: String? = null
+    var unitValue: Int? = null
+    var unitScale: Int? = null
+    //--------------------------------------------
 
     @JvmOverloads
     fun scale(scale: Int = 2): PropertyCellSetter<E, P> {
@@ -77,6 +83,8 @@ class PropertyCellSetter<E, P>(
 
     @JvmOverloads
     fun unit(value: Int, scale: Int = log10(value.toDouble()).toInt()): PropertyCellSetter<E, P> {
+        this.unitValue = value
+        this.unitScale = scale
         return converter { property: P ->
             val result =
                 UnitConverter.larger(number = property as Number, value = value, scale = scale)
@@ -99,6 +107,8 @@ class PropertyCellSetter<E, P>(
     }
 
     fun code(codeServiceRef: String, codeType: String): PropertyCellSetter<E, P> {
+        this.codeServiceRef = codeServiceRef
+        this.codeType = codeType
         return converter { property: P ->
             val dicCodes = CodeServiceHolder.get(codeServiceRef, codeType)
             if (property is String) {
@@ -191,4 +201,22 @@ class PropertyCellSetter<E, P>(
         }
     }
 
+    @JvmOverloads
+    fun toGetter(converter: ((Any) -> P?)? = null): CellGetter<E, P> {
+        val cellGetter = CellGetter(title, propertyGetter)
+        if (isDate) {
+            cellGetter.date(style.valueFormatting)
+        }
+        if (converter != null) {
+            cellGetter.converter(converter)
+        } else {
+            this.codeServiceRef?.let {
+                cellGetter.code(it, this.codeType!!)
+            }
+            this.unitValue?.let {
+                cellGetter.unit(it, this.unitScale!!)
+            }
+        }
+        return cellGetter
+    }
 }

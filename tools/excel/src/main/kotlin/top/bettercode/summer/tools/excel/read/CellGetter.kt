@@ -8,6 +8,8 @@ import org.springframework.util.ClassUtils
 import org.springframework.util.ReflectionUtils
 import top.bettercode.summer.tools.excel.Converter
 import top.bettercode.summer.tools.excel.ExcelException
+import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.DEFAULT_DATE_FORMAT
+import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.DEFAULT_DATE_TIME_FORMAT
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
@@ -188,8 +190,17 @@ class CellGetter<E, P> {
         this.propertyType = propertyType
         this.entityType = entityType
         this.propertySetter = propertySetter ?: throw ExcelException("属性set方法解析错误")
-        isDate =
-            propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
+        when (this.propertyType) {
+            LocalDate::class.java -> {
+                this.dateFormat = DEFAULT_DATE_FORMAT
+                this.isDate = true
+            }
+
+            Date::class.java, LocalDateTime::class.java -> {
+                this.dateFormat = DEFAULT_DATE_TIME_FORMAT
+                this.isDate = true
+            }
+        }
     }
 
     private fun resolvePropertyName(methodName: String): String {

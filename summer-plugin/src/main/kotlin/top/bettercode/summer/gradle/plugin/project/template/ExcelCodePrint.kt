@@ -84,41 +84,6 @@ open class ExcelCodePrint : ProjectGenerator() {
                 +"ExcelWriter.sheet(\"${remarks}导入模板\", writer -> writer.template(rowSetter));"
             }
 
-            field(
-                "rowGetter",
-                JavaType("top.bettercode.summer.tools.excel.read.RowGetter<${if (isFullComposite) primaryKeyClassName else className}>"),
-                isFinal = true
-            ) {
-                initializationString = "RowGetter.of(\n"
-                val size = filterColumns.size
-                filterColumns.forEachIndexed { i, it ->
-                    val code =
-                        if (it.isCodeField) {
-                            if (it.javaName == it.codeType) ".code()" else ".code(${
-                                it.codeType.capitalized()
-                            }Enum.ENUM_NAME).dataValidation(${
-                                it.dicCodes()!!.codes.values.joinToString(
-                                    ", "
-                                ) { s -> "\"$s\"" }
-                            })"
-                        } else {
-                            ""
-                        }
-                    import("top.bettercode.summer.tools.excel.read.CellGetter")
-                    val propertyGetter =
-                        "${excelClassName}::get${it.javaName.capitalized()}"
-                    initializationString += "      CellGetter.of(\"${
-                        it.remark.split(
-                            Regex(
-                                "[:：,， (（]"
-                            )
-                        )[0]
-                    }\", $propertyGetter)${code}${if (i == size - 1) "" else ","}\n"
-                }
-
-                initializationString += "  )"
-            }
-
             //import
             method("importTemplate", JavaType.objectInstance) {
                 annotation("@org.springframework.transaction.annotation.Transactional")
@@ -129,7 +94,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                     name = "file"
                 }
                 +"try(ExcelReader reader = ExcelReader.of(file)){"
-                2 + "List<${formType.shortName}> list = reader.validateGroups(Default.class, CreateConstraint.class).getData(rowGetter);"
+                2 + "List<${formType.shortName}> list = reader.validateGroups(Default.class, CreateConstraint.class).getData(rowSetter.toGetter());"
                 2 + "for (${formType.shortName} form : list) {"
                 2 + "create(form);"
                 2 + "}"
