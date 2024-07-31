@@ -98,6 +98,11 @@ class Jenkins(private val url: String, auth: String) {
             val nameNodes = branchSpecNode.getElementsByTagName("name")
             if (nameNodes.length > 0) {
                 val nameNode = nameNodes.item(0)
+                val remoteBranch = nameNode.textContent.trim()
+                log.warn("当前jenkins代码分支：$remoteBranch")
+                if (remoteBranch == branch) {
+                    return
+                }
                 nameNode.textContent = branch
             }
         }
