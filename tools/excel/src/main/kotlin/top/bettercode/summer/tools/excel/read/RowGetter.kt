@@ -15,6 +15,18 @@ class RowGetter<E> @JvmOverloads constructor(val cellGetters: MutableList<CellGe
             ?: throw ExcelException("RowGetter识别类型失败")
     }
 
+    fun <P> converter(index: Int, converter: (Any) -> P?): CellGetter<E, P> {
+        @Suppress("UNCHECKED_CAST")
+        val cellGetter = this[index] as CellGetter<E, P>
+        cellGetter.converter(converter)
+        return cellGetter
+    }
+
+    fun <P> cellGetter(index: Int, cellGetter: CellGetter<E, P>): RowGetter<E> {
+        this[index] = cellGetter
+        return this
+    }
+
     companion object {
 
         @SafeVarargs
