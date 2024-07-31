@@ -11,8 +11,6 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
-import top.bettercode.summer.gradle.plugin.project.update.ExcelUpdate
-import top.bettercode.summer.gradle.plugin.project.update.JpaUpdate
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
@@ -74,7 +72,7 @@ object CoreProjectTasks {
                                 Generators.callInAllModule(ext)
                             }
                             //生成
-                            DicCodeGen(project, ext.packageName, ext.enable("update")).run()
+                            DicCodeGen(project, ext.packageName).run()
                         }
                     })
                 }
@@ -286,21 +284,18 @@ object CoreProjectTasks {
                 })
             }
 
-            create("updateCode") {
-                it.group = GeneratorPlugin.GEN_GROUP
-                it.doLast(object : Action<Task> {
-                    override fun execute(t: Task) {
-                        ExcelUpdate().update(project)
-                        JpaUpdate().update(project)
-                    }
-                })
-            }
+//            create("updateCode") {
+//                it.group = GeneratorPlugin.GEN_GROUP
+//                it.doLast(object : Action<Task> {
+//                    override fun execute(t: Task) {
+//                    }
+//                })
+//            }
 
             create("genAuthCode") {
                 it.group = GeneratorPlugin.GEN_GROUP
                 it.doLast(object : Action<Task> {
                     override fun execute(t: Task) {
-                        val update = ext.enable("update")
                         val file = project.rootProject.file("conf/auth.json")
                         val replaceCodeNames: MutableMap<String, String> = mutableMapOf()
                         val authProject = try {
@@ -315,8 +310,7 @@ object CoreProjectTasks {
                                 project
                             }
                         }
-                        val codeGen = DicCodeGen(project, ext.packageName, update)
-                        val packageName = project.property("app.packageName") as String
+                        val codeGen = DicCodeGen(project, ext.packageName)
                         if (file.exists()) {
                             val map = StringUtil.readJsonTree(file.readText())
                             project.logger.lifecycle("======================================")
@@ -333,31 +327,11 @@ object CoreProjectTasks {
                             map.forEach { node ->
                                 printNode(project, dicCodes, node)
                             }
-                            if (update)
-                                authProject.file(
-                                    "src/main/java/${
-                                        packageName.replace(
-                                            ".",
-                                            "/"
-                                        )
-                                    }/security/auth"
-                                ).deleteRecursively()
                             codeGen.genCode(dicCodes = dicCodes, auth = true)
                             project.logger.lifecycle("======================================")
                             map.forEach { node ->
                                 genNode(authProject, codeGen, node, replaceCodeNames)
                             }
-                        }
-
-                        if (update) {
-                            project.logger.lifecycle("更新代码")
-
-                            replaceCodeNames["AuthenticationHelper.getPrincipal()"] =
-                                "AuthenticationHelper.getUserDetails()"
-                            replaceCodeNames["com.cdwintech.app.support.dic.AuthEnum"] =
-                                "com.cdwintech.app.security.auth.AuthEnum"
-                            DicCodeGen.replaceOld(project, replaceCodeNames)
-                            project.logger.lifecycle("更新代码完成")
                         }
                     }
                 })

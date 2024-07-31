@@ -28,9 +28,7 @@ import java.util.*
  */
 class DicCodeGen(
     private val project: Project,
-    private val packageName: String,
-    private val updateCode: Boolean,
-    private val replaceCodeNames: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
+    private val packageName: String
 ) {
 
     private val fieldCollectionType = TypeFactory.defaultInstance()
@@ -107,10 +105,6 @@ class DicCodeGen(
     fun run() {
         docFile = FileUnit("doc/v1.0/编码类型.adoc")
 
-        if (updateCode) {
-            project.file("src/main/java/${packageName.replace(".", "/")}/support/dic")
-                .deleteRecursively()
-        }
         docFile.apply {
             +"== 编码类型"
             +""
@@ -134,19 +128,6 @@ class DicCodeGen(
             +"\n\n"
             +docText.toString()
         }
-        if (updateCode) {
-            project.logger.lifecycle("更新代码")
-            val replaces: MutableMap<String, String> = mutableMapOf()
-            replaceCodeNames.forEach { (className, u) ->
-                u.forEach { (oldCodeName, codeName) ->
-                    replaces["${className}Enum.$oldCodeName"] = "${className}Enum.$codeName"
-                    replaces["${className}Const.$oldCodeName"] = "${className}Const.$codeName"
-                }
-            }
-            replaceOld(project, replaces)
-            project.logger.lifecycle("更新代码完成")
-        }
-
     }
 
     fun genCode(dicCodes: DicCodes, auth: Boolean = false) {
@@ -196,25 +177,6 @@ class DicCodeGen(
                         .toUnderscore()
                 }
                 codeFieldNames.add(codeFieldName)
-
-                val oldCodeName = (
-                        if (code is Int || code.toString()
-                                .startsWith("0") && code.toString().length > 1
-                        ) {
-                            "CODE_${code.toString().replace("-", "MINUS_")}"
-                        } else if (code.toString().isBlank()) {
-                            "BLANK"
-                        } else {
-                            (code as String).replace("-", "_").replace(".", "_")
-                                .toUnderscore()
-                        }
-                        ).replace(Regex("_+"), "_")
-                if (oldCodeName != codeFieldName) {
-                    val map = replaceCodeNames.computeIfAbsent(className) {
-                        mutableMapOf()
-                    }
-                    map[oldCodeName] = codeFieldName
-                }
 
                 innerInterface.apply {
                     field(
