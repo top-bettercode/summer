@@ -4,7 +4,6 @@ import org.junit.jupiter.api.*
 import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.excel.read.CellGetter
 import top.bettercode.summer.tools.excel.read.ExcelReader
-import top.bettercode.summer.tools.excel.read.RowGetter
 import top.bettercode.summer.tools.excel.write.CellSetter
 import top.bettercode.summer.tools.excel.write.ExcelWriter
 import top.bettercode.summer.tools.excel.write.RowSetter
@@ -78,21 +77,19 @@ open class ExcelTest {
         ExcelTestUtil.openExcel(filename)
     }
 
-    private val rowGetter  = RowGetter.of(
-        CellGetter.of("编码1", DataBean::intCode),
-        CellGetter.of("编码2", DataBean::integer),
-        CellGetter.of("编码3", DataBean::longl),
-        CellGetter.of("编码4", DataBean::doublel),
-        CellGetter.of("编码5", DataBean::floatl),
-        CellGetter.of("编码6", DataBean::name)
-    )
 
     @Order(1)
     @Test
     fun testImport() {
         ExcelReader.of(ClassPathResource("template.xlsx").inputStream).use {
             it.column(1)
-            val list = it.getData<DataBean, DataBean>(rowGetter)
+            val list = it.getData<DataBean, DataBean>(
+                rowSetter.toGetter { index, _ ->
+                    index < 6
+                }
+                    .cell(CellGetter.of("编码7", DataBean::date))
+                    .cell(CellGetter.of("编码8", DataBean::num))
+            )
             println(json(list, true))
             System.err.println(list.size)
             Assertions.assertEquals(3, list.size)

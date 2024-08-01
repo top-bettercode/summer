@@ -12,8 +12,13 @@ class RowSetter<E> @JvmOverloads constructor(val cellSetters: MutableList<CellSe
 
     val needMerge: Boolean by lazy { cellSetters.any { it.needMerge } }
 
-    fun toGetter(): RowGetter<E> {
-        val cellGetters = cellSetters.filterIsInstance<PropertyCellSetter<E, *>>()
+    @JvmOverloads
+    fun toGetter(predicate: ((index: Int, CellSetter<E, *>) -> Boolean)? = null): RowGetter<E> {
+        var setters = cellSetters.filterIsInstance<PropertyCellSetter<E, *>>()
+        predicate?.let {
+            setters = setters.filterIndexed(it)
+        }
+        val cellGetters = setters
             .map { it.toGetter() }.toMutableList()
         return RowGetter(cellGetters)
     }

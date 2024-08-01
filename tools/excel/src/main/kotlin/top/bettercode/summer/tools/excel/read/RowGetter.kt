@@ -22,7 +22,12 @@ class RowGetter<E> @JvmOverloads constructor(val cellGetters: MutableList<CellGe
         return cellGetter
     }
 
-    fun <P> cellGetter(index: Int, cellGetter: CellGetter<E, P>): RowGetter<E> {
+    fun <P> cell(cellGetter: CellGetter<E, P>): RowGetter<E> {
+        this.add(cellGetter)
+        return this
+    }
+
+    fun <P> cell(index: Int, cellGetter: CellGetter<E, P>): RowGetter<E> {
         this[index] = cellGetter
         return this
     }

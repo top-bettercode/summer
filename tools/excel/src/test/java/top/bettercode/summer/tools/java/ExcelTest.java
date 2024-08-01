@@ -13,7 +13,6 @@ import org.springframework.core.io.ClassPathResource;
 import top.bettercode.summer.tools.excel.ExcelTestUtil;
 import top.bettercode.summer.tools.excel.read.CellGetter;
 import top.bettercode.summer.tools.excel.read.ExcelReader;
-import top.bettercode.summer.tools.excel.read.RowGetter;
 import top.bettercode.summer.tools.excel.write.CellSetter;
 import top.bettercode.summer.tools.excel.write.ExcelWriter;
 import top.bettercode.summer.tools.excel.write.RowSetter;
@@ -101,16 +100,6 @@ public class ExcelTest {
     ExcelTestUtil.openExcel(filename);
   }
 
-  private final RowGetter<DataBean> rowGetter = RowGetter.of(
-      CellGetter.of("编码1", DataBean::getIntCode),
-      CellGetter.of("编码2", DataBean::getInteger),
-      CellGetter.of("编码3", DataBean::getLongl),
-      CellGetter.of("编码4", DataBean::getDoublel),
-      CellGetter.of("编码5", DataBean::getFloatl),
-      CellGetter.of("编码6", DataBean::getName),
-      CellGetter.of("编码7", DataBean::getDate),
-      CellGetter.of("编码8", DataBean::getNum));
-
 
   @Order(1)
   @Test
@@ -119,7 +108,7 @@ public class ExcelTest {
     try (ExcelReader excelReader = ExcelReader.of(
         new ClassPathResource("template.xlsx").getInputStream())) {
       excelReader.column(1);
-      List<DataBean> list = excelReader.getData(rowGetter);
+      List<DataBean> list = excelReader.getData(rowSetter.toGetter());
       System.out.println(StringUtil.json(list, true));
       System.err.println(list.size());
       Assertions.assertEquals(3, list.size());
