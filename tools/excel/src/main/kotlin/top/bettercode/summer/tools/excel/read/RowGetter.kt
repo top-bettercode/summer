@@ -32,6 +32,11 @@ class RowGetter<E> @JvmOverloads constructor(val cellGetters: MutableList<CellGe
         return this
     }
 
+    fun <P> insert(index: Int, cellGetter: CellGetter<E, P>): RowGetter<E> {
+        this.add(index, cellGetter)
+        return this
+    }
+
     companion object {
 
         @SafeVarargs
