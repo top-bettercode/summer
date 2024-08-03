@@ -388,7 +388,7 @@ open class Generator {
 
     fun setUp(ext: GeneratorExtension) {
         this.ext = ext
-        JavaElement.indent = ext.indent
+        JavaElement.INDENT = ext.indent
         setUp()
     }
 

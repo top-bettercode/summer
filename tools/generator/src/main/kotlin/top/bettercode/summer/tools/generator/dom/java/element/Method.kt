@@ -84,7 +84,7 @@ class Method : JavaElement() {
     operator fun Int.plus(str: String) {
         var prefix = ""
         for (i in 0 until this) {
-            prefix += indent
+            prefix += INDENT
         }
         bodyLines.add(prefix + str)
     }

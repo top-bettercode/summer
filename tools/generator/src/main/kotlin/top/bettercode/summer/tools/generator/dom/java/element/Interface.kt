@@ -60,7 +60,7 @@ class Interface(
             newLine(sb)
         }
 
-        sb.append(super.getFormattedContent(0, this))
+        sb.append(super.getFormattedContent(indentLevel, this))
 
         return sb.toString()
     }

@@ -89,7 +89,7 @@ open class GeneratorExtension(
     /**
      * 缩进
      */
-    var indent: String = JavaElement.defaultIndent,
+    var indent: String = JavaElement.DEFAULT_INDENT,
     /**
      * 模板
      */

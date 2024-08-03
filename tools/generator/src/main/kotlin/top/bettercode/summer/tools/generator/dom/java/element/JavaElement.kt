@@ -92,12 +92,12 @@ abstract class JavaElement {
 
     companion object {
         private val lineSeparator = System.lineSeparator() ?: "\n"
-        var defaultIndent: String = "  "
-        var indent: String = defaultIndent
+        var DEFAULT_INDENT: String = "  "
+        var INDENT: String = DEFAULT_INDENT
 
         fun indent(sb: StringBuilder, indentLevel: Int) {
             for (i in 0 until indentLevel) {
-                sb.append(indent)
+                sb.append(INDENT)
             }
         }
 
