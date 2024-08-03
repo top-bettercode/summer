@@ -45,89 +45,92 @@ class FastExcel(outputStream: OutputStream) : Excel {
     /**
      * 工作表对象
      */
-    lateinit var sheet: Worksheet
+    lateinit var worksheet: Worksheet
         private set
 
     override fun sheet(sheetname: String) {
-        this.sheet = workbook.newWorksheet(sheetname)
+        this.worksheet = workbook.newWorksheet(sheetname)
     }
 
     override fun keepInActiveTab() {
-        this.sheet.keepInActiveTab()
+        this.worksheet.keepInActiveTab()
     }
 
     override fun setStyle(row: Int, column: Int, cellStyle: CellStyle) {
-        sheet.style(row, column)
-                .style(cellStyle)
-                .set()
+        worksheet.style(row, column)
+            .style(cellStyle)
+            .set()
     }
 
     override fun setStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
-        sheet.range(top, left, bottom, right).style()
-                .style(cellStyle)
-                .set()
+        worksheet.range(top, left, bottom, right).style()
+            .style(cellStyle)
+            .set()
     }
 
     override fun width(column: Int, width: Double) {
-        this.sheet.width(column, width)
+        this.worksheet.width(column, width)
     }
 
     override fun height(row: Int, height: Double) {
-        this.sheet.rowHeight(row, height)
+        this.worksheet.rowHeight(row, height)
     }
 
     override fun formula(row: Int, column: Int, expression: String?) {
-        sheet.formula(row, column, expression)
+        worksheet.formula(row, column, expression)
     }
 
     override fun comment(row: Int, column: Int, commen: String?) {
         if (!commen.isNullOrBlank())
-            sheet.comment(row, column, commen)
+            worksheet.comment(row, column, commen)
     }
 
     override fun value(row: Int, column: Int, value: String?) {
-        this.sheet.value(row, column, value)
+        this.worksheet.value(row, column, value)
     }
 
     override fun value(row: Int, column: Int) {
-        this.sheet.value(row, column)
+        this.worksheet.value(row, column)
     }
 
     override fun value(row: Int, column: Int, value: Number?) {
-        this.sheet.value(row, column, value)
+        this.worksheet.value(row, column, value)
     }
 
     override fun value(row: Int, column: Int, value: Boolean?) {
-        this.sheet.value(row, column, value)
+        this.worksheet.value(row, column, value)
     }
 
     override fun value(row: Int, column: Int, value: Date?) {
-        this.sheet.value(row, column, value)
+        this.worksheet.value(row, column, value)
     }
 
     override fun value(row: Int, column: Int, value: LocalDateTime?) {
-        this.sheet.value(row, column, value)
+        this.worksheet.value(row, column, value)
     }
 
     override fun value(row: Int, column: Int, value: LocalDate?) {
-        this.sheet.value(row, column, value)
+        this.worksheet.value(row, column, value)
     }
 
     override fun value(row: Int, column: Int, value: ZonedDateTime?) {
-        this.sheet.value(row, column, value)
+        this.worksheet.value(row, column, value)
     }
 
     override fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>) {
         val listDataValidation = AbsoluteListDataValidation(
-                sheet.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation)
-        listDataValidation.add(sheet)
+            worksheet.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation
+        )
+        listDataValidation.add(worksheet)
     }
 
     override fun merge(top: Int, left: Int, bottom: Int, right: Int) {
-        this.sheet.range(top, left, bottom, right).merge()
+        this.worksheet.range(top, left, bottom, right).merge()
     }
 
     override fun close() {
-        this.workbook.close()
+        if (this::worksheet.isInitialized) {
+            this.workbook.close()
+        }
     }
 }

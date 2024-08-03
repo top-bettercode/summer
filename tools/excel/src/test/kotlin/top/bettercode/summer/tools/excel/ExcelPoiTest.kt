@@ -27,7 +27,7 @@ class ExcelPoiTest {
                 // 设置文本
                 val text = "Hello, World!"
                 // 创建字体
-                val sheet = excel.sheet
+                val sheet = excel.worksheet
                 val poiCell = sheet.getRow(cell.row).getCell(cell.column)
                 // 创建字体
                 val boldFont = excel.xssfWorkbook.createFont()

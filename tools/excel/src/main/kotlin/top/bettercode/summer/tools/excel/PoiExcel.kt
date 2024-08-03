@@ -46,7 +46,7 @@ class PoiExcel @JvmOverloads constructor(
         this.workbook as XSSFWorkbook
 
 
-    lateinit var sheet: Sheet
+    lateinit var worksheet: Sheet
 
     private fun Row.cell(column: Int): Cell =
         this.getCell(column) ?: this.createCell(column)
@@ -54,11 +54,11 @@ class PoiExcel @JvmOverloads constructor(
     private fun Sheet.row(row: Int): Row = this.getRow(row) ?: this.createRow(row)
 
     override fun sheet(sheetname: String) {
-        this.sheet = workbook.createSheet(sheetname)
+        this.worksheet = workbook.createSheet(sheetname)
     }
 
     override fun keepInActiveTab() {
-        workbook.setActiveSheet(this.workbook.indexOf(this.sheet))
+        workbook.setActiveSheet(this.workbook.indexOf(this.worksheet))
     }
 
     override fun setStyle(top: Int, left: Int, bottom: Int, right: Int, cellStyle: CellStyle) {
@@ -67,7 +67,7 @@ class PoiExcel @JvmOverloads constructor(
         }
         for (i in top..bottom) {
             for (j in left..right) {
-                val cell = sheet.row(i).cell(j)
+                val cell = worksheet.row(i).cell(j)
                 cell.cellStyle = poiCellStyle
             }
         }
@@ -75,89 +75,91 @@ class PoiExcel @JvmOverloads constructor(
     }
 
     override fun width(column: Int, width: Double) {
-        sheet.setColumnWidth(column, (width * 256).toInt())
+        worksheet.setColumnWidth(column, (width * 256).toInt())
     }
 
     override fun height(row: Int, height: Double) {
-        sheet.row(row).height = (height * 20).toInt().toShort()
+        worksheet.row(row).height = (height * 20).toInt().toShort()
     }
 
     override fun formula(row: Int, column: Int, expression: String?) {
-        sheet.row(row).cell(column).cellFormula = expression
+        worksheet.row(row).cell(column).cellFormula = expression
     }
 
     override fun comment(row: Int, column: Int, commen: String?) {
         if (!commen.isNullOrBlank()) {
             val creationHelper: CreationHelper = workbook.creationHelper
-            val drawing: Drawing<*> = sheet.createDrawingPatriarch()
+            val drawing: Drawing<*> = worksheet.createDrawingPatriarch()
             val anchor = creationHelper.createClientAnchor()
             anchor.setCol1(column) // 批注起始列
             anchor.row1 = row // 批注起始行
             val comment: Comment = drawing.createCellComment(anchor)
             val commentText = creationHelper.createRichTextString(commen)
             comment.string = commentText
-            sheet.row(row).cell(column).cellComment = comment
+            worksheet.row(row).cell(column).cellComment = comment
         }
     }
 
     override fun value(row: Int, column: Int) {
-        this.sheet.row(row).cell(column).setBlank()
+        this.worksheet.row(row).cell(column).setBlank()
     }
 
     override fun value(row: Int, column: Int, value: String?) {
-        this.sheet.row(row).cell(column).setCellValue(value)
+        this.worksheet.row(row).cell(column).setCellValue(value)
     }
 
     override fun value(row: Int, column: Int, value: Number?) {
         if (value == null) {
-            this.sheet.row(row).cell(column).setBlank()
+            this.worksheet.row(row).cell(column).setBlank()
         } else
-            this.sheet.row(row).cell(column).setCellValue(value.toDouble())
+            this.worksheet.row(row).cell(column).setCellValue(value.toDouble())
     }
 
     override fun value(row: Int, column: Int, value: Boolean?) {
         if (value == null) {
-            this.sheet.row(row).cell(column).setBlank()
+            this.worksheet.row(row).cell(column).setBlank()
         } else
-            this.sheet.row(row).cell(column).setCellValue(value)
+            this.worksheet.row(row).cell(column).setCellValue(value)
     }
 
     override fun value(row: Int, column: Int, value: Date?) {
-        this.sheet.row(row).cell(column).setCellValue(value)
+        this.worksheet.row(row).cell(column).setCellValue(value)
     }
 
     override fun value(row: Int, column: Int, value: LocalDateTime?) {
-        this.sheet.row(row).cell(column).setCellValue(value)
+        this.worksheet.row(row).cell(column).setCellValue(value)
     }
 
     override fun value(row: Int, column: Int, value: LocalDate?) {
-        this.sheet.row(row).cell(column).setCellValue(value)
+        this.worksheet.row(row).cell(column).setCellValue(value)
     }
 
     override fun value(row: Int, column: Int, value: ZonedDateTime?) {
-        this.sheet.row(row).cell(column).setCellValue(value?.toLocalDateTime())
+        this.worksheet.row(row).cell(column).setCellValue(value?.toLocalDateTime())
     }
 
     override fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>) {
         // 创建数据验证规则
-        val validationHelper = sheet.dataValidationHelper
+        val validationHelper = worksheet.dataValidationHelper
         // 设置下拉列表的可选项
         val constraint = validationHelper.createExplicitListConstraint(dataValidation)
         // 设置数据验证的范围
         val addressList = CellRangeAddressList(row + 1, Worksheet.MAX_ROWS - 1, column, column)
         // 将数据验证对象应用到工作表
-        sheet.addValidationData(validationHelper.createValidation(constraint, addressList))
+        worksheet.addValidationData(validationHelper.createValidation(constraint, addressList))
     }
 
     override fun merge(top: Int, left: Int, bottom: Int, right: Int) {
         val mergedRegion = CellRangeAddress(top, bottom, left, right)
-        sheet.addMergedRegion(mergedRegion)
+        worksheet.addMergedRegion(mergedRegion)
     }
 
     override fun close() {
-        this.workbook.write(outputStream)
-        this.workbook.close()
-        this.outputStream.close()
+        if (this::worksheet.isInitialized) {
+            this.workbook.write(outputStream)
+            this.workbook.close()
+            this.outputStream.close()
+        }
     }
 
     companion object {
@@ -182,7 +184,7 @@ class PoiExcel @JvmOverloads constructor(
 
         val imageSetter: ((PoiExcel, CellData<*>) -> Unit) = { excel, cell ->
             val workbook = excel.workbook
-            val sheet = excel.sheet
+            val sheet = excel.worksheet
             val helper: CreationHelper = workbook.creationHelper
             val drawing: Drawing<*> = sheet.createDrawingPatriarch()
             if (cell is RangeData && cell.needMerge) {
