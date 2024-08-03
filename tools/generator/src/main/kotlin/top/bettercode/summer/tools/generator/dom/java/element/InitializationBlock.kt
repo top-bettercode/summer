@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.generator.dom.java.element
 
 import top.bettercode.summer.tools.generator.dom.java.StringOperator
+import top.bettercode.summer.tools.generator.dom.java.element.JavaElement.Companion.indent
 import top.bettercode.summer.tools.generator.dom.java.element.JavaElement.Companion.newLine
 
 class InitializationBlock @JvmOverloads constructor(private var isStatic: Boolean = false) {
