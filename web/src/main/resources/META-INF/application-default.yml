@@ -107,6 +107,7 @@ logging:
     org.redisson.command.RedisExecutor: info
     org.thymeleaf: warn
     org.jboss: warn
+    org.aspectj: warn
     org.quartz: warn
     org.apache: warn
     org.mybatis: warn
