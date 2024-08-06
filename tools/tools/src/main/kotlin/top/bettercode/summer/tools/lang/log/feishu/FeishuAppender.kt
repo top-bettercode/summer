@@ -48,6 +48,7 @@ open class FeishuAppender @JvmOverloads constructor(
             if (timeout) properties.timeoutChat.ifBlank { properties.chat } else properties.chat
         val chatId = chatId(chat)
         return if (chatId != null) {
+            val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
             if (!isPortConnectable()) {
                 client.postMessage(
                     chatId = chatId,
@@ -55,10 +56,10 @@ open class FeishuAppender @JvmOverloads constructor(
                     subTitle = properties.apiAddress,
                     initialComment = initialComment,
                     template = template(level),
+                    linkTitle = linkTitle,
                     message = message.last()
                 )
             } else {
-                val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
                 client.postMessage(
                     chatId = chatId,
                     title = properties.warnTitle,

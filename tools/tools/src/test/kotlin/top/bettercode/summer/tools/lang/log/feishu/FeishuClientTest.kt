@@ -49,13 +49,14 @@ class FeishuClientTest {
         println(
             StringUtil.json(
                 client.postMessage(
-                    chatId = client.chatIdByName(chat) ?: throw RuntimeException("channel not exist"),
+                    chatId = client.chatIdByName(chat)
+                        ?: throw RuntimeException("channel not exist"),
                     title = "title tag1 tag2",
                     subTitle = "subtitle",
                     initialComment = "initialComment",
-                    template = template(Level.ERROR),
+                    template = template(Level.INFO),
                     logUrl = "http://localhost:8080/actuator/logs",
-                    linkTitle = "logging"
+                    linkTitle = "logging#2024-08-06-09:28:55.562-error"
                 ), true
             )
         )
@@ -66,7 +67,8 @@ class FeishuClientTest {
         println(
             StringUtil.json(
                 client.filesUpload(
-                    chatId = client.chatIdByName(chat) ?: throw RuntimeException("channel not exist"),
+                    chatId = client.chatIdByName(chat)
+                        ?: throw RuntimeException("channel not exist"),
                     timeStamp = System.currentTimeMillis(),
                     title = "title",
                     message = listOf("message")

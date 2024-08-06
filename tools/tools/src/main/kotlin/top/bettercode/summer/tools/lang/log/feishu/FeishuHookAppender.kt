@@ -37,16 +37,17 @@ open class FeishuHookAppender @JvmOverloads constructor(
         timeout: Boolean
     ): Boolean {
         val chat = if (timeout) timeoutChatClient ?: chatClient else chatClient
+        val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
         return if (!isPortConnectable()) {
             chat.postMessage(
                 title = properties.warnTitle,
                 subTitle = properties.apiAddress,
                 initialComment = initialComment,
                 template = template(level),
+                linkTitle = linkTitle,
                 message = message.last()
             )
         } else {
-            val (logUrl, linkTitle) = logUrl(properties.actuatorAddress, message)
             chat.postMessage(
                 title = properties.warnTitle,
                 subTitle = properties.apiAddress,

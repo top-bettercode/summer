@@ -182,9 +182,9 @@ class FeishuClient(
         subTitle: String,
         initialComment: String,
         template: Array<String>,
+        linkTitle: String,
         message: String? = null,
         logUrl: String? = null,
-        linkTitle: String? = null
     ): Boolean {
         val params =
             mapOf(
@@ -196,9 +196,9 @@ class FeishuClient(
                         subTitle = subTitle,
                         initialComment = initialComment,
                         template = template,
+                        linkTitle = linkTitle,
                         message = message,
                         logUrl = logUrl,
-                        linkTitle = linkTitle,
                     )
                 ),
             )
@@ -296,6 +296,9 @@ class FeishuClient(
 
     companion object {
 
+        /**
+         * https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards/card-components/content-components/title
+         */
         fun template(level: Level): Array<String> {
             when {
                 level.levelInt >= Level.ERROR_INT -> {
@@ -303,6 +306,7 @@ class FeishuClient(
                         "red",
                         "orange",
                         "carmine",
+                        "neutral",
                         "more-close_outlined",
                         "red"
                     )
@@ -313,6 +317,7 @@ class FeishuClient(
                         "orange",
                         "yellow",
                         "red",
+                        "neutral",
                         "warning_outlined",
                         "orange"
                     )
@@ -323,6 +328,7 @@ class FeishuClient(
                         "green",
                         "lime",
                         "turquoise",
+                        "neutral",
                         "info_outlined",
                         "green"
                     )
@@ -336,14 +342,15 @@ class FeishuClient(
             subTitle: String,
             initialComment: String,
             template: Array<String>,
+            linkTitle: String,
             message: String?,
             logUrl: String?,
-            linkTitle: String?,
         ): Map<String, Any> {
             val titles = title.split(Regex(" +"))
             val mainTitle = titles.first()
             val tag1 = titles.getOrElse(1) { "" }
             val tag2 = titles.getOrElse(2) { "" }
+            val tag3 = if (linkTitle.contains("#")) linkTitle.substringAfter("#") else ""
             val params = mapOf(
                 "config" to mapOf(
                     "width_mode" to "fill"
@@ -358,7 +365,7 @@ class FeishuClient(
                         "tag" to "plain_text",
                         "content" to subTitle
                     ),
-                    "text_tag_list" to listOf(
+                    "text_tag_list" to if (tag3.isBlank()) listOf(
                         mapOf(
                             "tag" to "text_tag",
                             "text" to mapOf(
@@ -375,11 +382,36 @@ class FeishuClient(
                             ),
                             "color" to template[2]
                         )
+                    ) else listOf(
+                        mapOf(
+                            "tag" to "text_tag",
+                            "text" to mapOf(
+                                "tag" to "plain_text",
+                                "content" to tag1
+                            ),
+                            "color" to template[1]
+                        ),
+                        mapOf(
+                            "tag" to "text_tag",
+                            "text" to mapOf(
+                                "tag" to "plain_text",
+                                "content" to tag2
+                            ),
+                            "color" to template[2]
+                        ),
+                        mapOf(
+                            "tag" to "text_tag",
+                            "text" to mapOf(
+                                "tag" to "plain_text",
+                                "content" to tag3
+                            ),
+                            "color" to template[3]
+                        )
                     ),
                     "ud_icon" to mapOf(
-                        "token" to template[3],
+                        "token" to template[4],
                         "style" to mapOf(
-                            "color" to template[4]
+                            "color" to template[5]
                         )
                     )
                 ),

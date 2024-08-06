@@ -63,9 +63,9 @@ class FeishuHookClient(
         subTitle: String,
         initialComment: String,
         template: Array<String>,
+        linkTitle: String,
         message: String? = null,
         logUrl: String? = null,
-        linkTitle: String? = null
     ): Boolean {
         val params = mutableMapOf(
             "msg_type" to "interactive",
