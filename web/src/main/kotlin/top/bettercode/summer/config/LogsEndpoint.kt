@@ -484,7 +484,7 @@ class LogsEndpoint(
         var level = "DEFAULT"
 
         lines.forEach { line ->
-            val matchResult = regrex.matchEntire(line.substringAfter("==="))
+            val matchResult = regrex.matchEntire(line)
             if (matchResult != null) {
                 val groupValues = matchResult.groupValues
 
