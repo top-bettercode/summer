@@ -32,10 +32,10 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 LoggerContext::class.java, factory,
                 String.format(
                     "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                            + "the classpath. Either remove Logback or the competing "
-                            + "implementation (%s loaded from %s). If you are using "
-                            + "WebLogic you will need to add 'org.slf4j' to "
-                            + "prefer-application-packages in WEB-INF/weblogic.xml",
+                        + "the classpath. Either remove Logback or the competing "
+                        + "implementation (%s loaded from %s). If you are using "
+                        + "WebLogic you will need to add 'org.slf4j' to "
+                        + "prefer-application-packages in WEB-INF/weblogic.xml",
                     factory.javaClass, getLocation(factory)
                 )
             )
@@ -176,7 +176,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
     private val logger = LoggerFactory.getLogger(SqlAppender::class.java)
 
     public override fun append(event: ILoggingEvent?) {
-        if (event == null || !isStarted || !logger.isInfoEnabled || !isLogEnabled()) {
+        if (event == null || !isStarted || !logger.isInfoEnabled || (!isLogEnabled() && LOG_SLOW != event.loggerName)) {
             return
         }
         try {
