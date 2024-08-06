@@ -22,7 +22,7 @@ summer:
 
 logging:
   level:
-    org.hibernate.SQL: debug
+    root: debug
 
 spring:
   jackson:

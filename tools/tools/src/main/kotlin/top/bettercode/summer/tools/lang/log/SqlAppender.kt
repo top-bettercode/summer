@@ -24,6 +24,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         const val MDC_SQL_COST = "SQL_COST"
         const val MDC_SQL_OFFSET = "SQL_OFFSET"
         const val MDC_SQL_LIMIT = "SQL_LIMIT"
+        const val LOG_SLOW = "org.hibernate.SQL_SLOW"
 
         val loggerContext: LoggerContext by lazy {
             val factory = LoggerFactory.getILoggerFactory()
@@ -196,7 +197,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     sqlLogData.sql = msg
                 }
 
-                "org.hibernate.SQL_SLOW" -> {
+                LOG_SLOW -> {
                     //SlowQuery: 2896 milliseconds. SQL: 'HikariProxyPreparedStatement@803096561 wrapping com.mysql.cj.jdbc.ClientPreparedStatement:
                     sqlLogData.slowSql.add(msg)
                 }
@@ -253,7 +254,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                         sqlLogData.error = error
                 }
             }
-            if (end) {
+            if (end || (LOG_SLOW == event.loggerName && !isShowSql())) {
                 log(sqlLogData)
                 sqlCache.remove(key)
             }
