@@ -75,7 +75,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
                 throw e
             else {
                 if (e.cause is SocketTimeoutException || e.cause is ConnectException || e.cause is UnknownHostException) {
-                    throw clientException(message = "连接超时", cause = e)
+                    throw clientException(message = "连接超时", cause = e, isTimeout = true)
                 } else
                     throw clientException(e)
             }

@@ -40,13 +40,14 @@ interface ApiExceptions {
     }
 
     fun clientException(
-        message: String?, cause: Throwable?
+        message: String?, cause: Throwable?, isTimeout: Boolean = false
     ): ClientException {
         return ClientException(
             platformName = platformName,
             marker = marker,
             originalMessage = message,
             cause = cause,
+            isTimeout = isTimeout,
             response = null
         )
 
