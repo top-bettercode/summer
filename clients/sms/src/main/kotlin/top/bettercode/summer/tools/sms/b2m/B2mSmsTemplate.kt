@@ -104,7 +104,7 @@ open class B2mSmsTemplate(
         content.forEach { (key: String, value: String) ->
             smses.add(
                 mapOf<String, Any>(
-                    //          "customSmsId" to "",
+//                    "customSmsId" to UUID.randomUUID().toString().replace("-", ""),
                     //          "timerTime" to "",
                     //          "extendedCode" to "",
                     "mobile" to key,
