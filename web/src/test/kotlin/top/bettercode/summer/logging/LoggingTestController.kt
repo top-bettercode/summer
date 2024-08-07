@@ -1,5 +1,6 @@
 package top.bettercode.summer.logging
 
+import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
@@ -40,11 +41,11 @@ class TestController {
     fun error(request: String?): Any {
         val initialComment = "xx：执行速度慢(2秒)"
         log.warn(
-            AlarmMarker(initialComment, true),
+            AlarmMarker(message = initialComment, timeout = true, level = Level.WARN),
             "超时测试"
         )
 
-        log.warn(AlarmMarker("initialComment"), "警告")
+        log.warn(AlarmMarker(message = "initialComment", level = Level.WARN), "警告")
         log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))

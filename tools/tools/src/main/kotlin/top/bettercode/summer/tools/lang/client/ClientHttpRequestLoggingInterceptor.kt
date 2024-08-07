@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.lang.client
 
+import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
@@ -104,7 +105,13 @@ class ClientHttpRequestLoggingInterceptor(
                         val initialComment =
                             "${operation.name}(${operation.request.restUri})：请求响应速度慢"
                         val timeoutMsg = "(${operation.duration / 1000}秒)"
-                        marker.add(AlarmMarker(initialComment + timeoutMsg, true))
+                        marker.add(
+                            AlarmMarker(
+                                message = initialComment + timeoutMsg,
+                                timeout = true,
+                                level = Level.WARN
+                            )
+                        )
                         msg = "$initialComment${timeoutMsg}\n$msg"
                         log.warn(marker, msg)
                     } else {

@@ -196,7 +196,13 @@ class RequestLoggingFilter(
                 if (!hasError && requestTimeout) {
                     val initialComment = "$uriName($restUri)：请求响应速度慢"
                     val timeoutMsg = "(${operation.duration / 1000}秒)"
-                    marker.add(AlarmMarker(initialComment + timeoutMsg, true))
+                    marker.add(
+                        AlarmMarker(
+                            message = initialComment + timeoutMsg,
+                            timeout = true,
+                            level = Level.WARN
+                        )
+                    )
                     msg = "$initialComment${timeoutMsg}\n$msg"
                 }
 
@@ -223,7 +229,12 @@ class RequestLoggingFilter(
                                     error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                                 }"
                             }"
-                        marker.add(AlarmMarker(initialComment))
+                        marker.add(
+                            AlarmMarker(
+                                message = initialComment,
+                                level = if (httpStatusCode < 500) Level.WARN else Level.ERROR
+                            )
+                        )
                         if (config.includeTrace)
                             log.error(marker, msg)
                         else

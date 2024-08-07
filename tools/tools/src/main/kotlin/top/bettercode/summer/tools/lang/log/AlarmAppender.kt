@@ -181,7 +181,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
             message.add(String(encoder.encode(e)))
             if (i == len - 1) {
                 val tp = e.throwableProxy
-                initialComment = alarmMarker?.initialComment
+                initialComment = alarmMarker?.message
                     ?: (if (tp != null) "${tp.className}:${tp.message ?: event.message}" else e.formattedMessage
                         ?: event.message)
                             ?: ""
@@ -197,8 +197,8 @@ abstract class AlarmAppender<T : AlarmProperties>(
         }
 
         if (needSend) {
-            val level = event.level
-            val timeout = alarmMarker?.timeout == true
+            val level = alarmMarker?.level ?: event.level
+            val timeout = alarmMarker?.timeout ?: false
             if (timeout) {
                 if (timeoutCache.getIfPresent(initialComment) == null) {
                     timeoutCache.put(initialComment, 1)
