@@ -14,7 +14,7 @@ object MysqlToDDL : ToDDL() {
         out.appendLine()
         val notOnlyCollate = !database.extension.setting("onlyCollate", "false").toBoolean()
         val notOnlyComment = !database.extension.setting("onlyComment", "false").toBoolean()
-        val noComment = database.extension.setting("noComment", "false").toBoolean()
+        val noComment = database.extension.enable("noComment")
         if (!database.offline && notOnlyComment) {
             //schema default collate change
             database.use {
@@ -90,7 +90,7 @@ object MysqlToDDL : ToDDL() {
                                                 if (columnDef != oldColumnDef) {
                                                     lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
                                                         columnDef(column, quote)
-                                                    } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
+                                                    } COMMENT '${oldColumn.remarks.replace("\\", "\\\\")}';")
                                                 }
                                             } else {
                                                 lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${

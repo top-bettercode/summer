@@ -116,7 +116,7 @@ open class GeneratorExtension(
     }
 
     fun enable(key: String, default: Boolean = false): Boolean {
-        return setting(key, default.toString()) == "true"
+        return settings[key]?.toBoolean() ?: default
     }
 
     /**

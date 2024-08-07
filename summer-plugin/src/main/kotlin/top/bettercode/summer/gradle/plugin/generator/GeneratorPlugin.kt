@@ -19,7 +19,6 @@ import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.PumlTableHolder
 import top.bettercode.summer.tools.generator.database.entity.Column
-import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
 import top.bettercode.summer.tools.generator.ddl.OracleToDDL
 import top.bettercode.summer.tools.generator.ddl.SqlLiteToDDL
@@ -427,12 +426,9 @@ class GeneratorPlugin : Plugin<Project> {
                                             if (defaultModule) "" else "-${module}"
                                         }${if (project != project.rootProject) "/${project.name}" else ""}.sql"
                                     )
-                                    val allTables = mutableListOf<Table>()
                                     unit.use { pw ->
                                         val tables =
                                             tableHolder.tables(tableName = extension.tableNames)
-                                        allTables.addAll(tables)
-                                        val tableNames = tables.map { it.tableName }
 
                                         val currentPumlFile = File(
                                             databasePumlDir,
@@ -440,14 +436,18 @@ class GeneratorPlugin : Plugin<Project> {
                                         )
 
                                         val oldTables =
-                                            if (database.offline && currentPumlFile.exists()) {
-                                                PumlConverter.toTables(database, currentPumlFile)
-                                            } else {
-                                                if (!database.offline && (tableNames.isNotEmpty() || deleteTablesWhenUpdate)) {
-                                                    database.tables(
-                                                        tableName = (if (deleteTablesWhenUpdate) emptyList() else tableNames).toTypedArray()
+                                            if (database.offline) {
+                                                if (currentPumlFile.exists())
+                                                    PumlConverter.toTables(
+                                                        database,
+                                                        currentPumlFile
                                                     )
-                                                } else emptyList()
+                                                else emptyList()
+                                            } else {
+                                                val tableNames = tables.map { it.tableName }
+                                                database.tables(
+                                                    tableName = (if (deleteTablesWhenUpdate) emptyList() else tableNames).toTypedArray()
+                                                )
                                             }
                                         when (database.driver) {
                                             DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
@@ -510,6 +510,8 @@ class GeneratorPlugin : Plugin<Project> {
                                         OracleToDDL.useQuote = extension.sqlQuote
                                         MysqlToDDL.useForeignKey = extension.useForeignKey
                                         OracleToDDL.useForeignKey = extension.useForeignKey
+                                        val deleteTablesWhenUpdate = database.dropTablesWhenUpdate
+
 
                                         val databasePumlDir =
                                             extension.file(extension.pumlSrc + "/database")
@@ -520,48 +522,61 @@ class GeneratorPlugin : Plugin<Project> {
                                         )
 
                                         val oldTables =
-                                            if (database.offline && currentPumlFile.exists()) {
-                                                PumlConverter.toTables(database, currentPumlFile)
+                                            if (database.offline) {
+                                                if (currentPumlFile.exists())
+                                                    PumlConverter.toTables(
+                                                        database,
+                                                        currentPumlFile
+                                                    )
+                                                else emptyList()
                                             } else {
-                                                database.tables(tableName = emptyArray())
+                                                val tableNames =
+                                                    tableHolder.tables(tableName = extension.tableNames)
+                                                        .map { it.tableName }
+
+                                                database.tables(
+                                                    tableName = (if (deleteTablesWhenUpdate) emptyList() else tableNames).toTypedArray()
+                                                )
                                             }
 
                                         tableHolder.files.forEach { file ->
                                             val tables = tableHolder.getTables(file)
                                                 .filter { table ->
-                                                    val oldTable =
+                                                    val newTable =
                                                         oldTables.find { it.tableName == table.tableName }
-                                                    if (oldTable != null) {
+                                                    if (newTable != null) {
                                                         table.primaryKeyNames =
-                                                            oldTable.primaryKeyNames
-                                                        table.indexes = oldTable.indexes
+                                                            newTable.primaryKeyNames
+                                                        table.indexes = newTable.indexes
                                                         val pumlColumns =
                                                             table.pumlColumns.filterIsInstance<Column>()
-                                                        table.pumlColumns = oldTable.pumlColumns
+                                                        table.pumlColumns = newTable.pumlColumns
                                                         table.pumlColumns.filterIsInstance<Column>()
                                                             .forEach { col ->
-                                                                val newCol =
+                                                                val oldCol =
                                                                     pumlColumns.find { it.columnName == col.columnName }
-                                                                if (newCol != null) {
-                                                                    col.remarks = newCol.remarks
+                                                                if (oldCol != null) {
+                                                                    if (!extension.enable("noComment"))
+                                                                        col.remarks = oldCol.remarks
                                                                     col.idgenerator =
-                                                                        newCol.idgenerator
+                                                                        oldCol.idgenerator
                                                                     col.idgeneratorParam =
-                                                                        newCol.idgeneratorParam
-                                                                    col.sequence = newCol.sequence
+                                                                        oldCol.idgeneratorParam
+                                                                    col.sequence = oldCol.sequence
                                                                     col.sequenceStartWith =
-                                                                        newCol.sequenceStartWith
-                                                                    col.version = newCol.version
+                                                                        oldCol.sequenceStartWith
+                                                                    col.version = oldCol.version
                                                                     col.logicalDelete =
-                                                                        newCol.logicalDelete
+                                                                        oldCol.logicalDelete
                                                                     col.createdDate =
-                                                                        newCol.createdDate
-                                                                    col.createdBy = newCol.createdBy
+                                                                        oldCol.createdDate
+                                                                    col.createdBy = oldCol.createdBy
                                                                     col.lastModifiedDate =
-                                                                        newCol.lastModifiedDate
+                                                                        oldCol.lastModifiedDate
                                                                     col.lastModifiedBy =
-                                                                        newCol.lastModifiedBy
-                                                                    col.asBoolean = newCol.asBoolean
+                                                                        oldCol.lastModifiedBy
+                                                                    col.asBoolean = oldCol.asBoolean
+                                                                    col.codeType = oldCol.codeType
                                                                 }
                                                             }
                                                         true
