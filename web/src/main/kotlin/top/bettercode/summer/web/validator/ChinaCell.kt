@@ -7,7 +7,7 @@ import javax.validation.ReportAsSingleViolation
 import kotlin.reflect.KClass
 
 /**
- * 中国内地手机号验证
+ * 中国大陆手机号验证
  *
  * @author Peter wu
  */
