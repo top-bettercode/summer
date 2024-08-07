@@ -106,18 +106,6 @@ class AutodocPlugin : Plugin<Project> {
                 }
             })
         }
-        project.tasks.create("pdfdoc") { task ->
-            task.group = group
-            task.doLast(object : Action<Task> {
-                override fun execute(it: Task) {
-                    AsciidocGenerator.pdf(
-                        project.extensions.findByType(
-                            AutodocExtension::class.java
-                        )!!
-                    )
-                }
-            })
-        }
         project.tasks.create("postman") { task ->
             task.group = group
             task.mustRunAfter("clean", "processResources")
