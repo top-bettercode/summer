@@ -34,10 +34,9 @@ dependencies {
         api("com.oracle.database.security:osdt_core:21.9.0.0")
         api("com.oracle.database.security:osdt_cert:21.9.0.0")
 
-        api("org.asciidoctor:asciidoctorj:2.5.10")
-        //高版本asciidoctorj-diagram要求JDK11
-        api("org.asciidoctor:asciidoctorj-diagram:2.2.7")
-        api("org.asciidoctor:asciidoctorj-pdf:2.3.9")
+        api("org.asciidoctor:asciidoctorj:2.5.13")
+        api("org.asciidoctor:asciidoctorj-diagram:2.3.1")
+        api("org.asciidoctor:asciidoctorj-pdf:2.3.18")
 
         api("org.dhatim:fastexcel:0.15.1")
         api("org.dhatim:fastexcel-reader:0.18.0")
