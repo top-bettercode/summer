@@ -284,13 +284,57 @@ object CoreProjectTasks {
                 })
             }
 
-//            create("updateCode") {
-//                it.group = GeneratorPlugin.GEN_GROUP
-//                it.doLast(object : Action<Task> {
-//                    override fun execute(t: Task) {
-//                    }
-//                })
-//            }
+            create("updateCode") {
+                it.group = GeneratorPlugin.GEN_GROUP
+                it.doLast(object : Action<Task> {
+                    override fun execute(t: Task) {
+                        project.rootProject.subprojects { subproject ->
+                            subproject.file("src/doc").walkTopDown()
+                                .filter { f -> f.isFile && f.extension == "yml" }
+                                .forEach { f ->
+                                    val lines = f.readLines()
+                                    val isGet = lines.any { l ->
+                                        return@any l.contains("method: \"GET\"")
+                                    }
+                                    if (isGet) {
+                                        val newLines = lines.map { l ->
+                                            if (l.trim() == "parametersExt:") {
+                                                "  queriesExt:"
+                                            } else {
+                                                l
+                                            }
+                                        }
+                                        f.writeText(newLines.joinToString("\n") + "\n")
+                                    }
+                                }
+                            subproject.file("src/test/java").walkTopDown()
+                                .filter { f -> f.isFile && (f.extension == "java" || f.extension == "kt") }
+                                .forEach { f ->
+                                    val lines = f.readLines()
+                                    var isGet = false
+                                    var update = false
+                                    val newLines = lines.map { l ->
+                                        if (l.matches(Regex(".*get\\(.*"))) {
+                                            isGet = true
+                                            l
+                                        } else if (l.trim().startsWith(".param(") && isGet) {
+                                            update = true
+                                            l.replace(".param(", ".queryParam(")
+                                        } else {
+                                            if (isGet && l.contains(");")) {
+                                                isGet = false
+                                            }
+                                            l
+                                        }
+                                    }
+                                    if (update) {
+                                        f.writeText(newLines.joinToString("\n") + "\n")
+                                    }
+                                }
+                        }
+                    }
+                })
+            }
 
             create("genAuthCode") {
                 it.group = GeneratorPlugin.GEN_GROUP
