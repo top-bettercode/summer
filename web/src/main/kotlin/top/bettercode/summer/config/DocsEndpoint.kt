@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils
 import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.resource.HttpResource
 import top.bettercode.summer.logging.LoggingUtil
+import top.bettercode.summer.tools.autodoc.AutodocExtension
 import java.io.File
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -29,9 +30,9 @@ import javax.servlet.http.HttpServletResponse
  */
 @Endpoint(id = "doc")
 class DocsEndpoint(
-        private val request: HttpServletRequest,
-        private val response: HttpServletResponse,
-        private val resourceLoader: ResourceLoader
+    private val request: HttpServletRequest,
+    private val response: HttpServletResponse,
+    private val resourceLoader: ResourceLoader
 ) {
     private val log: Logger = LoggerFactory.getLogger(DocsEndpoint::class.java)
 
@@ -49,22 +50,33 @@ class DocsEndpoint(
         val docPath = "$docFileClassPath/$requestPath"
         val resource = resourceLoader.getResource(docPath)
         if (isRoot) {
-            val servletPath = (request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE) as String?
-                    ?: throw IllegalStateException("Required request attribute '" +
-                            HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE + "' is not set")).trimEnd('/')
+            val servletPath =
+                (request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE) as String?
+                    ?: throw IllegalStateException(
+                        "Required request attribute '" +
+                                HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE + "' is not set"
+                    )).trimEnd('/')
 
             if (resource.exists()) {
                 val url = resource.url.toString()
                 if (url.startsWith("jar:")) {
-                    val resources = resolver.getResources("$docPath**").map { it.url.path.substringAfter(resource.url.path) }.filter { it.matches("^v.*\\.html$".toRegex()) }
+                    val resources = resolver.getResources("$docPath**")
+                        .map { it.url.path.substringAfter(resource.url.path) }
+                        .filter { it.matches("^v.*\\.html$".toRegex()) }
+
                     val last = resources
-                            .sortedWith { o1, o2 -> o1.compareTo(o2) }.lastOrNull()
+                        .sortedWith { o1, o2 -> AutodocExtension.compareVersion(o1, o2) }
+                        .lastOrNull()
                     if (last != null) {
                         response.sendRedirect("$servletPath/$last")
                         return
                     }
                 } else if (resource.file.exists()) {
-                    val last = resource.file.listFiles()?.filter { f: File -> f.isFile && f.name.matches("^v.*\\.html$".toRegex()) }?.map { it.name }?.maxOfOrNull { it }
+                    val last = resource.file.listFiles()
+                        ?.filter { f: File -> f.isFile && f.name.matches("^v.*\\.html$".toRegex()) }
+                        ?.map { it.name }
+                        ?.sortedWith { o1, o2 -> AutodocExtension.compareVersion(o1, o2) }
+                        ?.lastOrNull()
                     if (last != null) {
                         response.sendRedirect("$servletPath/${last}")
                         return
@@ -77,7 +89,8 @@ class DocsEndpoint(
         if (reqResource != null) {
             val urlPath = reqResource.url.path
             if (urlPath.endsWith(".html") || urlPath.endsWith(".postman_collection.json")) {
-                val text = reqResource.inputStream.reader().readText().replace("\${apiAddress}", apiAddress)
+                val text = reqResource.inputStream.reader().readText()
+                    .replace("\${apiAddress}", apiAddress)
                 reqResource = object : ByteArrayResource(text.toByteArray()) {
                     override fun getFilename(): String? {
                         return resource.filename
@@ -114,7 +127,8 @@ class DocsEndpoint(
                 val httpRanges = inputMessage.headers.range
                 response.status = HttpServletResponse.SC_PARTIAL_CONTENT
                 this.resourceRegionHttpMessageConverter.write(
-                        HttpRange.toResourceRegions(httpRanges, resource), mediaType, outputMessage)
+                    HttpRange.toResourceRegions(httpRanges, resource), mediaType, outputMessage
+                )
             } catch (ex: IllegalArgumentException) {
                 response.setHeader(HttpHeaders.CONTENT_RANGE, "bytes */" + resource.contentLength())
                 response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE)
@@ -148,7 +162,11 @@ class DocsEndpoint(
         return result
     }
 
-    private fun setHeaders(response: HttpServletResponse, resource: Resource?, @Nullable mediaType: MediaType?) {
+    private fun setHeaders(
+        response: HttpServletResponse,
+        resource: Resource?,
+        @Nullable mediaType: MediaType?
+    ) {
         if (mediaType != null) {
             response.contentType = mediaType.toString()
         }
