@@ -19,12 +19,12 @@ import java.net.URI
 @JsonPropertyOrder("name", "items")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class DocCollection(
-        override val name: String = "", var items: LinkedHashSet<String> = linkedSetOf(),
-        /**
-         * 集合目录
-         */
-        @JsonIgnore
-        val dir: File
+    override val name: String = "", var items: LinkedHashSet<String> = linkedSetOf(),
+    /**
+     * 集合目录
+     */
+    @JsonIgnore
+    val dir: File
 ) : ICollection {
 
     private val log: Logger = LoggerFactory.getLogger(DocCollection::class.java)
@@ -55,22 +55,28 @@ data class DocCollection(
 
                 headers = headersExt.associateTo(HttpHeaders()) { field ->
                     Pair(
-                            field.name,
-                            listOf(field.value)
+                        field.name,
+                        listOf(field.value)
+                    )
+                }
+                queries = queriesExt.associateTo(Parameters()) { field ->
+                    Pair(
+                        field.name,
+                        listOf(field.value)
                     )
                 }
                 parameters = parametersExt.associateTo(Parameters()) { field ->
                     Pair(
-                            field.name,
-                            listOf(field.value)
+                        field.name,
+                        listOf(field.value)
                     )
                 }
                 parts = partsExt.map { field ->
                     OperationRequestPart(
-                            field.name,
-                            field.partType,
-                            headers,
-                            field.value.toByteArray()
+                        field.name,
+                        field.partType,
+                        headers,
+                        field.value.toByteArray()
                     )
                 }
             }
@@ -79,8 +85,8 @@ data class DocCollection(
                 this as DocOperationResponse
                 headers = headersExt.associateTo(HttpHeaders()) { field ->
                     Pair(
-                            field.name,
-                            listOf(field.value)
+                        field.name,
+                        listOf(field.value)
                     )
                 }
             }
