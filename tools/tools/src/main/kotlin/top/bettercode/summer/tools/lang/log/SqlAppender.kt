@@ -176,7 +176,8 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
     private val logger = LoggerFactory.getLogger(SqlAppender::class.java)
 
     public override fun append(event: ILoggingEvent?) {
-        if (event == null || !isStarted || !logger.isInfoEnabled || (!isLogEnabled() && LOG_SLOW != event.loggerName)) {
+        val loggerName = event?.loggerName
+        if (event == null || !isStarted || !logger.isInfoEnabled || (!isLogEnabled() && LOG_SLOW != loggerName)) {
             return
         }
         try {
@@ -187,7 +188,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             val key = "$traceid:$id"
             var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
             val msg = event.formattedMessage
-            when (event.loggerName) {
+            when (loggerName) {
                 "org.hibernate.SQL" -> {
                     if (!sqlLogData.sql.isNullOrBlank()) {
                         sqlCache.remove(key)
@@ -254,7 +255,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                         sqlLogData.error = error
                 }
             }
-            if (end || (LOG_SLOW == event.loggerName && !isShowSql())) {
+            if (end || (LOG_SLOW == loggerName && !isShowSql())) {
                 log(sqlLogData)
                 sqlCache.remove(key)
             }
