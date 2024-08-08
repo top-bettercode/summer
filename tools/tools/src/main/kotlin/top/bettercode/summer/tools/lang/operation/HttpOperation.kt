@@ -85,7 +85,7 @@ object HttpOperation {
         decrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
-        stringBuilder.appendLine("${request.method} ${request.uri.rawPath}${if (request.queries.isNotEmpty()) "?${request.queries.toQueryString()}" else ""} $protocol")
+        stringBuilder.appendLine("${request.method} ${getRequestPath(request)} $protocol")
         getHeaders(request).forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
         if (decrypt != null) {
             request.content = decrypt(request.content)
@@ -138,7 +138,7 @@ object HttpOperation {
         request.uriVariables.forEach { (t, u) ->
             path = path.replace("{$t}", u)
         }
-        return "$path?${request.queries.toQueryString()}"
+        return "$path${if (request.queries.isNotEmpty()) "?${request.queries.toQueryString()}" else ""}"
     }
 
     private fun getHeaders(request: OperationRequest): HttpHeaders {
