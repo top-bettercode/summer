@@ -150,9 +150,9 @@ class OkHttpLoggingInterceptor(
         val url = request.url
         headers["Host"] = extractHost(url.toUri())
 
-        val parameters = Parameters()
+        val queries = Parameters()
         for (parameterName in url.queryParameterNames) {
-            parameters.add(parameterName, url.queryParameter(parameterName))
+            queries.add(parameterName, url.queryParameter(parameterName))
         }
         val uri = url.toUri()
         val restUri = uri.toString()
@@ -165,7 +165,7 @@ class OkHttpLoggingInterceptor(
             headers = headers,
             cookies = emptyList(),
             remoteUser = remoteUser,
-            parameters = parameters,
+            queries = queries,
             parts = emptyList(),
             content = content,
             dateTime = dateTime

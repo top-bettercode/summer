@@ -145,7 +145,6 @@ class ClientHttpRequestLoggingInterceptor(
         headers.remove(HttpHeaders.COOKIE)
 
         val restUri = uri.toString()
-        val parameters = QueryStringParser.parse(uri)
         return OperationRequest(
             uri = uri,
             restUri = restUri,
@@ -154,7 +153,7 @@ class ClientHttpRequestLoggingInterceptor(
             headers = headers,
             cookies = cookies,
             remoteUser = "NonSpecificUser",
-            parameters = parameters,
+            queries = QueryStringParser.parse(uri),
             parts = listOf(),
             content = body,
             dateTime = dateTime

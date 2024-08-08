@@ -24,7 +24,7 @@ object PostmanGenerator {
     fun postman(autodoc: AutodocExtension) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
-                ?: autodoc.source.absolutePath) + File.separator
+            ?: autodoc.source.absolutePath) + File.separator
         autodoc.listModules { module, pyname ->
             val postmanFile = autodoc.postmanFile(pyname)
             postmanFile.delete()
@@ -32,45 +32,45 @@ object PostmanGenerator {
 
             val variables = linkedSetOf<Variable>()
             variables.add(
-                    Variable(
-                            key = "apiAddress",
-                            value = autodoc.apiAddress,
-                            type = "string",
-                            description = "接口地址"
-                    )
+                Variable(
+                    key = "apiAddress",
+                    value = autodoc.apiAddress,
+                    type = "string",
+                    description = "接口地址"
+                )
             )
             val items: List<Item> = module.collections.map { collection ->
                 val collectionName = collection.name
 
                 Item(name = collectionName, item = collection.operations.map { operation ->
                     val operationPath =
-                            operation.operationFile.absolutePath.substringAfter(sourcePath)
+                        operation.operationFile.absolutePath.substringAfter(sourcePath)
                     val request = extractRequest(
-                            operation.request as DocOperationRequest,
-                            autodoc,
-                            operationPath
+                        operation.request as DocOperationRequest,
+                        autodoc,
+                        operationPath
                     )
 
                     Item(
-                            name = operation.name,
-                            description = operation.description,
-                            request = request,
-                            response = listOf(
-                                    extractResponse(
-                                            operation.name,
-                                            request,
-                                            operation.response as DocOperationResponse,
-                                            operationPath
-                                    )
-                            ),
-                            event = module.postmanEvents(operation, autodoc)
+                        name = operation.name,
+                        description = operation.description,
+                        request = request,
+                        response = listOf(
+                            extractResponse(
+                                operation.name,
+                                request,
+                                operation.response as DocOperationResponse,
+                                operationPath
+                            )
+                        ),
+                        event = module.postmanEvents(operation, autodoc)
                     )
                 }.toList())
             }
             val postmanCollection = Collection(
-                    info = Info(name = autodoc.projectName + " " + pyname),
-                    item = items,
-                    variable = variables.toList()
+                info = Info(name = autodoc.projectName + " " + pyname),
+                item = items,
+                variable = variables.toList()
             )
             postmanFile.writeText(postmanCollection.toJsonString())
             log.warn("生成：$postmanFile")
@@ -78,16 +78,16 @@ object PostmanGenerator {
     }
 
     private fun extractRequest(
-            request: DocOperationRequest,
-            autodoc: AutodocExtension,
-            operationPath: String
+        request: DocOperationRequest,
+        autodoc: AutodocExtension,
+        operationPath: String
     ): Request {
         val httpHeaders = request.headersExt
         if (request.restUri != autodoc.authUri) {
             httpHeaders.filter { it.name == "Authorization" || it.name == "authorization" }
-                    .forEach {
-                        it.value = "{{token_type}} {{access_token}}"
-                    }
+                .forEach {
+                    it.value = "{{token_type}} {{access_token}}"
+                }
             httpHeaders.filter { autodoc.authVariables.contains(it.name) }.forEach {
                 it.value = "{{${it.name}}}"
             }
@@ -100,75 +100,75 @@ object PostmanGenerator {
         httpHeaders.removeIf { it.name == HttpHeaders.HOST || it.name == HttpHeaders.CONTENT_LENGTH }
 
         return Request(
-                method = request.method,
-                header = request.headersExt.checkBlank("$operationPath:request.headersExt").map {
-                    HeaderItem(it.name, it.name, it.value, it.postmanDescription)
-                },
-                url = extractUrl(request, operationPath),
-                body = extractBody(request, operationPath)
+            method = request.method,
+            header = request.headersExt.checkBlank("$operationPath:request.headersExt").map {
+                HeaderItem(it.name, it.name, it.value, it.postmanDescription)
+            },
+            url = extractUrl(request, operationPath),
+            body = extractBody(request, operationPath)
         )
     }
 
     private fun extractResponse(
-            name: String,
-            request: Request,
-            response: DocOperationResponse,
-            operationPath: String
+        name: String,
+        request: Request,
+        response: DocOperationResponse,
+        operationPath: String
     ): Response {
         val httpHeaders = response.headersExt
         httpHeaders.removeIf { it.name == HttpHeaders.HOST || it.name == HttpHeaders.CONTENT_LENGTH }
 
         val contentType = response.contentType
         return Response(
-                name = name,
-                originalRequest = request,
-                code = response.statusCode,
-                status = try {
-                    HttpStatus.valueOf(response.statusCode).reasonPhrase
-                } catch (e: Exception) {
-                    HttpStatus.OK.reasonPhrase
-                },
-                header = httpHeaders.checkBlank("$operationPath:response.headersExt").map {
-                    HeaderItem(it.name, it.name, it.value)
-                },
-                body = response.prettyContentAsString,
-                postmanPreviewlanguage = when {
-                    MediaType.APPLICATION_JSON
-                            .isCompatibleWith(contentType) -> "json"
+            name = name,
+            originalRequest = request,
+            code = response.statusCode,
+            status = try {
+                HttpStatus.valueOf(response.statusCode).reasonPhrase
+            } catch (e: Exception) {
+                HttpStatus.OK.reasonPhrase
+            },
+            header = httpHeaders.checkBlank("$operationPath:response.headersExt").map {
+                HeaderItem(it.name, it.name, it.value)
+            },
+            body = response.prettyContentAsString,
+            postmanPreviewlanguage = when {
+                MediaType.APPLICATION_JSON
+                    .isCompatibleWith(contentType) -> "json"
 
-                    MediaType.APPLICATION_XML
-                            .isCompatibleWith(contentType) -> "xml"
+                MediaType.APPLICATION_XML
+                    .isCompatibleWith(contentType) -> "xml"
 
-                    else -> "text"
-                }
+                else -> "text"
+            }
         )
     }
 
     private fun extractBody(request: DocOperationRequest, operationPath: String): Body? {
         when {
             request.contentExt.isNotEmpty() -> return Body(
-                    "raw",
-                    raw = request.prettyContentAsString,
-                    options = when {
-                        MediaType.APPLICATION_JSON
-                                .isCompatibleWith(request.contentType) -> Body.rawLanguage()
+                "raw",
+                raw = request.prettyContentAsString,
+                options = when {
+                    MediaType.APPLICATION_JSON
+                        .isCompatibleWith(request.contentType) -> Body.rawLanguage()
 
-                        MediaType.APPLICATION_XML
-                                .isCompatibleWith(request.contentType) -> Body.rawLanguage("xml")
+                    MediaType.APPLICATION_XML
+                        .isCompatibleWith(request.contentType) -> Body.rawLanguage("xml")
 
-                        else -> Body.rawLanguage("text")
-                    }
+                    else -> Body.rawLanguage("text")
+                }
             )
 
             request.partsExt.isNotEmpty() -> {
                 return Body(
-                        "formdata",
-                        formdata = request.partsExt.checkBlank("$operationPath:request.partsExt").map {
-                            Formdatum(it.name, it.value, it.partType, it.postmanDescription)
-                        })
+                    "formdata",
+                    formdata = request.partsExt.checkBlank("$operationPath:request.partsExt").map {
+                        Formdatum(it.name, it.value, it.partType, it.postmanDescription)
+                    })
             }
 
-            HttpOperation.isPutOrPost(request) -> {
+            request.parametersExt.isNotEmpty() -> {
                 val param = request.parametersExt.checkBlank("$operationPath:request.parametersExt")
                 param.filter { it.name == "refresh_token" }.forEach {
                     it.value = "{{refresh_token}}"
@@ -176,10 +176,10 @@ object PostmanGenerator {
 
                 return Body("urlencoded", urlencoded = param.map {
                     Urlencoded(
-                            it.name,
-                            it.value,
-                            it.type.substringBefore("(").lowercase(Locale.getDefault()),
-                            it.postmanDescription
+                        it.name,
+                        it.value,
+                        it.type.substringBefore("(").lowercase(Locale.getDefault()),
+                        it.postmanDescription
                     )
                 })
             }
@@ -194,13 +194,11 @@ object PostmanGenerator {
         return Url().apply {
             host = listOf("{{apiAddress}}")
             path = uri.split("/").filter { it.isNotBlank() }
-            raw = "{{apiAddress}}${HttpOperation.getRestRequestPath(request)}"
+            raw = "{{apiAddress}}${HttpOperation.getRequestPath(request)}"
 
-            if (!HttpOperation.isPutOrPost(request))
-                query =
-                        request.parametersExt.checkBlank("$operationPath:request.parametersExt").map {
-                            Query(it.name, it.value, it.postmanDescription)
-                        }
+            query = request.queriesExt.checkBlank("$operationPath:request.parametersExt").map {
+                Query(it.name, it.value, it.postmanDescription)
+            }
         }
     }
 }

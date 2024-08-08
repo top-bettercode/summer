@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.lang.operation
 
 import org.springframework.util.LinkedMultiValueMap
 import java.io.UnsupportedEncodingException
-import java.net.URI
 import java.net.URLEncoder
 
 /**
@@ -39,11 +38,10 @@ class Parameters : LinkedMultiValueMap<String, String>() {
      * Returns a new `Parameters` containing only the parameters that do no appear
      * in the query string of the given `uri`.
      *
-     * @param uri the uri
+     * @param queryStringParameters the queryStringParameters
      * @return the unique parameters
      */
-    fun getUniqueParameters(uri: URI): Parameters {
-        val queryStringParameters = QueryStringParser.parse(uri)
+    fun getUniqueParameters(queryStringParameters: Parameters): Parameters {
         val uniqueParameters = Parameters()
 
         for (parameter in entries) {
@@ -53,8 +51,8 @@ class Parameters : LinkedMultiValueMap<String, String>() {
     }
 
     private fun addIfUnique(
-            parameter: Map.Entry<String, List<String>>,
-            queryStringParameters: Parameters, uniqueParameters: Parameters
+        parameter: Map.Entry<String, List<String>>,
+        queryStringParameters: Parameters, uniqueParameters: Parameters
     ) {
         if (!queryStringParameters.containsKey(parameter.key)) {
             uniqueParameters[parameter.key] = parameter.value
@@ -92,8 +90,8 @@ class Parameters : LinkedMultiValueMap<String, String>() {
             return URLEncoder.encode(s, "UTF-8")
         } catch (ex: UnsupportedEncodingException) {
             throw IllegalStateException(
-                    "Unable to URL encode $s using UTF-8",
-                    ex
+                "Unable to URL encode $s using UTF-8",
+                ex
             )
         }
 

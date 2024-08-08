@@ -85,7 +85,7 @@ object HttpOperation {
         decrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
-        stringBuilder.appendLine("${request.method} ${getPath(request)} $protocol")
+        stringBuilder.appendLine("${request.method} ${request.uri.rawPath}${if (request.queries.isNotEmpty()) "?${request.queries.toQueryString()}" else ""} $protocol")
         getHeaders(request).forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
         if (decrypt != null) {
             request.content = decrypt(request.content)
@@ -131,45 +131,14 @@ object HttpOperation {
         return stringBuilder.toString()
     }
 
-    private fun getPath(request: OperationRequest, forceParametersInUri: Boolean = false): String {
-        return getPath(request, forceParametersInUri, request.uri.rawPath)
-    }
-
-    fun getRestRequestPath(
-        request: OperationRequest,
-        forceParametersInUri: Boolean = false
+    fun getRequestPath(
+        request: OperationRequest
     ): String {
         var path = request.restUri
         request.uriVariables.forEach { (t, u) ->
             path = path.replace("{$t}", u)
         }
-        return getPath(request, forceParametersInUri, path)
-    }
-
-    private fun getPath(
-        request: OperationRequest,
-        forceParametersInUri: Boolean,
-        path: String
-    ): String {
-        var rpath = path
-        var queryString = request.uri.rawQuery
-        val uniqueParameters = request.parameters.getUniqueParameters(request.uri)
-        if (uniqueParameters.isNotEmpty() && (forceParametersInUri || includeParametersInUri(request))) {
-            queryString = if (!queryString.isNullOrBlank()) {
-                queryString + "&" + uniqueParameters.toQueryString()
-            } else {
-                uniqueParameters.toQueryString()
-            }
-        }
-        if (!queryString.isNullOrBlank()) {
-            rpath = "$rpath?$queryString"
-        }
-        return rpath
-    }
-
-    private fun includeParametersInUri(request: OperationRequest): Boolean {
-        return (request.method == HttpMethod.GET.name || request.method == HttpMethod.DELETE.name) || (request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
-            .isCompatibleWith(request.contentType))
+        return "$path?${request.queries.toQueryString()}"
     }
 
     private fun getHeaders(request: OperationRequest): HttpHeaders {
@@ -211,7 +180,7 @@ object HttpOperation {
         val content = if (format) request.prettyContentAsString else request.contentAsString
         if (content.isNotBlank()) {
             writer.printf("%n%s", content)
-        } else if (isPutOrPost(request)) {
+        } else {
             if (request.parts.isEmpty()) {
                 val queryString = request.parameters.toQueryString()
                 if (queryString.isNotBlank()) {

@@ -14,6 +14,7 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.operation.Operation
 import java.io.File
+import java.io.PrintWriter
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -204,6 +205,7 @@ object AsciidocGenerator {
 :toc: left
 :toc-title: 目录
 :sectanchors:
+:pdf-page-margin: [1in, 0.5in]
 :docinfo1:
 :table-caption!:
 :sectlinks:"""
@@ -239,10 +241,8 @@ object AsciidocGenerator {
                 }
                 val properties = autodoc.properties
                 (commonAdocs + autodoc.commonAdocs(module)).sortedWith { o1, o2 ->
-                    if (o1.name == "README.adoc") -1 else o1.name.compareTo(
-                        o2.name
-                    )
-                }.forEach {
+                    if (o1.name == "README.adoc") -1 else o1.name.compareTo(o2.name)
+                }.forEach   {
                     out.println()
                     var pre = ""
                     it.readLines().forEach { l ->
@@ -264,7 +264,7 @@ object AsciidocGenerator {
                 }
                 out.println()
                 out.println(":sectnums:")
-                module.collections.forEach { collection ->
+                module.collections.filter { it.operations.isNotEmpty() }.forEach { collection ->
                     val collectionName = collection.name
 
                     out.println()
@@ -279,172 +279,140 @@ object AsciidocGenerator {
                         val operationName = operation.name.replace(AutodocUtil.REPLACE_CHAR, "/")
                         out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
+                        out.println(":sectnums!:")
                         out.println()
-                        out.println("[width=\"100%\",cols=\"1,4,1,1,2,1,2\", stripes=\"even\"]")
-                        out.println("|===")
                         if (operation.description.isNotBlank()) {
-                            out.println(".1+.^|说明 6+|${operation.description}")
+                            out.println("==== 接口说明")
+                            out.println(operation.description)
+                            out.println()
                         }
-
                         val request = operation.request as DocOperationRequest
                         request.apply {
-                            out.println(".1+.^|方法 6+.^|${method}")
-
+                            out.println("==== 请求")
                             out.println(
-                                ".1+.^|地址 6+.^|link:{apiAddress}${
-                                    str(
-                                        HttpOperation.getRestRequestPath(
-                                            request
-                                        )
-                                    )
-                                }[{apiAddress}++$restUri++]"
+                                "$method link:{apiAddress}${
+                                    HttpOperation.getRequestPath(request)
+                                }[{apiAddress}$restUri]"
                             )
+                            out.println()
 
                             if (uriVariablesExt.isNotEmpty()) {
-                                val uriFields =
+                                val fields =
                                     uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
-                                out.println(".${uriFields.size + 1}+.^|URL")
-                                out.println("h|名称 h|类型 3+h|描述 h|示例")
-                                uriFields.forEach {
-                                    out.print(
-                                        "|${
-                                            str(
-                                                it.name
-                                            )
-                                        }"
-                                    )
-                                    out.print(
-                                        "|${
-                                            str(
-                                                it.type
-                                            )
-                                        }"
-                                    )
-                                    out.print(
-                                        " 3+|${
-                                            str(
-                                                it.description,
-                                                true
-                                            )
-                                        }"
-                                    )
-                                    out.print(
-                                        "|${
-                                            str(
-                                                it.value
-                                            )
-                                        }"
-                                    )
+                                out.println("==== URL参数")
+                                out.println("[width=\"100%\", cols=\"2,1,3,3\", stripes=\"even\"]")
+                                out.println("|===")
+                                out.println("h|名称 h|类型 h|描述 h|示例")
+                                fields.forEach {
+                                    out.print("|${str(it.name)}")
+                                    out.print("|${str(it.type)}")
+                                    out.print("|${str(it.description, true)}")
+                                    out.print("|${str(it.value)}")
                                     out.println()
                                 }
+                                out.println("|===")
                             }
                             if (headersExt.isNotEmpty()) {
-                                val headerFields =
+                                val fields =
                                     headersExt.checkBlank("$operationPath:request.headersExt")
-                                out.println(".${headerFields.size + 1}+.^|请求头")
-                                out.println("h|名称 h|类型 h|必填 2+h|描述 h|示例")
-                                headerFields.forEach {
-                                    out.print(
-                                        "|${
-                                            str(
-                                                it.name
-                                            )
-                                        }"
-                                    )
-                                    out.print(
-                                        "|${
-                                            str(
-                                                it.type
-                                            )
-                                        }"
-                                    )
-                                    out.print(
-                                        "|${
-                                            str(
-                                                it.requiredDescription
-                                            )
-                                        }"
-                                    )
-                                    out.print(
-                                        " 2+|${
-                                            str(
-                                                it.description,
-                                                true
-                                            )
-                                        }"
-                                    )
-                                    out.print(
-                                        "|${
-                                            str(
-                                                it.value
-                                            )
-                                        }"
-                                    )
+                                out.println("==== 请求头")
+                                out.println("[width=\"100%\", cols=\"2,2,1,3,3\", stripes=\"even\"]")
+                                out.println("|===")
+                                out.println("h|名称 h|类型 h|必填 h|描述 h|示例")
+                                fields.forEach {
+                                    out.print("|${str(it.name)}")
+                                    out.print("|${str(it.type)}")
+                                    out.print("|${str(it.requiredDescription)}")
+                                    out.print("|${str(it.description, true)}")
+                                    out.print("|${str(it.value)}")
                                     out.println()
                                 }
+                                out.println("|===")
                             }
 
-                            val parameterFields =
-                                parametersExt.checkBlank("$operationPath:request.parametersExt")
-                            val partsFields = partsExt.checkBlank("$operationPath:request.partsExt")
-                            val contentFields =
-                                contentExt.checkBlank("$operationPath:request.contentExt")
-                            val parameterBuilder = StringBuilder()
-                            val size =
-                                writeParameters(
-                                    parameterBuilder,
-                                    parameterFields,
-                                    partsFields,
-                                    contentFields
-                                )
-
-                            out.println(".${size + 1}+.^|请求")
-                            if (size == 0) {
-                                out.println("6+|无")
-                            } else {
+                            if (queriesExt.isNotEmpty()) {
+                                val fields =
+                                    queriesExt.checkBlank("$operationPath:request.queriesExt")
+                                out.println("==== 查询参数")
+                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
+                                out.println("|===")
                                 out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
-                                out.println(parameterBuilder.toString())
+                                fields.forEach {
+                                    writeParam(out, it)
+                                }
+                                out.println("|===")
+                            }
+
+                            if (parametersExt.isNotEmpty()) {
+                                val fields =
+                                    parametersExt.checkBlank("$operationPath:request.parametersExt")
+                                out.println("==== 请求参数")
+                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
+                                out.println("|===")
+                                out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
+                                fields.forEach {
+                                    writeParam(out, it)
+                                }
+                                out.println("|===")
+                            }
+                            if (partsExt.isNotEmpty()) {
+                                val fields =
+                                    partsExt.checkBlank("$operationPath:request.partsExt")
+                                out.println("==== 请求参数")
+                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
+                                out.println("|===")
+                                out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
+                                fields.forEach {
+                                    writeParam(out, it)
+                                }
+                                out.println("|===")
+                            }
+
+                            if (contentExt.isNotEmpty()) {
+                                val fields =
+                                    contentExt.checkBlank("$operationPath:request.bodyExt")
+                                out.println("==== 请求体")
+                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
+                                out.println("|===")
+                                out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
+                                fields.forEach {
+                                    writeParam(out, it)
+                                }
+                                out.println("|===")
                             }
                         }
+                        out.println("==== 请求示例")
+                        out.println("[source,http,options=\"nowrap\"]")
+                        out.println("----")
+                        out.println(
+                            HttpOperation.toString(operation.request, operation.protocol, true)
+                        )
+                        out.println("----")
+
                         val response = operation.response as DocOperationResponse
                         response.apply {
-                            val contentFields =
-                                contentExt.checkBlank("$operationPath:response.contentExt")
-                            val responseBuilder = StringBuilder()
-                            val size =
-                                writeResponse(
-                                    responseBuilder,
-                                    contentFields
-                                )
-                            out.println(".${size + 1}+.^|响应")
-                            if (size == 0) {
-                                out.println("6+|无")
-                            } else {
-                                out.println("h|名称 h|类型 3+h|描述 h|示例")
-                                out.println(responseBuilder.toString())
+                            if (contentExt.isNotEmpty()) {
+                                val fields =
+                                    contentExt.checkBlank("$operationPath:response.contentExt")
+                                out.println("==== 返回参数")
+                                out.println("[width=\"100%\", cols=\"3,2,3,2\",, stripes=\"even\"]")
+                                out.println("|===")
+                                out.println("h|名称 h|类型 h|描述 h|示例")
+                                fields.forEach {
+                                    writeResp(out, it)
+                                }
+                                out.println("|===")
                             }
                         }
-                        if (!pdf) {
-                            out.println(".1+.^|示例 6+a|")
-                            out.println("[source,http,options=\"nowrap\"]")
-                            out.println("----")
-                            out.println(
-                                HttpOperation.toString(
-                                    operation.request,
-                                    operation.protocol,
-                                    true
-                                ).replace("|", "\\|")
-                            )
-                            out.println(
-                                HttpOperation.toString(response, operation.protocol, true)
-                                    .replace("|", "\\|")
-                            )
-                            out.println("----")
-                        }
+                        out.println("==== 返回示例")
+                        out.println("[source,http,options=\"nowrap\"]")
+                        out.println("----")
+                        out.println(HttpOperation.toString(response, operation.protocol, true))
+                        out.println("----")
 
-                        out.println("|===")
                         out.println("'''")
                         out.println()
+                        out.println(":sectnums:")
                     }
                 }
             }
@@ -452,94 +420,30 @@ object AsciidocGenerator {
         }
     }
 
-    private fun writeResponse(out: StringBuilder, contentFields: Set<Field>): Int {
-        var size = 0
-        contentFields.forEach { field ->
-            size += writeResp(out, field)
-        }
-        return size
-    }
-
-    private fun writeParameters(
-        out: StringBuilder,
-        parameterFields: Set<Field>,
-        partsFields: Set<Field>,
-        contentFields: Set<Field>
-    ): Int {
-        var size = 0
-        parameterFields.forEach {
-            size += writeParam(out, it)
-        }
-        partsFields.forEach {
-            size += writeParam(out, it)
-        }
-        contentFields.forEach {
-            size += writeParam(out, it)
-        }
-        return size
-    }
-
-    private fun writeResp(out: StringBuilder, field: Field, depth: Int = 0): Int {
-        out.append(
-            "|${fillBlank(depth)}${
-                str(
-                    field.name
-                )
-            }"
-        )
+    private fun writeResp(out: PrintWriter, field: Field, depth: Int = 0): Int {
+        out.append("|${fillBlank(depth)}${str(field.name)}")
         out.append("|${str(field.type)}")
-        out.append(
-            " 3+|${
-                str(
-                    field.description,
-                    true
-                )
-            }"
-        )
-
+        out.append("|${str(field.description, true)}")
         out.append("|${str(if (field.children.isNotEmpty()) "" else field.value)}")
         out.appendLine()
         var size = 1
         field.children.forEach {
-            size += writeResp(
-                out,
-                it,
-                depth + 1
-            )
+            size += writeResp(out, it, depth + 1)
         }
         return size
     }
 
-    private fun writeParam(out: StringBuilder, field: Field, depth: Int = 0): Int {
-        out.append(
-            "|${fillBlank(depth)}${
-                str(
-                    field.name
-                )
-            }"
-        )
+    private fun writeParam(out: PrintWriter, field: Field, depth: Int = 0) {
+        out.append("|${fillBlank(depth)}${str(field.name)}")
         out.append("|${str(field.type)}")
         out.append("|${str(field.requiredDescription)}")
-        out.append(
-            "|${
-                str(
-                    field.description,
-                    true
-                )
-            }"
-        )
+        out.append("|${str(field.description, true)}")
         out.append("|${str(field.defaultVal)}")
         out.append("|${str(field.value)}")
         out.appendLine()
-        var size = 1
         field.children.forEach {
-            size += writeParam(
-                out,
-                it,
-                depth + 1
-            )
+            writeParam(out, it, depth + 1)
         }
-        return size
     }
 
     private fun str(str: String?, desc: Boolean = false): String {
@@ -553,7 +457,7 @@ object AsciidocGenerator {
         return if (depth == 0) {
             ""
         } else {
-            var blank = "[white]#├──# "
+            var blank = "[white]#├─# "
             for (i in 1 until depth) {
                 blank += blank
             }

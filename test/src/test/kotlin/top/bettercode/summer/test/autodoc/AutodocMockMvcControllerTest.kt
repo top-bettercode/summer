@@ -26,8 +26,8 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
         Autodoc.requiredHeaders("sign")
         mockMvc.perform(
                 get("/clientTokens")
-                        .param("page", "1")
-                        .param("size", "5")
+                        .queryParam("page", "1")
+                        .queryParam("size", "5")
         ).andExpect(status().isOk)
     }
 

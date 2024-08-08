@@ -48,6 +48,7 @@ class FeignLogger : Logger() {
                 headers = headers,
                 cookies = emptyList(),
                 remoteUser = remoteUser,
+                queries = QueryStringParser.parse(uri),
                 parameters = parameters,
                 parts = emptyList(),
                 content = requestBody,

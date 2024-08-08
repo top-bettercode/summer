@@ -166,6 +166,13 @@ class AutodocHandler(
                     it.required = requiredHeaders.contains(it.name)
                 }
 
+                request.queriesExt =
+                    request.queries.singleValueMap.toFields(request.queriesExt, expand = true)
+
+                request.queriesExt.forEach {
+                    setRequired(it, requiredParameters)
+                }
+
                 request.parametersExt =
                     request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
                 request.parametersExt.forEach {

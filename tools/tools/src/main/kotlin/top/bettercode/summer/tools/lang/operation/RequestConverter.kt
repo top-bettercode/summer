@@ -54,7 +54,8 @@ object RequestConverter {
             ?: LocalDateTime.now()
         val uri = URI.create(getRequestUri(request))
         val headers = extractHeaders(request, uri)
-        val parameters = extractParameters(request)
+        val queries = QueryStringParser.parse(uri)
+        val parameters = extractParameters(request).getUniqueParameters(queries)
         val parts = extractParts(request)
         val cookies = extractCookies(request, headers)
         val restUri =
@@ -89,6 +90,7 @@ object RequestConverter {
             headers = headers,
             cookies = cookies,
             remoteUser = remoteUser,
+            queries = queries,
             parameters = parameters,
             parts = parts,
             content = content,
@@ -295,6 +297,9 @@ object RequestConverter {
         }
 
         printer.print(request.requestURI)
+        request.queryString?.let {
+            printer.printf("?%s", it)
+        }
         return uriWriter.toString()
     }
 

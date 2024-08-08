@@ -50,9 +50,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"$testInsertName();"
             +""
             +"perform(get(\"/$pathName/list\")"
-            2 + ".param(\"page\", \"1\")"
-            2 + ".param(\"size\", \"5\")"
-            2 + ".param(\"sort\", \"\")"
+            2 + ".queryParam(\"page\", \"1\")"
+            2 + ".queryParam(\"size\", \"5\")"
+            2 + ".queryParam(\"sort\", \"\")"
             +");"
         }
 
@@ -70,7 +70,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"$testInsertName();"
                 +""
                 +"download(get(\"/$pathName/export.xlsx\")"
-                2 + ".param(\"sort\", \"\")"
+                2 + ".queryParam(\"sort\", \"\")"
                 +");"
             }
         }
@@ -93,7 +93,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"Assertions.assertNotNull($primaryKeyName);"
                 +""
                 +"perform(get(\"/$pathName/info\")"
-                2 + ".param(\"${primaryKeyName}\", $keyValue)"
+                2 + ".queryParam(\"${primaryKeyName}\", $keyValue)"
                 +");"
             }
 
@@ -187,7 +187,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }();"
                 +""
                 +"perform(get(\"/$pathName/delete\")"
-                2 + ".param(\"${primaryKeyName}\", $keyValue)"
+                2 + ".queryParam(\"${primaryKeyName}\", $keyValue)"
                 +");"
                 +"Assertions.assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
             }
