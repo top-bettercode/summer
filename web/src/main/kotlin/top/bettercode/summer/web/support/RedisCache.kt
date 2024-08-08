@@ -34,8 +34,8 @@ import java.util.concurrent.Callable
 class RedisCache @JvmOverloads
 constructor(
     connectionFactory: RedisConnectionFactory,
-    private val cacheName: String,
-    private val ttl: Duration,
+    val cacheName: String,
+    val ttl: Duration,
     private val allowNullValues: Boolean = false,
     private val usePrefix: Boolean = true,
     private val keyPrefix: CacheKeyPrefix = CacheKeyPrefix.simple(),
