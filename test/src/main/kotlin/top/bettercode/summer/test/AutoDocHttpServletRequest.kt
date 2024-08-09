@@ -18,16 +18,16 @@ class AutoDocHttpServletRequest(request: HttpServletRequest) :
         return request is MockHttpServletRequest
     }
 
-    fun isGetOrDelete(): Boolean {
+    fun fixQuery(): Boolean {
         return when (method) {
             HttpMethod.GET.name, HttpMethod.DELETE.name -> true
-            else -> false
+            else -> request.contentLength > 0
         }
     }
 
     override fun getQueryString(): String? {
         val queryString = super.getQueryString()
-        return if (isGetOrDelete()) {
+        return if (fixQuery()) {
             val parameterMap = mutableMapOf<String, Array<out String>>()
             parameterMap.putAll(extParams)
             parameterMap.putAll(super.getParameterMap())
