@@ -242,7 +242,7 @@ object AsciidocGenerator {
                 val properties = autodoc.properties
                 (commonAdocs + autodoc.commonAdocs(module)).sortedWith { o1, o2 ->
                     if (o1.name == "README.adoc") -1 else o1.name.compareTo(o2.name)
-                }.forEach   {
+                }.forEach {
                     out.println()
                     var pre = ""
                     it.readLines().forEach { l ->
@@ -289,17 +289,16 @@ object AsciidocGenerator {
                         val request = operation.request as DocOperationRequest
                         request.apply {
                             out.println("==== 请求")
+                            val requestPath = HttpOperation.getRequestPath(request)
                             out.println(
-                                "$method link:{apiAddress}${
-                                    HttpOperation.getRequestPath(request)
-                                }[{apiAddress}$restUri]"
+                                "$method link:{apiAddress}$requestPath[{apiAddress}$requestPath]"
                             )
                             out.println()
 
                             if (uriVariablesExt.isNotEmpty()) {
                                 val fields =
                                     uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
-                                out.println("==== URL参数")
+                                out.println("==== URI参数")
                                 out.println("[width=\"100%\", cols=\"2,1,3,3\", stripes=\"even\"]")
                                 out.println("|===")
                                 out.println("h|名称 h|类型 h|描述 h|示例")
@@ -312,6 +311,19 @@ object AsciidocGenerator {
                                 }
                                 out.println("|===")
                             }
+                            if (queriesExt.isNotEmpty()) {
+                                val fields =
+                                    queriesExt.checkBlank("$operationPath:request.queriesExt")
+                                out.println("==== URL查询参数")
+                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
+                                out.println("|===")
+                                out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
+                                fields.forEach {
+                                    writeParam(out, it)
+                                }
+                                out.println("|===")
+                            }
+
                             if (headersExt.isNotEmpty()) {
                                 val fields =
                                     headersExt.checkBlank("$operationPath:request.headersExt")
@@ -330,64 +342,41 @@ object AsciidocGenerator {
                                 out.println("|===")
                             }
 
-                            if (queriesExt.isNotEmpty()) {
-                                val fields =
-                                    queriesExt.checkBlank("$operationPath:request.queriesExt")
-                                out.println("==== 查询参数")
-                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
-                                out.println("|===")
-                                out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
-                                fields.forEach {
-                                    writeParam(out, it)
-                                }
-                                out.println("|===")
-                            }
-
+                            val contentFields = LinkedHashSet<Field>()
                             if (parametersExt.isNotEmpty()) {
                                 val fields =
                                     parametersExt.checkBlank("$operationPath:request.parametersExt")
-                                out.println("==== 请求参数")
-                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
-                                out.println("|===")
-                                out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
-                                fields.forEach {
-                                    writeParam(out, it)
-                                }
-                                out.println("|===")
+                                contentFields.addAll(fields)
                             }
                             if (partsExt.isNotEmpty()) {
                                 val fields =
                                     partsExt.checkBlank("$operationPath:request.partsExt")
-                                out.println("==== 请求参数")
-                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
-                                out.println("|===")
-                                out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
-                                fields.forEach {
-                                    writeParam(out, it)
-                                }
-                                out.println("|===")
+                                contentFields.addAll(fields)
                             }
 
                             if (contentExt.isNotEmpty()) {
                                 val fields =
                                     contentExt.checkBlank("$operationPath:request.bodyExt")
+                                contentFields.addAll(fields)
+                            }
+                            if (contentFields.isNotEmpty()) {
                                 out.println("==== 请求体")
                                 out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
                                 out.println("|===")
                                 out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
-                                fields.forEach {
+                                contentFields.forEach {
                                     writeParam(out, it)
                                 }
                                 out.println("|===")
                             }
+                            out.println("==== 请求示例")
+                            out.println("[source,http,options=\"nowrap\"]")
+                            out.println("----")
+                            out.println(
+                                HttpOperation.toString(this, operation.protocol, true)
+                            )
+                            out.println("----")
                         }
-                        out.println("==== 请求示例")
-                        out.println("[source,http,options=\"nowrap\"]")
-                        out.println("----")
-                        out.println(
-                            HttpOperation.toString(operation.request, operation.protocol, true)
-                        )
-                        out.println("----")
 
                         val response = operation.response as DocOperationResponse
                         response.apply {
@@ -403,12 +392,12 @@ object AsciidocGenerator {
                                 }
                                 out.println("|===")
                             }
+                            out.println("==== 返回示例")
+                            out.println("[source,http,options=\"nowrap\"]")
+                            out.println("----")
+                            out.println(HttpOperation.toString(this, operation.protocol, true))
+                            out.println("----")
                         }
-                        out.println("==== 返回示例")
-                        out.println("[source,http,options=\"nowrap\"]")
-                        out.println("----")
-                        out.println(HttpOperation.toString(response, operation.protocol, true))
-                        out.println("----")
 
                         out.println("'''")
                         out.println()
