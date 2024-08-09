@@ -42,6 +42,71 @@ object CoreProjectTasks {
             val group = "gen $prefix code"
 
             if (project.isCore) {
+
+                create("updateCode") {
+                    it.group = GeneratorPlugin.GEN_GROUP
+                    it.doLast(object : Action<Task> {
+                        override fun execute(t: Task) {
+                            val doclog = StringBuilder()
+                            updateDoc(project.rootProject.file("doc"), doclog)
+                            project.rootProject.subprojects { subproject ->
+                                val file = subproject.file("src/doc")
+                                updateDoc(file, doclog)
+                                subproject.logger.lifecycle(doclog.toString())
+                                subproject.file("src/test/java").walkTopDown()
+                                    .filter { f -> f.isFile && (f.extension == "java" || f.extension == "kt") }
+                                    .forEach { f ->
+                                        val lines = f.readLines()
+                                        var isQueryParam = false
+                                        var update = false
+                                        val log = StringBuilder()
+                                        val newLines = lines.map { l ->
+                                            if (l.matches(Regex(".*get\\(.*")) || l.matches(Regex(".*delete\\(.*"))) {
+                                                isQueryParam = true
+                                                l
+                                            } else if (l.trim().startsWith(".param(") && isQueryParam) {
+                                                update = true
+                                                log.append(".")
+                                                l.replace(".param(", ".queryParam(")
+                                            } else {
+                                                if (isQueryParam && l.contains(");")) {
+                                                    isQueryParam = false
+                                                }
+                                                l
+                                            }
+                                        }
+                                        if (update) {
+                                            f.writeText(newLines.joinToString("\n") + "\n")
+                                            subproject.logger.lifecycle(log.toString())
+                                        }
+                                    }
+                            }
+                        }
+
+                        private fun updateDoc(file: File, doclog: StringBuilder) {
+                            file.walkTopDown()
+                                .filter { f -> f.isFile && f.extension == "yml" }
+                                .forEach { f ->
+                                    val lines = f.readLines()
+                                    val isGet = lines.any { l ->
+                                        return@any l.contains("method: \"GET\"") || l.contains("method: \"DELETE\"")
+                                    }
+                                    if (isGet) {
+                                        val newLines = lines.map { l ->
+                                            if (l.trim() == "parametersExt:") {
+                                                doclog.append(".")
+                                                "  queriesExt:"
+                                            } else {
+                                                l
+                                            }
+                                        }
+                                        f.writeText(newLines.joinToString("\n") + "\n")
+                                    }
+                                }
+                        }
+                    })
+                }
+
                 create("genDicCode") {
                     it.group = GeneratorPlugin.GEN_GROUP
                     it.doLast(object : Action<Task> {
@@ -77,7 +142,7 @@ object CoreProjectTasks {
                     })
                 }
 
-                if (project.isCloud)
+                if (project.isCloud) {
                     create("genMsg") {
                         it.group = GeneratorPlugin.GEN_GROUP
                         it.doLast(object : Action<Task> {
@@ -103,7 +168,7 @@ object CoreProjectTasks {
                             }
                         })
                     }
-
+                }
             }
 
             if (ext.hasPuml && project.isCore) {
@@ -195,64 +260,6 @@ object CoreProjectTasks {
                         ext.generators = arrayOf(dbDoc)
                         ext.tableNames = emptyArray()
                         Generators.callInAllModule(ext)
-                    }
-                })
-            }
-
-            create("updateCode") {
-                it.group = GeneratorPlugin.GEN_GROUP
-                it.doLast(object : Action<Task> {
-                    override fun execute(t: Task) {
-                        val doclog = StringBuilder()
-                        project.rootProject.subprojects { subproject ->
-                            subproject.file("src/doc").walkTopDown()
-                                .filter { f -> f.isFile && f.extension == "yml" }
-                                .forEach { f ->
-                                    val lines = f.readLines()
-                                    val isGet = lines.any { l ->
-                                        return@any l.contains("method: \"GET\"")
-                                    }
-                                    if (isGet) {
-                                        val newLines = lines.map { l ->
-                                            if (l.trim() == "parametersExt:") {
-                                                doclog.append(".")
-                                                "  queriesExt:"
-                                            } else {
-                                                l
-                                            }
-                                        }
-                                        f.writeText(newLines.joinToString("\n") + "\n")
-                                    }
-                                }
-                            subproject.logger.lifecycle(doclog.toString())
-                            subproject.file("src/test/java").walkTopDown()
-                                .filter { f -> f.isFile && (f.extension == "java" || f.extension == "kt") }
-                                .forEach { f ->
-                                    val lines = f.readLines()
-                                    var isGet = false
-                                    var update = false
-                                    val log = StringBuilder()
-                                    val newLines = lines.map { l ->
-                                        if (l.matches(Regex(".*get\\(.*"))) {
-                                            isGet = true
-                                            l
-                                        } else if (l.trim().startsWith(".param(") && isGet) {
-                                            update = true
-                                            log.append(".")
-                                            l.replace(".param(", ".queryParam(")
-                                        } else {
-                                            if (isGet && l.contains(");")) {
-                                                isGet = false
-                                            }
-                                            l
-                                        }
-                                    }
-                                    if (update) {
-                                        f.writeText(newLines.joinToString("\n") + "\n")
-                                        subproject.logger.lifecycle(log.toString())
-                                    }
-                                }
-                        }
                     }
                 })
             }
