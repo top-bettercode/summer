@@ -7,13 +7,12 @@ import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.web.client.DefaultResponseErrorHandler
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import org.w3c.dom.Element
 import top.bettercode.summer.tools.lang.capitalized
-import top.bettercode.summer.tools.lang.client.ApiTemplate
-import top.bettercode.summer.tools.lang.client.ClientProperties
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -32,8 +31,7 @@ import javax.xml.transform.stream.StreamResult
  */
 class Jenkins(private val url: String, auth: String) {
     private val log = LoggerFactory.getLogger(Jenkins::class.java)
-    private val restTemplate: ApiTemplate<ClientProperties> =
-        ApiTemplate("jenkins", ClientProperties("jenkins"))
+    private val restTemplate = RestTemplate()
 
     init {
         restTemplate.interceptors.add { request, body, execution ->

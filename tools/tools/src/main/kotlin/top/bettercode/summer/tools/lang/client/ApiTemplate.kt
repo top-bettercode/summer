@@ -35,7 +35,7 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
     }
 ) : RestTemplate(), ApiExceptions {
 
-    protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    protected val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     private val loggingInterceptor: ClientHttpRequestLoggingInterceptor =
         ClientHttpRequestLoggingInterceptor(
