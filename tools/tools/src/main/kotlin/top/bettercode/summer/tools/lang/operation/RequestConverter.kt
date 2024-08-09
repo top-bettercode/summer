@@ -55,7 +55,7 @@ object RequestConverter {
         val uri = URI.create(getRequestUri(request))
         val headers = extractHeaders(request, uri)
         val queries = QueryStringParser.parse(uri)
-        val parameters = extractParameters(request).getUniqueParameters(queries)
+        val parameters = Parameters.parse(request).getUniqueParameters(queries)
         val parts = extractParts(request)
         val cookies = extractCookies(request, headers)
         val restUri =
@@ -256,16 +256,6 @@ object RequestConverter {
             }
         }
         return partHeaders
-    }
-
-    private fun extractParameters(servletRequest: HttpServletRequest): Parameters {
-        val parameters = Parameters()
-        for (name in servletRequest.parameterNames) {
-            for (value in servletRequest.getParameterValues(name)) {
-                parameters.add(name, value)
-            }
-        }
-        return parameters
     }
 
     private fun extractHeaders(servletRequest: HttpServletRequest, uri: URI): HttpHeaders {

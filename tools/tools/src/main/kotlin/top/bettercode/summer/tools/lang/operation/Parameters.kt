@@ -3,12 +3,26 @@ package top.bettercode.summer.tools.lang.operation
 import org.springframework.util.LinkedMultiValueMap
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
+import javax.servlet.http.HttpServletRequest
 
 /**
  * The parameters received in a request.
  *
  */
 class Parameters : LinkedMultiValueMap<String, String>() {
+
+
+    companion object {
+        fun parse(request: HttpServletRequest): Parameters {
+            val parameters = Parameters()
+            for (name in request.parameterNames) {
+                for (value in request.getParameterValues(name)) {
+                    parameters.add(name, value)
+                }
+            }
+            return parameters
+        }
+    }
 
     override fun get(key: String): MutableList<String>? {
         return super.get(key)

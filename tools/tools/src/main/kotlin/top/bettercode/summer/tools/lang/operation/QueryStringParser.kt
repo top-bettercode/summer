@@ -25,7 +25,7 @@ object QueryStringParser {
         } else Parameters()
     }
 
-    private fun parse(query: String): Parameters {
+    fun parse(query: String): Parameters {
         val parameters = Parameters()
         Scanner(query).use { scanner ->
             scanner.useDelimiter("&")
@@ -38,7 +38,7 @@ object QueryStringParser {
 
     private fun processParameter(parameter: String, parameters: Parameters) {
         val components =
-                parameter.split("=".toRegex()).dropLastWhile { it.isEmpty() }
+            parameter.split("=".toRegex()).dropLastWhile { it.isEmpty() }
         if (components.size in 1..2) {
             val name = components[0]
             if (components.size == 2) {
@@ -52,7 +52,7 @@ object QueryStringParser {
             }
         } else {
             throw IllegalArgumentException(
-                    "The parameter '$parameter' is malformed"
+                "The parameter '$parameter' is malformed"
             )
         }
     }
@@ -62,7 +62,7 @@ object QueryStringParser {
             return URLDecoder.decode(encoded, "UTF-8")
         } catch (ex: UnsupportedEncodingException) {
             throw IllegalStateException(
-                    "Unable to URL encode $encoded using UTF-8", ex
+                "Unable to URL encode $encoded using UTF-8", ex
             )
         }
 

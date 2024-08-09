@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 class AutoDocFilter(
-        private val handlers: List<AutoDocRequestHandler>?
+    private val handlers: List<AutoDocRequestHandler>?
 ) : OncePerRequestFilter(), Ordered {
 
     override fun getOrder(): Int {
@@ -23,26 +23,35 @@ class AutoDocFilter(
     }
 
     override fun doFilterInternal(
-            request: HttpServletRequest,
-            response: HttpServletResponse,
-            filterChain: FilterChain
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
     ) {
         if (!handlers.isNullOrEmpty()) {
             val servletRequest = AutoDocHttpServletRequest(request)
             handlers.filter { it.support(servletRequest) }.forEach { it.handle(servletRequest) }
             if (servletRequest.contentType.isNullOrBlank() && (HttpMethod.PUT.name == request.method || HttpMethod.POST.name == request.method)) {
-                if (request is MockHttpServletRequest && request.contentLengthLong > 0L && isJson(request.contentAsByteArray!!)) {
-                    servletRequest.extHeaders[HttpHeaders.CONTENT_TYPE] =
-                            arrayOf(MediaType.APPLICATION_JSON_VALUE)
+                if (request is MockHttpServletRequest && request.contentLengthLong > 0L && isJson(
+                        request.contentAsByteArray!!
+                    )
+                ) {
+                    servletRequest.header(
+                        HttpHeaders.CONTENT_TYPE,
+                        MediaType.APPLICATION_JSON_VALUE
+                    )
                 } else {
-                    servletRequest.extHeaders[HttpHeaders.CONTENT_TYPE] =
-                            arrayOf(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-
+                    servletRequest.header(
+                        HttpHeaders.CONTENT_TYPE,
+                        MediaType.APPLICATION_FORM_URLENCODED_VALUE
+                    )
                 }
             }
             //user-agent 未设置时，设置默认：Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0
-            if (servletRequest.extHeaders[HttpHeaders.USER_AGENT].isNullOrEmpty()) {
-                servletRequest.extHeaders[HttpHeaders.USER_AGENT] = arrayOf("Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0")
+            if (servletRequest.getHeaders(HttpHeaders.USER_AGENT)?.hasMoreElements() != true) {
+                servletRequest.header(
+                    HttpHeaders.USER_AGENT,
+                    "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0"
+                )
             }
             filterChain.doFilter(servletRequest, response)
         } else {
