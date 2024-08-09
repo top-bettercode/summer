@@ -9,8 +9,11 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownProjectException
+import org.springframework.http.HttpMethod
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
+import top.bettercode.summer.tools.autodoc.operation.DocOperation
+import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
@@ -47,12 +50,10 @@ object CoreProjectTasks {
                     it.group = GeneratorPlugin.GEN_GROUP
                     it.doLast(object : Action<Task> {
                         override fun execute(t: Task) {
-                            val doclog = StringBuilder()
-                            updateDoc(project.rootProject.file("doc"), doclog)
+                            updateDoc(project.rootProject.file("doc"))
                             project.rootProject.subprojects { subproject ->
                                 val file = subproject.file("src/doc")
-                                updateDoc(file, doclog)
-                                subproject.logger.lifecycle(doclog.toString())
+                                updateDoc(file)
                                 subproject.file("src/test/java").walkTopDown()
                                     .filter { f -> f.isFile && (f.extension == "java" || f.extension == "kt") }
                                     .forEach { f ->
@@ -64,7 +65,9 @@ object CoreProjectTasks {
                                             if (l.matches(Regex(".*get\\(.*")) || l.matches(Regex(".*delete\\(.*"))) {
                                                 isQueryParam = true
                                                 l
-                                            } else if (l.trim().startsWith(".param(") && isQueryParam) {
+                                            } else if (l.trim()
+                                                    .startsWith(".param(") && isQueryParam
+                                            ) {
                                                 update = true
                                                 log.append(".")
                                                 l.replace(".param(", ".queryParam(")
@@ -83,24 +86,20 @@ object CoreProjectTasks {
                             }
                         }
 
-                        private fun updateDoc(file: File, doclog: StringBuilder) {
+                        private fun updateDoc(file: File) {
                             file.walkTopDown()
-                                .filter { f -> f.isFile && f.extension == "yml" }
+                                .filter { f -> f.isFile && f.extension == "yml" && f.parentFile.parentFile.name == "collection" }
                                 .forEach { f ->
-                                    val lines = f.readLines()
-                                    val isGet = lines.any { l ->
-                                        return@any l.contains("method: \"GET\"") || l.contains("method: \"DELETE\"")
-                                    }
-                                    if (isGet) {
-                                        val newLines = lines.map { l ->
-                                            if (l.trim() == "parametersExt:") {
-                                                doclog.append(".")
-                                                "  queriesExt:"
-                                            } else {
-                                                l
-                                            }
-                                        }
-                                        f.writeText(newLines.joinToString("\n") + "\n")
+                                    val operation = DocOperation.read(f)!!
+                                    val request = operation.request as DocOperationRequest
+                                    val method = request.method
+                                    val update =
+                                        (HttpMethod.GET.name == method || HttpMethod.DELETE.name == method || request.contentExt.isNotEmpty()) && request.parametersExt.isNotEmpty()
+
+                                    if (update) {
+                                        request.queriesExt = request.parametersExt
+                                        request.parametersExt = LinkedHashSet()
+                                        operation.save()
                                     }
                                 }
                         }

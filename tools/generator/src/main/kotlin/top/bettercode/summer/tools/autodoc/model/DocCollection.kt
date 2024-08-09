@@ -5,16 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
-import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
-import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
-import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
-import top.bettercode.summer.tools.lang.operation.OperationRequestPart
-import top.bettercode.summer.tools.lang.operation.Parameters
-import top.bettercode.summer.tools.lang.operation.RequestConverter
 import java.io.File
-import java.net.URI
 
 @JsonPropertyOrder("name", "items")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,69 +24,11 @@ data class DocCollection(
 
     fun operation(operationName: String): DocOperation? {
         val operationFile = operationFile(operationName)
-        return if (operationFile.exists()) {
-            val docOperation = try {
-                AutodocUtil.yamlMapper.readValue(operationFile, DocOperation::class.java)
-            } catch (e: Exception) {
-                log.error(name + "/" + operationName + "解析失败")
-                throw e
-            }
-            docOperation.operationFile = operationFile
-            docOperation.collectionName = name
-            docOperation.name = operationName
-            if (docOperation.protocol.isBlank()) {
-                docOperation.protocol = RequestConverter.DEFAULT_PROTOCOL
-            }
-            docOperation.request.apply {
-                this as DocOperationRequest
-                uriVariables = uriVariablesExt.associate { Pair(it.name, it.value) }
-                var uriString = restUri
-                uriVariables.forEach { (t, u) -> uriString = uriString.replace("{${t}}", u) }
-
-                uri = URI(uriString)
-
-                headers = headersExt.associateTo(HttpHeaders()) { field ->
-                    Pair(
-                        field.name,
-                        listOf(field.value)
-                    )
-                }
-                queries = queriesExt.associateTo(Parameters()) { field ->
-                    Pair(
-                        field.name,
-                        listOf(field.value)
-                    )
-                }
-                parameters = parametersExt.associateTo(Parameters()) { field ->
-                    Pair(
-                        field.name,
-                        listOf(field.value)
-                    )
-                }
-                parts = partsExt.map { field ->
-                    OperationRequestPart(
-                        field.name,
-                        field.partType,
-                        headers,
-                        field.value.toByteArray()
-                    )
-                }
-            }
-
-            docOperation.response.apply {
-                this as DocOperationResponse
-                headers = headersExt.associateTo(HttpHeaders()) { field ->
-                    Pair(
-                        field.name,
-                        listOf(field.value)
-                    )
-                }
-            }
-
-            docOperation
-        } else {
-            null
-        }
+        return DocOperation.read(
+            operationFile = operationFile,
+            collectionName = name,
+            operationName = operationName
+        )
     }
 
     override val operations: List<DocOperation>

@@ -299,6 +299,7 @@ object InitField {
                 this as DocOperationRequest
                 commonFields(genProperties, "request.uriVariables").fixFieldTree(uriVariablesExt)
                 commonFields(genProperties, "request.headers").fixFieldTree(headersExt)
+                commonFields(genProperties, "request.parameters").fixFieldTree(queriesExt)
                 commonFields(genProperties, "request.parameters").fixFieldTree(parametersExt)
                 commonFields(genProperties, "request.parts").fixFieldTree(partsExt)
                 commonFields(genProperties, "request.content").fixFieldTree(contentExt)
