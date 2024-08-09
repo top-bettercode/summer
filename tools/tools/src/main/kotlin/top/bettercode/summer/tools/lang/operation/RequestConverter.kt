@@ -54,7 +54,8 @@ object RequestConverter {
             ?: LocalDateTime.now()
         val uri = URI.create(getRequestUri(request))
         val headers = extractHeaders(request, uri)
-        val queries = QueryStringParser.parse(request.queryString)
+        val query = request.queryString
+        val queries = if (query.isNullOrBlank()) Parameters() else QueryStringParser.parse(query)
         val parameters = Parameters.parse(request).getUniqueParameters(queries)
         val parts = extractParts(request)
         val cookies = extractCookies(request, headers)

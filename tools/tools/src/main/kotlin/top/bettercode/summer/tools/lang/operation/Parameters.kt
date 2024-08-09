@@ -56,12 +56,15 @@ class Parameters : LinkedMultiValueMap<String, String>() {
      * @return the unique parameters
      */
     fun getUniqueParameters(queryStringParameters: Parameters): Parameters {
-        val uniqueParameters = Parameters()
-
-        for (parameter in entries) {
-            addIfUnique(parameter, queryStringParameters, uniqueParameters)
+        if (queryStringParameters.isEmpty()) {
+            return this
+        } else {
+            val uniqueParameters = Parameters()
+            for (parameter in entries) {
+                addIfUnique(parameter, queryStringParameters, uniqueParameters)
+            }
+            return uniqueParameters
         }
-        return uniqueParameters
     }
 
     private fun addIfUnique(
