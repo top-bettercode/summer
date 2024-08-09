@@ -36,21 +36,15 @@ class FeignLogger : Logger() {
             val uri = URI(request.url())
             headers["Host"] = extractHost(uri)
 
-            val parameters = Parameters()
-
             val restUri = uri.rawPath
             val remoteUser = "NonSpecificUser"
             val operationRequest = OperationRequest(
                 uri = uri,
                 restUri = restUri,
-                uriVariables = emptyMap(),
                 method = request.httpMethod().name,
                 headers = headers,
-                cookies = emptyList(),
                 remoteUser = remoteUser,
                 queries = QueryStringParser.parse(uri),
-                parameters = parameters,
-                parts = emptyList(),
                 content = requestBody,
                 dateTime = LocalDateTime.now()
             )

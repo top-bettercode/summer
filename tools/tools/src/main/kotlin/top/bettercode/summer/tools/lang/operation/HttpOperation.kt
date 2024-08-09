@@ -92,7 +92,9 @@ object HttpOperation {
             stringBuilder.appendLine()
             stringBuilder.appendLine("---- decrypted content ----")
         }
-        stringBuilder.appendLine(getRequestBody(request, format))
+        val body = getRequestBody(request, format)
+        if (body.isNotBlank())
+            stringBuilder.appendLine(body)
         if (decrypt != null) {
             stringBuilder.appendLine()
             stringBuilder.appendLine("---- decrypted content ----")

@@ -148,13 +148,11 @@ class ClientHttpRequestLoggingInterceptor(
         return OperationRequest(
             uri = uri,
             restUri = restUri,
-            uriVariables = emptyMap(),
             method = request.method!!.name,
             headers = headers,
             cookies = cookies,
             remoteUser = "NonSpecificUser",
             queries = QueryStringParser.parse(uri),
-            parts = listOf(),
             content = body,
             dateTime = dateTime
         )

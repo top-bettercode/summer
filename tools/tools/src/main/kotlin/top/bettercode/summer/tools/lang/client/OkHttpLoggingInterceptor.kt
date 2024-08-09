@@ -160,13 +160,10 @@ class OkHttpLoggingInterceptor(
         return OperationRequest(
             uri = uri,
             restUri = restUri,
-            uriVariables = emptyMap(),
             method = request.method,
             headers = headers,
-            cookies = emptyList(),
             remoteUser = remoteUser,
             queries = queries,
-            parts = emptyList(),
             content = content,
             dateTime = dateTime
         )
