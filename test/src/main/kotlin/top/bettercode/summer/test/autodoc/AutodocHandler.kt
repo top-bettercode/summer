@@ -9,12 +9,10 @@ import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.method.HandlerMethod
 import top.bettercode.summer.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingHandler
-import top.bettercode.summer.test.autodoc.InitField.toFields
+import top.bettercode.summer.test.autodoc.field.FieldDescFix
+import top.bettercode.summer.tools.autodoc.AutodocExtension
 import top.bettercode.summer.tools.autodoc.AutodocUtil
-import top.bettercode.summer.tools.autodoc.AutodocUtil.singleValueMap
-import top.bettercode.summer.tools.autodoc.AutodocUtil.toMap
 import top.bettercode.summer.tools.autodoc.model.DocModule
-import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
@@ -156,62 +154,20 @@ class AutodocHandler(
                 //collections
                 module.collections(docOperation.collectionName, docOperation.name)
 
-                //field
+                DocExt.ext(
+                    docOperation = docOperation,
+                    requiredHeaders = requiredHeaders,
+                    requiredParameters = requiredParameters,
+                    defaultValueHeaders = defaultValueHeaders,
+                    defaultValueParams = defaultValueParams
+                )
+
                 val extension = GeneratorExtension()
                 extension.databases = datasources
 
-                request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
-                request.headersExt = request.headers.singleValueMap.toFields(request.headersExt)
-                request.headersExt.forEach {
-                    it.required = requiredHeaders.contains(it.name)
-                }
-
-                request.queriesExt =
-                    request.queries.singleValueMap.toFields(request.queriesExt, expand = true)
-
-                request.queriesExt.forEach {
-                    setRequired(it, requiredParameters)
-                }
-
-                request.parametersExt =
-                    request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
-                request.parametersExt.forEach {
-                    setRequired(it, requiredParameters)
-                }
-
-                request.partsExt = request.parts.toFields(request.partsExt)
-                request.partsExt.forEach {
-                    setRequired(it, requiredParameters)
-                }
-
-                request.contentExt =
-                    request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
-                        ?: linkedSetOf()
-                if (request.contentExt.isEmpty()) {
-                    if (request.content.isNotEmpty())
-                        request.content = Operation.UNRECORDED_MARK.toByteArray()
-                } else {
-                    request.contentExt.forEach {
-                        setRequired(it, requiredParameters)
-                    }
-                }
-
-                val response = docOperation.response as DocOperationResponse
-                response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
-                response.contentExt =
-                    response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
-                        ?: linkedSetOf()
-                if (response.contentExt.isEmpty() && response.content.isNotEmpty()) {
-                    response.content = Operation.UNRECORDED_MARK.toByteArray()
-                }
-
-                InitField.extFieldExt(genProperties, docOperation)
-                InitField.init(
-                    docOperation,
-                    extension,
-                    summerWebProperties.isWrapEnable,
-                    defaultValueHeaders,
-                    defaultValueParams
+                FieldDescFix.fix(
+                    operation = docOperation,
+                    extension = extension
                 )
 
                 if (paramInfo.existNoAnnoDefaultPageParam) {
@@ -237,19 +193,6 @@ class AutodocHandler(
         }
     }
 
-    private fun setRequired(
-        field: Field,
-        requiredParameters: MutableSet<String>,
-        prefix: String = ""
-    ) {
-        field.required = requiredParameters.contains(prefix + field.name)
-        if (field.children.isNotEmpty()) {
-            field.children.forEach {
-                setRequired(it, requiredParameters, "${prefix + field.name}.")
-            }
-        }
-    }
-
 
     private fun Operation.description(dir: File, description: String): DocOperation {
         val operationFile = File(dir, "collection/$collectionName/$name.yml")
@@ -257,7 +200,12 @@ class AutodocHandler(
         if (!operationFile.exists()) {
             val subDirs = dir.parentFile.listFiles()?.filter { it.isDirectory }
             if (subDirs != null) {
-                subDirs.sortedByDescending { it.name }
+                subDirs.sortedWith { o1, o2 ->
+                    AutodocExtension.compareVersion(
+                        o2.nameWithoutExtension,
+                        o1.nameWithoutExtension,
+                    )
+                }
                 for (oDir in subDirs) {
                     if (!oDir.equals(dir)) {
                         val oldOperationFile = File(oDir, "collection/$collectionName/$name.yml")

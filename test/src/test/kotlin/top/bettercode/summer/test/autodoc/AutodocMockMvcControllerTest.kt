@@ -25,18 +25,18 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     fun test0Index() {
         Autodoc.requiredHeaders("sign")
         mockMvc.perform(
-                get("/clientTokens")
-                        .queryParam("page", "1")
-                        .queryParam("size", "5")
+            get("/clientTokens")
+                .queryParam("page", "1")
+                .queryParam("size", "5")
         ).andExpect(status().isOk)
     }
 
     @Test
     fun token() {
         mockMvc.perform(
-                post("/oauth/token")
-                        .param("page", "1")
-                        .param("size", "5")
+            post("/oauth/token")
+                .param("page", "1")
+                .param("size", "5")
         ).andExpect(status().isOk)
     }
 
@@ -48,8 +48,8 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     @Test
     fun test2Create() {
         mockMvc.perform(
-                post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
-                        .content("[{}]")
+            post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
+                .content("[{}]")
 //                .param("map", "{\"a\":1}")
 //                .param("list", "[{\"a\":1}]")
 //                .param("tokenId", "test")
@@ -63,11 +63,11 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     @Test
     fun test3Update() {
         mockMvc.perform(
-                put("/clientTokens/1")
-                        .param("tokenId", "test")
-                        .param("token", "1")
-                        .param("userName", "test")
-                        .param("clientId", "1")
+            put("/clientTokens/1")
+                .param("tokenId", "test")
+                .param("token", "1")
+                .param("userName", "test")
+                .param("clientId", "1")
         ).andExpect(status().isOk)
     }
 
@@ -80,8 +80,8 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     @Test
     fun test5Upload() {
         mockMvc.perform(
-                multipart("/clientTokens/upload")
-                        .file(file("file", "test.png"))
+            multipart("/clientTokens/upload")
+                .file(file("file", "test.png"))
         ).andExpect(status().isOk)
     }
 }

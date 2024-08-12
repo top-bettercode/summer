@@ -30,7 +30,6 @@ class ProjectPlugin : Plugin<Project> {
                 apply("org.springframework.boot")
             }
 
-
             //dependencies
             ProjectDependencies.config(subProject)
 

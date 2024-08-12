@@ -5,14 +5,12 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import top.bettercode.summer.tools.autodoc.AutodocExtension
-import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
-import top.bettercode.summer.tools.autodoc.AutodocUtil.toJsonString
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.autodoc.postman.*
 import top.bettercode.summer.tools.autodoc.postman.Collection
 import top.bettercode.summer.tools.lang.operation.HttpOperation
-import java.io.File
+import top.bettercode.summer.tools.lang.util.StringUtil.toJsonString
 import java.util.*
 
 /**
@@ -21,10 +19,9 @@ import java.util.*
  */
 object PostmanGenerator {
     private val log = LoggerFactory.getLogger(PostmanGenerator::class.java)
+
     fun postman(autodoc: AutodocExtension) {
-        val rootDoc = autodoc.rootSource
-        val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
-            ?: autodoc.source.absolutePath) + File.separator
+
         autodoc.listModules { module, pyname ->
             val postmanFile = autodoc.postmanFile(pyname)
             postmanFile.delete()
@@ -43,12 +40,9 @@ object PostmanGenerator {
                 val collectionName = collection.name
 
                 Item(name = collectionName, item = collection.operations.map { operation ->
-                    val operationPath =
-                        operation.operationFile.absolutePath.substringAfter(sourcePath)
                     val request = extractRequest(
                         operation.request as DocOperationRequest,
                         autodoc,
-                        operationPath
                     )
 
                     Item(
@@ -59,8 +53,7 @@ object PostmanGenerator {
                             extractResponse(
                                 operation.name,
                                 request,
-                                operation.response as DocOperationResponse,
-                                operationPath
+                                operation.response as DocOperationResponse
                             )
                         ),
                         event = module.postmanEvents(operation, autodoc)
@@ -80,7 +73,6 @@ object PostmanGenerator {
     private fun extractRequest(
         request: DocOperationRequest,
         autodoc: AutodocExtension,
-        operationPath: String
     ): Request {
         val httpHeaders = request.headersExt
         if (request.restUri != autodoc.authUri) {
@@ -101,19 +93,18 @@ object PostmanGenerator {
 
         return Request(
             method = request.method,
-            header = request.headersExt.checkBlank("$operationPath:request.headersExt").map {
+            header = request.headersExt.map {
                 HeaderItem(it.name, it.name, it.value, it.postmanDescription)
             },
-            url = extractUrl(request, operationPath),
-            body = extractBody(request, operationPath)
+            url = extractUrl(request),
+            body = extractBody(request)
         )
     }
 
     private fun extractResponse(
         name: String,
         request: Request,
-        response: DocOperationResponse,
-        operationPath: String
+        response: DocOperationResponse
     ): Response {
         val httpHeaders = response.headersExt
         httpHeaders.removeIf { it.name == HttpHeaders.HOST || it.name == HttpHeaders.CONTENT_LENGTH }
@@ -128,7 +119,7 @@ object PostmanGenerator {
             } catch (e: Exception) {
                 HttpStatus.OK.reasonPhrase
             },
-            header = httpHeaders.checkBlank("$operationPath:response.headersExt").map {
+            header = httpHeaders.map {
                 HeaderItem(it.name, it.name, it.value)
             },
             body = response.prettyContentAsString,
@@ -144,7 +135,7 @@ object PostmanGenerator {
         )
     }
 
-    private fun extractBody(request: DocOperationRequest, operationPath: String): Body? {
+    private fun extractBody(request: DocOperationRequest): Body? {
         when {
             request.contentExt.isNotEmpty() -> return Body(
                 "raw",
@@ -163,13 +154,13 @@ object PostmanGenerator {
             request.partsExt.isNotEmpty() -> {
                 return Body(
                     "formdata",
-                    formdata = request.partsExt.checkBlank("$operationPath:request.partsExt").map {
+                    formdata = request.partsExt.map {
                         Formdatum(it.name, it.value, it.partType, it.postmanDescription)
                     })
             }
 
             request.parametersExt.isNotEmpty() -> {
-                val param = request.parametersExt.checkBlank("$operationPath:request.parametersExt")
+                val param = request.parametersExt
                 param.filter { it.name == "refresh_token" }.forEach {
                     it.value = "{{refresh_token}}"
                 }
@@ -189,14 +180,14 @@ object PostmanGenerator {
         }
     }
 
-    private fun extractUrl(request: DocOperationRequest, operationPath: String): Url {
+    private fun extractUrl(request: DocOperationRequest): Url {
         val uri = request.restUri.replace("{", "{{").replace("}", "}}")
         return Url().apply {
             host = listOf("{{apiAddress}}")
             path = uri.split("/").filter { it.isNotBlank() }
             raw = "{{apiAddress}}${HttpOperation.getRequestPath(request)}"
 
-            query = request.queriesExt.checkBlank("$operationPath:request.parametersExt").map {
+            query = request.queriesExt.map {
                 Query(it.name, it.value, it.postmanDescription)
             }
         }

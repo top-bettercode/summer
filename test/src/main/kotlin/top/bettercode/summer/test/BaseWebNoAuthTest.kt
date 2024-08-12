@@ -27,7 +27,6 @@ import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.test.autodoc.Autodoc
 import top.bettercode.summer.test.autodoc.Autodoc.requiredParameters
-import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.properties.SummerWebProperties
@@ -129,7 +128,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     protected fun contentAsJsonNode(result: MvcResult): JsonNode {
-        return objectMapper.readTree(result.response.contentAsByteArray)
+        return StringUtil.objectMapper().readTree(result.response.contentAsByteArray)
     }
 
     private fun getFileName(result: MvcResult): String? {

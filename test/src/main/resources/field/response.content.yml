@@ -1,0 +1,100 @@
+- name: "errors"
+  type: "Object"
+  description: "错误详情"
+  canCover: false
+  required: false
+- name: "trace"
+  type: "String"
+  description: "异常栈"
+  canCover: false
+  required: false
+- name: "data"
+  type: "Object"
+  description: "数据"
+  canCover: false
+  required: false
+  children:
+    - name: "jti"
+      type: "String"
+      description: "jwt的唯一身份标识"
+      canCover: false
+      required: false
+    - name: "client_id"
+      type: "String"
+      description: "客户端ID"
+      canCover: false
+      required: false
+    - name: "name"
+      type: "String"
+      description: "名称"
+      canCover: false
+      required: false
+    - name: "token_type"
+      type: "String"
+      description: "令牌类型"
+      canCover: false
+      required: false
+    - name: "refresh_token"
+      type: "String"
+      description: "刷新令牌"
+      canCover: false
+      required: false
+    - name: "access_token"
+      type: "String"
+      description: "存取令牌"
+      value: "026f6f17-e353-4bf7-b957-0c33fc2c2caf"
+      canCover: false
+      required: false
+    - name: "expires_in"
+      type: "Integer"
+      description: "存取令牌多少时间后过期"
+      value: "2591999"
+      canCover: false
+      required: false
+    - name: "scope"
+      type: "String"
+      description: "权限范围"
+      canCover: false
+      required: false
+    - name: "content"
+      type: "Array"
+      description: "内容"
+      canCover: false
+      required: false
+    - name: "page"
+      type: "Object"
+      description: "分页信息"
+      canCover: false
+      children:
+        - name: "size"
+          type: "Integer"
+          description: "当前页的数量"
+          defaultVal: "10"
+          canCover: true
+          required: false
+        - name: "totalElements"
+          type: "Integer"
+          description: "总数"
+          canCover: true
+          required: false
+        - name: "totalPages"
+          type: "Integer"
+          description: "总页数"
+          canCover: true
+          required: false
+        - name: "number"
+          type: "Integer"
+          description: "页码"
+          canCover: true
+          required: false
+      required: false
+- name: "status"
+  type: "String"
+  description: "状态"
+  canCover: false
+  required: false
+- name: "message"
+  type: "String"
+  description: "消息"
+  canCover: false
+  required: false

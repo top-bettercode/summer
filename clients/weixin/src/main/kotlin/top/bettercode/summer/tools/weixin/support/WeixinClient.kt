@@ -6,7 +6,6 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
-import top.bettercode.summer.tools.autodoc.AutodocUtil.objectMapper
 import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.weixin.properties.WeixinProperties
@@ -54,10 +53,6 @@ open class WeixinClient<T : WeixinProperties>(
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
         this.messageConverters = messageConverters
-    }
-
-    fun writeToXml(obj: Any): String {
-        return objectMapper.writeValueAsString(obj)
     }
 
     protected open fun clearBaseTokenCache() {

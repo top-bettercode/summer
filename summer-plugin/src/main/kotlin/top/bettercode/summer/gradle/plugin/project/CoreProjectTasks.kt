@@ -19,7 +19,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
-import top.bettercode.summer.tools.generator.dsl.DicCodes
+import top.bettercode.summer.tools.generator.dsl.GenDicCodes
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
@@ -50,6 +50,14 @@ object CoreProjectTasks {
                     it.group = GeneratorPlugin.GEN_GROUP
                     it.doLast(object : Action<Task> {
                         override fun execute(t: Task) {
+                            project.rootProject.file("doc").listFiles()?.filter {
+                                it.isFile && it.extension == "yml" && (it.name.startsWith("request.") || it.name.startsWith(
+                                    "response."
+                                ))
+                            }?.forEach {
+                                it.delete()
+                            }
+
                             updateDoc(project.rootProject.file("doc"))
                             project.rootProject.subprojects { subproject ->
                                 val file = subproject.file("src/doc")
@@ -290,15 +298,15 @@ object CoreProjectTasks {
                                         "auth=权限\n" +
                                         "auth|TYPE=String"
                             )
-                            val dicCodes = DicCodes(
+                            val genDicCodes = GenDicCodes(
                                 type = "auth",
                                 name = "权限",
                                 javaType = JavaType.stringInstance,
                             )
                             map.forEach { node ->
-                                printNode(project, dicCodes, node)
+                                printNode(project, genDicCodes, node)
                             }
-                            codeGen.genCode(dicCodes = dicCodes, auth = true)
+                            codeGen.genCode(genDicCodes = genDicCodes, auth = true)
                             project.logger.lifecycle("======================================")
                             map.forEach { node ->
                                 genNode(authProject, codeGen, node, replaceCodeNames)
@@ -373,14 +381,14 @@ object CoreProjectTasks {
 
     }
 
-    private fun printNode(project: Project, dicCodes: DicCodes, node: JsonNode) {
+    private fun printNode(project: Project, genDicCodes: GenDicCodes, node: JsonNode) {
         val code = node.get("id").asText()
         val name = node.get("name").asText()
         project.logger.lifecycle("auth.$code=$name")
-        dicCodes.codes[code] = name
+        genDicCodes.codes[code] = name
         val jsonNode = node.get("children")
         if (!jsonNode.isEmpty) {
-            jsonNode.forEach { printNode(project, dicCodes, it) }
+            jsonNode.forEach { printNode(project, genDicCodes, it) }
         }
     }
 

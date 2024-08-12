@@ -237,6 +237,16 @@ object StringUtil {
 
     @JvmOverloads
     @JvmStatic
+    fun Any.toJsonString(
+        format: Boolean = false,
+        escapeNonAscii: Boolean = false,
+        writeDatesAsTimestamps: Boolean = true
+    ): String {
+        return json(this, format, escapeNonAscii, writeDatesAsTimestamps)
+    }
+
+    @JvmOverloads
+    @JvmStatic
     fun jsonBytes(
         `object`: Any?,
         format: Boolean = false,

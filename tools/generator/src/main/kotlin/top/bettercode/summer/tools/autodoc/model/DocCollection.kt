@@ -5,8 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.autodoc.AutodocUtil.yamlMapper
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import java.io.File
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 @JsonPropertyOrder("name", "items")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -35,5 +38,29 @@ data class DocCollection(
         @JsonIgnore
         get() = items.mapNotNull { operation(it) }
 
+    companion object {
+
+        fun read(file: File): LinkedHashSet<DocCollection> {
+            return if (file.exists() && file.length() > 0) yamlMapper.readValue(
+                file.inputStream(),
+                DocCollections::class.java
+            ).mapTo(linkedSetOf()) { (k, v) ->
+                DocCollection(k, LinkedHashSet(v), File(file.parentFile, "collection/${k}"))
+            } else linkedSetOf()
+        }
+
+        fun LinkedHashSet<DocCollection>.write(file: File) {
+            file.writer().use { w ->
+                w.write("")
+                this.forEach { collection ->
+                    w.appendLine("\"${collection.name}\":")
+                    collection.items.forEach {
+                        w.appendLine("  - \"$it\"")
+                    }
+                }
+            }
+        }
+
+    }
 }
 

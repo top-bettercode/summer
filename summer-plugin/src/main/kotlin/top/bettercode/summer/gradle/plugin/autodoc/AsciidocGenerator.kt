@@ -7,7 +7,6 @@ import org.asciidoctor.SafeMode
 import top.bettercode.summer.tools.autodoc.AutodocExtension
 import top.bettercode.summer.tools.autodoc.AutodocExtension.Companion.pyname
 import top.bettercode.summer.tools.autodoc.AutodocUtil
-import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
@@ -176,9 +175,6 @@ object AsciidocGenerator {
     }
 
     fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {
-        val rootDoc = autodoc.rootSource
-        val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
-            ?: autodoc.source.absolutePath) + File.separator
         val commonAdocs = autodoc.commonAdocs()
         autodoc.listModules { module, pyname ->
             module.clean()
@@ -274,8 +270,6 @@ object AsciidocGenerator {
 
                     collection.operations.forEach { operation ->
                         out.println()
-                        val operationPath =
-                            operation.operationFile.absolutePath.substringAfter(sourcePath)
                         val operationName = operation.name.replace(AutodocUtil.REPLACE_CHAR, "/")
                         out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
@@ -297,7 +291,7 @@ object AsciidocGenerator {
 
                             if (uriVariablesExt.isNotEmpty()) {
                                 val fields =
-                                    uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
+                                    uriVariablesExt
                                 out.println("==== URI参数")
                                 out.println("[width=\"100%\", cols=\"2,1,3,3\", stripes=\"even\"]")
                                 out.println("|===")
@@ -313,7 +307,7 @@ object AsciidocGenerator {
                             }
                             if (queriesExt.isNotEmpty()) {
                                 val fields =
-                                    queriesExt.checkBlank("$operationPath:request.queriesExt")
+                                    queriesExt
                                 out.println("==== URL查询参数")
                                 out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
                                 out.println("|===")
@@ -326,7 +320,7 @@ object AsciidocGenerator {
 
                             if (headersExt.isNotEmpty()) {
                                 val fields =
-                                    headersExt.checkBlank("$operationPath:request.headersExt")
+                                    headersExt
                                 out.println("==== 请求头")
                                 out.println("[width=\"100%\", cols=\"2,2,1,3,3\", stripes=\"even\"]")
                                 out.println("|===")
@@ -345,18 +339,18 @@ object AsciidocGenerator {
                             val contentFields = LinkedHashSet<Field>()
                             if (parametersExt.isNotEmpty()) {
                                 val fields =
-                                    parametersExt.checkBlank("$operationPath:request.parametersExt")
+                                    parametersExt
                                 contentFields.addAll(fields)
                             }
                             if (partsExt.isNotEmpty()) {
                                 val fields =
-                                    partsExt.checkBlank("$operationPath:request.partsExt")
+                                    partsExt
                                 contentFields.addAll(fields)
                             }
 
                             if (contentExt.isNotEmpty()) {
                                 val fields =
-                                    contentExt.checkBlank("$operationPath:request.bodyExt")
+                                    contentExt
                                 contentFields.addAll(fields)
                             }
                             if (contentFields.isNotEmpty()) {
@@ -382,7 +376,7 @@ object AsciidocGenerator {
                         response.apply {
                             if (contentExt.isNotEmpty()) {
                                 val fields =
-                                    contentExt.checkBlank("$operationPath:response.contentExt")
+                                    contentExt
                                 out.println("==== 返回参数")
                                 out.println("[width=\"100%\", cols=\"3,2,3,2\",, stripes=\"even\"]")
                                 out.println("|===")

@@ -408,12 +408,12 @@ open class Generator {
     }
 
 
-    fun Column.dicCodes(): DicCodes? {
+    fun Column.dicCodes(): GenDicCodes? {
         return if (isCodeField) {
             val prettyRemarks = prettyRemarks
             val codeTypeName = prettyRemarks.substringBefore('(')
 
-            val dicCodes = DicCodes(
+            val genDicCodes = GenDicCodes(
                 codeType,
                 codeTypeName,
                 javaType.primitiveType ?: javaType
@@ -423,10 +423,10 @@ open class Generator {
                 .forEach { item: String ->
                     val code = item.substringBefore(":").trim().trim(',', '，').trim()
                     val name = item.substringAfter(":").trim().trim(',', '，').trim()
-                    dicCodes.codes[code] = name
+                    genDicCodes.codes[code] = name
                 }
 
-            return dicCodes
+            return genDicCodes
         } else {
             null
         }

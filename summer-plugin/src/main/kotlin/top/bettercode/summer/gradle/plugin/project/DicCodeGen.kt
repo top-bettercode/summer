@@ -1,18 +1,16 @@
 package top.bettercode.summer.gradle.plugin.project
 
-import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import com.hankcs.hanlp.HanLP
 import com.hankcs.hanlp.dictionary.CustomDictionary
 import org.gradle.api.Project
-import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.LinkedProperties
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
-import top.bettercode.summer.tools.generator.dsl.DicCodes
+import top.bettercode.summer.tools.generator.dsl.GenDicCodes
 import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
@@ -34,7 +32,7 @@ class DicCodeGen(
     private val fieldCollectionType = TypeFactory.defaultInstance()
         .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
 
-    private fun codeTypes(): Map<String, DicCodes> {
+    private fun codeTypes(): Map<String, GenDicCodes> {
         val properties = LinkedProperties()
         val defaultDicCodeFile = project.file("src/main/resources/default-dic-code.properties")
         if (defaultDicCodeFile.exists())
@@ -42,60 +40,12 @@ class DicCodeGen(
         val dicCodeFile = project.file("src/main/resources/dic-code.properties")
         if (dicCodeFile.exists()) {
             properties.load(dicCodeFile.inputStream())
-
-            val props = LinkedProperties()
-            props.load(dicCodeFile.inputStream())
-            val collectionType = fieldCollectionType
-            addFields("doc/request.parameters.yml", props, collectionType)
-            addFields("doc/response.content.yml", props, collectionType)
         }
-        return convert(properties)
-    }
-
-    private fun addFields(filePath: String, props: Properties, collectionType: CollectionType?) {
-        val file = project.rootProject.file(filePath)
-        val fields: SortedSet<Field> = TreeSet()
-        convert(props).values.forEach { t ->
-            val field = Field()
-            field.name = t.type
-            field.description =
-                "${t.name}(${t.codes.entries.joinToString { "${it.key}:${it.value}" }})"
-            field.type = t.javaType.shortNameWithoutTypeArguments
-            fields.add(field)
+        val appDicCodeFile = project.file("src/main/resources/app-dic-code.properties")
+        if (appDicCodeFile.exists()) {
+            properties.load(appDicCodeFile.inputStream())
         }
-        fields.addAll(AutodocUtil.yamlMapper.readValue(file, collectionType))
-        file.writeText(AutodocUtil.yamlMapper.writeValueAsString(fields))
-    }
-
-    private fun convert(properties: Properties): MutableMap<String, DicCodes> {
-        val map = linkedMapOf<String, DicCodes>()
-        val keys = properties.keys
-        for (key in keys) {
-            key as String
-            val codeType: String
-            if (key.contains(".")) {
-                codeType = key.substringBefore(".")
-                val code = key.substringAfter(".")
-                var javaType = properties.getProperty("$codeType|TYPE") ?: "java.lang.String"
-                if (javaType == "Int") {
-                    javaType = JavaType.int.fullyQualifiedNameWithoutTypeParameters
-                } else if (javaType == "String") {
-                    javaType = JavaType.stringInstance.fullyQualifiedNameWithoutTypeParameters
-                }
-                val type = JavaType(javaType)
-                val dicCode = map.computeIfAbsent(codeType) {
-                    DicCodes(
-                        type = codeType,
-                        name = properties.getProperty(codeType),
-                        javaType = type
-                    )
-                }
-                val codeKey: Serializable =
-                    if (JavaType.stringInstance == type) code else code.toInt()
-                dicCode.codes[codeKey] = properties.getProperty(key)
-            }
-        }
-        return map
+        return GenDicCodes.convert(properties)
     }
 
     private lateinit var docFile: FileUnit
@@ -130,12 +80,12 @@ class DicCodeGen(
         }
     }
 
-    fun genCode(dicCodes: DicCodes, auth: Boolean = false) {
-        val codeType: String = dicCodes.type
-        val codeTypeName: String = dicCodes.name
+    fun genCode(genDicCodes: GenDicCodes, auth: Boolean = false) {
+        val codeType: String = genDicCodes.type
+        val codeTypeName: String = genDicCodes.name
         val className = enumClassName(codeType)
 
-        val fieldType = dicCodes.javaType
+        val fieldType = genDicCodes.javaType
 
         //
         val enumType =
@@ -146,29 +96,23 @@ class DicCodeGen(
             javadoc {
                 +"/**"
                 +" * ${
-                    codeTypeName.replace(
-                        "@",
-                        "\\@"
-                    )
-                }(${dicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
+                    codeTypeName
+                }(${genDicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
                 +" */"
             }
             val innerInterface = InnerInterface(JavaType("${className}Const")).apply {
                 javadoc {
                     +"/**"
                     +" * ${
-                        codeTypeName.replace(
-                            "@",
-                            "\\@"
-                        )
-                    }(${dicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
+                        codeTypeName
+                    }(${genDicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
                     +" */"
                 }
                 visibility = JavaVisibility.PUBLIC
             }
             innerInterface(innerInterface)
             val codeFieldNames = mutableSetOf<String>()
-            dicCodes.codes.forEach { (code, name) ->
+            genDicCodes.codes.forEach { (code, name) ->
                 docText.appendLine("|$code|$name")
 
                 var codeFieldName = codeName(code, name)
