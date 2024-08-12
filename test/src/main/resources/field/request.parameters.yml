@@ -70,6 +70,12 @@
   defaultVal: "10"
   canCover: false
   required: false
+- name: "limit"
+  type: "Integer"
+  description: "每页的数量"
+  defaultVal: "10"
+  canCover: false
+  required: false
 - name: "sort"
   type: "String"
   description: "排序字段"
