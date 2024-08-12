@@ -18,6 +18,7 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorExtension
+import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.operation.Operation
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.File
@@ -165,10 +166,14 @@ class AutodocHandler(
                 val extension = GeneratorExtension()
                 extension.databases = datasources
 
-                val typeName = handler?.beanType?.simpleName?.substringBeforeLast("Controller")
+                var typeName = handler?.beanType?.simpleName?.substringBeforeLast("Controller")
                 if (typeName != null) {
-                    val tableNames = Autodoc.tableNames.toMutableSet()
-                    tableNames.add(typeName)
+                    val projectName = summerWebProperties.projectName?.capitalized()
+                    if (!projectName.isNullOrBlank() && typeName.endsWith(projectName)) {
+                        typeName = typeName.substringBeforeLast(projectName)
+                    }
+                    val tableNames = linkedSetOf(typeName)
+                    tableNames.addAll(Autodoc.tableNames)
                     Autodoc.tableNames = tableNames
                 }
                 FieldDescFix.fix(

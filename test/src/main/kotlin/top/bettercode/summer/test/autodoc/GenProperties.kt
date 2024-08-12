@@ -2,7 +2,6 @@ package top.bettercode.summer.test.autodoc
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import top.bettercode.summer.tools.autodoc.AutodocExtension
-import top.bettercode.summer.tools.generator.DataType
 
 /**
  * @author Peter Wu
