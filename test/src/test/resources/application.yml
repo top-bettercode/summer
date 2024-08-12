@@ -7,6 +7,11 @@ summer:
       # noinspection SpringBootApplicationYaml
       output: build/docOutput
   #    postman-tests: false
+      version: v1.0
+      table-prefixes: OAUTH_
+      table-suffixes: ''
+      entity-prefix: ''
+
   sign:
     client-secret: 123
   security:

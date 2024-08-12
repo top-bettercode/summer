@@ -19,7 +19,6 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.lang.operation.Operation
-import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.File
 import java.net.URI
@@ -169,8 +168,7 @@ class AutodocHandler(
                 val typeName = handler?.beanType?.simpleName?.substringBeforeLast("Controller")
                 if (typeName != null) {
                     val tableNames = Autodoc.tableNames.toMutableSet()
-                    val tableName = typeName.toUnderscore()
-                    tableNames.add(tableName)
+                    tableNames.add(typeName)
                     Autodoc.tableNames = tableNames
                 }
                 FieldDescFix.fix(

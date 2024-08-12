@@ -20,10 +20,8 @@ class TableFix(
         extension.run { _, tableHolder ->
             tableHolder as PumlTableHolder
             tableHolder.tables().forEach {
-                val tableName = it.tableName
-                val fixTableName = tableHolder.database.fixTableName(tableName)
-                fields[tableName.uppercase()] = it.fields()
-                fields[fixTableName.uppercase()] = it.fields()
+                fields[it.tableName] = it.fields()
+                fields[it.className] = it.fields()
             }
         }
         fields

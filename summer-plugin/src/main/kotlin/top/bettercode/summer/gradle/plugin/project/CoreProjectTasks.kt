@@ -60,6 +60,16 @@ object CoreProjectTasks {
 
                             updateDoc(project.rootProject.file("doc"))
                             project.rootProject.subprojects { subproject ->
+                                val testFile =
+                                    subproject.file("src/test/resources/META-INF/application-test.yml")
+                                if (testFile.exists()) {
+                                    val lines = testFile.readLines()
+                                    val newLines = lines.filter { l ->
+                                        "data-type: @generator.dataType@" != l.trim()
+                                    }
+                                    testFile.writeText(newLines.joinToString("\n") + "\n")
+                                }
+
                                 val file = subproject.file("src/doc")
                                 updateDoc(file)
                                 subproject.file("src/test/java").walkTopDown()

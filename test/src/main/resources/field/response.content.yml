@@ -73,7 +73,7 @@
           canCover: true
           required: false
         - name: "totalElements"
-          type: "Integer"
+          type: "Long"
           description: "总数"
           canCover: true
           required: false
@@ -88,6 +88,11 @@
           canCover: true
           required: false
       required: false
+- name: "count"
+  type: "Long"
+  description: "数量"
+  canCover: true
+  required: false
 - name: "status"
   type: "String"
   description: "状态"

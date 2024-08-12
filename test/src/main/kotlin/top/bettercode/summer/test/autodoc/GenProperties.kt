@@ -20,11 +20,6 @@ open class GenProperties : AutodocExtension() {
     var isDisableOnException = true
 
     /**
-     * 数据源类型
-     */
-    var dataType = DataType.DATABASE
-
-    /**
      * 项目路径
      */
     var projectPath = ""
