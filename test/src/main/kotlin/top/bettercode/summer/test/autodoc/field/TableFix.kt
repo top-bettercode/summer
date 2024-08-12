@@ -5,6 +5,7 @@ import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.PumlTableHolder
 import top.bettercode.summer.tools.generator.database.entity.Table
+import kotlin.collections.LinkedHashSet
 
 /**
  *
@@ -12,11 +13,11 @@ import top.bettercode.summer.tools.generator.database.entity.Table
  */
 class TableFix(
     private val extension: GeneratorExtension,
-    private val tableNames: Set<String>
+    private val tableNames: LinkedHashSet<String>
 ) {
 
     private val tableFields: Map<String, Set<Field>> by lazy {
-        val fields = mutableMapOf<String, Set<Field>>()
+        val fields = mutableMapOf<String, LinkedHashSet<Field>>()
         extension.run { _, tableHolder ->
             tableHolder as PumlTableHolder
             tableHolder.tables().forEach {
@@ -27,19 +28,25 @@ class TableFix(
         fields
     }
 
-    fun tableNames(): Set<Field> {
-        return tableFields.filter { it.key in tableNames }.values.flatten().toSet()
+    val namedFields: Set<Field> by lazy {
+        val set = linkedSetOf<Field>()
+        tableNames.forEach {
+            tableFields[it]?.apply {
+                set.addAll(this)
+            }
+        }
+        set
     }
 
-    fun others(): Set<Field> {
-        return tableFields.filter { it.key !in tableNames }.values.flatten().toSet()
+    val otherFields: Set<Field> by lazy {
+        tableFields.filter { it.key !in tableNames }.values.flatten().toSet()
     }
 
-    private fun Table.fields(): Set<Field> {
-        val fields = columns.flatMapTo(mutableSetOf()) { column ->
+    private fun Table.fields(): LinkedHashSet<Field> {
+        val fields = columns.flatMapTo(linkedSetOf()) { column ->
             var type =
                 if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
-            setOf(
+            linkedSetOf(
                 Field(
                     column.javaName, type, column.remarks, column.columnDef
                         ?: "", "", required = column.nullable

@@ -90,12 +90,14 @@ abstract class FieldDescFix {
                     override val cover: Boolean = true
 
                     override fun descFields(properties: DocProperties): Set<Field> {
-                        return tableFix.tableNames()
+                        val namedFields = tableFix.namedFields
+                        return namedFields
                     }
                 },
                 object : FieldDescFix() {
                     override fun descFields(properties: DocProperties): Set<Field> {
-                        return tableFix.others()
+                        val otherFields = tableFix.otherFields
+                        return otherFields
                     }
                 },
                 AutodocFieldFix()

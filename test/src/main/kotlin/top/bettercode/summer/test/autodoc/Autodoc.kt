@@ -35,7 +35,7 @@ object Autodoc {
      * 相关数据表名
      */
     @JvmStatic
-    var tableNames: Set<String> = setOf()
+    var tableNames: LinkedHashSet<String> = linkedSetOf()
 
     /**
      * 必填参数
@@ -117,7 +117,7 @@ object Autodoc {
      */
     @JvmStatic
     fun tableNames(vararg tableName: String) {
-        tableNames = tableName.toSet()
+        tableNames = tableName.mapTo(LinkedHashSet<String>()){it}
     }
 
     /**

@@ -166,13 +166,24 @@ class AutodocHandler(
                 val extension = GeneratorExtension()
                 extension.databases = datasources
 
-                var typeName = handler?.beanType?.simpleName?.substringBeforeLast("Controller")
-                if (typeName != null) {
+                val beanType = handler?.beanType
+                if (beanType != null) {
+                    var typeName = beanType.simpleName.substringBeforeLast("Controller")
                     val projectName = summerWebProperties.projectName?.capitalized()
                     if (!projectName.isNullOrBlank() && typeName.endsWith(projectName)) {
                         typeName = typeName.substringBeforeLast(projectName)
                     }
                     val tableNames = linkedSetOf(typeName)
+                    beanType.declaredFields.forEach {
+                        var otherTypeName = it.type.simpleName
+                        if (otherTypeName.endsWith("Service")) {
+                            otherTypeName = otherTypeName.substringBeforeLast("Service")
+                            if (!projectName.isNullOrBlank() && otherTypeName.endsWith(projectName)) {
+                                otherTypeName = otherTypeName.substringBeforeLast(projectName)
+                            }
+                            tableNames.add(otherTypeName)
+                        }
+                    }
                     tableNames.addAll(Autodoc.tableNames)
                     Autodoc.tableNames = tableNames
                 }
@@ -193,7 +204,7 @@ class AutodocHandler(
             } finally {
                 Autodoc.collectionName = ""
                 Autodoc.name = ""
-                Autodoc.tableNames = setOf()
+                Autodoc.tableNames = linkedSetOf<String>()
                 Autodoc.requiredParameters = setOf()
                 Autodoc.requiredHeaders = setOf()
                 Autodoc.headers = setOf()
