@@ -24,11 +24,11 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
         this.scope = "app"
     }
 
-    public override fun defaultBeforeEach() {
+    override fun defaultBeforeEach() {
         beforeEach()
         if (clientId.isBlank()) {
             this.clientId = ApplicationContextHolder.getProperty("summer.security.client-id", "")
-                    ?: ""
+                ?: ""
         }
         userDetailsService.loadAuthentication(clientId, setOf(scope), username)
     }

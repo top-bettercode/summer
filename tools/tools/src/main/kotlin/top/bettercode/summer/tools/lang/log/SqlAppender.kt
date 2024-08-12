@@ -175,7 +175,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
     private val sqlCache: ConcurrentMap<String, SqlLogData> = ConcurrentHashMap()
     private val logger = LoggerFactory.getLogger(SqlAppender::class.java)
 
-    public override fun append(event: ILoggingEvent?) {
+    override fun append(event: ILoggingEvent?) {
         val loggerName = event?.loggerName
         if (event == null || !isStarted || !logger.isInfoEnabled || (!isLogEnabled() && LOG_SLOW != loggerName)) {
             return

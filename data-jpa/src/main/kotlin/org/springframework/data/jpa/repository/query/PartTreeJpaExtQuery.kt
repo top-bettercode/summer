@@ -124,7 +124,7 @@ internal class PartTreeJpaExtQuery internal constructor(
    * (non-Javadoc)
    * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#doCreateQuery(JpaParametersParameterAccessor)
    */
-    public override fun doCreateQuery(accessor: JpaParametersParameterAccessor): Query {
+    override fun doCreateQuery(accessor: JpaParametersParameterAccessor): Query {
         return query.createQuery(accessor)
     }
 
@@ -132,7 +132,7 @@ internal class PartTreeJpaExtQuery internal constructor(
    * (non-Javadoc)
    * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#doCreateCountQuery(JpaParametersParameterAccessor)
    */
-    public override fun doCreateCountQuery(accessor: JpaParametersParameterAccessor): TypedQuery<Long> {
+    override fun doCreateCountQuery(accessor: JpaParametersParameterAccessor): TypedQuery<Long> {
         @Suppress("UNCHECKED_CAST")
         return countQuery.createQuery(accessor) as TypedQuery<Long>
     }
@@ -230,7 +230,7 @@ internal class PartTreeJpaExtQuery internal constructor(
             return entityManager.createQuery(criteriaQuery)
         }
 
-        protected open fun createCreator(accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
+        open fun createCreator(accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
             val entityManager = entityManager
             val builder = entityManager.criteriaBuilder
             val processor = queryMethod.resultProcessor
@@ -249,7 +249,7 @@ internal class PartTreeJpaExtQuery internal constructor(
         /**
          * Invokes parameter binding on the given [TypedQuery].
          */
-        protected open fun invokeBinding(
+        open fun invokeBinding(
             binder: ParameterBinder, query: TypedQuery<*>,
             accessor: JpaParametersParameterAccessor,
             metadataCache: QueryMetadataCache

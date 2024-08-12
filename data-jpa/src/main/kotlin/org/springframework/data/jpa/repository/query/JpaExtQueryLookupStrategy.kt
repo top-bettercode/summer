@@ -112,7 +112,7 @@ object JpaExtQueryLookupStrategy {
             )
         }
 
-        protected abstract fun resolveQuery(
+        abstract fun resolveQuery(
             method: JpaExtQueryMethod, em: EntityManager,
             namedQueries: NamedQueries
         ): RepositoryQuery
@@ -132,7 +132,7 @@ object JpaExtQueryLookupStrategy {
         configuration: Configuration,
         private val auditorAware: AuditorAware<*>
     ) : AbstractQueryLookupStrategy(em, extractor, configuration) {
-        public override fun resolveQuery(
+        override fun resolveQuery(
             method: JpaExtQueryMethod, em: EntityManager,
             namedQueries: NamedQueries
         ): RepositoryQuery {
@@ -153,7 +153,7 @@ object JpaExtQueryLookupStrategy {
         private val evaluationContextProvider: QueryMethodEvaluationContextProvider,
         configuration: Configuration
     ) : AbstractQueryLookupStrategy(em, extractor, configuration) {
-        public override fun resolveQuery(
+        override fun resolveQuery(
             method: JpaExtQueryMethod, em: EntityManager,
             namedQueries: NamedQueries
         ): RepositoryQuery {

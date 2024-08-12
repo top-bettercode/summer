@@ -111,7 +111,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
         super.start()
     }
 
-    public override fun append(event: ILoggingEvent?) {
+    override fun append(event: ILoggingEvent?) {
         if (event == null || !isStarted) {
             return
         }

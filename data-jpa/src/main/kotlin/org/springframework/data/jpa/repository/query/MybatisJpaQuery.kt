@@ -110,7 +110,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         }
     }
 
-    public override fun doCreateQuery(accessor: JpaParametersParameterAccessor): Query {
+    override fun doCreateQuery(accessor: JpaParametersParameterAccessor): Query {
         val parameterBinder = parameterBinder.get() as MybatisParameterBinder
         val mybatisParam = parameterBinder.bindParameterObject(accessor)
         val boundSql = mybatisParam.boundSql
@@ -132,7 +132,12 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         if (mybatisQueryMethod.querySize != null && size == null) {
             mybatisParam.size = Size.of(mybatisQueryMethod.querySize)
         }
-        return parameterBinder.bindAndPrepare(MybatisQuery(query, mybatisParam), metadata, accessor.pageable, mybatisParam)
+        return parameterBinder.bindAndPrepare(
+            MybatisQuery(query, mybatisParam),
+            metadata,
+            accessor.pageable,
+            mybatisParam
+        )
     }
 
     private fun doCreateCountQuery(mybatisParam: MybatisParam): Query {

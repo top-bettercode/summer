@@ -76,7 +76,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 
     private fun Node.getAt(name: String): Node? {
         val nodeList = get(name) as NodeList
-        return if (nodeList.size > 0)
+        return if (nodeList.isNotEmpty())
             nodeList[0] as Node
         else null
     }

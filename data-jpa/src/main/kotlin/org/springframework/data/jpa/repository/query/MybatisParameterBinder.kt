@@ -44,7 +44,7 @@ internal class MybatisParameterBinder(
     ) {
     }
 
-    public override fun bindAndPrepare(
+    override fun bindAndPrepare(
         query: Query, metadata: QueryParameterSetter.QueryMetadata,
         accessor: JpaParametersParameterAccessor
     ): Query {
@@ -99,14 +99,14 @@ internal class MybatisParameterBinder(
         bind(metadata.withQuery(query), mybatisParam)
         val size = mybatisParam.size
         if (size != null && !size.isUnlimited()) {
-            query.setFirstResult(0)
-            query.setMaxResults(size.size)
+            query.firstResult = 0
+            query.maxResults = size.size
         }
         if (!parameters.hasPageableParameter() || pageable.isUnpaged) {
             return query
         }
-        query.setFirstResult(pageable.offset.toInt())
-        query.setMaxResults(pageable.pageSize)
+        query.firstResult = pageable.offset.toInt()
+        query.maxResults = pageable.pageSize
         return query
     }
 
