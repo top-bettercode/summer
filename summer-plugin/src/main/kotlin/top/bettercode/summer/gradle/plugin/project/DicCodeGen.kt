@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
+import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
@@ -29,8 +30,10 @@ class DicCodeGen(
     private val packageName: String
 ) {
 
-    private val fieldCollectionType = TypeFactory.defaultInstance()
-        .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
+    private val fieldCollectionType: CollectionType by lazy {
+        TypeFactory.defaultInstance()
+            .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
+    }
 
     private fun codeTypes(): Map<String, GenDicCodes> {
         val properties = LinkedProperties()

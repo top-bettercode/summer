@@ -31,9 +31,8 @@ import javax.xml.transform.stream.StreamResult
  */
 class Jenkins(private val url: String, auth: String) {
     private val log = LoggerFactory.getLogger(Jenkins::class.java)
-    private val restTemplate = RestTemplate()
-
-    init {
+    private val restTemplate: RestTemplate by lazy {
+        val restTemplate = RestTemplate()
         restTemplate.interceptors.add { request, body, execution ->
             val headers = request.headers
             val (username, password) = auth.split(":")
@@ -46,6 +45,8 @@ class Jenkins(private val url: String, auth: String) {
 
         (restTemplate.messageConverters.find { it is StringHttpMessageConverter } as StringHttpMessageConverter?)?.defaultCharset =
             StandardCharsets.UTF_8
+
+        restTemplate
     }
 
     fun config(job: String): String? {

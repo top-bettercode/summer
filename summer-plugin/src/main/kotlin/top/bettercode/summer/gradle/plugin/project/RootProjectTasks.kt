@@ -19,7 +19,9 @@ import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
  */
 @Suppress("ObjectLiteralToLambda")
 object RootProjectTasks {
+
     fun config(project: Project) {
+
         project.tasks.apply {
 
             val prefix = "jenkins"
