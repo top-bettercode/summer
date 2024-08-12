@@ -3,6 +3,7 @@ package top.bettercode.summer.test.autodoc.field
 import org.atteo.evo.inflector.English
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.GeneratorExtension
+import top.bettercode.summer.tools.generator.PumlTableHolder
 import top.bettercode.summer.tools.generator.database.entity.Table
 
 /**
@@ -17,8 +18,12 @@ class TableFix(
     private val tableFields: Map<String, Set<Field>> by lazy {
         val fields = mutableMapOf<String, Set<Field>>()
         extension.run { _, tableHolder ->
+            tableHolder as PumlTableHolder
             tableHolder.tables().forEach {
-                fields[it.tableName] = it.fields()
+                val tableName = it.tableName
+                val fixTableName = tableHolder.database.fixTableName(tableName)
+                fields[tableName.uppercase()] = it.fields()
+                fields[fixTableName.uppercase()] = it.fields()
             }
         }
         fields

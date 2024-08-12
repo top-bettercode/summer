@@ -10,6 +10,8 @@ import top.bettercode.summer.tools.lang.property.PropertiesSource
  */
 class DicCodeFix : FieldDescFix() {
 
+    override val cover: Boolean = true
+
     private val dicCodeFields: Set<Field> by lazy {
         val propertiesSource = PropertiesSource("dic-code", "app-dic-code")
 

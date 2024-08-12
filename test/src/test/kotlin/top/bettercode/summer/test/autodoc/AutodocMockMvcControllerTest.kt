@@ -17,7 +17,8 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
 
     @BeforeEach
     fun setUp() {
-        Autodoc.tableNames("OAUTH_CLIENT_TOKEN")
+        Autodoc.field("size","数量")
+        Autodoc.field("list","列表")
     }
 
     @DisplayName("列表1")

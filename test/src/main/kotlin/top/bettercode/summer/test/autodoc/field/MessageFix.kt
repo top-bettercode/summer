@@ -9,6 +9,8 @@ import top.bettercode.summer.tools.lang.property.PropertiesSource
  */
 class MessageFix : FieldDescFix() {
 
+    override val cover: Boolean = true
+
     private val messageFields: Set<Field> by lazy {
         setOf(Field(name = "lines", description = "行信息")) +
                 PropertiesSource.of("messages").all()

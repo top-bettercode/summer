@@ -81,24 +81,14 @@ abstract class FieldDescFix {
             val request = operation.request as DocOperationRequest
             val response = operation.response as DocOperationResponse
 
-            Autodoc.fields.forEach { (name, desc) ->
-                request.uriVariablesExt.filter { it.name == name }.forEach { it.description = desc }
-                request.queriesExt.filter { it.name == name }.forEach { it.description = desc }
-                request.headersExt.filter { it.name == name }.forEach { it.description = desc }
-                request.parametersExt.filter { it.name == name }.forEach { it.description = desc }
-                request.partsExt.filter { it.name == name }.forEach { it.description = desc }
-                request.contentExt.filter { it.name == name }.forEach { it.description = desc }
-
-                response.headersExt.filter { it.name == name }.forEach { it.description = desc }
-                response.contentExt.filter { it.name == name }.forEach { it.description = desc }
-            }
-
             val tableFix = TableFix(extension, Autodoc.tableNames)
             val docFieldDescFixes = listOf(
                 CommoYmlFix(),
                 DicCodeFix(),
                 MessageFix(),
                 object : FieldDescFix() {
+                    override val cover: Boolean = true
+
                     override fun descFields(properties: DocProperties): Set<Field> {
                         return tableFix.tableNames()
                     }
@@ -107,7 +97,8 @@ abstract class FieldDescFix {
                     override fun descFields(properties: DocProperties): Set<Field> {
                         return tableFix.others()
                     }
-                }
+                },
+                AutodocFieldFix()
             )
 
             for (fixDocFieldDesc in docFieldDescFixes) {
