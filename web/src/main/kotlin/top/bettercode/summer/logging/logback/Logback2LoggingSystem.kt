@@ -1,5 +1,6 @@
 package top.bettercode.summer.logging.logback
 
+import ch.qos.logback.classic.AsyncAppender
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.boolex.OnMarkerEvaluator
@@ -134,11 +135,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val sqlAppender = SqlAppender(timeoutAlarmSeconds)
         sqlAppender.context = context
         sqlAppender.start()
-        val sqlAsyncAppender = EssentialAsyncAppender()
-        sqlAsyncAppender.context = context
-        sqlAsyncAppender.name = "sql"
-        sqlAsyncAppender.addAppender(sqlAppender)
-        sqlAsyncAppender.start()
         arrayOf(
             "org.hibernate.SQL",
             "org.hibernate.SQL_SLOW",
@@ -146,7 +142,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             "top.bettercode.summer.SQL"
         ).map { context.getLogger(it) }
             .forEach {
-                it.addAppender(sqlAsyncAppender)
+                it.addAppender(asyncAppender(context, "sql", sqlAppender))
             }
 
 
@@ -188,14 +184,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     )
                     feishuAppender.context = context
                     feishuAppender.start()
-                    val asyncAppender = EssentialAsyncAppender()
-                    asyncAppender.context = context
-                    asyncAppender.name = "feishu"
-                    asyncAppender.addAppender(feishuAppender)
-                    asyncAppender.start()
                     feishuProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            it.addAppender(asyncAppender)
+                            it.addAppender(asyncAppender(context, "feishu", feishuAppender))
                         }
                 } catch (e: Exception) {
                     log.error("配置FeishuAppender失败", e)
@@ -221,14 +212,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     )
                     feishuAppender.context = context
                     feishuAppender.start()
-                    val asyncAppender = EssentialAsyncAppender()
-                    asyncAppender.context = context
-                    asyncAppender.name = "feishu"
-                    asyncAppender.addAppender(feishuAppender)
-                    asyncAppender.start()
                     feishuProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            it.addAppender(asyncAppender)
+                            it.addAppender(asyncAppender(context, "feishu", feishuAppender))
                         }
                 } catch (e: Exception) {
                     log.error("配置FeishuAppender失败", e)
@@ -259,14 +245,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     )
                     slackAppender.context = context
                     slackAppender.start()
-                    val asyncAppender = EssentialAsyncAppender()
-                    asyncAppender.context = context
-                    asyncAppender.name = "slack"
-                    asyncAppender.addAppender(slackAppender)
-                    asyncAppender.start()
                     slackProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            it.addAppender(asyncAppender)
+                            it.addAppender(asyncAppender(context, "slack", slackAppender))
                         }
                 } catch (e: Exception) {
                     log.error("配置SlackAppender失败", e)
@@ -290,12 +271,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     }
                     val appender = WebSocketAppender().apply { addFilter(sqlFilter) }
                     start(context, appender)
-                    val asyncAppender = EssentialAsyncAppender()
-                    asyncAppender.context = context
-                    asyncAppender.name = "websocket"
-                    asyncAppender.addAppender(appender)
-                    asyncAppender.start()
-                    logger.addAppender(asyncAppender)
+                    logger.addAppender(asyncAppender(context, "websocket", appender))
                 } catch (e: Exception) {
                     log.error("配置Websocket失败", e)
                 }
@@ -313,12 +289,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     context, socketProperties
                 ) else sslSocketAppender(context, socketProperties)
                 socketAppender.start()
-                val asyncAppender = EssentialAsyncAppender()
-                asyncAppender.context = context
-                asyncAppender.name = "socket"
-                asyncAppender.addAppender(socketAppender)
-                asyncAppender.start()
-                context.getLogger("root").addAppender(asyncAppender)
+                context.getLogger("root")
+                    .addAppender(asyncAppender(context, "socket", socketAppender))
             }
         }
 
@@ -405,6 +377,20 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
     }
 
+    private fun asyncAppender(
+        context: LoggerContext,
+        name: String,
+        appender: Appender<ILoggingEvent>
+    ): AsyncAppender {
+        val asyncAppender = AsyncAppender()
+        asyncAppender.context = context
+        asyncAppender.name = name
+        asyncAppender.isIncludeCallerData = true
+        asyncAppender.addAppender(appender)
+        asyncAppender.start()
+        return asyncAppender
+    }
+
 
     private fun bind(environment: Environment, key: String): MutableMap<String, String> {
         val bindable = Bindable.mapOf(String::class.java, String::class.java)
@@ -459,12 +445,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             if (rootLevel != null) {
                 logger.level = rootLevel
             }
-            val asyncAppender = EssentialAsyncAppender()
-            asyncAppender.context = context
-            asyncAppender.name = "allFile"
-            asyncAppender.addAppender(appender)
-            asyncAppender.start()
-            logger.addAppender(asyncAppender)
+            logger.addAppender(asyncAppender(context, "allFile", appender))
         }
     }
 
@@ -533,12 +514,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             if (rootLevel != null) {
                 logger.level = Level.toLevel(rootLevel)
             }
-            val asyncAppender = EssentialAsyncAppender()
-            asyncAppender.context = context
-            asyncAppender.name = "rootFile"
-            asyncAppender.addAppender(appender)
-            asyncAppender.start()
-            logger.addAppender(asyncAppender)
+            logger.addAppender(asyncAppender(context, "rootFile", appender))
         }
     }
 
@@ -572,12 +548,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         synchronized(context.configurationLock) {
             val logger = context.getLogger(ROOT_LOGGER_NAME)
-            val asyncAppender = EssentialAsyncAppender()
-            asyncAppender.context = context
-            asyncAppender.name = "levelFile"
-            asyncAppender.addAppender(appender)
-            asyncAppender.start()
-            logger.addAppender(asyncAppender)
+            logger.addAppender(asyncAppender(context, "levelFile", appender))
         }
     }
 
@@ -625,12 +596,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         synchronized(context.configurationLock) {
             val logger = context.getLogger(ROOT_LOGGER_NAME)
             logger.level = Level.toLevel(level)
-            val asyncAppender = EssentialAsyncAppender()
-            asyncAppender.context = context
-            asyncAppender.name = "markerFile"
-            asyncAppender.addAppender(appender)
-            asyncAppender.start()
-            logger.addAppender(asyncAppender)
+            logger.addAppender(asyncAppender(context, "markerFile", appender))
         }
     }
 
@@ -658,12 +624,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         synchronized(context.configurationLock) {
             val logger = context.getLogger(name)
             logger.level = Level.toLevel(level)
-            val asyncAppender = EssentialAsyncAppender()
-            asyncAppender.context = context
-            asyncAppender.name = "spiltFile"
-            asyncAppender.addAppender(appender)
-            asyncAppender.start()
-            logger.addAppender(asyncAppender)
+            logger.addAppender(asyncAppender(context, "spiltFile", appender))
         }
     }
 
@@ -746,12 +707,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
             start()
         }
-        val asyncAppender = EssentialAsyncAppender()
-        asyncAppender.context = context
-        asyncAppender.name = "mail"
-        asyncAppender.addAppender(appender)
-        asyncAppender.start()
-        return asyncAppender
+        return asyncAppender(context, "mail", appender)
     }
 
     /**
