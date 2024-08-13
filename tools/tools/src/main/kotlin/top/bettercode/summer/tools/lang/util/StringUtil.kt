@@ -78,6 +78,7 @@ object StringUtil {
 
     }
 
+    @JvmStatic
     fun timeModule(writeDatesAsTimestamps: Boolean): SimpleModule {
         val module = JavaTimeModule()
         module.addSerializer(
