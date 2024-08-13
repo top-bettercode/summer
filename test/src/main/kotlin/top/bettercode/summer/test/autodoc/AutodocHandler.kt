@@ -193,17 +193,13 @@ class AutodocHandler(
                                 if (!tableNames.contains(otherTypeName)) {
                                     typeNames.add(otherTypeName)
                                 }
-                            } else {
-                                if (otherTypeName.endsWith("Core")) {
-                                    otherTypeName = otherTypeName.substringBeforeLast("Core")
-                                }
+                            } else if (otherTypeName.endsWith("Core")) {
+                                otherTypeName = otherTypeName.substringBeforeLast("Core")
                                 if (!tableNames.contains(otherTypeName) && isEntity(otherTypeName)
                                 ) {
                                     typeNames.add(otherTypeName)
                                 }
                             }
-
-
                         }
                     }
                     if (typeNames.isNotEmpty()) {
