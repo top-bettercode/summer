@@ -24,22 +24,24 @@ class AutodocAspect(private val entityManagerFactory: EntityManagerFactory) {
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping) || @annotation(org.springframework.web.bind.annotation.GetMapping) || @annotation(org.springframework.web.bind.annotation.PostMapping) || @annotation(org.springframework.web.bind.annotation.PutMapping) || @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
     fun autodoc(joinPoint: ProceedingJoinPoint): Any? {
         val result = joinPoint.proceed()
-        try {
-            val args = joinPoint.args
-            val typeNames = mutableListOf<String>()
-            typeNames.addAll(args.filterNotNull().flatMap {
-                extTypeName(it)
-            })
-            if (result != null) {
-                typeNames.addAll(extTypeName(result))
-            }
+        if (Autodoc.enable) {
+            try {
+                val args = joinPoint.args
+                val typeNames = mutableListOf<String>()
+                typeNames.addAll(args.filterNotNull().flatMap {
+                    extTypeName(it)
+                })
+                if (result != null) {
+                    typeNames.addAll(extTypeName(result))
+                }
 
-            if (typeNames.isNotEmpty()) {
-                log.debug("自动识别参数类型：{}", typeNames)
-                Autodoc.tableNames.addAll(typeNames)
+                if (typeNames.isNotEmpty()) {
+                    log.debug("自动识别参数类型：{}", typeNames)
+                    Autodoc.tableNames.addAll(typeNames)
+                }
+            } catch (e: Exception) {
+                log.error("解析参数实体类型失败", e)
             }
-        } catch (e: Exception) {
-            log.error("解析参数实体类型失败", e)
         }
         return result
     }
