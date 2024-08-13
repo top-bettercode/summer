@@ -92,7 +92,8 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
                 ?.filterNot { items.contains(it.nameWithoutExtension) }
                 ?.forEach {
                     it.delete()
-                    log.warn("delete $it")
+                    if (log.isDebugEnabled)
+                        log.debug("delete $it")
                 }
         }
 
@@ -101,14 +102,16 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
             File(this.rootModuleDic, "collection").listFiles()
                 ?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
                     it.deleteRecursively()
-                    log.warn("delete $it")
+                    if (log.isDebugEnabled)
+                        log.debug("delete $it")
                 }
         }
         val subCollectionNames = projectCollections.map { it.name }
         File(projectModuleDic, "collection").listFiles()
             ?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
                 it.deleteRecursively()
-                log.warn("delete $it")
+                if (log.isDebugEnabled)
+                    log.debug("delete $it")
             }
     }
 

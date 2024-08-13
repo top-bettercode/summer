@@ -455,21 +455,34 @@ class DicCodeGen(
                             if (old.startsWith("|||")) {
                                 val oldStr = old.substring(3)
                                 if (newLine.contains(oldStr)) {
-                                    project.logger.warn("${file.name} $oldStr 替换为 $new")
+                                    if (project.logger.isDebugEnabled)
+                                        project.logger.debug("${file.name} $oldStr 替换为 $new")
                                     newLine = newLine.replace(oldStr, new)
                                     changed = true
                                 }
                             } else if (old.startsWith("***")) {
                                 val regex = old.substring(3)
                                 if (newLine.matches(".*${regex}.*".toRegex())) {
-                                    project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
+                                    if (project.logger.isDebugEnabled)
+                                        project.logger.debug(
+                                            "{} {} 替换为 {}",
+                                            file.name,
+                                            regex.toRegex(),
+                                            new
+                                        )
                                     newLine = newLine.replace(regex.toRegex(), new)
                                     changed = true
                                 }
                             } else {
                                 val regex = """([^a-zA-Z0-9_])\Q${old}\E([^a-zA-Z0-9_]|$)"""
                                 if (newLine.matches(".*${regex}.*".toRegex())) {
-                                    project.logger.warn("${file.name} ${regex.toRegex()} 替换为 $new")
+                                    if (project.logger.isDebugEnabled)
+                                        project.logger.debug(
+                                            "{} {} 替换为 {}",
+                                            file.name,
+                                            regex.toRegex(),
+                                            new
+                                        )
                                     newLine = newLine.replace(regex.toRegex(), "$1${new}$2")
                                     changed = true
                                 }

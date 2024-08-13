@@ -230,7 +230,8 @@ class AutodocHandler(
             }
             typeNames.removeAll(Autodoc.tableNames)
             if (typeNames.isNotEmpty()) {
-                log.debug("自动增加可能参数类型：{}", typeNames)
+                if (log.isDebugEnabled)
+                    log.debug("自动增加可能参数类型：{}", typeNames)
                 Autodoc.tableNames.addAll(typeNames)
             }
         }

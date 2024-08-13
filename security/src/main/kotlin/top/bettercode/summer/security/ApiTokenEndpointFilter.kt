@@ -262,7 +262,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                             if (revokeTokenEndpointMatcher.matches(request)) { //撤消token
                                 throw UnauthorizedException("不支持token所属scope:$scope")
                             }
-                            logger.warn("不支持token所属scope:$scope")
+                            logger.warn("不支持token scope:$scope")
                         } else if (revokeTokenEndpointMatcher.matches(request)) { //撤消token
                             throw UnauthorizedException("错误或过期的token:$accessToken")
                         } else {

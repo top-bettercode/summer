@@ -263,7 +263,8 @@ data class DatabaseConfiguration(
         val names = (if (tableName.isEmpty()) tableNames() else tableName.distinct()).filter {
             !excludeTableNames.contains(it)
         }
-        log.warn("数据表（${names.size}）:${names}")
+        if (log.isDebugEnabled)
+            log.debug("数据表（${names.size}）:${names}")
         val result = ConcurrentLinkedDeque<Table>()
         val map = mutableMapOf<Int, MutableList<String>>()
         var i = 1

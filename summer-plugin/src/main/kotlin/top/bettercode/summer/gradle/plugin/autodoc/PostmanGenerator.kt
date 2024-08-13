@@ -66,7 +66,8 @@ object PostmanGenerator {
                 variable = variables.toList()
             )
             postmanFile.writeText(postmanCollection.toJsonString())
-            log.warn("生成：$postmanFile")
+            if (log.isDebugEnabled)
+                log.debug("生成：$postmanFile")
         }
     }
 

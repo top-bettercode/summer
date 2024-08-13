@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.generator.dom.unit
 
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.*
 
@@ -23,11 +24,11 @@ interface GenUnit {
             val file = File(name)
             return if (file.isAbsolute || SourceSet.ROOT == sourceSet) file else {
                 File(
-                        "src/${sourceSet.name.lowercase(Locale.getDefault())}/${
-                            directorySet.name.lowercase(
-                                    Locale.getDefault()
-                            )
-                        }/$name"
+                    "src/${sourceSet.name.lowercase(Locale.getDefault())}/${
+                        directorySet.name.lowercase(
+                            Locale.getDefault()
+                        )
+                    }/$name"
                 )
             }
         }
@@ -40,18 +41,19 @@ interface GenUnit {
         val destFile = outputFile(directory)
         val exists = destFile.exists()
         if (!exists ||
-                (overwrite && !destFile.readLines().any { it.contains("[[Don't cover]]") })
+            (overwrite && !destFile.readLines().any { it.contains("[[Don't cover]]") })
         ) {
             destFile.parentFile.mkdirs()
             val oldContent = if (exists) destFile.readText() else ""
             val writed = destFile.write(oldContent)
             if (writed) {
-                val log = org.slf4j.LoggerFactory.getLogger(GenUnit::class.java)
-                if (exists) {
-                    log.warn("覆盖：${file.path}")
-                } else {
-                    log.warn("生成：${file.path}")
-                }
+                val log = LoggerFactory.getLogger(GenUnit::class.java)
+                if (log.isDebugEnabled)
+                    if (exists) {
+                        log.debug("覆盖：${file.path}")
+                    } else {
+                        log.debug("生成：${file.path}")
+                    }
             }
         }
     }

@@ -69,7 +69,8 @@ object AsciidocGenerator {
                 val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
                 asciidoctor.requireLibrary("asciidoctor-diagram")
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
-                log.warn("生成：$outFile")
+                if (log.isDebugEnabled)
+                    log.debug("生成：{}", outFile)
             } catch (e: Exception) {
                 log.error(e.message, e)
             }
@@ -108,14 +109,15 @@ object AsciidocGenerator {
                 val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
                 asciidoctor.requireLibrary("asciidoctor-diagram")
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
-                log.warn(
-                    "${if (outFile.exists()) "覆盖" else "生成"}：${
-                        if (prefixPath == null) outFile.path else
-                            outFile.absolutePath.substringAfter(
-                                prefixPath.absolutePath + File.separator
-                            )
-                    }"
-                )
+                if (log.isDebugEnabled)
+                    log.debug(
+                        "${if (outFile.exists()) "覆盖" else "生成"}：${
+                            if (prefixPath == null) outFile.path else
+                                outFile.absolutePath.substringAfter(
+                                    prefixPath.absolutePath + File.separator
+                                )
+                        }"
+                    )
             } catch (e: Exception) {
                 log.error(e.message, e)
             }
@@ -399,7 +401,8 @@ object AsciidocGenerator {
                     }
                 }
             }
-            log.warn("生成：$adocFile")
+            if (log.isDebugEnabled)
+                log.debug("生成：{}", adocFile)
         }
     }
 

@@ -65,7 +65,8 @@ class ExcelReader private constructor(`is`: InputStream) : Closeable {
             throw ExcelException("Excel读取失败，文档中没有工作表", e)
         }
         cell(1, 0)
-        log.debug("Initialize success.")
+        if (log.isDebugEnabled)
+            log.debug("Initialize success.")
     }
 
     /**

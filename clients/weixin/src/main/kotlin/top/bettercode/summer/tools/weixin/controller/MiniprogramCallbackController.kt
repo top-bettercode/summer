@@ -31,7 +31,8 @@ class MiniprogramCallbackController(
         name = "小程序code2Session授权接口"
     )
     fun miniOauth(@NotBlank code: String, encryptedData: String?, iv: String?): Any {
-        log.debug("code:{}", code)
+        if (log.isDebugEnabled)
+            log.debug("code:{}", code)
         return try {
             val jsSession =
                 miniprogramClient.jscode2session(code).decrypt(encryptedData, iv)
@@ -58,7 +59,8 @@ class MiniprogramCallbackController(
     @RequestLogging(ignoredTimeout = true)
     @PostMapping(value = ["/miniPhoneOauth"], name = "小程序手机号授权接口")
     fun miniPhoneOauth(@NotBlank code: String): Any {
-        log.debug("code:{}", code)
+        if (log.isDebugEnabled)
+            log.debug("code:{}", code)
         val phoneInfoResp = miniprogramClient.getuserphonenumber(code)
         Assert.isTrue(phoneInfoResp.isOk, phoneInfoResp.errmsg ?: "手机号授权失败")
         val phoneInfo = if (phoneInfoResp.isOk) phoneInfoResp.phoneInfo else null

@@ -36,7 +36,8 @@ class AutodocAspect(private val entityManagerFactory: EntityManagerFactory) {
                 }
 
                 if (typeNames.isNotEmpty()) {
-                    log.debug("自动识别参数类型：{}", typeNames)
+                    if (log.isDebugEnabled)
+                        log.debug("自动识别参数类型：{}", typeNames)
                     Autodoc.tableNames.addAll(typeNames)
                 }
             } catch (e: Exception) {

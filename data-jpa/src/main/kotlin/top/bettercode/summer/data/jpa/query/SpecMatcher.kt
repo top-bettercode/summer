@@ -97,7 +97,8 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
             val attributeValue: Any? = try {
                 beanWrapper.getPropertyValue(attribute.name)
             } catch (e: Exception) {
-                log.debug("获取属性值失败", e)
+                if (log.isDebugEnabled)
+                    log.debug("获取属性值失败", e)
                 null
             }
             if (attributeValue == null || "" == attributeValue) {

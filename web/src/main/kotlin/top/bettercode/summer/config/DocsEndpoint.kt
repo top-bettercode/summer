@@ -104,7 +104,8 @@ class DocsEndpoint(
     fun handleRequest(resource: Resource?) {
         // For very general mappings (e.g. "/") we need to check 404 first
         if (resource == null) {
-            log.debug("Resource not found")
+            if (log.isDebugEnabled)
+                log.debug("Resource not found")
             response.sendError(HttpServletResponse.SC_NOT_FOUND)
             return
         }

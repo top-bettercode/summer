@@ -42,7 +42,8 @@ class DocOperation(
     fun save() {
         operationFile.parentFile.mkdirs()
         operationFile.parentFile.mkdirs()
-        log.warn("${if (operationFile.exists()) "更新" else "创建"}：$operationFile")
+        if (log.isDebugEnabled)
+            log.debug("${if (operationFile.exists()) "更新" else "创建"}：$operationFile")
         operationFile.writeText(AutodocUtil.yamlMapper.writeValueAsString(this))
     }
 

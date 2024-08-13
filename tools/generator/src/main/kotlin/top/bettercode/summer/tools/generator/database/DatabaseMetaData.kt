@@ -23,7 +23,7 @@ import java.util.*
 
 @Suppress("ConvertTryFinallyToUseCall")
 class DatabaseMetaData(
-        private val datasource: DatabaseConfiguration
+    private val datasource: DatabaseConfiguration
 ) : AutoCloseable {
     private val log: Logger = LoggerFactory.getLogger(DatabaseMetaData::class.java)
     private var databaseMetaData: java.sql.DatabaseMetaData
@@ -89,8 +89,13 @@ class DatabaseMetaData(
      * @return 数据表名
      */
     fun tableNames(): List<String> {
-        return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, arrayOf("TABLE"))
-                .map { getString("TABLE_NAME") }.sortedBy { it }
+        return databaseMetaData.getTables(
+            datasource.catalog,
+            datasource.schema,
+            null,
+            arrayOf("TABLE")
+        )
+            .map { getString("TABLE_NAME") }.sortedBy { it }
     }
 
     /**
@@ -98,13 +103,14 @@ class DatabaseMetaData(
      * @return 数据表
      */
     fun table(tableName: String, call: (Table) -> Unit = {}): Table? {
-        log.warn("查询：$tableName 表数据结构")
+        if (log.isDebugEnabled)
+            log.debug("查询：$tableName 表数据结构")
         var table: Table? = null
 
         val databaseProductName = databaseMetaData.databaseProductName
         tableName.current { curentSchema, curentTableName ->
             val tables =
-                    databaseMetaData.getTables(datasource.catalog, curentSchema, curentTableName, null)
+                databaseMetaData.getTables(datasource.catalog, curentSchema, curentTableName, null)
             table = tables.toTable(call)
         }
         if (table == null) {
@@ -152,17 +158,17 @@ class DatabaseMetaData(
                     indexes = mutableListOf()
                 }
                 val table = Table(
-                        productName = databaseMetaData.databaseProductName,
-                        catalog = tableCat ?: datasource.catalog,
-                        schema = schema ?: datasource.schema,
-                        tableName = name,
-                        tableType = tableType,
-                        remarks = remarks,
-                        primaryKeyNames = primaryKeyNames,
-                        indexes = indexes,
-                        pumlColumns = columns.toMutableList(),
-                        engine = engine,
-                        collate = collate
+                    productName = databaseMetaData.databaseProductName,
+                    catalog = tableCat ?: datasource.catalog,
+                    schema = schema ?: datasource.schema,
+                    tableName = name,
+                    tableType = tableType,
+                    remarks = remarks,
+                    primaryKeyNames = primaryKeyNames,
+                    indexes = indexes,
+                    pumlColumns = columns.toMutableList(),
+                    engine = engine,
+                    collate = collate
                 )
                 call(table)
                 return table
@@ -175,18 +181,18 @@ class DatabaseMetaData(
 
     fun getSchemaDefaultCollate(): String {
         val databaseDriver =
-                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+            DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
         var collate = ""
         if (arrayOf(
-                        DatabaseDriver.MYSQL,
-                        DatabaseDriver.MARIADB
-                ).contains(
-                        databaseDriver
-                )
+                DatabaseDriver.MYSQL,
+                DatabaseDriver.MARIADB
+            ).contains(
+                databaseDriver
+            )
         ) {
             try {
                 val prepareStatement =
-                        databaseMetaData.connection.prepareStatement("SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA where schema_name=?")
+                    databaseMetaData.connection.prepareStatement("SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA where schema_name=?")
                 prepareStatement.setString(1, datasource.schema)
                 prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().map {
@@ -202,18 +208,18 @@ class DatabaseMetaData(
 
     private fun getCollate(tableName: String): String {
         val databaseDriver =
-                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+            DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
         var collate = ""
         if (arrayOf(
-                        DatabaseDriver.MYSQL,
-                        DatabaseDriver.MARIADB
-                ).contains(
-                        databaseDriver
-                )
+                DatabaseDriver.MYSQL,
+                DatabaseDriver.MARIADB
+            ).contains(
+                databaseDriver
+            )
         ) {
             try {
                 val prepareStatement =
-                        databaseMetaData.connection.prepareStatement("SELECT table_collation FROM information_schema.TABLES where table_name = ? and table_schema=?")
+                    databaseMetaData.connection.prepareStatement("SELECT table_collation FROM information_schema.TABLES where table_name = ? and table_schema=?")
                 prepareStatement.setString(1, tableName)
                 prepareStatement.setString(2, datasource.schema)
                 prepareStatement.queryTimeout = 5
@@ -230,19 +236,19 @@ class DatabaseMetaData(
 
     private fun getEngine(tableName: String): String {
         val databaseDriver =
-                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+            DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
         var engine = ""
         if (arrayOf(
-                        DatabaseDriver.MYSQL,
-                        DatabaseDriver.MARIADB,
-                        DatabaseDriver.H2
-                ).contains(
-                        databaseDriver
-                )
+                DatabaseDriver.MYSQL,
+                DatabaseDriver.MARIADB,
+                DatabaseDriver.H2
+            ).contains(
+                databaseDriver
+            )
         ) {
             try {
                 val prepareStatement =
-                        databaseMetaData.connection.prepareStatement("SHOW TABLE STATUS LIKE ?")
+                    databaseMetaData.connection.prepareStatement("SHOW TABLE STATUS LIKE ?")
                 prepareStatement.setString(1, tableName)
                 prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().map {
@@ -258,19 +264,19 @@ class DatabaseMetaData(
 
     private fun fixColumns(tableName: String, columns: MutableList<Column>) {
         val databaseDriver =
-                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+            DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
         if (arrayOf(
-                        DatabaseDriver.MYSQL,
-                        DatabaseDriver.MARIADB,
-                        DatabaseDriver.H2
-                ).contains(
-                        databaseDriver
-                )
+                DatabaseDriver.MYSQL,
+                DatabaseDriver.MARIADB,
+                DatabaseDriver.H2
+            ).contains(
+                databaseDriver
+            )
         ) {
             val quoteMark = "`"
             try {
                 val prepareStatement =
-                        databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $quoteMark$tableName$quoteMark")
+                    databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $quoteMark$tableName$quoteMark")
                 prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().map {
                     val find = columns.find { it.columnName == getString(1) }
@@ -282,7 +288,7 @@ class DatabaseMetaData(
                             if (find.extra.contains("AUTO_INCREMENT", true)) {
                                 find.autoIncrement = true
                                 find.extra = find.extra.replace("AUTO_INCREMENT", "", true)
-                                        .replace("  ", " ", true).trim()
+                                    .replace("  ", " ", true).trim()
                             }
                         } catch (ignore: Exception) {
                         }
@@ -309,16 +315,16 @@ class DatabaseMetaData(
         tableName.current { curentSchema, curentTableName ->
             if (columnNames.isEmpty()) {
                 databaseMetaData.getColumns(datasource.catalog, curentSchema, curentTableName, null)
-                        .map {
-                            fillColumn(columns)
-                        }
+                    .map {
+                        fillColumn(columns)
+                    }
             } else {
                 columnNames.forEach {
                     databaseMetaData.getColumns(
-                            datasource.catalog,
-                            curentSchema,
-                            curentTableName,
-                            it
+                        datasource.catalog,
+                        curentSchema,
+                        curentTableName,
+                        it
                     ).map {
                         fillColumn(columns)
                     }
@@ -329,9 +335,9 @@ class DatabaseMetaData(
     }
 
     private fun fixImportedKeys(
-            curentSchema: String?,
-            curentTableName: String,
-            columns: MutableList<Column>
+        curentSchema: String?,
+        curentTableName: String,
+        columns: MutableList<Column>
     ) {
         databaseMetaData.getImportedKeys(datasource.catalog, curentSchema, curentTableName).map {
             val find = columns.find { it.columnName == getString("FKCOLUMN_NAME") }!!
@@ -364,24 +370,24 @@ class DatabaseMetaData(
         val decimalDigits = getInt("DECIMAL_DIGITS")
         val def = getString("COLUMN_DEF")
         val columnDef =
-                if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim()
+            if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim()
         val columnSize = getInt("COLUMN_SIZE")
         val remarks = getString("REMARKS")?.replace("[\t\n\r]".toRegex(), "")?.trim()
-                ?: ""
+            ?: ""
         val tableCat = getString("TABLE_CAT") ?: datasource.catalog
         val tableSchem = getString("TABLE_SCHEM") ?: datasource.schema
         val column = Column(
-                tableCat = tableCat,
-                tableSchem = tableSchem,
-                columnName = columnName,
-                typeName = typeName,
-                dataType = dataType,
-                decimalDigits = decimalDigits,
-                columnSize = columnSize,
-                remarks = remarks,
-                nullable = nullable,
-                columnDef = columnDef,
-                unsigned = typeName.contains("UNSIGNED", true)
+            tableCat = tableCat,
+            tableSchem = tableSchem,
+            columnName = columnName,
+            typeName = typeName,
+            dataType = dataType,
+            decimalDigits = decimalDigits,
+            columnSize = columnSize,
+            remarks = remarks,
+            nullable = nullable,
+            columnDef = columnDef,
+            unsigned = typeName.contains("UNSIGNED", true)
         )
         if (supportsIsAutoIncrement) {
             column.autoIncrement = "YES" == getString("IS_AUTOINCREMENT")
@@ -393,12 +399,14 @@ class DatabaseMetaData(
     }
 
     private fun ResultSet.debug(name: String, rsmd: ResultSetMetaData) {
-        val colCount = rsmd.columnCount
-        log.warn("-----------------------------------------------------")
-        for (i in 1..colCount) {
-            log.warn("::$name::${metaData.getColumnName(i)}:${getString(i)}")
+        if (log.isDebugEnabled) {
+            val colCount = rsmd.columnCount
+            log.debug("-----------------------------------------------------")
+            for (i in 1..colCount) {
+                log.debug("::$name::${metaData.getColumnName(i)}:${getString(i)}")
+            }
+            log.debug("-----------------------------------------------------")
         }
-        log.warn("-----------------------------------------------------")
     }
 
     /**
@@ -421,23 +429,25 @@ class DatabaseMetaData(
         val indexes = mutableListOf<Indexed>()
         tableName.current { curentSchema, curentTableName ->
             databaseMetaData.getIndexInfo(
-                    datasource.catalog,
-                    curentSchema,
-                    curentTableName,
-                    false,
-                    true
+                datasource.catalog,
+                curentSchema,
+                curentTableName,
+                false,
+                true
             )
-                    .map {
-                        val indexName = getString("INDEX_NAME")
-                        if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
-                            var indexed = indexes.find { it.name(datasource.fixTableName(tableName)) == indexName }
-                            if (indexed == null) {
-                                indexed = Indexed(unique = !getBoolean("NON_UNIQUE"), indexName = indexName)
-                                indexes.add(indexed)
-                            }
-                            indexed.columnName.add(getString("COLUMN_NAME"))
+                .map {
+                    val indexName = getString("INDEX_NAME")
+                    if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
+                        var indexed =
+                            indexes.find { it.name(datasource.fixTableName(tableName)) == indexName }
+                        if (indexed == null) {
+                            indexed =
+                                Indexed(unique = !getBoolean("NON_UNIQUE"), indexName = indexName)
+                            indexes.add(indexed)
                         }
+                        indexed.columnName.add(getString("COLUMN_NAME"))
                     }
+                }
         }
         return indexes
     }
