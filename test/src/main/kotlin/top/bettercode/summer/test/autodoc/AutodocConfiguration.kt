@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -50,6 +51,7 @@ class AutodocConfiguration(
     fun autodocHandler(
         signProperties: ApiSignProperties,
         summerWebProperties: SummerWebProperties,
+        springDataWebProperties: SpringDataWebProperties,
         @Autowired(required = false) autodocAspect: AutodocAspect?
     ): AutodocHandler {
         val datasources: MutableMap<String, DatabaseConfiguration> =
@@ -85,11 +87,12 @@ class AutodocConfiguration(
         }
 
         return AutodocHandler(
-            datasources,
-            genProperties,
-            signProperties,
-            summerWebProperties,
-            autodocAspect
+            datasources = datasources,
+            genProperties = genProperties,
+            signProperties = signProperties,
+            summerWebProperties = summerWebProperties,
+            springDataWebProperties = springDataWebProperties,
+            autodocAspect = autodocAspect
         )
     }
 

@@ -2,6 +2,7 @@ package top.bettercode.summer.test.autodoc
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.util.StreamUtils
@@ -35,6 +36,7 @@ class AutodocHandler(
     private val genProperties: GenProperties,
     private val signProperties: ApiSignProperties,
     private val summerWebProperties: SummerWebProperties,
+    private val springDataWebProperties: SpringDataWebProperties,
     private val autodocAspect: AutodocAspect?
 ) : RequestLoggingHandler {
 
@@ -146,6 +148,8 @@ class AutodocHandler(
                 //参数
                 val paramInfo = RequiredParameters.calculate(handler)
                 val defaultValueParams = paramInfo.defaultValueParams
+                val pageable = springDataWebProperties.pageable
+                defaultValueParams[pageable.sizeParameter] = pageable.defaultPageSize.toString()
                 val requiredParameters = paramInfo.requiredParameters.toMutableSet()
                 requiredParameters.addAll(Autodoc.requiredParameters)
 
