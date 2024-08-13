@@ -21,7 +21,8 @@ object SapNativeLibLoader {
     @Synchronized
     fun loadNativeLib() {
         val version = bundle.getString("version")
-        val tmpPath =  System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
+        val tmpPath =
+            System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
         val targetFolder = File(tmpPath)
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
@@ -37,8 +38,10 @@ object SapNativeLibLoader {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
-            Files.copy(SapNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                    targetFile.toPath())
+            Files.copy(
+                SapNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+                targetFile.toPath()
+            )
         }
 
         val libraryPath = targetFolder.absolutePath
@@ -49,8 +52,7 @@ object SapNativeLibLoader {
         } else {
             ":"
         }
-        if (!systemNativePath.contains(pathSeparator + libraryPath)
-                && !systemNativePath.contains(libraryPath + pathSeparator)) {
+        if (!systemNativePath.split(pathSeparator).contains(libraryPath)) {
             systemNativePath += pathSeparator + libraryPath
             System.setProperty(nativeSystemProperty, systemNativePath)
         }
