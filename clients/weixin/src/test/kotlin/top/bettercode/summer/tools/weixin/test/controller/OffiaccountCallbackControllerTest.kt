@@ -27,9 +27,10 @@ class OffiaccountCallbackControllerTest : BaseWebNoAuthTest() {
         val code = "xxx"
         val accessToken = WebPageAccessToken(openid = "xxx")
         Mockito.doReturn(accessToken).`when`(offiaccountClient).getWebPageAccessToken(code)
-        mockMvc.perform(get("/wechat/oauth")
-                .param("code", code)
-                .param("state", code)
+        mockMvc.perform(
+            get("/wechat/oauth")
+                .queryParam("code", code)
+                .queryParam("state", code)
         ).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 
     }
@@ -38,8 +39,8 @@ class OffiaccountCallbackControllerTest : BaseWebNoAuthTest() {
     fun jsSignUrl() {
         Mockito.doReturn("xxx").`when`(offiaccountClient).getJsapiTicket()
         perform(
-                get("/wechat/jsSign")
-                        .param("url", "https://xxx.com")
+            get("/wechat/jsSign")
+                .queryParam("url", "https://xxx.com")
         )
     }
 }

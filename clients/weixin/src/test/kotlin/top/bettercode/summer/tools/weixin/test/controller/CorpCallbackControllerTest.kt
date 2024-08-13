@@ -29,8 +29,8 @@ class CorpCallbackControllerTest : BaseWebNoAuthTest() {
         val accessToken = CorpWebPageAccessToken(openid = "xxx")
         Mockito.doReturn(accessToken).`when`(corpClient).getWebPageAccessToken(code)
         mockMvc.perform(get("/wechat/corpOauth")
-                .param("code", code)
-                .param("state", code)
+                .queryParam("code", code)
+                .queryParam("state", code)
         ).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 
     }

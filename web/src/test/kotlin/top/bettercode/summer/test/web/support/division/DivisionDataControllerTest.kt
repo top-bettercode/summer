@@ -13,17 +13,18 @@ class DivisionDataControllerTest : BaseWebNoAuthTest() {
 
     @Test
     fun list() {
-        perform(get("/divisions/list")
-                .param("vnode", "true")
+        perform(
+            get("/divisions/list")
+                .queryParam("vnode", "true")
         )
     }
 
     @Test
     fun select() {
         perform(
-                get("/divisions/select")
-                        .param("code", "110000")
-                        .param("vnode", "false")
+            get("/divisions/select")
+                .queryParam("code", "110000")
+                .queryParam("vnode", "false")
         )
     }
 }

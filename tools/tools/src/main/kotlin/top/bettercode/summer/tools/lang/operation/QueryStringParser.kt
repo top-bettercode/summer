@@ -37,7 +37,7 @@ object QueryStringParser {
     }
 
     private fun processParameter(parameter: String, parameters: Parameters) {
-        val components = parameter.split("=".toRegex())
+        val components = parameter.split("=".toRegex()).dropLastWhile { it.isEmpty() }
         if (components.size in 1..2) {
             val name = components[0]
             if (components.size == 2) {

@@ -33,11 +33,11 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     fun testGet() {
         mockMvc.perform(
                 get("/test")
-                        .param("username", "1")
-                        .param("username", "1")
-                        .param("password", "20")
-                        .param("word", "中文")
-                        .param("中文", "中文")
+                        .queryParam("username", "1")
+                        .queryParam("username", "1")
+                        .queryParam("password", "20")
+                        .queryParam("word", "中文")
+                        .queryParam("中文", "中文")
                         .content(requestBody)
                         .header("Accept", "application/json;version=2.0")
                         .header("user-agent", "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)")
@@ -58,11 +58,11 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     fun testGet2() {
         mockMvc.perform(
                 get("/test")
-                        .param("username", "1")
-                        .param("username", "1")
-                        .param("password", "20")
-                        .param("word", "中文")
-                        .param("中文", "中文")
+                        .queryParam("username", "1")
+                        .queryParam("username", "1")
+                        .queryParam("password", "20")
+                        .queryParam("word", "中文")
+                        .queryParam("中文", "中文")
                         .header("Accept", "application/json;version=2.0")
                         .header("user-agent", "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)")
         ).andExpect(status().isOk)

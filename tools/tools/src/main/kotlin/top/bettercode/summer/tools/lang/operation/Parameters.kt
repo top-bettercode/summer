@@ -77,7 +77,7 @@ class Parameters : LinkedMultiValueMap<String, String>() {
             val candidates = parameter.value
             val existing = queryStringParameters[parameter.key]
             for (candidate in candidates) {
-                if (!existing!!.contains(candidate)) {
+                if (candidate.isNotEmpty() && !existing!!.contains(candidate)) {
                     uniqueParameters.add(parameter.key, candidate)
                 }
             }

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import top.bettercode.summer.logging.annotation.NoRequestLogging
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.web.resolver.NoWrapResp
@@ -25,7 +24,7 @@ class TestController {
 
     private val log: Logger = LoggerFactory.getLogger(TestController::class.java)
 
-    @NoRequestLogging
+    //    @NoRequestLogging
     @RequestMapping("/test")
     fun test(@RequestBody request: String?): Any {
         return request ?: "null"

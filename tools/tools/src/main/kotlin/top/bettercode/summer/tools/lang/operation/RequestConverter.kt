@@ -52,10 +52,14 @@ object RequestConverter {
     fun convert(request: HttpServletRequest): OperationRequest {
         val dateTime = (request.getAttribute(HttpOperation.REQUEST_DATE_TIME) as LocalDateTime?)
             ?: LocalDateTime.now()
-        val uri = URI.create(getRequestUri(request))
+        val requestURL = request.requestURL
+        val queryString = request.queryString
+        if (!queryString.isNullOrBlank()) {
+            requestURL.append("?").append(queryString)
+        }
+        val uri = URI.create(requestURL.toString())
         val headers = extractHeaders(request, uri)
-        val query = request.queryString
-        val queries = if (query.isNullOrBlank()) Parameters() else QueryStringParser.parse(query)
+        val queries = QueryStringParser.parse(uri)
         val parameters = Parameters.parse(request).getUniqueParameters(queries)
         val parts = extractParts(request)
         val cookies = extractCookies(request, headers)
@@ -276,19 +280,6 @@ object RequestConverter {
         serverPort: Int = request.serverPort
     ): Boolean {
         return (SCHEME_HTTP == request.scheme && serverPort != STANDARD_PORT_HTTP) || (SCHEME_HTTPS == request.scheme && serverPort != STANDARD_PORT_HTTPS)
-    }
-
-    private fun getRequestUri(request: HttpServletRequest): String {
-        val uriWriter = StringWriter()
-        val printer = PrintWriter(uriWriter)
-
-        printer.printf("%s://%s", request.scheme, request.serverName)
-        if (isNonStandardPort(request)) {
-            printer.printf(":%d", request.serverPort)
-        }
-
-        printer.print(request.requestURI)
-        return uriWriter.toString()
     }
 
     fun getRequestPath(request: HttpServletRequest): String {
