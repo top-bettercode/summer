@@ -12,7 +12,7 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-starter-data-jpa")
 
     //test
-    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
+//    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
     testImplementation("com.h2database:h2")
 
     compileOnly(project(":security"))

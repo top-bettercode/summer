@@ -168,45 +168,7 @@ class AutodocHandler(
                 extension.databases = datasources
 
                 val beanType = handler?.beanType
-                if (beanType != null) {
-                    var typeName = beanType.simpleName.substringBeforeLast("Controller")
-                    val projectName = summerWebProperties.projectName?.capitalized()
-                    if (!projectName.isNullOrBlank() && typeName.endsWith(projectName)) {
-                        typeName = typeName.substringBeforeLast(projectName)
-                    }
-                    val tableNames = Autodoc.tableNames
-                    val typeNames = mutableListOf<String>()
-                    if (!tableNames.contains(typeName) && isEntity(typeName)) {
-                        typeNames.add(typeName)
-                    }
-                    beanType.declaredFields.forEach {
-                        var otherTypeName = it.type.simpleName
-                        if (otherTypeName.endsWith("Service")) {
-                            otherTypeName = otherTypeName.substringBeforeLast("Service")
-                            if (!projectName.isNullOrBlank() && otherTypeName.endsWith(projectName)) {
-                                otherTypeName = otherTypeName.substringBeforeLast(projectName)
-                            }
-                            if (otherTypeName.startsWith("I") && otherTypeName[1].isUpperCase()) {
-                                otherTypeName = otherTypeName.substring(1)
-                            }
-                            if (isEntity(otherTypeName)) {
-                                if (!tableNames.contains(otherTypeName)) {
-                                    typeNames.add(otherTypeName)
-                                }
-                            } else if (otherTypeName.endsWith("Core")) {
-                                otherTypeName = otherTypeName.substringBeforeLast("Core")
-                                if (!tableNames.contains(otherTypeName) && isEntity(otherTypeName)
-                                ) {
-                                    typeNames.add(otherTypeName)
-                                }
-                            }
-                        }
-                    }
-                    if (typeNames.isNotEmpty()) {
-                        log.debug("自动增加可能参数类型：{}", typeNames)
-                        Autodoc.tableNames.addAll(typeNames)
-                    }
-                }
+                extTableNames(beanType)
                 FieldDescFix.fix(
                     operation = docOperation,
                     extension = extension
@@ -231,6 +193,47 @@ class AutodocHandler(
                 Autodoc.enable = true
                 Autodoc.description = ""
                 Autodoc.schema = null
+            }
+        }
+    }
+
+    private fun extTableNames(beanType: Class<*>?) {
+        if (beanType != null) {
+            var typeName = beanType.simpleName.substringBeforeLast("Controller")
+            val projectName = summerWebProperties.projectName?.capitalized()
+            if (!projectName.isNullOrBlank() && typeName.endsWith(projectName)) {
+                typeName = typeName.substringBeforeLast(projectName)
+            }
+            val tableNames = Autodoc.tableNames
+            val typeNames = mutableListOf<String>()
+            if (!tableNames.contains(typeName) && isEntity(typeName)) {
+                typeNames.add(typeName)
+            }
+            beanType.declaredFields.forEach {
+                var otherTypeName = it.type.simpleName
+                if (otherTypeName.endsWith("Service")) {
+                    otherTypeName = otherTypeName.substringBeforeLast("Service")
+                    if (!projectName.isNullOrBlank() && otherTypeName.endsWith(projectName)) {
+                        otherTypeName = otherTypeName.substringBeforeLast(projectName)
+                    }
+                    if (otherTypeName.startsWith("I") && otherTypeName[1].isUpperCase()) {
+                        otherTypeName = otherTypeName.substring(1)
+                    }
+                    if (isEntity(otherTypeName)) {
+                        if (!tableNames.contains(otherTypeName)) {
+                            typeNames.add(otherTypeName)
+                        }
+                    } else if (otherTypeName.endsWith("Core")) {
+                        otherTypeName = otherTypeName.substringBeforeLast("Core")
+                        if (!tableNames.contains(otherTypeName) && isEntity(otherTypeName)) {
+                            typeNames.add(otherTypeName)
+                        }
+                    }
+                }
+            }
+            if (typeNames.isNotEmpty()) {
+                log.debug("自动增加可能参数类型：{}", typeNames)
+                Autodoc.tableNames.addAll(typeNames)
             }
         }
     }
