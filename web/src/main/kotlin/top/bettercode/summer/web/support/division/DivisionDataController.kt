@@ -12,7 +12,7 @@ import top.bettercode.summer.web.BaseController
 @ConditionalOnWebApplication
 @Anonymous
 @RequestMapping(value = ["/divisions"], name = "行政区划")
-class DivisionDataController : BaseController() {
+open class DivisionDataController : BaseController() {
 
     @RequestLogging(includeResponseBody = false)
     @JsonView(AllDivisionView::class)

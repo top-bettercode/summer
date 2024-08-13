@@ -9,6 +9,7 @@ dependencies {
     api("org.atteo:evo-inflector")
 
     compileOnly("org.springframework.data:spring-data-commons")
+    compileOnly("org.springframework.boot:spring-boot-starter-data-jpa")
 
     //test
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")

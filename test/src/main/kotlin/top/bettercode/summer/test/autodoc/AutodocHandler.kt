@@ -173,7 +173,11 @@ class AutodocHandler(
                     if (!projectName.isNullOrBlank() && typeName.endsWith(projectName)) {
                         typeName = typeName.substringBeforeLast(projectName)
                     }
-                    val tableNames = linkedSetOf(typeName)
+                    val tableNames = Autodoc.tableNames
+                    val typeNames = mutableListOf<String>()
+                    if (!tableNames.contains(typeName)) {
+                        typeNames.add(typeName)
+                    }
                     beanType.declaredFields.forEach {
                         var otherTypeName = it.type.simpleName
                         if (otherTypeName.endsWith("Service")) {
@@ -181,11 +185,15 @@ class AutodocHandler(
                             if (!projectName.isNullOrBlank() && otherTypeName.endsWith(projectName)) {
                                 otherTypeName = otherTypeName.substringBeforeLast(projectName)
                             }
-                            tableNames.add(otherTypeName)
+                            if (!tableNames.contains(otherTypeName)) {
+                                typeNames.add(otherTypeName)
+                            }
                         }
                     }
-                    tableNames.addAll(Autodoc.tableNames)
-                    Autodoc.tableNames = tableNames
+                    if (typeNames.isNotEmpty()) {
+                        log.debug("自动增加可能参数类型：{}", typeNames)
+                        Autodoc.tableNames.addAll(typeNames)
+                    }
                 }
                 FieldDescFix.fix(
                     operation = docOperation,

@@ -14,6 +14,7 @@ import top.bettercode.summer.apisign.ApiSignProperties
 @ConditionalOnWebApplication
 @AutoConfigureAfter(ApiSignConfiguration::class)
 class TestConfiguration {
+
     @ConditionalOnBean(ApiSignProperties::class)
     @ConditionalOnProperty(prefix = "summer.auto-sign", name = ["enabled"], matchIfMissing = true)
     @Bean
@@ -23,7 +24,8 @@ class TestConfiguration {
 
     @Bean
     fun autoSignFilter(
-            @Autowired(required = false) handlers: List<AutoDocRequestHandler>?): AutoDocFilter {
+        @Autowired(required = false) handlers: List<AutoDocRequestHandler>?
+    ): AutoDocFilter {
         return AutoDocFilter(handlers)
     }
 }
