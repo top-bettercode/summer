@@ -29,7 +29,6 @@ import org.springframework.boot.context.properties.bind.Bindable
 import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.logging.LogFile
 import org.springframework.boot.logging.LoggingInitializationContext
-import org.springframework.boot.logging.LoggingSystem
 import org.springframework.boot.logging.logback.LogbackLoggingSystem
 import org.springframework.core.env.Environment
 import org.springframework.util.ClassUtils
@@ -285,7 +284,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         ) {
             synchronized(context.configurationLock) {
                 try {
-                    val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+                    val logger = context.getLogger(ROOT_LOGGER_NAME)
                     if (rootLevel != null) {
                         logger.level = rootLevel
                     }
@@ -357,7 +356,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         consoleAppender.addFilter(sqlFilter)
         consoleAppender.start()
         start(context, consoleAppender)
-        val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+        val logger = context.getLogger(ROOT_LOGGER_NAME)
         if (rootLevel != null) {
             logger.level = rootLevel
         }
@@ -385,7 +384,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 .bind("summer.logging.spilt-level", Bindable.setOf(String::class.java))
                 .orElseGet { setOf() }
 
-            val rootName = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
+            val rootName = ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
             spilts.remove(rootName)
 
             setAllFileAppender(context, fileLogPattern, filesProperties, rootLevel, logFile)
@@ -456,7 +455,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         start(context, appender)
         synchronized(context.configurationLock) {
-            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            val logger = context.getLogger(ROOT_LOGGER_NAME)
             if (rootLevel != null) {
                 logger.level = rootLevel
             }
@@ -486,7 +485,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val name = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
+        val name = ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
         val logFile = (filesProperties.path + File.separator + "root" + File.separator + name)
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
@@ -530,7 +529,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         start(context, appender)
 
         synchronized(context.configurationLock) {
-            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            val logger = context.getLogger(ROOT_LOGGER_NAME)
             if (rootLevel != null) {
                 logger.level = Level.toLevel(rootLevel)
             }
@@ -572,7 +571,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         start(context, appender)
 
         synchronized(context.configurationLock) {
-            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            val logger = context.getLogger(ROOT_LOGGER_NAME)
             val asyncAppender = EssentialAsyncAppender()
             asyncAppender.context = context
             asyncAppender.name = "levelFile"
@@ -624,7 +623,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         start(context, appender)
 
         synchronized(context.configurationLock) {
-            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            val logger = context.getLogger(ROOT_LOGGER_NAME)
             logger.level = Level.toLevel(level)
             val asyncAppender = EssentialAsyncAppender()
             asyncAppender.context = context
