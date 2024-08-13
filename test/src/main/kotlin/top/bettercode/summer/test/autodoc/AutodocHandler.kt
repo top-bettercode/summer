@@ -204,9 +204,8 @@ class AutodocHandler(
             if (!projectName.isNullOrBlank() && typeName.endsWith(projectName)) {
                 typeName = typeName.substringBeforeLast(projectName)
             }
-            val tableNames = Autodoc.tableNames
-            val typeNames = mutableListOf<String>()
-            if (!tableNames.contains(typeName) && isEntity(typeName)) {
+            val typeNames = linkedSetOf<String>()
+            if (isEntity(typeName)) {
                 typeNames.add(typeName)
             }
             beanType.declaredFields.forEach {
@@ -220,17 +219,16 @@ class AutodocHandler(
                         otherTypeName = otherTypeName.substring(1)
                     }
                     if (isEntity(otherTypeName)) {
-                        if (!tableNames.contains(otherTypeName)) {
-                            typeNames.add(otherTypeName)
-                        }
+                        typeNames.add(otherTypeName)
                     } else if (otherTypeName.endsWith("Core")) {
                         otherTypeName = otherTypeName.substringBeforeLast("Core")
-                        if (!tableNames.contains(otherTypeName) && isEntity(otherTypeName)) {
+                        if (isEntity(otherTypeName)) {
                             typeNames.add(otherTypeName)
                         }
                     }
                 }
             }
+            typeNames.removeAll(Autodoc.tableNames)
             if (typeNames.isNotEmpty()) {
                 log.debug("自动增加可能参数类型：{}", typeNames)
                 Autodoc.tableNames.addAll(typeNames)

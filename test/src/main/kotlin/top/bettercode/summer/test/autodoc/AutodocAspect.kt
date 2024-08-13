@@ -27,7 +27,7 @@ class AutodocAspect(private val entityManagerFactory: EntityManagerFactory) {
         if (Autodoc.enable) {
             try {
                 val args = joinPoint.args
-                val typeNames = mutableListOf<String>()
+                val typeNames = linkedSetOf<String>()
                 typeNames.addAll(args.filterNotNull().flatMap {
                     extTypeName(it)
                 })
@@ -51,8 +51,8 @@ class AutodocAspect(private val entityManagerFactory: EntityManagerFactory) {
         return entityTypes.contains(type)
     }
 
-    private fun extTypeName(any: Any): List<String> {
-        val result = mutableListOf<String>()
+    private fun extTypeName(any: Any): Set<String> {
+        val result = linkedSetOf<String>()
         val type = any::class.java
         if (type.classLoader != null) {
             getClassHierarchy(type).forEach {
