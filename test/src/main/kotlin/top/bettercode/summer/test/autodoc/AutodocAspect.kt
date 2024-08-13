@@ -17,8 +17,8 @@ import javax.persistence.EntityManagerFactory
 class AutodocAspect(private val entityManagerFactory: EntityManagerFactory) {
 
     private val log: Logger = LoggerFactory.getLogger(AutodocAspect::class.java)
-    private val entityTypes: List<Class<*>> by lazy {
-        entityManagerFactory.metamodel.entities.map { it.javaType }
+    private val entityTypes: List<String> by lazy {
+        entityManagerFactory.metamodel.entities.map { it.javaType.simpleName }
     }
 
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping) || @annotation(org.springframework.web.bind.annotation.GetMapping) || @annotation(org.springframework.web.bind.annotation.PostMapping) || @annotation(org.springframework.web.bind.annotation.PutMapping) || @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
@@ -46,18 +46,25 @@ class AutodocAspect(private val entityManagerFactory: EntityManagerFactory) {
         return result
     }
 
+
+    fun isEntity(type: String): Boolean {
+        return entityTypes.contains(type)
+    }
+
     private fun extTypeName(any: Any): List<String> {
         val result = mutableListOf<String>()
         val type = any::class.java
         if (type.classLoader != null) {
             getClassHierarchy(type).forEach {
-                if (entityTypes.contains(it)) {
-                    result.add(it.simpleName)
+                val simpleName = it.simpleName
+                if (entityTypes.contains(simpleName)) {
+                    result.add(simpleName)
                 }
             }
             getClassGetters(any)?.forEach {
-                if (entityTypes.contains(it)) {
-                    result.add(it.simpleName)
+                val simpleName = it.simpleName
+                if (entityTypes.contains(simpleName)) {
+                    result.add(simpleName)
                 }
                 result.addAll(extTypeName(it))
             }

@@ -34,7 +34,8 @@ class AutodocHandler(
     private val datasources: Map<String, DatabaseConfiguration>,
     private val genProperties: GenProperties,
     private val signProperties: ApiSignProperties,
-    private val summerWebProperties: SummerWebProperties
+    private val summerWebProperties: SummerWebProperties,
+    private val autodocAspect: AutodocAspect?
 ) : RequestLoggingHandler {
 
     private val log: Logger = LoggerFactory.getLogger(AutodocHandler::class.java)
@@ -175,7 +176,7 @@ class AutodocHandler(
                     }
                     val tableNames = Autodoc.tableNames
                     val typeNames = mutableListOf<String>()
-                    if (!tableNames.contains(typeName)) {
+                    if (!tableNames.contains(typeName) && isEntity(typeName)) {
                         typeNames.add(typeName)
                     }
                     beanType.declaredFields.forEach {
@@ -185,9 +186,24 @@ class AutodocHandler(
                             if (!projectName.isNullOrBlank() && otherTypeName.endsWith(projectName)) {
                                 otherTypeName = otherTypeName.substringBeforeLast(projectName)
                             }
-                            if (!tableNames.contains(otherTypeName)) {
-                                typeNames.add(otherTypeName)
+                            if (otherTypeName.startsWith("I") && otherTypeName[1].isUpperCase()) {
+                                otherTypeName = otherTypeName.substring(1)
                             }
+                            if (isEntity(otherTypeName)) {
+                                if (!tableNames.contains(otherTypeName)) {
+                                    typeNames.add(otherTypeName)
+                                }
+                            } else {
+                                if (otherTypeName.endsWith("Core")) {
+                                    otherTypeName = otherTypeName.substringBeforeLast("Core")
+                                }
+                                if (!tableNames.contains(otherTypeName) && isEntity(otherTypeName)
+                                ) {
+                                    typeNames.add(otherTypeName)
+                                }
+                            }
+
+
                         }
                     }
                     if (typeNames.isNotEmpty()) {
@@ -221,6 +237,13 @@ class AutodocHandler(
                 Autodoc.schema = null
             }
         }
+    }
+
+    private fun isEntity(typeName: String): Boolean {
+        return if (autodocAspect == null) {
+            true
+        } else
+            autodocAspect.isEntity(typeName)
     }
 
 

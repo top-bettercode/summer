@@ -23,18 +23,18 @@ import javax.annotation.PostConstruct
  */
 @ConditionalOnProperty(prefix = "summer.autodoc.gen", name = ["enable"], havingValue = "true")
 @EnableConfigurationProperties(
-        GenProperties::class,
-        ApiSignProperties::class
+    GenProperties::class,
+    ApiSignProperties::class
 )
 @ConditionalOnWebApplication
 @Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
 class AutodocConfiguration(
-        private val genProperties: GenProperties,
-        private val requestLoggingProperties: RequestLoggingProperties,
-        private val environment: Environment,
-        @Autowired(required = false)
-        private val dataSourceProperties: DataSourceProperties? = null
+    private val genProperties: GenProperties,
+    private val requestLoggingProperties: RequestLoggingProperties,
+    private val environment: Environment,
+    @Autowired(required = false)
+    private val dataSourceProperties: DataSourceProperties? = null
 ) {
 
     @PostConstruct
@@ -48,10 +48,12 @@ class AutodocConfiguration(
 
     @Bean
     fun autodocHandler(
-            signProperties: ApiSignProperties,
-            summerWebProperties: SummerWebProperties
+        signProperties: ApiSignProperties,
+        summerWebProperties: SummerWebProperties,
+        @Autowired(required = false) autodocAspect: AutodocAspect?
     ): AutodocHandler {
-        val datasources: MutableMap<String, DatabaseConfiguration> = PumlEndpoint.databases(environment)
+        val datasources: MutableMap<String, DatabaseConfiguration> =
+            PumlEndpoint.databases(environment)
 
         datasources.values.forEach { configuration ->
             if (configuration.entityPrefix.isBlank())
@@ -82,7 +84,13 @@ class AutodocConfiguration(
             }
         }
 
-        return AutodocHandler(datasources, genProperties, signProperties, summerWebProperties)
+        return AutodocHandler(
+            datasources,
+            genProperties,
+            signProperties,
+            summerWebProperties,
+            autodocAspect
+        )
     }
 
 }
