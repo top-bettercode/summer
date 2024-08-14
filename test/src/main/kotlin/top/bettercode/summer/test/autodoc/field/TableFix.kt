@@ -48,11 +48,13 @@ class TableFix(
                 if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
             linkedSetOf(
                 Field(
-                    column.javaName, type, column.remarks, column.columnDef
-                        ?: "", "", required = column.nullable
+                    name = column.javaName,
+                    type = type,
+                    description = column.remarks
                 ), Field(
-                    column.columnName, type, column.remarks, column.columnDef
-                        ?: "", "", required = column.nullable
+                    name = column.columnName,
+                    type = type,
+                    description = column.remarks
                 )
             )
         }
