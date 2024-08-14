@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.lang.util
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JavaType
@@ -58,13 +59,12 @@ object StringUtil {
         val key = "$format:$escapeNonAscii:$writeDatesAsTimestamps:$include"
         return cacheObjectMapper.getOrPut(key) {
             val objectMapper = ObjectMapper()
-            objectMapper.enable(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN)
             objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             objectMapper.registerModule(timeModule(writeDatesAsTimestamps))
 
             val serializationConfig = objectMapper.serializationConfig
-            var config = serializationConfig
+            var config = serializationConfig.with(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
             if (format) {
                 config = config.with(SerializationFeature.INDENT_OUTPUT)
             }
