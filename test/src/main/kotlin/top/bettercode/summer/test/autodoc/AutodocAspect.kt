@@ -10,14 +10,11 @@ import org.aspectj.lang.reflect.MethodSignature
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeanWrapperImpl
-import org.springframework.beans.factory.support.AbstractBeanDefinition
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.web.PagedResources
-import top.bettercode.summer.web.config.summer.WebMvcConfiguration
 import java.beans.Introspector
 import java.io.File
 import java.lang.reflect.Method
@@ -43,32 +40,34 @@ class AutodocAspect(
                 val signature = joinPoint.signature as MethodSignature
                 val method = signature.method
                 val params = getMethodParamComments(method)
-                if (params.isNotEmpty()) {
+                if (!params.isNullOrEmpty()) {
                     if (log.isDebugEnabled) {
-                        log.debug("自动识别参数：{}", params)
+                        log.debug("自动识别方法参数：{}", params)
                     }
                     Autodoc.fields.addAll(params)
                 }
 
+                val fields = linkedSetOf<Field>()
+                val entityTypeNames = linkedSetOf<String>()
                 val args = joinPoint.args
-                val types = linkedSetOf<Class<*>>()
-                types.addAll(args.filterNotNull().flatMap {
-                    extTypeName(it::class.java, it)
-                })
-                if (result != null) {
-                    types.addAll(extTypeName(result::class.java, result))
+                method.parameterTypes.forEachIndexed { index, clazz ->
+                    val arg = args[index]
+                    val type = if (arg == null) clazz else arg::class.java
+                    val (extFields, extEntityTypeNames) = extDocFieldInfo(type, arg)
+                    fields.addAll(extFields)
+                    entityTypeNames.addAll(extEntityTypeNames)
                 }
+                var resultType = if (result == null) method.returnType else result::class.java
+                val (extFields, extEntityTypeNames) = extDocFieldInfo(resultType, result)
+                fields.addAll(extFields)
+                entityTypeNames.addAll(extEntityTypeNames)
 
-                if (types.isNotEmpty()) {
-                    val entityTypes = types.filter { isEntity(it.simpleName) }
-                    val entityTypeNames = entityTypes.map { it.simpleName }
-                    if (entityTypeNames.isNotEmpty()) {
-                        if (log.isDebugEnabled)
-                            log.debug("自动识别参数类型：{}", entityTypeNames)
-                        Autodoc.tableNames.addAll(entityTypeNames)
-                    }
-                    Autodoc.fields.addAll(fields(entityTypes))
-                    val fields = fields(types.filter { !isEntity(it.simpleName) })
+                if (entityTypeNames.isNotEmpty()) {
+                    if (log.isDebugEnabled)
+                        log.debug("自动识别参数类型：{}", entityTypeNames)
+                    Autodoc.tableNames.addAll(entityTypeNames)
+                }
+                if (fields.isNotEmpty()) {
                     if (log.isDebugEnabled) {
                         log.debug("自动识别参数：{}", fields)
                     }
@@ -81,49 +80,14 @@ class AutodocAspect(
         return result
     }
 
-    private fun getMethodParamComments(method: Method): List<Field> {
-        val className = method.declaringClass.name
-        val methodName = method.name
-        val parameters = method.parameters.associate {
-            it.name to it.type
-                .simpleName
-        }
-        val cu = StaticJavaParser.parse(File("src/main/java/${className.replace(".", "/")}.java"))
-        val targetMethodOpt = cu.findAll(MethodDeclaration::class.java)
-            .firstOrNull {
-                it.nameAsString == methodName && it.parameters.size == method.parameterCount && it.parameters.map { it.type } == method.parameterTypes.map {
-                    StaticJavaParser.parseType(
-                        it.simpleName
-                    )
-                }
-            }
 
-        val fields = mutableListOf<Field>()
-
-        targetMethodOpt?.javadoc?.ifPresent { javadoc ->
-            javadoc.blockTags
-                .filter { it.tagName == "param" }
-                .forEach { paramTag ->
-                    val paramName = paramTag.name.orElse("").trim()
-                    val paramDescription = paramTag.content.toText().trim()
-
-                    if (paramName.isNotBlank() && paramDescription.isNotBlank()) {
-                        fields.add(
-                            Field(
-                                name = paramName,
-                                type = parameters[paramName]!!,
-                                description = paramDescription
-                            )
-                        )
-                    }
-                }
-        }
-
-        return fields
+    fun isEntity(type: String): Boolean {
+        return entityTypes.contains(type)
     }
 
-    private fun fields(types: Collection<Class<*>>): List<Field> = types.flatMap {
-        val pathname = "src/main/java/${it.name.replace(".", "/")}.java"
+    private fun getMethodParamComments(method: Method): List<Field>? {
+        val className = method.declaringClass.name
+        val pathname = "src/main/java/${className.replace(".", "/")}.java"
         var file = File(pathname)
         if (!file.exists()) {
             rootProject.walkTopDown().find {
@@ -132,8 +96,93 @@ class AutodocAspect(
                 file = it
             }
         }
-        val fields = mutableListOf<Field>()
         if (file.exists()) {
+            val methodName = method.name
+            val parameters = method.parameters.associate {
+                it.name to it.type
+                    .simpleName
+            }
+            val cu = StaticJavaParser.parse(file)
+            val targetMethodOpt = cu.findAll(MethodDeclaration::class.java)
+                .firstOrNull {
+                    it.nameAsString == methodName && it.parameters.size == method.parameterCount && it.parameters.map { it.type } == method.parameterTypes.map {
+                        StaticJavaParser.parseType(
+                            it.simpleName
+                        )
+                    }
+                } ?: return null
+
+            val fields = mutableListOf<Field>()
+
+            targetMethodOpt.javadoc?.ifPresent { javadoc ->
+                javadoc.blockTags
+                    .filter { it.tagName == "param" }
+                    .forEach { paramTag ->
+                        val paramName = paramTag.name.orElse("").trim()
+                        val paramDescription = paramTag.content.toText().trim()
+
+                        if (paramName.isNotBlank() && paramDescription.isNotBlank()) {
+                            fields.add(
+                                Field(
+                                    name = paramName,
+                                    type = parameters[paramName]!!,
+                                    description = paramDescription
+                                )
+                            )
+                        }
+                    }
+            }
+            return fields
+        } else {
+            return null
+        }
+    }
+
+
+    private fun extDocFieldInfo(
+        type: Class<*>,
+        any: Any?
+    ): Pair<LinkedHashSet<Field>, LinkedHashSet<String>> {
+        val fields = linkedSetOf<Field>()
+        val entityTypeNames = linkedSetOf<String>()
+        if (type.classLoader != null) {
+            getClassHierarchy(type).forEach {
+                val simpleName = it.simpleName
+                if (isEntity(simpleName)) {
+                    entityTypeNames.add(simpleName)
+                }
+                fields(it)?.let {
+                    fields.addAll(it)
+                }
+            }
+            getClassGetters(type, any)?.forEach { cls, value ->
+                val simpleName = cls.simpleName
+                if (isEntity(simpleName)) {
+                    entityTypeNames.add(simpleName)
+                }
+                fields(cls)?.let {
+                    fields.addAll(it)
+                }
+                val (subFields, subEntityTypeNames) = extDocFieldInfo(cls, value)
+                fields.addAll(subFields)
+                entityTypeNames.addAll(subEntityTypeNames)
+            }
+        }
+        return fields to entityTypeNames
+    }
+
+    private fun fields(type: Class<*>): Set<Field>? {
+        val pathname = "src/main/java/${type.name.replace(".", "/")}.java"
+        var file = File(pathname)
+        if (!file.exists()) {
+            rootProject.walkTopDown().find {
+                it.isFile && it.absolutePath.endsWith(pathname)
+            }?.let {
+                file = it
+            }
+        }
+        if (file.exists()) {
+            val fields = linkedSetOf<Field>()
             val cu = StaticJavaParser.parse(file)
             cu.findAll(FieldDeclaration::class.java).forEach { field ->
                 field.variables.forEach { variable ->
@@ -141,76 +190,28 @@ class AutodocAspect(
                     val comment =
                         field.comment.map { it.content.trim().trimStart('*').trim() }.orElse("")
                     if (comment.isNotBlank()) {
-                        val type = variable.typeAsString.substringBefore("<")
                         fields.add(
                             Field(
                                 name = fieldName,
-                                type = type,
+                                type = variable.typeAsString.substringBefore("<"),
                                 description = comment
                             )
                         )
                     }
                 }
             }
+            return fields
+        } else {
+            return null
         }
-        fields
-    }
-
-    val rootProject: File by lazy {
-        var file = File("").absoluteFile
-        while (!File(file, "gradlew").exists()) {
-            file = file.parentFile
-        }
-        file
-    }
-
-    val appPackageName: String by lazy {
-        val beanName =
-            applicationContext.getBeanNamesForAnnotation(SpringBootApplication::class.java).first()
-        val beanDefinition = applicationContext.getBeanDefinition(
-            beanName
-        ) as AbstractBeanDefinition
-        if (!beanDefinition.hasBeanClass()) {
-            beanDefinition.resolveBeanClass(
-                WebMvcConfiguration::class.java.classLoader
-            )
-        }
-        val beanClass = beanDefinition.beanClass
-        beanClass.getPackage().name
-    }
-
-
-    fun isEntity(type: String): Boolean {
-        return entityTypes.contains(type)
-    }
-
-    private fun extTypeName(type: Class<*>, any: Any?): Set<Class<*>> {
-        val result = linkedSetOf<Class<*>>()
-        if (type.classLoader != null) {
-            getClassHierarchy(type).forEach {
-                val simpleName = it.simpleName
-                if (it.`package`.name.startsWith(appPackageName) || isEntity(simpleName)) {
-                    result.add(it)
-                }
-            }
-            getClassGetters(type, any)?.forEach { cls, value ->
-                val simpleName = cls.simpleName
-                if (cls.`package`.name.startsWith(appPackageName) || isEntity(simpleName)) {
-                    result.add(cls)
-                }
-                result.addAll(extTypeName(cls, value))
-            }
-        }
-        return result
     }
 
     private fun valided(type: Class<*>): Boolean {
         return type.classLoader != null
     }
 
-    // 获取一个类的父类列表
-    fun getClassHierarchy(cls: Class<*>): List<Class<*>> {
-        val classes = mutableListOf<Class<*>>()
+    private fun getClassHierarchy(cls: Class<*>): Set<Class<*>> {
+        val classes = linkedSetOf<Class<*>>()
         var currentClass: Class<*>? = cls.superclass
         while (currentClass != null && valided(currentClass)) {
             classes.add(currentClass)
@@ -219,15 +220,23 @@ class AutodocAspect(
         return classes
     }
 
-    fun getClassGetters(type: Class<*>, any: Any?): Map<Class<*>, Any?>? {
+
+    private val rootProject: File by lazy {
+        var file = File("").absoluteFile
+        while (!File(file, "gradlew").exists()) {
+            file = file.parentFile
+        }
+        file
+    }
+
+
+    private fun getClassGetters(type: Class<*>, any: Any?): Map<Class<*>, Any?>? {
         if (any is Pageable) {
             return null
         }
         if (any is ResponseEntity<*>) {
             val body = any.body
-            if (body == null) {
-                return null
-            } else {
+            if (body != null) {
                 val classes = mutableMapOf<Class<*>, Any?>()
                 if (body is PagedResources<*>) {
                     val content = body.content
@@ -253,10 +262,10 @@ class AutodocAspect(
 
         for (pd in propertyDescriptors) {
             val propertyName = pd.name
-            val readMethod = pd.getReadMethod()
+            val readMethod = pd.readMethod
             if (readMethod != null) {
-                val returnType = readMethod.returnType
                 val p = beanWrapper?.getPropertyValue(propertyName)
+                val returnType = if (p == null) readMethod.returnType else p::class.java
                 if (valided(returnType)) {
                     classes.put(returnType, p)
                 } else {
@@ -285,33 +294,40 @@ class AutodocAspect(
         return classes
     }
 
-    private fun extValue(p: Any): Pair<Class<*>?, Any?> {
-        if (p is Array<*>) {
-            if (p.isNotEmpty() && p[0] != null) {
-                val any = p[0]!!
-                val componentType = any::class.java
-                if (valided(componentType)) {
-                    return componentType to any
+    private fun extValue(value: Any): Pair<Class<*>?, Any?> {
+        if (value is Array<*>) {
+            if (value.isNotEmpty()) {
+                val p = value.find { it != null }
+                if (p != null) {
+                    val componentType = p::class.java
+                    if (valided(componentType)) {
+                        return componentType to p
+                    }
                 }
             }
-        } else if (p is Collection<*>) {
-            if (p.isNotEmpty() && p.first() != null) {
-                val first = p.first()!!
-                val componentType = first::class.java
-                if (valided(componentType)) {
-                    return componentType to first
+        } else if (value is Collection<*>) {
+            if (value.isNotEmpty()) {
+                val p = value.find { it != null }
+                if (p != null) {
+                    val componentType = p::class.java
+                    if (valided(componentType)) {
+                        return componentType to p
+                    }
                 }
             }
-        } else if (p is Map<*, *>) {
-            if (p.isNotEmpty() && p.values.first() != null) {
-                val first = p.values.first()!!
-                val componentType = first::class.java
-                if (valided(componentType)) {
-                    return componentType to first
+        } else if (value is Map<*, *>) {
+            val values = value.values
+            if (values.isNotEmpty()) {
+                val p = values.find { it != null }
+                if (p != null) {
+                    val componentType = p::class.java
+                    if (valided(componentType)) {
+                        return componentType to p
+                    }
                 }
             }
         } else {
-            return p::class.java to p
+            return value::class.java to value
         }
         return null to null
     }
