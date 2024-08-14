@@ -2,9 +2,11 @@ package top.bettercode.summer.test.autodoc
 
 import com.github.javaparser.StaticJavaParser
 import com.github.javaparser.ast.body.FieldDeclaration
+import com.github.javaparser.ast.body.MethodDeclaration
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
+import org.aspectj.lang.reflect.MethodSignature
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeanWrapperImpl
@@ -38,6 +40,16 @@ class AutodocAspect(
         val result = joinPoint.proceed()
         if (Autodoc.enable) {
             try {
+                val signature = joinPoint.signature as MethodSignature
+                val method = signature.method
+                val params = getMethodParamComments(method)
+                if (params.isNotEmpty()) {
+                    if (log.isDebugEnabled) {
+                        log.debug("自动识别参数：{}", params)
+                    }
+                    Autodoc.fields.addAll(params)
+                }
+
                 val args = joinPoint.args
                 val types = linkedSetOf<Class<*>>()
                 types.addAll(args.filterNotNull().flatMap {
@@ -69,6 +81,47 @@ class AutodocAspect(
         return result
     }
 
+    private fun getMethodParamComments(method: Method): List<Field> {
+        val className = method.declaringClass.name
+        val methodName = method.name
+        val parameters = method.parameters.associate {
+            it.name to it.type
+                .simpleName
+        }
+        val cu = StaticJavaParser.parse(File("src/main/java/${className.replace(".", "/")}.java"))
+        val targetMethodOpt = cu.findAll(MethodDeclaration::class.java)
+            .firstOrNull {
+                it.nameAsString == methodName && it.parameters.size == method.parameterCount && it.parameters.map { it.type } == method.parameterTypes.map {
+                    StaticJavaParser.parseType(
+                        it.simpleName
+                    )
+                }
+            }
+
+        val fields = mutableListOf<Field>()
+
+        targetMethodOpt?.javadoc?.ifPresent { javadoc ->
+            javadoc.blockTags
+                .filter { it.tagName == "param" }
+                .forEach { paramTag ->
+                    val paramName = paramTag.name.orElse("").trim()
+                    val paramDescription = paramTag.content.toText().trim()
+
+                    if (paramName.isNotBlank() && paramDescription.isNotBlank()) {
+                        fields.add(
+                            Field(
+                                name = paramName,
+                                type = parameters[paramName]!!,
+                                description = paramDescription
+                            )
+                        )
+                    }
+                }
+        }
+
+        return fields
+    }
+
     private fun fields(types: Collection<Class<*>>): List<Field> = types.flatMap {
         val pathname = "src/main/java/${it.name.replace(".", "/")}.java"
         var file = File(pathname)
@@ -79,7 +132,7 @@ class AutodocAspect(
                 file = it
             }
         }
-        val fieldComments = mutableListOf<Field>()
+        val fields = mutableListOf<Field>()
         if (file.exists()) {
             val cu = StaticJavaParser.parse(file)
             cu.findAll(FieldDeclaration::class.java).forEach { field ->
@@ -89,7 +142,7 @@ class AutodocAspect(
                         field.comment.map { it.content.trim().trimStart('*').trim() }.orElse("")
                     if (comment.isNotBlank()) {
                         val type = variable.typeAsString.substringBefore("<")
-                        fieldComments.add(
+                        fields.add(
                             Field(
                                 name = fieldName,
                                 type = type,
@@ -100,7 +153,7 @@ class AutodocAspect(
                 }
             }
         }
-        fieldComments
+        fields
     }
 
     val rootProject: File by lazy {
