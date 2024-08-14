@@ -12,9 +12,7 @@ class AutodocFieldFix : FieldDescFix() {
     override val cover: Boolean = true
 
     private val fields: Set<Field> by lazy {
-        Autodoc.fields
-            .map { Field(name = it.key, description = it.value) }
-            .toSet()
+        Autodoc.fields.toSet()
     }
 
     override fun descFields(properties: DocProperties): Set<Field> {

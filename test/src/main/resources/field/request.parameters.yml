@@ -1,93 +1,59 @@
 - name: "file"
   type: "String"
   description: "上传文件字段名"
-  canCover: false
-  required: false
 - name: "useDefaultAuthorization"
   type: "Boolean"
   description: "是否使用默认授权"
   value: "true"
-  canCover: false
-  required: false
 - name: "password"
   type: "String"
   description: "密码"
   value: "e10adc3949ba59abbe56e057f20f883e"
-  canCover: false
-  required: false
 - name: "refresh_token"
   type: "String"
   description: "刷新令牌"
-  canCover: false
-  required: false
 - name: "grant_type"
   type: "String"
   description: "授权方式"
   value: "password"
-  canCover: false
-  required: false
 - name: "scope"
   type: "String"
   description: "权限范围"
   value: "openid"
-  canCover: false
-  required: false
 - name: "username"
   type: "String"
   description: "账户名"
   value: "13100523654"
-  canCover: false
-  required: false
 - name: "sign"
   type: "String"
   description: "接口签名 <<v1.0#_jiekouqianmingsuanfa>>"
-  canCover: false
-  required: false
 - name: "keyword"
   type: "String"
   description: "关键字"
-  canCover: false
-  required: false
 - name: "access_token"
   type: "String"
   description: "存取令牌"
-  canCover: false
-  required: false
 - name: "revoke_token"
   type: "String"
   description: "存取令牌"
-  canCover: false
-  required: false
 - name: "page"
   type: "Integer"
   description: "页码，从1开始"
   defaultVal: "1"
-  canCover: false
-  required: false
 - name: "size"
   type: "Integer"
   description: "每页的数量"
   defaultVal: "20"
-  canCover: false
-  required: false
 - name: "limit"
   type: "Integer"
   description: "每页的数量"
   defaultVal: "20"
-  canCover: false
-  required: false
 - name: "sort"
   type: "String"
   description: "排序字段"
-  canCover: false
-  required: false
 - name: "startDate"
   type: "Long"
   description: "开始时间"
-  canCover: false
-  required: false
 - name: "endDate"
   type: "Long"
   description: "结束时间"
-  canCover: false
-  required: false

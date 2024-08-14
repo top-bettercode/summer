@@ -69,6 +69,7 @@ dependencies {
         api("org.dom4j:dom4j:2.1.4")
         api("org.jsoup:jsoup:1.16.1")
         api("org.atteo:evo-inflector:1.3")
+        api("com.github.javaparser:javaparser-core:3.26.1")
         api("com.github.axet:kaptcha:0.0.9")
         api("com.github.stuxuhai:jpinyin:1.1.8")
         api("com.hankcs:hanlp:portable-1.8.4")

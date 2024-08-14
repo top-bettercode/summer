@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.support.GenericApplicationContext
 import javax.persistence.EntityManagerFactory
 
 /**
@@ -20,8 +21,11 @@ import javax.persistence.EntityManagerFactory
 class AutodocAspectConfiguration {
 
     @Bean
-    fun autoDocAspect(entityManagerFactory: EntityManagerFactory): AutodocAspect {
-        return AutodocAspect(entityManagerFactory)
+    fun autoDocAspect(
+        entityManagerFactorys: MutableList<EntityManagerFactory>,
+        applicationContext: GenericApplicationContext
+    ): AutodocAspect {
+        return AutodocAspect(entityManagerFactorys, applicationContext)
     }
 
 

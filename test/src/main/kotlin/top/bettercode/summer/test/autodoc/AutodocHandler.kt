@@ -204,40 +204,40 @@ class AutodocHandler(
 
     private fun extTableNames(beanType: Class<*>?) {
         if (beanType != null) {
-            var typeName = beanType.simpleName.substringBeforeLast("Controller")
+            var entityTypeName = beanType.simpleName.substringBeforeLast("Controller")
             val projectName = summerWebProperties.projectName?.capitalized()
-            if (!projectName.isNullOrBlank() && typeName.endsWith(projectName)) {
-                typeName = typeName.substringBeforeLast(projectName)
+            if (!projectName.isNullOrBlank() && entityTypeName.endsWith(projectName)) {
+                entityTypeName = entityTypeName.substringBeforeLast(projectName)
             }
-            val typeNames = linkedSetOf<String>()
-            if (isEntity(typeName)) {
-                typeNames.add(typeName)
+            val entityTypeNames = linkedSetOf<String>()
+            if (isEntity(entityTypeName)) {
+                entityTypeNames.add(entityTypeName)
             }
             beanType.declaredFields.forEach {
-                var otherTypeName = it.type.simpleName
-                if (otherTypeName.endsWith("Service")) {
-                    otherTypeName = otherTypeName.substringBeforeLast("Service")
-                    if (!projectName.isNullOrBlank() && otherTypeName.endsWith(projectName)) {
-                        otherTypeName = otherTypeName.substringBeforeLast(projectName)
+                var otherEntityTypeName = it.type.simpleName
+                if (otherEntityTypeName.endsWith("Service")) {
+                    otherEntityTypeName = otherEntityTypeName.substringBeforeLast("Service")
+                    if (!projectName.isNullOrBlank() && otherEntityTypeName.endsWith(projectName)) {
+                        otherEntityTypeName = otherEntityTypeName.substringBeforeLast(projectName)
                     }
-                    if (otherTypeName.startsWith("I") && otherTypeName[1].isUpperCase()) {
-                        otherTypeName = otherTypeName.substring(1)
+                    if (otherEntityTypeName.startsWith("I") && otherEntityTypeName[1].isUpperCase()) {
+                        otherEntityTypeName = otherEntityTypeName.substring(1)
                     }
-                    if (isEntity(otherTypeName)) {
-                        typeNames.add(otherTypeName)
-                    } else if (otherTypeName.endsWith("Core")) {
-                        otherTypeName = otherTypeName.substringBeforeLast("Core")
-                        if (isEntity(otherTypeName)) {
-                            typeNames.add(otherTypeName)
+                    if (isEntity(otherEntityTypeName)) {
+                        entityTypeNames.add(otherEntityTypeName)
+                    } else if (otherEntityTypeName.endsWith("Core")) {
+                        otherEntityTypeName = otherEntityTypeName.substringBeforeLast("Core")
+                        if (isEntity(otherEntityTypeName)) {
+                            entityTypeNames.add(otherEntityTypeName)
                         }
                     }
                 }
             }
-            typeNames.removeAll(Autodoc.tableNames)
-            if (typeNames.isNotEmpty()) {
+            entityTypeNames.removeAll(Autodoc.tableNames)
+            if (entityTypeNames.isNotEmpty()) {
                 if (log.isDebugEnabled)
-                    log.debug("自动增加可能参数类型：{}", typeNames)
-                Autodoc.tableNames.addAll(typeNames)
+                    log.debug("自动增加可能参数类型：{}", entityTypeNames)
+                Autodoc.tableNames.addAll(entityTypeNames)
             }
         }
     }

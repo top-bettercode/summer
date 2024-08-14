@@ -1,5 +1,7 @@
 package top.bettercode.summer.test.autodoc
 
+import top.bettercode.summer.tools.autodoc.model.Field
+
 /**
  * 接口文档数据模型
  */
@@ -83,7 +85,7 @@ object Autodoc {
      * 字段描述
      */
     @JvmStatic
-    var fields: MutableMap<String, String> = mutableMapOf()
+    var fields: MutableList<Field> = mutableListOf()
 
 
     @JvmStatic
@@ -117,7 +119,7 @@ object Autodoc {
      */
     @JvmStatic
     fun tableNames(vararg tableName: String) {
-        tableNames = tableName.mapTo(LinkedHashSet<String>()){it}
+        tableNames = tableName.mapTo(LinkedHashSet<String>()) { it }
     }
 
     /**
@@ -188,7 +190,7 @@ object Autodoc {
      */
     @JvmStatic
     fun field(name: String, description: String) {
-        fields[name] = description
+        fields.add(Field(name = name, description = description))
     }
 
 }

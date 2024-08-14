@@ -7,6 +7,7 @@ dependencies {
 
     api("org.springframework.boot:spring-boot-starter-test")
     api("org.atteo:evo-inflector")
+    api("com.github.javaparser:javaparser-core")
 
     compileOnly("org.springframework.data:spring-data-commons")
     compileOnly("org.springframework.boot:spring-boot-starter-data-jpa")
