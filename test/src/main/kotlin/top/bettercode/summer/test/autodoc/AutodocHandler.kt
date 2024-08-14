@@ -189,15 +189,7 @@ class AutodocHandler(
 
                 docOperation.save()
             } finally {
-                Autodoc.collectionName = ""
-                Autodoc.name = ""
-                Autodoc.tableNames = linkedSetOf<String>()
-                Autodoc.requiredParameters = setOf()
-                Autodoc.requiredHeaders = setOf()
-                Autodoc.headers = setOf()
-                Autodoc.enable = true
-                Autodoc.description = ""
-                Autodoc.schema = null
+                Autodoc.reset()
             }
         }
     }

@@ -193,4 +193,20 @@ object Autodoc {
         fields.add(Field(name = name, description = description))
     }
 
+    fun reset() {
+        collectionName = ""
+        name = ""
+        version = ""
+        description = ""
+        schema = null
+        tableNames = linkedSetOf<String>()
+        requiredParameters = setOf()
+        requiredHeaders = setOf()
+        ignoredHeaders = setOf()
+        headers = setOf()
+        enable = true
+        disableOnException = null
+        requireAuthorization = false
+        fields = mutableListOf()
+    }
 }
