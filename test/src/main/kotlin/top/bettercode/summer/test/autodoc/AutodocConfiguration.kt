@@ -51,7 +51,7 @@ class AutodocConfiguration(
     fun autodocHandler(
         signProperties: ApiSignProperties,
         summerWebProperties: SummerWebProperties,
-        springDataWebProperties: SpringDataWebProperties,
+        @Autowired(required = false) springDataWebProperties: SpringDataWebProperties?,
         @Autowired(required = false) autodocAspect: AutodocAspect?
     ): AutodocHandler {
         val datasources: MutableMap<String, DatabaseConfiguration> =

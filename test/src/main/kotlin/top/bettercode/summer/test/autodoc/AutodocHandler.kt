@@ -36,7 +36,7 @@ class AutodocHandler(
     private val genProperties: GenProperties,
     private val signProperties: ApiSignProperties,
     private val summerWebProperties: SummerWebProperties,
-    private val springDataWebProperties: SpringDataWebProperties,
+    private val springDataWebProperties: SpringDataWebProperties?,
     private val autodocAspect: AutodocAspect?
 ) : RequestLoggingHandler {
 
@@ -148,8 +148,9 @@ class AutodocHandler(
                 //参数
                 val paramInfo = RequiredParameters.calculate(handler)
                 val defaultValueParams = paramInfo.defaultValueParams
-                val pageable = springDataWebProperties.pageable
-                defaultValueParams[pageable.sizeParameter] = pageable.defaultPageSize.toString()
+                val pageable = springDataWebProperties?.pageable
+                if (pageable != null)
+                    defaultValueParams[pageable.sizeParameter] = pageable.defaultPageSize.toString()
                 val requiredParameters = paramInfo.requiredParameters.toMutableSet()
                 requiredParameters.addAll(Autodoc.requiredParameters)
 
