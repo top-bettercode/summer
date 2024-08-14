@@ -83,8 +83,8 @@ abstract class FieldDescFix {
 
             val tableFix = TableFix(extension, Autodoc.tableNames)
             val docFieldDescFixes = listOf(
-                AutodocFieldFix(),
                 CommoYmlFix(),
+                AutodocFieldFix(),
                 MessageFix(),
                 DicCodeFix(),
                 object : FieldDescFix() {

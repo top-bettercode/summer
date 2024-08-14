@@ -1,65 +1,85 @@
 - name: "errors"
   type: "Object"
   description: "错误详情"
+  canCover: false
 - name: "trace"
   type: "String"
   description: "异常栈"
+  canCover: false
 - name: "data"
   type: "Object"
   description: "数据"
+  canCover: false
   children:
     - name: "jti"
       type: "String"
       description: "jwt的唯一身份标识"
+      canCover: false
     - name: "client_id"
       type: "String"
       description: "客户端ID"
+      canCover: false
     - name: "name"
       type: "String"
       description: "名称"
+      canCover: false
     - name: "token_type"
       type: "String"
       description: "令牌类型"
+      canCover: false
     - name: "refresh_token"
       type: "String"
       description: "刷新令牌"
+      canCover: false
     - name: "access_token"
       type: "String"
-      description: "存取令牌"
+      description: "令牌"
       value: "026f6f17-e353-4bf7-b957-0c33fc2c2caf"
+      canCover: false
     - name: "expires_in"
       type: "Integer"
-      description: "存取令牌多少时间后过期"
+      description: "多少时间(s)后过期"
       value: "2591999"
+      canCover: false
     - name: "scope"
       type: "String"
       description: "权限范围"
+      canCover: false
     - name: "content"
       type: "Array"
       description: "内容"
+      canCover: false
     - name: "page"
       type: "Object"
       description: "分页信息"
+      canCover: false
       children:
         - name: "size"
           type: "Integer"
           description: "当前页的数量"
           defaultVal: "10"
+          canCover: false
         - name: "totalElements"
           type: "Long"
           description: "总数"
+          canCover: false
         - name: "totalPages"
           type: "Integer"
           description: "总页数"
+          canCover: false
         - name: "number"
           type: "Integer"
           description: "页码"
+          canCover: false
 - name: "count"
   type: "Long"
   description: "数量"
+  canCover: false
 - name: "status"
   type: "String"
   description: "状态"
+  canCover: false
 - name: "message"
   type: "String"
   description: "消息"
+  canCover: false
