@@ -220,16 +220,14 @@ abstract class FieldDescFix {
         fun Iterable<Field>.findField(name: String, type: String): Field? {
             val set = this
             val field =
-                set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }
-                    ?.copy() ?: set.find {
-                    it.name.equals(name, true) && it.type.substringBefore("(")
-                        .equals(type, true)
-                }?.copy() ?: set.find { it.name == name }?.copy() ?: set.find {
-                    it.name.equals(
-                        name,
-                        true
-                    )
-                }?.copy()
+                set.find { it.name == name && it.type.equals(type, true) }?.copy()
+                    ?: set.find { it.name.equals(name, true) && it.type.equals(type, true) }?.copy()
+                    ?: set.find { it.name == name }?.copy() ?: set.find {
+                        it.name.equals(
+                            name,
+                            true
+                        )
+                    }?.copy()
             return field?.apply { this.name = name }
         }
 

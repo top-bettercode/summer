@@ -99,7 +99,10 @@ class DicCodeGen(
             javadoc {
                 +"/**"
                 +" * ${
-                    codeTypeName
+                    codeTypeName.replace(
+                        "@",
+                        "\\@"
+                    )
                 }(${genDicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
                 +" */"
             }
@@ -107,7 +110,10 @@ class DicCodeGen(
                 javadoc {
                     +"/**"
                     +" * ${
-                        codeTypeName
+                        codeTypeName.replace(
+                            "@",
+                            "\\@"
+                        )
                     }(${genDicCodes.codes.entries.joinToString { "${it.key}:${it.value}" }})"
                     +" */"
                 }

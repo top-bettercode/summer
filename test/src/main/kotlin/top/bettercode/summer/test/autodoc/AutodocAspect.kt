@@ -175,7 +175,7 @@ class AutodocAspect(
                 field.variables.forEach { variable ->
                     val fieldName = variable.nameAsString
                     val comment =
-                        field.comment.map { it.content.trim().trimStart('*').trim() }.orElse("")
+                        field.comment.map { it.content.trim().trimStart('*').trim().substringBefore(" 默认值：") }.orElse("")
                     if (comment.isNotBlank()) {
                         fields.add(
                             Field(
