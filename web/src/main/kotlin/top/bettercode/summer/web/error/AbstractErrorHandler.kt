@@ -72,7 +72,7 @@ abstract class AbstractErrorHandler(
                         || invalidValue is String && invalidValue.isBlank()
                         || invalidValue is Array<*> && invalidValue.isEmpty()
                         || invalidValue is Collection<*> && invalidValue.isEmpty() -> {
-                    "[]"
+                    ""
                 }
 
                 else -> "[${StringUtil.subStringWithEllipsis("$invalidValue", 20)}]"
