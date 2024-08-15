@@ -126,56 +126,53 @@ class ExecutorLogMethodInterceptor(
             if (logAdice == null) {
                 return invocation.proceed()
             } else {
-                MDC.put(SqlAppender.MDC_SQL_ID, logAdice.sqlId)
-                val modify = logAdice.isModify
+                val startMillis = System.currentTimeMillis()
                 try {
-                    val startMillis = System.currentTimeMillis()
-                    try {
-                        val pageInfo = logAdice.pageable(invocation.arguments)
-                        if (pageInfo != null) {
-                            sqlLog.offset(pageInfo.offset)
-                            sqlLog.limit(pageInfo.size)
+                    MDC.put(SqlAppender.MDC_SQL_ID, logAdice.sqlId)
+                    val modify = logAdice.isModify
+                    val pageInfo = logAdice.pageable(invocation.arguments)
+                    if (pageInfo != null) {
+                        sqlLog.offset(pageInfo.offset)
+                        sqlLog.limit(pageInfo.size)
+                    }
+                    val result = invocation.proceed()
+                    when (result) {
+
+                        is Page<*> -> {
+                            sqlLog.total(result.totalElements)
+                            sqlLog.retrieved(result.content.size)
                         }
-                        val result = invocation.proceed()
-                        when (result) {
 
-                            is Page<*> -> {
-                                sqlLog.total(result.totalElements)
-                                sqlLog.retrieved(result.content.size)
-                            }
+                        is Collection<*> -> {
+                            sqlLog.retrieved(result.size)
+                        }
 
-                            is Collection<*> -> {
-                                sqlLog.retrieved(result.size)
-                            }
-
-                            is Number -> {
-                                if (modify) {
-                                    sqlLog.affected(result)
-                                } else {
-                                    sqlLog.result(result.toString())
-                                }
-                            }
-
-                            is Boolean -> {
+                        is Number -> {
+                            if (modify) {
+                                sqlLog.affected(result)
+                            } else {
                                 sqlLog.result(result.toString())
                             }
+                        }
 
-                            else -> {
-                            }
+                        is Boolean -> {
+                            sqlLog.result(result.toString())
                         }
-                        return result
-                    } catch (e: Exception) {
-                        MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
-                        throw e
-                    } finally {
-                        if (modify && entityManager.isJoinedToTransaction) {
-                            val flushMethod = repositoryClass.getMethod("flush")
-                            flushMethod.invoke(repository)
+
+                        else -> {
                         }
-                        val duration = System.currentTimeMillis() - startMillis
-                        sqlLog.cost(duration)
                     }
+                    if (modify && entityManager.isJoinedToTransaction) {
+                        val flushMethod = repositoryClass.getMethod("flush")
+                        flushMethod.invoke(repository)
+                    }
+                    return result
+                } catch (e: Exception) {
+                    MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
+                    throw e
                 } finally {
+                    val duration = System.currentTimeMillis() - startMillis
+                    sqlLog.cost(duration)
                     MDC.remove(SqlAppender.MDC_SQL_ERROR)
                     MDC.remove(SqlAppender.MDC_SQL_ID)
                 }
