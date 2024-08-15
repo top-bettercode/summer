@@ -226,6 +226,7 @@ class AutodocHandler(
                 }
             }
             entityTypeNames.removeAll(Autodoc.tableNames)
+            entityTypeNames.removeAll(Autodoc.fields.keys)
             if (entityTypeNames.isNotEmpty()) {
                 if (log.isDebugEnabled)
                     log.debug("自动增加可能参数类型：{}", entityTypeNames)

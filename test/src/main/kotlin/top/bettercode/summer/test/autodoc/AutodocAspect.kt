@@ -120,35 +120,27 @@ class AutodocAspect(
 
     private fun extDocFieldInfo(type: Class<*>, any: Any?) {
         if (type.classLoader != null) {
-            getClassHierarchy(type).forEach {
-                val simpleName = it.simpleName
-                val entity = isEntity(simpleName)
-                if (entity) {
-                    Autodoc.tableNames.add(simpleName)
-                }
-                fields(it)?.let {
-                    if (it.isNotEmpty()) {
-                        Autodoc.fields.put(simpleName, it)
-                        if (!entity) {
+            getClassHierarchy(type).forEach { cls ->
+                fields(cls)?.let { fields ->
+                    if (fields.isNotEmpty()) {
+                        val simpleName = cls.simpleName
+                        Autodoc.fields.put(simpleName, fields)
+                        if (!isEntity(simpleName)) {
                             if (log.isDebugEnabled) {
-                                log.debug("自动识别参数：{}", it)
+                                log.debug("自动识别参数：{}", fields)
                             }
                         }
                     }
                 }
             }
             getClassGetters(type, any)?.forEach { cls, value ->
-                val simpleName = cls.simpleName
-                val entity = isEntity(simpleName)
-                if (entity) {
-                    Autodoc.tableNames.add(simpleName)
-                }
-                fields(cls)?.let {
-                    if (it.isNotEmpty()) {
-                        Autodoc.fields.put(simpleName, it)
-                        if (!entity) {
+                fields(cls)?.let { fields ->
+                    if (fields.isNotEmpty()) {
+                        val simpleName = cls.simpleName
+                        Autodoc.fields.put(simpleName, fields)
+                        if (!isEntity(simpleName)) {
                             if (log.isDebugEnabled) {
-                                log.debug("自动识别参数：{}", it)
+                                log.debug("自动识别参数：{}", fields)
                             }
                         }
                     }
@@ -175,7 +167,9 @@ class AutodocAspect(
                 field.variables.forEach { variable ->
                     val fieldName = variable.nameAsString
                     val comment =
-                        field.comment.map { it.content.trim().trimStart('*').trim().substringBefore(" 默认值：") }.orElse("")
+                        field.comment.map {
+                            it.content.trim().trimStart('*').trim().substringBefore(" 默认值：")
+                        }.orElse("")
                     if (comment.isNotBlank()) {
                         fields.add(
                             Field(
