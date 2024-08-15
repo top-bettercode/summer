@@ -11,11 +11,11 @@ class AutodocFieldFix : FieldDescFix() {
 
     override val cover: Boolean = true
 
-    private val fields: Set<Field> by lazy {
-        Autodoc.fields.toSet()
+    private val fields: Iterable<Iterable<Field>> by lazy {
+        Autodoc.fields.values
     }
 
-    override fun descFields(properties: DocProperties): Set<Field> {
+    override fun descFields(properties: DocProperties): Iterable<Iterable<Field>> {
         return fields
     }
 }

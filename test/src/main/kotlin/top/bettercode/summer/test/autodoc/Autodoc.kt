@@ -85,7 +85,7 @@ object Autodoc {
      * 字段描述
      */
     @JvmStatic
-    var fields: MutableList<Field> = mutableListOf()
+    var fields: LinkedHashMap<String, LinkedHashSet<Field>> = linkedMapOf()
 
 
     @JvmStatic
@@ -190,7 +190,7 @@ object Autodoc {
      */
     @JvmStatic
     fun field(name: String, description: String) {
-        fields.add(Field(name = name, description = description))
+        fields.computeIfAbsent("DEFAULT") { LinkedHashSet() }.add(Field(name = name, description = description))
     }
 
     fun reset() {
@@ -207,6 +207,6 @@ object Autodoc {
         enable = true
         disableOnException = null
         requireAuthorization = false
-        fields = mutableListOf()
+        fields = linkedMapOf()
     }
 }

@@ -39,40 +39,16 @@ class AutodocAspect(
             try {
                 val signature = joinPoint.signature as MethodSignature
                 val method = signature.method
-                val params = getMethodParamComments(method)
-                if (!params.isNullOrEmpty()) {
-                    if (log.isDebugEnabled) {
-                        log.debug("自动识别方法参数：{}", params)
-                    }
-                    Autodoc.fields.addAll(params)
-                }
+                extMethodParamComments(method)
 
-                val fields = linkedSetOf<Field>()
-                val entityTypeNames = linkedSetOf<String>()
                 val args = joinPoint.args
                 method.parameterTypes.forEachIndexed { index, clazz ->
                     val arg = args[index]
                     val type = if (arg == null) clazz else arg::class.java
-                    val (extFields, extEntityTypeNames) = extDocFieldInfo(type, arg)
-                    fields.addAll(extFields)
-                    entityTypeNames.addAll(extEntityTypeNames)
+                    extDocFieldInfo(type, arg)
                 }
                 var resultType = if (result == null) method.returnType else result::class.java
-                val (extFields, extEntityTypeNames) = extDocFieldInfo(resultType, result)
-                fields.addAll(extFields)
-                entityTypeNames.addAll(extEntityTypeNames)
-
-                if (entityTypeNames.isNotEmpty()) {
-                    if (log.isDebugEnabled)
-                        log.debug("自动识别参数类型：{}", entityTypeNames)
-                    Autodoc.tableNames.addAll(entityTypeNames)
-                }
-                if (fields.isNotEmpty()) {
-                    if (log.isDebugEnabled) {
-                        log.debug("自动识别参数：{}", fields)
-                    }
-                    Autodoc.fields.addAll(fields)
-                }
+                extDocFieldInfo(resultType, result)
             } catch (e: Exception) {
                 log.error("解析参数实体类型失败", e)
             }
@@ -85,7 +61,7 @@ class AutodocAspect(
         return entityTypes.contains(type)
     }
 
-    private fun getMethodParamComments(method: Method): List<Field>? {
+    private fun extMethodParamComments(method: Method) {
         val className = method.declaringClass.name
         val pathname = "src/main/java/${className.replace(".", "/")}.java"
         var file = File(pathname)
@@ -110,9 +86,9 @@ class AutodocAspect(
                             it.simpleName
                         )
                     }
-                } ?: return null
+                } ?: return
 
-            val fields = mutableListOf<Field>()
+            val fields = linkedSetOf<Field>()
 
             targetMethodOpt.javadoc?.ifPresent { javadoc ->
                 javadoc.blockTags
@@ -132,46 +108,57 @@ class AutodocAspect(
                         }
                     }
             }
-            return fields
-        } else {
-            return null
+            if (fields.isNotEmpty()) {
+                if (log.isDebugEnabled) {
+                    log.debug("自动识别方法参数：{}", fields)
+                }
+                Autodoc.fields.put("ARGS", fields)
+            }
         }
     }
 
 
-    private fun extDocFieldInfo(
-        type: Class<*>,
-        any: Any?
-    ): Pair<LinkedHashSet<Field>, LinkedHashSet<String>> {
-        val fields = linkedSetOf<Field>()
-        val entityTypeNames = linkedSetOf<String>()
+    private fun extDocFieldInfo(type: Class<*>, any: Any?) {
         if (type.classLoader != null) {
             getClassHierarchy(type).forEach {
                 val simpleName = it.simpleName
-                if (isEntity(simpleName)) {
-                    entityTypeNames.add(simpleName)
+                val entity = isEntity(simpleName)
+                if (entity) {
+                    Autodoc.tableNames.add(simpleName)
                 }
                 fields(it)?.let {
-                    fields.addAll(it)
+                    if (it.isNotEmpty()) {
+                        Autodoc.fields.put(simpleName, it)
+                        if (!entity) {
+                            if (log.isDebugEnabled) {
+                                log.debug("自动识别参数：{}", it)
+                            }
+                        }
+                    }
                 }
             }
             getClassGetters(type, any)?.forEach { cls, value ->
                 val simpleName = cls.simpleName
-                if (isEntity(simpleName)) {
-                    entityTypeNames.add(simpleName)
+                val entity = isEntity(simpleName)
+                if (entity) {
+                    Autodoc.tableNames.add(simpleName)
                 }
                 fields(cls)?.let {
-                    fields.addAll(it)
+                    if (it.isNotEmpty()) {
+                        Autodoc.fields.put(simpleName, it)
+                        if (!entity) {
+                            if (log.isDebugEnabled) {
+                                log.debug("自动识别参数：{}", it)
+                            }
+                        }
+                    }
                 }
-                val (subFields, subEntityTypeNames) = extDocFieldInfo(cls, value)
-                fields.addAll(subFields)
-                entityTypeNames.addAll(subEntityTypeNames)
+                extDocFieldInfo(cls, value)
             }
         }
-        return fields to entityTypeNames
     }
 
-    private fun fields(type: Class<*>): Set<Field>? {
+    private fun fields(type: Class<*>): LinkedHashSet<Field>? {
         val pathname = "src/main/java/${type.name.replace(".", "/")}.java"
         var file = File(pathname)
         if (!file.exists()) {

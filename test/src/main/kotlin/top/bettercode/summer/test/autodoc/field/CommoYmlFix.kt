@@ -16,18 +16,18 @@ class CommoYmlFix() : FieldDescFix() {
 
     override val fixChildren: Boolean = false
 
-    private val requestHeaders: Set<Field> by lazy {
+    private val requestHeaders: Iterable<Iterable<Field>> by lazy {
         commonFields(DocProperties.REQUEST_HEADERS.propertyName)
     }
-    private val requestParameters: Set<Field> by lazy {
+    private val requestParameters: Iterable<Iterable<Field>> by lazy {
         commonFields(DocProperties.REQUEST_PARAMETERS.propertyName)
     }
-    private val responseContent: Set<Field> by lazy {
+    private val responseContent: Iterable<Iterable<Field>> by lazy {
         commonFields(DocProperties.RESPONSE_CONTENT.propertyName)
     }
 
-    private fun commonFields(name: String): Set<Field> {
-        return CommoYmlFix::class.java.getResourceAsStream("/field/$name.yml")!!.parseList(Field::class.java)
+    private fun commonFields(name: String): Iterable<Iterable<Field>> {
+        return setOf(CommoYmlFix::class.java.getResourceAsStream("/field/$name.yml")!!.parseList(Field::class.java))
     }
 
     private fun <T> InputStream.parseList(clazz: Class<T>): LinkedHashSet<T> {
@@ -44,7 +44,7 @@ class CommoYmlFix() : FieldDescFix() {
     }
 
 
-    override fun descFields(properties: DocProperties): Set<Field> {
+    override fun descFields(properties: DocProperties): Iterable<Iterable<Field>> {
         return when (properties) {
             DocProperties.REQUEST_HEADERS -> {
                 requestHeaders

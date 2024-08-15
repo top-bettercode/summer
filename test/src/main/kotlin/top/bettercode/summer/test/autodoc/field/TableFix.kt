@@ -16,8 +16,8 @@ class TableFix(
     private val tableNames: LinkedHashSet<String>
 ) {
 
-    private val tableFields: Map<String, Set<Field>> by lazy {
-        val fields = mutableMapOf<String, LinkedHashSet<Field>>()
+    private val tableFields: Map<String, Iterable<Field>> by lazy {
+        val fields = mutableMapOf<String, Iterable<Field>>()
         extension.run { _, tableHolder ->
             tableHolder as PumlTableHolder
             tableHolder.tables().forEach {
@@ -28,24 +28,19 @@ class TableFix(
         fields
     }
 
-    val namedFields: Set<Field> by lazy {
-        val set = linkedSetOf<Field>()
-        tableNames.forEach {
-            tableFields[it]?.apply {
-                set.addAll(this)
-            }
+    val namedFields: Iterable<Iterable<Field>> by lazy {
+        tableNames.mapNotNull {
+            tableFields[it]
         }
-        set
     }
 
-    val otherFields: Set<Field> by lazy {
-        tableFields.filter { it.key !in tableNames }.values.flatten().toSet()
+    val otherFields: Iterable<Iterable<Field>> by lazy {
+        tableFields.filter { it.key !in tableNames }.values
     }
 
-    private fun Table.fields(): LinkedHashSet<Field> {
+    private fun Table.fields(): Iterable<Field> {
         val fields = columns.flatMapTo(linkedSetOf()) { column ->
-            var type =
-                if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
+            var type = column.javaType.shortNameWithoutTypeArguments
             linkedSetOf(
                 Field(
                     name = column.javaName,

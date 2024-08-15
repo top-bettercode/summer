@@ -21,9 +21,9 @@ abstract class FieldDescFix {
     open val cover: Boolean = false
     open val fixChildren: Boolean = true
 
-    abstract fun descFields(properties: DocProperties): Set<Field>
+    abstract fun descFields(properties: DocProperties): Iterable<Iterable<Field>>
 
-    fun fix(descFields: Set<Field>, fields: Set<Field>): Boolean {
+    fun fix(descFields: Iterable<Field>, fields: Iterable<Field>): Boolean {
         fields.blankField().forEach { field ->
             var findField = descFields.findField(field.name, field.type)
             if (field.description.isBlank() && (findField == null || findField.description.isBlank())) {
@@ -55,13 +55,13 @@ abstract class FieldDescFix {
         return !fields.anyBlank()
     }
 
-    private fun Set<Field>.blankField(): Set<Field> {
+    private fun Iterable<Field>.blankField(): Iterable<Field> {
         return filter {
             it.isBlank() || it.children.anyBlank()
-        }.toSet()
+        }
     }
 
-    private fun Set<Field>.anyBlank(): Boolean {
+    private fun Iterable<Field>.anyBlank(): Boolean {
         return any { it.isBlank() || it.children.anyBlank() }
     }
 
@@ -90,77 +90,91 @@ abstract class FieldDescFix {
                 object : FieldDescFix() {
                     override val cover: Boolean = true
 
-                    override fun descFields(properties: DocProperties): Set<Field> {
+                    override fun descFields(properties: DocProperties): Iterable<Iterable<Field>> {
                         val namedFields = tableFix.namedFields
                         return namedFields
                     }
                 },
                 object : FieldDescFix() {
-                    override fun descFields(properties: DocProperties): Set<Field> {
+                    override fun descFields(properties: DocProperties): Iterable<Iterable<Field>> {
                         val otherFields = tableFix.otherFields
                         return otherFields
                     }
                 },
             )
 
-            for (fixDocFieldDesc in docFieldDescFixes) {
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val headerFields = fixDocFieldDesc.descFields(DocProperties.REQUEST_HEADERS)
-                if (fixDocFieldDesc.fix(headerFields, request.headersExt)) {
-                    break
+                for (fields in headerFields) {
+                    if (fixDocFieldDesc.fix(fields, request.headersExt)) {
+                        break@out
+                    }
                 }
             }
             request.headersExt.checkBlank("request.headersExt")
-            for (fixDocFieldDesc in docFieldDescFixes) {
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
-                if (fixDocFieldDesc.fix(parameterFields, request.uriVariablesExt)) {
-                    break
+                for (fields in parameterFields) {
+                    if (fixDocFieldDesc.fix(fields, request.uriVariablesExt)) {
+                        break@out
+                    }
                 }
             }
             request.uriVariablesExt.checkBlank("request.uriVariablesExt")
-            for (fixDocFieldDesc in docFieldDescFixes) {
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
-                if (fixDocFieldDesc.fix(parameterFields, request.queriesExt)) {
-                    break
+                for (fields in parameterFields) {
+                    if (fixDocFieldDesc.fix(fields, request.queriesExt)) {
+                        break@out
+                    }
                 }
             }
             request.queriesExt.checkBlank("request.queriesExt")
-            for (fixDocFieldDesc in docFieldDescFixes) {
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
-                if (fixDocFieldDesc.fix(parameterFields, request.parametersExt)) {
-                    break
+                for (fields in parameterFields) {
+                    if (fixDocFieldDesc.fix(fields, request.parametersExt)) {
+                        break@out
+                    }
                 }
             }
             request.parametersExt.checkBlank("request.parametersExt")
-            for (fixDocFieldDesc in docFieldDescFixes) {
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
-                if (fixDocFieldDesc.fix(parameterFields, request.partsExt)) {
-                    break
+                for (fields in parameterFields) {
+                    if (fixDocFieldDesc.fix(fields, request.partsExt)) {
+                        break@out
+                    }
                 }
             }
             request.partsExt.checkBlank("request.partsExt")
-            for (fixDocFieldDesc in docFieldDescFixes) {
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
-                if (fixDocFieldDesc.fix(parameterFields, request.contentExt)) {
-                    break
+                for (fields in parameterFields) {
+                    if (fixDocFieldDesc.fix(fields, request.contentExt)) {
+                        break@out
+                    }
                 }
             }
             request.contentExt.checkBlank("request.contentExt")
 
-            for (fixDocFieldDesc in docFieldDescFixes) {
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val responseFields = fixDocFieldDesc.descFields(DocProperties.RESPONSE_CONTENT)
-                if (fixDocFieldDesc.fix(responseFields, response.contentExt)) {
-                    break
+                for (fields in responseFields) {
+                    if (fixDocFieldDesc.fix(fields, response.contentExt)) {
+                        break@out
+                    }
                 }
             }
             response.contentExt.checkBlank("response.contentExt")
         }
 
-        fun Set<Field>.findExtField(
+        fun Iterable<Field>.findExtField(
             name: String,
             type: String
         ): Field? {
@@ -203,7 +217,7 @@ abstract class FieldDescFix {
             return field
         }
 
-        fun Set<Field>.findField(name: String, type: String): Field? {
+        fun Iterable<Field>.findField(name: String, type: String): Field? {
             val set = this
             val field =
                 set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }
@@ -219,7 +233,7 @@ abstract class FieldDescFix {
             return field?.apply { this.name = name }
         }
 
-        private fun Set<Field>.checkBlank(desc: String, prefix: String = ""): Set<Field> {
+        private fun Iterable<Field>.checkBlank(desc: String, prefix: String = ""): Iterable<Field> {
             forEach {
                 val blank = it.description.isBlank()
                 if (blank) {

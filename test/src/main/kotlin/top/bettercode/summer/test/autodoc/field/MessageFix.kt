@@ -11,14 +11,13 @@ class MessageFix : FieldDescFix() {
 
     override val cover: Boolean = true
 
-    private val messageFields: Set<Field> by lazy {
-        setOf(Field(name = "lines", description = "行信息")) +
-                PropertiesSource.of("messages").all()
-                    .map { Field(name = it.key, description = it.value) }
-                    .toSet()
+    private val messageFields: Iterable<Iterable<Field>> by lazy {
+        val fields = PropertiesSource.of("messages").all()
+            .map { Field(name = it.key, description = it.value) }
+        setOf(fields + Field(name = "lines", description = "行信息"))
     }
 
-    override fun descFields(properties: DocProperties): Set<Field> {
+    override fun descFields(properties: DocProperties): Iterable<Iterable<Field>> {
         return messageFields
     }
 
