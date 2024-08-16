@@ -48,8 +48,8 @@ open class MaterialIDs(
         return RelationMaterialIDs(ids, relationIds)
     }
 
-    fun replace(replaceRate: Double, replaceId: String): ReplacebleMaterialIDs {
-        return ReplacebleMaterialIDs(ids, replaceRate, MaterialIDs(replaceId))
+    fun replace(replaceRate: Double?, replaceId: String?): ReplacebleMaterialIDs {
+        return ReplacebleMaterialIDs(ids, replaceRate, replaceId?.let { MaterialIDs(it) })
     }
 
     fun replace(): ReplacebleMaterialIDs {

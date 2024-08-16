@@ -202,16 +202,17 @@ data class PrepareSolveData(
                                     UsageVar(normal = normalVar, overdose = overdoseVar)
                             }
                             //替换原料消耗变量初始化
-                            replaceConsumeMaterialVars?.forEach {
-                                val replaceRate = ids.replaceRate!!
-                                it.weight.leIfNot(0.0, useReplace)
-                                val normalVar = numVar(0.0, targetWeight)
-                                normalVars.add(normalVar / replaceRate)
-                                val overdoseVar = numVar(0.0, targetWeight)
-                                overdoseVars.add(overdoseVar / replaceRate)
-                                it.consumes[m.id] =
-                                    UsageVar(normal = normalVar, overdose = overdoseVar)
-                            }
+                            if (ids.replaceRate != null)
+                                replaceConsumeMaterialVars?.forEach {
+                                    val replaceRate = ids.replaceRate
+                                    it.weight.leIfNot(0.0, useReplace)
+                                    val normalVar = numVar(0.0, targetWeight)
+                                    normalVars.add(normalVar / replaceRate)
+                                    val overdoseVar = numVar(0.0, targetWeight)
+                                    overdoseVars.add(overdoseVar / replaceRate)
+                                    it.consumes[m.id] =
+                                        UsageVar(normal = normalVar, overdose = overdoseVar)
+                                }
 
                             //m 对应原料的用量变量
                             val normalWeight =
