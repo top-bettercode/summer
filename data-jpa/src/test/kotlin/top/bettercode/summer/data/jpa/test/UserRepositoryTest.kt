@@ -12,6 +12,7 @@ import top.bettercode.summer.data.jpa.domain.StaticUser
 import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.repository.StaticUserRepository
 import top.bettercode.summer.data.jpa.repository.UserRepository
+import java.lang.Thread.sleep
 import javax.sql.DataSource
 
 @ExtendWith(SpringExtension::class)
@@ -108,6 +109,50 @@ class UserRepositoryTest {
 
     @Test
     fun flush() {
-       repository.flush()
+        repository.flush()
+    }
+
+    @Test
+    fun version() {
+        var dave = User("Wu", "Matthews")
+        System.err.println(dave.version)
+        System.err.println(dave.createdDate)
+        System.err.println(dave.lastModifiedDate)
+        System.err.println(dave.lastModifiedBy)
+
+        dave = repository.save(dave)
+        System.err.println(dave.version)
+        val createdDate = dave.createdDate
+        System.err.println(createdDate)
+        var lastModifiedDate = dave.lastModifiedDate
+        System.err.println(lastModifiedDate)
+        var lastModifiedBy = dave.lastModifiedBy
+        System.err.println(lastModifiedBy)
+        Assertions.assertEquals(0, dave.version)
+        System.err.println(dave.id)
+        sleep(1000)
+        Assertions.assertNotNull(dave.id)
+        dave.firstName = "Wu2"
+        dave = repository.save(dave)
+        System.err.println(dave.version)
+        System.err.println(dave.createdDate)
+        System.err.println(dave.lastModifiedDate)
+        System.err.println(dave.lastModifiedBy)
+        Assertions.assertEquals(createdDate, dave.createdDate)
+        Assertions.assertNotEquals(lastModifiedDate, dave.lastModifiedDate)
+        lastModifiedDate = dave.lastModifiedDate
+        Assertions.assertNotEquals(lastModifiedBy, dave.lastModifiedBy)
+        lastModifiedBy = dave.lastModifiedBy
+        Assertions.assertEquals(1, dave.version)
+        dave.firstName = "Wu3"
+        dave = repository.save(dave)
+        System.err.println(dave.version)
+        System.err.println(dave.createdDate)
+        System.err.println(dave.lastModifiedDate)
+        System.err.println(dave.lastModifiedBy)
+        Assertions.assertEquals(createdDate, dave.createdDate)
+        Assertions.assertNotEquals(lastModifiedDate, dave.lastModifiedDate)
+        Assertions.assertNotEquals(lastModifiedBy, dave.lastModifiedBy)
+        Assertions.assertEquals(2, dave.version)
     }
 }

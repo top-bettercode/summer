@@ -31,7 +31,6 @@ class VersionAttribute<X, T>(singularAttribute: SingularAttribute<X, T>) : Singu
         } else {
             throw UnsupportedOperationException("Unsupported version type: $javaType")
         }
-
     }
 
 }

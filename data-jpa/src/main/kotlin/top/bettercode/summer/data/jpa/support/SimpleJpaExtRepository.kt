@@ -95,19 +95,20 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
 
     @Transactional
     override fun <S : T> saveDynamic(s: S): S {
-        extJpaSupport.logicalDeletedAttribute?.setFalseIf(s)
-
-        var form = false
-        val entity: T = if (s::class.java != domainClass) {
+        var obj = s
+        extJpaSupport.logicalDeletedAttribute?.setFalseIf(obj)
+        var needCopy = false
+        var entity: T = if (obj::class.java != domainClass) {
             val newInstance = domainClass.getConstructor().newInstance()
-            BeanUtils.copyProperties(s, newInstance)
-            form = true
+            BeanUtils.copyProperties(obj, newInstance)
+            needCopy = true
             newInstance
         } else {
-            s
+            obj
         }
-        if (isNew(entity, true)) {
+        entity = if (isNew(entity, true)) {
             entityManager.persist(entity)
+            entity
         } else {
             val optional = findById(entityInformation.getId(entity)!!)
             if (optional.isPresent) {
@@ -116,12 +117,16 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
                 entityManager.merge(entity)
             } else {
                 entityManager.persist(entity)
+                entity
             }
         }
-        if (form) {
-            BeanUtils.copyProperties(entity, s)
+        if (needCopy) {
+            BeanUtils.copyProperties(entity, obj)
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            obj = entity as S
         }
-        return s
+        return obj
     }
 
     @Transactional
@@ -218,6 +223,8 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
         }
         return affected.toLong()
     }
+
+    //--------------------------------------------
 
     @Transactional
     override fun delete(entity: T) {
@@ -322,6 +329,54 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
             super.deleteAllInBatch()
         }
     }
+
+    @Transactional
+    override fun deleteAllRecycleBin(): Long {
+        return if (extJpaSupport.logicalDeletedSupported) {
+            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification)
+        } else {
+            0L
+        }
+    }
+
+    @Transactional
+    override fun deleteFromRecycleBin(id: ID) {
+        if (extJpaSupport.logicalDeletedSupported) {
+            val spec =
+                Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                    builder.equal(
+                        root[entityInformation.idAttribute], id
+                    )
+                }
+            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
+            val entity = findByIdFromRecycleBin(id)
+            entity.ifPresent { t: T -> super.delete(t) }
+        }
+    }
+
+    @Transactional
+    override fun deleteAllByIdFromRecycleBin(ids: Iterable<ID>): Long {
+        return if (extJpaSupport.logicalDeletedSupported) {
+            val spec =
+                Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
+                    root[entityInformation.idAttribute].`in`(toCollection(ids))
+                }
+            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
+        } else {
+            0
+        }
+    }
+
+    @Transactional
+    override fun deleteFromRecycleBin(spec: Specification<T>?): Long {
+        return if (extJpaSupport.logicalDeletedSupported) {
+            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
+        } else {
+            0
+        }
+    }
+
+    //--------------------------------------------
 
     override fun findById(id: ID): Optional<T> {
         return if (extJpaSupport.logicalDeletedSupported) {
@@ -529,51 +584,6 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
             count(null)
         } else {
             super.count()
-        }
-    }
-
-    @Transactional
-    override fun deleteAllRecycleBin(): Long {
-        return if (extJpaSupport.logicalDeletedSupported) {
-            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.deletedSpecification)
-        } else {
-            0L
-        }
-    }
-
-    @Transactional
-    override fun deleteFromRecycleBin(id: ID) {
-        if (extJpaSupport.logicalDeletedSupported) {
-            val spec =
-                Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-                    builder.equal(
-                        root[entityInformation.idAttribute], id
-                    )
-                }
-            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
-            val entity = findByIdFromRecycleBin(id)
-            entity.ifPresent { t: T -> super.delete(t) }
-        }
-    }
-
-    override fun deleteAllByIdFromRecycleBin(ids: Iterable<ID>): Long {
-        return if (extJpaSupport.logicalDeletedSupported) {
-            val spec =
-                Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? ->
-                    root[entityInformation.idAttribute].`in`(toCollection(ids))
-                }
-            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
-        } else {
-            0
-        }
-    }
-
-    @Transactional
-    override fun deleteFromRecycleBin(spec: Specification<T>?): Long {
-        return if (extJpaSupport.logicalDeletedSupported) {
-            doPhysicalDelete(extJpaSupport.logicalDeletedAttribute!!.andDeleted(spec))
-        } else {
-            0
         }
     }
 

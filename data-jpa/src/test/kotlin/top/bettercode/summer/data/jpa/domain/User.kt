@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.domain
 
 import org.hibernate.annotations.ColumnDefault
+import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
@@ -11,11 +12,11 @@ import javax.persistence.EntityListeners
 import javax.persistence.Table
 import javax.persistence.Version
 
+@DynamicUpdate
 @Entity
 @Table(name = "t_user")
 @EntityListeners(AuditingEntityListener::class)
 open class User : BaseUser {
-
 
     /**
      * 修改人
