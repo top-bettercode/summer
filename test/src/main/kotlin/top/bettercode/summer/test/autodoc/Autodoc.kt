@@ -37,31 +37,31 @@ object Autodoc {
      * 相关数据表名
      */
     @JvmStatic
-    var tableNames: LinkedHashSet<String> = linkedSetOf()
+    val tableNames: LinkedHashSet<String> = linkedSetOf()
 
     /**
      * 必填参数
      */
     @JvmStatic
-    var requiredParameters: Set<String> = setOf()
+    val requiredParameters: MutableSet<String> = mutableSetOf()
 
     /**
      * 请求头必填参数
      */
     @JvmStatic
-    var requiredHeaders: Set<String> = setOf()
+    val requiredHeaders: MutableSet<String> = mutableSetOf()
 
     /**
      * 忽略请求头参数
      */
     @JvmStatic
-    var ignoredHeaders: Set<String> = setOf()
+    val ignoredHeaders: MutableSet<String> = mutableSetOf()
 
     /**
      * 请求头
      */
     @JvmStatic
-    var headers: Set<String> = setOf()
+    val headers: MutableSet<String> = mutableSetOf()
 
     /**
      * 是否启用文档数据生成
@@ -85,8 +85,9 @@ object Autodoc {
      * 字段描述
      */
     @JvmStatic
-    var fields: LinkedHashMap<String, LinkedHashSet<Field>> = linkedMapOf()
+    val fields: LinkedHashMap<String, LinkedHashSet<Field>> = linkedMapOf()
 
+    val extedTypes: MutableSet<Class<*>> = mutableSetOf()
 
     @JvmStatic
     fun collectionName(collectionName: String) {
@@ -119,7 +120,7 @@ object Autodoc {
      */
     @JvmStatic
     fun tableNames(vararg tableName: String) {
-        tableNames = tableName.mapTo(LinkedHashSet<String>()) { it }
+        tableNames.addAll(tableName)
     }
 
     /**
@@ -127,7 +128,7 @@ object Autodoc {
      */
     @JvmStatic
     fun requiredParameters(vararg parameter: String) {
-        requiredParameters = parameter.toSet()
+        requiredParameters.addAll(parameter)
     }
 
     /**
@@ -135,12 +136,12 @@ object Autodoc {
      */
     @JvmStatic
     fun requiredHeaders(vararg header: String) {
-        requiredHeaders = header.toSet()
+        requiredHeaders.addAll(header)
     }
 
     @JvmStatic
     fun ignoredHeaders(vararg header: String) {
-        ignoredHeaders = header.toSet()
+        ignoredHeaders.addAll(header)
     }
 
     /**
@@ -156,7 +157,7 @@ object Autodoc {
      */
     @JvmStatic
     fun headers(vararg header: String) {
-        headers = header.toSet()
+        headers.addAll(header)
     }
 
     /**
@@ -190,7 +191,8 @@ object Autodoc {
      */
     @JvmStatic
     fun field(name: String, description: String) {
-        fields.computeIfAbsent("DEFAULT") { LinkedHashSet() }.add(Field(name = name, description = description))
+        fields.computeIfAbsent("DEFAULT") { LinkedHashSet() }
+            .add(Field(name = name, description = description))
     }
 
     fun reset() {
@@ -199,14 +201,15 @@ object Autodoc {
         version = ""
         description = ""
         schema = null
-        tableNames = linkedSetOf<String>()
-        requiredParameters = setOf()
-        requiredHeaders = setOf()
-        ignoredHeaders = setOf()
-        headers = setOf()
+        tableNames.clear()
+        requiredParameters.clear()
+        requiredHeaders.clear()
+        ignoredHeaders.clear()
+        headers.clear()
         enable = true
         disableOnException = null
         requireAuthorization = false
-        fields = linkedMapOf()
+        fields.clear()
+        extedTypes.clear()
     }
 }

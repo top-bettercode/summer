@@ -10,6 +10,7 @@ import org.aspectj.lang.reflect.MethodSignature
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeanWrapperImpl
+import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -20,6 +21,8 @@ import java.io.File
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 import javax.persistence.EntityManagerFactory
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 @Aspect
 class AutodocAspect(
@@ -29,7 +32,7 @@ class AutodocAspect(
 
     private val log: Logger = LoggerFactory.getLogger(AutodocAspect::class.java)
     private val entityTypes: List<String> by lazy {
-        entityManagerFactory.flatMap { it.metamodel.entities.map { it.javaType.simpleName } }
+        entityManagerFactory.flatMap { em -> em.metamodel.entities.map { it.javaType.simpleName } }
     }
 
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping) || @annotation(org.springframework.web.bind.annotation.GetMapping) || @annotation(org.springframework.web.bind.annotation.PostMapping) || @annotation(org.springframework.web.bind.annotation.PutMapping) || @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
@@ -39,16 +42,18 @@ class AutodocAspect(
             try {
                 val signature = joinPoint.signature as MethodSignature
                 val method = signature.method
-                extMethodParamComments(method)
+                if (!ErrorController::class.java.isAssignableFrom(method.declaringClass)) {
+                    extMethodParamComments(method)
 
-                val args = joinPoint.args
-                method.parameterTypes.forEachIndexed { index, clazz ->
-                    val arg = args[index]
-                    val type = if (arg == null) clazz else arg::class.java
-                    extDocFieldInfo(type, arg)
+                    val args = joinPoint.args
+                    method.parameterTypes.forEachIndexed { index, clazz ->
+                        val arg = args[index]
+                        val type = if (arg == null) clazz else arg::class.java
+                        extDocFieldInfo(type, arg)
+                    }
+                    val resultType = if (result == null) method.returnType else result::class.java
+                    extDocFieldInfo(resultType, result)
                 }
-                var resultType = if (result == null) method.returnType else result::class.java
-                extDocFieldInfo(resultType, result)
             } catch (e: Exception) {
                 log.error("解析参数实体类型失败", e)
             }
@@ -80,8 +85,8 @@ class AutodocAspect(
             }
             val cu = StaticJavaParser.parse(file)
             val targetMethodOpt = cu.findAll(MethodDeclaration::class.java)
-                .firstOrNull {
-                    it.nameAsString == methodName && it.parameters.size == method.parameterCount && it.parameters.map { it.type } == method.parameterTypes.map {
+                .firstOrNull { m ->
+                    m.nameAsString == methodName && m.parameters.size == method.parameterCount && m.parameters.map { it.type } == method.parameterTypes.map {
                         StaticJavaParser.parseType(
                             it.simpleName
                         )
@@ -112,40 +117,37 @@ class AutodocAspect(
                 if (log.isDebugEnabled) {
                     log.debug("自动识别方法参数：{}", fields)
                 }
-                Autodoc.fields.put("ARGS", fields)
+                Autodoc.fields["ARGS"] = fields
             }
         }
     }
 
 
     private fun extDocFieldInfo(type: Class<*>, any: Any?) {
-        if (type.classLoader != null) {
+        if (!Autodoc.extedTypes.contains(type) && valided(type)) {
             getClassHierarchy(type).forEach { cls ->
-                fields(cls)?.let { fields ->
-                    if (fields.isNotEmpty()) {
-                        val simpleName = cls.simpleName
-                        Autodoc.fields.put(simpleName, fields)
-                        if (!isEntity(simpleName)) {
-                            if (log.isDebugEnabled) {
-                                log.debug("自动识别参数：{}", fields)
-                            }
-                        }
-                    }
-                }
+                extFields(cls)
             }
-            getClassGetters(type, any)?.forEach { cls, value ->
-                fields(cls)?.let { fields ->
-                    if (fields.isNotEmpty()) {
-                        val simpleName = cls.simpleName
-                        Autodoc.fields.put(simpleName, fields)
-                        if (!isEntity(simpleName)) {
-                            if (log.isDebugEnabled) {
-                                log.debug("自动识别参数：{}", fields)
-                            }
+            getClassGetters(type, any)?.forEach { (cls, value) ->
+                extFields(cls)
+                extDocFieldInfo(cls, value)
+            }
+            Autodoc.extedTypes.add(type)
+        }
+    }
+
+    private fun extFields(cls: Class<*>) {
+        val simpleName = cls.simpleName
+        if (!Autodoc.fields.containsKey(simpleName)) {
+            fields(cls)?.let { fields ->
+                if (fields.isNotEmpty()) {
+                    Autodoc.fields[simpleName] = fields
+                    if (!isEntity(simpleName)) {
+                        if (log.isDebugEnabled) {
+                            log.debug("自动识别参数：{}", fields)
                         }
                     }
                 }
-                extDocFieldInfo(cls, value)
             }
         }
     }
@@ -188,7 +190,13 @@ class AutodocAspect(
     }
 
     private fun valided(type: Class<*>): Boolean {
-        return type.classLoader != null
+        return if (type.classLoader != null) {
+            !(HttpServletRequest::class.java.isAssignableFrom(type) || HttpServletResponse::class.java.isAssignableFrom(
+                type
+            ))
+        } else {
+            false
+        }
     }
 
     private fun getClassHierarchy(cls: Class<*>): Set<Class<*>> {

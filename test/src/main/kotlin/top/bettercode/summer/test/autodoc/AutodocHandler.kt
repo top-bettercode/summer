@@ -61,6 +61,7 @@ class AutodocHandler(
                 if (disableOnException && operation.response.stackTrace.isNotBlank()) {
                     return
                 }
+
                 //生成相应数据
                 val projectModuleDic = File(
                     genProperties.source,
