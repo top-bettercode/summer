@@ -8,7 +8,7 @@ import top.bettercode.summer.tools.recipe.criteria.UsageVar
  * @author Peter Wu
  */
 data class RecipeMaterialVar(
-    private val material: RecipeMaterial,
+    val material: RecipeMaterial,
     /** 最终使用量  */
     val weight: IVar,
     /**

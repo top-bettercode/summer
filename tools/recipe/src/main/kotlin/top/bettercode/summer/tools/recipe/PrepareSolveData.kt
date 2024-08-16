@@ -56,7 +56,8 @@ data class PrepareSolveData(
 
                 // 进料口数量
                 if (numMaxMaterials != null && numMaxMaterials in 1 until numRawMaterials) {
-                    materialVars.atMost(numMaxMaterials)
+                    recipeMaterials.values.filter { !it.material.feedPortShare }.map { it.weight }
+                        .atMost(numMaxMaterials)
                 }
 
                 // 不能混用的原料

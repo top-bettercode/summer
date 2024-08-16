@@ -4,28 +4,8 @@
   "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : { },
-    "material" : {
-      "id" : "氯化铵（干）",
-      "index" : 6,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 25.3
-        },
-        "氯离子" : {
-          "id" : "氯离子",
-          "value" : 66.7
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 1.0
-        }
-      },
-      "name" : "氯化铵（干）",
-      "price" : 1.25,
-      "unit" : "吨"
-    },
     "weight" : 306.0573038988986,
+    "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 6,
     "indicators" : {
@@ -90,24 +70,8 @@
         "overdose" : 0.0
       }
     },
-    "material" : {
-      "id" : "液氨",
-      "index" : 10,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 81.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 0.5
-        }
-      },
-      "name" : "液氨",
-      "price" : 4.2,
-      "unit" : "吨"
-    },
     "weight" : 5.164343745150803,
+    "feedPortShare" : false,
     "id" : "液氨",
     "index" : 10,
     "indicators" : {
@@ -127,28 +91,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "硝铵",
-      "index" : 12,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 34.5
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 0.6
-        },
-        "硝态氮" : {
-          "id" : "硝态氮",
-          "value" : 17.299999999999997
-        }
-      },
-      "name" : "硝铵",
-      "price" : 2.161,
-      "unit" : "吨"
-    },
     "weight" : 8.819339628633386,
+    "feedPortShare" : false,
     "id" : "硝铵",
     "index" : 12,
     "indicators" : {
@@ -172,32 +116,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "32-4-0硝磷",
-      "index" : 14,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 31.5
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 1.0
-        },
-        "硝态氮" : {
-          "id" : "硝态氮",
-          "value" : 15.5
-        },
-        "磷" : {
-          "id" : "磷",
-          "value" : 4.5
-        }
-      },
-      "name" : "32-4-0硝磷",
-      "price" : 2.68,
-      "unit" : "吨"
-    },
     "weight" : 31.56706865233705,
+    "feedPortShare" : false,
     "id" : "32-4-0硝磷",
     "index" : 14,
     "indicators" : {
@@ -225,36 +145,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "8-40-0再浆肥（粉）",
-      "index" : 20,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 8.0
-        },
-        "水溶磷" : {
-          "id" : "水溶磷",
-          "value" : 19.2
-        },
-        "水溶磷率" : {
-          "id" : "水溶磷率",
-          "value" : 48.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 2.0
-        },
-        "磷" : {
-          "id" : "磷",
-          "value" : 40.0
-        }
-      },
-      "name" : "8-40-0再浆肥（粉）",
-      "price" : 1.8,
-      "unit" : "吨"
-    },
     "weight" : 284.1246505085467,
+    "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
     "indicators" : {
@@ -286,36 +178,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "64磷酸二铵（颗粒）",
-      "index" : 23,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 18.0
-        },
-        "水溶磷" : {
-          "id" : "水溶磷",
-          "value" : 40.48
-        },
-        "水溶磷率" : {
-          "id" : "水溶磷率",
-          "value" : 88.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 0.5
-        },
-        "磷" : {
-          "id" : "磷",
-          "value" : 46.0
-        }
-      },
-      "name" : "64磷酸二铵（颗粒）",
-      "price" : 3.85,
-      "unit" : "吨"
-    },
     "weight" : 125.93396023310028,
+    "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
     "indicators" : {
@@ -347,28 +211,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "95%氯化钾烘干粉（国产）",
-      "index" : 36,
-      "indicators" : {
-        "氯离子" : {
-          "id" : "氯离子",
-          "value" : 47.699999999999996
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 1.0
-        },
-        "钾" : {
-          "id" : "钾",
-          "value" : 60.0
-        }
-      },
-      "name" : "95%氯化钾烘干粉（国产）",
-      "price" : 3.55,
-      "unit" : "吨"
-    },
     "weight" : 227.09780134769795,
+    "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
     "indicators" : {
@@ -392,15 +236,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "防结油（白色）",
-      "index" : 64,
-      "indicators" : { },
-      "name" : "防结油（白色）",
-      "price" : 8.0,
-      "unit" : "吨"
-    },
     "weight" : 1.9999999999999998,
+    "feedPortShare" : false,
     "id" : "防结油（白色）",
     "index" : 64,
     "indicators" : { },
@@ -411,15 +248,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "防结粉（白色）",
-      "index" : 65,
-      "indicators" : { },
-      "name" : "防结粉（白色）",
-      "price" : 2.0,
-      "unit" : "吨"
-    },
     "weight" : 2.9999999999999996,
+    "feedPortShare" : false,
     "id" : "防结粉（白色）",
     "index" : 65,
     "indicators" : { },
@@ -430,28 +260,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "喷浆硫基用95氯化钾",
-      "index" : 102,
-      "indicators" : {
-        "氯离子" : {
-          "id" : "氯离子",
-          "value" : 2.385
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 47.5
-        },
-        "钾" : {
-          "id" : "钾",
-          "value" : 60.0
-        }
-      },
-      "name" : "喷浆硫基用95氯化钾",
-      "price" : 3.55,
-      "unit" : "吨"
-    },
     "weight" : 6.23553198563538,
+    "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
     "indicators" : {

@@ -4,28 +4,8 @@
   "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : { },
-    "material" : {
-      "id" : "氯化铵（干）",
-      "index" : 3,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 25.3
-        },
-        "氯离子" : {
-          "id" : "氯离子",
-          "value" : 66.7
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 1.0
-        }
-      },
-      "name" : "氯化铵（干）",
-      "price" : 1.35,
-      "unit" : "吨"
-    },
     "weight" : 474.30830039525694,
+    "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -49,32 +29,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "中白肥（24%)",
-      "index" : 24,
-      "indicators" : {
-        "水溶磷" : {
-          "id" : "水溶磷",
-          "value" : 3.5999999999999996
-        },
-        "水溶磷率" : {
-          "id" : "水溶磷率",
-          "value" : 15.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 7.000000000000001
-        },
-        "磷" : {
-          "id" : "磷",
-          "value" : 24.0
-        }
-      },
-      "name" : "中白肥（24%)",
-      "price" : 0.75,
-      "unit" : "吨"
-    },
     "weight" : 339.28233744090454,
+    "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 24,
     "indicators" : {
@@ -102,28 +58,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "95%氯化钾烘干粉（国产）",
-      "index" : 26,
-      "indicators" : {
-        "氯离子" : {
-          "id" : "氯离子",
-          "value" : 47.699999999999996
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 1.0
-        },
-        "钾" : {
-          "id" : "钾",
-          "value" : 60.0
-        }
-      },
-      "name" : "95%氯化钾烘干粉（国产）",
-      "price" : 3.55,
-      "unit" : "吨"
-    },
     "weight" : 100.0,
+    "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -147,20 +83,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "白泥",
-      "index" : 53,
-      "indicators" : {
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 7.000000000000001
-        }
-      },
-      "name" : "白泥",
-      "price" : 0.35,
-      "unit" : "吨"
-    },
     "weight" : 80.0,
+    "feedPortShare" : false,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -176,20 +100,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "石粉（尿基高塔用）",
-      "index" : 54,
-      "indicators" : {
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 1.0
-        }
-      },
-      "name" : "石粉（尿基高塔用）",
-      "price" : 0.24,
-      "unit" : "吨"
-    },
     "weight" : 6.40936216383858,
+    "feedPortShare" : false,
     "id" : "石粉（尿基高塔用）",
     "index" : 54,
     "indicators" : {

@@ -427,6 +427,7 @@
   } ],
   "materialRelationConstraints" : [ ],
   "materials" : [ {
+    "feedPortShare" : false,
     "id" : "普通尿素",
     "index" : 0,
     "indicators" : {
@@ -443,6 +444,7 @@
     "price" : 2.822,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
     "indicators" : {
@@ -463,6 +465,7 @@
     "price" : 1.35,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "焦化硫铵",
     "index" : 4,
     "indicators" : {
@@ -483,6 +486,7 @@
     "price" : 1.35,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "己内级硫铵",
     "index" : 5,
     "indicators" : {
@@ -503,6 +507,7 @@
     "price" : 1.4,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "碳铵",
     "index" : 6,
     "indicators" : {
@@ -519,6 +524,7 @@
     "price" : 1.25,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "硝铵",
     "index" : 7,
     "indicators" : {
@@ -539,6 +545,7 @@
     "price" : 2.7,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "32-4-0硝磷",
     "index" : 8,
     "indicators" : {
@@ -563,6 +570,7 @@
     "price" : 2.75,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "55磷酸一铵（粉）",
     "index" : 9,
     "indicators" : {
@@ -591,6 +599,7 @@
     "price" : 3.25,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "58磷酸一铵（粉）",
     "index" : 10,
     "indicators" : {
@@ -619,6 +628,7 @@
     "price" : 3.51,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "60磷酸一铵（粉）",
     "index" : 12,
     "indicators" : {
@@ -647,6 +657,7 @@
     "price" : 3.71,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 14,
     "indicators" : {
@@ -675,6 +686,7 @@
     "price" : 3.95,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "64全水溶磷酸一铵",
     "index" : 15,
     "indicators" : {
@@ -703,6 +715,7 @@
     "price" : 4.95,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "67全水溶磷酸一铵",
     "index" : 16,
     "indicators" : {
@@ -731,6 +744,7 @@
     "price" : 5.17,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "工业一铵73%",
     "index" : 17,
     "indicators" : {
@@ -759,6 +773,7 @@
     "price" : 6.35,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "锌工铵",
     "index" : 18,
     "indicators" : {
@@ -795,6 +810,7 @@
     "price" : 5.37,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "磷酸脲",
     "index" : 19,
     "indicators" : {
@@ -823,6 +839,7 @@
     "price" : 7.9,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "67聚磷酸铵",
     "index" : 20,
     "indicators" : {
@@ -851,6 +868,7 @@
     "price" : 8.4,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "磷酸二氢钾",
     "index" : 21,
     "indicators" : {
@@ -879,6 +897,7 @@
     "price" : 10.1,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "硝酸钾",
     "index" : 23,
     "indicators" : {
@@ -903,6 +922,7 @@
     "price" : 6.0,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 24,
     "indicators" : {
@@ -927,6 +947,7 @@
     "price" : 0.75,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "低白肥（14%）",
     "index" : 25,
     "indicators" : {
@@ -951,6 +972,7 @@
     "price" : 0.42,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
     "indicators" : {
@@ -971,6 +993,7 @@
     "price" : 3.55,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "95%进口白钾(粉)",
     "index" : 29,
     "indicators" : {
@@ -991,6 +1014,7 @@
     "price" : 3.75,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "52%罗布泊硫酸钾（粉）",
     "index" : 30,
     "indicators" : {
@@ -1015,6 +1039,7 @@
     "price" : 3.85,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "52%曼海姆硫酸钾（粉）",
     "index" : 31,
     "indicators" : {
@@ -1039,6 +1064,7 @@
     "price" : 4.3,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "50%曼海姆硫酸钾（粉）",
     "index" : 32,
     "indicators" : {
@@ -1063,6 +1089,7 @@
     "price" : 4.1,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "EDTA-镁",
     "index" : 33,
     "indicators" : {
@@ -1079,6 +1106,7 @@
     "price" : 29.3,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "一水硫酸镁",
     "index" : 34,
     "indicators" : {
@@ -1099,6 +1127,7 @@
     "price" : 3.0,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "无水硫酸镁",
     "index" : 35,
     "indicators" : {
@@ -1119,6 +1148,7 @@
     "price" : 3.15,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "七水硫酸镁",
     "index" : 36,
     "indicators" : {
@@ -1139,6 +1169,7 @@
     "price" : 0.8,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "七水黄镁",
     "index" : 37,
     "indicators" : {
@@ -1159,6 +1190,7 @@
     "price" : 0.8,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "80氧化镁",
     "index" : 38,
     "indicators" : {
@@ -1175,6 +1207,7 @@
     "price" : 1.23,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "85氧化镁",
     "index" : 39,
     "indicators" : {
@@ -1191,6 +1224,7 @@
     "price" : 1.3,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "EDTA-钙",
     "index" : 40,
     "indicators" : {
@@ -1207,6 +1241,7 @@
     "price" : 29.0,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "EDTA-锌",
     "index" : 41,
     "indicators" : {
@@ -1223,6 +1258,7 @@
     "price" : 29.5,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "EDTA-锰",
     "index" : 42,
     "indicators" : {
@@ -1239,6 +1275,7 @@
     "price" : 29.0,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "EDTA-铁",
     "index" : 43,
     "indicators" : {
@@ -1255,6 +1292,7 @@
     "price" : 29.0,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "EDTA-铜",
     "index" : 44,
     "indicators" : {
@@ -1271,6 +1309,7 @@
     "price" : 39.5,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 45,
     "indicators" : {
@@ -1287,6 +1326,7 @@
     "price" : 160.0,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "一水硫酸锌",
     "index" : 46,
     "indicators" : {
@@ -1307,6 +1347,7 @@
     "price" : 7.1,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "七水硫酸锌",
     "index" : 47,
     "indicators" : {
@@ -1327,6 +1368,7 @@
     "price" : 4.9,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "硼砂",
     "index" : 48,
     "indicators" : {
@@ -1343,6 +1385,7 @@
     "price" : 5.4,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "硼酸",
     "index" : 49,
     "indicators" : {
@@ -1359,6 +1402,7 @@
     "price" : 8.4,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "四水八硼酸钠",
     "index" : 50,
     "indicators" : {
@@ -1375,6 +1419,7 @@
     "price" : 13.5,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "五水硫酸铜",
     "index" : 51,
     "indicators" : {
@@ -1395,6 +1440,7 @@
     "price" : 21.0,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "一水硫酸锰",
     "index" : 52,
     "indicators" : {
@@ -1415,6 +1461,7 @@
     "price" : 4.7,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "白泥",
     "index" : 53,
     "indicators" : {
@@ -1427,6 +1474,7 @@
     "price" : 0.35,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "石粉（尿基高塔用）",
     "index" : 54,
     "indicators" : {
@@ -1439,6 +1487,7 @@
     "price" : 0.24,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "籽煤",
     "index" : 84,
     "indicators" : { },
@@ -1446,6 +1495,7 @@
     "price" : 1.65,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "有机质（褐煤）",
     "index" : 65,
     "indicators" : {
@@ -1466,6 +1516,7 @@
     "price" : 0.75,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "生化黄腐酸钾",
     "index" : 66,
     "indicators" : {
@@ -1494,6 +1545,7 @@
     "price" : 2.65,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "心连心矿源黄腐酸钾",
     "index" : 67,
     "indicators" : {
@@ -1518,6 +1570,7 @@
     "price" : 8.5,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "植物氨基酸",
     "index" : 68,
     "indicators" : {
@@ -1538,6 +1591,7 @@
     "price" : 2.3,
     "unit" : "吨"
   }, {
+    "feedPortShare" : false,
     "id" : "1000亿微生物菌",
     "index" : 69,
     "indicators" : {

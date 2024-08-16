@@ -14,7 +14,7 @@ import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder(alphabetic = true)
 data class RecipeMaterialValue(
-    @JsonProperty("material")
+    @JsonIgnore
     val material: RecipeMaterial,
     /** 最终使用量  */
     @JsonProperty("weight")
@@ -26,6 +26,7 @@ data class RecipeMaterialValue(
     val consumes: Map<String, Usage>
 ) : IRecipeMaterial by material {
 
+    val feedPortShare: Boolean = material.feedPortShare
     val normalWeight: Double = consumes.values.sumOf { it.normal }
     val overdoseWeight: Double = consumes.values.sumOf { it.overdose }
 

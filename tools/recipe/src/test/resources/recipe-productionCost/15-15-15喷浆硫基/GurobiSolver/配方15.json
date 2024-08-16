@@ -45,24 +45,8 @@
         "overdose" : 0.0
       }
     },
-    "material" : {
-      "id" : "液氨",
-      "index" : 9,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 81.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 0.5
-        }
-      },
-      "name" : "液氨",
-      "price" : 3.8,
-      "unit" : "吨"
-    },
     "weight" : 65.8992847338096,
+    "feedPortShare" : false,
     "id" : "液氨",
     "index" : 9,
     "indicators" : {
@@ -82,36 +66,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "58磷酸一铵（粉）",
-      "index" : 13,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 10.0
-        },
-        "水溶磷" : {
-          "id" : "水溶磷",
-          "value" : 38.4
-        },
-        "水溶磷率" : {
-          "id" : "水溶磷率",
-          "value" : 80.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 2.0
-        },
-        "磷" : {
-          "id" : "磷",
-          "value" : 48.0
-        }
-      },
-      "name" : "58磷酸一铵（粉）",
-      "price" : 3.48,
-      "unit" : "吨"
-    },
     "weight" : 100.75613945991024,
+    "feedPortShare" : false,
     "id" : "58磷酸一铵（粉）",
     "index" : 13,
     "indicators" : {
@@ -143,36 +99,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "8-40-0再浆肥（粉）",
-      "index" : 16,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 8.0
-        },
-        "水溶磷" : {
-          "id" : "水溶磷",
-          "value" : 19.2
-        },
-        "水溶磷率" : {
-          "id" : "水溶磷率",
-          "value" : 48.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 2.0
-        },
-        "磷" : {
-          "id" : "磷",
-          "value" : 40.0
-        }
-      },
-      "name" : "8-40-0再浆肥（粉）",
-      "price" : 2.0,
-      "unit" : "吨"
-    },
     "weight" : 178.23308918187772,
+    "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
     "indicators" : {
@@ -204,36 +132,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "64磷酸二铵（颗粒）",
-      "index" : 18,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 18.0
-        },
-        "水溶磷" : {
-          "id" : "水溶磷",
-          "value" : 40.48
-        },
-        "水溶磷率" : {
-          "id" : "水溶磷率",
-          "value" : 88.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 0.5
-        },
-        "磷" : {
-          "id" : "磷",
-          "value" : 46.0
-        }
-      },
-      "name" : "64磷酸二铵（颗粒）",
-      "price" : 3.85,
-      "unit" : "吨"
-    },
     "weight" : 115.96482040541754,
+    "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
     "indicators" : {
@@ -270,24 +170,8 @@
         "overdose" : 28.473604026845408
       }
     },
-    "material" : {
-      "id" : "硫酸",
-      "index" : 36,
-      "indicators" : {
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 0.5
-        },
-        "硫" : {
-          "id" : "硫",
-          "value" : 32.7
-        }
-      },
-      "name" : "硫酸",
-      "price" : 0.22,
-      "unit" : "吨"
-    },
     "weight" : 313.20964429530244,
+    "feedPortShare" : false,
     "id" : "硫酸",
     "index" : 36,
     "indicators" : {
@@ -307,15 +191,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "防结油（白色）",
-      "index" : 61,
-      "indicators" : { },
-      "name" : "防结油（白色）",
-      "price" : 8.0,
-      "unit" : "吨"
-    },
     "weight" : 2.0,
+    "feedPortShare" : false,
     "id" : "防结油（白色）",
     "index" : 61,
     "indicators" : { },
@@ -326,15 +203,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "防结粉（白色）",
-      "index" : 62,
-      "indicators" : { },
-      "name" : "防结粉（白色）",
-      "price" : 2.0,
-      "unit" : "吨"
-    },
     "weight" : 3.0,
+    "feedPortShare" : false,
     "id" : "防结粉（白色）",
     "index" : 62,
     "indicators" : { },
@@ -345,36 +215,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "生化黄腐酸钾",
-      "index" : 67,
-      "indicators" : {
-        "有机质" : {
-          "id" : "有机质",
-          "value" : 60.0
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 2.0
-        },
-        "腐植酸" : {
-          "id" : "腐植酸",
-          "value" : 30.0
-        },
-        "钾" : {
-          "id" : "钾",
-          "value" : 10.0
-        },
-        "黄腐酸" : {
-          "id" : "黄腐酸",
-          "value" : 32.0
-        }
-      },
-      "name" : "生化黄腐酸钾",
-      "price" : 2.65,
-      "unit" : "吨"
-    },
     "weight" : 5.0,
+    "feedPortShare" : false,
     "id" : "生化黄腐酸钾",
     "index" : 67,
     "indicators" : {
@@ -406,28 +248,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "喷浆硫基用95氯化钾",
-      "index" : 89,
-      "indicators" : {
-        "氯离子" : {
-          "id" : "氯离子",
-          "value" : 2.385
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 47.5
-        },
-        "钾" : {
-          "id" : "钾",
-          "value" : 60.0
-        }
-      },
-      "name" : "喷浆硫基用95氯化钾",
-      "price" : 3.55,
-      "unit" : "吨"
-    },
     "weight" : 232.5,
+    "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 89,
     "indicators" : {
@@ -451,24 +273,8 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "material" : {
-      "id" : "喷浆专用尿素",
-      "index" : 90,
-      "indicators" : {
-        "氮" : {
-          "id" : "氮",
-          "value" : 34.5
-        },
-        "物料水分" : {
-          "id" : "物料水分",
-          "value" : 25.0
-        }
-      },
-      "name" : "喷浆专用尿素",
-      "price" : 2.8,
-      "unit" : "吨"
-    },
     "weight" : 120.03956699158782,
+    "feedPortShare" : false,
     "id" : "喷浆专用尿素",
     "index" : 90,
     "indicators" : {
