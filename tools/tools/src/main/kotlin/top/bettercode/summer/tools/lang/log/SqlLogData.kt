@@ -43,27 +43,34 @@ class SqlLogData(val id: String? = null) {
             }
 
             //limit ? offset ?
-            if (sql!!.contains("limit ?") && limit != null) {
-                sql = sql.replaceFirst("limit ?", "limit #${limit}")
+            val qsql = sql!!.lowercase().replace("\\s+".toRegex(), " ")
+            if (qsql.contains("limit ? offset ?") && limit != null && offset != null) {
+                sql = sql.replaceFirst("?", "#$limit")
+                sql = sql.replaceFirst("?", "#$offset")
+            } else if (qsql.contains("limit ?, ?") && limit != null && offset != null) {
+                sql = sql.replaceFirst("?", "#$offset")
+                sql = sql.replaceFirst("?", "#$limit")
             }
-            if (sql.contains("offset ?") && offset != null) {
-                sql = sql.replaceFirst("offset ?", "offset #${offset}")
+            if (qsql.contains("limit ?") && limit != null) {
+                sql = sql.replaceFirst("?", "#$limit")
+            }
+            if (qsql.contains("offset ?") && offset != null) {
+                sql = sql.replaceFirst("?", "#$offset")
             }
             //where
             //            rownum <= ?
             //        )
             //    where
             //        rownum_ > ?
-            if (sql.contains("rownum <= ?") && offset != null && limit != null) {
-                sql = sql.replaceFirst("rownum <= ?", "rownum <= #${offset!! + limit!!}")
+            if (qsql.contains("rownum <= ?") && offset != null && limit != null) {
+                sql = sql.replaceFirst("?", "#${offset!! + limit!!}")
             }
-            if (sql.contains("rownum_ > ?") && offset != null) {
-                sql = sql.replaceFirst("rownum_ > ?", "rownum_ > #${offset!!}")
+            if (qsql.contains("rownum_ > ?") && offset != null) {
+                sql = sql.replaceFirst("?", "#${offset}")
             }
-
             //fetch next ? rows only;
-            if (sql.contains("fetch next ?") && limit != null) {
-                sql = sql.replaceFirst("fetch next ?", "fetch next #${limit}")
+            if (qsql.contains("fetch next ?") && limit != null) {
+                sql = sql.replaceFirst("?", "#${limit}")
             }
         }
 
