@@ -25,6 +25,7 @@ import javax.persistence.Tuple
 import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Root
+import javax.transaction.Transactional
 
 /**
  * @author Peter Wu
@@ -484,6 +485,31 @@ class SimpleJpaExtRepositoryTest {
         query.setParameter(1, "Carter")
         query.setParameter(2, "Carter")
         query.setParameter(3, "Beauford1")
+        @Suppress("DEPRECATION")
+        query.unwrap(org.hibernate.query.Query::class.java)
+            .setResultTransformer(org.hibernate.transform.AliasToEntityMapResultTransformer.INSTANCE)
+
+//    nativeQuery.addScalar("first_name", StringType.INSTANCE);
+//    nativeQuery.addScalar("last_name", StringType.INSTANCE);
+//    nativeQuery.addScalar("date", TimestampType.INSTANCE);
+//    nativeQuery.addScalar("date1", TimestampType.INSTANCE);
+//    nativeQuery.forEach(o -> {
+//      System.err.println(StringUtil.json(o, true));
+//    });
+        val resultList = query.resultList
+        System.err.println(json(resultList, true))
+    }
+
+    @Test
+    @Transactional
+    fun nativeUpdate() {
+        val query = repository.entityManager.createNativeQuery(
+            "update t_user set first_name = 'abc'  where first_name = ? AND first_name = ? and last_name = ?",
+            Tuple::class.java
+        )
+        query.setParameter(1, "Carter")
+        query.setParameter(2, "Carter")
+        query.setParameter(3, "Beauford1")
 //        val nativeQuery = query.unwrap(NativeQuery::class.java)
         //    nativeQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 //    nativeQuery.addScalar("first_name", StringType.INSTANCE);
@@ -493,7 +519,7 @@ class SimpleJpaExtRepositoryTest {
 //    nativeQuery.forEach(o -> {
 //      System.err.println(StringUtil.json(o, true));
 //    });
-        val resultList = query.resultList
+        val resultList = query.executeUpdate()
         System.err.println(json(resultList, true))
     }
 

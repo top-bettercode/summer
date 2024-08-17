@@ -56,7 +56,7 @@ open class PageController : BaseController() {
         val collect = if (mapper == null) `object` else `object`.stream().map(mapper)
             .collect(Collectors.toList())
         val pagedResources =
-            pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+            pagedResources(number, size, 1, size.toLong(), collect)
         return super.ok(pagedResources)
     }
 
@@ -71,7 +71,7 @@ open class PageController : BaseController() {
             if (mapper == null) `object`.toList() else `object`.toList().stream().map(mapper)
                 .collect(Collectors.toList())
         val pagedResources =
-            pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+            pagedResources(number, size, 1, size.toLong(), collect)
         return super.ok(pagedResources)
     }
 
@@ -87,7 +87,7 @@ open class PageController : BaseController() {
         val collect = if (mapper == null) `object` else `object`.stream().map(mapper)
             .collect(Collectors.toList())
         val pagedResources =
-            pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+            pagedResources(number, size, 1, size.toLong(), collect)
         return super.of(pagedResources)
     }
 
@@ -99,7 +99,7 @@ open class PageController : BaseController() {
             if (mapper == null) `object`.toList() else `object`.toList().stream().map(mapper)
                 .collect(Collectors.toList())
         val pagedResources =
-            pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), collect)
+            pagedResources(number, size, 1, size.toLong(), collect)
         return super.of(pagedResources)
     }
 
@@ -111,18 +111,18 @@ open class PageController : BaseController() {
             if (mapper == null) `object`.content else `object`.content.stream().map(mapper)
                 .collect(Collectors.toList())
         return pagedResources(
-            number.toLong(),
-            `object`.size.toLong(),
-            `object`.totalPages.toLong(),
+            number,
+            `object`.size,
+            `object`.totalPages,
             `object`.totalElements,
             content
         )
     }
 
     protected open fun <T> pagedResources(
-        number: Long,
-        size: Long,
-        totalPages: Long,
+        number: Int,
+        size: Int,
+        totalPages: Int,
         totalElements: Long,
         content: Collection<T?>
     ): Any {
