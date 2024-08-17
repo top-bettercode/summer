@@ -12,6 +12,8 @@ import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionSynchronization
+import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
@@ -88,7 +90,39 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
             entityManager.persist(entity)
             entity
         } else {
-            entityManager.merge(entity)
+            val r = entityManager.merge(entity)
+            if (TransactionSynchronizationManager.isActualTransactionActive()) {
+                TransactionSynchronizationManager.registerSynchronization(object :
+                    TransactionSynchronization {
+                    override fun afterCommit() {
+                        var bean: DirectFieldAccessFallbackBeanWrapper? = null
+                        var resultBean: DirectFieldAccessFallbackBeanWrapper? = null
+                        if (extJpaSupport.versionAttribute != null) {
+                            bean = DirectFieldAccessFallbackBeanWrapper(entity)
+                            resultBean = DirectFieldAccessFallbackBeanWrapper(r)
+                            val name = extJpaSupport.versionAttribute!!.name
+                            bean.setPropertyValue(name, resultBean.getPropertyValue(name))
+                        }
+                        if (extJpaSupport.lastModifiedDateAttribute != null) {
+                            if (bean == null)
+                                bean = DirectFieldAccessFallbackBeanWrapper(entity)
+                            if (resultBean == null)
+                                resultBean = DirectFieldAccessFallbackBeanWrapper(r)
+                            val name = extJpaSupport.lastModifiedDateAttribute!!.name
+                            bean.setPropertyValue(name, resultBean.getPropertyValue(name))
+                        }
+                        if (extJpaSupport.lastModifiedByAttribute != null) {
+                            if (bean == null)
+                                bean = DirectFieldAccessFallbackBeanWrapper(entity)
+                            if (resultBean == null)
+                                resultBean = DirectFieldAccessFallbackBeanWrapper(r)
+                            val name = extJpaSupport.lastModifiedByAttribute!!.name
+                            bean.setPropertyValue(name, resultBean.getPropertyValue(name))
+                        }
+                    }
+                })
+            }
+            r
         }
         return result
     }
@@ -114,7 +148,39 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
             if (optional.isPresent) {
                 val exist = optional.get()
                 entity.nullFrom(exist)
-                entityManager.merge(entity)
+                val r = entityManager.merge(entity)
+                if (!needCopy && TransactionSynchronizationManager.isActualTransactionActive()) {
+                    TransactionSynchronizationManager.registerSynchronization(object :
+                        TransactionSynchronization {
+                        override fun afterCommit() {
+                            var bean: DirectFieldAccessFallbackBeanWrapper? = null
+                            var resultBean: DirectFieldAccessFallbackBeanWrapper? = null
+                            if (extJpaSupport.versionAttribute != null) {
+                                bean = DirectFieldAccessFallbackBeanWrapper(entity)
+                                resultBean = DirectFieldAccessFallbackBeanWrapper(r)
+                                val name = extJpaSupport.versionAttribute!!.name
+                                bean.setPropertyValue(name, resultBean.getPropertyValue(name))
+                            }
+                            if (extJpaSupport.lastModifiedDateAttribute != null) {
+                                if (bean == null)
+                                    bean = DirectFieldAccessFallbackBeanWrapper(entity)
+                                if (resultBean == null)
+                                    resultBean = DirectFieldAccessFallbackBeanWrapper(r)
+                                val name = extJpaSupport.lastModifiedDateAttribute!!.name
+                                bean.setPropertyValue(name, resultBean.getPropertyValue(name))
+                            }
+                            if (extJpaSupport.lastModifiedByAttribute != null) {
+                                if (bean == null)
+                                    bean = DirectFieldAccessFallbackBeanWrapper(entity)
+                                if (resultBean == null)
+                                    resultBean = DirectFieldAccessFallbackBeanWrapper(r)
+                                val name = extJpaSupport.lastModifiedByAttribute!!.name
+                                bean.setPropertyValue(name, resultBean.getPropertyValue(name))
+                            }
+                        }
+                    })
+                }
+                r
             } else {
                 entityManager.persist(entity)
                 entity

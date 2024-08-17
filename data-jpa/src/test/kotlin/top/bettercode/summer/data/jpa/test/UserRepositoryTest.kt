@@ -156,4 +156,49 @@ class UserRepositoryTest {
         Assertions.assertNotEquals(lastModifiedBy, dave.lastModifiedBy)
         Assertions.assertEquals(2, dave.version)
     }
+
+    @Test
+    fun version2() {
+        val dave = User("Wu", "Matthews")
+        System.err.println(dave.version)
+        System.err.println(dave.createdDate)
+        System.err.println(dave.lastModifiedDate)
+        System.err.println(dave.lastModifiedBy)
+
+        repository.save(dave)
+        System.err.println(dave.version)
+        val createdDate = dave.createdDate
+        System.err.println(createdDate)
+        var lastModifiedDate = dave.lastModifiedDate
+        System.err.println(lastModifiedDate)
+        var lastModifiedBy = dave.lastModifiedBy
+        System.err.println(lastModifiedBy)
+        Assertions.assertEquals(0, dave.version)
+        System.err.println(dave.id)
+        sleep(1000)
+        Assertions.assertNotNull(dave.id)
+        dave.firstName = "Wu2"
+        repository.save(dave)
+        System.err.println(dave.version)
+        System.err.println(dave.createdDate)
+        System.err.println(dave.lastModifiedDate)
+        System.err.println(dave.lastModifiedBy)
+        Assertions.assertEquals(createdDate, dave.createdDate)
+        Assertions.assertNotEquals(lastModifiedDate, dave.lastModifiedDate)
+        lastModifiedDate = dave.lastModifiedDate
+        Assertions.assertNotEquals(lastModifiedBy, dave.lastModifiedBy)
+        lastModifiedBy = dave.lastModifiedBy
+        Assertions.assertEquals(1, dave.version)
+        dave.firstName = "Wu3"
+        repository.save(dave)
+        System.err.println(dave.version)
+        System.err.println(dave.createdDate)
+        System.err.println(dave.lastModifiedDate)
+        System.err.println(dave.lastModifiedBy)
+        Assertions.assertEquals(createdDate, dave.createdDate)
+        Assertions.assertNotEquals(lastModifiedDate, dave.lastModifiedDate)
+        Assertions.assertNotEquals(lastModifiedBy, dave.lastModifiedBy)
+        Assertions.assertEquals(2, dave.version)
+    }
+
 }
