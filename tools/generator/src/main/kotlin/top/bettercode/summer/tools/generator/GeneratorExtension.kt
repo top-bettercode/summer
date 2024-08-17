@@ -135,7 +135,7 @@ open class GeneratorExtension(
     fun database(moduleName: String): DatabaseConfiguration {
         return databases[moduleName] ?: _databases.getOrPut(moduleName) {
             val database = (databases[DEFAULT_MODULE_NAME]
-                ?: databases.values.first()).copy()
+                ?: databases.values.firstOrNull() ?: DatabaseConfiguration()).copy()
             database.module = moduleName
             database.driver = DatabaseDriver.UNKNOWN
             database.extension = this
