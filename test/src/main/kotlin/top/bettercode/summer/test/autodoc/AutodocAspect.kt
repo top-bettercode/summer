@@ -125,6 +125,7 @@ class AutodocAspect(
 
     private fun extDocFieldInfo(type: Class<*>, any: Any?) {
         if (!Autodoc.extedTypes.contains(type) && valided(type)) {
+            extFields(type)
             getClassHierarchy(type).forEach { cls ->
                 extFields(cls)
             }
