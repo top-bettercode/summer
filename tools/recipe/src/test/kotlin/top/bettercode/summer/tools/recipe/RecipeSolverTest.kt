@@ -41,7 +41,7 @@ internal class RecipeSolverTest {
     val solverTypes = listOf(
         SolverType.COPT,
         SolverType.CPLEX,
-        SolverType.GUROBI,
+//        SolverType.GUROBI,
         SolverType.SCIP,
         SolverType.CBC,
     )

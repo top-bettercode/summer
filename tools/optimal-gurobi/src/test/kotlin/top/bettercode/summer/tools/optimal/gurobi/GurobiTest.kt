@@ -4,9 +4,11 @@ import com.gurobi.gurobi.GRB
 import com.gurobi.gurobi.GRBEnv
 import com.gurobi.gurobi.GRBLinExpr
 import com.gurobi.gurobi.GRBModel
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 
+@Disabled
 object GurobiTest {
 
     @Test

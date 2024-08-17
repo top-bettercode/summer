@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.gurobi
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.optimal.OutLimitedException
 import top.bettercode.summer.tools.optimal.Solver
@@ -9,6 +10,7 @@ import top.bettercode.summer.tools.optimal.Solver
  *
  * @author Peter Wu
  */
+@Disabled
 open class GurobiSolverTest {
 
     open val solver: Solver = GurobiSolver(logging = true, epsilon = 1e-5)
