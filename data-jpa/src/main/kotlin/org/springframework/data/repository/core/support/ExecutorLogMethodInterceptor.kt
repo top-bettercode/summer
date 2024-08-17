@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.query.JpaExtQueryMethod
 import org.springframework.data.repository.query.RepositoryQuery
+import org.springframework.util.ClassUtils
 import top.bettercode.summer.data.jpa.support.LoggerInfo
 import top.bettercode.summer.data.jpa.support.PageInfo
 import top.bettercode.summer.data.jpa.support.QuerySize
@@ -136,26 +137,25 @@ class ExecutorLogMethodInterceptor(
                         sqlLog.limit(pageInfo.size)
                     }
                     val result = invocation.proceed()
-                    when (result) {
+                    when {
 
-                        is Page<*> -> {
+                        result is Page<*> -> {
                             sqlLog.total(result.totalElements)
                             sqlLog.retrieved(result.content.size)
                         }
 
-                        is Collection<*> -> {
+                        result is Collection<*> -> {
                             sqlLog.retrieved(result.size)
                         }
 
-                        is Number -> {
+                        result is Number -> {
                             if (modify) {
-                                sqlLog.affected(result)
-                            } else {
-                                sqlLog.result(result.toString())
+                                sqlLog.affected(result.toString())
                             }
                         }
 
-                        is Boolean -> {
+                        (result == null && !isVoidType(invocation.method.returnType))
+                                || result != null && ClassUtils.isPrimitiveOrWrapper(result::class.java) -> {
                             sqlLog.result(result.toString())
                         }
 
@@ -181,4 +181,9 @@ class ExecutorLogMethodInterceptor(
             return invocation.proceed()
         }
     }
+
+    private fun isVoidType(clazz: Class<*>): Boolean {
+        return clazz == Void.TYPE || clazz == Void::class.java
+    }
+
 }

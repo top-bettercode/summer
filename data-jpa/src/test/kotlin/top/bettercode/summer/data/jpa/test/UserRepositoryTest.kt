@@ -14,6 +14,7 @@ import top.bettercode.summer.data.jpa.repository.StaticUserRepository
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import java.lang.Thread.sleep
 import javax.sql.DataSource
+import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -71,7 +72,7 @@ class UserRepositoryTest {
         repository.saveDynamic(dave)
     }
 
-    //    @Transactional
+    @Transactional
     @Test
     fun staticSaveTest() {
         var dave = StaticUser(null, "Matthews")

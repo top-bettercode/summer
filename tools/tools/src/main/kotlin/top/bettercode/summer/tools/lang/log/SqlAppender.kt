@@ -136,9 +136,9 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             }
         }
 
-        fun Logger.affected(affected: Any) {
+        fun Logger.affected(affected: String) {
             try {
-                MDC.put(MDC_SQL_AFFECTED, affected.toString())
+                MDC.put(MDC_SQL_AFFECTED, affected)
                 debug("affected: {} rows", affected)
             } finally {
                 MDC.remove(MDC_SQL_AFFECTED)
@@ -235,7 +235,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     //{} row affected
                     val affected = event.mdcPropertyMap[MDC_SQL_AFFECTED]
                     if (!affected.isNullOrBlank()) {
-                        sqlLogData.affected = affected.toInt()
+                        sqlLogData.affected = affected
                     }
                     //cost: {} ms
                     val cost = event.mdcPropertyMap[MDC_SQL_COST]
