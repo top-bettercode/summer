@@ -2,6 +2,7 @@ package top.bettercode.summer.test.autodoc.field
 
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.test.autodoc.Autodoc
+import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
@@ -229,17 +230,6 @@ abstract class FieldDescFix {
                         )
                     }?.copy()
             return field?.apply { this.name = name }
-        }
-
-        private fun Iterable<Field>.checkBlank(desc: String, prefix: String = ""): Iterable<Field> {
-            forEach {
-                val blank = it.description.isBlank()
-                if (blank) {
-                    log.error("[${desc}]未找到字段[${prefix + it.name}]的描述")
-                }
-                it.children.checkBlank(desc, "${prefix + it.name}.")
-            }
-            return this
         }
 
     }

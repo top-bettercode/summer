@@ -7,6 +7,7 @@ import org.asciidoctor.SafeMode
 import top.bettercode.summer.tools.autodoc.AutodocExtension
 import top.bettercode.summer.tools.autodoc.AutodocExtension.Companion.pyname
 import top.bettercode.summer.tools.autodoc.AutodocUtil
+import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
@@ -14,7 +15,6 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.operation.Operation
 import java.io.File
 import java.io.PrintWriter
-import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -145,34 +145,26 @@ object AsciidocGenerator {
         return pw.toString()
     }
 
-    fun setDefaultDesc(autodoc: AutodocExtension, properties: Properties) {
+    fun checkBlank(autodoc: AutodocExtension) {
         autodoc.listModules { module, _ ->
             module.collections.forEach { collection ->
                 collection.operations.forEach { operation ->
                     val request = operation.request as DocOperationRequest
                     val response = operation.response as DocOperationResponse
 
-                    request.uriVariablesExt.setDefaultFieldDesc(properties)
-                    request.headersExt.setDefaultFieldDesc(properties)
-                    request.parametersExt.setDefaultFieldDesc(properties)
-                    request.partsExt.setDefaultFieldDesc(properties)
-                    request.contentExt.setDefaultFieldDesc(properties)
+                    request.uriVariablesExt.checkBlank("request.uriVariablesExt")
+                    request.headersExt.checkBlank("request.headersExt")
+                    request.queriesExt.checkBlank("request.queriesExt")
+                    request.parametersExt.checkBlank("request.parametersExt")
+                    request.partsExt.checkBlank("request.partsExt")
+                    request.contentExt.checkBlank("request.contentExt")
 
-                    response.headersExt.setDefaultFieldDesc(properties)
-                    response.contentExt.setDefaultFieldDesc(properties)
+                    response.headersExt.checkBlank("response.headersExt")
+                    response.contentExt.checkBlank("response.contentExt")
 
                     operation.save()
                 }
             }
-        }
-    }
-
-    private fun Set<Field>.setDefaultFieldDesc(properties: Properties) {
-        this.forEach {
-            if (it.description.isBlank() || it.name == it.description) {
-                it.description = properties.getOrDefault(it.name, it.name).toString()
-            }
-            it.children.setDefaultFieldDesc(properties)
         }
     }
 

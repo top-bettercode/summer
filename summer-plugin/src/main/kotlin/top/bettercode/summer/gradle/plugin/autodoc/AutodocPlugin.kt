@@ -127,7 +127,8 @@ class AutodocPlugin : Plugin<Project> {
                 }
             })
         }
-        project.tasks.create("setDefaultDesc") { task ->
+
+        project.tasks.create("checkBlank") { task ->
             task.group = group
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
@@ -137,7 +138,7 @@ class AutodocPlugin : Plugin<Project> {
                     if (file.exists()) {
                         source.load(file.inputStream())
                     }
-                    AsciidocGenerator.setDefaultDesc(extension, source)
+                    AsciidocGenerator.checkBlank(extension)
                 }
             })
         }

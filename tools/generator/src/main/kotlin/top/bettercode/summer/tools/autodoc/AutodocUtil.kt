@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.lang.util.StringUtil
 
 
@@ -19,6 +21,9 @@ import top.bettercode.summer.tools.lang.util.StringUtil
  * @author Peter Wu
  */
 object AutodocUtil {
+
+    private val log = LoggerFactory.getLogger(AutodocUtil::class.java)
+
     const val REPLACE_CHAR = "丨"
     val yamlMapper = YAMLMapper()
 
@@ -42,5 +47,16 @@ object AutodocUtil {
         objectMapper.registerModule(StringUtil.timeModule(true))
     }
 
+
+    fun Iterable<Field>.checkBlank(desc: String, prefix: String = ""): Iterable<Field> {
+        forEach {
+            val blank = it.description.isBlank()
+            if (blank) {
+                log.error("[${desc}]未找到字段[${prefix + it.name}]的描述")
+            }
+            it.children.checkBlank(desc, "${prefix + it.name}.")
+        }
+        return this
+    }
 
 }
