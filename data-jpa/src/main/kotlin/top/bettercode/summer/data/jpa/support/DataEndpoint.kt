@@ -104,7 +104,7 @@ open class DataEndpoint(
     private fun getEntityManager(db: String): EntityManager {
         return if (entityManagers.size == 1)
             entityManagers[0]
-        else if (db == "default") {
+        else if (db == "d") {
             entityManagers.find { ApplicationContextHolder.getBeanName(it.entityManagerFactory) == "entityManagerFactory" }!!
         } else {
             entityManagers.find { ApplicationContextHolder.getBeanName(it.entityManagerFactory) == "${db}EntityManagerFactory" }!!
@@ -114,7 +114,7 @@ open class DataEndpoint(
     private fun getTransactionManager(db: String): PlatformTransactionManager {
         return if (transactionManagers.size == 1)
             transactionManagers[0]
-        else if (db == "default") {
+        else if (db == "d") {
             transactionManagers.find { ApplicationContextHolder.getBeanName(it) == "transactionManager" }!!
         } else {
             transactionManagers.find { ApplicationContextHolder.getBeanName(it) == "${db}TransactionManager" }!!
