@@ -51,6 +51,18 @@ object ApplicationContextHolder {
         return applicationContext?.environment?.getProperty(key, targetType, defaultValue!!)
     }
 
+
+    @JvmStatic
+    fun getBeanName(bean: Any): String? {
+        val beanNames = applicationContext!!.getBeanNamesForType(bean.javaClass)
+        for (beanName in beanNames) {
+            if (applicationContext!!.getBean(beanName) === bean) {
+                return beanName
+            }
+        }
+        return null
+    }
+
     @JvmStatic
     val environment: Environment?
         get() = applicationContext?.environment

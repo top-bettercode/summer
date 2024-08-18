@@ -8,10 +8,10 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.AuditorAware
+import org.springframework.transaction.PlatformTransactionManager
+import top.bettercode.summer.data.jpa.support.DataEndpoint
 import top.bettercode.summer.data.jpa.support.DataJpaErrorHandler
 import top.bettercode.summer.data.jpa.support.DisableSqlLogAspect
-import top.bettercode.summer.data.jpa.support.QueryEndpoint
-import top.bettercode.summer.data.jpa.support.UpdateEndpoint
 import java.util.*
 import javax.persistence.EntityManager
 import javax.servlet.http.HttpServletRequest
@@ -57,12 +57,11 @@ class DataJpaAutoConfiguration {
     }
 
     @Bean
-    fun queryEndpoint(entityManager: EntityManager): QueryEndpoint {
-        return QueryEndpoint(entityManager)
+    fun queryEndpoint(
+        entityManagers: MutableList<EntityManager>,
+        transactionManagers: MutableList<PlatformTransactionManager>
+    ): DataEndpoint {
+        return DataEndpoint(entityManagers, transactionManagers)
     }
 
-    @Bean
-    fun updateEndpoint(entityManager: EntityManager): UpdateEndpoint {
-        return UpdateEndpoint(entityManager)
-    }
 }
