@@ -123,17 +123,17 @@ open class DataEndpoint(
 
     @WriteOperation
     open fun write(
-        @Selector db: String, @Selector operation: String, sql: String,
+        @Selector ds: String, @Selector op: String, sql: String,
         @Nullable page: Int?,
         @Nullable size: Int?
     ): Any {
-        return when (operation) {
+        return when (op) {
             "update" -> {
-                update(getTransactionManager(db), getEntityManager(db), sql)
+                update(getTransactionManager(ds), getEntityManager(ds), sql)
             }
 
             "query" -> {
-                query(getEntityManager(db), sql, page, size)
+                query(getEntityManager(ds), sql, page, size)
             }
 
             else -> {
