@@ -182,9 +182,11 @@ abstract class AlarmAppender<T : AlarmProperties>(
             if (i == len - 1) {
                 val tp = e.throwableProxy
                 initialComment = alarmMarker?.message
-                    ?: (if (tp != null) "${tp.className}:${tp.message ?: event.message}" else e.formattedMessage
-                        ?: event.message)
-                            ?: ""
+                    ?: (if (tp != null) "${tp.className}:${
+                        event.formattedMessage ?: tp.message.substringAfter(
+                            "${tp.className}: "
+                        )
+                    }" else event.formattedMessage) ?: ""
             }
         }
 
