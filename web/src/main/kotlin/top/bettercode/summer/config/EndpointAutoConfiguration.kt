@@ -32,11 +32,12 @@ import javax.servlet.http.HttpServletResponse
 @ConditionalOnClass(WebEndpointProperties::class)
 @ConditionalOnBean(WebEndpointProperties::class)
 @AutoConfigureAfter(WebEndpointAutoConfiguration::class)
-@EnableConfigurationProperties(
-        ManagementAuthProperties::class
-)
+@EnableConfigurationProperties(ManagementAuthProperties::class)
 @Configuration(proxyBeanMethods = false)
-class EndpointAutoConfiguration(managementServerProperties: ManagementServerProperties, serverProperties: ServerProperties) {
+class EndpointAutoConfiguration(
+    managementServerProperties: ManagementServerProperties,
+    serverProperties: ServerProperties
+) {
 
     private val log: Logger = LoggerFactory.getLogger(EndpointAutoConfiguration::class.java)
 
@@ -57,57 +58,63 @@ class EndpointAutoConfiguration(managementServerProperties: ManagementServerProp
     @ConditionalOnWebApplication
     @Bean
     fun docsEndpoint(
-            @Autowired(required = false) request: HttpServletRequest,
-            @Autowired(required = false) response: HttpServletResponse,
-            resourceLoader: ResourceLoader
+        @Autowired(required = false) request: HttpServletRequest,
+        @Autowired(required = false) response: HttpServletResponse,
+        resourceLoader: ResourceLoader
     ): DocsEndpoint {
         return DocsEndpoint(request, response, resourceLoader)
     }
 
     @ConditionalOnProperty(
-            prefix = "summer.logging",
-            name = ["show-enabled"],
-            havingValue = "true",
-            matchIfMissing = true
+        prefix = "summer.logging",
+        name = ["show-enabled"],
+        havingValue = "true",
+        matchIfMissing = true
     )
     @Conditional(LogsEndpointCondition::class)
     @ConditionalOnWebApplication
     @Bean
     fun logsEndpoint(
-            @Value("\${summer.logging.files.view-path:#{'\${summer.logging.files.path}'}}") loggingFilesPath: String,
-            environment: Environment,
-            websocketProperties: WebsocketProperties,
-            @Autowired(required = false) response: HttpServletResponse,
-            webEndpointProperties: WebEndpointProperties,
-            managementServerProperties: ManagementServerProperties
+        @Value("\${summer.logging.files.view-path:#{'\${summer.logging.files.path}'}}") loggingFilesPath: String,
+        environment: Environment,
+        websocketProperties: WebsocketProperties,
+        @Autowired(required = false) response: HttpServletResponse,
+        webEndpointProperties: WebEndpointProperties,
+        managementServerProperties: ManagementServerProperties
     ): LogsEndpoint {
         return LogsEndpoint(
-                loggingFilesPath,
-                environment,
-                websocketProperties,
-                response,
-                webEndpointProperties,
-                managementServerProperties
+            loggingFilesPath,
+            environment,
+            websocketProperties,
+            response,
+            webEndpointProperties,
+            managementServerProperties
         )
     }
 
 
     @ConditionalOnProperty(
-            prefix = "summer.gen",
-            name = ["enabled"],
-            havingValue = "true",
-            matchIfMissing = true
+        prefix = "summer.gen",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
     )
     @ConditionalOnWebApplication
     @Bean
     fun genEndpoint(
-            @Autowired(required = false) response: HttpServletResponse,
-            dataSourceProperties: DataSourceProperties? = null,
-            environment: Environment,
-            serverProperties: ServerProperties,
-            webEndpointProperties: WebEndpointProperties
+        @Autowired(required = false) response: HttpServletResponse,
+        dataSourceProperties: DataSourceProperties? = null,
+        environment: Environment,
+        serverProperties: ServerProperties,
+        webEndpointProperties: WebEndpointProperties
     ): PumlEndpoint {
-        return PumlEndpoint(response, dataSourceProperties, environment, serverProperties, webEndpointProperties)
+        return PumlEndpoint(
+            response,
+            dataSourceProperties,
+            environment,
+            serverProperties,
+            webEndpointProperties
+        )
     }
 
 
