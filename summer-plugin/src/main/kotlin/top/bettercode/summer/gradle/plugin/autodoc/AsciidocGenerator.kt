@@ -432,15 +432,11 @@ object AsciidocGenerator {
     }
 
     private fun fillBlank(depth: Int): String {
-        return if (depth == 0) {
-            ""
-        } else {
-            var blank = "[white]#├─# "
-            for (i in 1 until depth) {
-                blank += blank
-            }
-            blank
+        var blank = ""
+        for (i in 1..depth) {
+            blank += "[white]#├─# "
         }
+        return blank
     }
 
     fun docStatic(ext: AutodocExtension) {
