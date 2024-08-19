@@ -6,11 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.springframework.http.HttpHeaders
 import top.bettercode.summer.tools.autodoc.AutodocUtil
-import top.bettercode.summer.tools.lang.operation.Operation
-import top.bettercode.summer.tools.lang.operation.OperationRequestPart
-import top.bettercode.summer.tools.lang.operation.OperationResponse
-import top.bettercode.summer.tools.lang.operation.Parameters
-import top.bettercode.summer.tools.lang.operation.RequestConverter
+import top.bettercode.summer.tools.lang.operation.*
 import java.io.File
 import java.net.URI
 
@@ -99,10 +95,6 @@ class DocOperation(
                 docOperation.request.apply {
                     this as DocOperationRequest
                     uriVariables = uriVariablesExt.associate { Pair(it.name, it.value) }
-                    var uriString = restUri
-                    uriVariables.forEach { (t, u) -> uriString = uriString.replace("{${t}}", u) }
-
-                    uri = URI(uriString)
 
                     headers = headersExt.associateTo(HttpHeaders()) { field ->
                         Pair(
@@ -116,6 +108,15 @@ class DocOperation(
                             listOf(field.value)
                         )
                     }
+
+                    var path = restUri
+                    uriVariables.forEach { (t, u) ->
+                        path = path.replace("{$t}", u)
+                    }
+
+                    uri =
+                        URI("$path${if (queries.isNotEmpty()) "?${queries.toQueryString()}" else ""}")
+
                     parameters = parametersExt.associateTo(Parameters()) { field ->
                         Pair(
                             field.name,
