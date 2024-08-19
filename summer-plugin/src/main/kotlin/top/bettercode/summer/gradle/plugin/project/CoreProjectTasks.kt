@@ -11,6 +11,10 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownProjectException
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
+import top.bettercode.summer.tools.autodoc.model.Field
+import top.bettercode.summer.tools.autodoc.operation.DocOperation
+import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
+import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
@@ -43,10 +47,57 @@ object CoreProjectTasks {
 
             if (project.isCore) {
 
-                create("updateCode") {
-                    it.group = GeneratorPlugin.GEN_GROUP
-                    it.doLast(object : Action<Task> {
+                create("updateCode") { task ->
+                    task.group = GeneratorPlugin.GEN_GROUP
+                    task.doLast(object : Action<Task> {
                         override fun execute(t: Task) {
+                            updateDoc(project.rootProject.file("doc"))
+                            project.rootProject.subprojects { subproject ->
+                                val file = subproject.file("src/doc")
+                                updateDoc(file)
+                            }
+                        }
+
+                        private fun updateField(field: Field) {
+                            field.type = field.type.substringBefore("(")
+                            field.children.forEach {
+                                updateField(it)
+                            }
+                        }
+
+                        private fun updateDoc(file: File) {
+                            file.walkTopDown()
+                                .filter { f -> f.isFile && f.extension == "yml" && f.parentFile.parentFile.name == "collection" }
+                                .forEach { f ->
+                                    val operation = DocOperation.read(f)!!
+                                    val request = operation.request as DocOperationRequest
+                                    request.uriVariablesExt.forEach {
+                                        updateField(it)
+                                    }
+                                    request.headersExt.forEach {
+                                        updateField(it)
+                                    }
+                                    request.parametersExt.forEach {
+                                        updateField(it)
+                                    }
+                                    request.contentExt.forEach {
+                                        updateField(it)
+                                    }
+                                    request.queriesExt.forEach {
+                                        updateField(it)
+                                    }
+                                    request.partsExt.forEach {
+                                        updateField(it)
+                                    }
+                                    val response = operation.response as DocOperationResponse
+                                    response.headersExt.forEach {
+                                        updateField(it)
+                                    }
+                                    response.contentExt.forEach {
+                                        updateField(it)
+                                    }
+                                    operation.save()
+                                }
                         }
                     })
                 }
