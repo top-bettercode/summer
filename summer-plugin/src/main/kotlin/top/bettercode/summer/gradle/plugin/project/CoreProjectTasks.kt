@@ -9,11 +9,8 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownProjectException
-import org.springframework.http.HttpMethod
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
-import top.bettercode.summer.tools.autodoc.operation.DocOperation
-import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
@@ -50,76 +47,6 @@ object CoreProjectTasks {
                     it.group = GeneratorPlugin.GEN_GROUP
                     it.doLast(object : Action<Task> {
                         override fun execute(t: Task) {
-                            project.rootProject.file("doc").listFiles()?.filter {
-                                it.isFile && it.extension == "yml" && (it.name.startsWith("request.") || it.name.startsWith(
-                                    "response."
-                                ))
-                            }?.forEach {
-                                it.delete()
-                            }
-
-                            updateDoc(project.rootProject.file("doc"))
-                            project.rootProject.subprojects { subproject ->
-                                val testFile =
-                                    subproject.file("src/test/resources/META-INF/application-test.yml")
-                                if (testFile.exists()) {
-                                    val lines = testFile.readLines()
-                                    val newLines = lines.filter { l ->
-                                        "data-type: @generator.dataType@" != l.trim()
-                                    }
-                                    testFile.writeText(newLines.joinToString("\n") + "\n")
-                                }
-
-                                val file = subproject.file("src/doc")
-                                updateDoc(file)
-                                subproject.file("src/test/java").walkTopDown()
-                                    .filter { f -> f.isFile && (f.extension == "java" || f.extension == "kt") }
-                                    .forEach { f ->
-                                        val lines = f.readLines()
-                                        var isQueryParam = false
-                                        var update = false
-                                        val log = StringBuilder()
-                                        val newLines = lines.map { l ->
-                                            if (l.matches(Regex(".*get\\(.*")) || l.matches(Regex(".*delete\\(.*"))) {
-                                                isQueryParam = true
-                                                l
-                                            } else if (l.trim()
-                                                    .startsWith(".param(") && isQueryParam
-                                            ) {
-                                                update = true
-                                                log.append(".")
-                                                l.replace(".param(", ".queryParam(")
-                                            } else {
-                                                if (isQueryParam && l.contains(");")) {
-                                                    isQueryParam = false
-                                                }
-                                                l
-                                            }
-                                        }
-                                        if (update) {
-                                            f.writeText(newLines.joinToString("\n") + "\n")
-                                            subproject.logger.lifecycle(log.toString())
-                                        }
-                                    }
-                            }
-                        }
-
-                        private fun updateDoc(file: File) {
-                            file.walkTopDown()
-                                .filter { f -> f.isFile && f.extension == "yml" && f.parentFile.parentFile.name == "collection" }
-                                .forEach { f ->
-                                    val operation = DocOperation.read(f)!!
-                                    val request = operation.request as DocOperationRequest
-                                    val method = request.method
-                                    val update =
-                                        (HttpMethod.GET.name == method || HttpMethod.DELETE.name == method || request.contentExt.isNotEmpty()) && request.parametersExt.isNotEmpty()
-
-                                    if (update) {
-                                        request.queriesExt = request.parametersExt
-                                        request.parametersExt = LinkedHashSet()
-                                        operation.save()
-                                    }
-                                }
                         }
                     })
                 }

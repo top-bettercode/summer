@@ -136,10 +136,11 @@ object HttpOperation {
     fun getRequestPath(
         request: OperationRequest
     ): String {
-        val uri = request.uri
-        var path = uri.rawPath
-        val rawQuery = uri.rawQuery
-        return "$path${if (rawQuery.isNullOrBlank()) "" else "?${rawQuery}"}"
+        var path = request.restUri
+        request.uriVariables.forEach { (t, u) ->
+            path = path.replace("{$t}", u)
+        }
+        return "$path${if (request.queries.isNotEmpty()) "?${request.queries.toQueryString()}" else ""}"
     }
 
     private fun getHeaders(request: OperationRequest): HttpHeaders {
