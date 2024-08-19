@@ -349,7 +349,7 @@ object AsciidocGenerator {
                             }
                             if (contentFields.isNotEmpty()) {
                                 out.println("==== 请求体")
-                                out.println("[width=\"100%\", cols=\"3,2,1,3,2,2\", stripes=\"even\"]")
+                                out.println("[width=\"100%\", cols=\"4,2,1,3,2,2\", stripes=\"even\"]")
                                 out.println("|===")
                                 out.println("h|名称 h|类型 h|必填 h|描述 h|默认值 h|示例值")
                                 contentFields.forEach {
@@ -372,7 +372,7 @@ object AsciidocGenerator {
                                 val fields =
                                     contentExt
                                 out.println("==== 返回参数")
-                                out.println("[width=\"100%\", cols=\"3,2,3,2\",, stripes=\"even\"]")
+                                out.println("[width=\"100%\", cols=\"4,2,3,2\",, stripes=\"even\"]")
                                 out.println("|===")
                                 out.println("h|名称 h|类型 h|描述 h|示例")
                                 fields.forEach {
