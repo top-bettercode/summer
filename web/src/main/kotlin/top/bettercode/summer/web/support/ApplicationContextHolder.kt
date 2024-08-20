@@ -64,6 +64,11 @@ object ApplicationContextHolder {
     }
 
     @JvmStatic
+    val isRelease: Boolean
+        get() = activeProfiles.any { it.contains("release") }
+
+
+    @JvmStatic
     val environment: Environment?
         get() = applicationContext?.environment
 
