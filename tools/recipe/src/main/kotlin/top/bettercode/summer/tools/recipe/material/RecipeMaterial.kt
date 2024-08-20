@@ -32,7 +32,7 @@ data class RecipeMaterial(
     @JsonProperty("indicators")
     override val indicators: RecipeValueIndicators,
     /**
-     * 是否共享投料口
+     * 是否可共享其他原料的投料口
      */
     @JsonProperty("feedPortShare")
     val feedPortShare: Boolean = false
