@@ -48,12 +48,11 @@ interface GenUnit {
             val writed = destFile.write(oldContent)
             if (writed) {
                 val log = LoggerFactory.getLogger(GenUnit::class.java)
-                if (log.isDebugEnabled)
-                    if (exists) {
-                        log.debug("覆盖：${file.path}")
-                    } else {
-                        log.debug("生成：${file.path}")
-                    }
+                if (exists) {
+                    log.warn("覆盖：${file.path}")
+                } else {
+                    log.warn("生成：${file.path}")
+                }
             }
         }
     }
