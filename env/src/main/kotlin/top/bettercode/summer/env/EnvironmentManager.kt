@@ -1,9 +1,12 @@
 package top.bettercode.summer.env
 
+import org.springframework.boot.env.OriginTrackedMapPropertySource
+import org.springframework.boot.origin.OriginTrackedValue
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.ApplicationEventPublisherAware
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
+import org.springframework.core.env.PropertySource
 import org.springframework.jmx.export.annotation.ManagedOperation
 import org.springframework.jmx.export.annotation.ManagedResource
 import org.springframework.stereotype.Component
@@ -64,6 +67,35 @@ class EnvironmentManager(val environment: ConfigurableEnvironment) :
         }
         return false
     }
+
+    @ManagedOperation
+    fun setProperties(propertySources: List<PropertySource<*>>): Map<String, String?> {
+        if (!environment.propertySources.contains(MANAGER_PROPERTY_SOURCE)) {
+            synchronized(map) {
+                if (!environment.propertySources.contains(MANAGER_PROPERTY_SOURCE)) {
+                    val source = MapPropertySource(MANAGER_PROPERTY_SOURCE, map)
+                    environment.propertySources.addFirst(source)
+                }
+            }
+        }
+        val changed: MutableMap<String, String?> = HashMap()
+        propertySources.forEach { propertySource ->
+            val mapPropertySource = propertySource as OriginTrackedMapPropertySource
+            for ((name, value) in mapPropertySource.source) {
+                val `val` = (value as OriginTrackedValue?)?.value?.toString()
+                val change = value != environment.getProperty(name)
+                if (change) {
+                    map[name] = `val`
+                    changed[name] = `val`
+                }
+            }
+        }
+        if (changed.isNotEmpty() && publisher != null) {
+            publish(EnvironmentChangeEvent(publisher!!, changed.keys))
+        }
+        return changed
+    }
+
 
     @ManagedOperation
     fun getProperty(name: String): Any? {
