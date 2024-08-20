@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.BeanWrapperImpl
 import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.context.support.GenericApplicationContext
+import org.springframework.core.io.InputStreamSource
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import top.bettercode.summer.tools.autodoc.model.Field
@@ -194,7 +195,7 @@ class AutodocAspect(
         return if (type.classLoader != null) {
             !(HttpServletRequest::class.java.isAssignableFrom(type) || HttpServletResponse::class.java.isAssignableFrom(
                 type
-            ))
+            ) || InputStreamSource::class.java.isAssignableFrom(type))
         } else {
             false
         }
