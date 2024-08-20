@@ -94,11 +94,11 @@ logging:
   level:
     _org.springframework: warn
     org.springframework: warn
-    org.springframework.boot.env.OriginTrackedYamlLoader: DEBUG
     org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver: error
     org.springframework.data.convert.CustomConversions: error
     org.springframework.boot.web.servlet.support.ErrorPageFilter: off
     org.mybatis.spring.mapper.ClassPathMapperScanner: error
+    org.eclipse: warn
     org.hibernate: warn
     org.hibernate.SQL: ${logging.level.root:warn}
     org.hibernate.SQL_SLOW: info

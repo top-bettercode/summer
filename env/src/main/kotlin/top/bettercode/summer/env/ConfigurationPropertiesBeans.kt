@@ -18,9 +18,6 @@ class ConfigurationPropertiesBeans : BeanPostProcessor, ApplicationContextAware 
     private var applicationContext: ApplicationContext? = null
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         this.applicationContext = applicationContext
-        if (applicationContext.autowireCapableBeanFactory is ConfigurableListableBeanFactory) {
-            applicationContext.autowireCapableBeanFactory
-        }
         if (applicationContext.parent != null && applicationContext.parent
                         ?.autowireCapableBeanFactory is ConfigurableListableBeanFactory) {
             val listable = applicationContext.parent

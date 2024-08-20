@@ -87,6 +87,7 @@ dependencies {
 
         api("io.swagger:swagger-annotations:1.6.12")
         api("io.github.openfeign:feign-core:11.10")
+        api("org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r")
 
         api(project(":env"))
         api(project(":web"))

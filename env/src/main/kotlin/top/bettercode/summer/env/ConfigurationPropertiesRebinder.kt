@@ -20,7 +20,8 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Component
 @ManagedResource
-class ConfigurationPropertiesRebinder(private val beans: ConfigurationPropertiesBeans) : ApplicationContextAware, ApplicationListener<EnvironmentChangeEvent> {
+class ConfigurationPropertiesRebinder(private val beans: ConfigurationPropertiesBeans) :
+    ApplicationContextAware, ApplicationListener<EnvironmentChangeEvent> {
     private var applicationContext: ApplicationContext? = null
     private val errors: MutableMap<String?, Exception> = ConcurrentHashMap()
 
@@ -50,38 +51,52 @@ class ConfigurationPropertiesRebinder(private val beans: ConfigurationProperties
         if (!beans.beanNames.contains(name)) {
             return false
         }
-        if (applicationContext != null) {
-            try {
-                var bean: Any? = applicationContext!!.getBean(name)
-                if (AopUtils.isAopProxy(bean)) {
-                    bean = ProxyUtils.getTargetObject(bean)
-                }
-                if (bean != null) {
-                    // see https://github.com/spring-cloud/spring-cloud-commons/issues/571
-                    if (neverRefreshable.contains(bean.javaClass.name)) {
-                        return false // ignore
-                    }
-                    applicationContext!!.autowireCapableBeanFactory.destroyBean(bean)
-                    applicationContext!!.autowireCapableBeanFactory.initializeBean(bean, name)
-                    return true
-                }
-            } catch (e: RuntimeException) {
-                errors[name] = e
-                throw e
-            } catch (e: Exception) {
-                errors[name] = e
-                throw IllegalStateException("Cannot rebind to $name", e)
+        var appContext = this.applicationContext
+        while (appContext != null) {
+            if (appContext.containsLocalBean(name)) {
+                return rebind(name, appContext)
+            } else {
+                appContext = appContext.parent
             }
         }
         return false
     }
 
+    private fun rebind(name: String, appContext: ApplicationContext): Boolean {
+        try {
+            var bean: Any? = appContext.getBean(name)
+            if (AopUtils.isAopProxy(bean)) {
+                bean = ProxyUtils.getTargetObject(bean)
+            }
+            if (bean != null) {
+                // see
+                // https://github.com/spring-cloud/spring-cloud-commons/issues/571
+                if (neverRefreshable.contains(bean.javaClass.name)) {
+                    return false // ignore
+                }
+                appContext.autowireCapableBeanFactory.destroyBean(bean)
+                appContext.autowireCapableBeanFactory.initializeBean(bean, name)
+                return true
+            }
+        } catch (e: java.lang.RuntimeException) {
+            errors[name] = e
+            throw e
+        } catch (e: java.lang.Exception) {
+            errors[name] = e
+            throw java.lang.IllegalStateException("Cannot rebind to $name", e)
+        }
+        return false
+    }
+
+
     @get:ManagedAttribute
     val neverRefreshable: Set<String>
         get() {
             val neverRefresh = applicationContext!!.environment
-                    .getProperty("spring.cloud.refresh.never-refreshable",
-                            "com.zaxxer.hikari.HikariDataSource")
+                .getProperty(
+                    "spring.cloud.refresh.never-refreshable",
+                    "com.zaxxer.hikari.HikariDataSource"
+                )
             return neverRefresh.split(",").toSet()
         }
 

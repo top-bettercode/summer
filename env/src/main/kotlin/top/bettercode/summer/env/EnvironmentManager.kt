@@ -15,12 +15,13 @@ import org.springframework.stereotype.Component
  */
 @Component
 @ManagedResource
-class EnvironmentManager(private val environment: ConfigurableEnvironment) : ApplicationEventPublisherAware {
+class EnvironmentManager(val environment: ConfigurableEnvironment) :
+    ApplicationEventPublisherAware {
     private val map: MutableMap<String, Any?> by lazy {
         val sources = environment.propertySources
         if (sources.contains(MANAGER_PROPERTY_SOURCE)) {
             @Suppress("UNCHECKED_CAST") val map = sources[MANAGER_PROPERTY_SOURCE]!!
-                    .source as MutableMap<String, Any?>
+                .source as MutableMap<String, Any?>
             map
         } else {
             LinkedHashMap()
