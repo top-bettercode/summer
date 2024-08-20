@@ -138,7 +138,7 @@ class PoiExcel @JvmOverloads constructor(
         this.worksheet.row(row).cell(column).setCellValue(value?.toLocalDateTime())
     }
 
-    override fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>) {
+    override fun dataValidation(row: Int, column: Int, vararg dataValidation: String) {
         // 创建数据验证规则
         val validationHelper = worksheet.dataValidationHelper
         // 设置下拉列表的可选项

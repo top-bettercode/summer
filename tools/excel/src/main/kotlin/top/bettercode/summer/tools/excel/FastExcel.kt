@@ -117,7 +117,7 @@ class FastExcel(outputStream: OutputStream) : Excel {
         this.worksheet.value(row, column, value)
     }
 
-    override fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>) {
+    override fun dataValidation(row: Int, column: Int, vararg dataValidation: String) {
         val listDataValidation = AbsoluteListDataValidation(
             worksheet.range(row + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation
         )

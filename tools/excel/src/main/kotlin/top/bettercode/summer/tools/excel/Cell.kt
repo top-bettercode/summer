@@ -18,7 +18,8 @@ class Cell(
     private val excel: Excel,
     private val style: CellStyle,
     private val row: Int,
-    private val column: Int) {
+    private val column: Int
+) {
 
     fun headerStyle(): Cell {
         this.style.headerStyle()
@@ -90,8 +91,8 @@ class Cell(
         return this
     }
 
-    fun dataValidation(dataValidation: Array<out String>): Cell {
-        this.excel.dataValidation(this.row, this.column, dataValidation)
+    fun dataValidation(vararg dataValidation: String): Cell {
+        this.excel.dataValidation(this.row, this.column, *dataValidation)
         return this
     }
 

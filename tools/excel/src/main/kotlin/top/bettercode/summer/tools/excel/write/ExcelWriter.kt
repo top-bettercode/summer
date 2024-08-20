@@ -226,7 +226,7 @@ class ExcelWriter(val excel: Excel) : Closeable {
                 }
             }
             if (includeDataValidation && cellSetter.dataValidation.isNotEmpty()) {
-                this.excel.dataValidation(row, column, cellSetter.dataValidation)
+                this.excel.dataValidation(row, column, *cellSetter.dataValidation)
             }
             column++
         }
@@ -236,7 +236,7 @@ class ExcelWriter(val excel: Excel) : Closeable {
 
 
     fun dataValidation(column: Int, vararg dataValidation: String): ExcelWriter {
-        this.excel.dataValidation(row, column, dataValidation)
+        this.excel.dataValidation(row, column, *dataValidation)
         return this
     }
 

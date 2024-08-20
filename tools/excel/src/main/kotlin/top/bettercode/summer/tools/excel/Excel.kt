@@ -81,7 +81,7 @@ interface Excel : Closeable {
     fun value(row: Int, column: Int, value: LocalDateTime?)
     fun value(row: Int, column: Int, value: LocalDate?)
     fun value(row: Int, column: Int, value: ZonedDateTime?)
-    fun dataValidation(row: Int, column: Int, dataValidation: Array<out String>)
+    fun dataValidation(row: Int, column: Int, vararg dataValidation: String)
 
     //--------------------------------------------
 
