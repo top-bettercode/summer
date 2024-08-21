@@ -6,13 +6,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.StringHttpMessageConverter
-import org.springframework.web.client.DefaultResponseErrorHandler
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.getForEntity
-import org.springframework.web.client.getForObject
-import org.springframework.web.client.postForObject
+import org.springframework.web.client.*
 import org.w3c.dom.Element
-import top.bettercode.summer.tools.lang.capitalized
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -121,8 +116,7 @@ class Jenkins(private val url: String, auth: String) {
         return restTemplate.getForObject("$url/job/${job}/description") ?: ""
     }
 
-    fun build(jobName: String, env: String = "") {
-
+    fun build(jobName: String, lastBuildInfoTaskName: String? = null) {
         currentBranch()?.let { branch ->
             log.warn("当前分支：$branch")
             changeBranch(jobName, branch)
@@ -135,12 +129,8 @@ class Jenkins(private val url: String, auth: String) {
             log.warn("job 描述信息：")
             log.warn(description)
         }
-        val envName = env.capitalized()
-        val jobTaskName = jobName.replace(
-            "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
-            ""
-        ).capitalized()
-        log.warn("\n如需查看最新build信息，请运行:[lastBuildInfo$envName$jobTaskName]任务")
+        if (!lastBuildInfoTaskName.isNullOrBlank())
+            log.warn("\n如需查看最新build信息，请运行:[$lastBuildInfoTaskName]任务")
     }
 
     fun buildInfo(job: String, id: String = "lastBuild", startIndex: Int = 0) {

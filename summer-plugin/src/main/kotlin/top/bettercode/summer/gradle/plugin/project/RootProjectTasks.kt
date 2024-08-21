@@ -37,10 +37,9 @@ object RootProjectTasks {
 
                 val jobs = (entries.mapKeys {
                     val key = it.key.substringAfter("$prefix.jobs.")
+                    //dev.sys
                     val split = key.split(".")
-                    val projectName = split.first()
-                    val jobName = "[${split.last().toCamelCase(true)}]"
-                    projectName to jobName
+                    split.first() to "[${split.last().toCamelCase(true)}]"
                 }).mapValues {
                     it.value.toString()
                 }.entries.groupBy { it.key.first }
@@ -54,8 +53,9 @@ object RootProjectTasks {
                             it.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
                                     jobs.forEach { (env, jobPairs) ->
-                                        jobPairs.forEach { (_, jobName) ->
-                                            jenkins.build(jobName, env)
+                                        val envName = env.capitalized()
+                                        jobPairs.forEach { (taskName, jobName) ->
+                                            jenkins.build(jobName, "last$envName$taskName")
                                         }
                                     }
                                 }
@@ -64,29 +64,30 @@ object RootProjectTasks {
                     }
                     jobs.forEach { (env, jobNames) ->
                         val group = "$prefix $env"
+                        val envName = env.capitalized()
                         if (jobNames.size > 1) {
                             create("build${env.capitalized()}") {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
-                                        jobNames.forEach { (_, jobName) ->
-                                            jenkins.build(jobName, env)
+                                        jobNames.forEach { (taskName, jobName) ->
+                                            jenkins.build(jobName, "last$envName$taskName")
                                         }
                                     }
                                 })
                             }
                         }
-                        val envName = env.capitalized()
-                        jobNames.forEach { (projectName, jobName) ->
-                            create("build$envName$projectName") {
+                        jobNames.forEach { (taskName, jobName) ->
+                            val lastBuildInfoTaskName = "last$envName$taskName"
+                            create("build$envName$taskName") {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
-                                        jenkins.build(jobName, env)
+                                        jenkins.build(jobName, lastBuildInfoTaskName)
                                     }
                                 })
                             }
-                            create("last$envName$projectName") {
+                            create(lastBuildInfoTaskName) {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
@@ -94,7 +95,7 @@ object RootProjectTasks {
                                     }
                                 })
                             }
-                            create("info$envName$projectName") {
+                            create("info$envName$taskName") {
                                 it.group = group
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
