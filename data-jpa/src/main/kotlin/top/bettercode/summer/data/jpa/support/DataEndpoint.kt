@@ -30,19 +30,16 @@ open class DataEndpoint(
     private val entityManagers: List<EntityManager>,
     private val transactionManagers: List<PlatformTransactionManager>
 ) {
-
     private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
+    private val defaultDS = "d"
 
-    private fun query(
-        entityManager: EntityManager,
-        sql: String,
-        @Nullable page: Int?,
-        @Nullable size: Int?
-    ): Any {
+    @JvmOverloads
+    fun query(ds: String = defaultDS, sql: String, @Nullable page: Int? = null, @Nullable size: Int? = null): Any {
         val sizeParam = size ?: 20
         val offset = page?.let { (it - 1).times(sizeParam) } ?: 0
         val startMillis = System.currentTimeMillis()
         try {
+            val entityManager = getEntityManager(ds)
             MDC.put(SqlAppender.MDC_SQL_ID, "Endpoint.query")
             sqlLog.offset(offset.toLong())
             sqlLog.limit(sizeParam)
@@ -71,11 +68,10 @@ open class DataEndpoint(
         }
     }
 
-    private fun update(
-        transactionManager: PlatformTransactionManager,
-        entityManager: EntityManager,
-        sql: String
-    ): Any {
+    @JvmOverloads
+    fun update(ds: String = defaultDS, sql: String): Any {
+        val entityManager = getEntityManager(ds)
+        val transactionManager = getTransactionManager(ds)
         val def = DefaultTransactionDefinition()
         def.name = "update"
         def.propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED
@@ -101,23 +97,23 @@ open class DataEndpoint(
         }
     }
 
-    private fun getEntityManager(db: String): EntityManager {
+    private fun getEntityManager(ds: String): EntityManager {
         return if (entityManagers.size == 1)
             entityManagers[0]
-        else if (db == "d") {
+        else if (ds == defaultDS) {
             entityManagers.find { ApplicationContextHolder.getBeanName(it.entityManagerFactory) == "entityManagerFactory" }!!
         } else {
-            entityManagers.find { ApplicationContextHolder.getBeanName(it.entityManagerFactory) == "${db}EntityManagerFactory" }!!
+            entityManagers.find { ApplicationContextHolder.getBeanName(it.entityManagerFactory) == "${ds}EntityManagerFactory" }!!
         }
     }
 
-    private fun getTransactionManager(db: String): PlatformTransactionManager {
+    private fun getTransactionManager(ds: String): PlatformTransactionManager {
         return if (transactionManagers.size == 1)
             transactionManagers[0]
-        else if (db == "d") {
+        else if (ds == defaultDS) {
             transactionManagers.find { ApplicationContextHolder.getBeanName(it) == "transactionManager" }!!
         } else {
-            transactionManagers.find { ApplicationContextHolder.getBeanName(it) == "${db}TransactionManager" }!!
+            transactionManagers.find { ApplicationContextHolder.getBeanName(it) == "${ds}TransactionManager" }!!
         }
     }
 
@@ -129,11 +125,11 @@ open class DataEndpoint(
     ): Any {
         return when (op) {
             "update" -> {
-                update(getTransactionManager(ds), getEntityManager(ds), sql)
+                update(ds, sql)
             }
 
             "query" -> {
-                query(getEntityManager(ds), sql, page, size)
+                query(ds, sql, page, size)
             }
 
             else -> {
