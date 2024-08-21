@@ -11,6 +11,7 @@ import org.springframework.data.domain.AuditorAware
 import org.springframework.transaction.PlatformTransactionManager
 import top.bettercode.summer.data.jpa.support.DataEndpoint
 import top.bettercode.summer.data.jpa.support.DataJpaErrorHandler
+import top.bettercode.summer.data.jpa.support.DataQuery
 import top.bettercode.summer.data.jpa.support.DisableSqlLogAspect
 import java.util.*
 import javax.persistence.EntityManager
@@ -57,11 +58,16 @@ class DataJpaAutoConfiguration {
     }
 
     @Bean
-    fun queryEndpoint(
+    fun dataQuery(
         entityManagers: MutableList<EntityManager>,
         transactionManagers: MutableList<PlatformTransactionManager>
-    ): DataEndpoint {
-        return DataEndpoint(entityManagers, transactionManagers)
+    ): DataQuery {
+        return DataQuery(entityManagers, transactionManagers)
+    }
+
+    @Bean
+    fun dataEndpoint(dataQuery: DataQuery): DataEndpoint {
+        return DataEndpoint(dataQuery)
     }
 
 }
