@@ -12,4 +12,9 @@ open class MiniprogramProperties : WeixinProperties("微信小程序") {
      *  跳转小程序类型：developer为开发版；trial为体验版；formal为正式版；默认为正式版
      */
     var miniprogramState: String = MiniprogramState.FORMAL
+
+    /**
+     * 小程序授权接口映射路径
+     */
+    var oauthMappingPath: String = "/miniOauth"
 }
