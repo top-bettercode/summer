@@ -11,7 +11,6 @@ import org.springframework.web.method.HandlerMethod
 import top.bettercode.summer.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingHandler
 import top.bettercode.summer.test.autodoc.field.FieldDescFix
-import top.bettercode.summer.tools.autodoc.AutodocExtension
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.DocModule
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
@@ -21,6 +20,7 @@ import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.operation.Operation
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.File
 import java.net.URI
@@ -251,7 +251,7 @@ class AutodocHandler(
             val subDirs = dir.parentFile.listFiles()?.filter { it.isDirectory }
             if (subDirs != null) {
                 subDirs.sortedWith { o1, o2 ->
-                    AutodocExtension.compareVersion(
+                    StringUtil.compareVersion(
                         o2.nameWithoutExtension,
                         o1.nameWithoutExtension,
                     )

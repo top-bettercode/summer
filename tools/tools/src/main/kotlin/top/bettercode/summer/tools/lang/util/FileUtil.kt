@@ -18,7 +18,7 @@ object FileUtil {
     val userDir: String = System.getProperty("user.dir")
 
     @JvmStatic
-    val tmpDir: String = "$userDir${File.separator}tmp"
+    val tmpDir: String = "$userDir${File.separator}build${File.separator}tmp"
 
     @JvmStatic
     val sysTmpDir: String = System.getProperty("java.io.tmpdir")

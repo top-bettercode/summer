@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils
 import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.resource.HttpResource
 import top.bettercode.summer.logging.LoggingUtil
-import top.bettercode.summer.tools.autodoc.AutodocExtension
+import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.File
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -65,7 +65,7 @@ class DocsEndpoint(
                         .filter { it.matches("^v.*\\.html$".toRegex()) }
 
                     val last = resources
-                        .sortedWith { o1, o2 -> AutodocExtension.compareVersion(o1, o2) }
+                        .sortedWith { o1, o2 -> StringUtil.compareVersion(o1, o2) }
                         .lastOrNull()
                     if (last != null) {
                         response.sendRedirect("$servletPath/$last")
@@ -75,7 +75,7 @@ class DocsEndpoint(
                     val last = resource.file.listFiles()
                         ?.filter { f: File -> f.isFile && f.name.matches("^v.*\\.html$".toRegex()) }
                         ?.map { it.name }
-                        ?.sortedWith { o1, o2 -> AutodocExtension.compareVersion(o1, o2) }
+                        ?.sortedWith { o1, o2 -> StringUtil.compareVersion(o1, o2) }
                         ?.lastOrNull()
                     if (last != null) {
                         response.sendRedirect("$servletPath/${last}")

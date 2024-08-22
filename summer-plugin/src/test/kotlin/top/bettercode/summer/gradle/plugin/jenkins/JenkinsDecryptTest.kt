@@ -8,6 +8,7 @@ import org.jdom2.output.XMLOutputter
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.lang.util.StringUtil.compareVersion
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -25,27 +26,51 @@ import javax.crypto.spec.SecretKeySpec
 class JenkinsDecryptTest {
 
 
-    @Disabled
+    //    @Disabled
     @Test
     fun read() {
-        val file = ""
+        val result1 = extracted("")
+        val result2 = extracted("")
+        val result = result1 + result2
+        File("build/jenkins.host").printWriter().use { p ->
+            result.sortedWith { o1, o2 ->
+                val username1 = o1.substringBefore("@")
+                val username2 = o2.substringBefore("@")
+                val hostname1 = o1.substringAfter("@").substringBefore(" ")
+                val hostname2 = o2.substringAfter("@").substringBefore(" ")
+                val r1 = compareVersion(hostname1, hostname2)
+                if (r1 == 0) {
+                    username1.compareTo(username2)
+                } else {
+                    r1
+                }
+            }.forEach { v ->
+                p.println(v)
+            }
+        }
+    }
+
+    private fun extracted(file: String): List<String> {
         val saxBuilder = SAXBuilder()
         val document: Document = saxBuilder.build(file)
         val rootElement: Element = document.rootElement
         val element = rootElement.getChildren("hostConfigurations")[0]
-        File("build/release.host").printWriter().use { p ->
-            element.getChildren("jenkins.plugins.publish__over__ssh.BapSshHostConfiguration")
-                .forEach {
-                    val hostname = it.getChildText("hostname")
-                    val port = it.getChildText("port")
-                    val username = it.getChildText("username")
-                    var password = it.getChild("keyInfo").getChildText("secretPassphrase")
-                    if (password.isNullOrBlank()) {
-                        password = it.getChild("commonConfig").getChildText("secretPassphrase")
-                    }
-                    p.println("$username@$hostname $port $password")
+        val result = mutableListOf<String>()
+        element.getChildren("jenkins.plugins.publish__over__ssh.BapSshHostConfiguration")
+            .forEach {
+                var hostname = it.getChildText("hostname")
+                if (hostname.contains("-")) {
+                    hostname = it.getChildText("name").substringBefore("-")
                 }
-        }
+                val port = it.getChildText("port")
+                val username = it.getChildText("username")
+                var password = it.getChild("keyInfo").getChildText("secretPassphrase")
+                if (password.isNullOrBlank()) {
+                    password = it.getChild("commonConfig").getChildText("secretPassphrase")
+                }
+                result.add("$username@$hostname $port $password")
+            }
+        return result
     }
 
     @Disabled
