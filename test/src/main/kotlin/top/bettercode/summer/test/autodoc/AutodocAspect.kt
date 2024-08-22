@@ -16,6 +16,7 @@ import org.springframework.core.io.InputStreamSource
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import top.bettercode.summer.tools.autodoc.model.Field
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.web.PagedResources
 import java.beans.Introspector
 import java.io.File
@@ -213,7 +214,7 @@ class AutodocAspect(
 
 
     private val rootProject: File by lazy {
-        var file = File("").absoluteFile
+        var file = File(FileUtil.userDir)
         while (!File(file, "gradlew").exists()) {
             file = file.parentFile
         }

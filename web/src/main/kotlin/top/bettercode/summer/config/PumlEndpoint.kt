@@ -15,6 +15,7 @@ import org.springframework.lang.Nullable
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
+import top.bettercode.summer.tools.lang.util.FileUtil
 import java.io.File
 import java.net.URLEncoder
 import java.time.LocalDate
@@ -107,8 +108,7 @@ class PumlEndpoint(
     @ReadOperation
     fun puml(@Selector module: String, @Nullable force: Boolean?) {
         log.info("开始生成puml:{}", module)
-        val tmpPath = System.getProperty("java.io.tmpdir")
-        val destFile = File(tmpPath, "summer${File.separator}puml${File.separator}${module}-${LocalDate.now()}.puml")
+        val destFile = File(FileUtil.tmpDir, "puml${File.separator}${module}-${LocalDate.now()}.puml")
         if (force == true || !destFile.exists()) {
             val database = databases[module]
                     ?: throw IllegalArgumentException("module $module not found")

@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.sap.config
 
 import com.sap.conn.jco.rt.JCoRuntimeFactory
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.Os
 import java.io.File
 import java.nio.file.Files
@@ -21,8 +22,7 @@ object SapNativeLibLoader {
     @Synchronized
     fun loadNativeLib() {
         val version = bundle.getString("version")
-        val tmpPath =
-            System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
+        val tmpPath = FileUtil.userDir + File.separator + "build" + File.separator + "native"
         val targetFolder = File(tmpPath)
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()

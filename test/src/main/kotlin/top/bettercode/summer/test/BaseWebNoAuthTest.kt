@@ -27,6 +27,7 @@ import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.test.autodoc.Autodoc
 import top.bettercode.summer.test.autodoc.Autodoc.requiredParameters
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.properties.SummerWebProperties
@@ -179,7 +180,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
             Files.newOutputStream(Paths.get(name))
         )
         try {
-            val filePath = System.getProperty("user.dir") + File.separator + name
+            val filePath = FileUtil.userDir + File.separator + name
             if (System.getProperties().getProperty("os.name").lowercase(Locale.getDefault())
                     .startsWith("win")
             ) {

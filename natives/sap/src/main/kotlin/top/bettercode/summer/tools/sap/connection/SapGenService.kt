@@ -12,6 +12,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.SourceSet
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.JavaType.Companion.dateInstance
 import top.bettercode.summer.tools.lang.util.JavaType.Companion.stringInstance
@@ -25,7 +26,7 @@ import java.util.*
  */
 class SapGenService(private val sapService: SapService) {
     private val log = LoggerFactory.getLogger(SapGenService::class.java)
-    private var outputDir = File(System.getProperty("user.dir") + "/build/sap/")
+    private var outputDir = File(FileUtil.userDir + "/build/sap/")
     fun setOutputDir(outputDir: String): SapGenService {
         Assert.notNull(outputDir, "outputDir must not be null")
         this.outputDir = File(outputDir)

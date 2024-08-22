@@ -8,6 +8,7 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.web.client.*
 import org.w3c.dom.Element
+import top.bettercode.summer.tools.lang.util.FileUtil
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -62,7 +63,7 @@ class Jenkins(private val url: String, auth: String) {
 
     fun currentBranch(): String? {
         val processBuilder = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD")
-        processBuilder.directory(File("./"))
+        processBuilder.directory(File(FileUtil.userDir))
 
         return try {
             val process = processBuilder.start()

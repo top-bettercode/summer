@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.generator
 
 import top.bettercode.summer.tools.generator.dom.java.element.JavaElement
 import top.bettercode.summer.tools.generator.dsl.Generator
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.io.File
 
@@ -22,7 +23,7 @@ open class GeneratorExtension(
     /**
      * 生成文件基础路径,项目路径
      */
-    var projectDir: File = File("").absoluteFile,
+    var projectDir: File = File(FileUtil.userDir),
     /**
      * 基础路径下相对路径
      */

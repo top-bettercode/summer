@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.copt
 
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.Os
 import java.io.File
 import java.nio.file.Files
@@ -20,9 +21,8 @@ object COPTNativeLibLoader {
     @Synchronized
     fun loadNativeLib() {
         val version = bundle.getString("version")
-        val tmpPath =
-            System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
-        val targetFolder = File(tmpPath)
+        val userDir = FileUtil.userDir + File.separator + "build" + File.separator + "native"
+        val targetFolder = File(userDir)
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
         }

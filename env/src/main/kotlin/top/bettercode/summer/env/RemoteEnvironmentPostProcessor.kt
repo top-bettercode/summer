@@ -14,6 +14,7 @@ import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.PropertySource
 import org.springframework.core.env.get
 import org.springframework.core.io.FileUrlResource
+import top.bettercode.summer.tools.lang.util.FileUtil
 import java.io.File
 
 open class RemoteEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
@@ -39,7 +40,6 @@ open class RemoteEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
 
     companion object {
         private val log = LoggerFactory.getLogger(RemoteEnvironmentPostProcessor::class.java)
-        private val tmpPath = System.getProperty("java.io.tmpdir")
 
         fun loadConfig(environment: ConfigurableEnvironment): Pair<ConfigProperties, List<PropertySource<*>>>? {
             val config = Binder.get(environment).bind(
@@ -64,7 +64,7 @@ open class RemoteEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
         }
 
         fun clone(url: String, appName: String, username: String, password: String): File {
-            val dir = File(tmpPath, "summer-config/$appName")
+            val dir = File(FileUtil.tmpDir, "config${File.separator}$appName")
             if (dir.exists()) {
                 dir.deleteRecursively()
                 if (log.isDebugEnabled) {

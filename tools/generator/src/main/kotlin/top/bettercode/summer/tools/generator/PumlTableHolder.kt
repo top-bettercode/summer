@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.generator
 
 import top.bettercode.summer.tools.generator.puml.PumlConverter
+import top.bettercode.summer.tools.lang.util.FileUtil
 import java.io.File
 
 /**
@@ -10,7 +11,7 @@ import java.io.File
 class PumlTableHolder(
     database: DatabaseConfiguration,
     files: List<File>,
-    securityFile: File = File("${System.getProperty("java.io.tmpdir")}${File.separator}summer${File.separator}security.puml")
+    securityFile: File = File(FileUtil.tmpDir, "puml${File.separator}security.puml")
 ) : FileTableHolder(database, if (database.storeToken) (files + listOf(securityFile)) else files) {
 
     init {

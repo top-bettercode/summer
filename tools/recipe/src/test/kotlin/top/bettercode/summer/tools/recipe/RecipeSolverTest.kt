@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.excel.FastExcel
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.optimal.OptimalUtil
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Solver
@@ -186,7 +187,7 @@ internal class RecipeSolverTest {
         val recipe1 = recipes[0]
         val includeProductionCost = recipe1.includeProductionCost
         val dir =
-            File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
+            File("${FileUtil.userDir}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
         dir.mkdirs()
         val expectedRequirement = File("$dir/requirement.json").bufferedReader().readText()
         //配方要求
@@ -251,7 +252,7 @@ internal class RecipeSolverTest {
         val requirement = recipe1.requirement
         val productName = requirement.productName
         val dir =
-            File("${System.getProperty("user.dir")}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
+            File("${FileUtil.userDir}/src/test/resources/recipe${if (includeProductionCost) "-productionCost" else ""}/$productName")
         dir.mkdirs()
         //配方要求
         File("$dir/requirement.json").writeText(

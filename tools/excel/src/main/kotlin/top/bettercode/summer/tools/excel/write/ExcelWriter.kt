@@ -9,6 +9,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import top.bettercode.summer.tools.excel.*
 import top.bettercode.summer.tools.excel.write.style.CellStyle
 import top.bettercode.summer.tools.excel.write.style.ColumnWidths
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.Closeable
 import java.io.File
@@ -515,11 +516,7 @@ class ExcelWriter(val excel: Excel) : Closeable {
             val response = requestAttributes.response!!
             excelDisposition(request, response, fileName)
             if (cacheKey != null) {
-                val tmpPath = System.getProperty("java.io.tmpdir")
-                val file = File(
-                    tmpPath,
-                    "summer${File.separator}excel-export${File.separator}$cacheKey.xlsx"
-                )
+                val file = File(FileUtil.tmpDir, "excel${File.separator}export${File.separator}$cacheKey.xlsx")
                 if (expiresIn != null && file.exists()) {
                     val expiresTime =
                         TimeUtil.Companion.toLocalDateTime(file.lastModified()).plus(expiresIn)

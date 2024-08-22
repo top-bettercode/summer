@@ -47,8 +47,8 @@ open class DistExtension(
 
     val jdkArchive: File
         get() {
-            val tmpPath = System.getProperty("user.home")
-            val file = File(tmpPath + File.separator + ".cache/jdk", File(jdkArchiveSrc).name)
+            val userHome = System.getProperty("user.home")
+            val file = File(userHome + File.separator + ".cache/jdk", File(jdkArchiveSrc).name)
             if (!file.parentFile.exists()) {
                 file.parentFile.mkdirs()
             }

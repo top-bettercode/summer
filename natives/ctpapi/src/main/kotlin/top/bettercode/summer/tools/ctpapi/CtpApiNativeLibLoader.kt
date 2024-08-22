@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.ctpapi
 
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.Os
 import java.io.File
 import java.nio.file.Files
@@ -24,8 +25,7 @@ object CtpApiNativeLibLoader {
     @Synchronized
     @JvmStatic
     fun loadNativeLib() {
-        val tmpPath =
-            System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
+        val tmpPath = FileUtil.userDir + File.separator + "build" + File.separator + "native"
         val targetFolder = File(tmpPath)
 
         if (!targetFolder.exists()) {

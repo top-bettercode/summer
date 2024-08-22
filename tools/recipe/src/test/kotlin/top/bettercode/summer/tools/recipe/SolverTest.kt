@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.optimal.SolverType
 import top.bettercode.summer.tools.optimal.copt.COPTSolver
@@ -56,7 +57,7 @@ class SolverTest {
         val require = "test"
 
         val content =
-            File("${System.getProperty("user.dir")}/src/test/resources/require/$require.json").readText()
+            File("${FileUtil.userDir}/src/test/resources/require/$require.json").readText()
 
         val requirement = RecipeRequirement.read(
             content
@@ -133,7 +134,7 @@ class SolverTest {
         Assertions.assertTrue(failMsgs.isEmpty())
     }
 
-    val dir = "${System.getProperty("user.dir")}/build/lp"
+    val dir = "${FileUtil.userDir}/build/lp"
 
     @BeforeEach
     fun setUp() {

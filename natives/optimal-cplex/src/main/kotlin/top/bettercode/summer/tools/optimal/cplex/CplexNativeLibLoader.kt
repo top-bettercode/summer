@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.optimal.cplex
 
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.Os
 import java.io.File
 import java.nio.file.Files
@@ -20,8 +21,7 @@ object CplexNativeLibLoader {
     @Synchronized
     fun loadNativeLib() {
         val version = bundle.getString("version")
-        val tmpPath =
-            System.getProperty("user.dir") + File.separator + "build" + File.separator + "native"
+        val tmpPath = FileUtil.userDir + File.separator + "build" + File.separator + "native"
         val targetFolder = File(tmpPath)
         if (!targetFolder.exists()) {
             targetFolder.mkdirs()
@@ -42,8 +42,10 @@ object CplexNativeLibLoader {
                 targetFile.delete()
             }
             log.info("copy $libraryName to $targetFile")
-            Files.copy(CplexNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
-                    targetFile.toPath())
+            Files.copy(
+                CplexNativeLibLoader::class.java.getResourceAsStream("/native/$libraryName")!!,
+                targetFile.toPath()
+            )
         }
         when {
             Os.isFamily(Os.FAMILY_MAC) -> {
