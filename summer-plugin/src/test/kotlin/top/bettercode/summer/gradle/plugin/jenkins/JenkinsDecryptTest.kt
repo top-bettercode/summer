@@ -24,11 +24,38 @@ import javax.crypto.spec.SecretKeySpec
 
 class JenkinsDecryptTest {
 
+
+    @Disabled
+    @Test
+    fun read() {
+        val file = ""
+        val saxBuilder = SAXBuilder()
+        val document: Document = saxBuilder.build(file)
+        val rootElement: Element = document.rootElement
+        val element = rootElement.getChildren("hostConfigurations")[0]
+        File("build/release.host").printWriter().use { p ->
+            element.getChildren("jenkins.plugins.publish__over__ssh.BapSshHostConfiguration")
+                .forEach {
+                    val hostname = it.getChildText("hostname")
+                    val port = it.getChildText("port")
+                    val username = it.getChildText("username")
+                    var password = it.getChild("keyInfo").getChildText("secretPassphrase")
+                    if (password.isNullOrBlank()) {
+                        password = it.getChild("commonConfig").getChildText("secretPassphrase")
+                    }
+                    p.println("$username@$hostname $port $password")
+                }
+        }
+    }
+
     @Disabled
     @Test
     fun decrypt() {
         val jenkinsDir = ""
-        decrypt(File(jenkinsDir), File(jenkinsDir, "jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml"))
+        decrypt(
+            File(jenkinsDir),
+            File(jenkinsDir, "jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml")
+        )
     }
 
     fun decrypt(jenkinsDir: File, encryptFile: File) {
@@ -44,7 +71,10 @@ class JenkinsDecryptTest {
 
         // 将修改后的XML写回文件
         val outputter = XMLOutputter(Format.getPrettyFormat())
-        val decryptFile = File(encryptFile.parent, encryptFile.nameWithoutExtension + "-decrypt." + encryptFile.extension)
+        val decryptFile = File(
+            encryptFile.parent,
+            encryptFile.nameWithoutExtension + "-decrypt." + encryptFile.extension
+        )
         outputter.output(document, decryptFile.outputStream())
     }
 
@@ -60,7 +90,8 @@ class JenkinsDecryptTest {
     }
 
     fun decrypt(secretsDir: File, encryptStr: String): String {
-        val payload: ByteArray = Base64.getDecoder().decode(encryptStr.substring(1, encryptStr.length - 1))
+        val payload: ByteArray =
+            Base64.getDecoder().decode(encryptStr.substring(1, encryptStr.length - 1))
         when (payload[0]) {
             1.toByte() -> {
                 // For PAYLOAD_V1 we use this byte shifting model, V2 probably will need DataOutput
