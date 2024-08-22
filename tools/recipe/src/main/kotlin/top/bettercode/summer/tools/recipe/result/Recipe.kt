@@ -238,8 +238,9 @@ data class Recipe(
     //检查结果
     fun validate(): Boolean {
         //检查进料口
-        if (requirement.maxUseMaterialNum != null && materials.size > requirement.maxUseMaterialNum) {
-            throw IllegalRecipeException("${requirement.id}:${requirement.productName}-配方所需进料口：${materials.size} 超过最大进料口：${requirement.maxUseMaterialNum}")
+        val useMaterialNum = materials.filter { !it.feedPortShare }.size
+        if (requirement.maxUseMaterialNum != null && useMaterialNum > requirement.maxUseMaterialNum) {
+            throw IllegalRecipeException("${requirement.id}:${requirement.productName}-配方所需进料口：$useMaterialNum 超过最大进料口：${requirement.maxUseMaterialNum}")
         }
 
         //检查烘干水分
