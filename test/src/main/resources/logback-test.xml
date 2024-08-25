@@ -3,4 +3,6 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <logger name="org.springframework.test" level="WARN"/>
     <logger name="org.springframework.boot.test" level="WARN"/>
+    <logger name="sun.rmi" level="WARN"/>
+    <logger name="javax.management.remote" level="WARN"/>
 </configuration>

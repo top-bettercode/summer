@@ -124,6 +124,7 @@ logging:
     com.sun: warn
     feign: warn
     com.wechat.pay: info
+    sun.rmi: warn
     sun.net.www.protocol.http.HttpURLConnection: warn
     reactor.util.Loggers: info
     jdk.event.security: warn
