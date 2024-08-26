@@ -1,12 +1,14 @@
 package top.bettercode.summer.web.error
 
 import org.springframework.context.MessageSource
+import org.springframework.core.NestedExceptionUtils
 import org.springframework.dao.*
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.transaction.CannotCreateTransactionException
 import org.springframework.transaction.TransactionSystemException
 import top.bettercode.summer.web.RespEntity
+import java.sql.SQLIntegrityConstraintViolationException
 import java.sql.SQLRecoverableException
 import javax.servlet.http.HttpServletRequest
 import javax.validation.ConstraintViolationException
@@ -32,73 +34,6 @@ class DataErrorHandler(
                     e, respEntity, errors,
                     separator
                 )
-            }
-        } else if (e is DataIntegrityViolationException) {
-            val specificCauseMessage = e.mostSpecificCause
-                .message!!.trim { it <= ' ' }
-            val notNullRegex = "Column '(.*?)' cannot be null"
-            val notNullRegex1 = "ORA-01400: 无法将 NULL 插入 \\(.+\\.\"(.*?)\"\\)"
-            val duplicateRegex = "^Duplicate entry '(.*?)'.*"
-            val dataTooLongRegex = "^Data truncation: Data too long for column '(.*?)'.*"
-            val outOfRangeRegex = "^Data truncation: Out of range value for column '(.*?)'.*"
-            val constraintSubfix = "Cannot delete or update a parent row"
-            val incorrectRegex =
-                "^Data truncation: Incorrect .* value: '(.*?)' for column '(.*?)' at.*"
-            if (specificCauseMessage.matches(notNullRegex.toRegex())) {
-                val columnName = specificCauseMessage.replace(notNullRegex.toRegex(), "$1")
-                respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = getText("notnull", getText(columnName))
-                errors[columnName] = respEntity.message
-            } else if (specificCauseMessage.matches(notNullRegex1.toRegex())) {
-                val columnName = specificCauseMessage.replace(notNullRegex1.toRegex(), "$1")
-                respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = getText("notnull", getText(columnName))
-                errors[columnName] = respEntity.message
-            } else if (specificCauseMessage.matches(duplicateRegex.toRegex())) {
-                val columnName =
-                    specificCauseMessage.replace(duplicateRegex.toRegex(), "$1")
-
-                var message = getText("duplicate.entry", getText(columnName))
-                if (message.isBlank()) {
-                    message = "data.valid.failed"
-                }
-                respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = message
-                errors[columnName] = respEntity.message
-            } else if (specificCauseMessage.matches(dataTooLongRegex.toRegex())) {
-                val columnName =
-                    specificCauseMessage.replace(dataTooLongRegex.toRegex(), "$1")
-
-                var message = getText("data.too.long", getText(columnName))
-                if (message.isBlank()) {
-                    message = "data.valid.failed"
-                }
-                respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = message
-                errors[columnName] = respEntity.message
-            } else if (specificCauseMessage.matches(outOfRangeRegex.toRegex())) {
-                val columnName = specificCauseMessage.replace(outOfRangeRegex.toRegex(), "$1")
-                var message = getText("data Out of range", getText(columnName))
-                if (message.isBlank()) {
-                    message = "data.valid.failed"
-                }
-                respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = message
-                errors[columnName] = respEntity.message
-            } else if (specificCauseMessage.startsWith(constraintSubfix)) {
-                var message = "cannot.delete.update.parent"
-                if (message.isBlank()) {
-                    message = "data.valid.failed"
-                }
-                respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = message
-            } else if (specificCauseMessage.matches(incorrectRegex.toRegex())) {
-                val columnName = specificCauseMessage.replace(incorrectRegex.toRegex(), "$2")
-                respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
-                respEntity.message = getText(columnName) + getText("incorrectFormatting")
-                errors[columnName] = respEntity.message
-            } else {
-                respEntity.message = "Data Integrity Violation Exception"
             }
         } else if (e is UncategorizedSQLException) {
             val detailMessage = e.sqlException.message
@@ -158,6 +93,80 @@ class DataErrorHandler(
         } else if (e is IncorrectResultSizeDataAccessException) {
             if (error.message != null && error.message!!.matches(".*query did not return a unique result:.*".toRegex())) {
                 respEntity.message = "data.not.unique.result"
+            }
+        } else if (e != null) {
+            val rootCause = NestedExceptionUtils.getRootCause(e)
+            if (rootCause is SQLIntegrityConstraintViolationException) {
+                val specificCauseMessage = rootCause.message ?: e.message
+                if (!specificCauseMessage.isNullOrBlank()) {
+                    val notNullRegex = "Column '(.*?)' cannot be null"
+                    val notNullRegex1 = "ORA-01400: 无法将 NULL 插入 \\(.+\\.\"(.*?)\"\\)"
+                    val duplicateRegex = "^Duplicate entry '(.*?)'.*"
+                    val dataTooLongRegex = "^Data truncation: Data too long for column '(.*?)'.*"
+                    val outOfRangeRegex =
+                        "^Data truncation: Out of range value for column '(.*?)'.*"
+                    val constraintSubfix = "Cannot delete or update a parent row"
+                    val incorrectRegex =
+                        "^Data truncation: Incorrect .* value: '(.*?)' for column '(.*?)' at.*"
+                    if (specificCauseMessage.matches(notNullRegex.toRegex())) {
+                        val columnName = specificCauseMessage.replace(notNullRegex.toRegex(), "$1")
+                        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
+                        respEntity.message = getText("notnull", getText(columnName))
+                        errors[columnName] = respEntity.message
+                    } else if (specificCauseMessage.matches(notNullRegex1.toRegex())) {
+                        val columnName = specificCauseMessage.replace(notNullRegex1.toRegex(), "$1")
+                        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
+                        respEntity.message = getText("notnull", getText(columnName))
+                        errors[columnName] = respEntity.message
+                    } else if (specificCauseMessage.matches(duplicateRegex.toRegex())) {
+                        val columnName =
+                            specificCauseMessage.replace(duplicateRegex.toRegex(), "$1")
+
+                        var message = getText("duplicate.entry", getText(columnName))
+                        if (message.isBlank()) {
+                            message = "data.valid.failed"
+                        }
+                        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
+                        respEntity.message = message
+                        errors[columnName] = respEntity.message
+                    } else if (specificCauseMessage.matches(dataTooLongRegex.toRegex())) {
+                        val columnName =
+                            specificCauseMessage.replace(dataTooLongRegex.toRegex(), "$1")
+
+                        var message = getText("data.too.long", getText(columnName))
+                        if (message.isBlank()) {
+                            message = "data.valid.failed"
+                        }
+                        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
+                        respEntity.message = message
+                        errors[columnName] = respEntity.message
+                    } else if (specificCauseMessage.matches(outOfRangeRegex.toRegex())) {
+                        val columnName =
+                            specificCauseMessage.replace(outOfRangeRegex.toRegex(), "$1")
+                        var message = getText("data Out of range", getText(columnName))
+                        if (message.isBlank()) {
+                            message = "data.valid.failed"
+                        }
+                        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
+                        respEntity.message = message
+                        errors[columnName] = respEntity.message
+                    } else if (specificCauseMessage.startsWith(constraintSubfix)) {
+                        var message = "cannot.delete.update.parent"
+                        if (message.isBlank()) {
+                            message = "data.valid.failed"
+                        }
+                        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
+                        respEntity.message = message
+                    } else if (specificCauseMessage.matches(incorrectRegex.toRegex())) {
+                        val columnName =
+                            specificCauseMessage.replace(incorrectRegex.toRegex(), "$2")
+                        respEntity.httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value()
+                        respEntity.message = getText(columnName) + getText("incorrectFormatting")
+                        errors[columnName] = respEntity.message
+                    } else {
+                        respEntity.message = "Data Integrity Violation Exception"
+                    }
+                }
             }
         }
     }

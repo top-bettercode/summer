@@ -85,6 +85,6 @@ class SqlLogData(val id: String? = null) {
         }${
             if (cost != null) "cost:${cost} ms;" else ""
         }"
-        return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (sql.isNullOrBlank()) "" else "\n$sql"} ${if (error.isNullOrBlank()) "" else "\n$error"}"
+        return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (sql.isNullOrBlank()) "" else "\n$sql"} ${if (error.isNullOrBlank()) "" else "\nERROR:$error"}"
     }
 }

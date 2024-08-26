@@ -5,6 +5,7 @@ import org.aopalliance.intercept.MethodInvocation
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.aop.framework.Advised
+import org.springframework.core.NestedExceptionUtils
 import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,6 +24,7 @@ import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import javax.persistence.EntityManager
 import kotlin.reflect.full.declaredMemberProperties
@@ -168,8 +170,15 @@ class ExecutorLogMethodInterceptor(
                     }
                     return result
                 } catch (e: Exception) {
-                    MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
-                    throw e
+                    MDC.put(
+                        SqlAppender.MDC_SQL_ERROR,
+                        (NestedExceptionUtils.getRootCause(e) ?: e).message ?: e.message
+                    )
+                    if (e is InvocationTargetException) {
+                        throw e.targetException ?: e
+                    } else {
+                        throw e
+                    }
                 } finally {
                     val duration = System.currentTimeMillis() - startMillis
                     sqlLog.cost(duration)
