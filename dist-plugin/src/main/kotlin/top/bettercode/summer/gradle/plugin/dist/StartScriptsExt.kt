@@ -10,14 +10,21 @@ import java.io.File
 object StartScriptsExt {
 
     fun ext(project: Project, dist: DistExtension) {
-        val appName = (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name
+        val appName =
+            (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name
+
+        writeServiceFile(
+            project, "build.txt", """${appName}-${project.version}"""
+        )
         if (dist.windows) {
             //WinSW
-            val winSWFile = File(project.layout.buildDirectory.get().asFile, "service/${project.name}.exe")
-            DistPlugin::class.java.getResourceAsStream("/WinSW.NET461.exe")?.copyTo(winSWFile.apply { parentFile.mkdirs() }.outputStream())
+            val winSWFile =
+                File(project.layout.buildDirectory.get().asFile, "service/${project.name}.exe")
+            DistPlugin::class.java.getResourceAsStream("/WinSW.NET461.exe")
+                ?.copyTo(winSWFile.apply { parentFile.mkdirs() }.outputStream())
 
             writeServiceFile(
-                    project, "${project.name}.xml", """
+                project, "${project.name}.xml", """
 <service>
   <id>$appName</id>
   <name>${project.rootProject.description ?: appName}</name>
@@ -32,7 +39,7 @@ object StartScriptsExt {
             """, executable = false
             )
             writeServiceFile(
-                    project, "run.bat", """
+                project, "run.bat", """
 @if "%DEBUG%"=="" @echo off
 
 @rem Set local scope for the variables with windows NT shell
@@ -49,7 +56,7 @@ pause
             )
 
             writeServiceFile(
-                    project, "startup.bat", """
+                project, "startup.bat", """
 @if "%DEBUG%"=="" @echo off
 
 @rem Set local scope for the variables with windows NT shell
@@ -64,7 +71,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
             )
 
             writeServiceFile(
-                    project, "shutdown.bat", """
+                project, "shutdown.bat", """
 @if "%DEBUG%"=="" @echo off
 
 @rem Set local scope for the variables with windows NT shell
@@ -79,7 +86,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
             )
 
             writeServiceFile(
-                    project, "${project.name}-install.bat", """
+                project, "${project.name}-install.bat", """
 @if "%DEBUG%"=="" @echo off
 
 @rem Set local scope for the variables with windows NT shell
@@ -97,7 +104,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
             )
 
             writeServiceFile(
-                    project, "${project.name}-uninstall.bat", """
+                project, "${project.name}-uninstall.bat", """
 @if "%DEBUG%"=="" @echo off
 
 @rem Set local scope for the variables with windows NT shell
@@ -117,7 +124,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
         } else {
             //run.sh
             writeServiceFile(
-                    project, "run.sh", """
+                project, "run.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -145,7 +152,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
             //startup.sh
             writeServiceFile(
-                    project, "startup.sh", """
+                project, "startup.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -174,7 +181,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
             //shutdown.sh
             writeServiceFile(
-                    project, "shutdown.sh", """
+                project, "shutdown.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -207,7 +214,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
             )
             //${project.name}-install
             writeServiceFile(
-                    project, "${project.name}-install.sh", """
+                project, "${project.name}-install.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -262,10 +269,10 @@ if "%DIRNAME%"=="" set DIRNAME=.\
               sudo chmod +x /etc/init.d/$appName
               sudo chkconfig $appName on
               ${
-                if (dist.autoStart) """
+                    if (dist.autoStart) """
               sudo service $appName start
               """.trimIndent() else ""
-            }
+                }
             else
               (
                 cat <<EOF
@@ -287,17 +294,17 @@ if "%DIRNAME%"=="" set DIRNAME=.\
               sudo systemctl daemon-reload
               sudo systemctl enable $appName.service
               ${
-                if (dist.autoStart) """
+                    if (dist.autoStart) """
               sudo systemctl start $appName.service
               """.trimIndent() else ""
-            }
+                }
             fi
             """
             )
 
             //${project.name}-uninstall
             writeServiceFile(
-                    project, "${project.name}-uninstall.sh", """
+                project, "${project.name}-uninstall.sh", """
             #!/usr/bin/env sh
             
             if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
@@ -316,10 +323,10 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
 
     private fun writeServiceFile(
-            project: Project,
-            fileName: String,
-            text: String,
-            executable: Boolean = true
+        project: Project,
+        fileName: String,
+        text: String,
+        executable: Boolean = true
     ) {
         val serviceScript = File(project.layout.buildDirectory.get().asFile, "service/$fileName")
         if (!serviceScript.parentFile.exists()) {
