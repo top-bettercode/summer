@@ -107,6 +107,35 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         }
 
         @JvmStatic
+        fun enableLog(runnable: Runnable) {
+            if (!isShowSql()) {
+                val sqlLevel = setSqlLevel(Level.DEBUG)
+                try {
+                    runnable.run()
+                } finally {
+                    sqlLevel?.let { setSqlLevel(it) }
+                }
+            } else {
+                runnable.run()
+            }
+        }
+
+        @JvmStatic
+        fun <T> enableLog(runnable: () -> T): T {
+            return if (!isShowSql()) {
+                val sqlLevel = setSqlLevel(Level.DEBUG)
+                try {
+                    runnable()
+                } finally {
+                    sqlLevel?.let { setSqlLevel(it) }
+                }
+            } else {
+                runnable()
+            }
+        }
+
+
+        @JvmStatic
         fun isLogEnabled() = MDC.get(MDC_SQL_DISABLE_LOG) == null
 
         fun Logger.total(total: Number) {
