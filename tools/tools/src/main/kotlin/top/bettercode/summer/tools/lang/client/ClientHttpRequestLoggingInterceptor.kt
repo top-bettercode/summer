@@ -163,6 +163,8 @@ class ClientHttpRequestLoggingInterceptor(
             response.statusCode.value()
         } catch (e: SocketTimeoutException) {
             0
+        } catch (e: java.net.SocketException) {
+            0
         }
         val content = response.content
         return OperationResponse(
