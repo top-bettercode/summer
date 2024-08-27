@@ -15,7 +15,6 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
     companion object {
         const val MDC_SQL_ERROR = "SQL_ERROR"
         const val MDC_SQL_ID = "SQL_ID"
-        const val MDC_SQL_DISABLE_LOG = "SQL_DISABLE_LOG"
         const val MDC_SQL_END = "SQL_END"
         const val MDC_SQL_TOTAL = "SQL_TOTAL"
         const val MDC_SQL_RESULT = "SQL_RESULT"
@@ -79,11 +78,9 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             if (isShowSql()) {
                 val sqlLevel = setSqlLevel(Level.INFO)
                 try {
-                    MDC.put(MDC_SQL_DISABLE_LOG, "true")
                     runnable.run()
                 } finally {
                     sqlLevel?.let { setSqlLevel(it) }
-                    MDC.remove(MDC_SQL_DISABLE_LOG)
                 }
             } else {
                 runnable.run()
@@ -95,11 +92,9 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             return if (isShowSql()) {
                 val sqlLevel = setSqlLevel(Level.INFO)
                 try {
-                    MDC.put(MDC_SQL_DISABLE_LOG, "true")
                     runnable()
                 } finally {
                     sqlLevel?.let { setSqlLevel(it) }
-                    MDC.remove(MDC_SQL_DISABLE_LOG)
                 }
             } else {
                 runnable()
@@ -133,10 +128,6 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 runnable()
             }
         }
-
-
-        @JvmStatic
-        fun isLogEnabled() = MDC.get(MDC_SQL_DISABLE_LOG) == null
 
         fun Logger.total(total: Number) {
             try {
@@ -206,7 +197,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
 
     override fun append(event: ILoggingEvent?) {
         val loggerName = event?.loggerName
-        if (event == null || !isStarted || !logger.isInfoEnabled || (!isLogEnabled() && LOG_SLOW != loggerName)) {
+        if (event == null || !isStarted || !logger.isInfoEnabled) {
             return
         }
         try {

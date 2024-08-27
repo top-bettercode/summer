@@ -12,7 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager
 import top.bettercode.summer.data.jpa.support.DataEndpoint
 import top.bettercode.summer.data.jpa.support.DataJpaErrorHandler
 import top.bettercode.summer.data.jpa.support.DataQuery
-import top.bettercode.summer.data.jpa.support.DisableSqlLogAspect
+import top.bettercode.summer.data.jpa.support.SqlLogAspect
 import java.util.*
 import javax.persistence.EntityManager
 import javax.servlet.http.HttpServletRequest
@@ -53,8 +53,8 @@ class DataJpaAutoConfiguration {
     }
 
     @Bean
-    fun disableSqlLogAspect(): DisableSqlLogAspect {
-        return DisableSqlLogAspect()
+    fun disableSqlLogAspect(): SqlLogAspect {
+        return SqlLogAspect()
     }
 
     @Bean

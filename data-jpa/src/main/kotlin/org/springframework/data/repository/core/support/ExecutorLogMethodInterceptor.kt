@@ -124,7 +124,7 @@ class ExecutorLogMethodInterceptor(
     }
 
     override fun invoke(invocation: MethodInvocation): Any? {
-        if (sqlLog.isDebugEnabled && SqlAppender.isLogEnabled()) {
+        if (sqlLog.isDebugEnabled) {
             val logAdice = loggerInfos[invocation.method]
             if (logAdice == null) {
                 return invocation.proceed()
