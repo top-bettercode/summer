@@ -379,8 +379,7 @@ class DicCodeGen(
     private fun addCustomDictionary(key: String) {
         try {
             CustomDictionary.add(key)
-        } catch (e: Exception) {
-            project.logger.warn("$key 添加到CustomDictionary失败", e)
+        } catch (_: Exception) {
         }
     }
 
