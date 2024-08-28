@@ -30,7 +30,12 @@ class DataQuery(
     private val defaultDS = "d"
 
     @JvmOverloads
-    fun query(ds: String = defaultDS, sql: String, @Nullable page: Int? = null, @Nullable size: Int? = null): Any {
+    fun query(
+        ds: String = defaultDS,
+        sql: String,
+        @Nullable page: Int? = null,
+        @Nullable size: Int? = null
+    ): Any {
         val sizeParam = size ?: 20
         val offset = page?.let { (it - 1).times(sizeParam) } ?: 0
         val startMillis = System.currentTimeMillis()
@@ -55,7 +60,7 @@ class DataQuery(
             return mapOf("size" to resultSize, "content" to result)
         } catch (e: Exception) {
             MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
-            throw e
+            return mapOf("error" to e.message)
         } finally {
             val duration = System.currentTimeMillis() - startMillis
             sqlLog.cost(duration)
@@ -84,7 +89,7 @@ class DataQuery(
             // 如果发生异常，回滚事务
             transactionManager.rollback(status)
             MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
-            throw e
+            return mapOf("error" to e.message)
         } finally {
             val duration = System.currentTimeMillis() - startMillis
             sqlLog.cost(duration)
