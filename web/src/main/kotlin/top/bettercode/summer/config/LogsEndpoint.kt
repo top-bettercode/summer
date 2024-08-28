@@ -34,7 +34,7 @@ import kotlin.math.max
 class LogsEndpoint(
     private val loggingFilesPath: String,
     env: Environment,
-    private val websocketProperties: WebsocketProperties,
+    private val websocketProperties: WebsocketProperties?,
     private val response: HttpServletResponse,
     webEndpointProperties: WebEndpointProperties,
     managementServerProperties: ManagementServerProperties
@@ -268,7 +268,7 @@ class LogsEndpoint(
   } else {
     console.info("连接...")
     
-    websocket = new WebSocket("${LoggingUtil.apiAddressWs.first}${"/websocket/logging"}?token=${websocketProperties.token}");
+    websocket = new WebSocket("${LoggingUtil.apiAddressWs.first}${"/websocket/logging"}?token=${websocketProperties?.token}");
     
     //连接发生错误的回调方法
     websocket.onerror = function () {

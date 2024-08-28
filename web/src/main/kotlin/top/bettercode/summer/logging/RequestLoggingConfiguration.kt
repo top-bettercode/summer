@@ -26,8 +26,7 @@ import top.bettercode.summer.logging.async.MethodLoggingAspect
 )
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(
-    RequestLoggingProperties::class,
-    WebsocketProperties::class
+    RequestLoggingProperties::class
 )
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class RequestLoggingConfiguration {

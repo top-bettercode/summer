@@ -11,6 +11,7 @@ summer:
 
     request:
       timeout-alarm-seconds: -1
+      enabled: true
 
   scheduling:
     enabled: false

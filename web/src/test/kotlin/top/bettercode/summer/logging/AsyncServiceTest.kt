@@ -2,12 +2,13 @@ package top.bettercode.summer.logging
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import top.bettercode.summer.test.BaseWebNoAuthTest
 
 /**
  *
  * @author Peter Wu
  */
-class AsyncServiceTest : BaseWebTest(){
+class AsyncServiceTest : BaseWebNoAuthTest(){
 
     @Autowired
     lateinit var asyncService: AsyncService

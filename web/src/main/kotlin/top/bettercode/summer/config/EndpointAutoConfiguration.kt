@@ -77,7 +77,8 @@ class EndpointAutoConfiguration(
     fun logsEndpoint(
         @Value("\${summer.logging.files.view-path:#{'\${summer.logging.files.path}'}}") loggingFilesPath: String,
         environment: Environment,
-        websocketProperties: WebsocketProperties,
+        @Autowired(required = false)
+        websocketProperties: WebsocketProperties?,
         @Autowired(required = false) response: HttpServletResponse,
         webEndpointProperties: WebEndpointProperties,
         managementServerProperties: ManagementServerProperties
