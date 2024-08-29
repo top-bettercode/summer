@@ -31,12 +31,13 @@ class OkHttpLoggingInterceptor(
     private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
     private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : Interceptor {
-    private val log: Logger = LoggerFactory.getLogger(logClazz)
 
+    private val clientLog: Logger = LoggerFactory.getLogger("CLIENT.$logMarker")
+    private val log: Logger = LoggerFactory.getLogger(logClazz)
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val dateTime =
-            if (log.isInfoEnabled) {
+            if (clientLog.isInfoEnabled) {
                 LocalDateTime.now()
             } else null
         val request = chain.request()
@@ -49,21 +50,12 @@ class OkHttpLoggingInterceptor(
             stackTrace = StringUtil.valueOf(e)
             throw e
         } finally {
-            if (log.isInfoEnabled) {
-                var exception: Exception? = null
+            if (clientLog.isInfoEnabled) {
                 val operationResponse = if (response == null) OperationResponse(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     HttpHeaders.EMPTY, ByteArray(0)
-                ) else try {
+                ) else {
                     convert(response)
-                } catch (e: Exception) {
-                    if (stackTrace.isBlank())
-                        stackTrace = StringUtil.valueOf(e)
-                    exception = e
-                    OperationResponse(
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        HttpHeaders.EMPTY, ByteArray(0)
-                    )
                 }
                 operationResponse.stackTrace = stackTrace
                 val operation = Operation(
@@ -108,16 +100,13 @@ class OkHttpLoggingInterceptor(
                         )
                     )
                     msg = "$initialComment${timeoutMsg}\n$msg"
-                    log.warn(marker, msg)
+                    clientLog.warn(marker, msg)
                 } else {
                     val hasException = stackTrace.isNotBlank()
                     if (hasException || operation.duration > 2 * 1000) {
-                        log.warn(marker, msg)
+                        clientLog.warn(marker, msg)
                     } else
-                        log.info(marker, msg)
-                }
-                if (exception != null) {
-                    throw exception
+                        clientLog.info(marker, msg)
                 }
             }
         }
@@ -170,13 +159,32 @@ class OkHttpLoggingInterceptor(
     }
 
     fun convert(response: Response): OperationResponse {
-        val headers = HttpHeaders()
-        for (name in response.headers.names()) {
-            headers.add(name, response.headers[name])
+        val statusCode = try {
+            response.code
+        } catch (e: Exception) {
+            log.warn("Failed to get response code", e)
+            0
         }
-        val responseBody = response.body
-        val content = if (responseBody != null) {
 
+        val headers = try {
+            val headers = HttpHeaders()
+            val respHeaders = response.headers
+            for (name in respHeaders.names()) {
+                headers.add(name, respHeaders[name])
+            }
+            headers
+        } catch (e: Exception) {
+            log.warn("Failed to get response headers", e)
+            HttpHeaders()
+        }
+
+        val responseBody = try {
+            response.body
+        } catch (e: Exception) {
+            log.warn("Failed to get response body", e)
+            null
+        }
+        val content = if (responseBody != null) {
             val source = responseBody.source()
             source.request(Long.MAX_VALUE) // Buffer the entire body.
             var buffer = source.buffer
@@ -191,9 +199,6 @@ class OkHttpLoggingInterceptor(
         } else {
             ByteArray(0)
         }
-        return OperationResponse(
-            response.code,
-            headers, content
-        )
+        return OperationResponse(statusCode, headers, content)
     }
 }

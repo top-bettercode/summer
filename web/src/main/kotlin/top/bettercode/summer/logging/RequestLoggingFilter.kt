@@ -58,6 +58,7 @@ class RequestLoggingFilter(
     }
 
     private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
+    private val requestLog = LoggerFactory.getLogger("REQUEST")
 
     private val isDebugEnabled: Boolean by lazy { Level.toLevel(environment.getProperty("logging.level.root")) == Level.DEBUG }
 
@@ -220,7 +221,7 @@ class RequestLoggingFilter(
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
                 if (error == null && !requestTimeout) {
-                    log.info(marker, msg)
+                    requestLog.info(marker, msg)
                 } else {
                     if (hasError) {
                         val initialComment =
@@ -236,11 +237,11 @@ class RequestLoggingFilter(
                             )
                         )
                         if (config.includeTrace)
-                            log.error(marker, msg)
+                            requestLog.error(marker, msg)
                         else
-                            log.error(marker, msg, error)
+                            requestLog.error(marker, msg, error)
                     } else
-                        log.warn(marker, msg)
+                        requestLog.warn(marker, msg)
                 }
             }
         }
@@ -345,7 +346,7 @@ class RequestLoggingFilter(
             })
         } else {
             include(properties.includePath, uri)
-                    || log.isTraceEnabled
+                    || requestLog.isTraceEnabled
                     || properties.isForceRecord
                     || (error != null && !isClientAbortException(error))
                     || (try {

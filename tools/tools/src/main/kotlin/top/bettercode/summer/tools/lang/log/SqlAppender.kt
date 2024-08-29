@@ -194,18 +194,21 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
 
     private val sqlCache: ConcurrentMap<String, SqlLogData> = ConcurrentHashMap()
     private val logger = LoggerFactory.getLogger(SqlAppender::class.java)
+    private val sqlLogger = LoggerFactory.getLogger("SQL")
 
     override fun append(event: ILoggingEvent?) {
         val loggerName = event?.loggerName
-        if (event == null || !isStarted || !logger.isInfoEnabled) {
+        if (event == null || !isStarted || !sqlLogger.isInfoEnabled) {
             return
         }
         try {
             val traceid = event.mdcPropertyMap[HttpOperation.MDC_TRACEID]
-                ?: event.threadName
+            if (traceid != null) {
+                MDC.put(HttpOperation.MDC_TRACEID, traceid)
+            }
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
             val end = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
-            val key = "$traceid:$id"
+            val key = "${traceid ?: event.threadName}:$id"
             var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
             val msg = event.formattedMessage
             when (loggerName) {
@@ -294,13 +297,13 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         }
 
         if (!sqlLogData.error.isNullOrBlank()) {
-            logger.error(
+            sqlLogger.error(
                 MarkerFactory.getMarker(AlarmAppender.NO_ALARM_LOG_MARKER),
                 sqlLogData.toString()
             )
         } else if (cost != null && timeoutAlarmMS > 0 && cost > timeoutAlarmMS) {
             val initialComment = "${sqlLogData.id}：执行速度慢(${cost / 1000}秒)"
-            logger.warn(
+            sqlLogger.warn(
                 AlarmMarker(
                     message = initialComment,
                     timeout = true,
@@ -309,9 +312,9 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 sqlLogData.toString()
             )
         } else if (slowSql.isNotEmpty()) {
-            logger.warn(sqlLogData.toString())
+            sqlLogger.warn(sqlLogData.toString())
         } else
-            logger.info(sqlLogData.toString())
+            sqlLogger.info(sqlLogData.toString())
     }
 
 }
