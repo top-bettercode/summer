@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
-import top.bettercode.summer.logging.async.MethodLoggingAspect
 
 /**
  * 自动增加请求日志过滤器
@@ -30,11 +29,6 @@ import top.bettercode.summer.logging.async.MethodLoggingAspect
 )
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class RequestLoggingConfiguration {
-
-    @Bean
-    fun methodLoggingAspect(): MethodLoggingAspect {
-        return MethodLoggingAspect()
-    }
 
     @Bean
     fun requestLoggingFilter(
