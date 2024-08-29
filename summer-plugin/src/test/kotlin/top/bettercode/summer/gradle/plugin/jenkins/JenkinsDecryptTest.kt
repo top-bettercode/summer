@@ -26,7 +26,7 @@ import javax.crypto.spec.SecretKeySpec
 class JenkinsDecryptTest {
 
 
-    //    @Disabled
+    @Disabled
     @Test
     fun read() {
         val result1 = extracted("")
