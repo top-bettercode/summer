@@ -44,6 +44,7 @@ class SqlLogData(val id: String? = null) {
 
             //limit ? offset ?
             val qsql = sql!!.lowercase().replace("\\s+".toRegex(), " ")
+                .replace(Regex("\\u001B\\[[;\\d]*m"), "")
             if (qsql.contains("limit ? offset ?") && limit != null && offset != null) {
                 sql = sql.replaceFirst("?", "#$limit")
                 sql = sql.replaceFirst("?", "#$offset")
