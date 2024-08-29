@@ -72,6 +72,10 @@ class SqlLogData(val id: String? = null) {
             if (qsql.contains("fetch next ?") && limit != null) {
                 sql = sql.replaceFirst("?", "#${limit}")
             }
+            //fetch first ? rows only
+            if (qsql.contains("fetch first ?") && limit != null) {
+                sql = sql.replaceFirst("?", "#${limit}")
+            }
         }
 
         val resultInfo = "${
