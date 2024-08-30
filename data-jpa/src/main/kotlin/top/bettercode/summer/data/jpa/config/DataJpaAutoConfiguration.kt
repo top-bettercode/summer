@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.config
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
@@ -7,6 +8,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.ResourceLoader
 import org.springframework.data.domain.AuditorAware
 import org.springframework.transaction.PlatformTransactionManager
 import top.bettercode.summer.data.jpa.support.DataEndpoint
@@ -16,6 +18,7 @@ import top.bettercode.summer.data.jpa.support.SqlLogAspect
 import java.util.*
 import javax.persistence.EntityManager
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 /**
  * DataJpaConfiguration 配置
@@ -65,9 +68,15 @@ class DataJpaAutoConfiguration {
         return DataQuery(entityManagers, transactionManagers)
     }
 
+    @ConditionalOnWebApplication
     @Bean
-    fun dataEndpoint(dataQuery: DataQuery): DataEndpoint {
-        return DataEndpoint(dataQuery)
+    fun dataEndpoint(
+        @Autowired(required = false) request: HttpServletRequest,
+        @Autowired(required = false) response: HttpServletResponse,
+        resourceLoader: ResourceLoader,
+        dataQuery: DataQuery
+    ): DataEndpoint {
+        return DataEndpoint(request, response, resourceLoader, dataQuery)
     }
 
 }

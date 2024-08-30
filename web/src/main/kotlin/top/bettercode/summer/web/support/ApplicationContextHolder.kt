@@ -7,6 +7,8 @@ import org.springframework.core.env.Environment
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.util.*
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 /**
  * @author Peter Wu
@@ -97,4 +99,11 @@ object ApplicationContextHolder {
             return Optional.ofNullable(requestAttributes)
         }
 
+    @JvmStatic
+    val request: Optional<HttpServletRequest>
+        get() = requestAttributes.map { it.request }
+
+    @JvmStatic
+    val response: Optional<HttpServletResponse>
+        get() = requestAttributes.map { it.response }
 }

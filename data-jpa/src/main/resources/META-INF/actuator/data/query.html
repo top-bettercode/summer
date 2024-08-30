@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DATA Query/Update</title>
+  <link href="./bootstrap.min.css" rel="stylesheet">
+  <script src="./jquery.min.js"></script>
+  <style>
+    .toggle-text {
+      max-width: 200px; /* 控制单元格的最大宽度 */
+      white-space: nowrap; /* 防止文本换行 */
+      overflow: hidden; /* 隐藏溢出的文本 */
+      text-overflow: ellipsis; /* 使用省略号表示被隐藏的文本 */
+      cursor: pointer; /* 鼠标悬停时显示为手指图标 */
+    }
+
+    .toggle-text.expanded {
+      white-space: normal; /* 允许换行 */
+      overflow: visible; /* 显示全部内容 */
+      text-overflow: clip; /* 移除省略号 */
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <form id="queryForm">
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label for="ds" class="form-label">ds</label>
+        <select id="ds" class="form-select">
+          @ds@
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="operation" class="form-label">操作</label>
+        <select id="operation" class="form-select">
+          <option value="query">查询</option>
+          <option value="update">更新</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="page" class="form-label">页码</label>
+        <input list="pageNumbers" id="page" class="form-control" placeholder="输入页码"
+               type="number" value="1">
+        <datalist id="pageNumbers">
+          <option value="1"></option>
+          <option value="2"></option>
+          <option value="3"></option>
+          <option value="4"></option>
+          <option value="5"></option>
+          <option value="6"></option>
+          <option value="7"></option>
+          <option value="8"></option>
+          <option value="9"></option>
+          <option value="10"></option>
+        </datalist>
+      </div>
+      <div class="col-md-3">
+        <label for="pageSize" class="form-label">每页数量</label>
+        <input list="sizeNumbers" id="pageSize" class="form-control" placeholder="输入每页数量"
+               type="number" value="10">
+        <datalist id="sizeNumbers">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="40">40</option>
+          <option value="50">50</option>
+        </datalist>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="sql" class="form-label">语句</label>
+      <textarea id="sql" class="form-control" placeholder="输入语句"
+                style="height: 150px"></textarea>
+    </div>
+    <button type="button" id="submitBtn" class="btn btn-primary">提交</button>
+  </form>
+
+  <div id="result" class="mt-5">
+    <h3>结果</h3>
+    <p id="resultCount"></p>
+    <table id="resultTable" class="table table-striped table-bordered">
+      <thead class="table-secondary">
+      <tr id="resultHeader"></tr>
+      </thead>
+      <tbody id="resultBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.getElementById('sql').addEventListener('input', function () {
+    const sql = this.value.trim().toLowerCase();
+    const op = document.getElementById('operation');
+
+    if (sql.startsWith('select')) {
+      op.value = 'query';
+    } else if (sql.startsWith('update') || sql.startsWith('insert') || sql.startsWith('delete')) {
+      op.value = 'update';
+    }
+  });
+  $('#submitBtn').on('click', function () {
+    let ds = $('#ds').val();
+    let op = $('#operation').val();
+    let page = $('#page').val();
+    let size = $('#pageSize').val();
+    let sql = $('#sql').val();
+
+    let pathname = '@path@';
+
+    $.ajax({
+      url: pathname + '/' + ds + '/' + op,
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        sql: sql,
+        page: page,
+        size: size
+      }),
+      success: function (response) {
+        // 清空表格内容
+        $('#resultHeader').empty();
+        $('#resultBody').empty();
+
+        let resultCount = $('#resultCount');
+        if (response.error) {
+          resultCount.css('color', 'red');
+          resultCount.text('ERROR: ' + response.error);
+          return;
+        }
+        // 假设返回的数据是 JSON 格式
+        resultCount.css('color', 'black');
+        resultCount.text('数量: ' + (response.size || response.affected));
+        let rows = response.content;
+
+        if (rows && rows.length > 0) {
+          let headers = Object.keys(rows[0]);
+          // 动态生成表头
+          headers.forEach(function (header) {
+            $('#resultHeader').append('<th>' + header + '</th>');
+          });
+
+          // 动态生成表格行
+          rows.forEach(function (row) {
+            let rowHtml = '<tr>';
+            headers.forEach(function (header) {
+              rowHtml += '<td class="toggle-text" onclick="this.classList.toggle(\'expanded\');">'
+                  + row[header] + '</td>';
+            });
+            rowHtml += '</tr>';
+            $('#resultBody').append(rowHtml);
+          });
+        }
+      },
+      error: function (error) {
+        // 清空表格内容
+        $('#resultHeader').empty();
+        $('#resultBody').empty();
+        let resultCount = $('#resultCount');
+        resultCount.css('color', 'red');
+        resultCount.text('ERROR: ' + error.message || error);
+      }
+    });
+  });
+</script>
+</body>
+</html>

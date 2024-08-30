@@ -34,20 +34,14 @@ class DocsEndpoint(
     private val response: HttpServletResponse,
     private val resourceLoader: ResourceLoader
 ) {
-    private val log: Logger = LoggerFactory.getLogger(DocsEndpoint::class.java)
 
-    private val mediaTypes: Map<String, MediaType> = HashMap(4)
-    private val resourceHttpMessageConverter = ResourceHttpMessageConverter()
-    private val resourceRegionHttpMessageConverter = ResourceRegionHttpMessageConverter()
-
-    private val resolver = PathMatchingResourcePatternResolver()
-    private val docFileClassPath = "classpath:/META-INF/actuator/doc"
+    private val fileClassPath = "classpath:/META-INF/actuator/doc"
 
     @ReadOperation
     fun root(@Selector(match = Selector.Match.ALL_REMAINING) path: String) {
         val requestPath = path.replace(",", "/").trimEnd('/')
         val isRoot = requestPath.isBlank()
-        val docPath = "$docFileClassPath/$requestPath"
+        val docPath = "$fileClassPath/$requestPath"
         val resource = resourceLoader.getResource(docPath)
         if (isRoot) {
             val servletPath =
@@ -84,108 +78,130 @@ class DocsEndpoint(
                 }
             }
         }
-        var reqResource: Resource? = if (resource.exists()) resource else null
-        val apiAddress = LoggingUtil.apiAddress.first
-        if (reqResource != null) {
-            val urlPath = reqResource.url.path
+        handleRequest(request, response, resource) {
+            val urlPath = it.url.path
             if (urlPath.endsWith(".html") || urlPath.endsWith(".postman_collection.json")) {
-                val text = reqResource.inputStream.reader().readText()
+                val apiAddress = LoggingUtil.apiAddress.first
+                val text = it.inputStream.reader().readText()
                     .replace("\${apiAddress}", apiAddress)
-                reqResource = object : ByteArrayResource(text.toByteArray()) {
+                object : ByteArrayResource(text.toByteArray()) {
                     override fun getFilename(): String? {
                         return resource.filename
                     }
                 }
-            }
-        }
-        handleRequest(reqResource)
-    }
-
-    fun handleRequest(resource: Resource?) {
-        // For very general mappings (e.g. "/") we need to check 404 first
-        if (resource == null) {
-            if (log.isDebugEnabled)
-                log.debug("Resource not found")
-            response.sendError(HttpServletResponse.SC_NOT_FOUND)
-            return
-        }
-        if (HttpMethod.OPTIONS.matches(request.method)) {
-            response.setHeader("Allow", "*")
-            return
-        }
-
-        // Check the media type for the resource
-        val mediaType = getMediaType(request, resource)
-        setHeaders(response, resource, mediaType)
-
-        // Content phase
-        val outputMessage = ServletServerHttpResponse(response)
-        if (request.getHeader(HttpHeaders.RANGE) == null) {
-            this.resourceHttpMessageConverter.write(resource, mediaType, outputMessage)
-        } else {
-            val inputMessage = ServletServerHttpRequest(request)
-            try {
-                val httpRanges = inputMessage.headers.range
-                response.status = HttpServletResponse.SC_PARTIAL_CONTENT
-                this.resourceRegionHttpMessageConverter.write(
-                    HttpRange.toResourceRegions(httpRanges, resource), mediaType, outputMessage
-                )
-            } catch (ex: IllegalArgumentException) {
-                response.setHeader(HttpHeaders.CONTENT_RANGE, "bytes */" + resource.contentLength())
-                response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE)
+            } else {
+                it
             }
         }
     }
 
-    private fun getMediaType(request: HttpServletRequest, resource: Resource): MediaType? {
-        var result: MediaType? = null
-        val mimeType = request.servletContext.getMimeType(resource.filename)
-        if (!mimeType.isNullOrBlank()) {
-            result = MediaType.parseMediaType(mimeType)
-        }
-        if (result == null || MediaType.APPLICATION_OCTET_STREAM == result) {
-            var mediaType: MediaType? = null
-            val filename = resource.filename
-            val ext = StringUtils.getFilenameExtension(filename)
-            if (ext != null) {
-                mediaType = this.mediaTypes[ext.lowercase()]
+    companion object {
+
+        private val log: Logger = LoggerFactory.getLogger(DocsEndpoint::class.java)
+        private val mediaTypes: Map<String, MediaType> = HashMap(4)
+        private val resourceHttpMessageConverter = ResourceHttpMessageConverter()
+        private val resourceRegionHttpMessageConverter = ResourceRegionHttpMessageConverter()
+        private val resolver = PathMatchingResourcePatternResolver()
+
+        fun handleRequest(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            resource: Resource?,
+            convert: (Resource) -> Resource
+        ) {
+            // For very general mappings (e.g. "/") we need to check 404 first
+            if (resource == null || !resource.exists()) {
+                if (log.isDebugEnabled)
+                    log.debug("Resource not found")
+                response.sendError(HttpServletResponse.SC_NOT_FOUND)
+                return
             }
-            if (mediaType == null) {
-                val mediaTypes = MediaTypeFactory.getMediaTypes(filename)
-                if (!CollectionUtils.isEmpty(mediaTypes)) {
-                    mediaType = mediaTypes[0]
+            if (HttpMethod.OPTIONS.matches(request.method)) {
+                response.setHeader("Allow", "*")
+                return
+            }
+
+            val responseResource = convert(resource)
+            // Check the media type for the resource
+            val mediaType = getMediaType(request, responseResource)
+            setHeaders(response, responseResource, mediaType)
+
+            // Content phase
+            val outputMessage = ServletServerHttpResponse(response)
+            if (request.getHeader(HttpHeaders.RANGE) == null) {
+                this.resourceHttpMessageConverter.write(responseResource, mediaType, outputMessage)
+            } else {
+                val inputMessage = ServletServerHttpRequest(request)
+                try {
+                    val httpRanges = inputMessage.headers.range
+                    response.status = HttpServletResponse.SC_PARTIAL_CONTENT
+                    this.resourceRegionHttpMessageConverter.write(
+                        HttpRange.toResourceRegions(httpRanges, responseResource),
+                        mediaType,
+                        outputMessage
+                    )
+                } catch (ex: IllegalArgumentException) {
+                    response.setHeader(
+                        HttpHeaders.CONTENT_RANGE,
+                        "bytes */" + responseResource.contentLength()
+                    )
+                    response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE)
                 }
             }
-            if (mediaType != null) {
-                result = mediaType
-            }
         }
-        return result
-    }
 
-    private fun setHeaders(
-        response: HttpServletResponse,
-        resource: Resource?,
-        @Nullable mediaType: MediaType?
-    ) {
-        if (mediaType != null) {
-            response.contentType = mediaType.toString()
-        }
-        if (resource is HttpResource) {
-            val resourceHeaders = resource.responseHeaders
-            resourceHeaders.forEach { headerName: String?, headerValues: List<String?> ->
-                var first = true
-                for (headerValue in headerValues) {
-                    if (first) {
-                        response.setHeader(headerName, headerValue)
-                    } else {
-                        response.addHeader(headerName, headerValue)
+        private fun getMediaType(request: HttpServletRequest, resource: Resource): MediaType? {
+            var result: MediaType? = null
+            val mimeType = request.servletContext.getMimeType(resource.filename)
+            if (!mimeType.isNullOrBlank()) {
+                result = MediaType.parseMediaType(mimeType)
+            }
+            if (result == null || MediaType.APPLICATION_OCTET_STREAM == result) {
+                var mediaType: MediaType? = null
+                val filename = resource.filename
+                val ext = StringUtils.getFilenameExtension(filename)
+                if (ext != null) {
+                    mediaType = this.mediaTypes[ext.lowercase()]
+                }
+                if (mediaType == null) {
+                    val mediaTypes = MediaTypeFactory.getMediaTypes(filename)
+                    if (!CollectionUtils.isEmpty(mediaTypes)) {
+                        mediaType = mediaTypes[0]
                     }
-                    first = false
+                }
+                if (mediaType != null) {
+                    result = mediaType
                 }
             }
+            return result
         }
-        response.setHeader(HttpHeaders.ACCEPT_RANGES, "bytes")
+
+        private fun setHeaders(
+            response: HttpServletResponse,
+            resource: Resource?,
+            @Nullable mediaType: MediaType?
+        ) {
+            if (mediaType != null) {
+                response.contentType = mediaType.toString()
+            }
+            if (resource is HttpResource) {
+                val resourceHeaders = resource.responseHeaders
+                resourceHeaders.forEach { headerName: String?, headerValues: List<String?> ->
+                    var first = true
+                    for (headerValue in headerValues) {
+                        if (first) {
+                            response.setHeader(headerName, headerValue)
+                        } else {
+                            response.addHeader(headerName, headerValue)
+                        }
+                        first = false
+                    }
+                }
+            }
+            response.setHeader(HttpHeaders.ACCEPT_RANGES, "bytes")
+        }
+
     }
+
 
 }

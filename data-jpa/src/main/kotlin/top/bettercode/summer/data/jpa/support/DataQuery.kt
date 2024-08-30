@@ -52,11 +52,14 @@ class DataQuery(
             query.setMaxResults(size ?: 20)
 
             val result = query.resultList
-            val resultSize = result.size
-            sqlLog.retrieved(resultSize)
-            if (result == null) {
+            val resultSize = if (result == null) {
                 sqlLog.result("null")
+                0
+            } else {
+                result.size
             }
+            sqlLog.retrieved(resultSize)
+
             return mapOf("size" to resultSize, "content" to result)
         } catch (e: Exception) {
             MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
@@ -96,6 +99,28 @@ class DataQuery(
             MDC.remove(SqlAppender.MDC_SQL_ERROR)
             MDC.remove(SqlAppender.MDC_SQL_ID)
         }
+    }
+
+    fun getDs(): List<String> {
+        return if (entityManagers.size == 1)
+            listOf(defaultDS)
+        else
+            entityManagers.map {
+                val beanName = ApplicationContextHolder.getBeanName(it.entityManagerFactory)!!
+                if ("entityManagerFactory" == beanName) {
+                    "d"
+                } else
+                    beanName
+                        .substringBefore("EntityManagerFactory")
+            }.sortedWith { o1, o2 ->
+                if (o1 == defaultDS) {
+                    -1
+                } else if (o2 == defaultDS) {
+                    1
+                } else {
+                    o1.compareTo(o2)
+                }
+            }
     }
 
     private fun getEntityManager(ds: String): EntityManager {
