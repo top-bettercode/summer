@@ -135,14 +135,16 @@ object AsciidocGenerator {
     ): String {
         val pw = StringBuilder()
         pw.appendLine("== 其他版本")
+        var hasOtherModule = false
         autodoc.listModuleNames { name, pyname ->
             if (name != currentName) {
+                hasOtherModule = true
                 pw.appendLine()
                 pw.appendLine("[[_${pynames.pyname(name)}]]")
                 pw.appendLine("* link:$pyname.html[$name]")
             }
         }
-        return pw.toString()
+        return if (hasOtherModule) pw.toString() else ""
     }
 
     fun checkBlank(autodoc: AutodocExtension) {
