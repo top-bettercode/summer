@@ -35,11 +35,11 @@ open class DataEndpoint(
     ): Any {
         return when (op) {
             "update" -> {
-                dataQuery.update(ds, sql)
+                dataQuery.update(ds, sql.trimEnd(';'))
             }
 
             "query" -> {
-                dataQuery.query(ds, sql, page, size)
+                dataQuery.query(ds, sql.trimEnd(';'), page ?: 1, size ?: 10)
             }
 
             else -> {

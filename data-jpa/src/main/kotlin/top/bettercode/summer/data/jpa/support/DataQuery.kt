@@ -2,7 +2,6 @@ package top.bettercode.summer.data.jpa.support
 
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import org.springframework.lang.Nullable
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.TransactionStatus
@@ -27,29 +26,30 @@ class DataQuery(
     private val transactionManagers: List<PlatformTransactionManager>
 ) {
     private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
-    private val defaultDS = "d"
+    private val defaultDS = "primary"
 
     @JvmOverloads
     fun query(
         ds: String = defaultDS,
         sql: String,
-        @Nullable page: Int? = null,
-        @Nullable size: Int? = null
+        page: Int,
+        size: Int
     ): Any {
-        val sizeParam = size ?: 20
-        val offset = page?.let { (it - 1).times(sizeParam) } ?: 0
         val startMillis = System.currentTimeMillis()
         try {
             val entityManager = getEntityManager(ds)
             MDC.put(SqlAppender.MDC_SQL_ID, "Endpoint.query")
-            sqlLog.offset(offset.toLong())
-            sqlLog.limit(sizeParam)
             val query = entityManager.createNativeQuery(sql, Tuple::class.java)
             @Suppress("DEPRECATION")
             query.unwrap(org.hibernate.query.Query::class.java)
                 .setResultTransformer(org.hibernate.transform.AliasToEntityMapResultTransformer.INSTANCE)
-            query.firstResult = page?.let { (it - 1).times(size ?: 20) } ?: 0
-            query.setMaxResults(size ?: 20)
+            if (page > 0) {
+                val offset = (page - 1).times(size)
+                query.firstResult = offset
+                query.setMaxResults(size)
+                sqlLog.offset(offset.toLong())
+                sqlLog.limit(size)
+            }
 
             val result = query.resultList
             val resultSize = if (result == null) {
@@ -108,7 +108,7 @@ class DataQuery(
             entityManagers.map {
                 val beanName = ApplicationContextHolder.getBeanName(it.entityManagerFactory)!!
                 if ("entityManagerFactory" == beanName) {
-                    "d"
+                    defaultDS
                 } else
                     beanName
                         .substringBefore("EntityManagerFactory")
