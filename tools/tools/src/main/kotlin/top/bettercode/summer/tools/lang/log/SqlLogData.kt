@@ -7,6 +7,8 @@ import top.bettercode.summer.tools.lang.util.JavaTypeResolver
  * @author Peter Wu
  */
 class SqlLogData(val id: String? = null) {
+    var start: Long = System.currentTimeMillis()
+    var end: Long? = null
     var sql: String? = null
         set(value) {
             field = value
@@ -15,7 +17,6 @@ class SqlLogData(val id: String? = null) {
     var paramCount: Int = 0
     var slowSql: MutableList<String> = mutableListOf()
     var params: MutableList<SqlLogParam> = mutableListOf()
-    var cost: Long? = null
     var affected: Any? = null
     var retrieved: Int? = null
     var total: Long? = null
@@ -23,6 +24,10 @@ class SqlLogData(val id: String? = null) {
     var offset: Long? = null
     var limit: Int? = null
     var error: String? = null
+
+    val cost: Long? by lazy {
+        end?.minus(start)
+    }
 
     fun addParams(args: Array<Any?>, types: IntArray) {
         args.forEachIndexed { index, any ->

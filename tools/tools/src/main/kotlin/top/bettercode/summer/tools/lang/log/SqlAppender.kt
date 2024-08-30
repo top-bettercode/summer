@@ -20,7 +20,8 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         const val MDC_SQL_RESULT = "SQL_RESULT"
         const val MDC_SQL_RETRIEVED = "SQL_RETRIEVED"
         const val MDC_SQL_AFFECTED = "SQL_AFFECTED"
-        const val MDC_SQL_COST = "SQL_COST"
+        const val MDC_SQL_TIME_START = "SQL_TIME_START"
+        const val MDC_SQL_TIME_END = "SQL_TIME_END"
         const val MDC_SQL_OFFSET = "SQL_OFFSET"
         const val MDC_SQL_LIMIT = "SQL_LIMIT"
         const val LOG_SLOW = "org.hibernate.SQL_SLOW"
@@ -132,7 +133,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         fun Logger.total(total: Number) {
             try {
                 MDC.put(MDC_SQL_TOTAL, total.toString())
-                info("total: {} rows", total)
+                debug("total: {} rows", total)
             } finally {
                 MDC.remove(MDC_SQL_TOTAL)
             }
@@ -141,7 +142,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         fun Logger.result(result: String) {
             try {
                 MDC.put(MDC_SQL_RESULT, result)
-                info("result: {}", result)
+                debug("result: {}", result)
             } finally {
                 MDC.remove(MDC_SQL_RESULT)
             }
@@ -150,7 +151,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         fun Logger.retrieved(retrieved: Int) {
             try {
                 MDC.put(MDC_SQL_RETRIEVED, retrieved.toString())
-                info("retrieved: {} rows", retrieved)
+                debug("retrieved: {} rows", retrieved)
             } finally {
                 MDC.remove(MDC_SQL_RETRIEVED)
             }
@@ -165,19 +166,25 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             }
         }
 
-        fun Logger.cost(cost: Long) {
+        fun Logger.start() {
             try {
-                MDC.put(MDC_SQL_COST, cost.toString())
-                MDC.put(MDC_SQL_END, "END")
-                if (cost > 2 * 1000) {
-                    warn("cost: {} ms", cost)
-                } else
-                    info("cost: {} ms", cost)
+                val current = System.currentTimeMillis()
+                MDC.put(MDC_SQL_TIME_START, current.toString())
+                debug("start: {} ms", current)
             } finally {
-                MDC.remove(MDC_SQL_COST)
+                MDC.remove(MDC_SQL_TIME_START)
+            }
+        }
+
+        fun Logger.end() {
+            try {
+                val current = System.currentTimeMillis()
+                MDC.put(MDC_SQL_TIME_END, current.toString())
+                MDC.put(MDC_SQL_END, "END")
+                debug("end: {} ms", current)
+            } finally {
+                MDC.remove(MDC_SQL_TIME_END)
                 MDC.remove(MDC_SQL_END)
-                MDC.remove(MDC_SQL_OFFSET)
-                MDC.remove(MDC_SQL_LIMIT)
             }
         }
 
@@ -207,7 +214,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 MDC.put(HttpOperation.MDC_TRACEID, traceid)
             }
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
-            val end = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
+            val isEnd = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
             val key = "${traceid ?: event.threadName}:$id"
             var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
             val msg = event.formattedMessage
@@ -215,6 +222,10 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 "org.hibernate.SQL" -> {
                     if (!sqlLogData.sql.isNullOrBlank()) {
                         sqlCache.remove(key)
+                        val current = System.currentTimeMillis()
+                        if (sqlLogData.end == null) {
+                            sqlLogData.end = current
+                        }
                         log(sqlLogData)
                         sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
                     }
@@ -240,6 +251,11 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                 }
 
                 else -> {
+                    //start
+                    val start = event.mdcPropertyMap[MDC_SQL_TIME_START]
+                    if (!start.isNullOrBlank()) {
+                        sqlLogData.start = start.toLong()
+                    }
                     //total: {} rows
                     val total = event.mdcPropertyMap[MDC_SQL_TOTAL]
                     if (!total.isNullOrBlank()) {
@@ -260,10 +276,10 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     if (!affected.isNullOrBlank()) {
                         sqlLogData.affected = affected
                     }
-                    //cost: {} ms
-                    val cost = event.mdcPropertyMap[MDC_SQL_COST]
-                    if (!cost.isNullOrBlank()) {
-                        sqlLogData.cost = cost.toLong()
+                    //end: {} ms
+                    val endTime = event.mdcPropertyMap[MDC_SQL_TIME_END]
+                    if (!endTime.isNullOrBlank()) {
+                        sqlLogData.end = endTime.toLong()
                     }
                     val offset = event.mdcPropertyMap[MDC_SQL_OFFSET]
                     if (!offset.isNullOrBlank()) {
@@ -278,7 +294,10 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                         sqlLogData.error = error
                 }
             }
-            if (end || (LOG_SLOW == loggerName && !isShowSql())) {
+            if (isEnd || (LOG_SLOW == loggerName && !isShowSql())) {
+                if (sqlLogData.end == null) {
+                    sqlLogData.end = System.currentTimeMillis()
+                }
                 log(sqlLogData)
                 sqlCache.remove(key)
             }

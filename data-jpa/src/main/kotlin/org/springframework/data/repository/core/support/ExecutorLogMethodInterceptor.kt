@@ -17,12 +17,15 @@ import top.bettercode.summer.data.jpa.support.PageInfo
 import top.bettercode.summer.data.jpa.support.QuerySize
 import top.bettercode.summer.data.jpa.support.Size
 import top.bettercode.summer.tools.lang.log.SqlAppender
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.MDC_SQL_LIMIT
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.MDC_SQL_OFFSET
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.affected
-import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.cost
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.end
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.limit
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.start
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -129,9 +132,9 @@ class ExecutorLogMethodInterceptor(
             if (logAdice == null) {
                 return invocation.proceed()
             } else {
-                val startMillis = System.currentTimeMillis()
                 try {
                     MDC.put(SqlAppender.MDC_SQL_ID, logAdice.sqlId)
+                    sqlLog.start()
                     val modify = logAdice.isModify
                     val pageInfo = logAdice.pageable(invocation.arguments)
                     if (pageInfo != null) {
@@ -180,10 +183,11 @@ class ExecutorLogMethodInterceptor(
                         throw e
                     }
                 } finally {
-                    val duration = System.currentTimeMillis() - startMillis
-                    sqlLog.cost(duration)
-                    MDC.remove(SqlAppender.MDC_SQL_ERROR)
+                    sqlLog.end()
                     MDC.remove(SqlAppender.MDC_SQL_ID)
+                    MDC.remove(MDC_SQL_OFFSET)
+                    MDC.remove(MDC_SQL_LIMIT)
+                    MDC.remove(SqlAppender.MDC_SQL_ERROR)
                 }
             }
         } else {

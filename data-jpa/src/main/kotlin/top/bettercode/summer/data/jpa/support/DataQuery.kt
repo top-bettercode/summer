@@ -7,12 +7,15 @@ import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.TransactionStatus
 import org.springframework.transaction.support.DefaultTransactionDefinition
 import top.bettercode.summer.tools.lang.log.SqlAppender
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.MDC_SQL_LIMIT
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.MDC_SQL_OFFSET
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.affected
-import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.cost
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.end
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.limit
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.offset
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
+import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.start
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import javax.persistence.EntityManager
 import javax.persistence.Tuple
@@ -35,10 +38,10 @@ class DataQuery(
         page: Int,
         size: Int
     ): Any {
-        val startMillis = System.currentTimeMillis()
         try {
             val entityManager = getEntityManager(ds)
             MDC.put(SqlAppender.MDC_SQL_ID, "Endpoint.query")
+            sqlLog.start()
             val query = entityManager.createNativeQuery(sql, Tuple::class.java)
             @Suppress("DEPRECATION")
             query.unwrap(org.hibernate.query.Query::class.java)
@@ -65,10 +68,11 @@ class DataQuery(
             MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
             return mapOf("error" to e.message)
         } finally {
-            val duration = System.currentTimeMillis() - startMillis
-            sqlLog.cost(duration)
-            MDC.remove(SqlAppender.MDC_SQL_ERROR)
+            sqlLog.end()
             MDC.remove(SqlAppender.MDC_SQL_ID)
+            MDC.remove(MDC_SQL_OFFSET)
+            MDC.remove(MDC_SQL_LIMIT)
+            MDC.remove(SqlAppender.MDC_SQL_ERROR)
         }
     }
 
@@ -80,9 +84,9 @@ class DataQuery(
         def.name = "update"
         def.propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED
         val status: TransactionStatus = transactionManager.getTransaction(def)
-        val startMillis = System.currentTimeMillis()
         try {
             MDC.put(SqlAppender.MDC_SQL_ID, "Endpoint.update")
+            sqlLog.start()
             val query = entityManager.createNativeQuery(sql)
             val affected = query.executeUpdate()
             transactionManager.commit(status)
@@ -94,10 +98,9 @@ class DataQuery(
             MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
             return mapOf("error" to e.message)
         } finally {
-            val duration = System.currentTimeMillis() - startMillis
-            sqlLog.cost(duration)
-            MDC.remove(SqlAppender.MDC_SQL_ERROR)
+            sqlLog.end()
             MDC.remove(SqlAppender.MDC_SQL_ID)
+            MDC.remove(SqlAppender.MDC_SQL_ERROR)
         }
     }
 
