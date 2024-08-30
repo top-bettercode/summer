@@ -33,6 +33,9 @@ open class DataEndpoint(
         @Nullable page: Int?,
         @Nullable size: Int?
     ): Any {
+        if (sql.isBlank()) {
+            return mapOf("error" to "sql不能为空")
+        }
         return when (op) {
             "update" -> {
                 dataQuery.update(ds, sql.trimEnd(';'))
