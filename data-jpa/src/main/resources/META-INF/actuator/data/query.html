@@ -120,8 +120,10 @@
       }),
       success: function (response) {
         // 清空表格内容
-        $('#resultHeader').empty();
-        $('#resultBody').empty();
+        let resultHeader = $('#resultHeader');
+        resultHeader.empty();
+        let resultBody = $('#resultBody');
+        resultBody.empty();
 
         let resultCount = $('#resultCount');
         if (response.error) {
@@ -137,19 +139,21 @@
         if (rows && rows.length > 0) {
           let headers = Object.keys(rows[0]);
           // 动态生成表头
+          resultHeader.append('<th></th>');
           headers.forEach(function (header) {
-            $('#resultHeader').append('<th>' + header + '</th>');
+            resultHeader.append('<th>' + header + '</th>');
           });
 
           // 动态生成表格行
-          rows.forEach(function (row) {
+          rows.forEach(function (row, index) {
             let rowHtml = '<tr>';
+            rowHtml += '<td>' + (index + 1) + '</td>'
             headers.forEach(function (header) {
               rowHtml += '<td class="toggle-text" onclick="this.classList.toggle(\'expanded\');">'
                   + row[header] + '</td>';
             });
             rowHtml += '</tr>';
-            $('#resultBody').append(rowHtml);
+            resultBody.append(rowHtml);
           });
         }
       },
