@@ -93,8 +93,7 @@ class PlantUML(
             dest.append("\n")
 
         dest.append(
-            """
-|@enduml
+            """@enduml
 ENGINE
 PK
 FK
@@ -115,7 +114,7 @@ DEFAULT
 SEQUENCE
 IDGENERATOR
 CODETYPE
-""".trimMargin()
+""".trimIndent()
         )
         dest.writeTo()
     }

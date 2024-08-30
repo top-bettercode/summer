@@ -372,7 +372,7 @@ class LogsEndpoint(
                 var dir = requestPath
                 dir = if (dir.startsWith("/")) dir else "/$dir"
                 writer.println(
-                    """
+                    """<!DOCTYPE html>
 <html>
 <head><title>$appName Index of $dir</title></head>
 <body>"""

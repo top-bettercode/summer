@@ -163,130 +163,125 @@ class ManagementLoginPageGeneratingFilter(
         request: HttpServletRequest, loginError: Boolean,
         logoutSuccess: Boolean, errorMsg: String
     ): String {
-        val sb = StringBuilder()
-        sb.append(
-            """<!DOCTYPE html>
+        return """<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Please sign in</title>
-    <style type="text/css">
-      body {
-        padding-top: 40px;
-        padding-bottom: 40px;
-        background-color: #eee;
-      }
-      .form-signin {
-        max-width: 330px;
-        padding: 15px;
-        margin: 0 auto;
-      }
-      .form-signin .form-signin-heading,
-      .form-signin .checkbox {
-        margin-bottom: 10px;
-      }
-      .form-signin .checkbox {
-        font-weight: 400;
-      }
-      .form-signin .form-control {
-        position: relative;
-        box-sizing: border-box;
-        height: auto;
-        padding: 10px;
-        font-size: 16px;
-      }
-      .form-signin .form-control:focus {
-        z-index: 2;
-      }
-      .form-signin input[type="email"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-      }
-      .form-signin input[type="password"] {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-      }
-      .form-control {
-        display: block;
-        width: 100%;
-        padding: .5rem .75rem;
-        font-size: 1rem;
-        line-height: 1.25;
-        color: #495057;
-        background-color: #fff;
-        background-image: none;
-        background-clip: padding-box;
-        border: 1px solid rgba(0, 0, 0, .15);
-        border-radius: .25rem;
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
-        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-      }
-      .form-control::placeholder {
-        color: #868e96;
-        opacity: 1;
-      }
-      .btn-primary:hover {
-        color: #fff;
-        background-color: #0069d9;
-        border-color: #0062cc
-      }
-      .btn-block {
-        padding: .5rem 1rem;
-        font-size: 1.25rem;
-        line-height: 1.5;
-        border-radius: .3rem;
-        color: #fff;
-        background-color: #007bff;
-        border-color: #007bff;
-        display: block;
-        width: 100%;
-      }
-    </style>
-    </head>
-  <body>
-     <div class="container">
-"""
-        )
-        val contextPath = request.contextPath
-        sb.append("      <form class=\"form-signin\" method=\"post\" action=\"")
-            .append(contextPath)
-            .append(authenticationUrl)
-            .append("\">\n")
-            .append("<input type=\"hidden\" id=\"hash\" name=\"hash\" value=\"\">")
-            .append("        <h2 class=\"form-signin-heading\">Please sign in</h2>\n")
-            .append(createError(loginError, errorMsg))
-            .append(createLogoutSuccess(logoutSuccess))
-            .append("        <p>\n")
-            .append("          <label for=\"username\" class=\"sr-only\"></label>\n")
-            .append("          <input type=\"text\" id=\"username\" name=\"")
-            .append(usernameParameter)
-            .append("\" class=\"form-control\" placeholder=\"Username\" required autofocus>\n")
-            .append("        </p>\n")
-            .append("        <p>\n")
-            .append("          <label for=\"password\" class=\"sr-only\"></label>\n")
-            .append("          <input type=\"password\" id=\"password\" name=\"")
-            .append(pwdParameter)
-            .append("\" class=\"form-control\" placeholder=\"Password\" required>\n")
-            .append("        </p>\n")
-            .append(renderHiddenInputs(request))
-            .append("        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Sign in</button>\n")
-            .append("      </form>\n")
-        sb.append("</div>\n")
-        sb.append(
-            """
-    <script>
-        document.getElementById("hash").value = window.location.hash;
-    </script>
-            """
-        )
-        sb.append("</body></html>")
-        return sb.toString()
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Please sign in</title>
+  <style>
+    body {
+      padding-top: 40px;
+      padding-bottom: 40px;
+      background-color: #eee;
+    }
+
+    .form-signin {
+      max-width: 330px;
+      padding: 15px;
+      margin: 0 auto;
+    }
+
+    .form-signin .form-signin-heading,
+    .form-signin .checkbox {
+      margin-bottom: 10px;
+    }
+
+    .form-signin .checkbox {
+      font-weight: 400;
+    }
+
+    .form-signin .form-control {
+      position: relative;
+      box-sizing: border-box;
+      height: auto;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .form-signin .form-control:focus {
+      z-index: 2;
+    }
+
+    .form-signin input[type="email"] {
+      margin-bottom: -1px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .form-signin input[type="password"] {
+      margin-bottom: 10px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    .form-control {
+      display: block;
+      width: 100%;
+      padding: .5rem .75rem;
+      font-size: 1rem;
+      line-height: 1.25;
+      color: #495057;
+      background-color: #fff;
+      background-image: none;
+      background-clip: padding-box;
+      border: 1px solid rgba(0, 0, 0, .15);
+      border-radius: 0.25rem 0.25rem .25rem .25rem;
+      transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .form-control::placeholder {
+      color: #868e96;
+      opacity: 1;
+    }
+
+    .btn-primary:hover {
+      color: #fff;
+      background-color: #0069d9;
+      border-color: #0062cc
+    }
+
+    .btn-block {
+      padding: .5rem 1rem;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      border-radius: .3rem;
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+      display: block;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <form class="form-signin" method="post" action="${request.contextPath}$authenticationUrl">
+    <input type="hidden" id="hash" name="hash" value="">
+    <h2 class="form-signin-heading">Please sign in</h2>
+    ${createError(loginError, errorMsg) + createLogoutSuccess(logoutSuccess)}
+    <p>
+      <label for="username" class="sr-only"></label>
+      <input type="text" id="username" name="$usernameParameter" class="form-control"
+             placeholder="Username" required autofocus>
+    </p>
+    <p>
+      <label for="password" class="sr-only"></label>
+      <input type="password" id="password" name="$pwdParameter" class="form-control"
+             placeholder="Password" required>
+    </p>
+    ${renderHiddenInputs(request)}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  </form>
+</div>
+<script>
+  document.getElementById("hash").value = window.location.hash;
+</script>
+</body>
+</html>
+            """.trimIndent()
     }
 
     private fun renderHiddenInputs(request: HttpServletRequest): String {
@@ -349,8 +344,6 @@ class ManagementLoginPageGeneratingFilter(
     }
 
     init {
-
-
         authenticationUrl = "${webEndpointProperties.basePath}$DEFAULT_LOGIN_PAGE"
         logoutSuccessUrl = "${webEndpointProperties.basePath}$DEFAULT_LOGIN_PAGE?logout"
         failureUrl = "${webEndpointProperties.basePath}$DEFAULT_LOGIN_PAGE?$ERROR_PARAMETER_NAME"
