@@ -216,32 +216,32 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
             val isEnd = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
             val key = "${traceid ?: event.threadName}:$id"
-            var sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
+            var logData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
             val msg = event.formattedMessage
             when (loggerName) {
                 "org.hibernate.SQL" -> {
-                    if (!sqlLogData.sql.isNullOrBlank()) {
+                    if (!logData.sql.isNullOrBlank()) {
                         sqlCache.remove(key)
                         val current = System.currentTimeMillis()
-                        if (sqlLogData.end == null) {
-                            sqlLogData.end = current
+                        if (logData.end == null) {
+                            logData.end = current
                         }
-                        log(sqlLogData)
-                        sqlLogData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
+                        log(logData)
+                        logData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
                     }
-                    sqlLogData.sql = msg
+                    logData.sql = msg
                 }
 
                 LOG_SLOW -> {
                     //SlowQuery: 2896 milliseconds. SQL: 'HikariProxyPreparedStatement@803096561 wrapping com.mysql.cj.jdbc.ClientPreparedStatement:
-                    sqlLogData.slowSql.add(msg)
+                    logData.slowSql.add(msg)
                 }
 
                 "org.hibernate.type.descriptor.sql.BasicBinder" -> {
                     val regex = Regex("""\[(.*?)]""")
                     val matches = regex.findAll(msg).map { it.groupValues[1] }.toList()
                     val index = matches[0].toInt()
-                    sqlLogData.params.add(
+                    logData.params.add(
                         SqlLogParam(
                             index,
                             JavaTypeResolver.type(matches[1])?.javaType,
@@ -254,51 +254,51 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     //start
                     val start = event.mdcPropertyMap[MDC_SQL_TIME_START]
                     if (!start.isNullOrBlank()) {
-                        sqlLogData.start = start.toLong()
+                        logData.start = start.toLong()
                     }
                     //total: {} rows
                     val total = event.mdcPropertyMap[MDC_SQL_TOTAL]
                     if (!total.isNullOrBlank()) {
-                        sqlLogData.total = total.toLong()
+                        logData.total = total.toLong()
                     }
                     //result: {}
                     val result = event.mdcPropertyMap[MDC_SQL_RESULT]
                     if (!result.isNullOrBlank()) {
-                        sqlLogData.result = result
+                        logData.result = result
                     }
                     //{} rows retrieved
                     val retrieved = event.mdcPropertyMap[MDC_SQL_RETRIEVED]
                     if (!retrieved.isNullOrBlank()) {
-                        sqlLogData.retrieved = retrieved.toInt()
+                        logData.retrieved = retrieved.toInt()
                     }
                     //{} row affected
                     val affected = event.mdcPropertyMap[MDC_SQL_AFFECTED]
                     if (!affected.isNullOrBlank()) {
-                        sqlLogData.affected = affected
+                        logData.affected = affected
                     }
                     //end: {} ms
                     val endTime = event.mdcPropertyMap[MDC_SQL_TIME_END]
                     if (!endTime.isNullOrBlank()) {
-                        sqlLogData.end = endTime.toLong()
+                        logData.end = endTime.toLong()
                     }
                     val offset = event.mdcPropertyMap[MDC_SQL_OFFSET]
                     if (!offset.isNullOrBlank()) {
-                        sqlLogData.offset = offset.toLong()
+                        logData.offset = offset.toLong()
                     }
                     val limit = event.mdcPropertyMap[MDC_SQL_LIMIT]
                     if (!limit.isNullOrBlank()) {
-                        sqlLogData.limit = limit.toInt()
+                        logData.limit = limit.toInt()
                     }
                     val error = event.mdcPropertyMap[MDC_SQL_ERROR]
                     if (!error.isNullOrBlank())
-                        sqlLogData.error = error
+                        logData.error = error
                 }
             }
             if (isEnd || (LOG_SLOW == loggerName && !isShowSql())) {
-                if (sqlLogData.end == null) {
-                    sqlLogData.end = System.currentTimeMillis()
+                if (logData.end == null) {
+                    logData.end = System.currentTimeMillis()
                 }
-                log(sqlLogData)
+                log(logData)
                 sqlCache.remove(key)
             }
         } catch (e: Exception) {
@@ -306,34 +306,32 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         }
     }
 
-    private fun log(
-        sqlLogData: SqlLogData
-    ) {
-        val cost = sqlLogData.cost
-        val slowSql = sqlLogData.slowSql
-        if (sqlLogData.sql.isNullOrBlank()) {
-            sqlLogData.sql = slowSql.joinToString("\n------\n")
+    private fun log(logData: SqlLogData) {
+        val cost = logData.cost
+        val slowSql = logData.slowSql
+        if (logData.sql.isNullOrBlank()) {
+            logData.sql = slowSql.joinToString("\n------\n")
         }
 
-        if (!sqlLogData.error.isNullOrBlank()) {
+        if (!logData.error.isNullOrBlank()) {
             sqlLogger.error(
                 MarkerFactory.getMarker(AlarmAppender.NO_ALARM_LOG_MARKER),
-                sqlLogData.toString()
+                logData.toString()
             )
         } else if (cost != null && timeoutAlarmMS > 0 && cost > timeoutAlarmMS) {
-            val initialComment = "${sqlLogData.id}：执行速度慢(${cost / 1000}秒)"
+            val initialComment = "${logData.id}：执行速度慢(${cost / 1000}秒)"
             sqlLogger.warn(
                 AlarmMarker(
                     message = initialComment,
                     timeout = true,
                     level = Level.WARN
                 ),
-                sqlLogData.toString()
+                logData.toString()
             )
         } else if (slowSql.isNotEmpty()) {
-            sqlLogger.warn(sqlLogData.toString())
+            sqlLogger.warn(logData.toString())
         } else
-            sqlLogger.info(sqlLogData.toString())
+            sqlLogger.info(logData.toString())
     }
 
 }

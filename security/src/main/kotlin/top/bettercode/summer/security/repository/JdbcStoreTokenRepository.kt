@@ -60,19 +60,18 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
             val auth = jdkSerializationSerializer.serialize(storeToken)
             val args = arrayOf(id, accessToken, refreshToken, SqlLobValue(auth))
             val types = intArrayOf(Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB)
+            val logData = SqlLogData("JdbcStoreTokenRepository.save")
             val update = jdbcTemplate.update(defaultInsertStatement, args, types)
-            if (log.isInfoEnabled) {
-                val logData = SqlLogData("JdbcStoreTokenRepository.save")
-                logData.sql = defaultInsertStatement
-                for (i in args.indices) {
-                    val value = if (i == 3) UNRECORDED_MARK else args[i].toString()
-                    logData.params.add(
-                        SqlLogParam(i, JavaTypeResolver.type(types[i])?.javaType, value)
-                    )
-                }
-                logData.affected = update
-                log.info(logData.toString())
+            logData.end = System.currentTimeMillis()
+            logData.sql = defaultInsertStatement
+            for (i in args.indices) {
+                val value = if (i == 3) UNRECORDED_MARK else args[i].toString()
+                logData.params.add(
+                    SqlLogParam(i, JavaTypeResolver.type(types[i])?.javaType, value)
+                )
             }
+            logData.affected = update
+            log.info(logData.toString())
         } catch (e: DuplicateKeyException) {
             save(storeToken)
         }
@@ -86,35 +85,33 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
     @Transactional
     override fun remove(tokenId: TokenId) {
         val id = tokenId.toString()
+        val logData = SqlLogData("JdbcStoreTokenRepository.remove")
         val update = jdbcTemplate.update(defaultDeleteStatement, id)
-        if (log.isInfoEnabled) {
-            val logData = SqlLogData("JdbcStoreTokenRepository.remove")
-            logData.sql = defaultDeleteStatement
-            logData.params.add(
-                SqlLogParam(0, JavaType.stringInstance, id)
-            )
-            logData.affected = update
-            log.info(logData.toString())
-        }
+        logData.end = System.currentTimeMillis()
+        logData.sql = defaultDeleteStatement
+        logData.params.add(
+            SqlLogParam(0, JavaType.stringInstance, id)
+        )
+        logData.affected = update
+        log.info(logData.toString())
     }
 
     @Transactional
     override fun remove(tokenIds: List<TokenId>) {
         Assert.notEmpty(tokenIds, "ids must not be empty")
+        val logData = SqlLogData("JdbcStoreTokenRepository.remove")
         val ids = tokenIds.map { it.toString() }.toTypedArray()
         val sql = defaultBatchDeleteStatement + "(${ids.joinToString(",") { "?" }})"
         @Suppress("SqlSourceToSinkFlow") val update = jdbcTemplate.update(sql, *ids)
-        if (log.isInfoEnabled) {
-            val logData = SqlLogData("JdbcStoreTokenRepository.remove")
-            logData.sql = sql
-            ids.forEachIndexed { index, s ->
-                logData.params.add(
-                    SqlLogParam(index, JavaType.stringInstance, s)
-                )
-            }
-            logData.affected = update
-            log.info(logData.toString())
+        logData.end = System.currentTimeMillis()
+        logData.sql = sql
+        ids.forEachIndexed { index, s ->
+            logData.params.add(
+                SqlLogParam(index, JavaType.stringInstance, s)
+            )
         }
+        logData.affected = update
+        log.info(logData.toString())
     }
 
     override fun findById(tokenId: TokenId): StoreToken? {
@@ -136,6 +133,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
      */
     private fun getStoreToken(param: String?, selectStatement: String): StoreToken? {
         return try {
+            val logData = SqlLogData("JdbcStoreTokenRepository.getStoreToken")
             val storeToken = jdbcTemplate.queryForObject<StoreToken>(
                 selectStatement,
                 RowMapper { rs: ResultSet, _: Int ->
@@ -148,16 +146,14 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
                     } catch (e: Exception) {
                         log.warn("apiToken反序列化失败", e)
                         try {
+                            val sqlLogData = SqlLogData("JdbcStoreTokenRepository.delete")
                             val id = rs.getString(2)
-                            val update =
-                                jdbcTemplate.update(defaultDeleteStatement, id)
-                            if (log.isInfoEnabled) {
-                                val logData = SqlLogData("JdbcStoreTokenRepository.delete")
-                                logData.sql = defaultDeleteStatement
-                                logData.params.add(SqlLogParam(0, JavaType.stringInstance, id))
-                                logData.affected = update
-                                log.info(logData.toString())
-                            }
+                            val update = jdbcTemplate.update(defaultDeleteStatement, id)
+                            sqlLogData.end = System.currentTimeMillis()
+                            sqlLogData.sql = defaultDeleteStatement
+                            sqlLogData.params.add(SqlLogParam(0, JavaType.stringInstance, id))
+                            sqlLogData.affected = update
+                            log.info(sqlLogData.toString())
                         } catch (ex: Exception) {
                             log.warn("apiToken删除失败", ex)
                         }
@@ -165,13 +161,11 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
                     }
                 }, param
             )
-            if (log.isInfoEnabled) {
-                val logData = SqlLogData("JdbcStoreTokenRepository.getStoreToken")
-                logData.sql = selectStatement
-                logData.params.add(SqlLogParam(0, JavaType.stringInstance, param))
-                logData.affected = if (storeToken == null) 0 else 1
-                log.info(logData.toString())
-            }
+            logData.end = System.currentTimeMillis()
+            logData.sql = selectStatement
+            logData.params.add(SqlLogParam(0, JavaType.stringInstance, param))
+            logData.affected = if (storeToken == null) 0 else 1
+            log.info(logData.toString())
             storeToken
         } catch (e: EmptyResultDataAccessException) {
             null
