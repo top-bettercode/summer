@@ -1,5 +1,6 @@
 package top.bettercode.summer.config
 
+import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.loggerContext
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
@@ -39,6 +41,8 @@ class LogsEndpoint(
     webEndpointProperties: WebEndpointProperties,
     managementServerProperties: ManagementServerProperties
 ) {
+
+    private val log = LoggerFactory.getLogger(LogsEndpoint::class.java)
 
     private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
@@ -428,7 +432,11 @@ class LogsEndpoint(
                 }
                 writer.println("</pre><hr></body>\n</html>")
             }
-            response.flushBuffer()
+            try {
+                response.flushBuffer()
+            } catch (e: Exception) {
+                log.error(AlarmAppender.NO_ALARM_MARKER, "Error while writing response", e)
+            }
         } else {
             response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
         }

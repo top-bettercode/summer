@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MarkerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpEntity
@@ -20,7 +19,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.lang.ExpiringValue
-import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
+import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
@@ -148,11 +147,7 @@ class FeishuClient(
             )
 
         if (result?.isOk() != true) {
-            log.error(
-                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                "feishu api request fail:{}",
-                result?.msg
-            )
+            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
         val chats = result?.data?.items
         if (log.isDebugEnabled) {
@@ -216,11 +211,7 @@ class FeishuClient(
             log.trace("feishu result:{}", result)
         }
         if (result?.isOk() != true) {
-            log.error(
-                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                "feishu api request fail:{}",
-                result?.msg
-            )
+            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
         return result?.isOk() == true
     }
@@ -254,20 +245,12 @@ class FeishuClient(
             log.trace("feishu result:{}", fileResult)
         }
         if (fileResult?.isOk() != true) {
-            log.error(
-                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                "feishu api request fail:{}",
-                fileResult?.msg
-            )
+            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", fileResult?.msg)
             return false
         }
         val fileKey = fileResult.data?.fileKey
         if (fileKey == null) {
-            log.error(
-                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                "feishu api request fail:{}",
-                fileResult.msg
-            )
+            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", fileResult.msg)
             return false
         }
         val params = mapOf(
@@ -285,11 +268,7 @@ class FeishuClient(
             log.trace("feishu result:{}", result)
         }
         if (result?.isOk() != true) {
-            log.error(
-                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                "feishu api request fail:{}",
-                result?.msg
-            )
+            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
         return result?.isOk() == true
     }

@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.lang.log.feishu
 import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.template
 import java.util.concurrent.ConcurrentHashMap
@@ -27,11 +26,7 @@ open class FeishuAppender @JvmOverloads constructor(
             try {
                 client.chatIdByName(chat)
             } catch (e: Exception) {
-                log.error(
-                    MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                    "获取飞书群聊ID失败",
-                    e
-                )
+                log.error(NO_ALARM_MARKER, "获取飞书群聊ID失败", e)
                 null
             }
         }

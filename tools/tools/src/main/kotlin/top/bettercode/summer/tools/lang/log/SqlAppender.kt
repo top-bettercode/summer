@@ -4,7 +4,10 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
-import org.slf4j.*
+import org.slf4j.ILoggerFactory
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
@@ -314,10 +317,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         }
 
         if (!logData.error.isNullOrBlank()) {
-            sqlLogger.error(
-                MarkerFactory.getMarker(AlarmAppender.NO_ALARM_LOG_MARKER),
-                logData.toString()
-            )
+            sqlLogger.error(AlarmAppender.NO_ALARM_MARKER, logData.toString())
         } else if (cost != null && timeoutAlarmMS > 0 && cost > timeoutAlarmMS) {
             val initialComment = "${logData.id}：执行速度慢(${cost / 1000}秒)"
             sqlLogger.warn(

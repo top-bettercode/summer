@@ -36,7 +36,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
         const val ALARM_LOG_MARKER = "alarm"
         const val NO_ALARM_LOG_MARKER = "no_alarm"
-
+        val NO_ALARM_MARKER: Marker get() = MarkerFactory.getMarker(NO_ALARM_LOG_MARKER)
 
         fun getServerAddress(): String {
             val host = IPAddressUtil.inet4Address
@@ -239,7 +239,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
             }
         } catch (e: Exception) {
             log.error(
-                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
+                NO_ALARM_MARKER,
                 "发送信息失败",
                 e
             )

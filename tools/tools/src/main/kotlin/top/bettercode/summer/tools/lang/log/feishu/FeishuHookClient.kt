@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.lang.log.feishu
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MarkerFactory
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -14,7 +13,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
-import top.bettercode.summer.tools.lang.log.AlarmAppender.Companion.NO_ALARM_LOG_MARKER
+import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.params
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -101,11 +100,7 @@ class FeishuHookClient(
             log.trace("feishu result:{}", result)
         }
         if (result?.isOk() != true) {
-            log.error(
-                MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                "feishu api request fail:{}",
-                result?.msg
-            )
+            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
         return result?.isOk() == true
     }

@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.lang.log.slack
 import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
 import javax.net.ssl.SSLHandshakeException
 
@@ -28,19 +27,11 @@ open class SlackAppender @JvmOverloads constructor(
                         channelExist = client.channelExist(properties.channel)
                     } catch (e: Exception) {
                         channelExist = false
-                        log.error(
-                            MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                            "slack 查询频道信息失败",
-                            e
-                        )
+                        log.error(NO_ALARM_MARKER, "slack 查询频道信息失败", e)
                     }
                 } else {
                     channelExist = false
-                    log.error(
-                        MarkerFactory.getMarker(NO_ALARM_LOG_MARKER),
-                        "slack 查询频道信息失败",
-                        e
-                    )
+                    log.error(NO_ALARM_MARKER, "slack 查询频道信息失败", e)
                 }
             }
         }
