@@ -352,6 +352,23 @@ class LogsEndpoint(
     if(!location.hash){
         window.location.href = '#last';
     }
+    document.addEventListener('copy', function(event) {
+            // 阻止默认的复制行为
+            event.preventDefault();
+
+            // 获取要复制的内容
+            let originalText = window.getSelection().toString();
+
+            // 修改复制的内容
+            let modifiedText = originalText.replace(/#/g, '');
+
+            // 将修改后的内容放入剪贴板
+            if (event.clipboardData) {
+                event.clipboardData.setData('text/plain', modifiedText);
+            } else if (window.clipboardData) { // 兼容IE
+                window.clipboardData.setData('Text', modifiedText);
+            }
+        });
 </script>
 """
             )
