@@ -62,7 +62,7 @@ class DistPlugin : Plugin<Project> {
         }
         val dist = project.extensions.getByType(DistExtension::class.java)
 
-        val includeJre = dist.includeJdk
+        val includeJdk = dist.includeJdk
 
         project.tasks.apply {
 
@@ -197,12 +197,10 @@ class DistPlugin : Plugin<Project> {
                             it.into("native")
                         }
                     }
-                    if (includeJre && distributionTask != null) {
+                    if (includeJdk && distributionTask != null) {
                         includeJre(copySpec, dist, project)
-                        distribution.distributionBaseName.set("${project.name}-${if (dist.isX64) "x64" else "x86"}")
-                    } else {
-                        distribution.distributionBaseName.set(project.name)
                     }
+                    distribution.distributionBaseName.set(project.name)
 
                     copySpec.from(
                         File(
@@ -266,7 +264,7 @@ class DistPlugin : Plugin<Project> {
                             project,
                             dist,
                             false,
-                            includeJre,
+                            includeJdk,
                             includeNative
                         )
                     task.windowsStartScriptGenerator =
@@ -274,7 +272,7 @@ class DistPlugin : Plugin<Project> {
                             project,
                             dist,
                             true,
-                            includeJre,
+                            includeJdk,
                             includeNative
                         )
 
