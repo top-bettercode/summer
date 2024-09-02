@@ -42,6 +42,7 @@ class DataQuery(
             val entityManager = getEntityManager(ds)
             MDC.put(SqlAppender.MDC_SQL_ID, "Endpoint.query")
             sqlLog.start()
+            val start = System.currentTimeMillis()
             val query = entityManager.createNativeQuery(sql, Tuple::class.java)
             @Suppress("DEPRECATION")
             query.unwrap(org.hibernate.query.Query::class.java)
@@ -62,8 +63,9 @@ class DataQuery(
                 result.size
             }
             sqlLog.retrieved(resultSize)
+            val duration = System.currentTimeMillis() - start
 
-            return mapOf("size" to resultSize, "content" to result)
+            return mapOf("size" to resultSize, "duration" to duration, "content" to result)
         } catch (e: Exception) {
             MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
             return mapOf("error" to e.message)
@@ -87,11 +89,13 @@ class DataQuery(
         try {
             MDC.put(SqlAppender.MDC_SQL_ID, "Endpoint.update")
             sqlLog.start()
+            val start = System.currentTimeMillis()
             val query = entityManager.createNativeQuery(sql)
             val affected = query.executeUpdate()
             transactionManager.commit(status)
             sqlLog.affected(affected.toString())
-            return mapOf("affected" to affected)
+            val duration = System.currentTimeMillis() - start
+            return mapOf("affected" to affected, "duration" to duration)
         } catch (e: Exception) {
             // 如果发生异常，回滚事务
             transactionManager.rollback(status)

@@ -165,8 +165,9 @@
         }
         // 假设返回的数据是 JSON 格式
         resultCount.css('color', 'black');
-        resultCount.text(
-            '数量: ' + (response.size === undefined ? response.affected : response.size));
+        let conunt = '数量: ' + (response.size === undefined ? response.affected : response.size);
+        conunt += '，耗时: ' + response.duration + 'ms';
+        resultCount.text(conunt);
         let rows = response.content;
 
         if (rows && rows.length > 0) {
