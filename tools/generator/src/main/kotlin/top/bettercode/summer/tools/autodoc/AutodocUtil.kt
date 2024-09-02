@@ -12,7 +12,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.slf4j.LoggerFactory
-import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.lang.util.StringUtil
 
 
@@ -45,18 +44,6 @@ object AutodocUtil {
         objectMapper.registerKotlinModule()
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
         objectMapper.registerModule(StringUtil.timeModule(true))
-    }
-
-
-    fun Iterable<Field>.checkBlank(desc: String, prefix: String = ""): Iterable<Field> {
-        forEach {
-            val blank = it.description.isBlank()
-            if (blank) {
-                log.error("[${desc}]未找到字段[${prefix + it.name}]的描述")
-            }
-            it.children.checkBlank(desc, "${prefix + it.name}.")
-        }
-        return this
     }
 
 }

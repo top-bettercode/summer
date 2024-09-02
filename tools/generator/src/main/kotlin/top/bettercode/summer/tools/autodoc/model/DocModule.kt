@@ -63,16 +63,27 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
         return result
     }
 
-    val name: String = moduleFile { it.name }
+    val name: String = (projectModuleDic?.name ?: rootModuleDic?.name)!!
 
-    fun <T> moduleFile(action: (File) -> T): T {
-        return if (projectModuleDic?.exists() == true)
-            action(projectModuleDic)
-        else
-            action(rootModuleDic!!)
+    fun moduleFile(subFile: String): File? {
+        if (projectModuleDic?.exists() == true) {
+            val file = File(projectModuleDic, subFile)
+            if (file.exists()) {
+                return file
+            }
+        }
+        return if (rootModuleDic != null)
+            File(rootModuleDic, subFile)
+        else null
     }
 
-    fun collections(collectionName: String, name: String): DocCollection {
+    fun inRootModule(operation: DocOperation): Boolean {
+        return rootCollections.find { it.name == operation.collectionName }?.items?.contains(
+            operation.name
+        ) ?: false
+    }
+
+    fun projectCollections(collectionName: String, name: String): DocCollection {
         var collectionTree = projectCollections.find { it.name == collectionName }
         if (collectionTree == null) {
             collectionTree = DocCollection(

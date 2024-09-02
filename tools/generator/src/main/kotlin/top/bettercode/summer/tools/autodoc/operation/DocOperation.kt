@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.springframework.http.HttpHeaders
 import top.bettercode.summer.tools.autodoc.AutodocUtil
+import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.lang.operation.*
 import java.io.File
 import java.net.URI
@@ -73,6 +74,47 @@ class DocOperation(
 
     companion object {
         private val log = org.slf4j.LoggerFactory.getLogger(DocOperation::class.java)
+
+        fun DocOperation.checkBlank(appName: String?, moduleName: String) {
+            val request = request as DocOperationRequest
+            val response = response as DocOperationResponse
+
+            val errors = mutableListOf<String>()
+            errors.addAll(request.uriVariablesExt.checkBlank("request.uriVariablesExt"))
+            errors.addAll(request.headersExt.checkBlank("request.headersExt"))
+            errors.addAll(request.queriesExt.checkBlank("request.queriesExt"))
+            errors.addAll(request.parametersExt.checkBlank("request.parametersExt"))
+            errors.addAll(request.partsExt.checkBlank("request.partsExt"))
+            errors.addAll(request.contentExt.checkBlank("request.contentExt"))
+
+            errors.addAll(response.headersExt.checkBlank("response.headersExt"))
+            errors.addAll(response.contentExt.checkBlank("response.contentExt"))
+            if (errors.isNotEmpty()) {
+                log.error(
+                    "\n${HttpOperation.SEPARATOR_LINE}\n${if (appName.isNullOrBlank()) "" else "$appName/"}${moduleName}/$collectionName/${name}：\n${
+                        errors.joinToString(
+                            "\n"
+                        )
+                    }\n${HttpOperation.SEPARATOR_LINE}"
+                )
+            }
+        }
+
+        private fun Iterable<Field>.checkBlank(
+            desc: String,
+            prefix: String = ""
+        ): Iterable<String> {
+            val errors = mutableListOf<String>()
+            forEach {
+                val blank = it.description.isBlank()
+                if (blank) {
+                    errors.add("[${desc}]未找到字段[${prefix + it.name}]的描述")
+                }
+                val childrenErrors = it.children.checkBlank(desc, "${prefix + it.name}.")
+                errors.addAll(childrenErrors)
+            }
+            return errors
+        }
 
         fun read(
             operationFile: File,

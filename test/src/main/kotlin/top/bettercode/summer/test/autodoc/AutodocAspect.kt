@@ -214,7 +214,7 @@ class AutodocAspect(
 
 
     private val rootProject: File by lazy {
-        var file = File(FileUtil.userDir)
+        var file = FileUtil.userDirFile
         while (!File(file, "gradlew").exists()) {
             file = file.parentFile
         }

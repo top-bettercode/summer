@@ -8,8 +8,11 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileProperties
 import top.bettercode.summer.gradle.plugin.profile.ProfilePlugin
 import top.bettercode.summer.tools.autodoc.AutodocExtension
+import top.bettercode.summer.tools.autodoc.model.Field
+import top.bettercode.summer.tools.autodoc.operation.DocOperation.Companion.checkBlank
+import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
+import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import java.io.File
-import java.util.*
 
 /**
  *
@@ -133,17 +136,61 @@ class AutodocPlugin : Plugin<Project> {
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     val extension = project.extensions.findByType(AutodocExtension::class.java)!!
-                    val file = project.file("src/main/resources/messages.properties")
-                    val source = Properties()
-                    if (file.exists()) {
-                        source.load(file.inputStream())
+                    extension.listModules { module, _ ->
+                        module.collections.forEach { collection ->
+                            collection.operations.forEach { operation ->
+                                operation.checkBlank(
+                                    if (module.inRootModule(operation))
+                                        project.rootProject.name
+                                    else project.name,
+                                    module.name
+                                )
+                            }
+                        }
                     }
-                    AsciidocGenerator.checkBlank(extension)
                 }
             })
         }
+
+        project.tasks.create("defaultDesc") { task ->
+            task.group = group
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    val extension = project.extensions.findByType(AutodocExtension::class.java)!!
+                    extension.listModules { module, _ ->
+                        module.collections.forEach { collection ->
+                            collection.operations.forEach { operation ->
+                                val request = operation.request as DocOperationRequest
+                                val response = operation.response as DocOperationResponse
+
+                                request.uriVariablesExt.defaultDesc()
+                                request.headersExt.defaultDesc()
+                                request.parametersExt.defaultDesc()
+                                request.partsExt.defaultDesc()
+                                request.contentExt.defaultDesc()
+
+                                response.headersExt.defaultDesc()
+                                response.contentExt.defaultDesc()
+
+                                operation.save()
+                            }
+                        }
+                    }
+                }
+            })
+        }
+
         project.tasks.getByName("jar") {
             it.dependsOn("htmldoc", "postman")
+        }
+    }
+
+    private fun Set<Field>.defaultDesc() {
+        this.forEach {
+            if (it.description.isBlank()) {
+                it.description = it.name
+            }
+            it.children.defaultDesc()
         }
     }
 

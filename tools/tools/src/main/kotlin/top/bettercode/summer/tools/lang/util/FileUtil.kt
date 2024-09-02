@@ -18,10 +18,19 @@ object FileUtil {
     val userDir: String = System.getProperty("user.dir")
 
     @JvmStatic
+    val userDirFile: File = File(userDir).canonicalFile
+
+    @JvmStatic
     val tmpDir: String = "$userDir${File.separator}build${File.separator}tmp"
 
     @JvmStatic
+    val tmpDirFile: File = File(tmpDir).canonicalFile
+
+    @JvmStatic
     val sysTmpDir: String = System.getProperty("java.io.tmpdir")
+
+    @JvmStatic
+    val sysTmpDirFile: File = File(sysTmpDir).canonicalFile
 
     //-----------------------------------------------------------------------
     @JvmStatic

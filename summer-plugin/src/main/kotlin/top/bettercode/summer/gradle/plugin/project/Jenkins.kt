@@ -11,7 +11,6 @@ import org.w3c.dom.Element
 import top.bettercode.summer.tools.lang.util.FileUtil
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
@@ -63,7 +62,7 @@ class Jenkins(private val url: String, auth: String) {
 
     fun currentBranch(): String? {
         val processBuilder = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD")
-        processBuilder.directory(File(FileUtil.userDir))
+        processBuilder.directory(FileUtil.userDirFile)
 
         return try {
             val process = processBuilder.start()

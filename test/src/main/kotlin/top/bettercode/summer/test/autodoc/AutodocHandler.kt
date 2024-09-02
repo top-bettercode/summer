@@ -160,7 +160,7 @@ class AutodocHandler(
                 }
 
                 //collections
-                module.collections(docOperation.collectionName, docOperation.name)
+                module.projectCollections(docOperation.collectionName, docOperation.name)
 
                 DocExt.ext(
                     docOperation = docOperation,
@@ -177,7 +177,8 @@ class AutodocHandler(
                 extTableNames(beanType)
                 FieldDescFix.fix(
                     operation = docOperation,
-                    extension = extension
+                    extension = extension,
+                    module = module
                 )
 
                 if (paramInfo.existNoAnnoDefaultPageParam) {
@@ -237,10 +238,7 @@ class AutodocHandler(
     }
 
     private fun isEntity(typeName: String): Boolean {
-        return if (autodocAspect == null) {
-            true
-        } else
-            autodocAspect.isEntity(typeName)
+        return autodocAspect?.isEntity(typeName) ?: true
     }
 
 

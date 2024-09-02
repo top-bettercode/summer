@@ -6,11 +6,62 @@
   type: "String"
   description: "异常栈"
   canCover: false
+- name: "total"
+  type: "Integer"
+  description: "总数量"
+  value: "24"
+  canCover: true
+  required: false
+- name: "page"
+  type: "Object"
+  description: "分页信息"
+  canCover: true
+  required: false
+- name: "size"
+  type: "Integer"
+  description: "每页数量"
+  value: "5"
+  canCover: true
+  required: false
+- name: "pages"
+  type: "Integer"
+  description: "页数"
+  value: "5"
+  canCover: true
+  required: false
+- name: "list"
+  type: "Array"
+  description: "列表内容"
+  canCover: true
+  required: false
 - name: "data"
   type: "Object"
   description: "数据"
   canCover: false
   children:
+    - name: "total"
+      type: "Integer"
+      description: "总数量"
+      value: "24"
+      canCover: true
+      required: false
+    - name: "size"
+      type: "Integer"
+      description: "每页数量"
+      value: "5"
+      canCover: true
+      required: false
+    - name: "pages"
+      type: "Integer"
+      description: "页数"
+      value: "5"
+      canCover: true
+      required: false
+    - name: "list"
+      type: "Array"
+      description: "列表内容"
+      canCover: true
+      required: false
     - name: "jti"
       type: "String"
       description: "jwt的唯一身份标识"

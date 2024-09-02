@@ -7,7 +7,6 @@ import org.asciidoctor.SafeMode
 import top.bettercode.summer.tools.autodoc.AutodocExtension
 import top.bettercode.summer.tools.autodoc.AutodocExtension.Companion.pyname
 import top.bettercode.summer.tools.autodoc.AutodocUtil
-import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
@@ -145,29 +144,6 @@ object AsciidocGenerator {
             }
         }
         return if (hasOtherModule) pw.toString() else ""
-    }
-
-    fun checkBlank(autodoc: AutodocExtension) {
-        autodoc.listModules { module, _ ->
-            module.collections.forEach { collection ->
-                collection.operations.forEach { operation ->
-                    val request = operation.request as DocOperationRequest
-                    val response = operation.response as DocOperationResponse
-
-                    request.uriVariablesExt.checkBlank("request.uriVariablesExt")
-                    request.headersExt.checkBlank("request.headersExt")
-                    request.queriesExt.checkBlank("request.queriesExt")
-                    request.parametersExt.checkBlank("request.parametersExt")
-                    request.partsExt.checkBlank("request.partsExt")
-                    request.contentExt.checkBlank("request.contentExt")
-
-                    response.headersExt.checkBlank("response.headersExt")
-                    response.contentExt.checkBlank("response.contentExt")
-
-                    operation.save()
-                }
-            }
-        }
     }
 
     fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {

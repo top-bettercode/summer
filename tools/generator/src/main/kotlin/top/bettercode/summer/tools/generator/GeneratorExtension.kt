@@ -23,7 +23,7 @@ open class GeneratorExtension(
     /**
      * 生成文件基础路径,项目路径
      */
-    var projectDir: File = File(FileUtil.userDir),
+    var projectDir: File = FileUtil.userDirFile,
     /**
      * 基础路径下相对路径
      */

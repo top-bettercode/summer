@@ -53,8 +53,8 @@ open class AutodocExtension(
             }
 
     fun propertiesFile(module: DocModule): File {
-        val file = module.moduleFile { File(it, "properties.adoc") }
-        return if (file.exists()) {
+        val file = module.moduleFile("properties.adoc")
+        return if (file?.exists() == true) {
             file
         } else {
             val pfile = File(source, "properties.adoc")

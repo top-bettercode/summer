@@ -2,9 +2,10 @@ package top.bettercode.summer.test.autodoc.field
 
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.test.autodoc.Autodoc
-import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
+import top.bettercode.summer.tools.autodoc.model.DocModule
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
+import top.bettercode.summer.tools.autodoc.operation.DocOperation.Companion.checkBlank
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.GeneratorExtension
@@ -77,7 +78,8 @@ abstract class FieldDescFix {
 
         fun fix(
             operation: DocOperation,
-            extension: GeneratorExtension
+            extension: GeneratorExtension,
+            module: DocModule
         ) {
             val request = operation.request as DocOperationRequest
             val response = operation.response as DocOperationResponse
@@ -112,7 +114,6 @@ abstract class FieldDescFix {
                     }
                 }
             }
-            request.headersExt.checkBlank("request.headersExt")
             out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
@@ -122,7 +123,6 @@ abstract class FieldDescFix {
                     }
                 }
             }
-            request.uriVariablesExt.checkBlank("request.uriVariablesExt")
             out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
@@ -132,7 +132,6 @@ abstract class FieldDescFix {
                     }
                 }
             }
-            request.queriesExt.checkBlank("request.queriesExt")
             out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
@@ -142,7 +141,6 @@ abstract class FieldDescFix {
                     }
                 }
             }
-            request.parametersExt.checkBlank("request.parametersExt")
             out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
@@ -152,7 +150,6 @@ abstract class FieldDescFix {
                     }
                 }
             }
-            request.partsExt.checkBlank("request.partsExt")
             out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val parameterFields =
                     fixDocFieldDesc.descFields(DocProperties.REQUEST_PARAMETERS)
@@ -162,7 +159,6 @@ abstract class FieldDescFix {
                     }
                 }
             }
-            request.contentExt.checkBlank("request.contentExt")
 
             out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val responseFields = fixDocFieldDesc.descFields(DocProperties.RESPONSE_CONTENT)
@@ -172,7 +168,7 @@ abstract class FieldDescFix {
                     }
                 }
             }
-            response.contentExt.checkBlank("response.contentExt")
+            operation.checkBlank(null, module.name)
         }
 
         fun Iterable<Field>.findExtField(
