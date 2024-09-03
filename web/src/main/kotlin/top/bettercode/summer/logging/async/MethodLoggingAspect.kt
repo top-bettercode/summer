@@ -12,7 +12,7 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation
 @Aspect
 class MethodLoggingAspect {
 
-    private val logger: Logger = LoggerFactory.getLogger(MethodLoggingAspect::class.java)
+    private val logger: Logger = LoggerFactory.getLogger("METHOD_PROCEED")
 
     companion object {
         var QUERIES_SLOWER_THAN_MS = 2000
