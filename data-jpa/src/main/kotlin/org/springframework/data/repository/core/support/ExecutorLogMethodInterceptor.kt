@@ -75,8 +75,9 @@ class ExecutorLogMethodInterceptor(
         }
         loggerInfos = methods.associateWith { method ->
             val parameters = method.parameters
+            val methodName = method.name
             val sqlId =
-                "$className.${method.name}(${
+                "$className.$methodName(${
                     parameters.joinToString(", ") { param ->
                         "${param.type.simpleName}${
                             if (param.type.typeParameters.isNotEmpty()) "<${
@@ -93,6 +94,8 @@ class ExecutorLogMethodInterceptor(
             if (currentClass) {
                 val querySize = AnnotationUtils.getAnnotation(method, QuerySize::class.java)
                 annoPageInfo = if (querySize != null) PageInfo(size = querySize.value) else null
+            } else if (methodName.startsWith("findFirst")) {
+                annoPageInfo = PageInfo(size = 1)
             } else {
                 annoPageInfo = null
             }
@@ -112,9 +115,9 @@ class ExecutorLogMethodInterceptor(
                     queryMethod.isModifyingQuery || queryMethod.mybatisQueryMethod?.isModifyingQuery == true
             } else {
                 //save update delete
-                isModify = method.name.startsWith("save")
-                        || method.name.startsWith("update")
-                        || method.name.startsWith("delete")
+                isModify = methodName.startsWith("save")
+                        || methodName.startsWith("update")
+                        || methodName.startsWith("delete")
             }
             LoggerInfo(
                 sqlId = sqlId,
