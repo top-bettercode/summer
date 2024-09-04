@@ -88,14 +88,12 @@ class ExecutorLogMethodInterceptor(
                         }${if (param.type.isArray) "[]" else ""}"
                     }
                 })"
-            val annoPageInfo: PageInfo?
+            var annoPageInfo: PageInfo?
             val declaringClass = method.declaringClass
             val currentClass = declaringClass == repositoryInterface
             if (currentClass) {
                 val querySize = AnnotationUtils.getAnnotation(method, QuerySize::class.java)
                 annoPageInfo = if (querySize != null) PageInfo(size = querySize.value) else null
-            } else if (methodName.startsWith("findFirst")) {
-                annoPageInfo = PageInfo(size = 1)
             } else {
                 annoPageInfo = null
             }
@@ -107,6 +105,10 @@ class ExecutorLogMethodInterceptor(
                 if (pageableIndex < 0)
                     pageableIndex = parameters.indexOfFirst { it.type == Size::class.java }
             }
+            if (pageableIndex < 0 && annoPageInfo == null && methodName.startsWith("findFirst")) {
+                annoPageInfo = PageInfo(size = 1)
+            }
+
             val isModify: Boolean
             val repositoryQuery = queries[method] as RepositoryQuery?
             if (repositoryQuery != null) {
