@@ -90,7 +90,6 @@ class MuipartFileToAttachmentConverter(private val multipartProperties: SummerMu
             attachment
         } catch (e: Exception) {
             cleanFile()
-            log.error("转存文件失败", e)
             throw IllegalArgumentException("转存文件失败", e)
         }
     }

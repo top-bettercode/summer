@@ -43,7 +43,7 @@ class SummerWebMvcConfigurer(
      * @param registry 注册转换类
      */
     override fun addFormatters(registry: FormatterRegistry) {
-        registry.addConverter(genericConverter(
+        registry.addConverter(dateConverter(
             sourceType = String::class.java,
             targetType = Date::class.java
         ) { source, _, _ ->
@@ -54,7 +54,7 @@ class SummerWebMvcConfigurer(
             }
         })
         registry.addConverter(
-            genericConverter(
+            dateConverter(
                 sourceType = String::class.java,
                 targetType = LocalDate::class.java
             ) { source, sourceType, _ ->
@@ -69,7 +69,7 @@ class SummerWebMvcConfigurer(
                 }
             })
         registry.addConverter(
-            genericConverter(
+            dateConverter(
                 sourceType = String::class.java,
                 targetType = LocalDateTime::class.java
             ) { source, _, _ ->
@@ -81,19 +81,19 @@ class SummerWebMvcConfigurer(
             })
         //toString
         registry.addConverter(
-            genericConverter(
+            dateConverter(
                 sourceType = Date::class.java,
                 targetType = String::class.java
             ) { source, _, _ ->
                 source.time.toString()
             })
         registry.addConverter(
-            genericConverter(
+            dateConverter(
                 sourceType = LocalDate::class.java,
                 targetType = String::class.java
             ) { source, _, _ -> of(source).toMillis().toString() })
         registry.addConverter(
-            genericConverter(
+            dateConverter(
                 sourceType = LocalDateTime::class.java,
                 targetType = String::class.java
             ) { source, _, _ -> of(source).toMillis().toString() })
@@ -137,7 +137,7 @@ class SummerWebMvcConfigurer(
             })
     }
 
-    private fun <S, T> genericConverter(
+    private fun <S, T> dateConverter(
         sourceType: Class<S>, targetType: Class<T>,
         convert: (S, TypeDescriptor, TypeDescriptor) -> T?
     ) = object : ConditionalGenericConverter {
