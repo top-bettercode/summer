@@ -207,12 +207,13 @@ object PumlConverter {
                                         tableName = tableName
                                     )
                             }
-
-                            val exist = codeTypeCache[codeType]
-                            if (exist != null && remarks != exist) {
-                                throw IllegalArgumentException("${pumlFile.name}:$tableName:$columnName codeType重复：$codeType,[$remarks]!=[$exist]")
-                            } else {
-                                codeTypeCache[codeType] = remarks
+                            if (pumlFile.parentFile.name != "database" && pumlFile.parentFile.parentFile.name != "database") {
+                                val exist = codeTypeCache[codeType]
+                                if (exist != null && remarks != exist) {
+                                    throw IllegalArgumentException("${pumlFile.name}:$tableName:$columnName codeType重复：$codeType,[$remarks]!=[$exist]")
+                                } else {
+                                    codeTypeCache[codeType] = remarks
+                                }
                             }
                         } else {
                             codeType = ""
