@@ -117,7 +117,7 @@
       if (page.value < 1) {
         page.value = 1;
       }
-    } else if (sql.startsWith('update') || sql.startsWith('insert') || sql.startsWith('delete')) {
+    } else if (sql.startsWith('update') || sql.startsWith('insert') || sql.startsWith('delete') || sql.startsWith('create')) {
       op.value = 'update';
     } else if (sql.startsWith('show')) {
       op.value = 'query';
