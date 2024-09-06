@@ -317,7 +317,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
         }
 
         if (!logData.error.isNullOrBlank()) {
-            sqlLogger.error(AlarmAppender.NO_ALARM_MARKER, logData.toString())
+            sqlLogger.error(AlarmAppender.NO_ALARM_MARKER, logData.toSql(timeoutAlarmMS))
         } else if (cost != null && timeoutAlarmMS > 0 && cost > timeoutAlarmMS) {
             val initialComment = "${logData.id}：执行速度慢(${cost / 1000}秒)"
             sqlLogger.warn(
@@ -326,12 +326,12 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     timeout = true,
                     level = Level.WARN
                 ),
-                logData.toString()
+                logData.toSql(timeoutAlarmMS)
             )
         } else if (slowSql.isNotEmpty()) {
-            sqlLogger.warn(logData.toString())
+            sqlLogger.warn(logData.toSql(timeoutAlarmMS))
         } else
-            sqlLogger.info(logData.toString())
+            sqlLogger.info(logData.toSql(timeoutAlarmMS))
     }
 
 }
