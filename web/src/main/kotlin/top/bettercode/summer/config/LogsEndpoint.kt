@@ -22,6 +22,7 @@ import java.io.File
 import java.io.InputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.net.SocketTimeoutException
 import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
@@ -118,40 +119,7 @@ class LogsEndpoint(
                             }
                             showLogFile(logPattern, logMsgs, collapse)
                         } else {
-                            val fileName = "$logPattern.log.gz"
-                            val newFileName: String =
-                                if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
-                                        "Edge"
-                                    ))
-                                ) {
-                                    URLEncoder.encode(fileName, "UTF-8")
-                                } else {
-                                    fileName
-                                }
-                            response.setHeader(
-                                "Content-Disposition",
-                                "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
-                                    fileName,
-                                    "UTF-8"
-                                )
-                            )
-                            response.contentType = "application/octet-stream; charset=utf-8"
-                            response.setHeader("Pragma", "No-cache")
-                            response.setHeader("Cache-Control", "no-cache")
-                            response.setDateHeader("Expires", 0)
-
-                            GZIPOutputStream(response.outputStream).buffered().use { bos ->
-                                files.forEach { file ->
-                                    bos.write(
-                                        if ("gz".equals(
-                                                file.extension,
-                                                true
-                                            )
-                                        ) GZIPInputStream(file.inputStream()).readBytes() else file.inputStream()
-                                            .readBytes()
-                                    )
-                                }
-                            }
+                            logGz(logPattern, userAgent, files)
                         }
                     } else {
                         response.sendError(HttpStatus.NOT_FOUND.value(), "no log file match")
@@ -168,30 +136,7 @@ class LogsEndpoint(
                     } else {
                         val extension = file.extension
                         if ("json" == extension) {
-                            val fileName = file.name
-                            val newFileName: String =
-                                if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
-                                        "Edge"
-                                    ))
-                                ) {
-                                    URLEncoder.encode(fileName, "UTF-8")
-                                } else {
-                                    fileName
-                                }
-                            response.setHeader(
-                                "Content-Disposition",
-                                "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
-                                    fileName,
-                                    "UTF-8"
-                                )
-                            )
-                            response.contentType = "application/octet-stream; charset=utf-8"
-                            response.setHeader("Pragma", "No-cache")
-                            response.setHeader("Cache-Control", "no-cache")
-                            response.setDateHeader("Expires", 0)
-                            response.outputStream.bufferedWriter().use { writer ->
-                                writer.write(file.readText())
-                            }
+                            json(file, userAgent)
                         } else {
                             val logMsgs = readLogMsgs(file.inputStream(), "gz" == extension)
                             showLogFile(file.name, logMsgs, collapse)
@@ -203,115 +148,187 @@ class LogsEndpoint(
             }
         } else {
             if (useWebSocket) {
-                response.contentType = "text/html;charset=utf-8"
-                response.setHeader("Pragma", "No-cache")
-                response.setHeader("Cache-Control", "no-cache")
-                response.setDateHeader("Expires", 0)
-                val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
-                prettyMessageHTMLLayout.context = loggerContext
-                prettyMessageHTMLLayout.start()
-                prettyMessageHTMLLayout.title = "实时日志"
-                response.writer.use { writer ->
-                    writer.println(prettyMessageHTMLLayout.fileHeader)
-                    writer.println(prettyMessageHTMLLayout.getLogsHeader())
-                    writer.println(prettyMessageHTMLLayout.presentationFooter)
-                    writer.println(
-                        """
-<script type="text/javascript">
-  
-
-  function getScrollTop() {
-    var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
-    if (document.body) {
-      bodyScrollTop = document.body.scrollTop;
-    }
-    if (document.documentElement) {
-      documentScrollTop = document.documentElement.scrollTop;
-    }
-    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
-    return scrollTop;
-  }
-
-  //文档的总高度
-
-  function getScrollHeight() {
-    var scrollHeight = 0, bodyScrollHeight = 0, documentScrollHeight = 0;
-    if (document.body) {
-      bodyScrollHeight = document.body.scrollHeight;
-    }
-    if (document.documentElement) {
-      documentScrollHeight = document.documentElement.scrollHeight;
-    }
-    scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight
-        : documentScrollHeight;
-    return scrollHeight;
-  }
-
-  //浏览器视口的高度
-
-  function getWindowHeight() {
-    var windowHeight = 0;
-    if (document.compatMode === "CSS1Compat") {
-      windowHeight = document.documentElement.clientHeight;
-    } else {
-      windowHeight = document.body.clientHeight;
-    }
-    return windowHeight;
-  }
-  
-  document.onEnd = true
-  window.onscroll = function () {
-    document.onEnd = getScrollTop() + getWindowHeight() === getScrollHeight();
-  };
-  
-  //websocket对象
-  let websocket = null;
-  //判断当前浏览器是否支持WebSocket
-  if (typeof (WebSocket) == "undefined") {
-    console.log("您的浏览器不支持WebSocket");
-  } else {
-    console.info("连接...")
-    
-    websocket = new WebSocket("${LoggingUtil.apiAddressWs.first}${"/websocket/logging"}?token=${websocketProperties?.token}");
-    
-    //连接发生错误的回调方法
-    websocket.onerror = function () {
-      console.error("WebSocket连接发生错误");
-    };
-
-    //连接成功建立的回调方法
-    websocket.onopen = function () {
-      console.log("WebSocket连接成功")
-    };
-
-    //接收到消息的回调方法
-    websocket.onmessage = function (event) {
-      if (event.data) {
-        let node = document.querySelector('#loggingText');
-        node.insertAdjacentHTML("beforeEnd", event.data);
-        if (document.onEnd) {
-          document.documentElement.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-            inline: "nearest"
-          });
-        }
-      }
-    }
-
-    //连接关闭的回调方法
-    websocket.onclose = function () {
-      console.log("WebSocket连接关闭")
-    };
-  }
-</script>
-                """.trimIndent()
-                    )
-                    writer.println(prettyMessageHTMLLayout.fileFooter)
-                }
+                webSocket()
             } else {
                 response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
             }
+        }
+    }
+
+    private fun logGz(
+        logPattern: String,
+        userAgent: String?,
+        files: List<File>
+    ) {
+        val fileName = "$logPattern.log.gz"
+        val newFileName: String =
+            if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
+                    "Edge"
+                ))
+            ) {
+                URLEncoder.encode(fileName, "UTF-8")
+            } else {
+                fileName
+            }
+        response.setHeader(
+            "Content-Disposition",
+            "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                fileName,
+                "UTF-8"
+            )
+        )
+        response.contentType = "application/octet-stream; charset=utf-8"
+        response.setHeader("Pragma", "No-cache")
+        response.setHeader("Cache-Control", "no-cache")
+        response.setDateHeader("Expires", 0)
+
+        GZIPOutputStream(response.outputStream).buffered().use { bos ->
+            files.forEach { file ->
+                bos.write(
+                    if ("gz".equals(
+                            file.extension,
+                            true
+                        )
+                    ) GZIPInputStream(file.inputStream()).readBytes() else file.inputStream()
+                        .readBytes()
+                )
+            }
+        }
+    }
+
+    private fun json(file: File, userAgent: String?) {
+        val fileName = file.name
+        val newFileName: String =
+            if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
+                    "Edge"
+                ))
+            ) {
+                URLEncoder.encode(fileName, "UTF-8")
+            } else {
+                fileName
+            }
+        response.setHeader(
+            "Content-Disposition",
+            "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                fileName,
+                "UTF-8"
+            )
+        )
+        response.contentType = "application/octet-stream; charset=utf-8"
+        response.setHeader("Pragma", "No-cache")
+        response.setHeader("Cache-Control", "no-cache")
+        response.setDateHeader("Expires", 0)
+        response.outputStream.bufferedWriter().use { writer ->
+            writer.write(file.readText())
+        }
+    }
+
+    private fun webSocket() {
+        response.contentType = "text/html;charset=utf-8"
+        response.setHeader("Pragma", "No-cache")
+        response.setHeader("Cache-Control", "no-cache")
+        response.setDateHeader("Expires", 0)
+        val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
+        prettyMessageHTMLLayout.context = loggerContext
+        prettyMessageHTMLLayout.start()
+        prettyMessageHTMLLayout.title = "实时日志"
+        response.writer.use { writer ->
+            writer.println(prettyMessageHTMLLayout.fileHeader)
+            writer.println(prettyMessageHTMLLayout.getLogsHeader())
+            writer.println(prettyMessageHTMLLayout.presentationFooter)
+            writer.println(
+                """
+    <script type="text/javascript">
+      
+    
+      function getScrollTop() {
+        var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
+        if (document.body) {
+          bodyScrollTop = document.body.scrollTop;
+        }
+        if (document.documentElement) {
+          documentScrollTop = document.documentElement.scrollTop;
+        }
+        scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+        return scrollTop;
+      }
+    
+      //文档的总高度
+    
+      function getScrollHeight() {
+        var scrollHeight = 0, bodyScrollHeight = 0, documentScrollHeight = 0;
+        if (document.body) {
+          bodyScrollHeight = document.body.scrollHeight;
+        }
+        if (document.documentElement) {
+          documentScrollHeight = document.documentElement.scrollHeight;
+        }
+        scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight
+            : documentScrollHeight;
+        return scrollHeight;
+      }
+    
+      //浏览器视口的高度
+    
+      function getWindowHeight() {
+        var windowHeight = 0;
+        if (document.compatMode === "CSS1Compat") {
+          windowHeight = document.documentElement.clientHeight;
+        } else {
+          windowHeight = document.body.clientHeight;
+        }
+        return windowHeight;
+      }
+      
+      document.onEnd = true
+      window.onscroll = function () {
+        document.onEnd = getScrollTop() + getWindowHeight() === getScrollHeight();
+      };
+      
+      //websocket对象
+      let websocket = null;
+      //判断当前浏览器是否支持WebSocket
+      if (typeof (WebSocket) == "undefined") {
+        console.log("您的浏览器不支持WebSocket");
+      } else {
+        console.info("连接...")
+        
+        websocket = new WebSocket("${LoggingUtil.apiAddressWs.first}${"/websocket/logging"}?token=${websocketProperties?.token}");
+        
+        //连接发生错误的回调方法
+        websocket.onerror = function () {
+          console.error("WebSocket连接发生错误");
+        };
+    
+        //连接成功建立的回调方法
+        websocket.onopen = function () {
+          console.log("WebSocket连接成功")
+        };
+    
+        //接收到消息的回调方法
+        websocket.onmessage = function (event) {
+          if (event.data) {
+            let node = document.querySelector('#loggingText');
+            node.insertAdjacentHTML("beforeEnd", event.data);
+            if (document.onEnd) {
+              document.documentElement.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+                inline: "nearest"
+              });
+            }
+          }
+        }
+    
+        //连接关闭的回调方法
+        websocket.onclose = function () {
+          console.log("WebSocket连接关闭")
+        };
+      }
+    </script>
+                    """.trimIndent()
+            )
+            writer.println(prettyMessageHTMLLayout.fileFooter)
         }
     }
 
@@ -327,52 +344,56 @@ class LogsEndpoint(
         prettyMessageHTMLLayout.start()
         val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()
         gzipOutputStream.use { writer ->
-            writer.appendLine(prettyMessageHTMLLayout.fileHeader)
-            val header = prettyMessageHTMLLayout.getLogsHeader()
-            writer.appendLine(header)
+            try {
+                writer.appendLine(prettyMessageHTMLLayout.fileHeader)
+                val header = prettyMessageHTMLLayout.getLogsHeader()
+                writer.appendLine(header)
 
-            if (!logMsgs.isNullOrEmpty()) {
-                val size = logMsgs.size
-                logMsgs.forEachIndexed { index, it ->
-                    writer.appendLine(
-                        prettyMessageHTMLLayout.doLayout(
-                            it.msg,
-                            it.level,
-                            collapse,
-                            index == size - 1
+                if (!logMsgs.isNullOrEmpty()) {
+                    val size = logMsgs.size
+                    logMsgs.forEachIndexed { index, it ->
+                        writer.appendLine(
+                            prettyMessageHTMLLayout.doLayout(
+                                it.msg,
+                                it.level,
+                                collapse,
+                                index == size - 1
+                            )
                         )
-                    )
+                    }
                 }
+
+                writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
+                writer.appendLine(
+                    """
+        <script type="text/javascript">
+            if(!location.hash){
+                window.location.href = '#last';
             }
-
-            writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
-            writer.appendLine(
-                """
-<script type="text/javascript">
-    if(!location.hash){
-        window.location.href = '#last';
-    }
-    document.addEventListener('copy', function(event) {
-            // 阻止默认的复制行为
-            event.preventDefault();
-
-            // 获取要复制的内容
-            let originalText = window.getSelection().toString();
-
-            // 修改复制的内容
-            let modifiedText = originalText.replace(/#/g, '');
-
-            // 将修改后的内容放入剪贴板
-            if (event.clipboardData) {
-                event.clipboardData.setData('text/plain', modifiedText);
-            } else if (window.clipboardData) { // 兼容IE
-                window.clipboardData.setData('Text', modifiedText);
+            document.addEventListener('copy', function(event) {
+                    // 阻止默认的复制行为
+                    event.preventDefault();
+        
+                    // 获取要复制的内容
+                    let originalText = window.getSelection().toString();
+        
+                    // 修改复制的内容
+                    let modifiedText = originalText.replace(/#/g, '');
+        
+                    // 将修改后的内容放入剪贴板
+                    if (event.clipboardData) {
+                        event.clipboardData.setData('text/plain', modifiedText);
+                    } else if (window.clipboardData) { // 兼容IE
+                        window.clipboardData.setData('Text', modifiedText);
+                    }
+                });
+        </script>
+        """
+                )
+                writer.appendLine(prettyMessageHTMLLayout.fileFooter)
+            } catch (e: SocketTimeoutException) {
+                log.error(AlarmAppender.NO_ALARM_MARKER, "Error while writing response", e)
             }
-        });
-</script>
-"""
-            )
-            writer.appendLine(prettyMessageHTMLLayout.fileFooter)
         }
     }
 
@@ -390,69 +411,68 @@ class LogsEndpoint(
             response.setHeader("Cache-Control", "no-cache")
             response.setDateHeader("Expires", 0)
             response.writer.use { writer ->
-                var dir = requestPath
-                dir = if (dir.startsWith("/")) dir else "/$dir"
-                writer.println(
-                    """<!DOCTYPE html>
-<html>
-<head><title>$appName Index of $dir</title></head>
-<body>"""
-                )
-                writer.print("<h1>Index of $dir</h1><hr><pre>")
-
-                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-                if (!root)
+                try {
+                    var dir = requestPath
+                    dir = if (dir.startsWith("/")) dir else "/$dir"
                     writer.println(
-                        "<a href=\"$basePath/${
-                            requestPath.substringBeforeLast(
-                                "/",
-                                ""
-                            )
-                        }\">../</a>"
+                        """<!DOCTYPE html>
+    <html>
+    <head><title>$appName Index of $dir</title></head>
+    <body>"""
                     )
-                else {
-                    if (useWebSocket) {
+                    writer.print("<h1>Index of $dir</h1><hr><pre>")
+
+                    val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+                    if (!root)
                         writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$basePath/real-time\">实时日志/</a>                                        ${
+                            "<a href=\"$basePath/${
+                                requestPath.substringBeforeLast(
+                                    "/",
+                                    ""
+                                )
+                            }\">../</a>"
+                        )
+                    else {
+                        if (useWebSocket) {
+                            writer.println(
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$basePath/real-time\">实时日志/</a>                                        ${
+                                    TimeUtil.now().format(dateTimeFormatter)
+                                }       -"
+                            )
+                        }
+                    }
+                    val hasAll = files.any { it.name.startsWith("all-") || it.name == "all.log" }
+                    if (hasAll)
+                        writer.println(
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
                                 TimeUtil.now().format(dateTimeFormatter)
                             }       -"
                         )
-                    }
-                }
-                val hasAll = files.any { it.name.startsWith("all-") || it.name == "all.log" }
-                if (hasAll)
-                    writer.println(
-                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
-                            TimeUtil.now().format(dateTimeFormatter)
-                        }       -"
-                    )
 
-                files.sortWith(comparator)
-                files.filter { if (filterEmpty) it.length() > 0 else true }.forEach {
-                    val millis = it.lastModified()
-                    val lastModify =
-                        if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
-                    if (it.isDirectory) {
-                        writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
-                        )
-                    } else {
-                        writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
-                                prettyValue(
-                                    it.length()
-                                )
-                            }"
-                        )
+                    files.sortWith(comparator)
+                    files.filter { if (filterEmpty) it.length() > 0 else true }.forEach {
+                        val millis = it.lastModified()
+                        val lastModify =
+                            if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
+                        if (it.isDirectory) {
+                            writer.println(
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
+                            )
+                        } else {
+                            writer.println(
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
+                                    prettyValue(
+                                        it.length()
+                                    )
+                                }"
+                            )
+                        }
                     }
+                    writer.println("</pre><hr></body>\n</html>")
+                } catch (e: SocketTimeoutException) {
+                    log.error(AlarmAppender.NO_ALARM_MARKER, "Error while writing response", e)
                 }
-                writer.println("</pre><hr></body>\n</html>")
-            }
-            try {
-                response.flushBuffer()
-            } catch (e: Exception) {
-                log.error(AlarmAppender.NO_ALARM_MARKER, "Error while writing response", e)
             }
         } else {
             response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
