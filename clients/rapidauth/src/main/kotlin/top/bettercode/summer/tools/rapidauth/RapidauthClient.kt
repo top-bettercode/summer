@@ -53,7 +53,8 @@ open class RapidauthClient(
      * @param carrier 运营商，移动：mobile， 联通：unicom，电信：telecom
      * @param token token 有效期为2分钟
      */
-    open fun query(carrier: String, token: String): RapidauthResponse {
+    @JvmOverloads
+    open fun query(carrier: String? = null, token: String): RapidauthResponse {
         val appkey = properties.appkey
         val random = RandomUtil.nextIntString(10) //随机数字串，生成10位
         val time = (System.currentTimeMillis() / 1000).toString()
