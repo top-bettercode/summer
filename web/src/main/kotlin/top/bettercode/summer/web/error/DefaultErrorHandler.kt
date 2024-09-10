@@ -36,16 +36,24 @@ class DefaultErrorHandler(
     ) {
         if (error is IllegalArgumentException) {
             val regex = "Parameter specified as non-null is null: .*parameter (.*)"
-            if (error.message?.matches(regex.toRegex()) == true) {
-                val paramName = error.message!!.replace(regex.toRegex(), "$1")
+            val message = error.message
+            if (message?.matches(regex.toRegex()) == true) {
+                val paramName = message.replace(regex.toRegex(), "$1")
                 respEntity.message = "${getText(paramName)}${getText("canTBeEmpty")}"
                 errors[paramName] = respEntity.message
             }
         } else if (error is MissingServletRequestParameterException) {
+            val message = error.message
             val regex =
-                "Required request parameter '(.*)' for method parameter type .* is not present"
-            if (error.message?.matches(regex.toRegex()) == true) {
-                val paramName = error.message!!.replace(regex.toRegex(), "$1")
+                "Required request parameter '(.*)' for method parameter type .* is not present".toRegex()
+            val nullRegex =
+                "Required request parameter '(.*)' for method parameter type .* is present but converted to null".toRegex()
+            if (message?.matches(regex) == true) {
+                val paramName = message.replace(regex, "$1")
+                respEntity.message = "${getText(paramName)}${getText("canTBeEmpty")}"
+                errors[paramName] = respEntity.message
+            } else if (message?.matches(nullRegex) == true) {
+                val paramName = message.replace(nullRegex, "$1")
                 respEntity.message = "${getText(paramName)}${getText("canTBeEmpty")}"
                 errors[paramName] = respEntity.message
             }
