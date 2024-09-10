@@ -191,7 +191,7 @@ class DataErrorHandler(
                 cause = cause.cause
             }
 
-            return cause!!
+            return cause ?: rootCause
         }
     }
 }
