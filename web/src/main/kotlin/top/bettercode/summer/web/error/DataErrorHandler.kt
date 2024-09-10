@@ -183,15 +183,21 @@ class DataErrorHandler(
         if (original == null) {
             return null
         } else {
+            if (original is SQLIntegrityConstraintViolationException || original is SQLException) {
+                return original
+            }
             var rootCause: Throwable? = null
 
             var cause: Throwable? = original.cause
-            while (cause != null && cause !is SQLIntegrityConstraintViolationException && cause !is SQLException && cause != rootCause) {
+            while (cause != null && cause != rootCause) {
+                if (cause is SQLIntegrityConstraintViolationException || cause is SQLException) {
+                    return cause
+                }
                 rootCause = cause
                 cause = cause.cause
             }
 
-            return cause ?: rootCause
+            return null
         }
     }
 }
