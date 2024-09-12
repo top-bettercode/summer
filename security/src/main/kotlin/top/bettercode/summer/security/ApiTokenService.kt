@@ -254,13 +254,13 @@ class ApiTokenService(
     @JvmOverloads
     fun removeToken(
         clientId: String = defaultClientId,
-        scope: String = defaultScope.first(),
+        scope: String? = clientDetailsService.getClientDetails(clientId)!!.scope.firstOrNull(),
         username: String
     ) {
         storeTokenRepository.remove(
             TokenId(
                 clientId = clientId,
-                scope = setOf(scope),
+                scope = if (scope == null) emptySet() else setOf(scope),
                 username = username
             )
         )
@@ -269,13 +269,13 @@ class ApiTokenService(
     @JvmOverloads
     fun removeToken(
         clientId: String = defaultClientId,
-        scope: String = defaultScope.first(),
+        scope: String? = clientDetailsService.getClientDetails(clientId)!!.scope.firstOrNull(),
         username: List<String>
     ) {
         storeTokenRepository.remove(username.map {
             TokenId(
                 clientId = clientId,
-                scope = setOf(scope),
+                scope = if (scope == null) emptySet() else setOf(scope),
                 username = it
             )
         })
@@ -284,7 +284,7 @@ class ApiTokenService(
     @JvmOverloads
     fun removeTokens(
         clientId: String = defaultClientId,
-        scope: Set<String> = defaultScope,
+        scope: Set<String> = clientDetailsService.getClientDetails(clientId)!!.scope,
         username: List<String>
     ) {
         storeTokenRepository.remove(username.map {
@@ -334,11 +334,6 @@ class ApiTokenService(
     private val defaultClientId: String
         get() {
             return clientDetailsService.getClientId()
-        }
-
-    private val defaultScope: Set<String>
-        get() {
-            return securityProperties.scope
         }
 
     fun getClientDetails(clientId: String): ClientDetails {

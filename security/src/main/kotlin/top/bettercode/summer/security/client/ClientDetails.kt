@@ -35,6 +35,8 @@ open class ClientDetails {
     open fun supportScope(scope: Collection<String>): Boolean {
         return if (this.scope.isEmpty()) {
             true
+        } else if (scope.isEmpty()) {
+            false
         } else
             this.scope.containsAll(scope)
     }
