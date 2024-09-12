@@ -65,6 +65,7 @@ class LogsEndpoint(
     fun path(
         @Selector(match = Selector.Match.ALL_REMAINING) path: String,
         @Nullable collapse: Boolean?,
+        @Nullable traceid: String?,
         @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String?
     ) {
         val requestPath = path.replace(",", "/")
@@ -113,7 +114,8 @@ class LogsEndpoint(
                                 logMsgs.addAll(
                                     readLogMsgs(
                                         file.inputStream(),
-                                        "gz" == file.extension
+                                        "gz" == file.extension,
+                                        traceid
                                     )
                                 )
                             }
@@ -138,7 +140,11 @@ class LogsEndpoint(
                         if ("json" == extension) {
                             json(file, userAgent)
                         } else {
-                            val logMsgs = readLogMsgs(file.inputStream(), "gz" == extension)
+                            val logMsgs = readLogMsgs(
+                                file.inputStream(),
+                                "gz" == extension,
+                                traceid
+                            )
                             showLogFile(file.name, logMsgs, collapse)
                         }
                     }
@@ -515,27 +521,34 @@ class LogsEndpoint(
         }
     }
 
-    private fun readLogMsgs(inputStream: InputStream, gzip: Boolean = false): List<LogMsg> {
+    private fun readLogMsgs(
+        inputStream: InputStream,
+        gzip: Boolean = false,
+        traceid: String?
+    ): List<LogMsg> {
         val lines = if (gzip) {
             GZIPInputStream(inputStream).bufferedReader().lines()
         } else {
             inputStream.bufferedReader().lines()
         }
+
+        //2024-09-12 11:55:06.505  INFO [exec-7] t.b.s.s.r.RedisStoreTokenRepository      RedisStoreTokenRepository.kt:138 4385dd54: msg
         val regrex =
-            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +.*")
+            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\S+) +(\\S+) +(\\S+) +(\\S*): (.*)")
 
         val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
         var level = "DEFAULT"
+        var traceIdMatch = false
 
         lines.forEach { line ->
             val matchResult = regrex.matchEntire(line)
             if (matchResult != null) {
                 val groupValues = matchResult.groupValues
-
-                if (msg.isNotBlank()) {
+                if (msg.isNotBlank() && traceIdMatch) {
                     msgs.add(LogMsg(level, msg.toString()))
                 }
+                traceIdMatch = if (traceid.isNullOrBlank()) true else groupValues[6] == traceid
                 msg = java.lang.StringBuilder(line)
                 level = groupValues[2]
             } else {
@@ -543,7 +556,7 @@ class LogsEndpoint(
                 msg.append(line)
             }
         }
-        if (msg.isNotBlank()) {
+        if (msg.isNotBlank() && traceIdMatch) {
             msgs.add(LogMsg(level, msg.toString()))
         }
         return msgs
