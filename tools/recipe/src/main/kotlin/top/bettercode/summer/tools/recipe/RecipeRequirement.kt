@@ -266,9 +266,15 @@ data class RecipeRequirement(
         materialRelationConstraints =
             materialRelationConstraints.filter { it.term.ids.isNotEmpty() }
 
-        materialConditionConstraints.forEach { (first, second) ->
-            first.materials = first.materials.minFrom(tmpMaterial)
-            second.materials = second.materials.minFrom(tmpMaterial, true, "条件约束使用原料")
+        materialConditionConstraints.forEach { (whencon, thencon) ->
+            whencon.materials = whencon.materials.minFrom(tmpMaterial)
+            val thenOperator = thencon.condition.operator
+            val thenValue = thencon.condition.value
+            thencon.materials = thencon.materials.minFrom(
+                tmpMaterial,
+                (thenOperator == Operator.GT && thenValue >= 0) || (thenOperator == Operator.EQ && thenValue > 0),
+                "条件约束使用原料"
+            )
         }
         materialConditionConstraints =
             materialConditionConstraints.filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
