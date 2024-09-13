@@ -7,23 +7,38 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author Peter Wu
  */
 class ReplacebleMaterialIDs(
-        @JsonProperty("ids")
-        ids: List<String>,
-        /**
-         * 对可替换原料使用量比例,1单位ids使用replaceRate单位replaceIds
-         */
-        @JsonProperty("replaceRate")
-        val replaceRate: Double? = null,
+    @JsonProperty("ids")
+    ids: List<String>,
+    /**
+     * 对可替换原料使用量比例,1单位ids使用replaceRate单位replaceIds
+     */
+    @JsonProperty("replaceRate")
+    val replaceRate: Double? = null,
 
-        /**
-         * 可替换原料
-         */
-        @JsonProperty("replaceIds")
-        val replaceIds: MaterialIDs? = null,
+    /**
+     * 可替换原料
+     */
+    @JsonProperty("replaceIds")
+    val replaceIds: MaterialIDs? = null,
 
-        ) : MaterialIDs(ids) {
-    constructor(vararg id: String, replaceRate: Double? = null, replaceIds: MaterialIDs? = null) : this(id.toList(), replaceRate, replaceIds)
-    constructor(ids: Iterable<String>, replaceRate: Double? = null, replaceIds: MaterialIDs? = null) : this(ids.toList(), replaceRate, replaceIds)
+    ) : MaterialIDs(ids) {
+    constructor(
+        vararg id: String,
+        replaceRate: Double? = null,
+        replaceIds: MaterialIDs? = null
+    ) : this(id.toList(), replaceRate, replaceIds)
+
+    constructor(
+        ids: Iterable<String>,
+        replaceRate: Double? = null,
+        replaceIds: MaterialIDs? = null
+    ) : this(ids.toList(), replaceRate, replaceIds)
+
+    override val size: Int get() = ids.size + (replaceIds?.size ?: 0)
+
+    override fun isEmpty(): Boolean {
+        return ids.isEmpty() && (replaceIds?.isEmpty() ?: true)
+    }
 
     override fun contains(element: String): Boolean {
         return if (replaceIds?.contains(element) == true) {
@@ -59,8 +74,16 @@ class ReplacebleMaterialIDs(
     }
 
     override fun toString(): String {
-        return this.ids.joinToString(",", "[", "]") + "|${replaceRate?.toString() ?: ""}" + "|" + (replaceIds?.ids?.joinToString(",", "[", "]")
-                ?: "")
+        return this.ids.joinToString(
+            ",",
+            "[",
+            "]"
+        ) + "|${replaceRate?.toString() ?: ""}" + "|" + (replaceIds?.ids?.joinToString(
+            ",",
+            "[",
+            "]"
+        )
+            ?: "")
     }
 
 }

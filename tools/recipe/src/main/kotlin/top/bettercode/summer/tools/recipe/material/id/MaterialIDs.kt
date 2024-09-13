@@ -56,6 +56,12 @@ open class MaterialIDs(
         return ReplacebleMaterialIDs(ids, null, null)
     }
 
+    open val size: Int get() = ids.size
+
+    open fun isEmpty(): Boolean {
+        return ids.isEmpty()
+    }
+
     open fun contains(element: String): Boolean {
         return ids.contains(element)
     }
