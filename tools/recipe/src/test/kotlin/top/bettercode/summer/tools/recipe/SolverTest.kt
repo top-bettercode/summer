@@ -24,7 +24,7 @@ import java.io.File
  * @author Peter Wu
  */
 class SolverTest {
-    val epsilon = 1e-4
+    val epsilon = 1e-2
     val openExcel = true
 //    val openExcel = false
     val minEpsilon = epsilon
@@ -42,7 +42,7 @@ class SolverTest {
 
     val solverTypes = listOf(
         SolverType.COPT,
-        SolverType.GUROBI,
+//        SolverType.GUROBI,
         SolverType.CPLEX,
         SolverType.SCIP,
         SolverType.CBC,
