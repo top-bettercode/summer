@@ -406,7 +406,7 @@ data class Recipe(
                         usedOverdoseWeight.toBigDecimal().toPlainString()
                     }，差值:${
                         (usedWeight - usedAddWeight).toBigDecimal().toPlainString()
-                    }"
+                    }。原料使用不是全部为关联原料产生。"
                 )
             }
             val (normal, overdose) = termThen.relationValue(true)
