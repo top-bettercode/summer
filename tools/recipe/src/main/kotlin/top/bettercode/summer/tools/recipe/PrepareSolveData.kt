@@ -43,7 +43,7 @@ data class PrepareSolveData(
             solver.apply {
                 setTimeLimit(requirement.timeout)
                 // 原料数量
-                val materials = requirement.materials
+                val materials = requirement.useMaterials
                 val numRawMaterials = materials.size
                 val numMaxMaterials = requirement.maxUseMaterialNum
                 val targetWeight = requirement.targetWeight

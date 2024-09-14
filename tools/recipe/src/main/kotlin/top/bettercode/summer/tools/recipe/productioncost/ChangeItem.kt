@@ -17,7 +17,9 @@ data class ChangeItem(
 
     fun toName(productionCost: ProductionCost): String {
         return when (type) {
-            ChangeItemType.MATERIAL -> productionCost.materialItems.find { it.id == id }?.name ?: id
+            ChangeItemType.MATERIAL -> productionCost.materialItems.find { it.id == id }
+                ?.let { "${it.name}(${it.id})" } ?: id
+
             ChangeItemType.DICT -> {
                 DictType.valueOf(id).dictName
             }

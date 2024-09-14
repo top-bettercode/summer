@@ -72,7 +72,7 @@ data class RecipeRequirement(
     val packagingMaterials: List<RecipeOtherMaterial>,
     /** 原料  */
     @JsonProperty("materials")
-    var materials: List<RecipeMaterial>,
+    val materials: List<RecipeMaterial>,
     /** 保留用原料ID  */
     @JsonProperty("keepMaterialConstraints")
     var keepMaterialConstraints: MaterialIDs,
@@ -223,6 +223,12 @@ data class RecipeRequirement(
         }
     }
 
+    @get:JsonIgnore
+    val useMaterials: List<RecipeMaterial>
+
+    @get:JsonIgnore
+    val unUseMaterials: List<RecipeMaterial>
+
     init {
         if (targetWeight <= 0) {
             throw IllegalArgumentException("targetWeight must be greater than 0")
@@ -332,8 +338,11 @@ data class RecipeRequirement(
             true
         }
 
+        this.keepMaterialConstraints =
+            if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
+                .toMaterialIDs() else keepMaterialConstraints
 
-        this.materials = materials.groupBy { it.indicators.key }.values
+        useMaterials = materials.groupBy { it.indicators.key }.values
             .asSequence()
             .map { list ->
                 val must = list.filter { f -> materialMust.test(f.id) }
@@ -346,9 +355,7 @@ data class RecipeRequirement(
             }.filter { it.isNotEmpty() }.flatten().distinct()
             .toList()
 
-        this.keepMaterialConstraints =
-            if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
-                .toMaterialIDs() else keepMaterialConstraints
+        this.unUseMaterials = this.materials - useMaterials.toSet()
     }
 
     //--------------------------------------------

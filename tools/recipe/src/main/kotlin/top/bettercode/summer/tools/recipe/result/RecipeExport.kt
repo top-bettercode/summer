@@ -7,6 +7,7 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
+import top.bettercode.summer.tools.recipe.material.RecipeMaterial
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
 import kotlin.math.max
 
@@ -17,7 +18,9 @@ import kotlin.math.max
 object RecipeExport {
 
     fun Excel.exportMaterial(requirement: RecipeRequirement) {
-        val materials = requirement.materials.toSortedSet()
+        val materials =
+            requirement.materials.sortedWith(Comparator.comparing<RecipeMaterial?, Boolean?> { it in requirement.unUseMaterials }
+                .thenBy { it.id.toIntOrNull() ?: Int.MAX_VALUE }.thenBy { it.id })
         val indicators = if (materials.isEmpty()) {
             return
         } else
@@ -38,7 +41,8 @@ object RecipeExport {
                 "${matrial.name}${if (matrial.name != matrial.id) "(${matrial.id})" else ""}"
             var c = 0
             // 原料名称
-            cell(++r, c++).value(matrialName).setStyle()
+            cell(++r, c++).value(matrialName)
+                .comment(if (matrial in requirement.unUseMaterials) "未使用" else "").setStyle()
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
             // 原料成份
@@ -139,7 +143,7 @@ object RecipeExport {
                         it.term.toNames(
                             requirement
                         )
-                    }/${it.term.replaceIds?.toNames(requirement)}用量换算系数：${it.term.replaceRate}\n"
+                    }/${it.term.replaceIds?.toNames(requirement)}用量换算系数：${it.term.replaceRate ?: "未设置"}\n"
                 }${
                     it.then.joinToString("\n") { v ->
                         val normal = v.then.normal
@@ -200,7 +204,10 @@ object RecipeExport {
             cell(r++, c++).value("合计").setStyle()
             productionCost.materialItems.forEach {
                 r = pr
-                cell(r++, c).value("${it.name}${if (it.unit.isBlank()) "" else "(${it.unit})"}")
+                cell(
+                    r++,
+                    c
+                ).value("${it.name}(${it.id})${if (it.unit.isBlank()) "" else "(${it.unit})"}")
                     .headerStyle().setStyle()
                 cell(r++, c).value(it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.value).format("0.00").setStyle()
@@ -236,7 +243,7 @@ object RecipeExport {
                         val filter =
                             materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name =
-                            if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
+                            if (filter.isNotEmpty()) filter.joinToString { "${it.name}(${it.id})" } else logic.materialId?.joinToString()
                         "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，能耗费用增加${logic.changeValue * 100}%"
                     }
 
@@ -244,7 +251,7 @@ object RecipeExport {
                         val filter =
                             materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name =
-                            if (filter.isNotEmpty()) filter.joinToString { it.name } else logic.materialId?.joinToString()
+                            if (filter.isNotEmpty()) filter.joinToString { "${it.name}(${it.id})" } else logic.materialId?.joinToString()
                         "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${
                             logic.changeItems?.joinToString { item ->
                                 item.toName(productionCost)
@@ -337,7 +344,7 @@ object RecipeExport {
                 cell(
                     r++,
                     c
-                ).value("${it.it.name}${if (it.it.unit.isBlank()) "" else "(${it.it.unit})"}")
+                ).value("${it.it.name}(${it.it.id})${if (it.it.unit.isBlank()) "" else "(${it.it.unit})"}")
                     .headerStyle().width(15.0)
                     .setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
@@ -484,7 +491,7 @@ object RecipeExport {
             //原料
             materials.forEach { material ->
                 c = 0
-                cell(r, c++).value(material.name).wrapText().setStyle()
+                cell(r, c++).value("${material.name}(${material.id})").wrapText().setStyle()
                 val recipeRelation: RecipeRelation?
                 val normal: DoubleRange?
                 val relationValue: Pair<DoubleRange, DoubleRange>?
