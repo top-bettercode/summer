@@ -41,9 +41,10 @@ class RecipeExt(private val recipe: Recipe) {
                 }
             val ids = materialRelationConstraints.firstOrNull() ?: return null
 
-            val materials = recipe.materials
+            val materials = recipe.requirement.materials
             val usedIds =
-                materials.filter { ids.term.contains(it.id) }.map { it.id }.toMaterialIDs()
+                materials.filter { ids.term.contains(it.id) || ids.term.replaceIds?.contains(it.id) == true }
+                    .map { it.id }.toMaterialIDs()
             return usedIds
         }
 
