@@ -235,13 +235,13 @@ class AutodocAspect(
                     if (content != null) {
                         val (cls, value) = extValue(content)
                         if (cls != null && valided(cls)) {
-                            classes.put(cls, value)
+                            classes[cls] = value
                         }
                     }
                 } else {
                     val (cls, value) = extValue(body)
                     if (cls != null && valided(cls)) {
-                        classes.put(cls, value)
+                        classes[cls] = value
                     }
                 }
                 return classes
@@ -259,7 +259,7 @@ class AutodocAspect(
                 val p = beanWrapper?.getPropertyValue(propertyName)
                 val returnType = if (p == null) readMethod.returnType else p::class.java
                 if (valided(returnType)) {
-                    classes.put(returnType, p)
+                    classes[returnType] = p
                 } else {
                     var componentType: Class<*>? = null
                     var value: Any? = null
@@ -278,7 +278,7 @@ class AutodocAspect(
                         }
                     }
                     if (componentType != null && valided(componentType)) {
-                        classes.put(componentType, value)
+                        classes[componentType] = value
                     }
                 }
             }
