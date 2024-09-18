@@ -16,15 +16,18 @@ import org.springframework.core.io.InputStreamSource
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import top.bettercode.summer.tools.autodoc.model.Field
+import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.web.PagedResources
 import java.beans.Introspector
 import java.io.File
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
+import java.util.*
 import javax.persistence.EntityManagerFactory
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+
 
 @Aspect
 class AutodocAspect(
@@ -186,6 +189,28 @@ class AutodocAspect(
                     }
                 }
             }
+            cu.findAll(MethodDeclaration::class.java)
+                .filter { it.nameAsString.startsWith("get") || it.nameAsString.startsWith("is") }
+                .forEach { method ->
+                    method.javadocComment.ifPresent { javadoc ->
+                        val fieldName =
+                            if (method.nameAsString.startsWith("get")) method.nameAsString.substring(
+                                3
+                            ).decapitalized() else method.nameAsString.substring(2).decapitalized()
+                        val comment =
+                            javadoc.content.trim().trimStart('*').trim().substringAfter("@return")
+                                .trim()
+                        if (comment.isNotBlank() && fields.none { it.name == fieldName }) {
+                            fields.add(
+                                Field(
+                                    name = fieldName,
+                                    type = method.typeAsString,
+                                    description = comment
+                                )
+                            )
+                        }
+                    }
+                }
             return fields
         } else {
             return null
