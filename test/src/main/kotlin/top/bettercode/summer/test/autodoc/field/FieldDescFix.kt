@@ -88,7 +88,6 @@ abstract class FieldDescFix {
             val docFieldDescFixes = listOf(
                 CommoYmlFix(),
                 AutodocFieldFix(),
-                MessageFix(),
                 DicCodeFix(),
                 object : FieldDescFix() {
                     override val cover: Boolean = true
@@ -104,6 +103,7 @@ abstract class FieldDescFix {
                         return otherFields
                     }
                 },
+                MessageFix(),
             )
 
             out@ for (fixDocFieldDesc in docFieldDescFixes) {

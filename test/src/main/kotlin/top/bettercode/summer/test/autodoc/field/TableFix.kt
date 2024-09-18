@@ -40,7 +40,7 @@ class TableFix(
 
     private fun Table.fields(): Iterable<Field> {
         val fields = columns.flatMapTo(linkedSetOf()) { column ->
-            var type = column.javaType.shortNameWithoutTypeArguments
+            val type = column.javaType.shortNameWithoutTypeArguments
             linkedSetOf(
                 Field(
                     name = column.javaName,
