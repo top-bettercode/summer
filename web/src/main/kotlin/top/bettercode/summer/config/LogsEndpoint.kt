@@ -534,7 +534,7 @@ class LogsEndpoint(
 
         //2024-09-12 11:55:06.505  INFO [exec-7] t.b.s.s.r.RedisStoreTokenRepository      RedisStoreTokenRepository.kt:138 4385dd54: msg
         val regrex =
-            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\S+) +(\\S+) +(\\S+) +(\\S*): (.*)")
+            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\[.*?]) +(\\S+) +(\\S+) +(\\S*): (.*)")
 
         val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
