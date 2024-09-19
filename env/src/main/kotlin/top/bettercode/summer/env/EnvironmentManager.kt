@@ -83,7 +83,7 @@ class EnvironmentManager(val environment: ConfigurableEnvironment) :
             val mapPropertySource = propertySource as OriginTrackedMapPropertySource
             for ((name, value) in mapPropertySource.source) {
                 val `val` = (value as OriginTrackedValue?)?.value?.toString()
-                val change = value != environment.getProperty(name)
+                val change = `val` != environment.getProperty(name)
                 if (change) {
                     map[name] = `val`
                     changed[name] = `val`
