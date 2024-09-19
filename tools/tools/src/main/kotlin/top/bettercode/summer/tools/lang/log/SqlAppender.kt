@@ -240,15 +240,17 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     logData.slowSql.add(msg)
                 }
 
+                //binding parameter [1] as [BIGINT] - [1704732344574808773]
                 "org.hibernate.type.descriptor.sql.BasicBinder" -> {
-                    val regex = Regex("""\[(.*?)]""")
-                    val matches = regex.findAll(msg).map { it.groupValues[1] }.toList()
-                    val index = matches[0].toInt()
+                    val index = msg.substringAfter("[").substringBefore("]").toInt()
+                    val type = msg.substringAfter("as [").substringBefore("]")
+                    val value =
+                        msg.substringAfter(" - [").substringBeforeLast("]").replace("\n", "\\n")
                     logData.params.add(
                         SqlLogParam(
                             index,
-                            JavaTypeResolver.type(matches[1])?.javaType,
-                            matches[2]
+                            JavaTypeResolver.type(type)?.javaType,
+                            value
                         )
                     )
                 }
