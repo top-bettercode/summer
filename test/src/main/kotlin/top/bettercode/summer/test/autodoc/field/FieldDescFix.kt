@@ -87,8 +87,8 @@ abstract class FieldDescFix {
             val tableFix = TableFix(extension, Autodoc.tableNames)
             val docFieldDescFixes = listOf(
                 CommoYmlFix(),
-                AutodocFieldFix(),
                 DicCodeFix(),
+                AutodocFieldFix(),
                 object : FieldDescFix() {
                     override val cover: Boolean = true
 
