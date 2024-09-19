@@ -539,7 +539,7 @@ class LogsEndpoint(
         val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
         var level = "DEFAULT"
-        var traceIdMatch = false
+        var traceIdMatch = traceid.isNullOrBlank()
 
         lines.forEach { line ->
             val matchResult = regrex.matchEntire(line)
@@ -548,7 +548,8 @@ class LogsEndpoint(
                 if (msg.isNotBlank() && traceIdMatch) {
                     msgs.add(LogMsg(level, msg.toString()))
                 }
-                traceIdMatch = if (traceid.isNullOrBlank()) true else groupValues[6] == traceid
+                if (!traceIdMatch)
+                    traceIdMatch = groupValues[6] == traceid
                 msg = java.lang.StringBuilder(line)
                 level = groupValues[2]
             } else {
