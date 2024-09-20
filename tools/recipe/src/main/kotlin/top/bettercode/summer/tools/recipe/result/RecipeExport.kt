@@ -37,8 +37,7 @@ object RecipeExport {
         //原料
         var r = 0
         for (matrial in materials) {
-            val matrialName =
-                "${matrial.name}${if (matrial.name != matrial.id) "(${matrial.id})" else ""}"
+            val matrialName = "$matrial"
             var c = 0
             // 原料名称
             cell(++r, c++).value(matrialName)
@@ -55,7 +54,7 @@ object RecipeExport {
                         )
 
                     cell(r, column).value(value)
-                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
+                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
                         .setStyle()
                 }
         }
@@ -82,10 +81,10 @@ object RecipeExport {
                 val unit = indicator.unit
                 cell(r++, c).value("${indicator.name}($unit)").headerStyle().width(11.0).setStyle()
                 cell(r++, c).value(it.scaledValue.max)
-                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
+                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.00%" else "")
                     .setStyle()
                 cell(r++, c++).value(it.scaledValue.min)
-                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.0%" else "")
+                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.00%" else "")
                     .setStyle()
             }
             if (columnSize > c)
@@ -207,7 +206,7 @@ object RecipeExport {
                 cell(
                     r++,
                     c
-                ).value("${it.name}(${it.id})${if (it.unit.isBlank()) "" else "(${it.unit})"}")
+                ).value("${it}${if (it.unit.isBlank()) "" else "(${it.unit})"}")
                     .headerStyle().setStyle()
                 cell(r++, c).value(it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.value).format("0.00").setStyle()
@@ -243,7 +242,7 @@ object RecipeExport {
                         val filter =
                             materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name =
-                            if (filter.isNotEmpty()) filter.joinToString { "${it.name}(${it.id})" } else logic.materialId?.joinToString()
+                            if (filter.isNotEmpty()) filter.joinToString { "$it" } else logic.materialId?.joinToString()
                         "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，能耗费用增加${logic.changeValue * 100}%"
                     }
 
@@ -251,7 +250,7 @@ object RecipeExport {
                         val filter =
                             materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name =
-                            if (filter.isNotEmpty()) filter.joinToString { "${it.name}(${it.id})" } else logic.materialId?.joinToString()
+                            if (filter.isNotEmpty()) filter.joinToString { "$it" } else logic.materialId?.joinToString()
                         "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${
                             logic.changeItems?.joinToString { item ->
                                 item.toName(productionCost)
@@ -344,7 +343,7 @@ object RecipeExport {
                 cell(
                     r++,
                     c
-                ).value("${it.it.name}(${it.it.id})${if (it.it.unit.isBlank()) "" else "(${it.it.unit})"}")
+                ).value("${it.it}${if (it.it.unit.isBlank()) "" else "(${it.it.unit})"}")
                     .headerStyle().width(15.0)
                     .setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
@@ -395,17 +394,19 @@ object RecipeExport {
         }
     }
 
-    fun Excel.exportRecipe(recipe: Recipe, showRate: Boolean = false): Int {
+    fun Excel.exportRecipe(recipe: Recipe): Int {
         val requirement = recipe.requirement
+        val showRate = requirement.materialRelationConstraints.isNotEmpty()
         RecipeExt(recipe).apply {
             val titles =
-                "项目${if (showRate) "\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量" else ""}\t投料量(公斤)".split(
+                "项目${if (showRate) "\t最小耗液氨/硫酸系数\t最小耗液氨/硫酸量\t最大耗液氨/硫酸系数\t最大耗液氨/硫酸量" else ""}".split(
                     "\t"
                 )
+            val titles2 = "投料量(公斤)\t投料比\t费用合计\t原料单价".split("\t")
             val materials = recipe.materials.toSortedSet()
             val rangeIndicators =
                 requirement.indicatorRangeConstraints.values.sortedBy { it.indicator.index }
-            val columnSize = titles.size + rangeIndicators.size + 1
+            val columnSize = titles.size + titles2.size + rangeIndicators.size - 1
 
             var r = 0
             var c = 0
@@ -413,10 +414,10 @@ object RecipeExport {
             titles.forEach { s ->
                 cell(r, c++).value(s).headerStyle().width(if (c in 1..5) 18.0 else 8.0).setStyle()
             }
-            if (materials.isEmpty()) {
-                return 0
+            titles2.forEach { s ->
+                cell(r, c++).value(s).headerStyle().width(8.0).setStyle()
             }
-            c++
+
             rangeIndicators.map { it.indicator }.forEach { indicator ->
                 cell(r, c++).value("${indicator.name}(${indicator.unit})").headerStyle().width(11.0)
                     .setStyle()
@@ -426,21 +427,20 @@ object RecipeExport {
             cell(r++, 0).value("配方目标最大值").bold().setStyle()
             cell(r++, 0).value("配方目标最小值").bold().setStyle()
             cell(r++, 0).value("实配值").bold().setStyle()
-            c = titles.size
-            // 投料量
-            for (i in 1..2) {
-                for (j in 1..5)
+            c = titles.size + titles2.size - 1
+            for (i in 1..3) {
+                for (j in 1..c)
                     cell(i, j).value("/").setStyle()
             }
-            for (j in 1..4)
-                cell(3, j).value("/").setStyle()
-            cell(3, c - 1).value(recipe.weight).bold().format("0.00").setStyle()
-
-            // 费用合计
-            cell(0, c).value("投料比").headerStyle().width(8.0).setStyle()
-            cell(1, c).value("/").setStyle()
-            cell(2, c).value("/").setStyle()
+            c = titles.size
+            // 投料量
+            cell(3, c++).value(recipe.weight).bold().format("0.00").setStyle()
+            // 投料比
             cell(3, c++).value(1.0).bold().format("0%").setStyle()
+            // 费用合计
+            cell(3, c++).value(recipe.materialCost).bold().format("0.00").setStyle()
+            // 原料单价
+            cell(3, c++).value("/").setStyle()
 
             rangeIndicators.forEach { rangeIndicator ->
                 val indicator = rangeIndicator.indicator
@@ -448,13 +448,13 @@ object RecipeExport {
                 //配方目标最大值
                 val max = rangeIndicator.scaledValue.max
                 cell(r++, c).value(max).bold()
-                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
                     .setStyle()
 
                 //配方目标最小值
                 val min = rangeIndicator.scaledValue.min
                 cell(r++, c).value(min).bold()
-                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
                     .setStyle()
 
                 //实配值
@@ -476,30 +476,27 @@ object RecipeExport {
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight)
                 }
                 // 百分比最小误差值
-                val minEpsilon = recipe.minEpsilon / 10
+                val minEpsilon = recipe.minEpsilon / 100
+                val minDiff = (value - min).scale(recipe.scale + 2)
+                val maxDiff = (value - max).scale(recipe.scale + 2)
                 val valid =
-                    (value - min).scale(recipe.scale + 1) > -minEpsilon && (value - max).scale(
-                        recipe.scale + 1
-                    ) < minEpsilon
+                    (minDiff == 0.0 || minDiff > -minEpsilon) && (maxDiff == 0.0 || maxDiff < minEpsilon)
                 cell(r++, c).value(value).bold()
-                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
                     .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
-            // 费用合计
-            cell(0, c).value("费用合计").headerStyle().width(8.0).setStyle()
-            cell(1, c).value("/").setStyle()
-            cell(2, c).value("/").setStyle()
-            cell(3, c++).value(recipe.materialCost).bold().format("0.00").setStyle()
-            // 原料单价
-            cell(0, c).value("原料单价").headerStyle().width(8.0).setStyle()
-            cell(1, c).value("/").setStyle()
-            cell(2, c).value("/").setStyle()
-            cell(3, c++).value("/").setStyle()
+
+            if (materials.isEmpty()) {
+                return 0
+            }
             //原料
             materials.forEach { material ->
                 c = 0
-                cell(r, c++).value("${material.name}(${material.id})").wrapText().setStyle()
+                if (showRate && material.hasOverdose) {
+                    cell(r + 1, c).wrapText().setStyle()
+                }
+                cell(r, c++).value("$material").wrapText().setStyle()
                 val recipeRelation: RecipeRelation?
                 val normal: DoubleRange?
                 val relationValue: Pair<DoubleRange, DoubleRange>?
@@ -533,23 +530,40 @@ object RecipeExport {
                     relationName = null
                 }
                 // 投料量
+                if (showRate && material.hasOverdose) {
+                    cell(r + 1, c).bold().format("0.00").setStyle()
+                }
                 cell(r, c++).value(material.weight).bold().format("0.00").setStyle()
                 // 投料比
+                if (showRate && material.hasOverdose) {
+                    cell(r + 1, c).format("0.00%").setStyle()
+                }
                 cell(r, c++).value(material.weight / recipe.weight).format("0.00%").setStyle()
+                // 费用合计
+                if (showRate && material.hasOverdose) {
+                    cell(r + 1, c).format("0.00").setStyle()
+                }
+                cell(r, c++).value(material.cost).format("0.00").setStyle()
+                // 原料单价
+                if (showRate && material.hasOverdose) {
+                    cell(r + 1, c).format("0").setStyle()
+                }
+                cell(r, c++).value(material.price * 1000).format("0").setStyle()
                 rangeIndicators.map { it.indicator }.forEach { indicator ->
                     val value: Double = when (indicator.type) {
                         RecipeIndicatorType.TOTAL_NUTRIENT -> material.totalNutrient
                         RecipeIndicatorType.PRODUCT_WATER -> material.indicators.waterValue
                         else -> material.indicators.valueOf(indicator.id)
                     }
+                    if (showRate && material.hasOverdose) {
+                        cell(r + 1, c)
+                            .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
+                            .setStyle()
+                    }
                     cell(r, c++).value(value)
-                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
+                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
                         .setStyle()
                 }
-                // 费用合计
-                cell(r, c++).value(material.cost).format("0.00").setStyle()
-                // 原料单价
-                cell(r, c++).value(material.price * 1000).format("0").setStyle()
                 if (showRate && material.hasOverdose) {
                     c = 1
                     val r1 = r + 1

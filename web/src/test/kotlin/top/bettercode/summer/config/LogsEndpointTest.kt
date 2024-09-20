@@ -21,13 +21,14 @@ class LogsEndpointTest {
     fun path() {
         val response = MockHttpServletResponse()
         val logsEndpoint = LogsEndpoint(
-                "/local/downloads",
-                MockEnvironment(),
-                WebsocketProperties(),
-                response,
-                WebEndpointProperties(),
-                ManagementServerProperties() )
-        logsEndpoint.path("log_total.log", false, null)
+            "/local/downloads",
+            MockEnvironment(),
+            WebsocketProperties(),
+            response,
+            WebEndpointProperties(),
+            ManagementServerProperties()
+        )
+        logsEndpoint.path("log_total.log", false, null, null)
         println(String(GZIPInputStream(ByteArrayInputStream(response.contentAsByteArray)).readBytes()))
     }
 }

@@ -77,7 +77,7 @@ open class MaterialIDs(
 
     fun toNames(requirement: RecipeRequirement): String {
         val names = ids.map { t ->
-            requirement.materials.find { m -> m.id == t }?.let { "${it.name}(${it.id})" } ?: t
+            requirement.materials.find { m -> m.id == t }?.let { "$it" } ?: t
         }
         return if (names.size == 1) names.first() else names.joinToString(",", "[", "]")
     }

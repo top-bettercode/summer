@@ -37,4 +37,9 @@ data class RecipeOtherMaterial(
     override val indicators: RecipeValueIndicators = RecipeValueIndicators.EMPTY
 
     val cost = (price * value)
+
+    override fun toString(): String {
+        return "${name}${if (id != name) "(${id})" else ""}"
+    }
+
 }

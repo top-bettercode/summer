@@ -49,7 +49,7 @@ class RecipeResult @JvmOverloads constructor(
             if (index == 0) {
                 keepInActiveTab()
             }
-            val row = exportRecipe(recipe, true)
+            val row = exportRecipe(recipe)
             exportProductionCost(recipe = recipe, row + 1)
         }
     }

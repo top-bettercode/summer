@@ -36,4 +36,8 @@ data class RecipeMaterial(
      */
     @JsonProperty("feedPortShare")
     val feedPortShare: Boolean = false
-) : IRecipeMaterial
+) : IRecipeMaterial {
+    override fun toString(): String {
+        return "${name}${if (id != name) "(${id})" else ""}"
+    }
+}

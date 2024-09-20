@@ -68,4 +68,7 @@ data class RecipeMaterialValue(
         return (indicators[id]?.scaledValue ?: 0.0) * weight
     }
 
+    override fun toString(): String {
+        return material.toString()
+    }
 }

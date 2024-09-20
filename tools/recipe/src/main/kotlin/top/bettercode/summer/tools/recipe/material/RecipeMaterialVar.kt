@@ -24,4 +24,8 @@ data class RecipeMaterialVar(
             consumes.mapValues { it.value.toUsage() }
         )
     }
+
+    override fun toString(): String {
+        return material.toString()
+    }
 }

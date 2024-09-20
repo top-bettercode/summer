@@ -40,6 +40,12 @@ object OptimalUtil {
     }
 
 
+    @JvmStatic
+    fun Double.toPlainString(): String {
+        return this.toBigDecimal().toPlainString()
+    }
+
+
     /**
      * 是否没有小数位数
      */

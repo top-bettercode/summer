@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.Operator
 import top.bettercode.summer.tools.optimal.OptimalUtil.inTolerance
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
+import top.bettercode.summer.tools.optimal.OptimalUtil.toPlainString
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeCondition
@@ -153,7 +154,7 @@ data class Recipe(
         materials.forEach { m ->
             val otherMaterialValue = otherMaterialsMap[m.id]
             val otherWeight = otherMaterialValue?.weight ?: 0.0
-            names.add("${m.name}(${m.id})")
+            names.add("$m")
             itValues.add(m.weight)
             compares.add(
                 (m.weight - otherWeight).scale(scale).inTolerance(minEpsilon)
@@ -163,7 +164,7 @@ data class Recipe(
         }
         other.materials.filter { m -> !materials.any { m.id == it.id } }.forEach {
             val otherWeight = it.weight
-            names.add("${it.name}(${it.id})")
+            names.add("$it")
             itValues.add(0.0)
             compares.add((-otherWeight.scale(scale)).inTolerance(minEpsilon))
             otherValues.add(otherWeight)
@@ -301,7 +302,7 @@ data class Recipe(
                     indicatorScale
                 )
             ) {
-                throw IllegalRecipeException("${requirement.id}:${requirement.productName}-指标:${indicator.name}：${indicatorValue} 不在范围${rangeIndicator.scaledValue.min}-${rangeIndicator.scaledValue.max}内")
+                throw IllegalRecipeException("${requirement.id}:${requirement.productName}-指标:${indicator.name}：${indicatorValue.toPlainString()} 不在范围${rangeIndicator.scaledValue.min.toPlainString()}-${rangeIndicator.scaledValue.max.toPlainString()}内")
             }
         }
 
@@ -768,7 +769,7 @@ data class Recipe(
         separatorIndexs.add(names.size)
 
         materials.forEach { m ->
-            names.add("${m.name}(${m.id})")
+            names.add("$m")
             itValues.add(m.weight)
         }
 

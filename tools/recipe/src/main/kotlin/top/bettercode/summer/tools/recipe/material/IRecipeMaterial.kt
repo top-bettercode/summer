@@ -44,6 +44,7 @@ interface IRecipeMaterial : Comparable<IRecipeMaterial> {
         get() {
             return indicators.nutrients.sumOf { it.scaledValue }
         }
+
 }
 
 
