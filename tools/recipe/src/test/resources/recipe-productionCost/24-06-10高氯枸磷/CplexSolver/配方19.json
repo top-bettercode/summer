@@ -1,10 +1,10 @@
 {
-  "cost" : 2650.0021503007383,
+  "cost" : 2650.0021503007374,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 474.9728871226345,
+    "weight" : 474.972887122634,
     "feedPortShare" : false,
     "id" : "普通尿素",
     "index" : 0,
@@ -25,7 +25,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 115.12471923588122,
+    "weight" : 115.12471923588349,
     "feedPortShare" : false,
     "id" : "58磷酸一铵（粉）",
     "index" : 10,
@@ -58,7 +58,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 95.10302893398882,
+    "weight" : 95.10302893399071,
     "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 25,
@@ -87,7 +87,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 158.19234637103284,
+    "weight" : 158.1923463710304,
     "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 27,
@@ -112,7 +112,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 154.06415418776055,
+    "weight" : 154.06415418775953,
     "feedPortShare" : false,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
@@ -215,10 +215,10 @@
   },
   "recipeName" : "CplexSolver-19",
   "scale" : 3,
-  "dryWaterWeight" : 2.4571358512979486,
-  "materialCost" : 2436.346750300738,
+  "dryWaterWeight" : 2.457135851298176,
+  "materialCost" : 2436.3467503007378,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 403.0,
-  "waterWeight" : 14.457135851297949,
-  "weight" : 1002.457135851298
+  "totalNutrientWeight" : 403.0000000000001,
+  "waterWeight" : 14.457135851298089,
+  "weight" : 1002.4571358512982
 }

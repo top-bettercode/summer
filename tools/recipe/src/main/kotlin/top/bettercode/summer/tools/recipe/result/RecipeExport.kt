@@ -475,9 +475,12 @@ object RecipeExport {
 
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight)
                 }
-                val minEpsilon = recipe.minEpsilon
+                // 百分比最小误差值
+                val minEpsilon = recipe.minEpsilon / 10
                 val valid =
-                    (value - min).scale(recipe.scale) >= -minEpsilon && (value - max).scale(recipe.scale) <= minEpsilon
+                    (value - min).scale(recipe.scale + 1) > -minEpsilon && (value - max).scale(
+                        recipe.scale + 1
+                    ) < minEpsilon
                 cell(r++, c).value(value).bold()
                     .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.0%" else "")
                     .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()

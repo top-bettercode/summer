@@ -62,7 +62,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.5164190140845086,
+        "normal" : 2.516419014084508,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -91,7 +91,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 291.93750000000006,
+    "weight" : 291.9375,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
@@ -124,7 +124,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 122.22826086956523,
+    "weight" : 122.22826086956525,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
@@ -157,7 +157,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 167.92462453923366,
+    "weight" : 167.92462453923363,
     "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
@@ -227,7 +227,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 18.422861755397715,
+    "weight" : 18.422861755397943,
     "feedPortShare" : false,
     "id" : "青石",
     "index" : 98,
@@ -332,9 +332,9 @@
   "recipeName" : "CplexSolver-11",
   "scale" : 3,
   "dryWaterWeight" : 34.99999999999977,
-  "materialCost" : 2343.6909116751535,
+  "materialCost" : 2343.690911675153,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000017,
-  "waterWeight" : 49.9999999999999,
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 49.99999999999999,
   "weight" : 1034.9999999999998
 }

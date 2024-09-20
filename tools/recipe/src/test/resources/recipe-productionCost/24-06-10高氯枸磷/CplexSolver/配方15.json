@@ -1,10 +1,10 @@
 {
-  "cost" : 2630.002150300739,
+  "cost" : 2630.002150300738,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 445.53915433650525,
+    "weight" : 445.53915433650354,
     "feedPortShare" : false,
     "id" : "普通尿素",
     "index" : 0,
@@ -25,7 +25,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 50.651421019873965,
+    "weight" : 50.65142101987706,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -137,7 +137,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 128.38971122493086,
+    "weight" : 128.3897112249295,
     "feedPortShare" : false,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
@@ -241,9 +241,9 @@
   "recipeName" : "CplexSolver-15",
   "scale" : 3,
   "dryWaterWeight" : 3.0418250428485862,
-  "materialCost" : 2416.3467503007387,
+  "materialCost" : 2416.3467503007378,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 403.0,
-  "waterWeight" : 15.041825042848524,
+  "totalNutrientWeight" : 403.00000000000006,
+  "waterWeight" : 15.041825042848533,
   "weight" : 1003.0418250428486
 }

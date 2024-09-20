@@ -30,6 +30,16 @@ object OptimalUtil {
         return BigDecimal(this).setScale(scale, roundingMode).stripTrailingZeros().toDouble()
     }
 
+    @JvmStatic
+    fun Double.inTolerance(minEpsilon: Double): Boolean {
+        return if (this == 0.0) {
+            true
+        } else {
+            this > -minEpsilon && this < minEpsilon
+        }
+    }
+
+
     /**
      * 是否没有小数位数
      */

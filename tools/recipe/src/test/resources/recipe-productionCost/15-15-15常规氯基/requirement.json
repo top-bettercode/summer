@@ -507,6 +507,40 @@
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
+    "id" : "大颗粒尿素",
+    "index" : 1,
+    "indicators" : {
+      "氮" : {
+        "id" : "氮",
+        "value" : 46.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      }
+    },
+    "name" : "大颗粒尿素",
+    "price" : 2.895,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "多肽尿素",
+    "index" : 2,
+    "indicators" : {
+      "氮" : {
+        "id" : "氮",
+        "value" : 46.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      }
+    },
+    "name" : "多肽尿素",
+    "price" : 3.015,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
     "id" : "60天缓释尿素",
     "index" : 3,
     "indicators" : {
@@ -521,6 +555,23 @@
     },
     "name" : "60天缓释尿素",
     "price" : 3.75,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "90天缓释尿素",
+    "index" : 4,
+    "indicators" : {
+      "氮" : {
+        "id" : "氮",
+        "value" : 45.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      }
+    },
+    "name" : "90天缓释尿素",
+    "price" : 3.85,
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
@@ -788,6 +839,35 @@
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
+    "id" : "58磷酸一铵（雷波洋丰）",
+    "index" : 17,
+    "indicators" : {
+      "氮" : {
+        "id" : "氮",
+        "value" : 10.0
+      },
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "value" : 38.4
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "value" : 80.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 2.0
+      },
+      "磷" : {
+        "id" : "磷",
+        "value" : 48.0
+      }
+    },
+    "name" : "58磷酸一铵（雷波洋丰）",
+    "price" : 3.73,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
     "id" : "60磷酸一铵（粉）",
     "index" : 18,
     "indicators" : {
@@ -814,6 +894,35 @@
     },
     "name" : "60磷酸一铵（粉）",
     "price" : 3.71,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "60磷酸一铵（云天化）",
+    "index" : 19,
+    "indicators" : {
+      "氮" : {
+        "id" : "氮",
+        "value" : 10.0
+      },
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "value" : 40.0
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "value" : 80.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 2.0
+      },
+      "磷" : {
+        "id" : "磷",
+        "value" : 50.0
+      }
+    },
+    "name" : "60磷酸一铵（云天化）",
+    "price" : 3.79,
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
@@ -1144,6 +1253,35 @@
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
+    "id" : "磷酸二氢钾（闪溶）",
+    "index" : 31,
+    "indicators" : {
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "value" : 52.0
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "value" : 100.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      },
+      "磷" : {
+        "id" : "磷",
+        "value" : 52.0
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 34.0
+      }
+    },
+    "name" : "磷酸二氢钾（闪溶）",
+    "price" : 10.8,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 32,
     "indicators" : {
@@ -1257,6 +1395,48 @@
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
+    "id" : "95%氯化钾结晶钾（国产）",
+    "index" : 37,
+    "indicators" : {
+      "氯离子" : {
+        "id" : "氯离子",
+        "value" : 47.699999999999996
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 1.0
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 60.0
+      }
+    },
+    "name" : "95%氯化钾结晶钾（国产）",
+    "price" : 3.55,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "95%进口红钾（粉）",
+    "index" : 38,
+    "indicators" : {
+      "氯离子" : {
+        "id" : "氯离子",
+        "value" : 47.699999999999996
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 61.0
+      }
+    },
+    "name" : "95%进口红钾（粉）",
+    "price" : 3.75,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
     "id" : "95%进口白钾(粉)",
     "index" : 39,
     "indicators" : {
@@ -1296,6 +1476,27 @@
     },
     "name" : "95%红钾（颗粒）",
     "price" : 3.8,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "95%白色晶钾（颗粒）",
+    "index" : 41,
+    "indicators" : {
+      "氯离子" : {
+        "id" : "氯离子",
+        "value" : 47.699999999999996
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 61.0
+      }
+    },
+    "name" : "95%白色晶钾（颗粒）",
+    "price" : 4.05,
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
@@ -1662,6 +1863,32 @@
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
+    "id" : "硅石粉（硝基用）",
+    "index" : 61,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 1.0
+      }
+    },
+    "name" : "硅石粉（硝基用）",
+    "price" : 0.26,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "元明粉",
+    "index" : 62,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 1.0
+      }
+    },
+    "name" : "元明粉",
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
     "id" : "磷石膏",
     "index" : 63,
     "indicators" : {
@@ -1691,11 +1918,43 @@
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
-    "id" : "籽煤",
-    "index" : 90,
+    "id" : "防结油（染色）",
+    "index" : 66,
     "indicators" : { },
-    "name" : "籽煤",
-    "price" : 1.64,
+    "name" : "防结油（染色）",
+    "price" : 8.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "防结粉（染色）",
+    "index" : 67,
+    "indicators" : { },
+    "name" : "防结粉（染色）",
+    "price" : 4.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "全水溶防结油",
+    "index" : 68,
+    "indicators" : { },
+    "name" : "全水溶防结油",
+    "price" : 12.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "全水溶防结粉",
+    "index" : 69,
+    "indicators" : { },
+    "name" : "全水溶防结粉",
+    "price" : 5.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "SPR全水溶防结油",
+    "index" : 70,
+    "indicators" : { },
+    "name" : "SPR全水溶防结油",
+    "price" : 20.0,
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
@@ -1808,6 +2067,182 @@
     "unit" : "吨"
   }, {
     "feedPortShare" : false,
+    "id" : "2000亿微生物菌",
+    "index" : 76,
+    "indicators" : { },
+    "name" : "2000亿微生物菌",
+    "price" : 27.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "DCD（液体）",
+    "index" : 77,
+    "indicators" : { },
+    "name" : "DCD（液体）",
+    "price" : 65.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "DCD（固体）",
+    "index" : 78,
+    "indicators" : { },
+    "name" : "DCD（固体）",
+    "price" : 29.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "聚天冬氨酸",
+    "index" : 79,
+    "indicators" : { },
+    "name" : "聚天冬氨酸",
+    "price" : 37.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "聚谷氨酸",
+    "index" : 80,
+    "indicators" : { },
+    "name" : "聚谷氨酸",
+    "price" : 20.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "鱼蛋白肽",
+    "index" : 81,
+    "indicators" : { },
+    "name" : "鱼蛋白肽",
+    "price" : 31.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "海藻酸",
+    "index" : 82,
+    "indicators" : { },
+    "name" : "海藻酸",
+    "price" : 20.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "海藻粉",
+    "index" : 83,
+    "indicators" : { },
+    "name" : "海藻粉",
+    "price" : 45.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "一水柠檬酸",
+    "index" : 84,
+    "indicators" : { },
+    "name" : "一水柠檬酸",
+    "price" : 15.7,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "牛皮多肽",
+    "index" : 85,
+    "indicators" : { },
+    "name" : "牛皮多肽",
+    "price" : 6.6,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "伽马氨基丁酸",
+    "index" : 86,
+    "indicators" : { },
+    "name" : "伽马氨基丁酸",
+    "price" : 46.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "AC818",
+    "index" : 87,
+    "indicators" : { },
+    "name" : "AC818",
+    "price" : 8.4,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "腐植酸钾",
+    "index" : 88,
+    "indicators" : { },
+    "name" : "腐植酸钾",
+    "price" : 4.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "DMPP",
+    "index" : 89,
+    "indicators" : { },
+    "name" : "DMPP",
+    "price" : 110.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "籽煤",
+    "index" : 90,
+    "indicators" : { },
+    "name" : "籽煤",
+    "price" : 1.64,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "油菜花黄",
+    "index" : 91,
+    "indicators" : { },
+    "name" : "油菜花黄",
+    "price" : 29.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "炭黑",
+    "index" : 92,
+    "indicators" : { },
+    "name" : "炭黑",
+    "price" : 11.5,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "亮蓝色素",
+    "index" : 93,
+    "indicators" : { },
+    "name" : "亮蓝色素",
+    "price" : 160.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "硝基用铁黑",
+    "index" : 94,
+    "indicators" : { },
+    "name" : "硝基用铁黑",
+    "price" : 2.4,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "艳绿染料",
+    "index" : 95,
+    "indicators" : { },
+    "name" : "艳绿染料",
+    "price" : 36.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "蓝色染料",
+    "index" : 96,
+    "indicators" : { },
+    "name" : "蓝色染料",
+    "price" : 32.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "铁黄",
+    "index" : 97,
+    "indicators" : { },
+    "name" : "铁黄",
+    "price" : 7.4,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
     "id" : "青石",
     "index" : 98,
     "indicators" : {
@@ -1818,6 +2253,35 @@
     },
     "name" : "青石",
     "price" : 0.08,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "石灰",
+    "index" : 99,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 39.0
+      }
+    },
+    "name" : "石灰",
+    "price" : 0.7,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "肥效保持剂（安徽帝元）",
+    "index" : 100,
+    "indicators" : { },
+    "name" : "肥效保持剂（安徽帝元）",
+    "price" : 4.0,
+    "unit" : "吨"
+  }, {
+    "feedPortShare" : false,
+    "id" : "农巧施（CA）木钙",
+    "index" : 101,
+    "indicators" : { },
+    "name" : "农巧施（CA）木钙",
+    "price" : 7.5,
     "unit" : "吨"
   }, {
     "feedPortShare" : false,

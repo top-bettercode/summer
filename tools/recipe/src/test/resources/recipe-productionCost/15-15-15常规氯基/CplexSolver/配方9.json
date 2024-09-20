@@ -62,7 +62,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.5164190140845086,
+        "normal" : 2.516419014084508,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -91,7 +91,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 291.93750000000006,
+    "weight" : 291.9375,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 20,
@@ -124,7 +124,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 122.22826086956523,
+    "weight" : 122.22826086956525,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
@@ -157,7 +157,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 167.9660430979754,
+    "weight" : 167.96604309797536,
     "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
@@ -182,7 +182,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.12056000896464836,
+    "weight" : 0.12056000896464791,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 51,
@@ -227,7 +227,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 18.472886767904157,
+    "weight" : 18.472886767904498,
     "feedPortShare" : false,
     "id" : "青石",
     "index" : 98,
@@ -244,7 +244,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 65.367290235358,
+    "weight" : 65.36729023535794,
     "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
@@ -331,10 +331,10 @@
   },
   "recipeName" : "CplexSolver-9",
   "scale" : 3,
-  "dryWaterWeight" : 34.99999999999977,
+  "dryWaterWeight" : 35.0,
   "materialCost" : 2335.690911675153,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0000000000001,
-  "waterWeight" : 49.999999999999986,
-  "weight" : 1034.9999999999998
+  "totalNutrientWeight" : 453.0,
+  "waterWeight" : 50.000000000000085,
+  "weight" : 1035.0
 }

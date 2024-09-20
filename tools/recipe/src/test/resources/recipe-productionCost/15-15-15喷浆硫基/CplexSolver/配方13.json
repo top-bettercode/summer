@@ -46,7 +46,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.166866773563619,
+        "normal" : 4.166866773563618,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -54,7 +54,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.9209356389604366,
+        "normal" : 1.9209356389604375,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -91,7 +91,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 182.33479995480204,
+    "weight" : 182.3347999548021,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -124,7 +124,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 217.53495656104178,
+    "weight" : 217.53495656104172,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -183,7 +183,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.03384592614468063,
+    "weight" : 0.03384592614468196,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 49,
@@ -365,10 +365,10 @@
   },
   "recipeName" : "CplexSolver-13",
   "scale" : 3,
-  "dryWaterWeight" : 126.03313806258802,
-  "materialCost" : 2661.382685232431,
+  "dryWaterWeight" : 126.03313806258757,
+  "materialCost" : 2661.3826852324314,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000006,
+  "totalNutrientWeight" : 453.0,
   "waterWeight" : 138.03313806258794,
-  "weight" : 1126.033138062588
+  "weight" : 1126.0331380625876
 }

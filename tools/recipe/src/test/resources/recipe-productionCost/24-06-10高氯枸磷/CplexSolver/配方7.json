@@ -1,10 +1,10 @@
 {
-  "cost" : 2596.002150300739,
+  "cost" : 2596.0021503007383,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 385.1061046758351,
+    "weight" : 385.106104675835,
     "feedPortShare" : false,
     "id" : "普通尿素",
     "index" : 0,
@@ -25,7 +25,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 160.52969313018332,
+    "weight" : 160.52969313018346,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -244,6 +244,6 @@
   "materialCost" : 2382.3467503007387,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 403.00000000000006,
-  "waterWeight" : 15.34704246537716,
+  "waterWeight" : 15.347042465377163,
   "weight" : 1003.3470424653773
 }

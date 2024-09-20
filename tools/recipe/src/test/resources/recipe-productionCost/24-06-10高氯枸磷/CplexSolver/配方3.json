@@ -1,5 +1,5 @@
 {
-  "cost" : 2584.0021503007383,
+  "cost" : 2584.002150300739,
   "includeProductionCost" : true,
   "indicatorScale" : 4,
   "materials" : [ {
@@ -25,7 +25,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 266.21739301401135,
+    "weight" : 266.2173930140116,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -50,7 +50,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 91.03245754477473,
+    "weight" : 91.03245754477466,
     "feedPortShare" : false,
     "id" : "58磷酸一铵（粉）",
     "index" : 10,
@@ -83,7 +83,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 75.20072579785739,
+    "weight" : 75.20072579785733,
     "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 25,
@@ -137,7 +137,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 34.03666417196183,
+    "weight" : 34.03666417196172,
     "feedPortShare" : false,
     "id" : "石粉（尿基高塔用）",
     "index" : 55,
@@ -243,7 +243,7 @@
   "dryWaterWeight" : 1.487240528605298,
   "materialCost" : 2370.3467503007387,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 403.0,
-  "waterWeight" : 13.487240528605245,
+  "totalNutrientWeight" : 403.00000000000006,
+  "waterWeight" : 13.48724052860524,
   "weight" : 1001.4872405286053
 }

@@ -91,7 +91,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 181.58467624789498,
+    "weight" : 181.584676247895,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -183,7 +183,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.24932540221002286,
+    "weight" : 0.24932540221002197,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 49,
@@ -366,7 +366,7 @@
   "recipeName" : "CplexSolver-20",
   "scale" : 3,
   "dryWaterWeight" : 125.97820746556954,
-  "materialCost" : 2696.391839416425,
+  "materialCost" : 2696.3918394164243,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0,
   "waterWeight" : 137.9782074655697,

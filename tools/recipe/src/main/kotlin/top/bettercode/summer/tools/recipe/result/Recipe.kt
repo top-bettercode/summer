@@ -7,6 +7,7 @@ import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.Operator
+import top.bettercode.summer.tools.optimal.OptimalUtil.inTolerance
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
@@ -112,6 +113,7 @@ data class Recipe(
         }
     }
 
+
     /**
      * 比较配方
      */
@@ -134,7 +136,7 @@ data class Recipe(
         //总成本(制造费用+原料成本)
         names.add("总成本(制造费用+原料成本)")
         itValues.add(cost)
-        val costEq = (cost - other.cost).scale(scale) in -minEpsilon..minEpsilon
+        val costEq = (cost - other.cost).scale(scale).inTolerance(minEpsilon)
         compares.add(costEq)
         otherValues.add(other.cost)
         diffValues.add((cost - other.cost))
@@ -153,7 +155,9 @@ data class Recipe(
             val otherWeight = otherMaterialValue?.weight ?: 0.0
             names.add("${m.name}(${m.id})")
             itValues.add(m.weight)
-            compares.add((m.weight - otherWeight).scale(scale) in -minEpsilon..minEpsilon)
+            compares.add(
+                (m.weight - otherWeight).scale(scale).inTolerance(minEpsilon)
+            )
             otherValues.add(otherWeight)
             diffValues.add((m.weight - otherWeight))
         }
@@ -161,7 +165,7 @@ data class Recipe(
             val otherWeight = it.weight
             names.add("${it.name}(${it.id})")
             itValues.add(0.0)
-            compares.add(-otherWeight.scale(scale) in -minEpsilon..minEpsilon)
+            compares.add((-otherWeight.scale(scale)).inTolerance(minEpsilon))
             otherValues.add(otherWeight)
             diffValues.add(-otherWeight)
         }
@@ -182,7 +186,8 @@ data class Recipe(
                 diffValues
             )
             productionCostEq =
-                (optimalProductionCost.totalFee - other.optimalProductionCost.totalFee).scale(scale) in -minEpsilon..minEpsilon
+                (optimalProductionCost.totalFee - other.optimalProductionCost.totalFee).scale(scale)
+                    .inTolerance(minEpsilon)
             separatorIndexs.addAll(productionCostSeparatorIndexs)
         } else {
             Assert.isNull(
@@ -598,7 +603,7 @@ data class Recipe(
 
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
-        if ((materialCost + productionCostFee - cost).scale(scale) !in -minEpsilon..minEpsilon) {
+        if (!(materialCost + productionCostFee - cost).scale(scale).inTolerance(minEpsilon)) {
             throw IllegalRecipeException(
                 "${requirement.id}:${requirement.productName}-配方成本不匹配，物料成本：${materialCost}+制造费用：${
                     productionCostFee.toBigDecimal().toPlainString()

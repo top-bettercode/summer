@@ -4,7 +4,7 @@
   "indicatorScale" : 4,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 359.2838936497488,
+    "weight" : 359.2838936497486,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -50,7 +50,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 2.1071463563992645,
+        "normal" : 2.107146356399265,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -70,7 +70,7 @@
         "overdose" : 0.0
       }
     },
-    "weight" : 4.623565370483773,
+    "weight" : 4.623565370483774,
     "feedPortShare" : false,
     "id" : "液氨",
     "index" : 10,
@@ -85,7 +85,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 4.623565370483773,
+    "normalWeight" : 4.623565370483774,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -124,7 +124,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 122.22826086956523,
+    "weight" : 122.22826086956528,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 23,
@@ -157,7 +157,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 167.95051113844727,
+    "weight" : 167.95051113844733,
     "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 36,
@@ -182,7 +182,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.13931938865449078,
+    "weight" : 0.13931938865449167,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 51,
@@ -227,7 +227,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 18.454127388214104,
+    "weight" : 18.454127388214445,
     "feedPortShare" : false,
     "id" : "青石",
     "index" : 98,
@@ -244,7 +244,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 65.38282219488615,
+    "weight" : 65.38282219488603,
     "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
@@ -334,7 +334,7 @@
   "dryWaterWeight" : 35.0,
   "materialCost" : 2338.690911675153,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000017,
-  "waterWeight" : 49.9999999999999,
+  "totalNutrientWeight" : 453.0000000000001,
+  "waterWeight" : 49.999999999999986,
   "weight" : 1035.0
 }

@@ -46,7 +46,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.177576264331466,
+        "normal" : 4.177576264331465,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -54,7 +54,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.914161886049766,
+        "normal" : 1.914161886049767,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -91,7 +91,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 181.69183677745303,
+    "weight" : 181.6918367774531,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -124,7 +124,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 218.0940549761279,
+    "weight" : 218.09405497612784,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -183,7 +183,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.21854261991497181,
+    "weight" : 0.21854261991497337,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 49,
@@ -282,7 +282,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 75.14222247863455,
+    "weight" : 75.1422224786345,
     "feedPortShare" : false,
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -331,7 +331,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 41.01769902446301,
+    "energyFee" : 41.017699024463006,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -343,7 +343,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.879860546937152
+      "value" : 1.8798605469371519
     }, {
       "it" : {
         "id" : "生物质",
@@ -368,7 +368,7 @@
   "dryWaterWeight" : 125.986054693715,
   "materialCost" : 2691.390531675854,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000006,
+  "totalNutrientWeight" : 453.0,
   "waterWeight" : 137.98605469371518,
   "weight" : 1125.986054693715
 }
