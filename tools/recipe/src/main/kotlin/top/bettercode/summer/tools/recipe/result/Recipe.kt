@@ -252,6 +252,13 @@ data class Recipe(
         if (dryWaterWeight.scale(scale) < 0) {
             throw IllegalRecipeException("${requirement.id}:${requirement.productName}-配方烘干水分异常：${dryWaterWeight}")
         }
+        if ((dryWaterWeight - waterWeight).scale(scale) > 0) {
+            throw IllegalRecipeException(
+                "${requirement.id}:${requirement.productName}-配方烘干水分:${dryWaterWeight} 超过总水分：${waterWeight},差值：${
+                    (dryWaterWeight - waterWeight).toBigDecimal().toPlainString()
+                }"
+            )
+        }
         if (requirement.maxBakeWeight != null && (dryWaterWeight - requirement.maxBakeWeight).scale(
                 scale
             ) > 0
@@ -263,13 +270,7 @@ data class Recipe(
                 }"
             )
         }
-        if ((dryWaterWeight - waterWeight).scale(scale) > 0) {
-            throw IllegalRecipeException(
-                "${requirement.id}:${requirement.productName}-配方烘干水分:${dryWaterWeight} 超过总水分：${waterWeight},差值：${
-                    (dryWaterWeight - waterWeight).toBigDecimal().toPlainString()
-                }"
-            )
-        }
+
 
         val targetWeight = requirement.targetWeight
         // 指标范围约束
