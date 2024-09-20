@@ -488,6 +488,11 @@ object RecipeExport {
             cell(1, c).value("/").setStyle()
             cell(2, c).value("/").setStyle()
             cell(3, c++).value(recipe.materialCost).bold().format("0.00").setStyle()
+            // 原料单价
+            cell(0, c).value("原料单价").headerStyle().width(8.0).setStyle()
+            cell(1, c).value("/").setStyle()
+            cell(2, c).value("/").setStyle()
+            cell(3, c++).value("/").setStyle()
             //原料
             materials.forEach { material ->
                 c = 0
@@ -540,6 +545,8 @@ object RecipeExport {
                 }
                 // 费用合计
                 cell(r, c++).value(material.cost).format("0.00").setStyle()
+                // 原料单价
+                cell(r, c++).value(material.price * 1000).format("0").setStyle()
                 if (showRate && material.hasOverdose) {
                     c = 1
                     val r1 = r + 1

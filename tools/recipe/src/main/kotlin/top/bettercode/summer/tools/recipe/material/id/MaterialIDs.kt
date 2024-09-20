@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.recipe.material.id
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.recipe.RecipeRequirement
 
@@ -56,8 +57,10 @@ open class MaterialIDs(
         return ReplacebleMaterialIDs(ids, null, null)
     }
 
+    @get:JsonIgnore
     open val size: Int get() = ids.size
 
+    @JsonIgnore
     open fun isEmpty(): Boolean {
         return ids.isEmpty()
     }
