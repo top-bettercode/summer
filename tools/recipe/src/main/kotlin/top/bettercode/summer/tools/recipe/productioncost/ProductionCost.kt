@@ -57,6 +57,20 @@ data class ProductionCost(
 ) {
 
     fun computeFee(recipe: Recipe): ProductionCostValue {
+        return computeFee(
+            materials = recipe.materials,
+            waterWeight = recipe.waterWeight,
+            scale = recipe.scale,
+            minEpsilon = recipe.minEpsilon
+        )
+    }
+
+    fun computeFee(
+        materials: List<RecipeMaterialValue>,
+        waterWeight: Double,
+        scale: Int,
+        minEpsilon: Double
+    ): ProductionCostValue {
         var allChange = 1.0
         val materialItems = materialItems.map { CarrierValue(it, 1.0) }
         val dictItems = dictItems.mapValues { CarrierValue(it.value, 1.0) }
@@ -66,9 +80,9 @@ data class ProductionCost(
             when (changeLogic.type) {
                 WATER_OVER -> {
                     changeProductionCost(
-                        recipe.materials,
+                        materials,
                         changeLogic,
-                        recipe.waterWeight,
+                        waterWeight,
                         materialItems,
                         dictItems
                     )
@@ -76,7 +90,7 @@ data class ProductionCost(
 
                 OVER -> {
                     changeProductionCost(
-                        recipe.materials,
+                        materials,
                         changeLogic,
                         null,
                         materialItems,
@@ -108,15 +122,15 @@ data class ProductionCost(
             taxFee = taxFee,
             totalFee = totalFee,
             allChange = allChange,
-            scale = recipe.scale,
-            minEpsilon = recipe.minEpsilon
+            scale = scale,
+            minEpsilon = minEpsilon
         )
     }
 
     fun computeFee(
         materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>?,
         dictItems: Map<DictType, CarrierValue<Cost, Double>>?,
-        scale:Int,
+        scale: Int,
         minEpsilon: Double
     ): ProductionCostValue? {
         if (materialItems == null || dictItems == null) {

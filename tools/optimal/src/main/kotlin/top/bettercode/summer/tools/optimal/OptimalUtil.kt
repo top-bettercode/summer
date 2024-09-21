@@ -42,7 +42,8 @@ object OptimalUtil {
 
     @JvmStatic
     fun Double.toPlainString(): String {
-        return this.toBigDecimal().toPlainString()
+        return this.toBigDecimal().setScale(10, RoundingMode.HALF_UP).stripTrailingZeros()
+            .toPlainString()
     }
 
 

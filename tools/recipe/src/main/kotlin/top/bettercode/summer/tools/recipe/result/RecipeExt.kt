@@ -77,7 +77,7 @@ class RecipeExt(private val recipe: Recipe) {
                     }
                         ?: return null
                 recipe.apply {
-                    return materialRelationConstraint.relationValue(false)
+                    return materialRelationConstraint.relationValue()
                 }
             } else {
                 var usedMinNormalWeight = 0.0
