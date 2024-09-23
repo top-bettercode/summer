@@ -41,6 +41,7 @@ include(":clients:qvod")
 include(":clients:amap")
 include(":clients:pay")
 include(":clients:hikvision")
+include(":clients:feishu")
 
 include(":natives:sap")
 include(":natives:optimal-copt")

@@ -121,6 +121,7 @@ dependencies {
         api(project(":clients:amap"))
         api(project(":clients:pay"))
         api(project(":clients:hikvision"))
+        api(project(":clients:feishu"))
 
         api(project(":natives:sap"))
         api(project(":natives:optimal-copt"))

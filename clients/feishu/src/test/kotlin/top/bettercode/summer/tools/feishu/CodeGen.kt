@@ -1,11 +1,11 @@
-package top.bettercode.summer.tools.hikvision
+package top.bettercode.summer.tools.feishu
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.generator.dom.java.element.Parameter
+import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
-import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
+import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import java.io.File
 
 /**
@@ -17,14 +17,16 @@ class CodeGen {
     @Disabled
     @Test
     fun gen() {
-        val content =javaClass.getResource("doc.txt")!!.readText().trimIndent()
+        val content = javaClass.getResource("/doc.txt")!!.readText().trimIndent()
+        val fullTypeSpecification = "${javaClass.`package`.name}.entity.UserFlowResult"
         TopLevelClass(
-            type = JavaType("com.cdwintech.app.support.hikvision.entity.EventData"),
+            type = JavaType(fullTypeSpecification),
             overwrite = true
         ).apply {
+
             javadoc {
                 +"/**"
-                +" * 门禁点事件返回参数"
+                +" * "
                 +" */"
             }
 
@@ -34,6 +36,7 @@ class CodeGen {
                     val javaType = when (val type = it[1].trim()) {
                         "string" -> JavaType.stringInstance
                         "string[]" -> JavaType("java.lang.String[]")
+                        "int" -> JavaType.intWrapper
                         "integer" -> JavaType.intWrapper
                         "integer[]" -> JavaType("java.lang.Integer[]")
                         "number" -> JavaType.intWrapper
@@ -46,38 +49,17 @@ class CodeGen {
                     val required = it[2].trim()
                     val comment = it[3].trim()
 
-                    field(name, javaType) {
+                    field(name.toCamelCase(), javaType) {
+                        annotation("@com.fasterxml.jackson.annotation.JsonProperty(\"$name\")")
+                        visibility = JavaVisibility.PUBLIC
                         javadoc {
                             +"/**"
-                            +" * $comment ${if (required == "True") "必填" else ""}"
+                            +" * $comment ${if (required == "是") "必填" else ""}"
                             +" */"
                         }
-                    }
-
-                    method("get${name.capitalized()}", javaType) {
-                        javadoc {
-                            +"/**"
-                            +" * @return $comment"
-                            +" */"
-                        }
-
-                        +"return ${name};"
-                    }
-                    method(
-                        "set${name.capitalized()}",
-                        JavaType.void,
-                        Parameter(name, javaType)
-                    ) {
-                        javadoc {
-                            +"/**"
-                            +" * @param $name $comment ${if (required == "True") "必填" else ""}"
-                            +" */"
-                        }
-
-                        +"this.$name = $name;"
                     }
                 }
             }
-        }.writeTo(File(""))
+        }.writeTo(File("./"))
     }
 }

@@ -46,7 +46,7 @@ internal class HikvisionClientTest : BaseTest() {
      *         "temp": null
      *       }
      */
-//    @Disabled
+    @Disabled
     @Test
     fun request() {
         val request = EventRequest()

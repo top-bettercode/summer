@@ -71,7 +71,7 @@ interface CompilationUnit : GenUnit {
 
     fun import(vararg fullTypeSpecification: String) {
         importedTypes.addAll(fullTypeSpecification.map { JavaType(it) }
-                .filter { it.isExplicitlyImported && it.packageName != type.packageName })
+            .filter { it.isExplicitlyImported && it.packageName != type.packageName })
     }
 
     fun import(vararg importedType: JavaType) {
