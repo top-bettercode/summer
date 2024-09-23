@@ -56,11 +56,11 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
             location
         )
         val entity: ResponseEntity<AMapRegeo> =
-            execute(
+            exchange(
                 expanded,
                 HttpMethod.GET,
                 null,
-                this.responseEntityExtractor(AMapRegeo::class.java)
+                AMapRegeo::class.java
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }
@@ -73,11 +73,11 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
             address
         )
         val entity: ResponseEntity<AMapGeo> =
-            execute(
+            exchange(
                 expanded,
                 HttpMethod.GET,
                 null,
-                this.responseEntityExtractor(AMapGeo::class.java)
+                AMapGeo::class.java
             ) ?: throw clientException("请求失败")
 
         return entity.body ?: throw clientException()
@@ -91,11 +91,11 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
             destination
         )
         val entity: ResponseEntity<Distance> =
-            execute(
+            exchange(
                 expanded,
                 HttpMethod.GET,
                 null,
-                this.responseEntityExtractor(Distance::class.java)
+                Distance::class.java
             ) ?: throw clientException("请求失败")
 
         return entity.body ?: throw clientException()

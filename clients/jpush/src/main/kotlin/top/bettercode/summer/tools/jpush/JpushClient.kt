@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.*
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClientResponseException
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.jpush.entity.JpushRequest
@@ -56,10 +55,6 @@ open class JpushClient(
     open fun send(request: JpushRequest): JpushResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = this.httpEntityCallback<JpushResponse>(
-            HttpEntity(request, headers),
-            JpushResponse::class.java
-        )
         if (request.cid == null) {
             val cidlist = cid(1).cidlist
             if (cidlist?.isNotEmpty() == true) {
@@ -70,10 +65,10 @@ open class JpushClient(
         }
         request.options = Options(properties.timeToLive, properties.apnsProduction)
         val entity: ResponseEntity<JpushResponse> = try {
-            execute(
+            exchange(
                 properties.url + "/push", HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(JpushResponse::class.java)
+                HttpEntity(request, headers),
+                JpushResponse::class.java
             )
         } catch (e: Exception) {
             if (e is RestClientResponseException) {
@@ -98,15 +93,11 @@ open class JpushClient(
     open fun cid(count: Int): JpushCidResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = this.httpEntityCallback<JpushCidResponse>(
-            HttpEntity(null, headers),
-            JpushCidResponse::class.java
-        )
         val entity: ResponseEntity<JpushCidResponse> = try {
-            execute(
+            exchange(
                 properties.url + "/push/cid?count={0}", HttpMethod.GET,
-                requestCallback,
-                this.responseEntityExtractor(JpushCidResponse::class.java),
+                HttpEntity(null, headers),
+                JpushCidResponse::class.java,
                 count
             )
         } catch (e: Exception) {

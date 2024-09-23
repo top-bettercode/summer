@@ -119,17 +119,13 @@ open class B2mSmsTemplate(
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, properties.secretKey)
-        val requestCallback = this.httpEntityCallback<ByteArray>(
-            HttpEntity(data, headers),
-            ByteArray::class.java
-        )
+
         val entity: ResponseEntity<ByteArray> =
-            execute(
+            exchange(
                 properties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(ByteArray::class.java)
-            )
-                ?: throw clientException()
+                HttpEntity(data, headers),
+                ByteArray::class.java
+            ) ?: throw clientException()
 
         val code = entity.headers.getFirst("result")
         return if (B2mResponse.SUCCESS == code) {
@@ -174,15 +170,11 @@ open class B2mSmsTemplate(
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, properties.secretKey)
-        val requestCallback = this.httpEntityCallback<ByteArray>(
-            HttpEntity(data, headers),
-            ByteArray::class.java
-        )
         val entity: ResponseEntity<ByteArray> =
-            execute(
+            exchange(
                 properties.url + "/inter/getReport", HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(ByteArray::class.java)
+                HttpEntity(data, headers),
+                ByteArray::class.java
             ) ?: throw clientException()
 
         val code = entity.headers.getFirst("result")
@@ -220,17 +212,12 @@ open class B2mSmsTemplate(
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, properties.secretKey)
-        val requestCallback = this.httpEntityCallback<ByteArray>(
-            HttpEntity(data, headers),
-            ByteArray::class.java
-        )
         val entity: ResponseEntity<ByteArray> =
-            execute(
+            exchange(
                 properties.url + "/inter/getBalance", HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(ByteArray::class.java)
-            )
-                ?: throw clientException()
+                HttpEntity(data, headers),
+                ByteArray::class.java
+            ) ?: throw clientException()
 
         val code = entity.headers.getFirst("result")
         return if (B2mResponse.SUCCESS == code) {

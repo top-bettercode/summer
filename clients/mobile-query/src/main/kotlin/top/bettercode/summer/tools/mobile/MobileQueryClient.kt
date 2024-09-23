@@ -67,15 +67,11 @@ open class MobileQueryClient(
         bodyParams["appKey"] = secretKey
         bodyParams["token"] = token
 
-        val requestCallback = this.httpEntityCallback<QueryResponse>(
-            HttpEntity(bodyParams, headers),
-            QueryResponse::class.java
-        )
         val entity: ResponseEntity<QueryResponse> =
-            execute(
+            exchange(
                 properties.url, HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(QueryResponse::class.java)
+                HttpEntity(bodyParams, headers),
+                QueryResponse::class.java
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }

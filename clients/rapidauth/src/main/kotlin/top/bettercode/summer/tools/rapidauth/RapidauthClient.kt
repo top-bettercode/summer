@@ -63,16 +63,11 @@ open class RapidauthClient(
 
         val request = RapidauthRequest(sig, time, carrier, token)
 
-
-        val requestCallback = this.httpEntityCallback<RapidauthResponse>(
-            HttpEntity(request),
-            RapidauthResponse::class.java
-        )
         val entity: ResponseEntity<RapidauthResponse> =
-            execute(
+            exchange(
                 properties.url, HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(RapidauthResponse::class.java),
+                HttpEntity(request),
+                RapidauthResponse::class.java,
                 properties.sdkappid,
                 random
             ) ?: throw clientException()

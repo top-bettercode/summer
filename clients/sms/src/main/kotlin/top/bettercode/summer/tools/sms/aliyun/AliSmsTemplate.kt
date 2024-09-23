@@ -241,18 +241,12 @@ open class AliSmsTemplate(
     ): T {
         //签名
         sign(params)
-        val requestCallback = this.httpEntityCallback<T>(
-            HttpEntity(params, null),
-            responseType
-        )
         val entity: ResponseEntity<T> =
-            execute(
+            exchange(
                 properties.url,
                 HttpMethod.POST,
-                requestCallback,
-                this.responseEntityExtractor(
-                    responseType
-                )
+                HttpEntity(params, null),
+                responseType
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }
