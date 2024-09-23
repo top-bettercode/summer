@@ -22,7 +22,7 @@ class AsciidocGeneratorTest {
     @Disabled
     @Test
     fun cp() {
-        val dir = "/data/repositories/bettercode/default/summer/summer-plugin"
+        val dir = "summer-plugin"
         File(AutodocExtension::class.java.getResource("/static")!!.file).walkTopDown()
             .filter { it.isFile }.forEach {
                 val path = it.path.replace(

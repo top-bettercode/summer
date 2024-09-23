@@ -21,7 +21,7 @@ class CodeGen {
 
     @Test
     fun all() {
-        File("/data/repositories/bettercode/default/summer/tools/pay/src/test/resources").list()?.forEach {
+        File("src/test/resources").list()?.forEach {
             if (it.endsWith(".txt")) {
                 gen(it.substringBeforeLast("."))
             }

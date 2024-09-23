@@ -89,6 +89,8 @@ dependencies {
         api("io.github.openfeign:feign-core:11.10")
         api("org.eclipse.jgit:org.eclipse.jgit:5.13.3.202401111512-r")
 
+        api("com.hikvision.ga:artemis-http-client:1.1.3")
+
         api(project(":env"))
         api(project(":web"))
         api(project(":data-jpa"))
@@ -118,6 +120,7 @@ dependencies {
         api(project(":clients:qvod"))
         api(project(":clients:amap"))
         api(project(":clients:pay"))
+        api(project(":clients:hikvision"))
 
         api(project(":natives:sap"))
         api(project(":natives:optimal-copt"))

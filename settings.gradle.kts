@@ -40,6 +40,7 @@ include(":clients:jpush")
 include(":clients:qvod")
 include(":clients:amap")
 include(":clients:pay")
+include(":clients:hikvision")
 
 include(":natives:sap")
 include(":natives:optimal-copt")
