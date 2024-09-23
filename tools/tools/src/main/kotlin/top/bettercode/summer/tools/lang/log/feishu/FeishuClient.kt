@@ -23,7 +23,6 @@ import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
-import java.lang.reflect.Type
 import java.time.Duration
 
 
@@ -101,31 +100,40 @@ class FeishuClient(
         method: HttpMethod = HttpMethod.POST,
         contentType: MediaType? = null,
         requestToken: Boolean = false,
-        responseType: Type,
+        responseType: ParameterizedTypeReference<T>? = null,
+        responseClass: Class<T>? = null,
     ): T? {
         val headers = HttpHeaders()
         headers.set("Authorization", "Bearer ${getToken(requestToken)}")
         if (contentType != null) {
             headers.contentType = contentType
         }
-        val requestCallback = restTemplate.httpEntityCallback<T>(
-            HttpEntity(request, headers), responseType
-        )
-        val responseEntityExtractor =
-            restTemplate.responseEntityExtractor<T>(responseType)
 
-        val response =
-            restTemplate.execute(api + url, method, requestCallback, responseEntityExtractor)
-        val body = response?.body
+        val response = if (responseType != null)
+            restTemplate.exchange(
+                api + url,
+                method,
+                HttpEntity(request, headers),
+                responseType
+            ) else
+            restTemplate.exchange(
+                api + url,
+                method,
+                HttpEntity(request, headers),
+                responseClass
+                    ?: throw RuntimeException("responseClass or responseType must be not null")
+            )
+        val body = response.body
         if (body != null) {
             if (body.isInvalidAccessToken()) {
                 return request(
                     url = url,
-                    responseType = responseType,
                     request = request,
                     method = method,
                     contentType = contentType,
-                    requestToken = true
+                    requestToken = true,
+                    responseType = responseType,
+                    responseClass = responseClass
                 )
             }
         }
@@ -133,7 +141,7 @@ class FeishuClient(
     }
 
     private val feishuChatType = object :
-        ParameterizedTypeReference<FeishuDataResult<FeishuPageData<FeishuChat>>>() {}.type
+        ParameterizedTypeReference<FeishuDataResult<FeishuPageData<FeishuChat>>>() {}
 
     /**
      * https://open.feishu.cn/document/server-docs/group/chat/list
@@ -204,7 +212,7 @@ class FeishuClient(
 
         val result: FeishuResult? = request(
             url = "/im/v1/messages?receive_id_type=chat_id",
-            responseType = FeishuResult::class.java,
+            responseClass = FeishuResult::class.java,
             request = params
         )
         if (log.isTraceEnabled) {
@@ -216,8 +224,8 @@ class FeishuClient(
         return result?.isOk() == true
     }
 
-    private val feishuFileType = object :
-        ParameterizedTypeReference<FeishuDataResult<FeishuFile>>() {}.type
+    private val feishuFileType =
+        object : ParameterizedTypeReference<FeishuDataResult<FeishuFile>>() {}
 
     fun filesUpload(
         chatId: String,
@@ -260,7 +268,7 @@ class FeishuClient(
         )
         val result: FeishuResult? = request(
             url = "/im/v1/messages?receive_id_type=chat_id",
-            responseType = FeishuResult::class.java,
+            responseClass = FeishuResult::class.java,
             request = params
         )
 
