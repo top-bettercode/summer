@@ -31,12 +31,12 @@ import java.time.Duration
  * https://open.feishu.cn/document/server-docs/api-call-guide/calling-process/overview
  * @author Peter Wu
  */
-class FeishuClient(
+class FeishuMsgClient(
     private val appId: String,
     private val appSecret: String
 ) {
     private val api = "https://open.feishu.cn/open-apis"
-    private val log: Logger = LoggerFactory.getLogger(FeishuClient::class.java)
+    private val log: Logger = LoggerFactory.getLogger(FeishuMsgClient::class.java)
     private val restTemplate: RestTemplate = RestTemplate()
     private var token: ExpiringValue<String>? = null
 

@@ -4,18 +4,18 @@ import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
-import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.template
+import top.bettercode.summer.tools.lang.log.feishu.FeishuMsgClient.Companion.template
 
 open class FeishuHookAppender @JvmOverloads constructor(
-    properties: FeishuProperties = FeishuProperties(),
-) : AlarmAppender<FeishuProperties>(properties) {
+    properties: FeishuMsgProperties = FeishuMsgProperties(),
+) : AlarmAppender<FeishuMsgProperties>(properties) {
 
     private val log: Logger = LoggerFactory.getLogger(FeishuHookAppender::class.java)
-    private val chatClient: FeishuHookClient by lazy {
-        FeishuHookClient(this.properties.chatHook!!.webhook!!, this.properties.chatHook!!.secret)
+    private val chatClient: FeishuMsgHookClient by lazy {
+        FeishuMsgHookClient(this.properties.chatHook!!.webhook!!, this.properties.chatHook!!.secret)
     }
 
-    private val timeoutChatClient: FeishuHookClient? by lazy {
+    private val timeoutChatClient: FeishuMsgHookClient? by lazy {
         val timeoutChatHook = this.properties.timeoutChatHook
         if (timeoutChatHook != null) {
             val webhook = timeoutChatHook.webhook
@@ -23,7 +23,7 @@ open class FeishuHookAppender @JvmOverloads constructor(
             if (webhook.isNullOrBlank()) {
                 null
             } else
-                FeishuHookClient(webhook, secret)
+                FeishuMsgHookClient(webhook, secret)
         } else {
             null
         }

@@ -14,7 +14,7 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.log.AlarmAppender
-import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.params
+import top.bettercode.summer.tools.lang.log.feishu.FeishuMsgClient.Companion.params
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.crypto.Mac
@@ -26,12 +26,12 @@ import javax.crypto.spec.SecretKeySpec
  *
  * @author Peter Wu
  */
-class FeishuHookClient(
+class FeishuMsgHookClient(
     val webhook: String,
     val secret: String?
 ) {
     private val api = "https://open.feishu.cn/open-apis/bot/v2/hook/"
-    private val log: Logger = LoggerFactory.getLogger(FeishuHookClient::class.java)
+    private val log: Logger = LoggerFactory.getLogger(FeishuMsgHookClient::class.java)
     private val restTemplate: RestTemplate = RestTemplate()
 
     init {

@@ -43,7 +43,7 @@ import top.bettercode.summer.tools.lang.log.SqlAppender
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.loggerContext
 import top.bettercode.summer.tools.lang.log.feishu.FeishuAppender
 import top.bettercode.summer.tools.lang.log.feishu.FeishuHookAppender
-import top.bettercode.summer.tools.lang.log.feishu.FeishuProperties
+import top.bettercode.summer.tools.lang.log.feishu.FeishuMsgProperties
 import top.bettercode.summer.tools.lang.log.slack.SlackAppender
 import top.bettercode.summer.tools.lang.log.slack.SlackProperties
 import top.bettercode.summer.tools.lang.operation.HttpOperation
@@ -166,25 +166,25 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             && existProperty(environment, "summer.logging.feishu.chat")
         ) {
             synchronized(context.configurationLock) {
-                val feishuProperties = Binder.get(environment).bind(
-                    "summer.logging.feishu", FeishuProperties::class.java
+                val feishuMsgProperties = Binder.get(environment).bind(
+                    "summer.logging.feishu", FeishuMsgProperties::class.java
                 ).get()
                 try {
-                    feishuProperties.logsPath = logsPath
-                    feishuProperties.actuatorAddress = actuatorAddress
-                    feishuProperties.managementHostName = address.first
-                    feishuProperties.managementPort = address.second
-                    feishuProperties.apiAddress = apiAddress.first
-                    feishuProperties.managementLogPath = managementLogPath
-                    feishuProperties.logPattern = fileLogPattern
-                    feishuProperties.warnTitle = warnTitle
+                    feishuMsgProperties.logsPath = logsPath
+                    feishuMsgProperties.actuatorAddress = actuatorAddress
+                    feishuMsgProperties.managementHostName = address.first
+                    feishuMsgProperties.managementPort = address.second
+                    feishuMsgProperties.apiAddress = apiAddress.first
+                    feishuMsgProperties.managementLogPath = managementLogPath
+                    feishuMsgProperties.logPattern = fileLogPattern
+                    feishuMsgProperties.warnTitle = warnTitle
 
                     val feishuAppender = FeishuAppender(
-                        properties = feishuProperties
+                        properties = feishuMsgProperties
                     )
                     feishuAppender.context = context
                     feishuAppender.start()
-                    feishuProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
+                    feishuMsgProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
                             it.addAppender(asyncAppender(context, "feishu", feishuAppender))
                         }
@@ -194,25 +194,25 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             }
         } else if (existProperty(environment, "summer.logging.feishu.chat-hook.webhook")) {
             synchronized(context.configurationLock) {
-                val feishuProperties = Binder.get(environment).bind(
-                    "summer.logging.feishu", FeishuProperties::class.java
+                val feishuMsgProperties = Binder.get(environment).bind(
+                    "summer.logging.feishu", FeishuMsgProperties::class.java
                 ).get()
                 try {
-                    feishuProperties.logsPath = logsPath
-                    feishuProperties.actuatorAddress = actuatorAddress
-                    feishuProperties.managementHostName = address.first
-                    feishuProperties.managementPort = address.second
-                    feishuProperties.apiAddress = apiAddress.first
-                    feishuProperties.managementLogPath = managementLogPath
-                    feishuProperties.logPattern = fileLogPattern
-                    feishuProperties.warnTitle = warnTitle
+                    feishuMsgProperties.logsPath = logsPath
+                    feishuMsgProperties.actuatorAddress = actuatorAddress
+                    feishuMsgProperties.managementHostName = address.first
+                    feishuMsgProperties.managementPort = address.second
+                    feishuMsgProperties.apiAddress = apiAddress.first
+                    feishuMsgProperties.managementLogPath = managementLogPath
+                    feishuMsgProperties.logPattern = fileLogPattern
+                    feishuMsgProperties.warnTitle = warnTitle
 
                     val feishuAppender = FeishuHookAppender(
-                        properties = feishuProperties
+                        properties = feishuMsgProperties
                     )
                     feishuAppender.context = context
                     feishuAppender.start()
-                    feishuProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
+                    feishuMsgProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
                             it.addAppender(asyncAppender(context, "feishu", feishuAppender))
                         }

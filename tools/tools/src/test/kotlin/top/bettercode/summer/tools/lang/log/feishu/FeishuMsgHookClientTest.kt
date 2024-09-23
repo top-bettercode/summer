@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.lang.log.feishu
 import ch.qos.logback.classic.Level
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.template
+import top.bettercode.summer.tools.lang.log.feishu.FeishuMsgClient.Companion.template
 import top.bettercode.summer.tools.lang.util.StringUtil
 
 /**
@@ -11,8 +11,8 @@ import top.bettercode.summer.tools.lang.util.StringUtil
  * @author Peter Wu
  */
 @Disabled
-class FeishuHookClientTest {
-    val client = FeishuHookClient(
+class FeishuMsgHookClientTest {
+    val client = FeishuMsgHookClient(
         "",
         ""
     )

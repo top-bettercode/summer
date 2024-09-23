@@ -4,17 +4,17 @@ import ch.qos.logback.classic.Level
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.lang.log.AlarmAppender
-import top.bettercode.summer.tools.lang.log.feishu.FeishuClient.Companion.template
+import top.bettercode.summer.tools.lang.log.feishu.FeishuMsgClient.Companion.template
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 open class FeishuAppender @JvmOverloads constructor(
-    properties: FeishuProperties = FeishuProperties(),
-) : AlarmAppender<FeishuProperties>(properties) {
+    properties: FeishuMsgProperties = FeishuMsgProperties(),
+) : AlarmAppender<FeishuMsgProperties>(properties) {
 
     private val log: Logger = LoggerFactory.getLogger(FeishuAppender::class.java)
-    private val client: FeishuClient by lazy {
-        FeishuClient(
+    private val client: FeishuMsgClient by lazy {
+        FeishuMsgClient(
             this.properties.appId,
             this.properties.appSecret
         )
