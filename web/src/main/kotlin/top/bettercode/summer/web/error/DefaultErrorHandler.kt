@@ -159,6 +159,9 @@ class DefaultErrorHandler(
             respEntity.message = "upload.fail"
         } else if (error is InvalidPropertyException) {
             respEntity.message = "paramMismatch"
+        } else if (error is IllegalStateException) {
+            if (error.message?.startsWith("Duplicate key") == true)
+                respEntity.message = "data.not.unique.result"
         } else if (error is SystemException) {
             respEntity.httpStatusCode = error.httpStatusCode
             respEntity.status = error.code
