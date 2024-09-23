@@ -14,7 +14,7 @@ class HikvisionConfiguration {
 
 
     @Bean
-    fun jpushClient(hikvisionProperties: HikvisionProperties): HikvisionClient {
+    fun hikvisionClient(hikvisionProperties: HikvisionProperties): HikvisionClient {
         return HikvisionClient(hikvisionProperties)
     }
 

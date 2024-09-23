@@ -5,7 +5,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.client.SimpleClientHttpRequestFactory
-import org.springframework.stereotype.Component
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.hikvision.SignUtil.sign
 import top.bettercode.summer.tools.hikvision.entity.EventData
@@ -24,7 +23,6 @@ import javax.net.ssl.*
  *
  * @author Peter Wu
  */
-@Component
 @LogMarker(HikvisionClient.MARKER)
 class HikvisionClient(properties: HikvisionProperties) :
     ApiTemplate<HikvisionProperties>(MARKER, properties) {
