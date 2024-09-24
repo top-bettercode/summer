@@ -22,14 +22,14 @@ class FeishuClientTest : BaseTest() {
     @Test
     fun queryUserFlows() {
         feishuClient.queryUserFlows(
-            employeeType = "employee_id",
+//            employeeType = "employee_id",
             userFlowRequest = UserFlowRequest(
-                userIds = arrayOf("fe75c4b6"),
+                userIds = arrayOf("116325"),
                 checkTimeFrom = "${
                     LocalDateTime.of(2024, 9, 21, 0, 0).toEpochSecond(ZoneOffset.ofHours(8))
                 }",
                 checkTimeTo = "${
-                    LocalDateTime.of(2024, 9, 21, 0, 1).toEpochSecond(ZoneOffset.ofHours(8))
+                    LocalDateTime.of(2024, 9, 28, 23, 0).toEpochSecond(ZoneOffset.ofHours(8))
                 }"
             )
         )?.forEach {
@@ -40,18 +40,17 @@ class FeishuClientTest : BaseTest() {
     @Test
     fun createUserFlows() {
         feishuClient.createUserFlows(
-            employeeType = "employee_id",
+//            employeeType = "employee_id",
             flowRecords = listOf(
                 UserFlow(
-                    userId = "fe75c4b6",
-                    creatorId = "fe75c4b6",
+                    userId = "116325",
+                    creatorId = "116325",
                     locationName = "测试",
                     checkTime = "${
-                        LocalDateTime.of(2024, 9, 21, 0, 0).toEpochSecond(ZoneOffset.ofHours(8))
+                        LocalDateTime.of(2024, 9, 24, 8, 1).toEpochSecond(ZoneOffset.ofHours(8))
                     }",
                     comment = "测试",
-                    externalId = "123",
-                    idempotentId = "external_id",
+                    externalId = "1237",
                 )
             )
         )?.forEach {

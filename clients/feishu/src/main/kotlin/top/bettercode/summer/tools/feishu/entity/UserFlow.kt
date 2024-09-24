@@ -100,5 +100,5 @@ data class UserFlow(
      * 唯一幂等键，不传的话无法实现幂等处理 。示例值："*_"
      */
     @JsonProperty("idempotent_id")
-    var idempotentId: String? = null
+    var idempotentId: String? = externalId
 )
