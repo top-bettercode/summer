@@ -6,9 +6,11 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
+import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.feishu.entity.UserFlow
@@ -16,8 +18,8 @@ import top.bettercode.summer.tools.feishu.entity.UserFlowRequest
 import top.bettercode.summer.tools.feishu.entity.UserFlowResults
 import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.client.ApiTemplate
-import top.bettercode.summer.tools.lang.log.AlarmAppender
 import top.bettercode.summer.tools.lang.log.feishu.FeishuDataResult
+import top.bettercode.summer.tools.lang.log.feishu.FeishuError
 import top.bettercode.summer.tools.lang.log.feishu.FeishuResult
 import top.bettercode.summer.tools.lang.log.feishu.FeishuTokenResult
 import java.time.Duration
@@ -48,6 +50,17 @@ open class FeishuClient(
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
         this.messageConverters = messageConverters
+
+        this.errorHandler = object : DefaultResponseErrorHandler() {
+            override fun handleError(response: ClientHttpResponse) {
+                val body = getResponseBody(response)
+                val error = messageConverter.objectMapper.readValue(
+                    body,
+                    FeishuError::class.java
+                )
+                throw clientSysException(error.message, error)
+            }
+        }
     }
 
 
@@ -68,14 +81,10 @@ open class FeishuClient(
                 requestEntity,
                 FeishuTokenResult::class
             )
-        return if (authToken.isOk()) {
-            ExpiringValue(
-                authToken.tenantAccessToken!!,
-                Duration.ofSeconds(authToken.expire!!.toLong())
-            )
-        } else {
-            throw RuntimeException("获取飞书token失败:${authToken.msg}")
-        }
+        return ExpiringValue(
+            authToken.tenantAccessToken ?: throw clientException("获取飞书token失败"),
+            Duration.ofSeconds(authToken.expire!!.toLong())
+        )
     }
 
     private fun getToken(requestToken: Boolean): String {
@@ -157,7 +166,7 @@ open class FeishuClient(
         userFlowRequest: UserFlowRequest,
         employeeType: String = "employee_no",
         includeTerminatedUser: Boolean = false
-    ): List<UserFlow>? {
+    ): List<UserFlow> {
         val result: FeishuDataResult<UserFlowResults>? =
             request(
                 url = "/attendance/v1/user_flows/query?employee_type={0}&include_terminated_user={1}",
@@ -167,10 +176,7 @@ open class FeishuClient(
                 uriVariables = arrayOf(employeeType, includeTerminatedUser),
             )
 
-        if (result?.isOk() != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
-        }
-        return result?.data?.userFlowResults
+        return result?.data?.userFlowResults ?: throw clientException("批量查询打卡流水失败")
     }
 
     /**
@@ -184,7 +190,7 @@ open class FeishuClient(
     fun createUserFlows(
         flowRecords: List<UserFlow>,
         employeeType: String = "employee_no",
-    ): List<UserFlow>? {
+    ): List<UserFlow> {
         val result: FeishuDataResult<UserFlowResults>? =
             request(
                 url = "/attendance/v1/user_flows/batch_create?employee_type={0}",
@@ -193,11 +199,7 @@ open class FeishuClient(
                 method = HttpMethod.POST,
                 uriVariables = arrayOf(employeeType),
             )
-
-        if (result?.isOk() != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
-        }
-        return result?.data?.userFlowResults
+        return result?.data?.userFlowResults ?: throw clientException("导入打卡流水失败")
     }
 
 }

@@ -26,15 +26,13 @@ class FeishuClientTest : BaseTest() {
             userFlowRequest = UserFlowRequest(
                 userIds = arrayOf("116325"),
                 checkTimeFrom = "${
-                    LocalDateTime.of(2024, 9, 21, 0, 0).toEpochSecond(ZoneOffset.ofHours(8))
+                    LocalDateTime.of(2024, 9, 25, 0, 0).toEpochSecond(ZoneOffset.ofHours(8))
                 }",
                 checkTimeTo = "${
-                    LocalDateTime.of(2024, 9, 28, 23, 0).toEpochSecond(ZoneOffset.ofHours(8))
+                    LocalDateTime.of(2024, 9, 30, 23, 59).toEpochSecond(ZoneOffset.ofHours(8))
                 }"
             )
-        )?.forEach {
-            println(it)
-        }
+        )
     }
 
     @Test
@@ -43,19 +41,17 @@ class FeishuClientTest : BaseTest() {
 //            employeeType = "employee_id",
             flowRecords = listOf(
                 UserFlow(
-                    userId = "116325",
-                    creatorId = "116325",
+                    userId = "1163256",
+                    creatorId = "1163256",
                     locationName = "测试",
                     checkTime = "${
-                        LocalDateTime.of(2024, 9, 24, 8, 1).toEpochSecond(ZoneOffset.ofHours(8))
+                        LocalDateTime.of(2024, 9, 25, 8, 1).toEpochSecond(ZoneOffset.ofHours(8))
                     }",
                     comment = "测试",
                     externalId = "1237",
                 )
             )
-        )?.forEach {
-            println(it)
-        }
+        )
     }
 
 }

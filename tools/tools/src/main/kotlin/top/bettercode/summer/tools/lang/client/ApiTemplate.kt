@@ -71,14 +71,12 @@ open class ApiTemplate<P : ClientProperties> @JvmOverloads constructor(
         try {
             return super.doExecute(url, method, requestCallback, responseExtractor)
         } catch (e: Exception) {
-            if (e is ClientException || e is RestClientResponseException)
+            if (e is ClientException)
                 throw e
-            else {
-                if (e.cause is SocketTimeoutException || e.cause is ConnectException || e.cause is UnknownHostException) {
-                    throw clientException(message = "连接超时", cause = e, isTimeout = true)
-                } else
-                    throw clientException(e)
-            }
+            else if (e.cause is SocketTimeoutException || e.cause is ConnectException || e.cause is UnknownHostException) {
+                throw clientException(message = "连接超时", cause = e, isTimeout = true)
+            } else
+                throw clientException(e)
         }
     }
 

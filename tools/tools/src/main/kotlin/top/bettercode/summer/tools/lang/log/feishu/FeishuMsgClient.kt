@@ -70,7 +70,7 @@ class FeishuMsgClient(
             requestEntity,
             FeishuTokenResult::class
         )
-        return if (authToken.isOk()) {
+        return if (authToken.isOk) {
             ExpiringValue(
                 authToken.tenantAccessToken!!,
                 Duration.ofSeconds(authToken.expire!!.toLong())
@@ -154,7 +154,7 @@ class FeishuMsgClient(
                 method = HttpMethod.GET
             )
 
-        if (result?.isOk() != true) {
+        if (result?.isOk != true) {
             log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
         val chats = result?.data?.items
@@ -218,10 +218,10 @@ class FeishuMsgClient(
         if (log.isTraceEnabled) {
             log.trace("feishu result:{}", result)
         }
-        if (result?.isOk() != true) {
+        if (result?.isOk != true) {
             log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
-        return result?.isOk() == true
+        return result?.isOk == true
     }
 
     private val feishuFileType =
@@ -252,7 +252,7 @@ class FeishuMsgClient(
         if (log.isTraceEnabled) {
             log.trace("feishu result:{}", fileResult)
         }
-        if (fileResult?.isOk() != true) {
+        if (fileResult?.isOk != true) {
             log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", fileResult?.msg)
             return false
         }
@@ -275,10 +275,10 @@ class FeishuMsgClient(
         if (log.isTraceEnabled) {
             log.trace("feishu result:{}", result)
         }
-        if (result?.isOk() != true) {
+        if (result?.isOk != true) {
             log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
-        return result?.isOk() == true
+        return result?.isOk == true
     }
 
     companion object {

@@ -3,9 +3,10 @@ package top.bettercode.summer.tools.jpush
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.*
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.web.client.RestClientResponseException
+import org.springframework.web.client.DefaultResponseErrorHandler
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.jpush.entity.JpushRequest
 import top.bettercode.summer.tools.jpush.entity.Options
@@ -49,6 +50,17 @@ open class JpushClient(
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
         this.messageConverters = messageConverters
+
+        this.errorHandler = object : DefaultResponseErrorHandler() {
+            override fun handleError(response: ClientHttpResponse) {
+                val body = getResponseBody(response)
+                val error = messageConverter.objectMapper.readValue(
+                    body,
+                    JpushErrorResponse::class.java
+                )
+                throw clientSysException(error.error?.message, error)
+            }
+        }
     }
 
 
@@ -64,25 +76,11 @@ open class JpushClient(
             }
         }
         request.options = Options(properties.timeToLive, properties.apnsProduction)
-        val entity: ResponseEntity<JpushResponse> = try {
-            exchange(
-                properties.url + "/push", HttpMethod.POST,
-                HttpEntity(request, headers),
-                JpushResponse::class.java
-            )
-        } catch (e: Exception) {
-            if (e is RestClientResponseException) {
-                val errorResponse = objectMapper.readValue(
-                    e.responseBodyAsByteArray,
-                    JpushErrorResponse::class.java
-                )
-                val error = errorResponse.error
-                if (error != null) {
-                    throw clientSysException(error.message, error)
-                }
-            }
-            throw clientException(e)
-        } ?: throw clientException()
+        val entity: ResponseEntity<JpushResponse> = exchange(
+            properties.url + "/push", HttpMethod.POST,
+            HttpEntity(request, headers),
+            JpushResponse::class.java
+        ) ?: throw clientException()
 
         return entity.body ?: throw clientException()
     }
@@ -93,29 +91,15 @@ open class JpushClient(
     open fun cid(count: Int): JpushCidResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val entity: ResponseEntity<JpushCidResponse> = try {
+        val entity: ResponseEntity<JpushCidResponse> =
             exchange(
                 properties.url + "/push/cid?count={0}", HttpMethod.GET,
                 HttpEntity(null, headers),
                 JpushCidResponse::class.java,
                 count
-            )
-        } catch (e: Exception) {
-            if (e is RestClientResponseException) {
-                val errorResponse = objectMapper.readValue(
-                    e.responseBodyAsByteArray,
-                    JpushErrorResponse::class.java
-                )
-                val error = errorResponse.error
-                if (error != null) {
-                    throw clientSysException(error.message, error)
-                }
-            }
-            throw clientException(e)
-        } ?: throw clientException()
+            ) ?: throw clientException()
 
         return entity.body ?: throw clientException()
     }
-
 
 }

@@ -99,10 +99,10 @@ class FeishuMsgHookClient(
         if (log.isTraceEnabled) {
             log.trace("feishu result:{}", result)
         }
-        if (result?.isOk() != true) {
+        if (result?.isOk != true) {
             log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
         }
-        return result?.isOk() == true
+        return result?.isOk == true
     }
 
 
