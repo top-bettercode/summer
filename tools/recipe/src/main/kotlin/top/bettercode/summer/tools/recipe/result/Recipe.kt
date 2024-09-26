@@ -698,10 +698,10 @@ data class Recipe(
                     if (relationIds == null) {//当无其他消耗m原料时，取本身用量
                         m.weight
                     } else {//当有其他消耗m原料时，如：氯化钾反应所需硫酸量耗液氨,取关联原料消耗汇总
-                        Assert.isTrue(
-                            calIds.contains(m.id),
-                            "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
-                        )
+                        if (errors != null && !calIds.contains(m.id))
+                            errors.add(
+                                "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
+                            )
                         m.normalWeight(relationIds)
                     }
                 //过量消耗原料用量变量
@@ -709,10 +709,10 @@ data class Recipe(
                     if (relationIds == null) {//当无其他消耗m原料时，不存在过量消耗
                         0.0
                     } else {//当有其他消耗m原料时，如：氯化钾反应需过量硫酸耗液氨,取关联原料消耗汇总
-                        Assert.isTrue(
-                            calIds.contains(m.id),
-                            "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
-                        )
+                        if (errors != null && !calIds.contains(m.id))
+                            errors.add(
+                                "有其他关联原料消耗此原料时，先计算每个关联原料消耗的此原料"
+                            )
                         m.overdoseWeight(relationIds)
                     }
                 if (normal != null) {
@@ -786,9 +786,11 @@ data class Recipe(
                 usedMaxOverdoseWeight += mMaxOverdoseWeight
             }
         }
-        calIds.addAll(ids.ids)
-        ids.replaceIds?.let {
-            calIds.addAll(it)
+        if (errors != null) {
+            calIds.addAll(ids.ids)
+            ids.replaceIds?.let {
+                calIds.addAll(it)
+            }
         }
         return DoubleRange(usedMinNormalWeight, usedMaxNormalWeight) to DoubleRange(
             usedMinOverdoseWeight,
