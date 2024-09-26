@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.hikvision.entity
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.ISO8601
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 /**
  * 门禁点事件请求参数
@@ -36,26 +36,26 @@ class EventRequest {
     /**
      * 开始时间（事件开始时间，采用ISO8601时间格式，与endTime配对使用，不能单独使用，时间范围最大不能超过3个月，与receiveStartTime和receiveEndTime两者二选一为必填），参考附录ISO8601时间格式说明
      */
-    @JsonFormat(pattern = ISO8601)
-    var startTime: ZonedDateTime? = null
+    @JsonFormat(pattern = ISO8601, timezone = "+08:00")
+    var startTime: OffsetDateTime? = null
 
     /**
      * 结束时间（事件结束时间，采用ISO8601时间格式，最大长度32个字符，与startTime配对使用，不能单独使用，时间范围最大不能超过3个月），参考附录ISO8601时间格式说明
      */
-    @JsonFormat(pattern = ISO8601)
-    var endTime: ZonedDateTime? = null
+    @JsonFormat(pattern = ISO8601, timezone = "+08:00")
+    var endTime: OffsetDateTime? = null
 
     /**
      * 入库开始时间，采用ISO8601时间格式，与receiveEndTime配对使用，不能单独使用，时间范围最大不能超过3个月，与startTime和endTime两者二选一为必填，参考附录ISO8601时间格式说明
      */
-    @JsonFormat(pattern = ISO8601)
-    var receiveStartTime: ZonedDateTime? = null
+    @JsonFormat(pattern = ISO8601, timezone = "+08:00")
+    var receiveStartTime: OffsetDateTime? = null
 
     /**
      * 入库结束时间，采用ISO8601时间格式，最大长度32个字符，与receiveStartTime配对使用，不能单独使用，时间范围最大不能超过3个月，参考附录ISO8601时间格式说明
      */
-    @JsonFormat(pattern = ISO8601)
-    var receiveEndTime: ZonedDateTime? = null
+    @JsonFormat(pattern = ISO8601, timezone = "+08:00")
+    var receiveEndTime: OffsetDateTime? = null
 
     /**
      * 门禁点所在区域集合，查询区域列表v2接口获取返回参数indexCode，最大支持500个区域

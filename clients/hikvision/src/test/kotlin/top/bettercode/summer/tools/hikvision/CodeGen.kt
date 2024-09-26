@@ -8,17 +8,12 @@ import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import top.bettercode.summer.tools.lang.util.StringUtil.toUnderscore
-import java.time.format.DateTimeFormatter
 
 /**
  *
  * @author Peter Wu
  */
 class CodeGen {
-    @Test
-    fun name() {
-        System.err.println(DateTimeFormatter.ISO_OFFSET_DATE_TIME.toFormat().toString())
-    }
 
     @Disabled
     @Test

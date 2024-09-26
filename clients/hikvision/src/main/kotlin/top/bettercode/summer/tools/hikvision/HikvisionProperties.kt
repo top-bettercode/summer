@@ -39,6 +39,6 @@ open class HikvisionProperties : ClientProperties("海康门禁") {
      * 196893:人脸认证通过
      * 196887:指纹+密码认证通过
      */
-    var eventTypes = arrayOf(197127, 196893, 196887)
+    var eventTypes = arrayOf(197127, 196893)
 
 }

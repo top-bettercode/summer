@@ -7,7 +7,7 @@ import top.bettercode.summer.test.BaseTest
 import top.bettercode.summer.tools.hikvision.entity.EventRequest
 import top.bettercode.summer.tools.lang.property.PropertiesSource
 import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 /**
@@ -79,8 +79,8 @@ internal class HikvisionClientTest : BaseTest() {
             request.pageNo = 1
             request.pageSize = 10
             request.eventTypes = arrayOf(type.toInt())
-            request.startTime = LocalDateTime.of(2019, 9, 20, 0, 0).atZone(ZoneId.systemDefault())
-            request.endTime = LocalDateTime.of(2024, 9, 30, 18, 0).atZone(ZoneId.systemDefault())
+            request.startTime = LocalDateTime.of(2019, 9, 20, 0, 0).atOffset(ZoneOffset.ofHours(8))
+            request.endTime = LocalDateTime.of(2024, 9, 30, 18, 0).atOffset(ZoneOffset.ofHours(8))
             val events = hikvisionClient!!.getEvents(request)
             if (events.list?.isNotEmpty() == true && events.list?.all { it.jobNo != null } == true) {
                 hasData.add("$type:$msg")
@@ -95,9 +95,14 @@ internal class HikvisionClientTest : BaseTest() {
         request.pageNo = 1
         request.pageSize = 10
         request.eventTypes = arrayOf(197127)
-        request.startTime = LocalDateTime.of(2023, 9, 1, 0, 0).atZone(ZoneId.systemDefault())
-        request.endTime = LocalDateTime.of(2024, 9, 30, 23, 59).atZone(ZoneId.systemDefault())
-        hikvisionClient!!.getEvents(request)
+        request.startTime = LocalDateTime.of(2023, 9, 1, 0, 0).atOffset(ZoneOffset.ofHours(8))
+        request.endTime = LocalDateTime.of(2024, 9, 30, 23, 59).atOffset(ZoneOffset.ofHours(8))
+        val events = hikvisionClient!!.getEvents(request)
+        events.list?.forEach {
+            println(it.eventTime)
+            println(it.eventTime?.toLocalDateTime())
+            println(it.eventTime?.withOffsetSameInstant(ZoneOffset.ofHours(8))?.toLocalDateTime())
+        }
     }
 
     @Test

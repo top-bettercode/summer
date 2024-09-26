@@ -15,6 +15,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.feishu.entity.UserFlow
+import top.bettercode.summer.tools.feishu.entity.UserFlowCreateResults
 import top.bettercode.summer.tools.feishu.entity.UserFlowRequest
 import top.bettercode.summer.tools.feishu.entity.UserFlowResults
 import top.bettercode.summer.tools.lang.ExpiringValue
@@ -154,8 +155,8 @@ open class FeishuClient(
         return body
     }
 
-    private val userFlowResultsType = object :
-        ParameterizedTypeReference<FeishuDataResult<UserFlowResults>>() {}
+    private val createFlowResultsType = object :
+        ParameterizedTypeReference<FeishuDataResult<UserFlowCreateResults>>() {}
 
     /**
      * 批量查询打卡流水
@@ -184,6 +185,9 @@ open class FeishuClient(
         return result?.data?.userFlowResults ?: throw clientException("批量查询打卡流水失败")
     }
 
+    private val userFlowResultsType = object :
+        ParameterizedTypeReference<FeishuDataResult<UserFlowResults>>() {}
+
     /**
      * 导入打卡流水
      *
@@ -199,17 +203,23 @@ open class FeishuClient(
     ): List<UserFlow> {
         Assert.notEmpty(flowRecords, "打卡流水不能为空")
         Assert.isTrue(flowRecords.size <= MAX_PAGE_SIZE, "打卡流水不能超过${MAX_PAGE_SIZE}条")
-        val result: FeishuDataResult<UserFlowResults>? =
+        val result: FeishuDataResult<UserFlowCreateResults>? =
             request(
                 url = "/attendance/v1/user_flows/batch_create?employee_type={0}",
                 request = mapOf("flow_records" to flowRecords),
-                responseType = userFlowResultsType,
+                responseType = createFlowResultsType,
                 method = HttpMethod.POST,
                 uriVariables = arrayOf(employeeType),
             )
-        return result?.data?.userFlowResults ?: throw clientException(
-            result?.message ?: "导入打卡流水失败", result
-        )
+        if (result?.msg.isNullOrBlank()) {
+            return result?.data?.flow_records ?: throw clientException(
+                result?.msg ?: "导入打卡流水失败", result
+            )
+        } else {
+            throw clientException(
+                result?.msg ?: "导入打卡流水失败", result
+            )
+        }
     }
 
 }
