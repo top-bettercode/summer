@@ -27,4 +27,18 @@ open class HikvisionProperties : ClientProperties("海康门禁") {
      * OpenAPI接口的上下文
      */
     var artemisPath: String = "/artemis"
+
+    /**
+     * 海康vision 门禁事件每页数据
+     */
+    var pageSize = 1000
+
+    /**
+     * 海康vision 门禁事件类型
+     * 197127:指纹比对通过
+     * 196893:人脸认证通过
+     * 196887:指纹+密码认证通过
+     */
+    var eventTypes = arrayOf(197127, 196893, 196887)
+
 }

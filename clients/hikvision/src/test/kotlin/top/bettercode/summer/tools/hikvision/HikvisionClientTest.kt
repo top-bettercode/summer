@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
 import top.bettercode.summer.tools.hikvision.entity.EventRequest
+import top.bettercode.summer.tools.lang.property.PropertiesSource
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -13,7 +14,9 @@ import java.time.format.DateTimeFormatter
  *
  * @author Peter Wu
  */
+@Disabled
 internal class HikvisionClientTest : BaseTest() {
+
     @Autowired
     var hikvisionClient: HikvisionClient? = null
 
@@ -46,45 +49,59 @@ internal class HikvisionClientTest : BaseTest() {
      *         "temp": null
      *       }
      *
-     *  门禁点事件查询:
-     * 	刷卡+指纹认证通过 	196885
-     * 	指纹+密码认证通过 	196887
-//     * 	合法卡比对通过 	198914
-//     * 	刷卡+密码认证通过 	198915
-//     * 	刷卡+指纹+密码通过 	196886
-     * 	工号+密码认证通过 	196897
-     * 	指纹比对通过 	197127
-     * 	人脸+指纹认证通过 	196888
-     * 	人脸+密码认证通过 	196889
-     * 	人脸+刷卡认证通过 	196890
-     * 	人脸+密码+指纹认证通过 	196891
-     * 	人脸+刷卡+指纹认证通过 	196892
-     * 	人脸认证通过 	196893
-     * 	人证比对通过 	197162
-     * 	首卡比对通过 	196874
-     * 	行动不便人士卡比对通过 	196875
-     * 	巡查卡比对通过 	198918
-     * 	超级卡比对通过 	198921
-     * 	胁迫卡比对通过 	199425
+     * 门禁点事件查询:
+     * 刷卡+指纹认证通过 196885
+     * 指纹+密码认证通过 196887
+     * 合法卡比对通过 198914
+     * 刷卡+密码认证通过 198915
+     * 刷卡+指纹+密码通过 196886
+     * 工号+密码认证通过 196897
+     * 指纹比对通过 197127
+     * 人脸+指纹认证通过 196888
+     * 人脸+密码认证通过 196889
+     * 人脸+刷卡认证通过 196890
+     * 人脸+密码+指纹认证通过 196891
+     * 人脸+刷卡+指纹认证通过 196892
+     * 人脸认证通过 196893
+     * 人证比对通过 197162
+     * 首卡比对通过 196874
+     * 行动不便人士卡比对通过 196875
+     * 巡查卡比对通过 198918
+     * 超级卡比对通过 198921
+     * 胁迫卡比对通过 199425
      */
-    @Disabled
     @Test
-    fun request() {
+    fun events() {
+        val hasData = mutableListOf<String>()
+        val eventTypes = PropertiesSource.of("events")
+        eventTypes.source.forEach { (msg, type) ->
+            val request = EventRequest()
+            request.pageNo = 1
+            request.pageSize = 10
+            request.eventTypes = arrayOf(type.toInt())
+            request.startTime = LocalDateTime.of(2019, 9, 20, 0, 0).atZone(ZoneId.systemDefault())
+            request.endTime = LocalDateTime.of(2024, 9, 30, 18, 0).atZone(ZoneId.systemDefault())
+            val events = hikvisionClient!!.getEvents(request)
+            if (events.list?.isNotEmpty() == true && events.list?.all { it.jobNo != null } == true) {
+                hasData.add("$type:$msg")
+            }
+        }
+        System.err.println(hasData.joinToString("\n"))
+    }
+
+    @Test
+    fun event() {
         val request = EventRequest()
         request.pageNo = 1
         request.pageSize = 10
-//        196893
-        request.eventTypes = arrayOf(
-            196885,
-            196887,
-            196897,
-            )
-        request.eventTypes = arrayOf(199425)
-        request.startTime = LocalDateTime.of(2023, 9, 20, 0, 0).atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-        request.endTime = LocalDateTime.of(2024, 9, 20, 18, 0).atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-
+        request.eventTypes = arrayOf(197127)
+        request.startTime = LocalDateTime.of(2023, 9, 1, 0, 0).atZone(ZoneId.systemDefault())
+        request.endTime = LocalDateTime.of(2024, 9, 30, 23, 59).atZone(ZoneId.systemDefault())
         hikvisionClient!!.getEvents(request)
+    }
+
+    @Test
+    fun format() {
+        System.err.println(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     }
 }

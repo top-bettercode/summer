@@ -1,10 +1,15 @@
 package top.bettercode.summer.tools.hikvision
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.hikvision.SignUtil.sign
 import top.bettercode.summer.tools.hikvision.entity.EventData
@@ -18,6 +23,7 @@ import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
+import kotlin.math.min
 
 /**
  *
@@ -26,12 +32,22 @@ import javax.net.ssl.*
 @LogMarker(HikvisionClient.MARKER)
 class HikvisionClient(properties: HikvisionProperties) :
     ApiTemplate<HikvisionProperties>(MARKER, properties) {
+
     private val eventResponseType =
         object : ParameterizedTypeReference<HikvisionResponse<PageData<EventData>>>() {
         }
 
 
     init {
+        val messageConverter = MappingJackson2HttpMessageConverter()
+        messageConverter.objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+        messageConverter.objectMapper.registerModule(JavaTimeModule())
+        val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
+        messageConverters.add(AllEncompassingFormHttpMessageConverter())
+        messageConverters.add(messageConverter)
+        this.messageConverters = messageConverters
+
+
         this.requestFactory = object : SimpleClientHttpRequestFactory() {
             @Throws(IOException::class)
             override fun prepareConnection(connection: HttpURLConnection, httpMethod: String) {
@@ -72,6 +88,9 @@ class HikvisionClient(properties: HikvisionProperties) :
 
     fun getEvents(request: EventRequest): PageData<EventData> {
         val properties = properties
+
+        request.pageSize = min(request.pageSize ?: properties.pageSize, maxPageSize)
+
         val method = HttpMethod.POST
         val path = properties.artemisPath + "/api/acs/v2/door/events"
         val headers = HttpHeaders()
@@ -89,5 +108,6 @@ class HikvisionClient(properties: HikvisionProperties) :
 
     companion object {
         const val MARKER: String = "hikvision"
+        private const val maxPageSize = 1000
     }
 }

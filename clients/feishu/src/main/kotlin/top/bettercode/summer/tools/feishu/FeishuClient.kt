@@ -10,6 +10,7 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
+import org.springframework.util.Assert
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
@@ -39,6 +40,9 @@ open class FeishuClient(
 
     companion object {
         const val MARKER = "feishu"
+
+        @JvmField
+        val MAX_PAGE_SIZE = 50
     }
 
     private var token: ExpiringValue<String>? = null
@@ -162,6 +166,7 @@ open class FeishuClient(
      * @param includeTerminatedUser 是否包含已离职员工,由于新入职用户可以复用已离职用户的employee_no/employee_id。如果true，返回employee_no/employee_id对应的所有在职+离职用户数据；如果false，只返回employee_no/employee_id对应的在职或最近一个离职用户数据
      *
      */
+    @JvmOverloads
     fun queryUserFlows(
         userFlowRequest: UserFlowRequest,
         employeeType: String = "employee_no",
@@ -187,10 +192,13 @@ open class FeishuClient(
      * @param employeeType 请求体中的 user_ids 和响应体中的 user_id 的员工ID类型。,employee_no:员工工号，employee_id:员工ID
      *
      */
+    @JvmOverloads
     fun createUserFlows(
         flowRecords: List<UserFlow>,
         employeeType: String = "employee_no",
     ): List<UserFlow> {
+        Assert.notEmpty(flowRecords, "打卡流水不能为空")
+        Assert.isTrue(flowRecords.size <= MAX_PAGE_SIZE, "打卡流水不能超过${MAX_PAGE_SIZE}条")
         val result: FeishuDataResult<UserFlowResults>? =
             request(
                 url = "/attendance/v1/user_flows/batch_create?employee_type={0}",
@@ -199,7 +207,9 @@ open class FeishuClient(
                 method = HttpMethod.POST,
                 uriVariables = arrayOf(employeeType),
             )
-        return result?.data?.userFlowResults ?: throw clientException("导入打卡流水失败")
+        return result?.data?.userFlowResults ?: throw clientException(
+            result?.message ?: "导入打卡流水失败", result
+        )
     }
 
 }

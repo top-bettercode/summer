@@ -152,6 +152,8 @@ open class TimeUtil(
         val DEFAULT_ZONE_ID: ZoneId = ZoneId.systemDefault()
         const val DEFAULT_DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss"
         const val DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS"
+        const val ISO8601 = "yyyy-MM-dd'T'HH:mm:ssXXX"
+        const val ISO8601_SSS = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
         val DEFAULT_DATE_TIME_FORMATTER: DateTimeFormatter =
             DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT_PATTERN)
         val DEFAULT_DATE_TIME_SSS_FORMATTER: DateTimeFormatter =

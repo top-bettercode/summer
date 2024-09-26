@@ -1,5 +1,10 @@
 package top.bettercode.summer.tools.hikvision.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.ISO8601
+import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.ISO8601_SSS
+import java.time.ZonedDateTime
+
 /**
  * 门禁点事件返回参数
  */
@@ -17,7 +22,8 @@ class EventData {
     /**
      * 事件产生时间，参考附录ISO8601时间格式说明
      */
-    var eventTime: String? = null
+    @JsonFormat(pattern = ISO8601)
+    var eventTime: ZonedDateTime? = null
 
     /**
      * 卡号
@@ -107,7 +113,8 @@ class EventData {
     /**
      * 事件入库时间，参考附录ISO8601时间格式说明
      */
-    var receiveTime: String? = null
+    @JsonFormat(pattern = ISO8601_SSS)
+    var receiveTime: ZonedDateTime? = null
 
     /**
      * 工号

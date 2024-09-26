@@ -41,11 +41,31 @@ class FeishuClientTest : BaseTest() {
 //            employeeType = "employee_id",
             flowRecords = listOf(
                 UserFlow(
-                    userId = "1163256",
-                    creatorId = "1163256",
+                    userId = "116325",
+                    creatorId = "116325",
                     locationName = "测试",
                     checkTime = "${
-                        LocalDateTime.of(2024, 9, 25, 8, 1).toEpochSecond(ZoneOffset.ofHours(8))
+                        LocalDateTime.of(2024, 9, 25, 8, 2).toEpochSecond(ZoneOffset.ofHours(8))
+                    }",
+                    comment = "测试",
+                    externalId = "1237",
+                ),
+                UserFlow(
+                    userId = "1163256",
+                    creatorId = "116325",
+                    locationName = "测试",
+                    checkTime = "${
+                        LocalDateTime.of(2024, 9, 25, 8, 3).toEpochSecond(ZoneOffset.ofHours(8))
+                    }",
+                    comment = "测试",
+                    externalId = "1237",
+                ),
+                UserFlow(
+                    userId = "1163257",
+                    creatorId = "116325",
+                    locationName = "测试",
+                    checkTime = "${
+                        LocalDateTime.of(2024, 9, 25, 8, 3).toEpochSecond(ZoneOffset.ofHours(8))
                     }",
                     comment = "测试",
                     externalId = "1237",
