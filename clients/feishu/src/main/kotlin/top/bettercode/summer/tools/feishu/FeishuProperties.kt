@@ -17,4 +17,8 @@ open class FeishuProperties : ClientProperties("飞书平台") {
 
     var appSecret: String = ""
 
+    /**
+     * 默认不在飞书的工号
+     */
+    var defaultNotInJobNo: Array<String> = arrayOf()
 }
