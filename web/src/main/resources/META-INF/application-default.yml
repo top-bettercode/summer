@@ -138,11 +138,4 @@ logging:
     javax.xml: warn
     javax.activation: warn
     javax.management: warn
-    top.bettercode.summer.config.ManagementLoginPageGeneratingFilter: info
-    top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter: info
-    top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver: info
-    top.bettercode.summer.web.filter: info
-    top.bettercode.summer.config.NavFilter: info
-    top.bettercode.summer.logging.RequestLoggingFilter: info
-    top.bettercode.summer.logging.RequestContentReadFilter: info
-    top.bettercode.summer.web.support.client.ApiTemplate: info
+    top.bettercode.summer: info
