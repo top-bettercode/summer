@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
-import top.bettercode.summer.tools.lang.log.AlarmAppender
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.loggerContext
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
@@ -398,7 +398,7 @@ class LogsEndpoint(
                 )
                 writer.appendLine(prettyMessageHTMLLayout.fileFooter)
             } catch (e: SocketTimeoutException) {
-                log.error(AlarmAppender.NO_ALARM_MARKER, "Error while writing response", e)
+                log.error(AlarmMarker.noAlarmMarker, "Error while writing response", e)
             }
         }
     }
@@ -477,7 +477,7 @@ class LogsEndpoint(
                     }
                     writer.println("</pre><hr></body>\n</html>")
                 } catch (e: SocketTimeoutException) {
-                    log.error(AlarmAppender.NO_ALARM_MARKER, "Error while writing response", e)
+                    log.error(AlarmMarker.noAlarmMarker, "Error while writing response", e)
                 }
             }
         } else {

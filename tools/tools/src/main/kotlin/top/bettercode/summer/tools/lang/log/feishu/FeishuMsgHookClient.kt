@@ -13,7 +13,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
-import top.bettercode.summer.tools.lang.log.AlarmAppender
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.log.feishu.FeishuMsgClient.Companion.params
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -100,7 +100,7 @@ class FeishuMsgHookClient(
             log.trace("feishu result:{}", result)
         }
         if (result?.isOk != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
+            log.error(AlarmMarker.noAlarmMarker, "feishu api request fail:{}", result?.msg)
         }
         return result?.isOk == true
     }

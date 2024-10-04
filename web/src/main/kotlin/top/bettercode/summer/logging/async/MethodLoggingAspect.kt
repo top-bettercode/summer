@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Aspect
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import top.bettercode.summer.tools.lang.log.AlarmAppender
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 
 @Aspect
@@ -36,7 +36,7 @@ class MethodLoggingAspect {
             }
             return result
         } catch (e: Throwable) {
-            logger.error(AlarmAppender.NO_ALARM_MARKER, "===$methodName error===", e)
+            logger.error(AlarmMarker.noAlarmMarker, "===$methodName error===", e)
             throw e
         } finally {
             MDC.remove(HttpOperation.MDC_TRACEID)

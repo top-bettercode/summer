@@ -19,7 +19,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.tools.lang.ExpiringValue
-import top.bettercode.summer.tools.lang.log.AlarmAppender
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
@@ -155,7 +155,7 @@ class FeishuMsgClient(
             )
 
         if (result?.isOk != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
+            log.error(AlarmMarker.noAlarmMarker, "feishu api request fail:{}", result?.msg)
         }
         val chats = result?.data?.items
         if (log.isDebugEnabled) {
@@ -219,7 +219,7 @@ class FeishuMsgClient(
             log.trace("feishu result:{}", result)
         }
         if (result?.isOk != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
+            log.error(AlarmMarker.noAlarmMarker, "feishu api request fail:{}", result?.msg)
         }
         return result?.isOk == true
     }
@@ -253,12 +253,12 @@ class FeishuMsgClient(
             log.trace("feishu result:{}", fileResult)
         }
         if (fileResult?.isOk != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", fileResult?.msg)
+            log.error(AlarmMarker.noAlarmMarker, "feishu api request fail:{}", fileResult?.msg)
             return false
         }
         val fileKey = fileResult.data?.fileKey
         if (fileKey == null) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", fileResult.msg)
+            log.error(AlarmMarker.noAlarmMarker, "feishu api request fail:{}", fileResult.msg)
             return false
         }
         val params = mapOf(
@@ -276,7 +276,7 @@ class FeishuMsgClient(
             log.trace("feishu result:{}", result)
         }
         if (result?.isOk != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "feishu api request fail:{}", result?.msg)
+            log.error(AlarmMarker.noAlarmMarker, "feishu api request fail:{}", result?.msg)
         }
         return result?.isOk == true
     }

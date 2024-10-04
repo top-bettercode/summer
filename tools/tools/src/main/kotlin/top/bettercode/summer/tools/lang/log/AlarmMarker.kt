@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.lang.log
 
 import ch.qos.logback.classic.Level
 import org.slf4j.Marker
+import org.slf4j.MarkerFactory
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -15,7 +16,7 @@ class AlarmMarker(
 ) : Marker {
     private val referenceList: MutableList<Marker> = CopyOnWriteArrayList()
     override fun getName(): String {
-        return AlarmAppender.ALARM_LOG_MARKER
+        return ALARM_LOG_MARKER
     }
 
     override fun add(reference: Marker) {
@@ -120,5 +121,14 @@ class AlarmMarker(
         private const val OPEN = "[ "
         private const val CLOSE = " ]"
         private const val SEP = ", "
+
+        const val ALARM_LOG_MARKER = "alarm"
+        const val NO_ALARM_LOG_MARKER = "no_alarm"
+
+        @JvmStatic
+        val alarmMarker: Marker get() = MarkerFactory.getMarker(ALARM_LOG_MARKER)
+        @JvmStatic
+        val noAlarmMarker: Marker get() = MarkerFactory.getMarker(NO_ALARM_LOG_MARKER)
+
     }
 }

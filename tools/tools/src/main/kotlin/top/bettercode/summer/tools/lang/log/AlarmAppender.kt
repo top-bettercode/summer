@@ -17,7 +17,6 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.slf4j.LoggerFactory
 import org.slf4j.Marker
-import org.slf4j.MarkerFactory
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.IPAddressUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
@@ -34,9 +33,6 @@ abstract class AlarmAppender<T : AlarmProperties>(
 
     companion object {
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
-        const val ALARM_LOG_MARKER = "alarm"
-        const val NO_ALARM_LOG_MARKER = "no_alarm"
-        val NO_ALARM_MARKER: Marker get() = MarkerFactory.getMarker(NO_ALARM_LOG_MARKER)
 
         fun getServerAddress(): String {
             val host = IPAddressUtil.inet4Address
@@ -91,9 +87,9 @@ abstract class AlarmAppender<T : AlarmProperties>(
                     }
                 }
                 return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
-                    ALARM_LOG_MARKER
+                    AlarmMarker.ALARM_LOG_MARKER
                 ) == true || event.formattedMessage.matches(Regex(properties.startedMsg))) && (event.marker == null || !event.marker.contains(
-                    NO_ALARM_LOG_MARKER
+                    AlarmMarker.NO_ALARM_LOG_MARKER
                 ))
             }
         }
@@ -122,7 +118,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
         val cb = cbTracker!!.getOrCreate(key, now)
         event.callerData
         event.prepareForDeferredProcessing()
-        if (event.marker?.contains(ALARM_LOG_MARKER) == true)
+        if (event.marker?.contains(AlarmMarker.ALARM_LOG_MARKER) == true)
             cb.clear()
         cb.add(event)
 
@@ -239,7 +235,7 @@ abstract class AlarmAppender<T : AlarmProperties>(
             }
         } catch (e: Exception) {
             log.error(
-                NO_ALARM_MARKER,
+                AlarmMarker.noAlarmMarker,
                 "发送信息失败",
                 e
             )

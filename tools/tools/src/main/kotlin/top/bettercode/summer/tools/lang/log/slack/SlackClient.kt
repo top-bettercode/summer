@@ -12,7 +12,7 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.web.client.RestTemplate
-import top.bettercode.summer.tools.lang.log.AlarmAppender
+import top.bettercode.summer.tools.lang.log.AlarmMarker
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_SSS_FORMAT_PATTERN
 import java.net.HttpURLConnection
@@ -136,7 +136,7 @@ class SlackClient(
             method = HttpMethod.GET
         )
         if (result?.ok != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "slack api request fail:{}", result?.error)
+            log.error(AlarmMarker.noAlarmMarker, "slack api request fail:{}", result?.error)
         }
         val channels = result?.channels
         if (log.isDebugEnabled) {
@@ -195,7 +195,7 @@ class SlackClient(
             log.trace("slack result:{}", result)
         }
         if (result?.ok != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "slack api request fail:{}", result?.error)
+            log.error(AlarmMarker.noAlarmMarker, "slack api request fail:{}", result?.error)
         }
         return result?.ok == true
     }
@@ -232,7 +232,7 @@ class SlackClient(
             log.trace("slack result:{}", result)
         }
         if (result?.ok != true) {
-            log.error(AlarmAppender.NO_ALARM_MARKER, "slack api request fail:{}", result?.error)
+            log.error(AlarmMarker.noAlarmMarker, "slack api request fail:{}", result?.error)
         }
         return result?.ok == true
     }
