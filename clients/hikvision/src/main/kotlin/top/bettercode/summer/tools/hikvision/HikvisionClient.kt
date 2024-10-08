@@ -6,6 +6,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -39,7 +40,15 @@ class HikvisionClient(properties: HikvisionProperties) :
 
 
     init {
-        val messageConverter = MappingJackson2HttpMessageConverter()
+        val messageConverter = object : MappingJackson2HttpMessageConverter() {
+            override fun canRead(mediaType: MediaType?): Boolean {
+                return true
+            }
+
+            override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
+                return true
+            }
+        }
         messageConverter.objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         messageConverter.objectMapper.registerModule(JavaTimeModule())
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
