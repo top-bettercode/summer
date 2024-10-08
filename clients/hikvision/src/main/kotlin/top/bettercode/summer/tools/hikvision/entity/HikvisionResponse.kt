@@ -14,7 +14,7 @@ class HikvisionResponse<T> : ClientResponse {
     /**
      * 返回描述
      */
-    override var message: String? = null
+    var msg: String? = null
 
     /**
      * 返回数据
@@ -23,4 +23,7 @@ class HikvisionResponse<T> : ClientResponse {
 
     override val isOk: Boolean
         get() = "0" == code
+
+    override val message: String
+        get() = msg ?: ""
 }
