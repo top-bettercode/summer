@@ -33,6 +33,21 @@ object HttpOperation {
         return MDC.get(MDC_TRACEID) ?: Integer.toHexString(Random.nextInt())
     }
 
+    @JvmStatic
+    fun appendTraceid(): String {
+        val traceId = MDC.get(MDC_TRACEID)
+        return if (traceId == null) {
+            Integer.toHexString(Random.nextInt())
+        } else if (traceId.contains("-")) {
+            val traceIdArray = traceId.split("-")
+            val mainId = traceIdArray[0]
+            val subId = traceIdArray[1].toInt()
+            "$mainId-${subId + 1}"
+        } else {
+            "$traceId-1"
+        }
+    }
+
     fun toString(
         output: Operation,
         format: Boolean,

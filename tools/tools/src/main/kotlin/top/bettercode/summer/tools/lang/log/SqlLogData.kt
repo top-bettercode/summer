@@ -38,30 +38,53 @@ class SqlLogData(val id: String? = null) {
     }
 
     fun toSql(timeoutAlarmMS: Long): String {
-        var sql = sql?.trim()
-        if (!sql.isNullOrBlank()) {
+        var part = 0
+        var originSql = sql?.trim()
+        val sqlParams = mutableListOf<String>()
+        if (originSql != null && paramCount > 0) {
             if (params.isNotEmpty()) {
                 val params = params.sortedBy { it.index }
                 for (i in params.indices) {
-                    sql = sql!!.replaceFirst("?", params[i].toString())
+                    if (part < paramCount) {
+                        sqlParams.add(params[i].toString())
+                        part++
+                    }
                 }
             }
 
             //limit ? offset ?
-            val qsql = sql!!.lowercase().replace("\\s+".toRegex(), " ")
+            val qsql = originSql.lowercase().replace("\\s+".toRegex(), " ")
                 .replace(Regex("\\u001B\\[[;\\d]*m"), "")
             if (qsql.contains("limit ? offset ?") && limit != null && offset != null) {
-                sql = sql.replaceFirst("?", "#$limit")
-                sql = sql.replaceFirst("?", "#$offset")
+                if (part < paramCount) {
+                    sqlParams.add("#$limit")
+                    part++
+                }
+                if (part < paramCount) {
+                    sqlParams.add("#$offset")
+                    part++
+                }
             } else if (qsql.contains("limit ?, ?") && limit != null && offset != null) {
-                sql = sql.replaceFirst("?", "#$offset")
-                sql = sql.replaceFirst("?", "#$limit")
+                if (part < paramCount) {
+                    sqlParams.add("#$offset")
+                    part++
+                }
+                if (part < paramCount) {
+                    sqlParams.add("#$limit")
+                    part++
+                }
             }
             if (qsql.contains("limit ?") && limit != null) {
-                sql = sql.replaceFirst("?", "#$limit")
+                if (part < paramCount) {
+                    sqlParams.add("#$limit")
+                    part++
+                }
             }
             if (qsql.contains("offset ?") && offset != null) {
-                sql = sql.replaceFirst("?", "#$offset")
+                if (part < paramCount) {
+                    sqlParams.add("#$offset")
+                    part++
+                }
             }
             //where
             //            rownum <= ?
@@ -69,18 +92,32 @@ class SqlLogData(val id: String? = null) {
             //    where
             //        rownum_ > ?
             if (qsql.contains("rownum <= ?") && offset != null && limit != null) {
-                sql = sql.replaceFirst("?", "#${offset!! + limit!!}")
+                if (part < paramCount) {
+                    sqlParams.add("#${offset!! + limit!!}")
+                    part++
+                }
             }
             if (qsql.contains("rownum_ > ?") && offset != null) {
-                sql = sql.replaceFirst("?", "#${offset}")
+                if (part < paramCount) {
+                    sqlParams.add("#$offset")
+                    part++
+                }
             }
             //fetch next ? rows only;
             if (qsql.contains("fetch next ?") && limit != null) {
-                sql = sql.replaceFirst("?", "#${limit}")
+                if (part < paramCount) {
+                    sqlParams.add("#$limit")
+                    part++
+                }
             }
             //fetch first ? rows only
             if (qsql.contains("fetch first ?") && limit != null) {
-                sql = sql.replaceFirst("?", "#${limit}")
+                if (part < paramCount) {
+                    sqlParams.add("#$limit")
+                }
+            }
+            for (param in sqlParams) {
+                originSql = originSql!!.replaceFirst("?", param)
             }
         }
 
@@ -95,6 +132,6 @@ class SqlLogData(val id: String? = null) {
         }${
             if (cost != null && (slowSql.isEmpty() || cost!! > timeoutAlarmMS)) "cost:${cost} ms;" else ""
         }"
-        return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (sql.isNullOrBlank()) "" else "\n$sql"} ${if (error.isNullOrBlank()) "" else "\nERROR:$error"}"
+        return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (originSql.isNullOrBlank()) "" else "\n$originSql"} ${if (error.isNullOrBlank()) "" else "\nERROR:$error"}"
     }
 }

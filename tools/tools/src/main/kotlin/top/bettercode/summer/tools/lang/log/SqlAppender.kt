@@ -219,18 +219,17 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
             val isEnd = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
             val key = "${traceid ?: event.threadName}:$id"
-            var logData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
+            val logData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
             val msg = event.formattedMessage
             when (loggerName) {
                 "org.hibernate.SQL" -> {
                     if (!logData.sql.isNullOrBlank()) {
-                        sqlCache.remove(key)
-                        val current = System.currentTimeMillis()
                         if (logData.end == null) {
-                            logData.end = current
+                            logData.end = System.currentTimeMillis()
                         }
                         log(logData)
-                        logData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
+                        logData.params =
+                            logData.params.subList(logData.paramCount, logData.params.size)
                     }
                     logData.sql = msg
                 }

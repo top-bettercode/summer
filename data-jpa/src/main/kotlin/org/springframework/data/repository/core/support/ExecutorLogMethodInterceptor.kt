@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.query.JpaExtQueryMethod
 import org.springframework.data.repository.query.RepositoryQuery
+import org.springframework.transaction.support.TransactionSynchronization
+import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.data.jpa.support.LoggerInfo
 import top.bettercode.summer.data.jpa.support.PageInfo
@@ -27,6 +29,8 @@ import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.start
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.total
+import top.bettercode.summer.tools.lang.operation.HttpOperation
+import top.bettercode.summer.tools.lang.operation.HttpOperation.MDC_TRACEID
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import javax.persistence.EntityManager
@@ -138,7 +142,9 @@ class ExecutorLogMethodInterceptor(
             if (logAdice == null) {
                 return invocation.proceed()
             } else {
+                val traceId = MDC.get(MDC_TRACEID)
                 try {
+                    MDC.put(MDC_TRACEID, HttpOperation.appendTraceid())
                     MDC.put(SqlAppender.MDC_SQL_ID, logAdice.sqlId)
                     sqlLog.start()
                     val modify = logAdice.isModify
@@ -194,6 +200,16 @@ class ExecutorLogMethodInterceptor(
                     MDC.remove(MDC_SQL_OFFSET)
                     MDC.remove(MDC_SQL_LIMIT)
                     MDC.remove(SqlAppender.MDC_SQL_ERROR)
+
+                    if (TransactionSynchronizationManager.isActualTransactionActive()) {
+                        TransactionSynchronizationManager.registerSynchronization(object :
+                            TransactionSynchronization {
+                            override fun afterCommit() {
+                                MDC.put(MDC_TRACEID, traceId)
+                            }
+                        }
+                        )
+                    }
                 }
             }
         } else {
