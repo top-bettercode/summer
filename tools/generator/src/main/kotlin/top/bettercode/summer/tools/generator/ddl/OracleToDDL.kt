@@ -63,7 +63,6 @@ object OracleToDDL : ToDDL() {
                         val oldColumns = oldTable.columns
                         val columns = table.columns
                         val oldPrimaryKeys = oldTable.primaryKeys.toMutableSet()
-                        val primaryKeys = table.primaryKeys.toSet()
 
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
