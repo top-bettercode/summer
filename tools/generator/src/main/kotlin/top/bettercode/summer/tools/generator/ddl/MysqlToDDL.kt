@@ -8,7 +8,12 @@ object MysqlToDDL : ToDDL() {
     override val quoteMark: String = "`"
     override val commentPrefix: String = "#"
 
-    override fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, database: DatabaseConfiguration) {
+    override fun toDDLUpdate(
+        oldTables: List<Table>,
+        tables: List<Table>,
+        out: Writer,
+        database: DatabaseConfiguration
+    ) {
         out.appendLine("$commentPrefix ${database.url.substringBefore("?")}")
         out.appendLine("$commentPrefix use ${database.schema};")
         out.appendLine()
@@ -21,7 +26,13 @@ object MysqlToDDL : ToDDL() {
                 if (database.collate != null && getSchemaDefaultCollate() != database.collate) {
                     out.appendLine("$commentPrefix schema default collate change")
                     //alter database testffjp character set utf8mb4 collate utf8mb4_unicode_ci;
-                    out.appendLine("ALTER DATABASE ${database.schema} CHARACTER SET ${database.collate!!.substringBefore("_")} COLLATE ${database.collate};")
+                    out.appendLine(
+                        "ALTER DATABASE ${database.schema} CHARACTER SET ${
+                            database.collate!!.substringBefore(
+                                "_"
+                            )
+                        } COLLATE ${database.collate};"
+                    )
                     out.appendLine()
                 }
             }
@@ -34,11 +45,12 @@ object MysqlToDDL : ToDDL() {
             }
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
-            if (notOnlyCollate && notOnlyComment && database.dropTablesWhenUpdate) (oldTableNames - tableNames.toSet()).filter { "api_token" != it }.forEach {
-                out.appendLine("$commentPrefix DROP $it")
-                out.appendLine("DROP TABLE IF EXISTS $schema$quote$it$quote;")
-                out.appendLine()
-            }
+            if (notOnlyCollate && notOnlyComment && database.dropTablesWhenUpdate) (oldTableNames - tableNames.toSet()).filter { "api_token" != it }
+                .forEach {
+                    out.appendLine("$commentPrefix DROP $it")
+                    out.appendLine("DROP TABLE IF EXISTS $schema$quote$it$quote;")
+                    out.appendLine()
+                }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
                 val tableName = table.tableName
@@ -50,9 +62,11 @@ object MysqlToDDL : ToDDL() {
                     if (oldTable != table) {
                         val lines = mutableListOf<String>()
                         if (notOnlyCollate) {
-                            if (oldTable.remarks != table.remarks) lines.add("ALTER TABLE $schema$quote$tableName$quote COMMENT '${
-                                table.remarks.replace("\\", "\\\\")
-                            }';")
+                            if (oldTable.remarks != table.remarks) lines.add(
+                                "ALTER TABLE $schema$quote$tableName$quote COMMENT '${
+                                    table.remarks.replace("\\", "\\\\")
+                                }';"
+                            )
 
                             val oldColumns = oldTable.columns
                             val columns = table.columns
@@ -75,33 +89,57 @@ object MysqlToDDL : ToDDL() {
                                 val columnName = column.columnName
                                 if (newColumnNames.contains(columnName)) {
                                     if (notOnlyComment) {
-                                        lines.add("ALTER TABLE $schema$quote$tableName$quote ADD COLUMN ${
-                                            columnDef(column, quote)
-                                        } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
+                                        lines.add(
+                                            "ALTER TABLE $schema$quote$tableName$quote ADD COLUMN ${
+                                                columnDef(column, quote)
+                                            } COMMENT '${column.remarks.replace("\\", "\\\\")}';"
+                                        )
                                         addFk(schema, column, lines, tableName, columnName)
                                     }
                                 } else {
-                                    val oldColumn = oldColumns.find { it.columnName == columnName }!!
+                                    val oldColumn =
+                                        oldColumns.find { it.columnName == columnName }!!
                                     if (column != oldColumn) {
                                         if (notOnlyComment) {
                                             if (noComment) {
                                                 val columnDef = columnDef(column, quote)
                                                 val oldColumnDef = columnDef(oldColumn, quote)
                                                 if (columnDef != oldColumnDef) {
-                                                    lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
-                                                        columnDef(column, quote)
-                                                    } COMMENT '${oldColumn.remarks.replace("\\", "\\\\")}';")
+                                                    lines.add(
+                                                        "ALTER TABLE $schema$quote$tableName$quote MODIFY ${
+                                                            columnDef(column, quote)
+                                                        } COMMENT '${
+                                                            oldColumn.remarks.replace(
+                                                                "\\",
+                                                                "\\\\"
+                                                            )
+                                                        }';"
+                                                    )
                                                 }
                                             } else {
-                                                lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
-                                                    columnDef(column, quote)
-                                                } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
+                                                lines.add(
+                                                    "ALTER TABLE $schema$quote$tableName$quote MODIFY ${
+                                                        columnDef(column, quote)
+                                                    } COMMENT '${
+                                                        column.remarks.replace(
+                                                            "\\",
+                                                            "\\\\"
+                                                        )
+                                                    }';"
+                                                )
                                             }
                                             updateFk(schema, column, oldColumn, lines, tableName)
                                         } else if (oldColumn.remarks != column.remarks) {
-                                            lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
-                                                columnDef(oldColumn, quote)
-                                            } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
+                                            lines.add(
+                                                "ALTER TABLE $schema$quote$tableName$quote MODIFY ${
+                                                    columnDef(oldColumn, quote)
+                                                } COMMENT '${
+                                                    column.remarks.replace(
+                                                        "\\",
+                                                        "\\\\"
+                                                    )
+                                                }';"
+                                            )
                                         }
                                     }
                                 }
@@ -112,22 +150,45 @@ object MysqlToDDL : ToDDL() {
                                     val oldPrimaryKey = oldPrimaryKeys.first()
                                     val primaryKey = primaryKeys.first()
                                     if (oldPrimaryKey != primaryKey) {
-                                        lines.add("ALTER TABLE $schema$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
-                                            columnDef(primaryKey, quote)
-                                        } COMMENT '${primaryKey.remarks.replace("\\", "\\\\")}';")
+                                        lines.add(
+                                            "ALTER TABLE $schema$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
+                                                columnDef(primaryKey, quote)
+                                            } COMMENT '${
+                                                primaryKey.remarks.replace(
+                                                    "\\",
+                                                    "\\\\"
+                                                )
+                                            }';"
+                                        )
                                     }
-                                } else if (oldPrimaryKeys != primaryKeys) {
+                                } else if (oldTable.primaryKeyNames.toSet() != table.primaryKeyNames.toSet()) {
                                     if (oldPrimaryKeys.isNotEmpty())
                                         lines.add("ALTER TABLE $schema$quote$tableName$quote DROP PRIMARY KEY;")
                                     if (table.primaryKeyNames.isNotEmpty()) {
-                                        lines.add("ALTER TABLE $schema$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
+                                        lines.add(
+                                            "ALTER TABLE $schema$quote$tableName$quote ADD PRIMARY KEY(${
+                                                table.primaryKeyNames.joinToString(
+                                                    ","
+                                                ) { "$quote$it$quote" }
+                                            });"
+                                        )
                                     }
                                 }
 
-                                if (database.queryIndex) updateIndexes(schema, oldTable, table, lines, dropColumnNames)
+                                if (database.queryIndex) updateIndexes(
+                                    schema,
+                                    oldTable,
+                                    table,
+                                    lines,
+                                    dropColumnNames
+                                )
 
                                 //engine change
-                                if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $schema$quote$tableName$quote ENGINE ${table.engine};")
+                                if (!oldTable.engine.equals(
+                                        table.engine,
+                                        true
+                                    )
+                                ) lines.add("ALTER TABLE $schema$quote$tableName$quote ENGINE ${table.engine};")
                             }
                         }
                         if (notOnlyComment) {
@@ -150,11 +211,20 @@ object MysqlToDDL : ToDDL() {
         }
     }
 
-    override fun dropFkStatement(prefixTableName: String, tableName: String, columnName: String): String = "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${
+    override fun dropFkStatement(
+        prefixTableName: String,
+        tableName: String,
+        columnName: String
+    ): String = "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${
         foreignKeyName(tableName, columnName)
     };"
 
-    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, database: DatabaseConfiguration) {
+    override fun appendTable(
+        prefixTableName: String,
+        table: Table,
+        pw: Writer,
+        database: DatabaseConfiguration
+    ) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
         if (database.dropTablesWhenUpdate) pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
@@ -162,17 +232,21 @@ object MysqlToDDL : ToDDL() {
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.appendLine("  ${
-                columnDef(column, quote)
-            } COMMENT '${
-                column.remarks.replace("\\", "\\\\")
-            }'${if (index < lastIndex || hasPrimary) "," else ""}")
+            pw.appendLine(
+                "  ${
+                    columnDef(column, quote)
+                } COMMENT '${
+                    column.remarks.replace("\\", "\\\\")
+                }'${if (index < lastIndex || hasPrimary) "," else ""}"
+            )
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendLine(")${if (table.collate.isNullOrBlank()) "" else " DEFAULT CHARSET = ${table.charset} COLLATE ${table.collate}"}${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
-            table.remarks.replace("\\", "\\\\")
-        }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine}" else ""};")
+        pw.appendLine(
+            ")${if (table.collate.isNullOrBlank()) "" else " DEFAULT CHARSET = ${table.charset} COLLATE ${table.collate}"}${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
+                table.remarks.replace("\\", "\\\\")
+            }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine}" else ""};"
+        )
 
         appendIndexes(prefixTableName, table, pw, quote)
 
