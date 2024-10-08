@@ -82,6 +82,12 @@ class SimpleJpaExtRepository<T : Any, ID : Any>(
     }
 
     //--------------------------------------------
+    @Transactional
+    override fun <S : T> persist(entity: S): S {
+        extJpaSupport.logicalDeletedAttribute?.setFalseIf(entity)
+        entityManager.persist(entity)
+        return entity
+    }
 
     @Transactional
     override fun <S : T> save(entity: S): S {

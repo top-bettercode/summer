@@ -31,6 +31,8 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, JpaSpecificationExecut
         entityManager.clear()
     }
 
+    fun <S : T> persist(entity: S): S
+
     fun updateLowLevel(spec: UpdateSpecification<T>): Long
 
     fun updatePhysical(spec: UpdateSpecification<T>): Long
