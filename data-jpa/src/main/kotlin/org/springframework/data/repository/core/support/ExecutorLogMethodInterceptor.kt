@@ -120,6 +120,7 @@ class ExecutorLogMethodInterceptor(
                 isModify = methodName.startsWith("save")
                         || methodName.startsWith("update")
                         || methodName.startsWith("delete")
+                        || methodName.startsWith("persist")
             }
             LoggerInfo(
                 sqlId = sqlId,
