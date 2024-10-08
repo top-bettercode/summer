@@ -66,6 +66,12 @@ class SimpleJpaExtRepositoryTest {
     }
 
     @Test
+    fun persist() {
+        val dave1 = User("Dave", "Matthews")
+        repository.persist(dave1)
+    }
+
+    @Test
     fun findByFirstName() {
         var users = repository
             .findByFirstName(
