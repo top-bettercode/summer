@@ -20,6 +20,7 @@ import top.bettercode.summer.tools.feishu.entity.UserFlowRequest
 import top.bettercode.summer.tools.feishu.entity.UserFlowResults
 import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.client.ApiTemplate
+import top.bettercode.summer.tools.lang.client.ClientSysException
 import top.bettercode.summer.tools.lang.log.feishu.FeishuDataResult
 import top.bettercode.summer.tools.lang.log.feishu.FeishuError
 import top.bettercode.summer.tools.lang.log.feishu.FeishuResult
@@ -122,21 +123,39 @@ open class FeishuClient(
             headers.contentType = contentType
         }
 
-        val response = if (responseType != null)
-            exchange(
-                properties.api + url,
-                method,
-                HttpEntity(request, headers),
-                responseType, *uriVariables
-            ) else
-            exchange(
-                properties.api + url,
-                method,
-                HttpEntity(request, headers),
-                responseClass
-                    ?: throw RuntimeException("responseClass or responseType must be not null"),
-                *uriVariables
-            )
+        val response = try {
+            if (responseType != null)
+                exchange(
+                    properties.api + url,
+                    method,
+                    HttpEntity(request, headers),
+                    responseType, *uriVariables
+                ) else
+                exchange(
+                    properties.api + url,
+                    method,
+                    HttpEntity(request, headers),
+                    responseClass
+                        ?: throw RuntimeException("responseClass or responseType must be not null"),
+                    *uriVariables
+                )
+        } catch (e: ClientSysException) {
+            val response: FeishuError? = e.response as FeishuError?
+            if (response != null && response.isInvalidAccessToken()) {
+                return request(
+                    url = url,
+                    request = request,
+                    method = method,
+                    contentType = contentType,
+                    requestToken = true,
+                    responseType = responseType,
+                    responseClass = responseClass,
+                    uriVariables = uriVariables
+                )
+            } else {
+                throw e
+            }
+        }
         val body = response.body
         if (body != null) {
             if (body.isInvalidAccessToken()) {
