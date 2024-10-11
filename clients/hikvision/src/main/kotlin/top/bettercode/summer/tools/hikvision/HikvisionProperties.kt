@@ -8,6 +8,17 @@ import top.bettercode.summer.tools.lang.client.ClientProperties
  */
 @ConfigurationProperties(prefix = "summer.hikvision")
 open class HikvisionProperties : ClientProperties("海康门禁") {
+
+    /**
+     * ID
+     */
+    var id: String = ""
+
+    /**
+     * 名称
+     */
+    var name: String = ""
+
     /**
      * 平台的地址
      */
