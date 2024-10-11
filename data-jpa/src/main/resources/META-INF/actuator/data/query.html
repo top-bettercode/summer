@@ -183,8 +183,7 @@
             let rowHtml = '<tr>';
             rowHtml += '<td>' + (((page < 1 ? 1 : page) - 1) * size + index + 1) + '</td>'
             headers.forEach(function (header) {
-              rowHtml += '<td class="toggle-text" onclick="this.classList.toggle(\'expanded\');">'
-                  + row[header] + '</td>';
+              rowHtml += '<td class="toggle-text" onclick="this.classList.toggle(\'expanded\');">' + row[header] + '</td>';
             });
             rowHtml += '</tr>';
             resultBody.append(rowHtml);

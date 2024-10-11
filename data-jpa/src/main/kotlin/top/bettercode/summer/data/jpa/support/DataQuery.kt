@@ -1,5 +1,10 @@
 package top.bettercode.summer.data.jpa.support
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.transaction.PlatformTransactionManager
@@ -17,6 +22,7 @@ import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.start
 import top.bettercode.summer.web.support.ApplicationContextHolder
+import java.text.SimpleDateFormat
 import javax.persistence.EntityManager
 import javax.persistence.Tuple
 
@@ -30,6 +36,20 @@ class DataQuery(
 ) {
     private val sqlLog = LoggerFactory.getLogger("top.bettercode.summer.SQL")
     private val defaultDS = "primary"
+    private val objectMapper: ObjectMapper
+        get() {
+            val objectMapper = ObjectMapper()
+            objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            objectMapper.setDateFormat(SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
+
+            val serializationConfig = objectMapper.serializationConfig
+            val config = serializationConfig.with(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            objectMapper.setConfig(config)
+            return objectMapper
+        }
 
     @JvmOverloads
     fun query(
@@ -65,7 +85,8 @@ class DataQuery(
             sqlLog.retrieved(resultSize)
             val duration = System.currentTimeMillis() - start
 
-            return mapOf("size" to resultSize, "duration" to duration, "content" to result)
+            val map = mapOf("size" to resultSize, "duration" to duration, "content" to result)
+            return objectMapper.writeValueAsBytes(map)
         } catch (e: Exception) {
             MDC.put(SqlAppender.MDC_SQL_ERROR, e.stackTraceToString())
             return mapOf("error" to e.message)
