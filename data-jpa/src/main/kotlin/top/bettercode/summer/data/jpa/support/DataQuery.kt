@@ -2,9 +2,8 @@ package top.bettercode.summer.data.jpa.support
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.module.SimpleModule
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.transaction.PlatformTransactionManager
@@ -22,6 +21,7 @@ import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.result
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.retrieved
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.start
 import top.bettercode.summer.web.support.ApplicationContextHolder
+import java.sql.Date
 import java.text.SimpleDateFormat
 import javax.persistence.EntityManager
 import javax.persistence.Tuple
@@ -42,7 +42,19 @@ class DataQuery(
             objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            objectMapper.setDateFormat(SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            objectMapper.setDateFormat(dateFormat)
+
+
+            // 创建模块并注册自定义序列化器
+            val module = SimpleModule()
+            module.addSerializer(Date::class.java, object : JsonSerializer<Date>() {
+                override fun serialize(p0: Date, p1: JsonGenerator, p2: SerializerProvider?) {
+                    p1.writeString(dateFormat.format(p0))
+                }
+            })
+            // 将模块注册到 ObjectMapper
+            objectMapper.registerModule(module)
 
             val serializationConfig = objectMapper.serializationConfig
             val config = serializationConfig.with(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
