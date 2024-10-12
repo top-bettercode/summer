@@ -23,7 +23,6 @@ import java.beans.Introspector
 import java.io.File
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
-import java.util.*
 import javax.persistence.EntityManagerFactory
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -112,7 +111,8 @@ class AutodocAspect(
                                 Field(
                                     name = paramName,
                                     type = parameters[paramName]!!,
-                                    description = paramDescription
+                                    description = paramDescription,
+                                    canCover = false
                                 )
                             )
                         }
@@ -183,7 +183,8 @@ class AutodocAspect(
                             Field(
                                 name = fieldName,
                                 type = variable.typeAsString.substringBefore("<"),
-                                description = comment
+                                description = comment,
+                                canCover = false
                             )
                         )
                     }
@@ -205,7 +206,8 @@ class AutodocAspect(
                                 Field(
                                     name = fieldName,
                                     type = method.typeAsString,
-                                    description = comment
+                                    description = comment,
+                                    canCover = false
                                 )
                             )
                         }

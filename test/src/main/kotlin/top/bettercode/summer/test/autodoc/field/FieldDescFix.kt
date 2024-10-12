@@ -32,7 +32,7 @@ abstract class FieldDescFix {
                 findField = descFields.findExtField(field.name, field.type)
             }
             if (findField != null) {
-                if (field.isBlank()) {
+                if (field.isBlank() || !findField.canCover) {
                     field.canCover = findField.canCover
 
                     if (field.defaultVal.isBlank() && findField.defaultVal.isNotBlank())

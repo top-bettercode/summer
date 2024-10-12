@@ -192,7 +192,7 @@ object Autodoc {
     @JvmStatic
     fun field(name: String, description: String) {
         fields.computeIfAbsent("DEFAULT") { LinkedHashSet() }
-            .add(Field(name = name, description = description))
+            .add(Field(name = name, description = description, canCover = false))
     }
 
     fun reset() {

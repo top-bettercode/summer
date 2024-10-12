@@ -24,6 +24,7 @@ summer:
 logging:
   level:
     root: debug
+    top.bettercode.summer: debug
 
 spring:
   jackson:
