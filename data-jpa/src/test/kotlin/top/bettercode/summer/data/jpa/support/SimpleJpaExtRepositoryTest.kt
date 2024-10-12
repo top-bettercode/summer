@@ -67,7 +67,7 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun persist() {
-        val dave1 = User("Dave", "Matthews")
+        val dave1 = User("Dave", "Matt?hews")
         repository.persist(dave1)
     }
 

@@ -39,8 +39,9 @@ class SqlLogData(val id: String? = null) {
 
     fun toSql(timeoutAlarmMS: Long): String {
         var part = 0
-        var originSql = sql?.trim()
+        val originSql = sql?.trim()
         val sqlParams = mutableListOf<String>()
+        var sql: String?
         if (originSql != null && paramCount > 0) {
             if (params.isNotEmpty()) {
                 val params = params.sortedBy { it.index }
@@ -116,9 +117,17 @@ class SqlLogData(val id: String? = null) {
                     sqlParams.add("#$limit")
                 }
             }
-            for (param in sqlParams) {
-                originSql = originSql!!.replaceFirst("?", param)
+            sql = ""
+            val strings = originSql.split("?")
+            strings.forEachIndexed { index, s ->
+                sql += if (index < sqlParams.size) {
+                    s + sqlParams[index]
+                } else {
+                    s
+                }
             }
+        } else {
+            sql = originSql
         }
 
         val resultInfo = "${
@@ -132,6 +141,6 @@ class SqlLogData(val id: String? = null) {
         }${
             if (cost != null && (slowSql.isEmpty() || cost!! > timeoutAlarmMS)) "cost:${cost} ms;" else ""
         }"
-        return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (originSql.isNullOrBlank()) "" else "\n$originSql"} ${if (error.isNullOrBlank()) "" else "\nERROR:$error"}"
+        return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (sql.isNullOrBlank()) "" else "\n$sql"} ${if (error.isNullOrBlank()) "" else "\nERROR:$error"}"
     }
 }
