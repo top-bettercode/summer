@@ -10,7 +10,7 @@ import java.io.InputStream
  *
  * @author Peter Wu
  */
-class CommoYmlFix() : FieldDescFix() {
+class CommoYmlFix : FieldDescFix() {
 
     private val log = LoggerFactory.getLogger(CommoYmlFix::class.java)
 
@@ -22,12 +22,18 @@ class CommoYmlFix() : FieldDescFix() {
     private val requestParameters: Iterable<Iterable<Field>> by lazy {
         commonFields(DocProperties.REQUEST_PARAMETERS.propertyName)
     }
+    private val responseHeaders: Iterable<Iterable<Field>> by lazy {
+        commonFields(DocProperties.RESPONSE_HEADERS.propertyName)
+    }
     private val responseContent: Iterable<Iterable<Field>> by lazy {
         commonFields(DocProperties.RESPONSE_CONTENT.propertyName)
     }
 
     private fun commonFields(name: String): Iterable<Iterable<Field>> {
-        return setOf(CommoYmlFix::class.java.getResourceAsStream("/field/$name.yml")!!.parseList(Field::class.java))
+        return setOf(
+            CommoYmlFix::class.java.getResourceAsStream("/field/$name.yml")!!
+                .parseList(Field::class.java)
+        )
     }
 
     private fun <T> InputStream.parseList(clazz: Class<T>): LinkedHashSet<T> {
@@ -52,6 +58,10 @@ class CommoYmlFix() : FieldDescFix() {
 
             DocProperties.REQUEST_PARAMETERS -> {
                 requestParameters
+            }
+
+            DocProperties.RESPONSE_HEADERS -> {
+                responseHeaders
             }
 
             DocProperties.RESPONSE_CONTENT -> {

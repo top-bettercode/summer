@@ -159,7 +159,14 @@ abstract class FieldDescFix {
                     }
                 }
             }
-
+            out@ for (fixDocFieldDesc in docFieldDescFixes) {
+                val responseFields = fixDocFieldDesc.descFields(DocProperties.RESPONSE_HEADERS)
+                for (fields in responseFields) {
+                    if (fixDocFieldDesc.fix(fields, response.headersExt)) {
+                        break@out
+                    }
+                }
+            }
             out@ for (fixDocFieldDesc in docFieldDescFixes) {
                 val responseFields = fixDocFieldDesc.descFields(DocProperties.RESPONSE_CONTENT)
                 for (fields in responseFields) {

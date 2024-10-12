@@ -87,7 +87,7 @@ class DocOperation(
             errors.addAll(request.partsExt.checkBlank("request.partsExt"))
             errors.addAll(request.contentExt.checkBlank("request.contentExt"))
 
-            errors.addAll(response.headersExt.checkBlank("response.headersExt"))
+//            errors.addAll(response.headersExt.checkBlank("response.headersExt"))
             errors.addAll(response.contentExt.checkBlank("response.contentExt"))
             if (errors.isNotEmpty()) {
                 log.error(
