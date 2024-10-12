@@ -185,6 +185,7 @@ abstract class FieldDescFix {
                 name.endsWith("Psign") -> name.substringBeforeLast("Psign")
                 name.endsWith("Alurl") -> name.substringBeforeLast("Alurl")
                 name.endsWith("Alurls") -> name.substringBeforeLast("Alurls")
+                name.endsWith("Pinyin") -> name.substringBeforeLast("Pinyin")
 
                 name.startsWith("start") -> name.substringAfter("start").decapitalized()
                 name.endsWith("Start") -> name.substringBeforeLast("Start")

@@ -18,6 +18,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-actuator")
 
     compileOnly("io.swagger:swagger-annotations")
+    compileOnly("com.github.stuxuhai:jpinyin")
 
     compileOnly("io.github.openfeign:feign-core")
     compileOnly("javax.mail:mail")
