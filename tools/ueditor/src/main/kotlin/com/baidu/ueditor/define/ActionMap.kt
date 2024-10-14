@@ -20,19 +20,20 @@ object ActionMap {
 
     init {
         mapping = mapOf(
-                "config" to CONFIG,
-                "uploadimage" to UPLOAD_IMAGE,
-                "uploadscrawl" to UPLOAD_SCRAWL,
-                "uploadvideo" to UPLOAD_VIDEO,
-                "uploadfile" to UPLOAD_FILE,
-                "catchimage" to CATCH_IMAGE,
-                "listfile" to LIST_FILE,
-                "listimage" to LIST_IMAGE
+            "config" to CONFIG,
+            "uploadimage" to UPLOAD_IMAGE,
+            "uploadscrawl" to UPLOAD_SCRAWL,
+            "uploadvideo" to UPLOAD_VIDEO,
+            "uploadfile" to UPLOAD_FILE,
+            "catchimage" to CATCH_IMAGE,
+            "listfile" to LIST_FILE,
+            "listimage" to LIST_IMAGE
         )
     }
 
     @JvmStatic
-    fun getType(key: String): Int? {
-        return mapping[key]
+    fun getType(key: String?): Int {
+        if (key == null) return -1
+        return mapping[key] ?: -1
     }
 }
