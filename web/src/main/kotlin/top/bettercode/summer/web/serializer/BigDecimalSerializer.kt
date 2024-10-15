@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
+import org.slf4j.LoggerFactory
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -20,43 +21,51 @@ class BigDecimalSerializer @JvmOverloads constructor(
     private val toPlainString: Boolean = false,
     private val stripTrailingZeros: Boolean = false,
     private val percent: Boolean = false
-) : StdScalarSerializer<Number>(Number::class.java), ContextualSerializer {
-    override fun serialize(value: Number, gen: JsonGenerator, provider: SerializerProvider?) {
-        var scale = scale
-        var content = when (value) {
-            is BigDecimal -> value
-            else -> BigDecimal(value.toString())
-        }
-        if (divisor != null) {
-            content = content.divide(divisor, roundingMode)
-        }
-        if (scale == -1) {
-            scale = content.scale()
-        } else if (content.scale() != scale) {
-            content = content.setScale(scale, roundingMode)
-        }
-        if (stripTrailingZeros) {
-            content = content.stripTrailingZeros()
-        }
-        if (toPlainString) {
-            gen.writeString(content.toPlainString())
-        } else {
-            gen.writeNumber(content.toPlainString().toBigDecimal())
-        }
-        if (percent) {
-            val outputContext = gen.outputContext
-            val fieldName = outputContext.currentName
-            var percent = content.multiply(BigDecimal(100))
-                .setScale(scale - 2, roundingMode)
-            if (stripTrailingZeros) {
-                percent = percent.stripTrailingZeros()
+) : StdScalarSerializer<Any>(Any::class.java), ContextualSerializer {
+
+    private val log = LoggerFactory.getLogger(BigDecimalSerializer::class.java)
+
+    override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider?) {
+        try {
+            var scale = scale
+            var content = when (value) {
+                is BigDecimal -> value
+                else -> BigDecimal(value.toString())
             }
-            gen.writeStringField(fieldName + "Pct", "${percent.toPlainString()}%")
+            if (divisor != null) {
+                content = content.divide(divisor, roundingMode)
+            }
+            if (scale == -1) {
+                scale = content.scale()
+            } else if (content.scale() != scale) {
+                content = content.setScale(scale, roundingMode)
+            }
+            if (stripTrailingZeros) {
+                content = content.stripTrailingZeros()
+            }
+            if (toPlainString) {
+                gen.writeString(content.toPlainString())
+            } else {
+                gen.writeNumber(content.toPlainString().toBigDecimal())
+            }
+            if (percent) {
+                val outputContext = gen.outputContext
+                val fieldName = outputContext.currentName
+                var percent = content.multiply(BigDecimal(100))
+                    .setScale(scale - 2, roundingMode)
+                if (stripTrailingZeros) {
+                    percent = percent.stripTrailingZeros()
+                }
+                gen.writeStringField(fieldName + "Pct", "${percent.toPlainString()}%")
+            }
+        } catch (e: Exception) {
+            log.error("BigDecimalSerializer error", e)
+            gen.writeObject(value)
         }
     }
 
     override fun serializeWithType(
-        value: Number,
+        value: Any,
         gen: JsonGenerator,
         provider: SerializerProvider,
         typeSer: TypeSerializer
