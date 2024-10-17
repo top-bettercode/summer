@@ -228,11 +228,7 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                             logData.end = System.currentTimeMillis()
                         }
                         log(logData)
-                        if (logData.paramCount < logData.params.size)
-                            logData.params =
-                                logData.params.sortedBy { it.index }
-                                    .subList(logData.paramCount, logData.params.size)
-                                    .toMutableList()
+                        logData.params.removeIf { it.index <= logData.paramCount }
                     }
                     logData.sql = msg
                 }
