@@ -78,7 +78,7 @@ class DataQuery(
             val query = entityManager.createNativeQuery(sql, Tuple::class.java)
             @Suppress("DEPRECATION")
             query.unwrap(org.hibernate.query.Query::class.java)
-                .setResultTransformer(org.hibernate.transform.AliasToEntityMapResultTransformer.INSTANCE)
+                .setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
             if (page > 0) {
                 val offset = (page - 1).times(size)
                 query.firstResult = offset
