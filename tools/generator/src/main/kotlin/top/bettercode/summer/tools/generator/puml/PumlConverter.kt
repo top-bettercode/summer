@@ -49,8 +49,8 @@ object PumlConverter {
                     subModuleName = line.substringAfter("@startuml").trim()
                     isUml = true
                 } else if (line.startsWith("entity ")) {
-                    val fieldDef = line.split(" ")
-                    tableName = fieldDef[1].trim()
+                    val fieldDef = line.split(" ").map { it.trim() }
+                    tableName = fieldDef[1]
                 } else if (tableName.isNotBlank() && !isField) {
                     if ("==" == line)
                         isField = true
@@ -64,7 +64,8 @@ object PumlConverter {
                         indexes.add(
                             Indexed(
                                 unique = uniqueMult,
-                                columnName = columnNames.split(",").toMutableList()
+                                columnName = columnNames.split(",").map { it.trim() }
+                                    .toMutableList()
                             )
                         )
                     } else if (line.startsWith("'ENGINE")) {
@@ -169,7 +170,7 @@ object PumlConverter {
                             val ref = extra.substringAfter(" FK > ").trim()
                                 .substringBefore(" ").trim()
                             extra = extra.replace(" FK > $ref", " ", true)
-                            val refs = ref.split(".")
+                            val refs = ref.split(".").map { it.trim() }
                             fk = true
                             refTable = refs[0]
                             refColumn = refs[1]
@@ -316,7 +317,7 @@ object PumlConverter {
         if (type.contains("(")) {
             val lengthScale = type.substringAfter("(").substringBefore(")")
             if (lengthScale.contains(",")) {
-                val ls = lengthScale.split(",")
+                val ls = lengthScale.split(",").map { it.trim() }
                 columnSize = ls[0].toInt()
                 decimalDigits = ls[1].toInt()
             } else {
