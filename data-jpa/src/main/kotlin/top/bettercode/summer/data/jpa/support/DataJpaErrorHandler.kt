@@ -8,6 +8,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.orm.jpa.JpaSystemException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.AbstractErrorHandler
+import javax.persistence.OptimisticLockException
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -63,7 +64,7 @@ class DataJpaErrorHandler(
         } else if (error is InvalidDataAccessApiUsageException) {
             if (error.message?.contains("detached entity passed to persist") == true) {
                 respEntity.message = "theUpdatedDataDoesNotExistInTheDatabase"
-            }else if(error.message?.contains("The given id must not be null") == true){
+            } else if (error.message?.contains("The given id must not be null") == true) {
                 respEntity.message = "IdCannotBeNull"
             }
         } else if (error is org.hibernate.NonUniqueResultException) {
@@ -72,7 +73,8 @@ class DataJpaErrorHandler(
             }
         } else if (error is ObjectOptimisticLockingFailureException) {
             respEntity.message = "data.optimistic.locking.failure"
+        } else if (error is OptimisticLockException) {
+            respEntity.message = "data.optimistic.locking.failure"
         }
-
     }
 }
