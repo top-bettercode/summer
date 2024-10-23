@@ -228,6 +228,10 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                             logData.end = System.currentTimeMillis()
                         }
                         log(logData)
+                        logData.start = System.currentTimeMillis()
+                        logData.end = null
+                        logData.slowSql = mutableListOf()
+                        logData.paramCount = 0
                         logData.params.removeIf { it.index <= logData.paramCount }
                     }
                     logData.sql = msg
@@ -312,12 +316,9 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
     private fun log(logData: SqlLogData) {
         val cost = logData.cost
         val slowSql = logData.slowSql
-        if (logData.sql.isNullOrBlank()) {
-            logData.sql = slowSql.joinToString("\n------\n")
-        }
 
         if (!logData.error.isNullOrBlank()) {
-            sqlLogger.error(AlarmMarker.noAlarmMarker, logData.toSql(timeoutAlarmMS))
+            sqlLogger.error(AlarmMarker.noAlarmMarker, logData.toSql())
         } else if (cost != null && timeoutAlarmMS > 0 && cost > timeoutAlarmMS) {
             val initialComment = "${logData.id}：执行速度慢(${cost / 1000}秒)"
             sqlLogger.warn(
@@ -326,12 +327,12 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
                     timeout = true,
                     level = Level.WARN
                 ),
-                logData.toSql(timeoutAlarmMS)
+                logData.toSql()
             )
         } else if (slowSql.isNotEmpty()) {
-            sqlLogger.warn(logData.toSql(timeoutAlarmMS))
+            sqlLogger.warn(logData.toSql())
         } else
-            sqlLogger.info(logData.toSql(timeoutAlarmMS))
+            sqlLogger.info(logData.toSql())
     }
 
 }

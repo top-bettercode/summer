@@ -71,7 +71,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
                 )
             }
             logData.affected = update
-            log.info(logData.toSql(-1))
+            log.info(logData.toSql())
         } catch (e: DuplicateKeyException) {
             save(storeToken)
         }
@@ -93,7 +93,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
             SqlLogParam(0, JavaType.stringInstance, id)
         )
         logData.affected = update
-        log.info(logData.toSql(-1))
+        log.info(logData.toSql())
     }
 
     @Transactional
@@ -111,7 +111,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
             )
         }
         logData.affected = update
-        log.info(logData.toSql(-1))
+        log.info(logData.toSql())
     }
 
     override fun findById(tokenId: TokenId): StoreToken? {
@@ -153,7 +153,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
                             sqlLogData.sql = defaultDeleteStatement
                             sqlLogData.params.add(SqlLogParam(0, JavaType.stringInstance, id))
                             sqlLogData.affected = update
-                            log.info(sqlLogData.toSql(-1))
+                            log.info(sqlLogData.toSql())
                         } catch (ex: Exception) {
                             log.warn("apiToken删除失败", ex)
                         }
@@ -165,7 +165,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
             logData.sql = selectStatement
             logData.params.add(SqlLogParam(0, JavaType.stringInstance, param))
             logData.affected = if (storeToken == null) 0 else 1
-            log.info(logData.toSql(-1))
+            log.info(logData.toSql())
             storeToken
         } catch (e: EmptyResultDataAccessException) {
             null

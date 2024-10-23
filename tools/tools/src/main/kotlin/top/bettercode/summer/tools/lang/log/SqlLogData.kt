@@ -25,9 +25,10 @@ class SqlLogData(val id: String? = null) {
     var limit: Int? = null
     var error: String? = null
 
-    val cost: Long? by lazy {
-        end?.minus(start)
-    }
+    val cost: Long?
+        get() {
+            return end?.minus(start)
+        }
 
     fun addParams(args: Array<Any?>, types: IntArray) {
         args.forEachIndexed { index, any ->
@@ -37,9 +38,17 @@ class SqlLogData(val id: String? = null) {
         }
     }
 
-    fun toSql(timeoutAlarmMS: Long): String {
+    fun toSql(): String {
         var part = 0
-        val originSql = sql?.trim()
+        val originSql =
+            sql?.trim() ?: (if (slowSql.isNotEmpty()) slowSql.joinToString("\n------\n") else null)
+        val cost =
+            if (sql.isNullOrBlank() && slowSql.isNotEmpty()) {
+                // "SlowQuery: " + queryExecutionMillis + " milliseconds. SQL: '" + sql + "'";
+                slowSql[0].trim().substringAfter("SlowQuery: ")
+                    .substringBefore(" milliseconds. SQL: '")
+                    .trim().toLong()
+            } else this.cost
         val sqlParams = mutableListOf<String>()
         var sql: String?
         if (originSql != null && paramCount > 0) {
@@ -139,13 +148,13 @@ class SqlLogData(val id: String? = null) {
         }${
             if (result != null) "result:${result}; " else ""
         }${
-            if (cost != null) "cost:${cost} ms;" else ""
+            if (cost != null && cost > 0) "cost:${cost} ms;" else ""
         }"
         return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (sql.isNullOrBlank()) "" else "\n$sql"} ${if (error.isNullOrBlank()) "" else "\nERROR:$error"}"
     }
 
     override fun toString(): String {
-        return toSql(-1)
+        return toSql()
     }
 
 
