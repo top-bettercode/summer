@@ -139,7 +139,7 @@ class SqlLogData(val id: String? = null) {
         }${
             if (result != null) "result:${result}; " else ""
         }${
-            if (cost != null && (slowSql.isEmpty() || (timeoutAlarmMS > 0 && cost!! > timeoutAlarmMS))) "cost:${cost} ms;" else ""
+            if (cost != null) "cost:${cost} ms;" else ""
         }"
         return "${if (id.isNullOrBlank()) "" else "${id}: "}$resultInfo${if (sql.isNullOrBlank()) "" else "\n$sql"} ${if (error.isNullOrBlank()) "" else "\nERROR:$error"}"
     }

@@ -127,12 +127,12 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val fileLogPattern =
             environment.getProperty("logging.pattern.file", AlarmProperties.DEFAULT_LOG_PATTERN)
         //sql log
-        val timeoutAlarmSeconds =
-            if (environment.activeProfiles.any { it.contains("test") || it.contains("dev") }) environment.getProperty(
+        val sqlAppender = SqlAppender(
+            environment.getProperty(
                 "spring.jpa.properties.hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS",
                 "2000"
-            ).toLong() else -1
-        val sqlAppender = SqlAppender(timeoutAlarmSeconds)
+            ).toLong()
+        )
         sqlAppender.context = context
         sqlAppender.start()
         arrayOf(
