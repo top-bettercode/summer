@@ -104,7 +104,7 @@ class AutodocAspect(
                     .filter { it.tagName == "param" }
                     .forEach { paramTag ->
                         val paramName = paramTag.name.orElse("").trim()
-                        val paramDescription = paramTag.content.toText().trim()
+                        val paramDescription = paramTag.content.toText().trim().trim('*').trim()
 
                         if (paramName.isNotBlank() && paramDescription.isNotBlank()) {
                             fields.add(
@@ -176,7 +176,7 @@ class AutodocAspect(
                     val fieldName = variable.nameAsString
                     val comment =
                         field.comment.map {
-                            it.content.trim().trimStart('*').trim().substringBefore(" 默认值：")
+                            it.content.trim().trim('*').trim().substringBefore(" 默认值：")
                         }.orElse("")
                     if (comment.isNotBlank()) {
                         fields.add(
@@ -199,7 +199,7 @@ class AutodocAspect(
                                 3
                             ).decapitalized() else method.nameAsString.substring(2).decapitalized()
                         val comment =
-                            javadoc.content.trim().trimStart('*').trim().substringAfter("@return")
+                            javadoc.content.trim().trim('*').trim().substringAfter("@return")
                                 .trim()
                         if (comment.isNotBlank() && fields.none { it.name == fieldName }) {
                             fields.add(
