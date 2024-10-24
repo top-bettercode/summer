@@ -48,6 +48,9 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
         }
     }
 
+    /**
+     * 逆地理编码 https://lbs.amap.com/api/webservice/guide/api/georegeo
+     */
     open fun regeo(location: String): AMapRegeo {
         //restapi.amap.com/v3/geocode/regeo?key=您的key&location=116.481488,39.990464&poitype=&radius=&extensions=base&batch=false&roadlevel=0
         val entity: ResponseEntity<AMapRegeo> =
@@ -62,6 +65,9 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
         return entity.body ?: throw clientException()
     }
 
+    /**
+     * 地理编码 https://lbs.amap.com/api/webservice/guide/api/georegeo
+     */
     open fun geo(address: String): AMapGeo {
         //https://restapi.amap.com/v3/geocode/geo?address=北京市朝阳区阜通东大街6号&output=JSON&key=您的key
         val entity: ResponseEntity<AMapGeo> =
