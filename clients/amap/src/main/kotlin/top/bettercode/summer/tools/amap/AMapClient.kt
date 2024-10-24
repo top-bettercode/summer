@@ -50,52 +50,43 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
 
     open fun regeo(location: String): AMapRegeo {
         //restapi.amap.com/v3/geocode/regeo?key=您的key&location=116.481488,39.990464&poitype=&radius=&extensions=base&batch=false&roadlevel=0
-        val expanded = uriTemplateHandler.expand(
-            properties.url + "/geocode/regeo?key={0}&location={1}",
-            properties.key,
-            location
-        )
         val entity: ResponseEntity<AMapRegeo> =
             exchange(
-                expanded,
+                properties.url + "/geocode/regeo?key={0}&location={1}",
                 HttpMethod.GET,
                 null,
-                AMapRegeo::class.java
+                AMapRegeo::class.java,
+                properties.key,
+                location
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }
 
     open fun geo(address: String): AMapGeo {
         //https://restapi.amap.com/v3/geocode/geo?address=北京市朝阳区阜通东大街6号&output=JSON&key=您的key
-        val expanded = uriTemplateHandler.expand(
-            properties.url + "/geocode/geo?key={0}&address={1}&output=JSON",
-            properties.key,
-            address
-        )
         val entity: ResponseEntity<AMapGeo> =
             exchange(
-                expanded,
+                properties.url + "/geocode/geo?key={0}&address={1}&output=JSON",
                 HttpMethod.GET,
                 null,
-                AMapGeo::class.java
+                AMapGeo::class.java,
+                properties.key,
+                address
             ) ?: throw clientException("请求失败")
 
         return entity.body ?: throw clientException()
     }
 
     open fun distance(origins: String, destination: String): Distance {
-        val expanded = uriTemplateHandler.expand(
-            properties.url + "/distance?key={0}&origins={1}&destination={2}&output=JSON",
-            properties.key,
-            origins,
-            destination
-        )
         val entity: ResponseEntity<Distance> =
             exchange(
-                expanded,
+                properties.url + "/distance?key={0}&origins={1}&destination={2}&output=JSON",
                 HttpMethod.GET,
                 null,
-                Distance::class.java
+                Distance::class.java,
+                properties.key,
+                origins,
+                destination
             ) ?: throw clientException("请求失败")
 
         return entity.body ?: throw clientException()

@@ -22,7 +22,7 @@ internal class AMapClientTest : BaseTest() {
 
     @Test
     fun geo() {
-        amapClient.geo("河南省洛阳市偃师区")
+        amapClient.geo("河南省洛阳市xxxx")
     }
 
     @Test
