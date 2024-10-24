@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.lang.util.JavaType
  *
  * @author Peter Wu
  */
-data class SqlLogParam(val index: Int, val type: JavaType?, val value: String?) {
+data class SqlLogParam(val type: JavaType?, val value: String?) {
     override fun toString(): String {
         val value = if (value == null || "null" == value)
             null

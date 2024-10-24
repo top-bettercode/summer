@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.lang.log
 
-import top.bettercode.summer.tools.lang.util.JavaTypeResolver
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 
 /**
  *
@@ -16,7 +17,7 @@ class SqlLogData(val id: String? = null) {
         }
     var paramCount: Int = 0
     var slowSql: MutableList<String> = mutableListOf()
-    var params: MutableList<SqlLogParam> = mutableListOf()
+    var params: MultiValueMap<Int, SqlLogParam> = LinkedMultiValueMap()
     var affected: Any? = null
     var retrieved: Int? = null
     var total: Long? = null
@@ -29,14 +30,6 @@ class SqlLogData(val id: String? = null) {
         get() {
             return end?.minus(start)
         }
-
-    fun addParams(args: Array<Any?>, types: IntArray) {
-        args.forEachIndexed { index, any ->
-            params.add(
-                SqlLogParam(index, JavaTypeResolver.type(types[index])?.javaType, any.toString())
-            )
-        }
-    }
 
     fun toSql(): String {
         var part = 0
@@ -53,10 +46,10 @@ class SqlLogData(val id: String? = null) {
         var sql: String?
         if (originSql != null && paramCount > 0) {
             if (params.isNotEmpty()) {
-                val params = params.sortedBy { it.index }
-                for (i in params.indices) {
+                val keys = params.keys.sorted()
+                for (i in keys) {
                     if (part < paramCount) {
-                        sqlParams.add(params[i].toString())
+                        sqlParams.add(params[i]?.firstOrNull()?.toString() ?: "#null")
                         part++
                     }
                 }

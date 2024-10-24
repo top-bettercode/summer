@@ -67,7 +67,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
             for (i in args.indices) {
                 val value = if (i == 3) UNRECORDED_MARK else args[i].toString()
                 logData.params.add(
-                    SqlLogParam(i, JavaTypeResolver.type(types[i])?.javaType, value)
+                    i + 1,
+                    SqlLogParam(JavaTypeResolver.type(types[i])?.javaType, value)
                 )
             }
             logData.affected = update
@@ -90,7 +91,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
         logData.end = System.currentTimeMillis()
         logData.sql = defaultDeleteStatement
         logData.params.add(
-            SqlLogParam(0, JavaType.stringInstance, id)
+            1,
+            SqlLogParam(JavaType.stringInstance, id)
         )
         logData.affected = update
         log.info(logData.toSql())
@@ -107,7 +109,8 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
         logData.sql = sql
         ids.forEachIndexed { index, s ->
             logData.params.add(
-                SqlLogParam(index, JavaType.stringInstance, s)
+                index + 1,
+                SqlLogParam(JavaType.stringInstance, s)
             )
         }
         logData.affected = update
@@ -151,7 +154,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
                             val update = jdbcTemplate.update(defaultDeleteStatement, id)
                             sqlLogData.end = System.currentTimeMillis()
                             sqlLogData.sql = defaultDeleteStatement
-                            sqlLogData.params.add(SqlLogParam(0, JavaType.stringInstance, id))
+                            sqlLogData.params.add(1, SqlLogParam(JavaType.stringInstance, id))
                             sqlLogData.affected = update
                             log.info(sqlLogData.toSql())
                         } catch (ex: Exception) {
@@ -163,7 +166,7 @@ open class JdbcStoreTokenRepository @JvmOverloads constructor(
             )
             logData.end = System.currentTimeMillis()
             logData.sql = selectStatement
-            logData.params.add(SqlLogParam(0, JavaType.stringInstance, param))
+            logData.params.add(1, SqlLogParam(JavaType.stringInstance, param))
             logData.affected = if (storeToken == null) 0 else 1
             log.info(logData.toSql())
             storeToken
