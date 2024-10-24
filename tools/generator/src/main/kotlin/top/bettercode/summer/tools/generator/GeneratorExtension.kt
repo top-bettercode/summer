@@ -222,7 +222,10 @@ open class GeneratorExtension(
                         DEFAULT_MODULE_NAME
                     } else it.name
                 }
-            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
+            ) {
+                it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }
+                    .sortedBy { file -> file.name }.toList()
+            }
             ?.toSortedMap(comparator)
             ?: emptyMap()
     }
@@ -231,7 +234,10 @@ open class GeneratorExtension(
         file(pdmSrc).listFiles()?.filter { it.isDirectory && "database" != it.name }
             ?.associateBy(
                 { if ("src" == it.name) DEFAULT_MODULE_NAME else it.name }
-            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
+            ) {
+                it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }
+                    .sortedBy { file -> file.name }.toList()
+            }
             ?.toSortedMap(comparator)
             ?: emptyMap()
     }
@@ -243,7 +249,10 @@ open class GeneratorExtension(
                     DEFAULT_MODULE_NAME
                 } else it.name
             }
-            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
+            ) {
+                it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }
+                    .sortedBy { file -> file.name }.toList()
+            }
             ?.toSortedMap(comparator)
             ?: emptyMap()
     }
