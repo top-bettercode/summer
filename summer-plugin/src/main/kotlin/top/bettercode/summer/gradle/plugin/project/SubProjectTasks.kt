@@ -13,7 +13,7 @@ import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dsl.Generators
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 
 
 /**

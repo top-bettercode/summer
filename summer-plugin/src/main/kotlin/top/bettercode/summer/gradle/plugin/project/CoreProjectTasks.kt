@@ -18,7 +18,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.GenDicCodes
 import top.bettercode.summer.tools.generator.dsl.Generators
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase

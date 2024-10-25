@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.Method
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.SourceSet
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
 import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.tools.lang.util.JavaType

@@ -7,7 +7,7 @@ import org.springframework.cglib.proxy.MethodInterceptor
 import org.springframework.cglib.proxy.MethodProxy
 import org.springframework.core.convert.ConversionService
 import org.springframework.util.Assert
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import top.bettercode.summer.tools.lang.property.MapPropertySource
 import top.bettercode.summer.tools.lang.property.PropertySource
 import java.lang.reflect.Method

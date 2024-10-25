@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.weixin.support.miniprogram.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.slf4j.Logger
@@ -15,7 +14,6 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class JsSession(
         @field:JsonProperty("openid")
         var openid: String? = null,

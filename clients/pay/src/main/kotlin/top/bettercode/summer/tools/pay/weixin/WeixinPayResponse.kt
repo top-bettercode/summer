@@ -1,13 +1,11 @@
 package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
 @JacksonXmlRootElement(localName = "xml")
-@JsonIgnoreProperties(ignoreUnknown = true)
 open class WeixinPayResponse(
 
         /**

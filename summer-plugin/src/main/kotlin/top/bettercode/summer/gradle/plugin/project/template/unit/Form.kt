@@ -4,8 +4,8 @@ import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.dom.java.element.Parameter
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
-import top.bettercode.summer.tools.lang.capitalized
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import top.bettercode.summer.tools.lang.util.JavaType
 
 /**

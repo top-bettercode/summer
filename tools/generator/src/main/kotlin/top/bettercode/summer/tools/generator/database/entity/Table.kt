@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.generator.database.entity
 
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import java.io.File
 
 /**

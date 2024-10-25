@@ -1,12 +1,10 @@
 package top.bettercode.summer.tools.lang.log.feishu
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * @author Peter Wu
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 class FeishuTokenResult : FeishuResult() {
     var expire: Int? = null
     @JsonProperty("tenant_access_token")

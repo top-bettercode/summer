@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.database.DatabaseMetaData
 import top.bettercode.summer.tools.generator.database.entity.Table
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import java.sql.Connection
 import java.sql.DriverManager

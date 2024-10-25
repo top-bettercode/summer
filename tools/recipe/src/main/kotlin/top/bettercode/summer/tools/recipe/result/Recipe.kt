@@ -31,7 +31,6 @@ import kotlin.math.log10
  *
  * @author Peter Wu
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder(alphabetic = true)
 data class Recipe(
     /**

@@ -7,7 +7,7 @@ import top.bettercode.summer.tools.excel.ExcelException
 import top.bettercode.summer.tools.excel.PoiExcel
 import top.bettercode.summer.tools.excel.write.style.Alignment
 import top.bettercode.summer.tools.excel.write.style.CellStyle
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.lang.invoke.SerializedLambda
 import java.math.BigDecimal

@@ -18,7 +18,7 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 import top.bettercode.summer.tools.lang.operation.Operation
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.properties.SummerWebProperties

@@ -1,14 +1,12 @@
 package top.bettercode.summer.tools.lang.log.feishu
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import top.bettercode.summer.tools.lang.client.ClientResponse
 import top.bettercode.summer.tools.lang.property.PropertiesSource
 
 /**
  * @author Peter Wu
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 open class FeishuResult : ClientResponse {
     val code: Int? = null
     val msg: String? = null

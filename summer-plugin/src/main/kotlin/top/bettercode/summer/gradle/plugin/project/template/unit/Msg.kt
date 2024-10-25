@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.InnerInterface
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 
 /**
  * @author Peter Wu

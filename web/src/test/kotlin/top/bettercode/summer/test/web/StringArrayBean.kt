@@ -1,6 +1,5 @@
 package top.bettercode.summer.test.web
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import top.bettercode.summer.web.resolver.Unit
 import top.bettercode.summer.web.serializer.annotation.JsonArray
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
@@ -10,7 +9,6 @@ import java.math.BigDecimal
 import java.util.*
 import javax.validation.constraints.NotNull
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 class StringArrayBean {
     @JsonDefault("0")
     var number1: @NotNull BigDecimal? = null

@@ -16,7 +16,7 @@ import org.springframework.core.io.InputStreamSource
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import top.bettercode.summer.tools.autodoc.model.Field
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import top.bettercode.summer.tools.lang.util.FileUtil
 import top.bettercode.summer.web.PagedResources
 import java.beans.Introspector

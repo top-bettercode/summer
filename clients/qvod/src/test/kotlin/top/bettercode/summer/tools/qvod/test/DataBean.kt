@@ -1,9 +1,7 @@
 package top.bettercode.summer.tools.qvod.test
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import top.bettercode.summer.tools.qvod.QvodAntiLeechUrl
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 class DataBean {
     @QvodAntiLeechUrl
     var path = "https://vod2.myqcloud.com/ad/dd/a.mp4"

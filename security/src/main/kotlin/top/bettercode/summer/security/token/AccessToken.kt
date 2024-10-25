@@ -1,12 +1,14 @@
 package top.bettercode.summer.security.token
 
-import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.security.core.userdetails.UserDetails
 import top.bettercode.summer.security.userdetails.AdditionalUserDetails
 import top.bettercode.summer.web.serializer.annotation.JsonSetToString
 import java.time.Instant
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 open class AccessToken : IAccessToken {
 
     @JsonProperty("token_type")
@@ -39,7 +41,8 @@ open class AccessToken : IAccessToken {
         expiresAt = accessToken.expiresAt
         refreshToken = storeToken.refreshToken.tokenValue
         scope = storeToken.scope
-        additionalInformation = if (userDetails is AdditionalUserDetails) userDetails.additionalInformation else mutableMapOf()
+        additionalInformation =
+            if (userDetails is AdditionalUserDetails) userDetails.additionalInformation else mutableMapOf()
     }
 
     override fun getClientId(): String? {
@@ -54,8 +57,9 @@ open class AccessToken : IAccessToken {
     var expiresIn: Int
         //--------------------------------------------
         get() = if (expiresAt != null) java.lang.Long.valueOf(
-                (expiresAt!!.toEpochMilli() - System.currentTimeMillis()) / 1000L)
-                .toInt() else 0
+            (expiresAt!!.toEpochMilli() - System.currentTimeMillis()) / 1000L
+        )
+            .toInt() else 0
         protected set(delta) {
             expiresAt = Instant.ofEpochSecond(System.currentTimeMillis() / 1000L + delta)
         }

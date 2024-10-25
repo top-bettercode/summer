@@ -5,7 +5,7 @@ import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dsl.Generator
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 import java.util.*
 
 /**

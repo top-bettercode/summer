@@ -9,7 +9,7 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperation.Companion.chec
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import top.bettercode.summer.tools.lang.property.PropertiesSource
 import kotlin.collections.component1
 import kotlin.collections.component2

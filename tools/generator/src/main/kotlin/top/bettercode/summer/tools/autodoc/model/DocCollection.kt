@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.autodoc.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,7 +11,6 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 
 @JsonPropertyOrder("name", "items")
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class DocCollection(
     override val name: String = "", var items: LinkedHashSet<String> = linkedSetOf(),
     /**

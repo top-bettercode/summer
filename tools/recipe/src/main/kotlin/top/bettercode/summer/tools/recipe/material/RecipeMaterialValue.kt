@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.recipe.material
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.recipe.criteria.Usage
@@ -11,7 +10,6 @@ import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
  *
  * @author Peter Wu
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder(alphabetic = true)
 data class RecipeMaterialValue(
     @JsonIgnore

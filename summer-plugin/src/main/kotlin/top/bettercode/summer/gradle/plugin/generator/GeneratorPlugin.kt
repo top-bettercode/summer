@@ -26,7 +26,7 @@ import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.Generator
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
 import top.bettercode.summer.tools.generator.puml.PumlConverter
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 import java.io.File
 import java.util.*
 

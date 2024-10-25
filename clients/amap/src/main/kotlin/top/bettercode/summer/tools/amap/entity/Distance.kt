@@ -1,35 +1,18 @@
 package top.bettercode.summer.tools.amap.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import top.bettercode.summer.tools.lang.client.ClientResponse
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Distance(
 
-    @field:JsonProperty("count")
-    val count: String? = null,
+    @field:JsonProperty("duration")
+    val duration: String? = null,
 
-    @field:JsonProperty("infocode")
-    val infocode: String? = null,
+    @field:JsonProperty("distance")
+    val distance: String? = null,
 
-    @field:JsonProperty("results")
-    val results: Any? = null,
+    @field:JsonProperty("origin_id")
+    val originId: String? = null,
 
-    @field:JsonProperty("status")
-    val status: String? = null,
-
-    @field:JsonProperty("info")
-    val info: String? = null
-) : ClientResponse {
-
-    override val message: String?
-        @JsonIgnore
-        get() = info
-
-    @get:JsonIgnore
-    override val isOk: Boolean by lazy { "1" == status }
-}
-
-
+    @field:JsonProperty("dest_id")
+    val destId: String? = null
+)

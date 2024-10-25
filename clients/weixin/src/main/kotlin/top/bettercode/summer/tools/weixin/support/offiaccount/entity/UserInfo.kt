@@ -1,10 +1,8 @@
 package top.bettercode.summer.tools.weixin.support.offiaccount.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class UserInfo @JvmOverloads constructor(
         /**
          * 用户是否订阅该公众号标识，值为0时，代表此用户没有关注该公众号，拉取不到其余信息。

@@ -3,7 +3,7 @@ package top.bettercode.summer.gradle.plugin.project.template.unit
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
-import top.bettercode.summer.tools.lang.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
 
 val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {

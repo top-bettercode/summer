@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.lang
 
-
-fun CharSequence.capitalized(): String =
+object CharSequenceExtensions {
+    fun CharSequence.capitalized(): String =
         when {
             isEmpty() -> ""
             else -> get(0).let { initial ->
@@ -12,7 +12,7 @@ fun CharSequence.capitalized(): String =
             }
         }
 
-fun CharSequence.decapitalized(): String =
+    fun CharSequence.decapitalized(): String =
         when {
             isEmpty() -> ""
             else -> get(0).let { initial ->
@@ -22,3 +22,4 @@ fun CharSequence.decapitalized(): String =
                 }
             }
         }
+}

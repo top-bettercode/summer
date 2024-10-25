@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.autodoc.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 /**
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
     "canCover",
     "children"
 )
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Field(
     var name: String = "",
     var type: String = "",

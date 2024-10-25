@@ -2,8 +2,8 @@ package top.bettercode.summer.tools.pay.test
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.lang.capitalized
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import java.io.File
 
 /**

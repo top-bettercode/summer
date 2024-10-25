@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.recipe.indicator
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
@@ -12,7 +11,6 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
  * @author Peter Wu
  */
 @JsonPropertyOrder(alphabetic = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class RecipeIndicator(
     /**
      * 序号，从0开始

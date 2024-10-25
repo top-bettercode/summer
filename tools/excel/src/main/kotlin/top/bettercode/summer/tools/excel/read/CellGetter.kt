@@ -10,8 +10,8 @@ import top.bettercode.summer.tools.excel.Converter
 import top.bettercode.summer.tools.excel.ExcelException
 import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.DEFAULT_DATE_FORMAT
 import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.DEFAULT_DATE_TIME_FORMAT
-import top.bettercode.summer.tools.lang.capitalized
-import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.capitalized
+import top.bettercode.summer.tools.lang.CharSequenceExtensions.decapitalized
 import top.bettercode.summer.tools.lang.util.BooleanUtil.toBoolean
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.DEFAULT_DATE_TIME_FORMAT_PATTERN
