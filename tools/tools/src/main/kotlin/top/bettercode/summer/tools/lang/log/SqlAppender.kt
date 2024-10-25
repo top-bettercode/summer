@@ -14,7 +14,8 @@ import top.bettercode.summer.tools.lang.util.JavaTypeResolver
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
-class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent>() {
+class SqlAppender(private val timeoutAlarmMS: Long, private val alarm: Boolean) :
+    AppenderBase<ILoggingEvent>() {
     companion object {
         const val MDC_SQL_ERROR = "SQL_ERROR"
         const val MDC_SQL_ID = "SQL_ID"
@@ -323,18 +324,19 @@ class SqlAppender(private val timeoutAlarmMS: Long) : AppenderBase<ILoggingEvent
 
         if (!logData.error.isNullOrBlank()) {
             sqlLogger.error(AlarmMarker.noAlarmMarker, logData.toSql())
-        } else if (cost != null && timeoutAlarmMS > 0 && cost > timeoutAlarmMS) {
-            val initialComment = "${logData.id}：执行速度慢(${cost / 1000}秒)"
-            sqlLogger.warn(
-                AlarmMarker(
-                    message = initialComment,
-                    timeout = true,
-                    level = Level.WARN
-                ),
-                logData.toSql()
-            )
-        } else if (slowSql.isNotEmpty()) {
-            sqlLogger.warn(logData.toSql())
+        } else if ((cost != null && cost > timeoutAlarmMS) || slowSql.isNotEmpty()) {
+            if (alarm) {
+                sqlLogger.warn(
+                    AlarmMarker(
+                        message = "${logData.id}：执行速度慢${if (cost != null) "(${cost / 1000}秒" else ""})",
+                        timeout = true,
+                        level = Level.WARN
+                    ),
+                    logData.toSql()
+                )
+            } else {
+                sqlLogger.warn(logData.toSql())
+            }
         } else
             sqlLogger.info(logData.toSql())
     }

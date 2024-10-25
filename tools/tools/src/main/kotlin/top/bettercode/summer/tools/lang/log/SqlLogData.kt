@@ -28,20 +28,20 @@ class SqlLogData(val id: String? = null) {
 
     val cost: Long?
         get() {
-            return end?.minus(start)
+            return if (sql.isNullOrBlank() && slowSql.isNotEmpty()) {
+                // "SlowQuery: " + queryExecutionMillis + " milliseconds. SQL: '" + sql + "'";
+                slowSql[0].trim().substringAfter("SlowQuery: ")
+                    .substringBefore(" milliseconds. SQL: '")
+                    .trim().toLong()
+            } else end?.minus(start)
         }
 
     fun toSql(): String {
         var part = 0
         val originSql =
             sql?.trim() ?: (if (slowSql.isNotEmpty()) slowSql.joinToString("\n------\n") else null)
-        val cost =
-            if (sql.isNullOrBlank() && slowSql.isNotEmpty()) {
-                // "SlowQuery: " + queryExecutionMillis + " milliseconds. SQL: '" + sql + "'";
-                slowSql[0].trim().substringAfter("SlowQuery: ")
-                    .substringBefore(" milliseconds. SQL: '")
-                    .trim().toLong()
-            } else this.cost
+        val cost = this.cost
+
         val sqlParams = mutableListOf<String>()
         var sql: String?
         if (originSql != null && paramCount > 0) {
