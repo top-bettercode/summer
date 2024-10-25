@@ -214,12 +214,12 @@ class CellStyle(var valueFormatting: String = DEFAULT_FORMAT) : Cloneable {
         /**
          * 默认日期格式
          */
-        const val DEFAULT_DATE_FORMAT = "yyyy-m-dd"
+        const val DEFAULT_DATE_FORMAT = "yyyy-mm-dd"
 
         /**
          * 默认时间格式
          */
-        const val DEFAULT_DATE_TIME_FORMAT = "yyyy-m-dd hh:mm"
+        const val DEFAULT_DATE_TIME_FORMAT = "yyyy-mm-dd hh:mm"
 
         /**
          * 默认格式

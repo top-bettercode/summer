@@ -147,7 +147,7 @@ class PropertyCellSetter<E, P>(
 
     /**
      * @param format 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
-     * 示例：yyyy年m月d日 hh时mm分ss秒
+     * 示例：yyyy年mm月d日 hh时mm分ss秒
      * @return this
      */
     @JvmOverloads
