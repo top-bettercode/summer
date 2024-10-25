@@ -22,8 +22,23 @@ data class Geocode(
         @field:JsonProperty("district")
         val district: String? = null,
 
+        @field:JsonProperty("township")
+        val township: String? = null,
+
+        @field:JsonProperty("neighborhood")
+        val neighborhood: Neighborhood? = null,
+
+        @field:JsonProperty("building")
+        val building: Building? = null,
+
         @field:JsonProperty("adcode")
         val adcode: String? = null,
+
+        @field:JsonProperty("street")
+        val street: String? = null,
+
+        @field:JsonProperty("number")
+        val number: String? = null,
 
         @field:JsonProperty("location")
         val location: String? = null,

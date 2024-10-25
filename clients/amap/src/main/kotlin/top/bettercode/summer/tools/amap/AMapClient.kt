@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.amap
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -38,6 +39,8 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
                     return true
                 }
             }
+
+        messageConverter.objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
