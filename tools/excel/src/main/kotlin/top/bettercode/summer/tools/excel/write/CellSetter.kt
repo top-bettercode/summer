@@ -180,7 +180,10 @@ open class CellSetter<E, P>(
 
         @JvmStatic
         fun <E, P> of(title: String, propertyGetter: Converter<E, P?>): PropertyCellSetter<E, P> {
-            val (propertyName: String?, propertyType: Class<P>) = parsePropertyGetter(title, propertyGetter)
+            val (propertyName: String?, propertyType: Class<P>) = parsePropertyGetter(
+                title,
+                propertyGetter
+            )
             val isDate =
                 propertyType == LocalDate::class.java || propertyType == LocalDateTime::class.java || propertyType == Date::class.java
             return PropertyCellSetter(
@@ -194,7 +197,10 @@ open class CellSetter<E, P>(
         }
 
         @JvmStatic
-        fun <E, P> image(title: String, propertyGetter: Converter<E, P?>): PropertyCellSetter<E, P> {
+        fun <E, P> image(
+            title: String,
+            propertyGetter: Converter<E, P?>
+        ): PropertyCellSetter<E, P> {
             return of(title, propertyGetter).setter(PoiExcel.imageSetter)
         }
 
@@ -275,11 +281,10 @@ open class CellSetter<E, P>(
         private fun <P : Any> convert(propertyType: Class<out P>, value: P, isDate: Boolean): Any {
             return when {
                 propertyType == String::class.java
-                        || ClassUtils.isPrimitiveOrWrapper(propertyType)
                         || propertyType == Date::class.java
                         || propertyType == LocalDate::class.java
                         || propertyType == LocalDateTime::class.java
-                -> {
+                    -> {
                     value
                 }
 
@@ -295,6 +300,10 @@ open class CellSetter<E, P>(
 
                 propertyType == BigDecimal::class.java -> {
                     (value as BigDecimal).toDouble()
+                }
+
+                ClassUtils.isPrimitiveOrWrapper(propertyType) -> {
+                    value
                 }
 
                 propertyType.isArray -> {
