@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class StreetNumber(
 
+    @field:JsonProperty("street")
+    val street: String? = null,
+
     @field:JsonProperty("number")
     val number: String? = null,
 
@@ -16,6 +19,4 @@ data class StreetNumber(
     @field:JsonProperty("distance")
     val distance: String? = null,
 
-    @field:JsonProperty("street")
-    val street: String? = null
-)
+    )

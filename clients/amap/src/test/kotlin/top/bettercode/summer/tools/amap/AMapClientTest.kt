@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.amap
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
+import top.bettercode.summer.tools.amap.entity.Extensions
 
 /**
  *
@@ -16,7 +17,10 @@ internal class AMapClientTest : BaseTest() {
 
     @Test
     fun regeo() {
-        val regeo = amapClient.regeo("104.1762947,30.8170838")
+        val regeo = amapClient.regeo(
+            location = "116.481488,39.990464",
+            extensions = Extensions.ALL
+        )
         System.err.println(regeo.regeocode?.formattedAddress)
     }
 

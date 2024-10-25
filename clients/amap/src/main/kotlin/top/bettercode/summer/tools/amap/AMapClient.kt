@@ -13,6 +13,7 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.amap.entity.AMapGeoResp
 import top.bettercode.summer.tools.amap.entity.AMapRegeoResp
 import top.bettercode.summer.tools.amap.entity.DistanceResp
+import top.bettercode.summer.tools.amap.entity.Extensions
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 
 /**
@@ -54,16 +55,17 @@ open class AMapClient(properties: AMapProperties) : ApiTemplate<AMapProperties>(
     /**
      * 逆地理编码 https://lbs.amap.com/api/webservice/guide/api/georegeo
      */
-    open fun regeo(location: String): AMapRegeoResp {
+    @JvmOverloads
+    open fun regeo(location: String, extensions: Extensions = Extensions.BASE): AMapRegeoResp {
         //restapi.amap.com/v3/geocode/regeo?key=您的key&location=116.481488,39.990464&poitype=&radius=&extensions=base&batch=false&roadlevel=0
         val entity: ResponseEntity<AMapRegeoResp> =
             exchange(
-                properties.url + "/geocode/regeo?key={0}&location={1}",
+                properties.url + "/geocode/regeo?key={0}&location={1}&extensions={2}",
                 HttpMethod.GET,
                 null,
                 AMapRegeoResp::class.java,
                 properties.key,
-                location
+                location, extensions.name.lowercase()
             ) ?: throw clientException()
         return entity.body ?: throw clientException()
     }
