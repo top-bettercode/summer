@@ -236,10 +236,17 @@ class RequestLoggingFilter(
                                 level = if (httpStatusCode < 500) Level.WARN else Level.ERROR
                             )
                         )
-                        if (config.includeTrace)
-                            requestLog.error(marker, msg)
-                        else
-                            requestLog.error(marker, msg, error)
+                        if (httpStatusCode < 500) {
+                            if (config.includeTrace)
+                                requestLog.warn(marker, msg)
+                            else
+                                requestLog.warn(marker, msg, error)
+                        } else {
+                            if (config.includeTrace)
+                                requestLog.error(marker, msg)
+                            else
+                                requestLog.error(marker, msg, error)
+                        }
                     } else
                         requestLog.warn(marker, msg)
                 }
