@@ -58,7 +58,7 @@ class DataQuery(
 
             val serializationConfig = objectMapper.serializationConfig
             val config = serializationConfig.with(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
             objectMapper.setConfig(config)
             return objectMapper
         }

@@ -9,10 +9,9 @@ class AliasToEntityMapResultTransformer
 private constructor() : AliasedTupleSubsetResultTransformer() {
     override fun transformTuple(tuple: Array<Any?>, aliases: Array<String?>): Any {
         val result = LinkedHashMap<Any?, Any?>(tuple.size)
-        for (i in tuple.indices) {
-            val alias = aliases[i]
+        aliases.forEachIndexed { index, alias ->
             if (alias != null) {
-                result[alias] = tuple[i]
+                result[alias] = tuple[index]
             }
         }
         return result
