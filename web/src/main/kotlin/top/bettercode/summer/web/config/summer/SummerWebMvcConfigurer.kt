@@ -57,10 +57,10 @@ class SummerWebMvcConfigurer(
             dateConverter(
                 sourceType = String::class.java,
                 targetType = LocalDate::class.java
-            ) { source, sourceType, _ ->
+            ) { source, _, targetType ->
                 if (legalDate(source)) {
                     val localDate = of(source.toLong()).toLocalDate()
-                    val plusDays = sourceType.getAnnotation(PlusDays::class.java)
+                    val plusDays = targetType.getAnnotation(PlusDays::class.java)
                     plusDays?.let {
                         localDate.plusDays(it.value)
                     } ?: localDate
