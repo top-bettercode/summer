@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.lang.Nullable
 import org.springframework.util.ClassUtils
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.servlet.HandlerMapping
 import top.bettercode.summer.logging.LoggingUtil
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
@@ -27,6 +28,7 @@ import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.math.max
 
@@ -38,6 +40,7 @@ class LogsEndpoint(
     private val loggingFilesPath: String,
     env: Environment,
     private val websocketProperties: WebsocketProperties?,
+    private val request: HttpServletRequest,
     private val response: HttpServletResponse,
     webEndpointProperties: WebEndpointProperties,
     managementServerProperties: ManagementServerProperties
@@ -91,6 +94,7 @@ class LogsEndpoint(
                         filenames.add(today)
                     }
                     index(filenames.map { File(it) }.toTypedArray(), false, requestPath, false)
+                    return
                 } else if (dailyPath.size == 2) {
                     var logPattern = dailyPath[1]
                     val html =
@@ -120,25 +124,37 @@ class LogsEndpoint(
                                 )
                             }
                             showLogFile(logPattern, logMsgs, collapse)
+                            return
                         } else {
                             logGz(logPattern, userAgent, files)
+                            return
                         }
                     } else {
                         response.sendError(HttpStatus.NOT_FOUND.value(), "no log file match")
+                        return
                     }
                 }
             } else {
-                var file = File(loggingFilesPath, requestPath)
+                val file = File(loggingFilesPath, requestPath)
                 if (!file.exists() && file.name.startsWith("all-")) {
-                    file = File(file.parentFile, "all.log")
+                    val servletPath =
+                        (request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE) as String?
+                            ?: throw IllegalStateException(
+                                "Required request attribute '" +
+                                        HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE + "' is not set"
+                            ))
+                    response.sendRedirect(servletPath.replace(file.name, "all.log"))
+                    return
                 }
                 if (file.isFile) {
                     if (!file.exists()) {
                         response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
+                        return
                     } else {
                         val extension = file.extension
                         if ("json" == extension) {
                             json(file, userAgent)
+                            return
                         } else {
                             val logMsgs = readLogMsgs(
                                 file.inputStream(),
@@ -146,17 +162,21 @@ class LogsEndpoint(
                                 traceid
                             )
                             showLogFile(file.name, logMsgs, collapse)
+                            return
                         }
                     }
                 } else {
                     index(file.listFiles(), false, requestPath, true)
+                    return
                 }
             }
         } else {
             if (useWebSocket) {
                 webSocket()
+                return
             } else {
                 response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
+                return
             }
         }
     }
@@ -338,14 +358,14 @@ class LogsEndpoint(
         }
     }
 
-    private fun showLogFile(name: String, logMsgs: List<LogMsg>?, collapse: Boolean?) {
+    private fun showLogFile(filename: String, logMsgs: List<LogMsg>?, collapse: Boolean?) {
         response.contentType = "text/html;charset=utf-8"
         response.setHeader("Pragma", "No-cache")
         response.setHeader("Cache-Control", "no-cache")
         response.setHeader("Content-Encoding", "gzip")
         response.setDateHeader("Expires", 0)
         val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
-        prettyMessageHTMLLayout.title = "$appName $name"
+        prettyMessageHTMLLayout.title = "$appName $filename"
         prettyMessageHTMLLayout.context = loggerContext
         prettyMessageHTMLLayout.start()
         val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()

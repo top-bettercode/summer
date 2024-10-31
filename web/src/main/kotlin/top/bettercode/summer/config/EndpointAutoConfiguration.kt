@@ -79,6 +79,7 @@ class EndpointAutoConfiguration(
         environment: Environment,
         @Autowired(required = false)
         websocketProperties: WebsocketProperties?,
+        @Autowired(required = false) request: HttpServletRequest,
         @Autowired(required = false) response: HttpServletResponse,
         webEndpointProperties: WebEndpointProperties,
         managementServerProperties: ManagementServerProperties
@@ -87,6 +88,7 @@ class EndpointAutoConfiguration(
             loggingFilesPath,
             environment,
             websocketProperties,
+            request,
             response,
             webEndpointProperties,
             managementServerProperties
