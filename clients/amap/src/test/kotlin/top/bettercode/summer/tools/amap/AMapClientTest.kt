@@ -25,9 +25,18 @@ internal class AMapClientTest : BaseTest() {
     }
 
     @Test
+    fun poiSearch() {
+        val poiSearch = amapClient.poiSearch(
+            keywords = "山东省潍坊市临朐县临港工业园",
+            region = ""
+        )
+        System.err.println(poiSearch.pois?.first()?.name)
+    }
+
+    @Test
     fun geo() {
         val geo = amapClient.geo("河南省洛阳市xxxx")
-        if (geo.hasGeocodes) {
+        if (geo.isNotEmpty) {
             System.err.println(geo.geocodes?.first()?.location)
         }
     }

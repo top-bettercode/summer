@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.lang.client.ClientProperties
 @ConfigurationProperties(prefix = "summer.amap")
 open class AMapProperties : ClientProperties("高德地图") {
     //--------------------------------------------
-    var url = "https://restapi.amap.com/v3"
+    var url = "https://restapi.amap.com"
     var key: String? = null
 
 }

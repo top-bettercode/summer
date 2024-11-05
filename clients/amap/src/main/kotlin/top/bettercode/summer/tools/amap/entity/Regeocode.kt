@@ -19,6 +19,6 @@ data class Regeocode(
     val roads: List<Road>? = null,
 
     @field:JsonProperty("pois")
-    val pois: List<Poi>? = null
+    val pois: List<GeoPoi>? = null
 
 )
