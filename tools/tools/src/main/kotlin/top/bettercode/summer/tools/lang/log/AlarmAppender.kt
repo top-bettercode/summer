@@ -61,6 +61,8 @@ abstract class AlarmAppender<T : AlarmProperties>(
     private var delayBetweenStatusMessages = 300 * CoreConstants.MILLIS_IN_ONE_SECOND
     private var errorCount = 0
     private var asynchronousSending = true
+    private var maxErrorCount = 30
+
     private val encoder: PatternLayoutEncoder by lazy {
         PatternLayoutEncoder().apply {
             pattern = OptionHelper.substVars(properties.logPattern, context)
@@ -229,11 +231,12 @@ abstract class AlarmAppender<T : AlarmProperties>(
                 sendErrorCount = 0
             } else {
                 sendErrorCount++
-                if (sendErrorCount > 15) {
+                if (sendErrorCount > maxErrorCount) {
                     stop()
                 }
             }
         } catch (e: Exception) {
+            sendErrorCount++
             log.error(
                 AlarmMarker.noAlarmMarker,
                 "发送信息失败",
