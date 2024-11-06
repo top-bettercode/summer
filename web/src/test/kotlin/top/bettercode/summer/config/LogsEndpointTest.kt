@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 import org.springframework.mock.env.MockEnvironment
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import top.bettercode.summer.logging.WebsocketProperties
 import java.io.ByteArrayInputStream
@@ -19,11 +20,13 @@ class LogsEndpointTest {
     @Disabled
     @Test
     fun path() {
+        val request = MockHttpServletRequest()
         val response = MockHttpServletResponse()
         val logsEndpoint = LogsEndpoint(
             "/local/downloads",
             MockEnvironment(),
             WebsocketProperties(),
+            request,
             response,
             WebEndpointProperties(),
             ManagementServerProperties()
