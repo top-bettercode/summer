@@ -27,7 +27,7 @@ class ProjectDistPlugin : Plugin<Project> {
                 subProject.plugins.apply("java")
 
                 subProject.group = (subProject.findProperty("app.package")
-                        ?: subProject.findProperty("app.packageName")) as String? ?: ""
+                    ?: subProject.findProperty("app.packageName")) as String? ?: ""
                 subProject.version = subProject.findProperty("app.version") as String? ?: "1.0"
 
                 //idea
@@ -36,17 +36,20 @@ class ProjectDistPlugin : Plugin<Project> {
                         it.isDownloadJavadoc = false
                         it.isDownloadSources = true
 
-                        val sourceSets = subProject.extensions.getByType(JavaPluginExtension::class.java).sourceSets
-                        it.outputDir = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.classesDirectory.get().asFile
-                        it.testOutputDir = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME).java.classesDirectory.get().asFile
+                        val sourceSets =
+                            subProject.extensions.getByType(JavaPluginExtension::class.java).sourceSets
+                        it.outputDir =
+                            sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.classesDirectory.get().asFile
+                        it.testOutputDir =
+                            sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME).java.classesDirectory.get().asFile
                     }
 
                 }
 
+                val version = subProject.findProperty("java.version") ?: "8"
+                val javaVersion = JavaVersion.toVersion(version)
                 //java
                 subProject.extensions.configure(org.gradle.api.plugins.JavaPluginExtension::class.java) { java ->
-                    val version = subProject.findProperty("java.version") ?: "8"
-                    val javaVersion = JavaVersion.toVersion(version)
                     java.sourceCompatibility = javaVersion
                     java.targetCompatibility = javaVersion
                 }
@@ -58,6 +61,12 @@ class ProjectDistPlugin : Plugin<Project> {
 
                     if ("true" == project.findProperty("kotlin.enabled")) {
                         apply("org.jetbrains.kotlin.jvm")
+                        subProject.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java)
+                            .configureEach {
+                                it.kotlinOptions {
+                                    jvmTarget = javaVersion.toString()
+                                }
+                            }
                     }
                     if (isBoot(subProject)) {
                         apply("application")

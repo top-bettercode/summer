@@ -35,6 +35,8 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
         return findAllPageByPage(springDataWebProperties.pageable.maxPageSize, query)
     }
 
+    private val customScope = CoroutineScope(Dispatchers.Default)
+
     override fun <E> findAllPageByPage(
         pageSize: Int,
         query: (Pageable) -> Page<E>
@@ -46,7 +48,6 @@ open class BaseService<T : Any, ID : Any, M : BaseRepository<T, ID>>(
 
         runBlocking {
             val deferredResults = mutableListOf<Deferred<Pair<Int, List<E>>>>()
-            val customScope = CoroutineScope(Dispatchers.Default)
             for (i in 1 until result.totalPages) {
                 deferredResults.add(customScope.async {
                     val content = query(PageRequest.of(i, pageSize).size()).content

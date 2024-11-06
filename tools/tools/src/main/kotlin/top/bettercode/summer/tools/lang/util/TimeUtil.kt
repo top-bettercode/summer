@@ -328,6 +328,8 @@ open class TimeUtil(
                 reGetNtpTime(server, t)
         }
 
+        private val customScope = CoroutineScope(Dispatchers.Default)
+
         private fun getNetworkTime(): Pair<String, Long> {
             return runBlocking {
                 val ntpServers = listOf(
@@ -340,7 +342,6 @@ open class TimeUtil(
                 // 使用单一的 Deferred 对象，用于保存第一个返回的结果
                 val firstResult = CompletableDeferred<Pair<String, Long>>()
                 val jobs = mutableListOf<Job>()
-                val customScope = CoroutineScope(Dispatchers.Default)
                 for (server in ntpServers) {
                     val job = customScope.launch {
                         val result = withContext(Dispatchers.IO) {

@@ -258,6 +258,8 @@ data class DatabaseConfiguration(
         }
     }
 
+    private val customScope = CoroutineScope(Dispatchers.Default)
+
     override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val set = ConcurrentSkipListSet(tableName.toSet())
         val names = (if (tableName.isEmpty()) tableNames() else tableName.distinct()).filter {
@@ -277,7 +279,6 @@ data class DatabaseConfiguration(
         }
 
         runBlocking {
-            val customScope = CoroutineScope(Dispatchers.Default)
             val deferred = map.values.map {
                 customScope.async {
                     use {
