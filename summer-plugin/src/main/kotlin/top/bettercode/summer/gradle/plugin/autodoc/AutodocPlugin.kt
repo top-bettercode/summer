@@ -6,7 +6,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileProperties
-import top.bettercode.summer.gradle.plugin.profile.ProfilePlugin
 import top.bettercode.summer.tools.autodoc.AutodocExtension
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation.Companion.checkBlank
@@ -25,7 +24,6 @@ class AutodocPlugin : Plugin<Project> {
 
     @Suppress("UnstableApiUsage")
     override fun apply(project: Project) {
-        project.plugins.apply(ProfilePlugin::class.java)
         project.extensions.create("autodoc", AutodocExtension::class.java)
 
         project.extensions.configure(AutodocExtension::class.java) { autodocExtension ->
