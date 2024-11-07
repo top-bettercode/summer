@@ -110,8 +110,6 @@ dependencies {
         api(project(":tools:optimal-gurobi"))
         api(project(":tools:optimal-ortools"))
         api(project(":tools:recipe"))
-        api(project(":tools:ktrader-datatype"))
-        api(project(":tools:ktrader-broker-api"))
         api(project(":tools:ktrader-broker-ctp"))
 
         api(project(":clients:weixin"))

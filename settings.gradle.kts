@@ -30,8 +30,6 @@ include(":tools:optimal")
 include(":tools:optimal-gurobi")
 include(":tools:optimal-ortools")
 include(":tools:recipe")
-include(":tools:ktrader-datatype")
-include(":tools:ktrader-broker-api")
 include(":tools:ktrader-broker-ctp")
 
 include(":clients:weixin")

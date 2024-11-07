@@ -12,10 +12,13 @@ java {
 }
 
 dependencies {
-    api(project(":tools:tools"))
-//    api( "org.rationalityfrontline.ktrader:ktrader-broker-api:1.2.0")
-    api(project(":tools:ktrader-broker-api"))
-    api("org.rationalityfrontline:jctp:6.6.1_P1-1.0.1")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    api("org.rationalityfrontline:kevent:2.1.2")
+    api("org.rationalityfrontline:jctp:6.6.1_P1-1.0.5")
+
+    testImplementation(project(":tools:generator"))
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }
 
 tasks{

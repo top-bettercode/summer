@@ -61,6 +61,7 @@ class ProjectDistPlugin : Plugin<Project> {
 
                     if ("true" == project.findProperty("kotlin.enabled")) {
                         apply("org.jetbrains.kotlin.jvm")
+                        apply("org.jetbrains.kotlin.plugin.spring")
                         subProject.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java)
                             .configureEach {
                                 it.kotlinOptions {
