@@ -73,7 +73,7 @@ internal suspend inline fun <T> runWithResultCheck(
     action: () -> Int,
     onSuccess: () -> T,
     onError: (Int, String) -> T = { code, info ->
-        throw Exception("$info ($code)")
+        throw CtpException("$info ($code)")
     },
     retry: Boolean = true
 ): T {

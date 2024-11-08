@@ -83,7 +83,7 @@ class CtpBrokerApi(val config: CtpConfig, val kEvent: KEvent) {
             tdConnected -> tdApi.tradingDay()
             else -> null
         }
-        return tradingDay ?: throw Exception("行情前置与交易前置均不可用，无法获取当前交易日")
+        return tradingDay ?: throw CtpException("行情前置与交易前置均不可用，无法获取当前交易日")
     }
 
     suspend fun subscribeTicks(codes: Collection<String>) {

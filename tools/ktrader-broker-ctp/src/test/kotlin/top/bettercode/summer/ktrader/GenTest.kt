@@ -2,7 +2,6 @@ package top.bettercode.summer.ktrader
 
 import org.junit.jupiter.api.Test
 import org.rationalityfrontline.jctp.CThostFtdcDepthMarketDataField
-import org.rationalityfrontline.jctp.CThostFtdcTradingAccountField
 import java.io.File
 
 /**

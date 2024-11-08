@@ -259,7 +259,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                 ConnectionEventType.MD_NET_DISCONNECTED,
                 "${getDisconnectReason(nReason)} ($nReason)"
             )
-            val e = Exception("网络连接断开：${getDisconnectReason(nReason)} ($nReason)")
+            val e = CtpException("网络连接断开：${getDisconnectReason(nReason)} ($nReason)")
             requestMap.values.forEach {
                 it.continuation.resumeWithException(e)
             }

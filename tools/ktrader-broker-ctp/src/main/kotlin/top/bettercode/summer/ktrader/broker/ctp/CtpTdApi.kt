@@ -543,7 +543,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             scope.launch {
                 fun resumeConnectWithException(errorInfo: String) {
                     resumeRequestsWithException("connect", errorInfo)
-                    throw Exception(errorInfo)
+                    throw CtpException(errorInfo)
                 }
                 try {
                     // 请求客户端认证
@@ -579,7 +579,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                 ConnectionEventType.TD_NET_DISCONNECTED,
                 "${getDisconnectReason(nReason)} ($nReason)"
             )
-            val e = Exception("网络连接断开：${getDisconnectReason(nReason)} ($nReason)")
+            val e = CtpException("网络连接断开：${getDisconnectReason(nReason)} ($nReason)")
             requestMap.values.forEach {
                 it.continuation.resumeWithException(e)
             }
