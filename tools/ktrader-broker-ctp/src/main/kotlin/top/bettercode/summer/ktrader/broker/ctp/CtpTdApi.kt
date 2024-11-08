@@ -645,7 +645,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                     postBrokerEvent(BrokerEventType.NEW_TRADING_DAY, tradingDay)
                 }
                 if (bIsLast) {
-                    postBrokerLogEvent(LogLevel.INFO, "【交易接口】资金账户登录成功")
+                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】资金账户登录成功")
                     (request.continuation as Continuation<Unit>).resume(Unit)
                     requestMap.remove(nRequestID)
                 }
@@ -667,7 +667,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             val request = requestMap[nRequestID] ?: return
             checkRspInfo(pRspInfo, {
                 if (bIsLast) {
-                    postBrokerLogEvent(LogLevel.INFO, "【交易接口】结算单确认成功")
+                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】结算单确认成功")
                     (request.continuation as Continuation<Unit>).resume(Unit)
                     requestMap.remove(nRequestID)
                 }
@@ -725,7 +725,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         null
                     )
                     requestMap.remove(nRequestID)
-                    postBrokerLogEvent(LogLevel.INFO, "【交易接口】查询 Tick 失败：$reqCode")
+                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询 Tick 失败：$reqCode")
                     return
                 }
                 val code = "${pDepthMarketData.exchangeID}.${pDepthMarketData.instrumentID}"
@@ -741,7 +741,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                             null
                         )
                         requestMap.remove(nRequestID)
-                        postBrokerLogEvent(LogLevel.INFO, "【交易接口】查询 Tick 失败：$reqCode")
+                        postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询 Tick 失败：$reqCode")
                     }
                 }
             }, { errorCode, errorMsg ->
@@ -766,10 +766,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                 if (reqData is String) {
                     val con = request.continuation as Continuation<Instrument?>
                     if (pInstrument == null) {
-                        postBrokerLogEvent(
-                            LogLevel.TRACE,
-                            "【交易接口】查询全市场合约:null"
-                        )
+                        postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询全市场合约:null")
                         con.resume(null)
                         requestMap.remove(nRequestID)
                         return
@@ -780,10 +777,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                     } else {
                         if (bIsLast) {
-                            postBrokerLogEvent(
-                                LogLevel.TRACE,
-                                "【交易接口】查询全市场合约:null"
-                            )
+                            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询全市场合约:null")
                             con.resume(null)
                             requestMap.remove(nRequestID)
                         }
