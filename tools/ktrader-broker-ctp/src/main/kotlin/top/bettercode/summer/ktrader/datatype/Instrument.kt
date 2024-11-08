@@ -2,77 +2,46 @@ package top.bettercode.summer.ktrader.datatype
 
 import org.rationalityfrontline.jctp.CThostFtdcInstrumentField
 
-class Instrument {
-    var exchangeInstID: String? = null
-
-    var reserve1: String? = null
-
-    var exchangeID: String? = null
-
-    var instrumentName: String? = null
-
-    var reserve2: String? = null
-
-    var reserve3: String? = null
-
-    var productClass: Char = 0.toChar()
-
-    var deliveryYear: Int = 0
-
-    var deliveryMonth: Int = 0
-
-    var maxMarketOrderVolume: Int = 0
-
-    var minMarketOrderVolume: Int = 0
-
-    var maxLimitOrderVolume: Int = 0
-
-    var minLimitOrderVolume: Int = 0
-
-    var volumeMultiple: Int = 0
-
-    var priceTick: Double = 0.0
-
-    var createDate: String? = null
-
-    var openDate: String? = null
-
-    var expireDate: String? = null
-
-    var startDelivDate: String? = null
-
-    var endDelivDate: String? = null
-
-    var instLifePhase: Char = 0.toChar()
-
-    var isTrading: Int = 0
-
-    var positionType: Char = 0.toChar()
-
-    var positionDateType: Char = 0.toChar()
-
-    var longMarginRatio: Double = 0.0
-
-    var shortMarginRatio: Double = 0.0
-
-    var maxMarginSideAlgorithm: Char = 0.toChar()
-
-    var reserve4: String? = null
-
-    var strikePrice: Double = 0.0
-
-    var optionsType: Char = 0.toChar()
-
-    var underlyingMultiple: Double = 0.0
-
-    var combinationType: Char = 0.toChar()
-
-    var instrumentID: String? = null
-
-    var productID: String? = null
-
-    var underlyingInstrID: String? = null
-
+/**
+ * @author Peter Wu
+ */
+data class Instrument(
+    var exchangeInstID: String? = null,
+    var reserve1: String? = null,
+    var exchangeID: String? = null,
+    var instrumentName: String? = null,
+    var reserve2: String? = null,
+    var reserve3: String? = null,
+    var productClass: Char = 0.toChar(),
+    var deliveryYear: Int = 0,
+    var deliveryMonth: Int = 0,
+    var maxMarketOrderVolume: Int = 0,
+    var minMarketOrderVolume: Int = 0,
+    var maxLimitOrderVolume: Int = 0,
+    var minLimitOrderVolume: Int = 0,
+    var volumeMultiple: Int = 0,
+    var priceTick: Double = 0.0,
+    var createDate: String? = null,
+    var openDate: String? = null,
+    var expireDate: String? = null,
+    var startDelivDate: String? = null,
+    var endDelivDate: String? = null,
+    var instLifePhase: Char = 0.toChar(),
+    var isTrading: Int = 0,
+    var positionType: Char = 0.toChar(),
+    var positionDateType: Char = 0.toChar(),
+    var longMarginRatio: Double = 0.0,
+    var shortMarginRatio: Double = 0.0,
+    var maxMarginSideAlgorithm: Char = 0.toChar(),
+    var reserve4: String? = null,
+    var strikePrice: Double = 0.0,
+    var optionsType: Char = 0.toChar(),
+    var underlyingMultiple: Double = 0.0,
+    var combinationType: Char = 0.toChar(),
+    var instrumentID: String? = null,
+    var productID: String? = null,
+    var underlyingInstrID: String? = null,
+) {
     companion object {
         fun from(field: CThostFtdcInstrumentField): Instrument {
             val obj = Instrument()
@@ -115,3 +84,4 @@ class Instrument {
         }
     }
 }
+

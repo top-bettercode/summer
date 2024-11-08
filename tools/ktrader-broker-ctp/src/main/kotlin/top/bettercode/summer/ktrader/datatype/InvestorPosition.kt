@@ -2,107 +2,61 @@ package top.bettercode.summer.ktrader.datatype
 
 import org.rationalityfrontline.jctp.CThostFtdcInvestorPositionField
 
-class InvestorPosition {
-    var reserve1: String? = null
-
-    var brokerID: String? = null
-
-    var investorID: String? = null
-
-    var posiDirection: Char = 0.toChar()
-
-    var hedgeFlag: Char = 0.toChar()
-
-    var positionDate: Char = 0.toChar()
-
-    var ydPosition: Int = 0
-
-    var longFrozen: Int = 0
-
-    var shortFrozen: Int = 0
-
-    var longFrozenAmount: Double = 0.0
-
-    var shortFrozenAmount: Double = 0.0
-
-    var openVolume: Int = 0
-
-    var closeVolume: Int = 0
-
-    var openAmount: Double = 0.0
-
-    var closeAmount: Double = 0.0
-
-    var positionCost: Double = 0.0
-
-    var preMargin: Double = 0.0
-
-    var useMargin: Double = 0.0
-
-    var frozenMargin: Double = 0.0
-
-    var frozenCash: Double = 0.0
-
-    var frozenCommission: Double = 0.0
-
-    var cashIn: Double = 0.0
-
-    var commission: Double = 0.0
-
-    var closeProfit: Double = 0.0
-
-    var positionProfit: Double = 0.0
-
-    var preSettlementPrice: Double = 0.0
-
-    var settlementPrice: Double = 0.0
-
-    var tradingDay: String? = null
-
-    var settlementID: Int = 0
-
-    var openCost: Double = 0.0
-
-    var exchangeMargin: Double = 0.0
-
-    var combPosition: Int = 0
-
-    var combLongFrozen: Int = 0
-
-    var combShortFrozen: Int = 0
-
-    var closeProfitByDate: Double = 0.0
-
-    var closeProfitByTrade: Double = 0.0
-
-    var todayPosition: Int = 0
-
-    var marginRateByMoney: Double = 0.0
-
-    var marginRateByVolume: Double = 0.0
-
-    var strikeFrozen: Int = 0
-
-    var strikeFrozenAmount: Double = 0.0
-
-    var abandonFrozen: Int = 0
-
-    var exchangeID: String? = null
-
-    var ydStrikeFrozen: Int = 0
-
-    var investUnitID: String? = null
-
-    var positionCostOffset: Double = 0.0
-
-    var tasPosition: Int = 0
-
-    var tasPositionCost: Double = 0.0
-
-    var instrumentID: String? = null
-
-    var position: Int = 0
-
+/**
+ * @author Peter Wu
+ */
+data class InvestorPosition(
+    var reserve1: String? = null,
+    var brokerID: String? = null,
+    var investorID: String? = null,
+    var posiDirection: Char = 0.toChar(),
+    var hedgeFlag: Char = 0.toChar(),
+    var positionDate: Char = 0.toChar(),
+    var ydPosition: Int = 0,
+    var longFrozen: Int = 0,
+    var shortFrozen: Int = 0,
+    var longFrozenAmount: Double = 0.0,
+    var shortFrozenAmount: Double = 0.0,
+    var openVolume: Int = 0,
+    var closeVolume: Int = 0,
+    var openAmount: Double = 0.0,
+    var closeAmount: Double = 0.0,
+    var positionCost: Double = 0.0,
+    var preMargin: Double = 0.0,
+    var useMargin: Double = 0.0,
+    var frozenMargin: Double = 0.0,
+    var frozenCash: Double = 0.0,
+    var frozenCommission: Double = 0.0,
+    var cashIn: Double = 0.0,
+    var commission: Double = 0.0,
+    var closeProfit: Double = 0.0,
+    var positionProfit: Double = 0.0,
+    var preSettlementPrice: Double = 0.0,
+    var settlementPrice: Double = 0.0,
+    var tradingDay: String? = null,
+    var settlementID: Int = 0,
+    var openCost: Double = 0.0,
+    var exchangeMargin: Double = 0.0,
+    var combPosition: Int = 0,
+    var combLongFrozen: Int = 0,
+    var combShortFrozen: Int = 0,
+    var closeProfitByDate: Double = 0.0,
+    var closeProfitByTrade: Double = 0.0,
+    var todayPosition: Int = 0,
+    var marginRateByMoney: Double = 0.0,
+    var marginRateByVolume: Double = 0.0,
+    var strikeFrozen: Int = 0,
+    var strikeFrozenAmount: Double = 0.0,
+    var abandonFrozen: Int = 0,
+    var exchangeID: String? = null,
+    var ydStrikeFrozen: Int = 0,
+    var investUnitID: String? = null,
+    var positionCostOffset: Double = 0.0,
+    var tasPosition: Int = 0,
+    var tasPositionCost: Double = 0.0,
+    var instrumentID: String? = null,
+    var position: Int = 0,
+) {
     companion object {
         fun from(field: CThostFtdcInvestorPositionField): InvestorPosition {
             val obj = InvestorPosition()
@@ -160,3 +114,4 @@ class InvestorPosition {
         }
     }
 }
+

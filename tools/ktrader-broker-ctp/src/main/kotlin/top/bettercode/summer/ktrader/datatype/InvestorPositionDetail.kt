@@ -2,69 +2,42 @@ package top.bettercode.summer.ktrader.datatype
 
 import org.rationalityfrontline.jctp.CThostFtdcInvestorPositionDetailField
 
-class InvestorPositionDetail {
-    var reserve1: String? = null
-
-    var brokerID: String? = null
-
-    var investorID: String? = null
-
-    var hedgeFlag: Char = 0.toChar()
-
-    var direction: Char = 0.toChar()
-
-    var openDate: String? = null
-
-    var tradeID: String? = null
-
-    var volume: Int = 0
-
-    var openPrice: Double = 0.0
-
-    var tradingDay: String? = null
-
-    var settlementID: Int = 0
-
-    var tradeType: Char = 0.toChar()
-
-    var reserve2: String? = null
-
-    var exchangeID: String? = null
-
-    var closeProfitByDate: Double = 0.0
-
-    var closeProfitByTrade: Double = 0.0
-
-    var positionProfitByDate: Double = 0.0
-
-    var positionProfitByTrade: Double = 0.0
-
-    var margin: Double = 0.0
-
-    var exchMargin: Double = 0.0
-
-    var marginRateByMoney: Double = 0.0
-
-    var marginRateByVolume: Double = 0.0
-
-    var lastSettlementPrice: Double = 0.0
-
-    var settlementPrice: Double = 0.0
-
-    var closeVolume: Int = 0
-
-    var closeAmount: Double = 0.0
-
-    var timeFirstVolume: Int = 0
-
-    var investUnitID: String? = null
-
-    var specPosiType: Char = 0.toChar()
-
-    var instrumentID: String? = null
-
-    var combInstrumentID: String? = null
-
+/**
+ * @author Peter Wu
+ */
+data class InvestorPositionDetail(
+    var reserve1: String? = null,
+    var brokerID: String? = null,
+    var investorID: String? = null,
+    var hedgeFlag: Char = 0.toChar(),
+    var direction: Char = 0.toChar(),
+    var openDate: String? = null,
+    var tradeID: String? = null,
+    var volume: Int = 0,
+    var openPrice: Double = 0.0,
+    var tradingDay: String? = null,
+    var settlementID: Int = 0,
+    var tradeType: Char = 0.toChar(),
+    var reserve2: String? = null,
+    var exchangeID: String? = null,
+    var closeProfitByDate: Double = 0.0,
+    var closeProfitByTrade: Double = 0.0,
+    var positionProfitByDate: Double = 0.0,
+    var positionProfitByTrade: Double = 0.0,
+    var margin: Double = 0.0,
+    var exchMargin: Double = 0.0,
+    var marginRateByMoney: Double = 0.0,
+    var marginRateByVolume: Double = 0.0,
+    var lastSettlementPrice: Double = 0.0,
+    var settlementPrice: Double = 0.0,
+    var closeVolume: Int = 0,
+    var closeAmount: Double = 0.0,
+    var timeFirstVolume: Int = 0,
+    var investUnitID: String? = null,
+    var specPosiType: Char = 0.toChar(),
+    var instrumentID: String? = null,
+    var combInstrumentID: String? = null,
+) {
     companion object {
         fun from(field: CThostFtdcInvestorPositionDetailField): InvestorPositionDetail {
             val obj = InvestorPositionDetail()
@@ -103,3 +76,4 @@ class InvestorPositionDetail {
         }
     }
 }
+

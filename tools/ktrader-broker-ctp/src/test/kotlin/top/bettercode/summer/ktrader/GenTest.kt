@@ -1,11 +1,8 @@
 package top.bettercode.summer.ktrader
 
 import org.junit.jupiter.api.Test
-import org.rationalityfrontline.jctp.*
-import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
-import top.bettercode.summer.tools.generator.dom.java.element.Parameter
-import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
-import top.bettercode.summer.tools.lang.util.JavaType
+import org.rationalityfrontline.jctp.CThostFtdcDepthMarketDataField
+import org.rationalityfrontline.jctp.CThostFtdcTradingAccountField
 import java.io.File
 
 /**
@@ -16,26 +13,53 @@ class GenTest {
 
     @Test
     fun gen() {
-        val clazz = CThostFtdcInstrumentCommissionRateField::class.java
-        val type = JavaType("${javaClass.`package`.name}.datatype.InstrumentCommissionRate")
-        TopLevelClass(
-            type = type,
-            overwrite = true
-        ).apply {
-            method(name = "from", returnType = type, Parameter("field", JavaType(clazz.name))) {
-                isStatic = true
-                +"${type.shortName} obj = new ${type.shortName}();"
-                getBeanProperties(clazz).forEach { it ->
-                    val name = it.first
-                    +"obj.${name} = field.get${name.replaceFirstChar { it.uppercase() }}();"
-                    val javaType = JavaType(it.second)
-                    field(name, javaType) {
-                        visibility = JavaVisibility.PUBLIC
+        val clazz = CThostFtdcDepthMarketDataField::class.java
+        val type = "DepthMarketData"
+
+        val imports = mutableSetOf<String>()
+        val printWriter =
+            File("src/main/kotlin/top/bettercode/summer/ktrader/datatype/$type.kt").printWriter()
+        printWriter.use { out ->
+            imports.add("import ${clazz.name}")
+
+            out.appendLine(
+                """package top.bettercode.summer.ktrader.datatype
+
+${imports.sorted().joinToString("\n")}
+
+/**
+ * @author Peter Wu
+ */
+data class $type("""
+            )
+            val properties = getBeanProperties(clazz)
+            properties.forEach {
+                when (val ptype = it.second) {
+                    "char" -> out.appendLine("    var ${it.first}: Char = 0.toChar(),")
+                    "int" -> out.appendLine("    var ${it.first}: Int = 0,")
+                    "double" -> out.appendLine("    var ${it.first}: Double = 0.0,")
+                    "long" -> out.appendLine("    var ${it.first}: Long = 0,")
+                    else -> out.appendLine("    var ${it.first}: $ptype? = null,")
+                }
+
+            }
+            out.appendLine(
+                """) {
+    companion object {
+        fun from(field: ${clazz.simpleName}): $type {
+            val obj = $type()
+${
+                    properties.joinToString("\n") {
+                        "            obj.${it.first} = field.${it.first}"
                     }
                 }
-                +"return obj;"
-            }
-        }.writeTo(File("./"))
+            return obj
+        }
+    }
+}
+"""
+            )
+        }
     }
 
 
@@ -57,7 +81,7 @@ class GenTest {
                     val propertyName =
                         methodName.substring(3).replaceFirstChar { it.lowercaseChar() }
                     getters.add(propertyName)
-                    types[propertyName] = method.returnType.name
+                    types[propertyName] = method.returnType.simpleName
                 }
 
                 methodName.startsWith("set") && method.parameterCount == 1 -> {
@@ -73,4 +97,5 @@ class GenTest {
 
         return properties.map { it to types[it]!! }
     }
+
 }

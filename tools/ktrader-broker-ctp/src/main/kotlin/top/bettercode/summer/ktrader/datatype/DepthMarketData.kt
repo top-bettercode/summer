@@ -2,103 +2,59 @@ package top.bettercode.summer.ktrader.datatype
 
 import org.rationalityfrontline.jctp.CThostFtdcDepthMarketDataField
 
-class DepthMarketData {
-    var bidPrice2: Double = 0.0
-
-    var tradingDay: String? = null
-
-    var reserve1: String? = null
-
-    var exchangeID: String? = null
-
-    var reserve2: String? = null
-
-    var lastPrice: Double = 0.0
-
-    var preSettlementPrice: Double = 0.0
-
-    var preClosePrice: Double = 0.0
-
-    var preOpenInterest: Double = 0.0
-
-    var openPrice: Double = 0.0
-
-    var highestPrice: Double = 0.0
-
-    var lowestPrice: Double = 0.0
-
-    var volume: Int = 0
-
-    var turnover: Double = 0.0
-
-    var openInterest: Double = 0.0
-
-    var closePrice: Double = 0.0
-
-    var settlementPrice: Double = 0.0
-
-    var upperLimitPrice: Double = 0.0
-
-    var lowerLimitPrice: Double = 0.0
-
-    var preDelta: Double = 0.0
-
-    var currDelta: Double = 0.0
-
-    var updateTime: String? = null
-
-    var updateMillisec: Int = 0
-
-    var bidPrice1: Double = 0.0
-
-    var bidVolume1: Int = 0
-
-    var askPrice1: Double = 0.0
-
-    var askVolume1: Int = 0
-
-    var bidVolume2: Int = 0
-
-    var askPrice2: Double = 0.0
-
-    var askVolume2: Int = 0
-
-    var bidPrice3: Double = 0.0
-
-    var bidVolume3: Int = 0
-
-    var askPrice3: Double = 0.0
-
-    var askVolume3: Int = 0
-
-    var bidPrice4: Double = 0.0
-
-    var bidVolume4: Int = 0
-
-    var askPrice4: Double = 0.0
-
-    var askVolume4: Int = 0
-
-    var bidPrice5: Double = 0.0
-
-    var bidVolume5: Int = 0
-
-    var askPrice5: Double = 0.0
-
-    var askVolume5: Int = 0
-
-    var averagePrice: Double = 0.0
-
-    var actionDay: String? = null
-
-    var instrumentID: String? = null
-
-    var exchangeInstID: String? = null
-
-    var bandingUpperPrice: Double = 0.0
-
-    var bandingLowerPrice: Double = 0.0
-
+/**
+ * @author Peter Wu
+ */
+data class DepthMarketData(
+    var bidPrice2: Double = 0.0,
+    var tradingDay: String? = null,
+    var reserve1: String? = null,
+    var exchangeID: String? = null,
+    var reserve2: String? = null,
+    var lastPrice: Double = 0.0,
+    var preSettlementPrice: Double = 0.0,
+    var preClosePrice: Double = 0.0,
+    var preOpenInterest: Double = 0.0,
+    var openPrice: Double = 0.0,
+    var highestPrice: Double = 0.0,
+    var lowestPrice: Double = 0.0,
+    var volume: Int = 0,
+    var turnover: Double = 0.0,
+    var openInterest: Double = 0.0,
+    var closePrice: Double = 0.0,
+    var settlementPrice: Double = 0.0,
+    var upperLimitPrice: Double = 0.0,
+    var lowerLimitPrice: Double = 0.0,
+    var preDelta: Double = 0.0,
+    var currDelta: Double = 0.0,
+    var updateTime: String? = null,
+    var updateMillisec: Int = 0,
+    var bidPrice1: Double = 0.0,
+    var bidVolume1: Int = 0,
+    var askPrice1: Double = 0.0,
+    var askVolume1: Int = 0,
+    var bidVolume2: Int = 0,
+    var askPrice2: Double = 0.0,
+    var askVolume2: Int = 0,
+    var bidPrice3: Double = 0.0,
+    var bidVolume3: Int = 0,
+    var askPrice3: Double = 0.0,
+    var askVolume3: Int = 0,
+    var bidPrice4: Double = 0.0,
+    var bidVolume4: Int = 0,
+    var askPrice4: Double = 0.0,
+    var askVolume4: Int = 0,
+    var bidPrice5: Double = 0.0,
+    var bidVolume5: Int = 0,
+    var askPrice5: Double = 0.0,
+    var askVolume5: Int = 0,
+    var averagePrice: Double = 0.0,
+    var actionDay: String? = null,
+    var instrumentID: String? = null,
+    var exchangeInstID: String? = null,
+    var bandingUpperPrice: Double = 0.0,
+    var bandingLowerPrice: Double = 0.0,
+) {
     companion object {
         fun from(field: CThostFtdcDepthMarketDataField): DepthMarketData {
             val obj = DepthMarketData()
@@ -154,3 +110,4 @@ class DepthMarketData {
         }
     }
 }
+

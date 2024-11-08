@@ -2,73 +2,44 @@ package top.bettercode.summer.ktrader.datatype
 
 import org.rationalityfrontline.jctp.CThostFtdcTradeField
 
-class Trade {
-    var exchangeInstID: String? = null
-
-    var userID: String? = null
-
-    var brokerID: String? = null
-
-    var investorID: String? = null
-
-    var reserve1: String? = null
-
-    var orderRef: String? = null
-
-    var exchangeID: String? = null
-
-    var tradeID: String? = null
-
-    var direction: Char = 0.toChar()
-
-    var orderSysID: String? = null
-
-    var participantID: String? = null
-
-    var clientID: String? = null
-
-    var tradingRole: Char = 0.toChar()
-
-    var reserve2: String? = null
-
-    var offsetFlag: Char = 0.toChar()
-
-    var hedgeFlag: Char = 0.toChar()
-
-    var price: Double = 0.0
-
-    var volume: Int = 0
-
-    var tradeDate: String? = null
-
-    var tradeTime: String? = null
-
-    var tradeType: Char = 0.toChar()
-
-    var priceSource: Char = 0.toChar()
-
-    var traderID: String? = null
-
-    var orderLocalID: String? = null
-
-    var clearingPartID: String? = null
-
-    var businessUnit: String? = null
-
-    var sequenceNo: Int = 0
-
-    var tradingDay: String? = null
-
-    var settlementID: Int = 0
-
-    var brokerOrderSeq: Int = 0
-
-    var tradeSource: Char = 0.toChar()
-
-    var investUnitID: String? = null
-
-    var instrumentID: String? = null
-
+/**
+ * @author Peter Wu
+ */
+data class Trade(
+    var exchangeInstID: String? = null,
+    var userID: String? = null,
+    var brokerID: String? = null,
+    var investorID: String? = null,
+    var reserve1: String? = null,
+    var orderRef: String? = null,
+    var exchangeID: String? = null,
+    var tradeID: String? = null,
+    var direction: Char = 0.toChar(),
+    var orderSysID: String? = null,
+    var participantID: String? = null,
+    var clientID: String? = null,
+    var tradingRole: Char = 0.toChar(),
+    var reserve2: String? = null,
+    var offsetFlag: Char = 0.toChar(),
+    var hedgeFlag: Char = 0.toChar(),
+    var price: Double = 0.0,
+    var volume: Int = 0,
+    var tradeDate: String? = null,
+    var tradeTime: String? = null,
+    var tradeType: Char = 0.toChar(),
+    var priceSource: Char = 0.toChar(),
+    var traderID: String? = null,
+    var orderLocalID: String? = null,
+    var clearingPartID: String? = null,
+    var businessUnit: String? = null,
+    var sequenceNo: Int = 0,
+    var tradingDay: String? = null,
+    var settlementID: Int = 0,
+    var brokerOrderSeq: Int = 0,
+    var tradeSource: Char = 0.toChar(),
+    var investUnitID: String? = null,
+    var instrumentID: String? = null,
+) {
     companion object {
         fun from(field: CThostFtdcTradeField): Trade {
             val obj = Trade()
@@ -109,3 +80,4 @@ class Trade {
         }
     }
 }
+
