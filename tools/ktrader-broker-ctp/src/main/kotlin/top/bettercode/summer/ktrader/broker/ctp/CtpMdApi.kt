@@ -75,7 +75,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             val requestId =
                 Int.MIN_VALUE // 因为 OnFrontConnected 中 requestId 会重置为 0，为防止 requestId 重复，取整数最小值
             requestMap[requestId] = RequestContinuation(requestId, continuation, tag)
-            postBrokerLogEvent(LogLevel.INFO, "【行情接口】连接前置服务器...")
+            postBrokerLogEvent(LogLevel.INFO, "【行情接口】$requestId 连接前置服务器...")
             mdApi.Init()
             inited = true
         }
@@ -142,7 +142,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             }.toTypedArray()
             val requestId = nextRequestId()
             runWithResultCheck({
-                postBrokerLogEvent(LogLevel.TRACE, "【行情接口】订阅合约 $rawCodes...")
+                postBrokerLogEvent(LogLevel.TRACE, "【行情接口】$requestId 订阅合约 $rawCodes...")
                 mdApi.SubscribeMarketData(rawCodes)
             }, {
                 val tag = "subscribeMarketData"
@@ -176,7 +176,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         val rawCodes = filteredCodes.map { parseCode(it).second }.toTypedArray()
         val requestId = nextRequestId()
         runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【行情接口】退订合约 $rawCodes...")
+            postBrokerLogEvent(LogLevel.TRACE, "【行情接口】$requestId 退订合约 $rawCodes...")
             mdApi.UnSubscribeMarketData(rawCodes)
         }, {
             val tag = "unsubscribeMarketData"
@@ -330,6 +330,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             val instrumentId = pSpecificInstrument.instrumentID
             val code = getCode(instrumentId)
             checkRspInfo(pRspInfo, {
+                postBrokerLogEvent(LogLevel.DEBUG, "【行情接口】$nRequestID 行情订阅成功：$code")
                 subscriptions.add(code)
                 resumeRequests("subscribeMarketData", Unit) { req ->
                     val subscribeSet = req.data as MutableSet<String>
@@ -365,6 +366,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             val instrumentId = pSpecificInstrument.instrumentID
             val code = getCode(instrumentId)
             checkRspInfo(pRspInfo, {
+                postBrokerLogEvent(LogLevel.DEBUG, "【行情接口】$nRequestID 行情退订成功：$code")
                 subscriptions.remove(code)
                 lastTicks.remove(code)
                 resumeRequests("unsubscribeMarketData", Unit) { req ->

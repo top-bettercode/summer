@@ -105,7 +105,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             val requestId =
                 Int.MIN_VALUE // 因为 OnFrontConnected 中 requestId 会重置为 0，为防止 requestId 重复，取整数最小值
             requestMap[requestId] = RequestContinuation(requestId, continuation, "connect")
-            postBrokerLogEvent(LogLevel.INFO, "【交易接口】连接前置服务器...")
+            postBrokerLogEvent(LogLevel.INFO, "【交易接口】$requestId 连接前置服务器...")
             tdApi.Init()
             inited = true
         }
@@ -153,7 +153,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询最新行情：$code ...")
+            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询最新行情：$code ...")
             tdApi.ReqQryDepthMarketData(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryLastTick", TIMEOUT_MILLS) { continuation ->
@@ -175,7 +175,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询合约信息：$code ...")
+            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询合约信息：$code ...")
             tdApi.ReqQryInstrument(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryInstrument", TIMEOUT_MILLS) { continuation ->
@@ -191,7 +191,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         val qryField = CThostFtdcQryInstrumentField()
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询全市场合约信息...")
+            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询全市场合约信息...")
             tdApi.ReqQryInstrument(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryAllInstruments", timeoutMills) { continuation ->
@@ -212,7 +212,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询产品信息：$productId ...")
+            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询产品信息：$productId ...")
             tdApi.ReqQryProduct(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryProduct", TIMEOUT_MILLS) { continuation ->
@@ -229,7 +229,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         val qryField = CThostFtdcQryProductField()
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询全市场产品信息...")
+            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询全市场产品信息...")
             tdApi.ReqQryProduct(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryAllProducts", timeoutMills) { continuation ->
@@ -262,7 +262,10 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询[${code ?: "所有"}]成交记录...")
+            postBrokerLogEvent(
+                LogLevel.TRACE,
+                "【交易接口】$requestId 查询[${code ?: "所有"}]成交记录..."
+            )
             tdApi.ReqQryTrade(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryTrades", TIMEOUT_MILLS * 5) { continuation ->
@@ -283,7 +286,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询账户资金信息...")
+            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询账户资金信息...")
             tdApi.ReqQryTradingAccount(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryAssets", TIMEOUT_MILLS) { continuation ->
@@ -306,7 +309,10 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询[${code ?: "所有"}]持仓信息...")
+            postBrokerLogEvent(
+                LogLevel.TRACE,
+                "【交易接口】$requestId 查询[${code ?: "所有"}]持仓信息..."
+            )
             tdApi.ReqQryInvestorPosition(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryPositions", TIMEOUT_MILLS) { continuation ->
@@ -336,7 +342,10 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询[${code ?: "所有"}]持仓明细...")
+            postBrokerLogEvent(
+                LogLevel.TRACE,
+                "【交易接口】$requestId 查询[${code ?: "所有"}]持仓明细..."
+            )
             tdApi.ReqQryInvestorPositionDetail(qryField, requestId)
         }, {
             suspendCoroutineWithTimeout("queryPositionDetails", TIMEOUT_MILLS) { continuation ->
@@ -361,7 +370,10 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
         }
         val requestId = nextRequestId()
         return runWithResultCheck({
-            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询[${code ?: "所有"}]组合持仓明细...")
+            postBrokerLogEvent(
+                LogLevel.TRACE,
+                "【交易接口】$requestId 查询[${code ?: "所有"}]组合持仓明细..."
+            )
             tdApi.ReqQryInvestorPositionCombineDetail(
                 qryField,
                 requestId
@@ -392,7 +404,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             }
             val requestId = nextRequestId()
             runWithResultCheck({
-                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询[所有]手续费率...")
+                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询[所有]手续费率...")
                 tdApi.ReqQryInstrumentCommissionRate(
                     qryField,
                     requestId
@@ -420,7 +432,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             }
             val requestId = nextRequestId()
             runWithResultCheck({
-                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询[${code}]手续费率...")
+                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 查询[${code}]手续费率...")
                 tdApi.ReqQryInstrumentCommissionRate(
                     qryField,
                     requestId
@@ -458,7 +470,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             }
             val requestId = nextRequestId()
             runWithResultCheck<Unit?>({
-                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】请求客户端认证...")
+                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 请求客户端认证...")
                 tdApi.ReqAuthenticate(reqField, requestId)
             }, {
                 suspendCoroutineWithTimeout("reqAuthenticate", TIMEOUT_MILLS) { continuation ->
@@ -479,7 +491,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             }
             val requestId = nextRequestId()
             runWithResultCheck<Unit?>({
-                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】请求用户登录...")
+                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 请求用户登录...")
                 tdApi.ReqUserLogin(reqField, requestId)
             }, {
                 suspendCoroutineWithTimeout("reqUserLogin", TIMEOUT_MILLS) { continuation ->
@@ -498,7 +510,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             }
             val requestId = nextRequestId()
             runWithResultCheck<Unit?>({
-                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】请求结算单确认...")
+                postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$requestId 请求结算单确认...")
                 tdApi.ReqSettlementInfoConfirm(reqField, requestId)
             }, {
                 suspendCoroutineWithTimeout(
@@ -598,7 +610,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             val request = requestMap[nRequestID] ?: return
             checkRspInfo(pRspInfo, {
                 if (bIsLast) {
-                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】客户端认证成功")
+                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$nRequestID 客户端认证成功")
                     (request.continuation as Continuation<Unit>).resume(Unit)
                     requestMap.remove(nRequestID)
                 }
@@ -645,7 +657,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                     postBrokerEvent(BrokerEventType.NEW_TRADING_DAY, tradingDay)
                 }
                 if (bIsLast) {
-                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】资金账户登录成功")
+                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$nRequestID 资金账户登录成功")
                     (request.continuation as Continuation<Unit>).resume(Unit)
                     requestMap.remove(nRequestID)
                 }
@@ -667,7 +679,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             val request = requestMap[nRequestID] ?: return
             checkRspInfo(pRspInfo, {
                 if (bIsLast) {
-                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】结算单确认成功")
+                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$nRequestID 结算单确认成功")
                     (request.continuation as Continuation<Unit>).resume(Unit)
                     requestMap.remove(nRequestID)
                 }
@@ -700,7 +712,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         reqData.results
                     )
                     requestMap.remove(nRequestID)
-                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询成交记录完成")
+                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】$nRequestID 查询成交记录完成")
                 }
             }, { errorCode, errorMsg ->
                 request.continuation.resumeWithException(Exception("$errorMsg ($errorCode)"))
@@ -725,7 +737,10 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         null
                     )
                     requestMap.remove(nRequestID)
-                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询 Tick 失败：$reqCode")
+                    postBrokerLogEvent(
+                        LogLevel.TRACE,
+                        "【交易接口】$nRequestID 查询 Tick 失败：$reqCode"
+                    )
                     return
                 }
                 val code = "${pDepthMarketData.exchangeID}.${pDepthMarketData.instrumentID}"
@@ -734,14 +749,20 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         DepthMarketData.from(pDepthMarketData)
                     )
                     requestMap.remove(nRequestID)
-                    postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询 Tick 完成：$reqCode")
+                    postBrokerLogEvent(
+                        LogLevel.TRACE,
+                        "【交易接口】$nRequestID 查询 Tick 完成：$reqCode"
+                    )
                 } else {
                     if (bIsLast) {
                         (request.continuation as Continuation<DepthMarketData?>).resume(
                             null
                         )
                         requestMap.remove(nRequestID)
-                        postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询 Tick 失败：$reqCode")
+                        postBrokerLogEvent(
+                            LogLevel.TRACE,
+                            "【交易接口】$nRequestID 查询 Tick 失败：$reqCode"
+                        )
                     }
                 }
             }, { errorCode, errorMsg ->
@@ -766,7 +787,10 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                 if (reqData is String) {
                     val con = request.continuation as Continuation<Instrument?>
                     if (pInstrument == null) {
-                        postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询全市场合约:null")
+                        postBrokerLogEvent(
+                            LogLevel.TRACE,
+                            "【交易接口】$nRequestID 查询全市场合约:null"
+                        )
                         con.resume(null)
                         requestMap.remove(nRequestID)
                         return
@@ -777,7 +801,10 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                     } else {
                         if (bIsLast) {
-                            postBrokerLogEvent(LogLevel.TRACE, "【交易接口】查询全市场合约:null")
+                            postBrokerLogEvent(
+                                LogLevel.TRACE,
+                                "【交易接口】$nRequestID 查询全市场合约:null"
+                            )
                             con.resume(null)
                             requestMap.remove(nRequestID)
                         }
@@ -788,7 +815,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                     if (bIsLast) {
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询全市场合约成功:${insList.size}"
+                            "【交易接口】$nRequestID 查询全市场合约成功:${insList.size}"
                         )
                         (request.continuation as Continuation<List<Instrument>>).resume(
                             insList
@@ -822,7 +849,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询合约信息失败：$reqData"
+                            "【交易接口】$nRequestID 查询合约信息失败：$reqData"
                         )
                         return
                     }
@@ -831,7 +858,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询合约信息成功：$reqData"
+                            "【交易接口】$nRequestID 查询合约信息成功：$reqData"
                         )
                     } else {
                         if (bIsLast) {
@@ -839,7 +866,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                             requestMap.remove(nRequestID)
                             postBrokerLogEvent(
                                 LogLevel.TRACE,
-                                "【交易接口】查询合约信息失败：$reqData"
+                                "【交易接口】$nRequestID 查询合约信息失败：$reqData"
                             )
                         }
                     }
@@ -853,7 +880,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询合约信息成功：${insList.size}"
+                            "【交易接口】$nRequestID 查询合约信息成功：${insList.size}"
                         )
                     }
                 }
@@ -885,7 +912,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                 requestMap.remove(nRequestID)
                 postBrokerLogEvent(
                     LogLevel.TRACE,
-                    "【交易接口】查询账户资金成功"
+                    "【交易接口】$nRequestID 查询账户资金成功"
                 )
                 lastQueryAssetsTime = System.currentTimeMillis()
             }, { errorCode, errorMsg ->
@@ -932,7 +959,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                     }
                     postBrokerLogEvent(
                         LogLevel.TRACE,
-                        "【交易接口】查询持仓信息成功：${posList.size}"
+                        "【交易接口】$nRequestID 查询持仓信息成功：${posList.size}"
                     )
                 }
             }, { errorCode, errorMsg ->
@@ -964,7 +991,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询持仓明细信息成功：${reqData.results.size}"
+                            "【交易接口】$nRequestID 查询持仓明细信息成功：${reqData.results.size}"
                         )
                     } else {  // 查询单个
                         val details =
@@ -979,7 +1006,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询持仓明细信息成功：${details}"
+                            "【交易接口】$nRequestID 查询持仓明细信息成功：${details}"
                         )
                     }
                 }
@@ -1016,7 +1043,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询持仓明细信息成功：${reqData.results.size}"
+                            "【交易接口】$nRequestID 查询持仓明细信息成功：${reqData.results.size}"
                         )
                     } else {  // 查询单个
                         val details =
@@ -1031,7 +1058,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                         requestMap.remove(nRequestID)
                         postBrokerLogEvent(
                             LogLevel.TRACE,
-                            "【交易接口】查询持仓明细信息成功：${details}"
+                            "【交易接口】$nRequestID 查询持仓明细信息成功：${details}"
                         )
                     }
                 }
@@ -1065,7 +1092,7 @@ class CtpTdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                     requestMap.remove(nRequestID)
                     postBrokerLogEvent(
                         LogLevel.TRACE,
-                        "【交易接口】查询手续费率信息成功：${request.data.size}"
+                        "【交易接口】$nRequestID 查询手续费率信息成功：${request.data.size}"
                     )
                 }
             }) { errorCode, errorMsg ->
