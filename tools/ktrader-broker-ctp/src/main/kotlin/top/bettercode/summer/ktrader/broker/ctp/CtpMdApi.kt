@@ -91,7 +91,6 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
      */
     fun close() {
         if (frontConnected) mdSpi.OnFrontDisconnected(0)
-        subscriptions.clear()
         codeMap.clear()
         mdApi.Release()
         mdApi.delete()
@@ -255,6 +254,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
             frontConnected = false
             connected = false
             lastTicks.clear()
+            subscriptions.clear()
             postBrokerConnectionEvent(
                 ConnectionEventType.MD_NET_DISCONNECTED,
                 "${getDisconnectReason(nReason)} ($nReason)"
@@ -264,6 +264,7 @@ class CtpMdApi(config: CtpConfig, kEvent: KEvent, sourceId: String) :
                 it.continuation.resumeWithException(e)
             }
             requestMap.clear()
+
         }
 
         private val scope = CoroutineScope(Dispatchers.Default)
