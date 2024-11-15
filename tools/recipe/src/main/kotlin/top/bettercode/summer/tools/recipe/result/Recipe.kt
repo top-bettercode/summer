@@ -1,6 +1,9 @@
 package top.bettercode.summer.tools.recipe.result
 
-import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
@@ -531,16 +534,18 @@ data class Recipe(
                 Operator.EQ -> {
                     if (whenTrue && thenWeight != thenValue) {
                         errors.add(
-                            "${requirement.id}:${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                            "${requirement.id}:${requirement.productName}-条件约束：当${
+                                whenCon.toString(requirement)
+                            }时，${thenCon.toString(requirement)}不成立:${
                                 MaterialCondition(
                                     whenCon.materials,
                                     RecipeCondition(value = whenWeight)
-                                )
+                                ).toString(requirement)
                             } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
-                                )
+                                ).toString(requirement)
                             }"
                         )
                     }
@@ -549,16 +554,20 @@ data class Recipe(
                 Operator.NE -> {
                     if (whenTrue && thenWeight == thenValue) {
                         errors.add(
-                            "${requirement.id}:${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                            "${requirement.id}:${requirement.productName}-条件约束：当${
+                                whenCon.toString(
+                                    requirement
+                                )
+                            }时，${thenCon.toString(requirement)}不成立:${
                                 MaterialCondition(
                                     whenCon.materials,
                                     RecipeCondition(value = whenWeight)
-                                )
+                                ).toString(requirement)
                             } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
-                                )
+                                ).toString(requirement)
                             }"
                         )
                     }
@@ -567,16 +576,20 @@ data class Recipe(
                 Operator.GT -> {
                     if (whenTrue && thenWeight <= thenValue) {
                         errors.add(
-                            "${requirement.id}:${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                            "${requirement.id}:${requirement.productName}-条件约束：当${
+                                whenCon.toString(
+                                    requirement
+                                )
+                            }时，${thenCon.toString(requirement)}不成立:${
                                 MaterialCondition(
                                     whenCon.materials,
                                     RecipeCondition(value = whenWeight)
-                                )
+                                ).toString(requirement)
                             } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
-                                )
+                                ).toString(requirement)
                             }"
                         )
                     }
@@ -585,16 +598,20 @@ data class Recipe(
                 Operator.LT -> {
                     if (whenTrue && thenWeight >= thenValue) {
                         errors.add(
-                            "${requirement.id}:${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                            "${requirement.id}:${requirement.productName}-条件约束：当${
+                                whenCon.toString(
+                                    requirement
+                                )
+                            }时，${thenCon.toString(requirement)}不成立:${
                                 MaterialCondition(
                                     whenCon.materials,
                                     RecipeCondition(value = whenWeight)
-                                )
+                                ).toString(requirement)
                             } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
-                                )
+                                ).toString(requirement)
                             }"
                         )
                     }
@@ -603,16 +620,20 @@ data class Recipe(
                 Operator.GE -> {
                     if (whenTrue && thenWeight < thenValue) {
                         errors.add(
-                            "${requirement.id}:${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                            "${requirement.id}:${requirement.productName}-条件约束：当${
+                                whenCon.toString(
+                                    requirement
+                                )
+                            }时，${thenCon.toString(requirement)}不成立:${
                                 MaterialCondition(
                                     whenCon.materials,
                                     RecipeCondition(value = whenWeight)
-                                )
+                                ).toString(requirement)
                             } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
-                                )
+                                ).toString(requirement)
                             }"
                         )
                     }
@@ -621,16 +642,20 @@ data class Recipe(
                 Operator.LE -> {
                     if (whenTrue && thenWeight > thenValue) {
                         errors.add(
-                            "${requirement.id}:${requirement.productName}-条件约束：当${whenCon}时，${thenCon}不成立:${
+                            "${requirement.id}:${requirement.productName}-条件约束：当${
+                                whenCon.toString(
+                                    requirement
+                                )
+                            }时，${thenCon.toString(requirement)}不成立:${
                                 MaterialCondition(
                                     whenCon.materials,
                                     RecipeCondition(value = whenWeight)
-                                )
+                                ).toString(requirement)
                             } ${
                                 MaterialCondition(
                                     thenCon.materials,
                                     RecipeCondition(value = thenWeight)
-                                )
+                                ).toString(requirement)
                             }"
                         )
                     }
