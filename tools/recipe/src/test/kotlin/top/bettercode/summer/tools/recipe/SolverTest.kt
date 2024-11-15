@@ -25,19 +25,19 @@ import java.io.File
  */
 class SolverTest {
     val epsilon = 1e-2
-    val openExcel = true
-//    val openExcel = false
+//    val openExcel = true
+    val openExcel = false
     val minEpsilon = epsilon
-    val requiresJson = "p_optimal_line_require.json"
+//    val requiresJson = "p_optimal_line_require.json"
+                val requiresJson = "p_optimal_line_require_realse.json"
 
-    //            val requiresJson = "p_optimal_line_require_realse.json"
-    private fun filter(lineId: Long) = arrayOf(
-        529L,
-        555L,
-        530L,
-        556L
-    ).contains(lineId)
-//    private fun filter(lineId: Long) = true
+//    private fun filter(lineId: Long) = arrayOf(
+//        529L,
+//        555L,
+//        530L,
+//        556L
+//    ).contains(lineId)
+    private fun filter(lineId: Long) = true
 
 
     val solverTypes = listOf(
@@ -65,7 +65,7 @@ class SolverTest {
         solve(requirement)
     }
 
-    @Disabled
+//    @Disabled
     @Test
     fun all() {
         val inputStream = ClassPathResource(requiresJson).inputStream
