@@ -496,10 +496,10 @@ data class Recipe(
 
             val whenWeight =
                 materials.filter { whenCon.materials.contains(it.id) }.sumOf { it.weight }
-                    .scale(whenValue.scale)
+                    .scale(scale)
             val thenWeight =
                 materials.filter { thenCon.materials.contains(it.id) }.sumOf { it.weight }
-                    .scale(whenValue.scale)
+                    .scale(scale)
             var whenTrue = false
 
             when (whenCon.condition.operator) {

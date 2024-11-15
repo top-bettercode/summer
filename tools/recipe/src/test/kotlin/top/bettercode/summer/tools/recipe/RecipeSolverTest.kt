@@ -53,7 +53,7 @@ internal class RecipeSolverTest {
     val materialUnchanged = true
     val minMaterialNum = true
     val solveTimes = 1
-    val toExcel = true
+    val toExcel = false
     val epsilon = 1e-3
     val minEpsilon = 0.00
 
