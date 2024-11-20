@@ -26,7 +26,7 @@ open class FilesProperties {
     /**
      * 最大历史记录数量
      */
-    var maxHistory = 100000
+    var maxHistory = 0
 
     /**
      * 启动时是否滚动日志
