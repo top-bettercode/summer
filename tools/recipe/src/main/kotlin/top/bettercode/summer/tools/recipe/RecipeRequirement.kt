@@ -285,20 +285,6 @@ data class RecipeRequirement(
         materialConditionConstraints =
             materialConditionConstraints.filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
 
-        // conditoin 转noMix
-        val noMixConditions = materialConditionConstraints.filter {
-            val op = it.term.condition.operator
-            val value = it.term.condition.value
-            val otherOp = it.then.condition.operator
-            val otherValue = it.then.condition.value
-            op == Operator.GT && value == 0.0 && (otherOp == Operator.LT || otherOp == Operator.LE || otherOp == Operator.EQ) && otherValue == 0.0
-        }
-        val noMixMaterials = noMixConditions.map {
-            arrayOf(it.term.materials, it.then.materials)
-        }
-        notMixMaterialConstraints = notMixMaterialConstraints + noMixMaterials
-        materialConditionConstraints = (materialConditionConstraints - noMixConditions.toSet())
-
         // 可选原料
         val keepMaterialIds = keepMaterialConstraints.ids.toMutableList()
         //不用原料
