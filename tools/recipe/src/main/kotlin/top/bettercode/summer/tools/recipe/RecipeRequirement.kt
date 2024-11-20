@@ -115,6 +115,11 @@ data class RecipeRequirement(
      */
     @JsonProperty("indicatorScale")
     val indicatorScale: Int,
+    /**
+     * 是否自动缩小物料数量
+     */
+    @JsonProperty("autoMinMaterialNum")
+    val autoMinMaterialNum: Boolean = false,
 ) {
 
 
@@ -327,13 +332,16 @@ data class RecipeRequirement(
         this.keepMaterialConstraints =
             if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
                 .toMaterialIDs() else keepMaterialConstraints
-
         useMaterials = materials.groupBy { it.indicators.key }.values
             .asSequence()
             .map { list ->
                 val must = list.filter { f -> materialMust.test(f.id) }
-                val min = list.filter { f -> materialFalse.test(f) }
-                    .minOfWithOrNull(materialComparator) { it }
+                val min = if (autoMinMaterialNum) {
+                    list.filter { f -> materialFalse.test(f) }
+                        .minOfWithOrNull(materialComparator) { it }?.let { listOf(it) }
+                } else {
+                    list.filter { f -> materialFalse.test(f) }
+                }
                 if (min == null)
                     must
                 else
@@ -362,6 +370,74 @@ data class RecipeRequirement(
         return toString(format = true)
     }
 
+    private fun MaterialIDs.minFrom(
+        materials: Map<String, RecipeMaterial>,
+        checkExist: Boolean = true,
+        msg: String = ""
+    ): MaterialIDs {
+        if (!autoMinMaterialNum) {
+            return this
+        }
+        val ids =
+            this.mapNotNull {
+                materials[it]
+            }.groupBy { it.indicators.key }.values.mapNotNull { list ->
+                list.minOfWithOrNull(materialComparator) { it }?.id
+            }
+        if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
+            throw IllegalArgumentException("$msg[$this]不在原料列表中")
+        }
+        return MaterialIDs(ids)
+    }
+
+    private fun RelationMaterialIDs.minFrom(
+        materials: Map<String, RecipeMaterial>
+    ): RelationMaterialIDs {
+        if (!autoMinMaterialNum) {
+            return this
+        }
+        val ids = this.mapNotNull { materials[it] }
+            .groupBy { it.indicators.key }.values.mapNotNull { list ->
+                list.minOfWithOrNull(
+                    materialComparator
+                ) { it }?.id
+            }
+        val relationIds = this.relationIds?.mapNotNull { materials[it] }
+            ?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
+                list.minOfWithOrNull(
+                    materialComparator
+                ) { it }?.id
+            }?.toMaterialIDs()
+        return RelationMaterialIDs(ids, relationIds)
+    }
+
+    private fun ReplacebleMaterialIDs.minFrom(
+        materials: Map<String, RecipeMaterial>,
+        checkExist: Boolean, msg: String
+    ): ReplacebleMaterialIDs {
+        if (!autoMinMaterialNum) {
+            return this
+        }
+        val ids = this.mapNotNull { materials[it] }
+            .groupBy { it.indicators.key }.values.mapNotNull { list ->
+                list.minOfWithOrNull(
+                    materialComparator
+                ) { it }?.id
+            }
+        if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
+            throw IllegalArgumentException("$msg[${this.ids}]不在原料列表中")
+        }
+        val replaceIds = this.replaceIds?.mapNotNull {
+            materials[it]
+        }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
+            list.minOfWithOrNull(materialComparator) { it }?.id
+        }
+        if (checkExist && !this.replaceIds?.ids.isNullOrEmpty() && replaceIds.isNullOrEmpty()) {
+            throw IllegalArgumentException("$msg[${this.replaceIds}]不在原料列表中")
+        }
+        return ReplacebleMaterialIDs(ids, this.replaceRate, replaceIds?.toMaterialIDs())
+    }
+
     //--------------------------------------------
 
     companion object {
@@ -378,66 +454,6 @@ data class RecipeRequirement(
             val objectMapper =
                 StringUtil.objectMapper(include = JsonInclude.Include.NON_NULL)
             return objectMapper.readValue(content, RecipeRequirement::class.java)
-        }
-
-
-        private fun MaterialIDs.minFrom(
-            materials: Map<String, RecipeMaterial>,
-            checkExist: Boolean = true,
-            msg: String = ""
-        ): MaterialIDs {
-            val ids =
-                this.mapNotNull {
-                    materials[it]
-                }.groupBy { it.indicators.key }.values.mapNotNull { list ->
-                    list.minOfWithOrNull(materialComparator) { it }?.id
-                }
-            if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
-                throw IllegalArgumentException("$msg[$this]不在原料列表中")
-            }
-            return MaterialIDs(ids)
-        }
-
-        private fun RelationMaterialIDs.minFrom(
-            materials: Map<String, RecipeMaterial>
-        ): RelationMaterialIDs {
-            val ids = this.mapNotNull { materials[it] }
-                .groupBy { it.indicators.key }.values.mapNotNull { list ->
-                    list.minOfWithOrNull(
-                        materialComparator
-                    ) { it }?.id
-                }
-            val relationIds = this.relationIds?.mapNotNull { materials[it] }
-                ?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-                    list.minOfWithOrNull(
-                        materialComparator
-                    ) { it }?.id
-                }?.toMaterialIDs()
-            return RelationMaterialIDs(ids, relationIds)
-        }
-
-        private fun ReplacebleMaterialIDs.minFrom(
-            materials: Map<String, RecipeMaterial>,
-            checkExist: Boolean, msg: String
-        ): ReplacebleMaterialIDs {
-            val ids = this.mapNotNull { materials[it] }
-                .groupBy { it.indicators.key }.values.mapNotNull { list ->
-                    list.minOfWithOrNull(
-                        materialComparator
-                    ) { it }?.id
-                }
-            if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
-                throw IllegalArgumentException("$msg[${this.ids}]不在原料列表中")
-            }
-            val replaceIds = this.replaceIds?.mapNotNull {
-                materials[it]
-            }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-                list.minOfWithOrNull(materialComparator) { it }?.id
-            }
-            if (checkExist && !this.replaceIds?.ids.isNullOrEmpty() && replaceIds.isNullOrEmpty()) {
-                throw IllegalArgumentException("$msg[${this.replaceIds}]不在原料列表中")
-            }
-            return ReplacebleMaterialIDs(ids, this.replaceRate, replaceIds?.toMaterialIDs())
         }
 
         private val materialComparator: Comparator<RecipeMaterial> = Comparator { o1, o2 ->
