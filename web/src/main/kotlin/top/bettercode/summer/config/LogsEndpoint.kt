@@ -68,6 +68,7 @@ class LogsEndpoint(
     fun path(
         @Selector(match = Selector.Match.ALL_REMAINING) path: String,
         @Nullable collapse: Boolean?,
+        @Nullable download: Boolean?,
         @Nullable traceid: String?,
         @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String?
     ) {
@@ -152,8 +153,8 @@ class LogsEndpoint(
                         return
                     } else {
                         val extension = file.extension
-                        if ("json" == extension) {
-                            json(file, userAgent)
+                        if ("json" == extension || download == true) {
+                            file(file, userAgent)
                             return
                         } else {
                             val logMsgs = readLogMsgs(
@@ -222,7 +223,7 @@ class LogsEndpoint(
         }
     }
 
-    private fun json(file: File, userAgent: String?) {
+    private fun file(file: File, userAgent: String?) {
         val fileName = file.name
         val newFileName: String =
             if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
