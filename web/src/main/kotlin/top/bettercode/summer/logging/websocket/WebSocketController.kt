@@ -3,14 +3,13 @@ package top.bettercode.summer.logging.websocket
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.web.support.ApplicationContextHolder
+import java.net.SocketTimeoutException
 import java.util.concurrent.ConcurrentHashMap
 import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
 @ServerEndpoint("/websocket/logging")
 class WebSocketController {
-
-    private val log = LoggerFactory.getLogger(WebSocketController::class.java)
 
 
     @OnOpen
@@ -50,6 +49,8 @@ class WebSocketController {
     }
 
     companion object {
+        private val log = LoggerFactory.getLogger(WebSocketController::class.java)
+
         private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
         private val websocketProperties: WebsocketProperties by lazy {
             ApplicationContextHolder.getBean(WebsocketProperties::class.java)!!
@@ -58,7 +59,11 @@ class WebSocketController {
         fun send(message: String?) {
             for (session in sessions.values) {
                 if (session.isOpen) {
-                    session.basicRemote.sendText(message)
+                    try {
+                        session.basicRemote.sendText(message)
+                    } catch (e: SocketTimeoutException) {
+                        log.warn("session:{} send message:{} timeout", session.id, message)
+                    }
                 }
             }
         }
