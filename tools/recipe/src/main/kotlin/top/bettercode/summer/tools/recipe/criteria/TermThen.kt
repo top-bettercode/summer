@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder(alphabetic = true)
 data class TermThen<T, E>(
         @JsonProperty("term")
-        var term: T,
+        val term: T,
         @JsonProperty("then")
         var then: E
 )

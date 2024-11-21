@@ -21,7 +21,7 @@ data class RecipeIndicatorValue<T : Any>(
      * 值
      */
     @JsonProperty("value")
-    var value: T,
+    val value: T,
 ) : Comparable<RecipeIndicatorValue<T>> {
 
     @get:JsonIgnore

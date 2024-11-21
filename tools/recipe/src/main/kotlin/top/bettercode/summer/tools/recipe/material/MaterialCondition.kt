@@ -13,7 +13,7 @@ import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
 @JsonPropertyOrder(alphabetic = true)
 data class MaterialCondition(
     @JsonProperty("materials")
-    var materials: MaterialIDs,
+    val materials: MaterialIDs,
     @JsonProperty("condition")
     val condition: RecipeCondition
 ) {

@@ -114,12 +114,7 @@ data class RecipeRequirement(
      * 指标小数位
      */
     @JsonProperty("indicatorScale")
-    val indicatorScale: Int,
-    /**
-     * 是否自动缩小物料数量
-     */
-    @JsonProperty("autoMinMaterialNum")
-    val autoMinMaterialNum: Boolean = false,
+    val indicatorScale: Int
 ) {
 
 
@@ -196,7 +191,7 @@ data class RecipeRequirement(
     }
 
     @get:JsonIgnore
-    val materialMust: Predicate<String> by lazy {
+    val mustUseMaterial: Predicate<String> by lazy {
         Predicate { materialId: String ->
             // 保留用原料ID
             if (keepMaterialConstraints.contains(materialId)) return@Predicate true
@@ -232,7 +227,7 @@ data class RecipeRequirement(
     val useMaterials: List<RecipeMaterial>
 
     @get:JsonIgnore
-    val unUseMaterials: List<RecipeMaterial>
+    val nonUseMaterials: List<RecipeMaterial>
 
     init {
         if (targetWeight <= 0) {
@@ -251,69 +246,42 @@ data class RecipeRequirement(
             it.indicators.init(indicatorMap)
         }
 
-        val tmpMaterial = materials.associateBy { it.id }
         //约束原料
-        indicatorMaterialIDConstraints.values.forEach { indicator ->
-            indicator.value = indicator.value.minFrom(tmpMaterial, true, "指标指定用原料")
-        }
-
-        materialRangeConstraints.forEach {
-            val u = it.then
-            it.term = it.term.minFrom(
-                tmpMaterial,
-                ((Operator.GE == u.minOperator && u.min > 0) || (Operator.GT == u.minOperator && u.min >= 0)),
-                "用量范围约束原料"
-            )
-        }
         materialRangeConstraints = materialRangeConstraints.filter { it.term.ids.isNotEmpty() }
 
         materialRelationConstraints.forEach {
-            it.term = it.term.minFrom(tmpMaterial, true, "关联约束消耗原料")
-            it.then.forEach { then ->
-                then.term = then.term.minFrom(tmpMaterial)
-            }
             it.then = it.then.filter { t -> t.term.ids.isNotEmpty() }
         }
         materialRelationConstraints =
             materialRelationConstraints.filter { it.term.ids.isNotEmpty() }
 
-        materialConditionConstraints.forEach { (whencon, thencon) ->
-            whencon.materials = whencon.materials.minFrom(tmpMaterial)
-            val thenOperator = thencon.condition.operator
-            val thenValue = thencon.condition.value
-            thencon.materials = thencon.materials.minFrom(
-                tmpMaterial,
-                (thenOperator == Operator.GT && thenValue >= 0) || (thenOperator == Operator.EQ && thenValue > 0),
-                "条件约束使用原料"
-            )
-        }
         materialConditionConstraints =
             materialConditionConstraints.filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
 
         // 可选原料
         val keepMaterialIds = keepMaterialConstraints.ids.toMutableList()
         //不用原料
-        val materialFalse = Predicate { material: IRecipeMaterial ->
+        val nonUseMaterial = Predicate { material: IRecipeMaterial ->
             val materialId = material.id
-            if (materialMust.test(materialId)) {
+            if (mustUseMaterial.test(materialId)) {
                 keepMaterialIds.add(materialId)
-                return@Predicate true
+                return@Predicate false
             }
 
             // 过滤不使用的原料
             if (noUseMaterialConstraints.contains(materialId)) {
-                return@Predicate false
+                return@Predicate true
             }
 
             // 排除全局非限用原料
             if (keepMaterialConstraints.ids.isNotEmpty()) {
-                if (!keepMaterialConstraints.contains(materialId)) return@Predicate false
+                if (!keepMaterialConstraints.contains(materialId)) return@Predicate true
             }
 
             // 排除非限用原料
             materialIDConstraints.forEach { (t, u) ->
                 if (t.contains(materialId) && !u.contains(materialId)) {
-                    return@Predicate false
+                    return@Predicate true
                 }
             }
 
@@ -322,34 +290,20 @@ data class RecipeRequirement(
                 val materialIDs = indicator.value
                 val materialIndicator = material.indicators[indicator.id]?.scaledValue ?: 0.0
                 if (materialIndicator > 0 && !materialIDs.contains(materialId)) {
-                    return@Predicate false
+                    return@Predicate true
                 }
             }
 
-            true
+            false
         }
-
+        //限用原料范围
         this.keepMaterialConstraints =
             if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
                 .toMaterialIDs() else keepMaterialConstraints
-        useMaterials = materials.groupBy { it.indicators.key }.values
-            .asSequence()
-            .map { list ->
-                val must = list.filter { f -> materialMust.test(f.id) }
-                val min = if (autoMinMaterialNum) {
-                    list.filter { f -> materialFalse.test(f) }
-                        .minOfWithOrNull(materialComparator) { it }?.let { listOf(it) }
-                } else {
-                    list.filter { f -> materialFalse.test(f) }
-                }
-                if (min == null)
-                    must
-                else
-                    must + min
-            }.filter { it.isNotEmpty() }.flatten().distinct()
-            .toList()
 
-        this.unUseMaterials = this.materials - useMaterials.toSet()
+        this.nonUseMaterials = materials.filter { f -> nonUseMaterial.test(f) }
+        this.useMaterials =
+            (materials.filter { f -> mustUseMaterial.test(f.id) } + (materials - nonUseMaterials.toSet())).distinct()
     }
 
     //--------------------------------------------
@@ -370,74 +324,6 @@ data class RecipeRequirement(
         return toString(format = true)
     }
 
-    private fun MaterialIDs.minFrom(
-        materials: Map<String, RecipeMaterial>,
-        checkExist: Boolean = true,
-        msg: String = ""
-    ): MaterialIDs {
-        if (!autoMinMaterialNum) {
-            return this
-        }
-        val ids =
-            this.mapNotNull {
-                materials[it]
-            }.groupBy { it.indicators.key }.values.mapNotNull { list ->
-                list.minOfWithOrNull(materialComparator) { it }?.id
-            }
-        if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
-            throw IllegalArgumentException("$msg[$this]不在原料列表中")
-        }
-        return MaterialIDs(ids)
-    }
-
-    private fun RelationMaterialIDs.minFrom(
-        materials: Map<String, RecipeMaterial>
-    ): RelationMaterialIDs {
-        if (!autoMinMaterialNum) {
-            return this
-        }
-        val ids = this.mapNotNull { materials[it] }
-            .groupBy { it.indicators.key }.values.mapNotNull { list ->
-                list.minOfWithOrNull(
-                    materialComparator
-                ) { it }?.id
-            }
-        val relationIds = this.relationIds?.mapNotNull { materials[it] }
-            ?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-                list.minOfWithOrNull(
-                    materialComparator
-                ) { it }?.id
-            }?.toMaterialIDs()
-        return RelationMaterialIDs(ids, relationIds)
-    }
-
-    private fun ReplacebleMaterialIDs.minFrom(
-        materials: Map<String, RecipeMaterial>,
-        checkExist: Boolean, msg: String
-    ): ReplacebleMaterialIDs {
-        if (!autoMinMaterialNum) {
-            return this
-        }
-        val ids = this.mapNotNull { materials[it] }
-            .groupBy { it.indicators.key }.values.mapNotNull { list ->
-                list.minOfWithOrNull(
-                    materialComparator
-                ) { it }?.id
-            }
-        if (checkExist && this.ids.isNotEmpty() && ids.isEmpty()) {
-            throw IllegalArgumentException("$msg[${this.ids}]不在原料列表中")
-        }
-        val replaceIds = this.replaceIds?.mapNotNull {
-            materials[it]
-        }?.groupBy { it.indicators.key }?.values?.mapNotNull { list ->
-            list.minOfWithOrNull(materialComparator) { it }?.id
-        }
-        if (checkExist && !this.replaceIds?.ids.isNullOrEmpty() && replaceIds.isNullOrEmpty()) {
-            throw IllegalArgumentException("$msg[${this.replaceIds}]不在原料列表中")
-        }
-        return ReplacebleMaterialIDs(ids, this.replaceRate, replaceIds?.toMaterialIDs())
-    }
-
     //--------------------------------------------
 
     companion object {
@@ -456,12 +342,6 @@ data class RecipeRequirement(
             return objectMapper.readValue(content, RecipeRequirement::class.java)
         }
 
-        private val materialComparator: Comparator<RecipeMaterial> = Comparator { o1, o2 ->
-            if (o1.price == o2.price)
-                o1.index.compareTo(o2.index)
-            else
-                o1.price.compareTo(o2.price)
-        }
     }
 
 }

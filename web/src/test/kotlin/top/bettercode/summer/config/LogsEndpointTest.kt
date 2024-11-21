@@ -31,7 +31,13 @@ class LogsEndpointTest {
             WebEndpointProperties(),
             ManagementServerProperties()
         )
-        logsEndpoint.path("log_total.log", false, null, null)
+        logsEndpoint.path(
+            path = "log_total.log",
+            collapse = false,
+            download = null,
+            traceid = null,
+            userAgent = null
+        )
         println(String(GZIPInputStream(ByteArrayInputStream(response.contentAsByteArray)).readBytes()))
     }
 }

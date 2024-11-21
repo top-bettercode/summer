@@ -19,7 +19,7 @@ object RecipeExport {
 
     fun Excel.exportMaterial(requirement: RecipeRequirement) {
         val materials =
-            requirement.materials.sortedWith(Comparator.comparing<RecipeMaterial?, Boolean?> { it in requirement.unUseMaterials }
+            requirement.materials.sortedWith(Comparator.comparing<RecipeMaterial?, Boolean?> { it in requirement.nonUseMaterials }
                 .thenBy { it.id.toIntOrNull() ?: Int.MAX_VALUE }.thenBy { it.id })
         val indicators = if (materials.isEmpty()) {
             return
@@ -41,7 +41,7 @@ object RecipeExport {
             var c = 0
             // 原料名称
             cell(++r, c++).value(matrialName)
-                .comment(if (matrial in requirement.unUseMaterials) "未使用" else "").setStyle()
+                .comment(if (matrial in requirement.nonUseMaterials) "未使用" else "").setStyle()
             // 成本 单价
             cell(r, c++).value(matrial.price * 1000).setStyle()
             // 原料成份
@@ -142,7 +142,7 @@ object RecipeExport {
                         it.term.toNames(
                             requirement
                         )
-                    }/${it.term.replaceIds?.toNames(requirement)}用量换算系数：${it.term.replaceRate ?: "未设置"}\n"
+                    }/${it.term.replaceIds.toNames(requirement)}用量换算系数：${it.term.replaceRate ?: "未设置"}\n"
                 }${
                     it.then.joinToString("\n") { v ->
                         val normal = v.then.normal

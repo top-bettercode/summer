@@ -373,7 +373,7 @@ data class Recipe(
         // 不能用原料ID
         val noUseMaterials = requirement.noUseMaterialConstraints
         if (noUseMaterials.ids.isNotEmpty()) {
-            if (usedMaterials.any { !requirement.materialMust.test(it) && noUseMaterials.contains(it) }) {
+            if (usedMaterials.any { !requirement.mustUseMaterial.test(it) && noUseMaterials.contains(it) }) {
                 errors.add("${requirement.id}:${requirement.productName}-配方所用原料：${usedMaterials} 包含不可用原料${noUseMaterials}内")
             }
         }
