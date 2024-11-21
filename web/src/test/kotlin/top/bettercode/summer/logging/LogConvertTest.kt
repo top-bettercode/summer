@@ -2,6 +2,8 @@ package top.bettercode.summer.logging
 
 import kotlinx.coroutines.*
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.config.LogMsg
+import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -66,63 +68,56 @@ class LogConvertTest {
     fun readLines(name: String, lines: List<String>) {
         print("处理${name}")
         //2023-02-11 12:56:11.967  INFO 30246 --- [pool-3-thread-1] com.cdwintech.npk.task.TaskService       :
+//        val regrex =
+//            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-z0-9\\-]+)] +(\\S+) +:(.*)")
+        //2024-09-12 11:55:06.505  INFO [exec-7] t.b.s.s.r.RedisStoreTokenRepository      RedisStoreTokenRepository.kt:138 4385dd54: msg
         val regrex =
-            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-z0-9\\-]+)] +(\\S+) +:(.*)")
+            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\S+) +(\\S+) +(\\S+) +(\\S*) *: (.*)")
 
-        lateinit var time: String
-        lateinit var logLevel: String
-        lateinit var pid: String
-        lateinit var threadName: String
-        lateinit var logName: String
+        val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
+        var level = "DEFAULT"
+        val traceid = null
+        var traceIdMatch = traceid.isNullOrBlank()
+
         lines.forEach { line ->
             val matchResult = regrex.matchEntire(line)
             if (matchResult != null) {
                 val groupValues = matchResult.groupValues
-                time = groupValues[1]
-                logLevel = groupValues[2]
-                pid = groupValues[3]
-                threadName = groupValues[4]
-                logName = groupValues[5]
-
-                if (msg.isNotBlank()) {
-                    process(time, logLevel, pid, threadName, logName, msg.toString())
+                if (msg.isNotBlank() && traceIdMatch) {
+                    process(LogMsg(level, msg.toString()))
                 }
-                msg = java.lang.StringBuilder(groupValues[6])
+                if (!traceIdMatch)
+                    traceIdMatch = groupValues[6] == traceid
+                msg = java.lang.StringBuilder(line)
+                level = groupValues[2]
             } else {
-                msg.append(System.lineSeparator())
+                msg.append(StringUtil.LINE_SEPARATOR)
                 msg.append(line)
             }
         }
-        if (msg.isNotBlank()) {
-            process(time, logLevel, pid, threadName, logName, msg.toString())
+        if (msg.isNotBlank() && traceIdMatch) {
+            process(LogMsg(level, msg.toString()))
         }
     }
 
-
-    fun process(
-        time: String,
-        logLevel: String,
-        pid: String,
-        threadName: String,
-        logName: String,
-        msg: String
-    ) {
-        if ((msg.contains("POST /npk/users/resetPassword") && msg.contains("mobile=13948644728")) || (msg.contains(
-                "POST /npk/users/password"
-            ) && msg.contains("app:CUST00173E"))
-        ) {
+    private fun process(log: LogMsg) {
+        val msg = log.msg
+        if ((msg.contains("POST /npk/appMessages"))) {
             logs.add(msg)
         }
     }
 
     @Test
     fun test() {
-        val source = File("/local/downloads/202304")
+        val source = File("/local/downloads/all-2023-04-15-13.gz")
         val target = File("/local/downloads/result.txt")
         runBlocking {
             readFile(source)
         }
-        target.writeText(logs.joinToString(System.lineSeparator()))
+        System.err.println("---------------------------------------")
+        System.err.println(logs.joinToString(System.lineSeparator()))
+        System.err.println("---------------------------------------")
+//        target.writeText(logs.joinToString(System.lineSeparator()))
     }
 }

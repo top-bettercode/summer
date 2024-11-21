@@ -70,11 +70,29 @@ class LogsEndpoint(
         @Nullable collapse: Boolean?,
         @Nullable download: Boolean?,
         @Nullable traceid: String?,
+        @Nullable logPattern: String?,
+        @Nullable keyword: String?,
         @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String?
     ) {
         val requestPath = path.replace(",", "/")
 
-        if ("real-time" != path) {
+        if ("query" == path && !logPattern.isNullOrBlank()) {
+            val files =
+                File(loggingFilesPath).listFiles()?.filter { it.name.matches(logPattern.toRegex()) }
+            val logMsgs = mutableListOf<LogMsg>()
+            files?.forEach { file ->
+                logMsgs.addAll(
+                    readLogMsgs(
+                        inputStream = file.inputStream(),
+                        gzip = "gz" == file.extension,
+                        traceid = traceid,
+                        keywords = keyword?.split(",")?.toTypedArray()
+                    )
+                )
+            }
+            showLogFile(filename = "query", logMsgs = logMsgs, collapse = collapse)
+            return
+        } else if ("real-time" != path) {
             val paths = path.split(",")
             if (paths.contains("daily")) {
                 val today = TimeUtil.now().format("yyyy-MM-dd")
@@ -97,17 +115,17 @@ class LogsEndpoint(
                     index(filenames.map { File(it) }.toTypedArray(), false, requestPath, false)
                     return
                 } else if (dailyPath.size == 2) {
-                    var logPattern = dailyPath[1]
+                    var dailyLogPattern = dailyPath[1]
                     val html =
-                        if (logPattern.endsWith(".html")) {
-                            logPattern = logPattern.substringBeforeLast(".html")
+                        if (dailyLogPattern.endsWith(".html")) {
+                            dailyLogPattern = dailyLogPattern.substringBeforeLast(".html")
                             true
                         } else false
 
-                    val matchCurrent = today.startsWith(logPattern)
+                    val matchCurrent = today.startsWith(dailyLogPattern)
                     val files =
                         dir.listFiles()
-                            ?.filter { file -> file.name.startsWith("all-$logPattern") || matchCurrent && file.name == "all.log" }
+                            ?.filter { file -> file.name.startsWith("all-$dailyLogPattern") || matchCurrent && file.name == "all.log" }
                             ?.toList()
 
                     if (!files.isNullOrEmpty()) {
@@ -124,10 +142,10 @@ class LogsEndpoint(
                                     )
                                 )
                             }
-                            showLogFile(logPattern, logMsgs, collapse)
+                            showLogFile(dailyLogPattern, logMsgs, collapse)
                             return
                         } else {
-                            logGz(logPattern, userAgent, files)
+                            logGz(dailyLogPattern, userAgent, files)
                             return
                         }
                     } else {
@@ -545,7 +563,8 @@ class LogsEndpoint(
     private fun readLogMsgs(
         inputStream: InputStream,
         gzip: Boolean = false,
-        traceid: String?
+        traceid: String? = null,
+        keywords: Array<String>? = null
     ): List<LogMsg> {
         val lines = if (gzip) {
             GZIPInputStream(inputStream).bufferedReader().lines()
@@ -555,7 +574,7 @@ class LogsEndpoint(
 
         //2024-09-12 11:55:06.505  INFO [exec-7] t.b.s.s.r.RedisStoreTokenRepository      RedisStoreTokenRepository.kt:138 4385dd54: msg
         val regrex =
-            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\[.*?]) +(\\S+) +(\\S+) +(\\S*): (.*)")
+            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\S+) +(\\S+) +(\\S+) +(\\S*) *: (.*)")
 
         val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
@@ -566,7 +585,9 @@ class LogsEndpoint(
             val matchResult = regrex.matchEntire(line)
             if (matchResult != null) {
                 val groupValues = matchResult.groupValues
-                if (msg.isNotBlank() && traceIdMatch) {
+                if (msg.isNotBlank() && traceIdMatch
+                    && (keywords.isNullOrEmpty() || keywords.any { msg.contains(it) })
+                ) {
                     msgs.add(LogMsg(level, msg.toString()))
                 }
                 if (!traceIdMatch)
@@ -578,7 +599,9 @@ class LogsEndpoint(
                 msg.append(line)
             }
         }
-        if (msg.isNotBlank() && traceIdMatch) {
+        if (msg.isNotBlank() && traceIdMatch
+            && (keywords.isNullOrEmpty() || keywords.any { msg.contains(it) })
+        ) {
             msgs.add(LogMsg(level, msg.toString()))
         }
         return msgs
