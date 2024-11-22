@@ -1,5 +1,6 @@
 package top.bettercode.summer.config
 
+import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
@@ -51,6 +52,7 @@ class LogsEndpoint(
     private val contextPath: String = managementServerProperties.basePath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
     private val appName: String = LoggingUtil.warnTitle(env)
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
         "org.springframework.web.socket.server.standard.ServerEndpointExporter",
@@ -60,8 +62,14 @@ class LogsEndpoint(
     ).isNullOrBlank())
 
     @ReadOperation
-    fun root() {
-        index(File(loggingFilesPath).listFiles(), true, "", true)
+    fun root(@Nullable download: Boolean?) {
+        index(
+            files = File(loggingFilesPath).listFiles(),
+            root = true,
+            requestPath = "",
+            filterEmpty = true,
+            download = download
+        )
     }
 
     @ReadOperation
@@ -79,18 +87,24 @@ class LogsEndpoint(
         if ("query" == path && !logPattern.isNullOrBlank()) {
             val files =
                 File(loggingFilesPath).listFiles()?.filter { it.name.matches(logPattern.toRegex()) }
-            val logMsgs = mutableListOf<LogMsg>()
-            files?.forEach { file ->
-                logMsgs.addAll(
-                    readLogMsgs(
-                        inputStream = file.inputStream(),
-                        gzip = "gz" == file.extension,
-                        traceid = traceid,
-                        keywords = keyword?.split(",")?.toTypedArray()
-                    )
-                )
+            runBlocking {
+                val deferredLogMsgs = files?.map { file ->
+                    scope.async {
+                        readLogMsgs(
+                            inputStream = file.inputStream(),
+                            gzip = "gz" == file.extension,
+                            traceid = traceid,
+                            keywords = keyword?.split(",")?.toTypedArray()
+                        )
+                    }
+                }
+                val logMsgs = deferredLogMsgs?.awaitAll()?.flatten()
+                if (download == true) {
+                    file("result", logMsgs?.joinToString("\n") ?: "", userAgent)
+                } else {
+                    showLogFile(filename = "query", logMsgs = logMsgs, collapse = collapse)
+                }
             }
-            showLogFile(filename = "query", logMsgs = logMsgs, collapse = collapse)
             return
         } else if ("real-time" != path) {
             val paths = path.split(",")
@@ -112,16 +126,16 @@ class LogsEndpoint(
                     if (!filenames.contains(today)) {
                         filenames.add(today)
                     }
-                    index(filenames.map { File(it) }.toTypedArray(), false, requestPath, false)
+                    index(
+                        files = filenames.map { File(it) }.toTypedArray(),
+                        root = false,
+                        requestPath = requestPath,
+                        filterEmpty = false,
+                        download = download
+                    )
                     return
                 } else if (dailyPath.size == 2) {
-                    var dailyLogPattern = dailyPath[1]
-                    val html =
-                        if (dailyLogPattern.endsWith(".html")) {
-                            dailyLogPattern = dailyLogPattern.substringBeforeLast(".html")
-                            true
-                        } else false
-
+                    val dailyLogPattern = dailyPath[1]
                     val matchCurrent = today.startsWith(dailyLogPattern)
                     val files =
                         dir.listFiles()
@@ -131,7 +145,10 @@ class LogsEndpoint(
                     if (!files.isNullOrEmpty()) {
                         files.sortedWith(compareBy { it.lastModified() })
 
-                        if (html) {
+                        if (download == true) {
+                            logGz(dailyLogPattern, userAgent, files)
+                            return
+                        } else {
                             val logMsgs = mutableListOf<LogMsg>()
                             files.forEach { file ->
                                 logMsgs.addAll(
@@ -143,9 +160,6 @@ class LogsEndpoint(
                                 )
                             }
                             showLogFile(dailyLogPattern, logMsgs, collapse)
-                            return
-                        } else {
-                            logGz(dailyLogPattern, userAgent, files)
                             return
                         }
                     } else {
@@ -172,7 +186,11 @@ class LogsEndpoint(
                     } else {
                         val extension = file.extension
                         if ("json" == extension || download == true) {
-                            file(file, userAgent)
+                            file(
+                                fileName = file.name,
+                                content = file.readText(),
+                                userAgent = userAgent
+                            )
                             return
                         } else {
                             val logMsgs = readLogMsgs(
@@ -185,7 +203,13 @@ class LogsEndpoint(
                         }
                     }
                 } else {
-                    index(file.listFiles(), false, requestPath, true)
+                    index(
+                        files = file.listFiles(),
+                        root = false,
+                        requestPath = requestPath,
+                        filterEmpty = true,
+                        download = download
+                    )
                     return
                 }
             }
@@ -241,8 +265,7 @@ class LogsEndpoint(
         }
     }
 
-    private fun file(file: File, userAgent: String?) {
-        val fileName = file.name
+    private fun file(fileName: String, content: String, userAgent: String?) {
         val newFileName: String =
             if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains(
                     "Edge"
@@ -264,7 +287,7 @@ class LogsEndpoint(
         response.setHeader("Cache-Control", "no-cache")
         response.setDateHeader("Expires", 0)
         response.outputStream.bufferedWriter().use { writer ->
-            writer.write(file.readText())
+            writer.write(content)
         }
     }
 
@@ -447,7 +470,8 @@ class LogsEndpoint(
         files: Array<File>?,
         root: Boolean,
         requestPath: String,
-        filterEmpty: Boolean
+        filterEmpty: Boolean,
+        download: Boolean?
     ) {
         if (!files.isNullOrEmpty()) {
             val path = if (root) basePath else "$basePath/$requestPath"
@@ -506,7 +530,7 @@ class LogsEndpoint(
                             )
                         } else {
                             writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}${if (download == true) "?download=true" else ""}#last\">${it.name}</a>                                        $lastModify       ${
                                     prettyValue(
                                         it.length()
                                     )
