@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.feishu.entity
+package top.bettercode.summer.tools.feishu.entity.userflow
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

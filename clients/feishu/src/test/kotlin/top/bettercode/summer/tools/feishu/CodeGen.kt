@@ -1,9 +1,6 @@
 package top.bettercode.summer.tools.feishu
 
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
-import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.lang.util.JavaType
 import top.bettercode.summer.tools.lang.util.StringUtil.toCamelCase
 import java.io.File
@@ -14,52 +11,61 @@ import java.io.File
  */
 class CodeGen {
 
-    @Disabled
+    //    @Disabled
     @Test
     fun gen() {
         val content = javaClass.getResource("/doc.txt")!!.readText().trimIndent()
-        val fullTypeSpecification = "${javaClass.`package`.name}.entity.UserFlowResult"
-        TopLevelClass(
-            type = JavaType(fullTypeSpecification),
-            overwrite = true
-        ).apply {
+        val classType = "${javaClass.`package`.name}.entity.EmployeeQuery"
 
-            javadoc {
-                +"/**"
-                +" * "
-                +" */"
-            }
+        val imports = mutableSetOf<String>()
+        imports.add("import com.fasterxml.jackson.annotation.JsonProperty")
+        val file = File("src/main/kotlin/${classType.replace(".", "/")}.kt")
+        file.parentFile.mkdirs()
+        val printWriter =
+            file.printWriter()
+        printWriter.use { out ->
+
+            out.appendLine(
+                """package ${classType.substringBeforeLast(".")}
+
+${imports.sorted().joinToString("\n")}
+
+/**
+ * @author Peter Wu
+ */
+data class ${JavaType(classType).shortName}("""
+            )
 
             content.split("\n").map { it.trim().trim('|') }.forEach { l ->
                 l.split("|").let {
                     val name = it[0].trim().trimStart('+')
                     val javaType = when (val type = it[1].trim()) {
-                        "string" -> JavaType.stringInstance
-                        "string[]" -> JavaType("java.lang.String[]")
-                        "int" -> JavaType.intWrapper
-                        "integer" -> JavaType.intWrapper
-                        "integer[]" -> JavaType("java.lang.Integer[]")
-                        "number" -> JavaType.intWrapper
-                        "number[]" -> JavaType("java.lang.Integer[]")
-                        "boolean" -> JavaType.booleanWrapper
-                        "object" -> JavaType.objectInstance
-                        "object[]" -> JavaType("java.util.List").typeArgument(JavaType.objectInstance)
+                        "string" -> "String"
+                        "string[]" -> "Array<Int>"
+                        "int" -> "Int"
+                        "integer" -> "Int"
+                        "integer[]" -> "Array<Int>"
+                        "number" -> "Int"
+                        "number[]" -> "Array<Int>"
+                        "boolean" -> "Boolean"
+                        "object" -> "Any"
+                        "object[]" -> "List<Any>"
                         else -> throw IllegalArgumentException("不支持的类型：$type")
                     }
                     val required = it[2].trim()
                     val comment = it[3].trim()
-
-                    field(name.toCamelCase(), javaType) {
-                        annotation("@com.fasterxml.jackson.annotation.JsonProperty(\"$name\")")
-                        visibility = JavaVisibility.PUBLIC
-                        javadoc {
-                            +"/**"
-                            +" * $comment ${if (required == "是") "必填" else ""}"
-                            +" */"
-                        }
-                    }
+                    out.appendLine(
+                        """    /**
+     * $comment ${if (required == "是") "必填" else ""}
+     */
+    @JsonProperty("$name")
+    var ${name.toCamelCase()}: ${javaType}? = null,"""
+                    )
                 }
             }
-        }.writeTo(File("./"))
+            out.append(")")
+
+        }
     }
+
 }

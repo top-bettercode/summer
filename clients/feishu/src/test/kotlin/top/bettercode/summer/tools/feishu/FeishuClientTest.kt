@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
-import top.bettercode.summer.tools.feishu.entity.UserFlow
-import top.bettercode.summer.tools.feishu.entity.UserFlowRequest
+import top.bettercode.summer.tools.feishu.entity.userflow.UserFlow
+import top.bettercode.summer.tools.feishu.entity.userflow.UserFlowRequest
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 

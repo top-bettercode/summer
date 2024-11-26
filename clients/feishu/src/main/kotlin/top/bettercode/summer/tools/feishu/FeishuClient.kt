@@ -14,10 +14,10 @@ import org.springframework.util.Assert
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.feishu.entity.UserFlow
-import top.bettercode.summer.tools.feishu.entity.UserFlowCreateResults
-import top.bettercode.summer.tools.feishu.entity.UserFlowRequest
-import top.bettercode.summer.tools.feishu.entity.UserFlowResults
+import top.bettercode.summer.tools.feishu.entity.userflow.UserFlow
+import top.bettercode.summer.tools.feishu.entity.userflow.UserFlowCreateResults
+import top.bettercode.summer.tools.feishu.entity.userflow.UserFlowRequest
+import top.bettercode.summer.tools.feishu.entity.userflow.UserFlowResults
 import top.bettercode.summer.tools.lang.ExpiringValue
 import top.bettercode.summer.tools.lang.client.ApiTemplate
 import top.bettercode.summer.tools.lang.client.ClientSysException
