@@ -89,11 +89,11 @@ class FeishuMsgHookClient(
         val headers = HttpHeaders()
         headers.contentType = MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
 
-        val result: FeishuResult? =
+        val result: FeishuResponse? =
             restTemplate.postForObject(
                 api + webhook,
                 HttpEntity(params, headers),
-                FeishuResult::class.java
+                FeishuResponse::class.java
             )
 
         if (log.isTraceEnabled) {

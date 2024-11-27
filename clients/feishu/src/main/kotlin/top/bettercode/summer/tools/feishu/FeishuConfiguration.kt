@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.feishu
 
+import com.lark.oapi.Client
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,8 +15,8 @@ class FeishuConfiguration {
 
 
     @Bean
-    fun feishuClient(feishuProperties: FeishuProperties): FeishuClient {
-        return FeishuClient(feishuProperties)
+    fun feishuClient(feishuProperties: FeishuProperties): Client {
+        return FeishuClientBuilder(feishuProperties).client
     }
 
 }

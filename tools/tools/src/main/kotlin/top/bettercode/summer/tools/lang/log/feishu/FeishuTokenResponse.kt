@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
  * @author Peter Wu
  */
-class FeishuTokenResult : FeishuResult() {
+class FeishuTokenResponse : FeishuResponse() {
     var expire: Int? = null
     @JsonProperty("tenant_access_token")
     var tenantAccessToken: String? = null

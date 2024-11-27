@@ -53,7 +53,7 @@ open class QvodClient(
         val httpConnection = field.get(vodClient) as HttpConnection
         httpConnection.addInterceptors(/* interceptor = */ OkHttpLoggingInterceptor(
             collectionName = "第三方平台",
-            name = "腾讯云",
+            name = properties.platformName,
             logMarker = MARKER,
             logClazz = QvodClient::class.java,
             timeoutAlarmSeconds = properties.timeoutAlarmSeconds

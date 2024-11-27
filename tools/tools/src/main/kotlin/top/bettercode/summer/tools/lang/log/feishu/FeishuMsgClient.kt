@@ -65,10 +65,10 @@ class FeishuMsgClient(
         headers.contentType =
             MediaType(MediaType.APPLICATION_JSON, mapOf("charset" to Charsets.UTF_8.name()))
         val requestEntity = HttpEntity(mapOf("app_id" to appId, "app_secret" to appSecret), headers)
-        val authToken: FeishuTokenResult = restTemplate.postForObject(
+        val authToken: FeishuTokenResponse = restTemplate.postForObject(
             "$api/auth/v3/tenant_access_token/internal",
             requestEntity,
-            FeishuTokenResult::class
+            FeishuTokenResponse::class
         )
         return if (authToken.isOk) {
             ExpiringValue(
@@ -94,7 +94,7 @@ class FeishuMsgClient(
         }
     }
 
-    private fun <T : FeishuResult> request(
+    private fun <T : FeishuResponse> request(
         url: String,
         request: Any? = null,
         method: HttpMethod = HttpMethod.POST,
@@ -141,13 +141,13 @@ class FeishuMsgClient(
     }
 
     private val feishuChatType = object :
-        ParameterizedTypeReference<FeishuDataResult<FeishuPageData<FeishuChat>>>() {}
+        ParameterizedTypeReference<FeishuDataResponse<FeishuPageResponse<FeishuChat>>>() {}
 
     /**
      * https://open.feishu.cn/document/server-docs/group/chat/list
      */
     fun chatList(): List<FeishuChat>? {
-        val result: FeishuDataResult<FeishuPageData<FeishuChat>>? =
+        val result: FeishuDataResponse<FeishuPageResponse<FeishuChat>>? =
             request(
                 url = "/im/v1/chats",
                 responseType = feishuChatType,
@@ -210,9 +210,9 @@ class FeishuMsgClient(
             log.trace("feishu params:{}", params)
         }
 
-        val result: FeishuResult? = request(
+        val result: FeishuResponse? = request(
             url = "/im/v1/messages?receive_id_type=chat_id",
-            responseClass = FeishuResult::class.java,
+            responseClass = FeishuResponse::class.java,
             request = params
         )
         if (log.isTraceEnabled) {
@@ -225,7 +225,7 @@ class FeishuMsgClient(
     }
 
     private val feishuFileType =
-        object : ParameterizedTypeReference<FeishuDataResult<FeishuFile>>() {}
+        object : ParameterizedTypeReference<FeishuDataResponse<FeishuFile>>() {}
 
     fun filesUpload(
         chatId: String,
@@ -243,7 +243,7 @@ class FeishuMsgClient(
         body.add("file", resource)
 
         //https://open.feishu.cn/document/server-docs/im-v1/file/create
-        val fileResult: FeishuDataResult<FeishuFile>? = request(
+        val fileResult: FeishuDataResponse<FeishuFile>? = request(
             url = "/im/v1/files",
             responseType = feishuFileType,
             request = body,
@@ -266,9 +266,9 @@ class FeishuMsgClient(
             "msg_type" to "file",
             "content" to "{\"file_key\":\"$fileKey\"}"
         )
-        val result: FeishuResult? = request(
+        val result: FeishuResponse? = request(
             url = "/im/v1/messages?receive_id_type=chat_id",
-            responseClass = FeishuResult::class.java,
+            responseClass = FeishuResponse::class.java,
             request = params
         )
 

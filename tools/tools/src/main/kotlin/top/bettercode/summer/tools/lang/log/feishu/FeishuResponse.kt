@@ -7,7 +7,7 @@ import top.bettercode.summer.tools.lang.property.PropertiesSource
 /**
  * @author Peter Wu
  */
-open class FeishuResult : ClientResponse {
+open class FeishuResponse : ClientResponse {
     val code: Int? = null
     val msg: String? = null
 

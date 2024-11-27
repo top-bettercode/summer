@@ -1,11 +1,11 @@
-package top.bettercode.summer.tools.lang.client
+package top.bettercode.summer.tools.feishu
 
 import ch.qos.logback.classic.Level
-import okhttp3.Interceptor
-import okhttp3.Request
-import okhttp3.Response
-import okio.Buffer
-import okio.GzipSource
+import com.lark.oapi.okhttp.Interceptor
+import com.lark.oapi.okhttp.Request
+import com.lark.oapi.okhttp.Response
+import com.lark.oapi.okio.Buffer
+import com.lark.oapi.okio.GzipSource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
@@ -67,10 +67,10 @@ class OkHttpLoggingInterceptor(
                     response = operationResponse
                 )
                 val isMultipart =
-                    request.headers[HttpHeaders.CONTENT_TYPE]?.lowercase(Locale.getDefault())
+                    request.headers()[HttpHeaders.CONTENT_TYPE]?.lowercase(Locale.getDefault())
                         ?.startsWith("multipart/") == true
                 val isFile =
-                    !response?.headers?.get(HttpHeaders.CONTENT_DISPOSITION).isNullOrBlank()
+                    !response?.headers()?.get(HttpHeaders.CONTENT_DISPOSITION).isNullOrBlank()
 
                 var msg = operation.toString(
                     RequestLoggingConfig(
@@ -114,10 +114,10 @@ class OkHttpLoggingInterceptor(
 
     fun convert(request: Request, dateTime: LocalDateTime): OperationRequest {
         val headers = HttpHeaders()
-        for (name in request.headers.names()) {
-            headers.add(name, request.headers[name])
+        for (name in request.headers().names()) {
+            headers.add(name, request.headers()[name])
         }
-        val requestBody = request.body
+        val requestBody = request.body()
         val content = if (requestBody != null) {
             requestBody.contentType()?.let {
                 if (headers["Content-Type"] == null) {
@@ -136,12 +136,12 @@ class OkHttpLoggingInterceptor(
         } else {
             ByteArray(0)
         }
-        val url = request.url
-        val uri = url.toUri()
+        val url = request.url()
+        val uri = url.uri()
         headers["Host"] = extractHost(uri)
 
         val queries = Parameters()
-        for (parameterName in url.queryParameterNames) {
+        for (parameterName in url.queryParameterNames()) {
             queries.add(parameterName, url.queryParameter(parameterName))
         }
         val restUri = uri.toString()
@@ -149,7 +149,7 @@ class OkHttpLoggingInterceptor(
         return OperationRequest(
             uri = uri,
             restUri = restUri,
-            method = request.method,
+            method = request.method(),
             headers = headers,
             remoteUser = remoteUser,
             queries = queries,
@@ -160,7 +160,7 @@ class OkHttpLoggingInterceptor(
 
     fun convert(response: Response): OperationResponse {
         val statusCode = try {
-            response.code
+            response.code()
         } catch (e: Exception) {
             log.warn("Failed to get response code", e)
             0
@@ -168,7 +168,7 @@ class OkHttpLoggingInterceptor(
 
         val headers = try {
             val headers = HttpHeaders()
-            val respHeaders = response.headers
+            val respHeaders = response.headers()
             for (name in respHeaders.names()) {
                 headers.add(name, respHeaders[name])
             }
@@ -179,7 +179,7 @@ class OkHttpLoggingInterceptor(
         }
 
         val responseBody = try {
-            response.body
+            response.body()
         } catch (e: Exception) {
             log.warn("Failed to get response body", e)
             null

@@ -138,4 +138,5 @@ logging:
     javax.xml: warn
     javax.activation: warn
     javax.management: warn
+    com.lark.oapi: warn
     top.bettercode.summer: info

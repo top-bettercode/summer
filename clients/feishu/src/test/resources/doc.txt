@@ -1,4 +1,68 @@
-page_size|int|是|分页大小，最大 100 示例值：100 数据校验规则： 取值范围：1 ～ 100
-page_token|string|否|分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 示例值："6891251722631890445"
-user_id_type|string|否|用户 ID 类型 示例值："open_id" 可选值有： open_id：标识一个用户在某个应用中的身份。同一个用户在不同应用中的 Open ID 不同。了解更多：如何获取 Open ID union_id：标识一个用户在某个应用开发商下的身份。同一用户在同一开发商下的应用中的 Union ID 是相同的，在不同开发商下的应用中的 Union ID 是不同的。通过 Union ID，应用开发商可以把同个用户在多个应用中的身份关联起来。了解更多：如何获取 Union ID？ user_id：标识一个用户在某个租户内的身份。同一个用户在租户 A 和租户 B 内的 User ID 是不同的。在同一个租户内，一个用户的 User ID 在所有应用（包括商店应用）中都保持一致。User ID 主要用于在不同的应用间打通用户数据。了解更多：如何获取 User ID？ people_corehr_id：以飞书人事的 ID 来识别用户 默认值：open_id 当值为 user_id，字段权限要求： 获取用户 user ID 仅自建应用
-department_id_type|string|否|此次调用中使用的部门 ID 类型 示例值："open_department_id" 可选值有： open_department_id：以 open_department_id 来标识部门 department_id：以 department_id 来标识部门 people_corehr_department_id：以 people_corehr_department_id 来标识部门 默认值：open_department_id
+employment_id|string|雇佣 ID，类型与 user_id_type 一致
+employment_id_v2|string|雇佣 ID 类型与 user_id_type 一致，转换失败时返回空值
+ats_application_id|string|招聘投递 ID ，详细信息可以通过【获取投递信息】接口查询
+prehire_id|string|待入职 ID，可通过【查询单个待入职】获取信息
+employee_number|string|工号，在【创建雇佣】是指定的或者自动生成的值
+employee_type_id|string|人员类型 ID，详细信息可通过【查询单个人员类型】接口查询
+employee_subtype_id|string|人员子类型 ID 功能灰度中，如有需求请联系技术支持
+department_id|string|部门 ID，详细信息可通过【查询单个部门】接口查询
+department_id_v2|string|部门 ID 可通过 【查询单个部门】获取详细信息 类型与 department_id_type 一致，转换失败时返回空值
+job_level_id|string|职级 ID，详细信息可通过【获取单个职级】接口查询 字段权限要求（满足任一）： 获取职务级别信息 读写员工的职务级别信息 仅自建应用
+job_level|employee.job_level|职级 字段权限要求（满足任一）： 获取职务级别信息 读写员工的职务级别信息 仅自建应用
+job_grade_id|string|职等 ID，可用于【查询职等】 字段权限要求（满足任一）： 获取职等信息 仅自建应用 读写职等信息 仅自建应用
+work_location_id|string|工作地点 ID，详细信息可通过【查询单个地点】接口查询
+job_family_id|string|序列 ID，详细信息可通过【查询单个序列】接口查询
+job_family|employee.job_family|序列
+position_id|string|岗位 ID，功能灰度中，如有需求请联系技术支持 字段权限要求（满足任一）： 获取员工的岗位信息 读写员工的岗位信息
+position|position|岗位，功能灰度中，如有需求请联系技术支持 字段权限要求（满足任一）： 获取员工的岗位信息 读写员工的岗位信息
+job_id|string|职务 ID，详细信息可通过【查询单个职务】接口查询 字段权限要求（满足任一）： 获取员工的职务信息 获取职务级别信息 读写员工的职务级别信息 仅自建应用
+job|job|职务 字段权限要求（满足任一）： 获取员工的职务信息 获取职务级别信息 读写员工的职务级别信息 仅自建应用
+company_id|string|所属公司 ID，详细信息可通过【查询单个公司】接口查询 当前生效的合同中的公司
+working_hours_type_id|string|工时制度 ID，详细信息可通过【查询单个工时制度】接口查询
+tenure|string|司龄
+seniority_date|string|资历起算日期
+effective_date|string|当前雇佣记录的入职日期
+primary_employment|boolean|是否是主雇佣信息
+probation_period|int|试用期时长（月）
+on_probation|boolean|是否在试用期中
+probation_end_date|string|试用期结束日期（实际结束日期）
+direct_manager_id|string|直接上级的雇佣 ID 类型与 user_id_type 一致 请使用 direct_manager_id_v2
+dotted_line_manager_id|string|虚线上级的雇佣 ID 类型与 user_id_type 一致 请使用 dotted_line_manager_id_v2
+direct_manager_id_v2|string|直接上级的雇佣 ID 类型与 user_id_type 一致，转换失败返回空值
+dotted_line_manager_id_v2|string|虚线上级的雇佣 ID 类型与 user_id_type 一致，转换失败返回空值
+employment_type|enum|雇佣类型 可通过【获取字段详情】接口查询，查询参数如下： object_api_name：employment custom_api_name：employment_type
+employment_status|enum|雇佣状态 可通过【获取字段详情】接口查询，查询参数如下： object_api_name：employment custom_api_name：employment_status
+expiration_date|string|离职日期，即员工的最后一个工作日，最后一个工作日时员工的雇佣状态仍为“在职”，次日凌晨将更改为“离职”
+reason_for_offboarding|enum|离职原因 可通过【获取字段详情】接口查询，查询参数如下： object_api_name：employment custom_api_name：reason_for_offboarding 字段权限要求：
+获取员工离职原因
+email_address|string|工作邮箱地址 计算字段，取自work_email_list 中 email_usage: work is_primary: true
+work_email_list|work_email[]|工作邮箱列表，只有当邮箱满足下面所有条件时，才在个人信息页面可见 email_usage: work is_primary: true
+cost_center_list|job_data_cost_center[]|成本中心列表
+rehire|enum|是否离职重聘，枚举如下： no：否 yes：是 to_be_confirmed：待确定
+rehire_employment_id|string|历史雇佣信息 ID，可通过本使用该id重新查询
+person_info|person_info|基本个人信息
+custom_fields|custom_field_data[]|自定义字段 请参考【自定义字段说明】 字段权限要求： 获取雇佣信息自定义字段信息
+noncompete_status|enum|竞业状态 可通过获取字段详情接口查询，查询参数如下： object_api_name：employment custom_api_name：noncompete_status
+past_offboarding|boolean|是否历史离职人员
+regular_employee_start_date|string|转正式日期
+external_id|string|外部系统 ID , 可存储租户系统中的员工 ID
+times_employed|int|入职次数
+recruitment_type|enum|招聘来源 可通过【获取字段详情】接口查询，查询参数如下： object_api_name：employment custom_api_name：recruitment_type
+avatar_url|string|员工头像
+primary_contract_id|string|主合同 ID
+contract_start_date|string|主合同开始日期 字段权限要求（满足任一）： 获取合同期限信息 读写合同期限信息 仅自建应用
+contract_end_date|string|主合同到期日期 字段权限要求（满足任一）： 获取合同期限信息 读写合同期限信息 仅自建应用
+contract_expected_end_date|string|主合同预计到期日期 字段权限要求（满足任一）： 获取合同期限信息 读写合同期限信息 仅自建应用
+pay_group_id|string|所属薪资组 ID 字段权限要求： 获取薪资组信息
+assignment_pay_group_id|string|所属外派薪资组 ID 字段权限要求： 获取员工所属外派薪资组 仅自建应用
+international_assignment|boolean|是否外派 字段权限要求： 获取员工外派信息
+work_calendar_id|string|工作日历 ID 可通过【查询工作日历】查询
+department|basic_department|部门基本信息 direct_manager|basic_employee|直接上级基本信息
+dotted_line_manager|basic_employee|虚线上级基本信息
+time_zone|string|时区
+service_company|string|任职公司 字段权限要求： 获取任职公司 仅自建应用
+compensation_type|enum|薪资类型 可通过【获取字段详情】接口查询，查询参数如下： object_api_name：job_data custom_api_name：compensation_type 字段权限要求： 获取薪资类型 仅自建应用
+work_shift|enum|排班类型 字段权限要求： 获取排班信息 仅自建应用
+ custom_org|string|自定义组织 功能灰度中，有需要请联系技术支持
+page_token|string|分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token
+has_more|boolean|是否还有更多项

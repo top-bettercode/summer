@@ -15,7 +15,9 @@ class CodeGen {
     @Test
     fun gen() {
         val content = javaClass.getResource("/doc.txt")!!.readText().trimIndent()
-        val classType = "${javaClass.`package`.name}.entity.EmployeeQuery"
+        val classType = "${javaClass.`package`.name}.entity.employee.Employee"
+//        val response = classType.contains("Response")
+        val response = true
 
         val imports = mutableSetOf<String>()
         imports.add("import com.fasterxml.jackson.annotation.JsonProperty")
@@ -52,8 +54,9 @@ data class ${JavaType(classType).shortName}("""
                         "object[]" -> "List<Any>"
                         else -> throw IllegalArgumentException("不支持的类型：$type")
                     }
-                    val required = it[2].trim()
-                    val comment = it[3].trim()
+
+                    val required = if(response) it[2].trim() else false
+                    val comment = it[if(response) 2 else 3].trim()
                     out.appendLine(
                         """    /**
      * $comment ${if (required == "是") "必填" else ""}

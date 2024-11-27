@@ -90,6 +90,7 @@ dependencies {
         api("org.eclipse.jgit:org.eclipse.jgit:5.13.3.202401111512-r")
 
         api("com.hikvision.ga:artemis-http-client:1.1.3")
+        api("com.larksuite.oapi:oapi-sdk:2.4.0")
 
         api(project(":env"))
         api(project(":web"))
