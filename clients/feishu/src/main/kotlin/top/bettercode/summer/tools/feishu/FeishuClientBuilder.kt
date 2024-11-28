@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.feishu
 import com.lark.oapi.Client
 import com.lark.oapi.core.httpclient.OkHttpTransport
 import com.lark.oapi.okhttp.OkHttpClient
+import top.bettercode.summer.logging.annotation.LogMarker
 import java.util.concurrent.TimeUnit
 
 /**
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Peter Wu
  */
+@LogMarker(FeishuClientBuilder.MARKER)
 open class FeishuClientBuilder(
     properties: FeishuProperties
 ) {
