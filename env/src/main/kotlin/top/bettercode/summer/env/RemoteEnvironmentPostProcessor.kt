@@ -67,8 +67,8 @@ open class RemoteEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
             val dir = File(FileUtil.tmpDir, "config${File.separator}$appName")
             if (dir.exists()) {
                 dir.deleteRecursively()
-                if (log.isDebugEnabled) {
-                    log.debug("exist:$dir deleted")
+                if (log.isInfoEnabled) {
+                    log.info("exist:$dir deleted")
                 }
             }
             Git.cloneRepository()
@@ -76,8 +76,9 @@ open class RemoteEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
                 .setDirectory(dir)
                 .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
                 .call().use {
-                    if (log.isDebugEnabled) {
-                        log.debug("repository:$url cloned successfully")
+                    if (log.isInfoEnabled) {
+                        val commit = it.log().setMaxCount(1).call().first()
+                        log.info("repository:$url cloned successfully:${commit.name} ${commit.authorIdent.`when`} ${commit.fullMessage.trim()}")
                     }
                     return dir
                 }
