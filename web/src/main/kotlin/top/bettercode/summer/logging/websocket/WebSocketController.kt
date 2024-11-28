@@ -37,7 +37,10 @@ class WebSocketController {
     @Suppress("UNUSED_PARAMETER")
     @OnError
     fun onError(session: Session?, error: Throwable) {
-        log.error(error.message, error)
+        if (error is SocketTimeoutException) {
+            log.warn(error.message, error)
+        } else
+            log.error(error.message, error)
     }
 
     /**
