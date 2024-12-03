@@ -2,6 +2,7 @@ package top.bettercode.summer.data.jpa.support
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.slf4j.LoggerFactory
@@ -57,7 +58,10 @@ class DataQuery(
             objectMapper.registerModule(module)
 
             val serializationConfig = objectMapper.serializationConfig
-            val config = serializationConfig.with(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
+            val config =
+                serializationConfig.with(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN).with(
+                    JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS
+                )
             objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
             objectMapper.setConfig(config)
             return objectMapper
