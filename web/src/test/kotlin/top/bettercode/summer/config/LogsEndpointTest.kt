@@ -36,7 +36,9 @@ class LogsEndpointTest {
             collapse = false,
             download = null,
             traceid = null,
-            userAgent = null
+            userAgent = null,
+            logPattern = null,
+            keyword = null
         )
         println(String(GZIPInputStream(ByteArrayInputStream(response.contentAsByteArray)).readBytes()))
     }

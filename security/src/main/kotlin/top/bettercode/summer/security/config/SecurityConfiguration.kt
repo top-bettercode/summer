@@ -25,7 +25,7 @@ import top.bettercode.summer.security.ApiTokenService
 import top.bettercode.summer.security.IResourceService
 import top.bettercode.summer.security.authorization.RequestMappingAuthorizationManager
 import top.bettercode.summer.security.token.IRevokeTokenService
-import top.bettercode.summer.web.form.IFormkeyService
+import top.bettercode.summer.web.form.FormkeyService
 import top.bettercode.summer.web.properties.CorsProperties
 import top.bettercode.summer.web.properties.SummerWebProperties
 import javax.servlet.http.HttpServletRequest
@@ -45,7 +45,7 @@ class SecurityConfiguration(
     private val summerWebProperties: SummerWebProperties,
     private val objectMapper: ObjectMapper,
     private val passwordEncoder: PasswordEncoder,
-    private val formkeyService: IFormkeyService,
+    private val formkeyService: FormkeyService,
 ) {
     @Bean
     fun authorizationManager(

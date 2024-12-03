@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 class FormDuplicateCheckInterceptor(
-    private val formkeyService: IFormkeyService,
+    private val formkeyService: FormkeyService,
     private val formKeyName: String
 ) : NotErrorHandlerInterceptor {
     override fun preHandlerMethod(

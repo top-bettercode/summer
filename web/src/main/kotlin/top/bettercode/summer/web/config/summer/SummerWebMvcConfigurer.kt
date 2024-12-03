@@ -15,7 +15,7 @@ import top.bettercode.summer.tools.lang.serializer.PlusDays
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
 import top.bettercode.summer.web.deprecated.DeprecatedAPIInterceptor
 import top.bettercode.summer.web.form.FormDuplicateCheckInterceptor
-import top.bettercode.summer.web.form.IFormkeyService
+import top.bettercode.summer.web.form.FormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,7 +26,7 @@ import java.util.*
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class SummerWebMvcConfigurer(
-    private val formkeyService: IFormkeyService,
+    private val formkeyService: FormkeyService,
     private val messageSource: MessageSource,
     private val summerWebProperties: SummerWebProperties
 ) : WebMvcConfigurer {

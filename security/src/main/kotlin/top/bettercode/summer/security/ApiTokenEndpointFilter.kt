@@ -30,7 +30,7 @@ import top.bettercode.summer.web.RespEntity.Companion.ok
 import top.bettercode.summer.web.config.SummerWebUtil.okEnable
 import top.bettercode.summer.web.config.SummerWebUtil.wrapEnable
 import top.bettercode.summer.web.exception.UnauthorizedException
-import top.bettercode.summer.web.form.IFormkeyService
+import top.bettercode.summer.web.form.FormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder.getHandler
 import javax.servlet.FilterChain
@@ -43,7 +43,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
     private val summerWebProperties: SummerWebProperties,
     private val revokeTokenService: IRevokeTokenService?,
     private val objectMapper: ObjectMapper,
-    private val formkeyService: IFormkeyService,
+    private val formkeyService: FormkeyService,
     tokenEndpointUri: String = DEFAULT_TOKEN_ENDPOINT_URI,
     revokeTokenEndpointUri: String = DEFAULT_REVOKE_TOKEN_ENDPOINT_URI
 ) : OncePerRequestFilter() {

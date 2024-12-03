@@ -7,8 +7,6 @@ import java.lang.annotation.Inherited
  */
 @Target(
     AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER,
     AnnotationTarget.CLASS
 )
 @Retention(AnnotationRetention.RUNTIME)
@@ -16,9 +14,7 @@ import java.lang.annotation.Inherited
 @MustBeDocumented
 annotation class FormDuplicateCheck(
     /**
-     * 使用 [RedisFormkeyService] 时，支持指定过期时间，单位秒
-     *
-     * @return form key有效时间
+     * @return form key过期时间，单位秒
      */
     val expireSeconds: Long = -1,
     /**

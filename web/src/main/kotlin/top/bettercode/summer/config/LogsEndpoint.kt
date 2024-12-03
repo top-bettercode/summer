@@ -75,12 +75,12 @@ class LogsEndpoint(
     @ReadOperation
     fun path(
         @Selector(match = Selector.Match.ALL_REMAINING) path: String,
-        @Nullable collapse: Boolean?,
-        @Nullable download: Boolean?,
-        @Nullable traceid: String?,
-        @Nullable logPattern: String?,
-        @Nullable keyword: String?,
-        @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String?
+        @Nullable collapse: Boolean? = null,
+        @Nullable download: Boolean? = null,
+        @Nullable traceid: String? = null,
+        @Nullable logPattern: String? = null,
+        @Nullable keyword: String? = null,
+        @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String? = null
     ) {
         val requestPath = path.replace(",", "/")
 
