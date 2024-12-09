@@ -763,10 +763,10 @@ data class Recipe(
                 }
                 if (errors != null) {
                     val consumeNormalWeight = consumeMaterials.sumOf {
-                        it.consumes[m.id]!!.normal
+                        it.consumes[m.id]?.normal?:0.0
                     }
                     val consumeOverdoseWeight = consumeMaterials.sumOf {
-                        it.consumes[m.id]!!.overdose
+                        it.consumes[m.id]?.overdose?:0.0
                     }
                     // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
                     if (consumeNormalWeight.scale(scale) !in mMinNormalWeight.scale(scale)..mMaxNormalWeight.scale(
