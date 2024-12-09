@@ -27,7 +27,8 @@ object OptimalUtil {
         roundingMode: RoundingMode = RoundingMode.HALF_UP
     ): Double {
         require(scale >= 0) { "小数位数不能为负数" }
-        return BigDecimal(this).setScale(scale, roundingMode).stripTrailingZeros().toDouble()
+        return BigDecimal(this).setScale(10, roundingMode).setScale(scale, roundingMode)
+            .stripTrailingZeros().toDouble()
     }
 
     @JvmStatic

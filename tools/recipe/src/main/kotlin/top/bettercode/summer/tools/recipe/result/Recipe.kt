@@ -72,7 +72,9 @@ data class Recipe(
      * 误差
      */
     @JsonProperty("minEpsilon")
-    val minEpsilon: Double
+    val minEpsilon: Double,
+    @JsonIgnore
+    val ignoreRelationCheck: Boolean = false
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
 
@@ -103,7 +105,8 @@ data class Recipe(
         ).totalFee,
         scale = scale,
         indicatorScale = requirement.indicatorScale,
-        minEpsilon = minEpsilon
+        minEpsilon = minEpsilon,
+        ignoreRelationCheck = true
     )
 
     @get:JsonIgnore
@@ -373,7 +376,11 @@ data class Recipe(
         // 不能用原料ID
         val noUseMaterials = requirement.noUseMaterialConstraints
         if (noUseMaterials.ids.isNotEmpty()) {
-            if (usedMaterials.any { !requirement.mustUseMaterial.test(it) && noUseMaterials.contains(it) }) {
+            if (usedMaterials.any {
+                    !requirement.mustUseMaterial.test(it) && noUseMaterials.contains(
+                        it
+                    )
+                }) {
                 errors.add("${requirement.id}:${requirement.productName}-配方所用原料：${usedMaterials} 包含不可用原料${noUseMaterials}内")
             }
         }
@@ -430,67 +437,80 @@ data class Recipe(
         // 关联原料约束
         val materialRelationConstraints = requirement.materialRelationConstraints
         val calIds = mutableSetOf<String>()
-        for (termThen in materialRelationConstraints) {
-            val ids = termThen.term
-            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
-            val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
-            val usedNormalWeight =
-                materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
-            val usedOverdoseWeight =
-                materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
-            val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
-            if ((usedWeight - usedAddWeight).scale(scale) != 0.0) {
-                errors.add(
-                    "${requirement.id}:${requirement.productName}-原料[${usedIds.toNames(requirement)}]使用量：${
-                        usedWeight.toPlainString()
-                    } 不等于:${
-                        usedAddWeight.toPlainString()
-                    } = 正常使用量：${
-                        usedNormalWeight.toPlainString()
-                    }+过量使用量：${
-                        usedOverdoseWeight.toPlainString()
-                    }，差值:${
-                        (usedWeight - usedAddWeight).toPlainString()
-                    }。原料使用不是全部为关联原料产生。"
+        if (!ignoreRelationCheck)
+            for (termThen in materialRelationConstraints) {
+                val ids = termThen.term
+                val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
+                val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
+                val usedNormalWeight =
+                    materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
+                val usedOverdoseWeight =
+                    materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
+                val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
+                if ((usedWeight - usedAddWeight).scale(scale) != 0.0) {
+                    errors.add(
+                        "${requirement.id}:${requirement.productName}-原料[${
+                            usedIds.toNames(
+                                requirement
+                            )
+                        }]使用量：${
+                            usedWeight.toPlainString()
+                        } 不等于:${
+                            usedAddWeight.toPlainString()
+                        } = 正常使用量：${
+                            usedNormalWeight.toPlainString()
+                        }+过量使用量：${
+                            usedOverdoseWeight.toPlainString()
+                        }，差值:${
+                            (usedWeight - usedAddWeight).toPlainString()
+                        }。原料使用不是全部为关联原料产生。"
+                    )
+                }
+                val (normal, overdose) = termThen.relationValue(
+                    calIds = calIds,
+                    errors = errors
                 )
-            }
-            val (normal, overdose) = termThen.relationValue(
-                calIds = calIds,
-                errors = errors
-            )
-            val usedMinNormalWeights = normal.min
-            val usedMaxNormalWeights = normal.max
-            val usedMinOverdoseWeights = overdose.min
-            val usedMaxOverdoseWeights = overdose.max
+                val usedMinNormalWeights = normal.min
+                val usedMaxNormalWeights = normal.max
+                val usedMinOverdoseWeights = overdose.min
+                val usedMaxOverdoseWeights = overdose.max
 
-            // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
-            if (usedNormalWeight.scale(scale) !in usedMinNormalWeights.scale(scale)..usedMaxNormalWeights.scale(
-                    scale
-                )
-            ) {
-                errors.add(
-                    "${requirement.id}:${requirement.productName}-原料[${usedIds.toNames(requirement)}]正常使用量：${
-                        usedNormalWeight.toPlainString()
-                    } 不在范围${
-                        usedMinNormalWeights.toPlainString()
-                    }-${usedMaxNormalWeights.toPlainString()}内"
-                )
-            }
+                // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
+                if (usedNormalWeight.scale(scale) !in usedMinNormalWeights.scale(scale)..usedMaxNormalWeights.scale(
+                        scale
+                    )
+                ) {
+                    errors.add(
+                        "${requirement.id}:${requirement.productName}-原料[${
+                            usedIds.toNames(
+                                requirement
+                            )
+                        }]正常使用量：${
+                            usedNormalWeight.toPlainString()
+                        } 不在范围${
+                            usedMinNormalWeights.toPlainString()
+                        }-${usedMaxNormalWeights.toPlainString()}内"
+                    )
+                }
 
-            // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
-            if (usedOverdoseWeight.scale(scale) !in usedMinOverdoseWeights.scale(scale)..usedMaxOverdoseWeights.scale(
-                    scale
-                )
-            ) {
-                errors.add(
-                    "${requirement.id}:${requirement.productName}-原料[${usedIds.toNames(requirement)}]过量使用量：${
-                        usedOverdoseWeight.toPlainString()
-                    } 不在范围${
-                        usedMinOverdoseWeights.toPlainString()
-                    }-${usedMaxOverdoseWeights.toPlainString()}内"
-                )
+                // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
+                if (usedOverdoseWeight.scale(scale) !in usedMinOverdoseWeights.scale(scale)..usedMaxOverdoseWeights.scale(
+                        scale
+                    )
+                ) {
+                    errors.add(
+                        "${requirement.id}:${requirement.productName}-原料[${
+                            usedIds.toNames(
+                                requirement
+                            )
+                        }]过量使用量：${
+                            usedOverdoseWeight.toPlainString()
+                        } 不在范围${
+                            usedMinOverdoseWeights.toPlainString()
+                        }-${usedMaxOverdoseWeights.toPlainString()}内"
+                    )
+                }
             }
-        }
         // 条件约束，当条件1满足时，条件2必须满足
         val materialConditions = requirement.materialConditionConstraints
         for ((whenCon, thenCon) in materialConditions) {
@@ -761,12 +781,12 @@ data class Recipe(
                         mMaxOverdoseWeight += overdoseWeight * overdoseMaterialOverdose.max * replaceRate
                     }
                 }
-                if (errors != null) {
+                if (errors != null && !ignoreRelationCheck) {
                     val consumeNormalWeight = consumeMaterials.sumOf {
-                        it.consumes[m.id]?.normal?:0.0
+                        it.consumes[m.id]?.normal ?: 0.0
                     }
                     val consumeOverdoseWeight = consumeMaterials.sumOf {
-                        it.consumes[m.id]?.overdose?:0.0
+                        it.consumes[m.id]?.overdose ?: 0.0
                     }
                     // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
                     if (consumeNormalWeight.scale(scale) !in mMinNormalWeight.scale(scale)..mMaxNormalWeight.scale(
