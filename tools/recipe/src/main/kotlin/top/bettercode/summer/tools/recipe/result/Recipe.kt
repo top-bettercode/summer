@@ -10,6 +10,7 @@ import org.springframework.util.Assert
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.StringUtil.toFullWidth
 import top.bettercode.summer.tools.optimal.Operator
+import top.bettercode.summer.tools.optimal.OptimalUtil.inRange
 import top.bettercode.summer.tools.optimal.OptimalUtil.inTolerance
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.OptimalUtil.toPlainString
@@ -28,6 +29,7 @@ import top.bettercode.summer.tools.recipe.productioncost.ProductionCostValue
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.log10
+import kotlin.math.pow
 
 /**
  * 配方
@@ -177,7 +179,7 @@ data class Recipe(
         //总成本(制造费用+原料成本)
         names.add("总成本(制造费用+原料成本)")
         itValues.add(cost)
-        val costEq = (cost - other.cost).scale(scale).inTolerance(minEpsilon)
+        val costEq = (cost - other.cost).inTolerance(minEpsilon)
         compares.add(costEq)
         otherValues.add(other.cost)
         diffValues.add((cost - other.cost))
@@ -197,7 +199,7 @@ data class Recipe(
             names.add("$m")
             itValues.add(m.weight)
             compares.add(
-                (m.weight - otherWeight).scale(scale).inTolerance(minEpsilon)
+                (m.weight - otherWeight).inTolerance(minEpsilon)
             )
             otherValues.add(otherWeight)
             diffValues.add((m.weight - otherWeight))
@@ -206,7 +208,7 @@ data class Recipe(
             val otherWeight = it.weight
             names.add("$it")
             itValues.add(0.0)
-            compares.add((-otherWeight.scale(scale)).inTolerance(minEpsilon))
+            compares.add((-otherWeight).inTolerance(minEpsilon))
             otherValues.add(otherWeight)
             diffValues.add(-otherWeight)
         }
@@ -227,8 +229,9 @@ data class Recipe(
                 diffValues
             )
             productionCostEq =
-                (optimalProductionCost.totalFee - other.optimalProductionCost.totalFee).scale(scale)
-                    .inTolerance(minEpsilon)
+                (optimalProductionCost.totalFee - other.optimalProductionCost.totalFee).inTolerance(
+                    minEpsilon
+                )
             separatorIndexs.addAll(productionCostSeparatorIndexs)
         } else {
             Assert.isNull(
@@ -336,10 +339,11 @@ data class Recipe(
                 else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight)
             }
             // 如果 indicatorValue 不在value.min,value.max范围内，返回 false
-            if (indicatorValue.scale(indicatorScale) !in rangeIndicator.scaledValue.min.scale(
-                    indicatorScale
-                )..rangeIndicator.scaledValue.max.scale(
-                    indicatorScale
+            val minIndicatorEpsilon = 1 / 10.0.pow(indicatorScale.toDouble())
+            if (!indicatorValue.inRange(
+                    min = rangeIndicator.scaledValue.min,
+                    max = rangeIndicator.scaledValue.max,
+                    minEpsilon = minIndicatorEpsilon
                 )
             ) {
                 errors.add("${requirement.id}:${requirement.productName}-指标:${indicator.name}：${indicatorValue.toPlainString()} 不在范围${rangeIndicator.scaledValue.min.toPlainString()}-${rangeIndicator.scaledValue.max.toPlainString()}内")
@@ -407,7 +411,7 @@ data class Recipe(
         // 原料约束,key:原料ID, value: 原料使用范围约束
         for ((ids, range) in materialRangeConstraints) {
             val weight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
-            if (weight.scale(scale) !in range.min..range.max) {
+            if (!weight.inRange(min = range.min, max = range.max, minEpsilon = minEpsilon)) {
                 errors.add(
                     "${requirement.id}:${requirement.productName}-原料${
                         ids.toNames(requirement)
@@ -437,17 +441,47 @@ data class Recipe(
         // 关联原料约束
         val materialRelationConstraints = requirement.materialRelationConstraints
         val calIds = mutableSetOf<String>()
-        if (!ignoreRelationCheck)
-            for (termThen in materialRelationConstraints) {
-                val ids = termThen.term
-                val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
-                val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
+        for (termThen in materialRelationConstraints) {
+            val ids = termThen.term
+            val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
+            val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
+            val (normal, overdose) = termThen.relationValue(
+                calIds = calIds,
+                errors = errors
+            )
+            val usedMinNormalWeights = normal.min
+            val usedMaxNormalWeights = normal.max
+            val usedMinOverdoseWeights = overdose.min
+            val usedMaxOverdoseWeights = overdose.max
+            val useMinWeight = usedMinNormalWeights + usedMinOverdoseWeights
+            val useMaxWeight = usedMaxNormalWeights + usedMaxOverdoseWeights
+
+            if (!usedWeight.inRange(
+                    min = useMinWeight,
+                    max = useMaxWeight,
+                    minEpsilon = minEpsilon
+                )
+            ) {
+                errors.add(
+                    "${requirement.id}:${requirement.productName}-原料[${
+                        usedIds.toNames(
+                            requirement
+                        )
+                    }]使用量：${
+                        usedWeight.toPlainString()
+                    } 不在范围${
+                        useMinWeight.toPlainString()
+                    }-${useMaxWeight.toPlainString()}内。${if (usedWeight < useMinWeight) "原料使用不足。" else "原料使用不是全部为关联原料产生。"}"
+                )
+            }
+
+            if (!ignoreRelationCheck) {
                 val usedNormalWeight =
                     materials.filter { ids.contains(it.id) }.sumOf { it.normalWeight }
                 val usedOverdoseWeight =
                     materials.filter { ids.contains(it.id) }.sumOf { it.overdoseWeight }
                 val usedAddWeight = (usedNormalWeight + usedOverdoseWeight)
-                if ((usedWeight - usedAddWeight).scale(scale) != 0.0) {
+                if (!(usedWeight - usedAddWeight).inTolerance(minEpsilon)) {
                     errors.add(
                         "${requirement.id}:${requirement.productName}-原料[${
                             usedIds.toNames(
@@ -463,21 +497,15 @@ data class Recipe(
                             usedOverdoseWeight.toPlainString()
                         }，差值:${
                             (usedWeight - usedAddWeight).toPlainString()
-                        }。原料使用不是全部为关联原料产生。"
+                        }。${if ((usedWeight - usedAddWeight).scale(scale) < 0.0) "原料使用不足。" else "原料使用不是全部为关联原料产生。"}"
                     )
                 }
-                val (normal, overdose) = termThen.relationValue(
-                    calIds = calIds,
-                    errors = errors
-                )
-                val usedMinNormalWeights = normal.min
-                val usedMaxNormalWeights = normal.max
-                val usedMinOverdoseWeights = overdose.min
-                val usedMaxOverdoseWeights = overdose.max
 
                 // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
-                if (usedNormalWeight.scale(scale) !in usedMinNormalWeights.scale(scale)..usedMaxNormalWeights.scale(
-                        scale
+                if (!usedNormalWeight.inRange(
+                        min = usedMinNormalWeights,
+                        max = usedMaxNormalWeights,
+                        minEpsilon = minEpsilon
                     )
                 ) {
                     errors.add(
@@ -494,8 +522,10 @@ data class Recipe(
                 }
 
                 // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
-                if (usedOverdoseWeight.scale(scale) !in usedMinOverdoseWeights.scale(scale)..usedMaxOverdoseWeights.scale(
-                        scale
+                if (!usedOverdoseWeight.inRange(
+                        min = usedMinOverdoseWeights,
+                        max = usedMaxOverdoseWeights,
+                        minEpsilon = minEpsilon
                     )
                 ) {
                     errors.add(
@@ -511,6 +541,7 @@ data class Recipe(
                     )
                 }
             }
+        }
         // 条件约束，当条件1满足时，条件2必须满足
         val materialConditions = requirement.materialConditionConstraints
         for ((whenCon, thenCon) in materialConditions) {
@@ -688,7 +719,7 @@ data class Recipe(
 
         //检查成本
         val productionCostFee = if (includeProductionCost) productionCost.totalFee else 0.0
-        if (!(materialCost + productionCostFee - cost).scale(scale).inTolerance(minEpsilon)) {
+        if (!(materialCost + productionCostFee - cost).inTolerance(minEpsilon)) {
             errors.add(
                 "${requirement.id}:${requirement.productName}-配方成本不匹配，物料成本：${materialCost}+制造费用：${
                     productionCostFee.toPlainString()
@@ -789,8 +820,10 @@ data class Recipe(
                         it.consumes[m.id]?.overdose ?: 0.0
                     }
                     // usedNormalWeight 必须在 usedMinNormalWeights usedMaxNormalWeights范围内
-                    if (consumeNormalWeight.scale(scale) !in mMinNormalWeight.scale(scale)..mMaxNormalWeight.scale(
-                            scale
+                    if (!consumeNormalWeight.inRange(
+                            min = mMinNormalWeight,
+                            max = mMaxNormalWeight,
+                            minEpsilon = minEpsilon
                         )
                     ) {
                         errors.add(
@@ -807,8 +840,10 @@ data class Recipe(
                     }
 
                     // usedOverdoseWeight 必须在 usedMinOverdoseWeights usedMaxOverdoseWeights范围内
-                    if (consumeOverdoseWeight.scale(scale) !in mMinOverdoseWeight.scale(scale)..mMaxOverdoseWeight.scale(
-                            scale
+                    if (!consumeOverdoseWeight.inRange(
+                            min = mMinOverdoseWeight,
+                            max = mMaxOverdoseWeight,
+                            minEpsilon = minEpsilon
                         )
                     ) {
                         errors.add(

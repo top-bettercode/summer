@@ -28,8 +28,8 @@ class SolverTest {
 //    val openExcel = true
     val openExcel = false
     val minEpsilon = epsilon
-//    val requiresJson = "p_optimal_line_require.json"
-                val requiresJson = "p_optimal_line_require_realse.json"
+    val requiresJson = "p_optimal_line_require.json"
+//                val requiresJson = "p_optimal_line_require_realse.json"
 
 //    private fun filter(lineId: Long) = arrayOf(
 //        529L,
@@ -49,7 +49,7 @@ class SolverTest {
         SolverType.CBC,
     )
 
-    @Disabled
+//    @Disabled
     @Test
     fun compareTo() {
 //        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
@@ -66,7 +66,7 @@ class SolverTest {
         solve(requirement)
     }
 
-//    @Disabled
+    @Disabled
     @Test
     fun all() {
         val inputStream = ClassPathResource(requiresJson).inputStream

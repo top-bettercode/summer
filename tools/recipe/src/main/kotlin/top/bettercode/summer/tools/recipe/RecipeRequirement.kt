@@ -158,7 +158,7 @@ data class RecipeRequirement(
         materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
         materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
         indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
-        indicatorScale: Int = 4
+        indicatorScale: Int = 5
     ) : this(
         id = id,
         productName = productName,

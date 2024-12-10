@@ -31,12 +31,27 @@ object OptimalUtil {
             .stripTrailingZeros().toDouble()
     }
 
+    /**
+     * 容差
+     */
     @JvmStatic
     fun Double.inTolerance(minEpsilon: Double): Boolean {
-        return if (this == 0.0) {
-            true
+        return if (minEpsilon == 0.0) {
+            this == 0.0
         } else {
             this > -minEpsilon && this < minEpsilon
+        }
+    }
+
+    /**
+     * 在范围内
+     */
+    @JvmStatic
+    fun Double.inRange(min: Double, max: Double, minEpsilon: Double): Boolean {
+        return if (minEpsilon == 0.0) {
+            this in min..max
+        } else {
+            this > min - minEpsilon && this < max + minEpsilon
         }
     }
 

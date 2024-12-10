@@ -140,7 +140,7 @@ data class ProductionCostValue(
             val otherVal = if (oth == null) 0.0 else (oth.it.cost * oth.value)
             names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
             itValues.add(thisVal)
-            compares.add((thisVal - otherVal).scale(scale).inTolerance(minEpsilon))
+            compares.add((thisVal - otherVal).inTolerance(minEpsilon))
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal))
         }
@@ -148,7 +148,7 @@ data class ProductionCostValue(
             val otherVal = (it.it.cost * it.value)
             names.add("${it.it.name} (${(it.value * 100).scale(2)}%)")
             itValues.add(0.0)
-            compares.add((-otherVal.scale(scale)).inTolerance(minEpsilon))
+            compares.add((-otherVal).inTolerance(minEpsilon))
             otherValues.add(otherVal)
             diffValues.add(-otherVal)
         }
@@ -157,7 +157,7 @@ data class ProductionCostValue(
         names.add("总能耗费用")
         itValues.add(energyFee)
         compares.add(
-            (this.energyFee - other.energyFee).scale(scale).inTolerance(minEpsilon)
+            (this.energyFee - other.energyFee).inTolerance(minEpsilon)
         )
         otherValues.add(other.energyFee)
         diffValues.add((energyFee - other.energyFee))
@@ -177,7 +177,7 @@ data class ProductionCostValue(
 
             names.add("${key.dictName} (${(value.value * 100).scale(2)}%)")
             itValues.add(thisVal)
-            compares.add((thisVal - otherVal).scale(scale).inTolerance(minEpsilon))
+            compares.add((thisVal - otherVal).inTolerance(minEpsilon))
             otherValues.add(otherVal)
             diffValues.add((thisVal - otherVal))
         }
@@ -185,7 +185,7 @@ data class ProductionCostValue(
             val otherVal = (it.value.it.cost * it.value.value)
             names.add("${it.key.dictName} (${(it.value.value * 100).scale(2)}%)")
             itValues.add(0.0)
-            compares.add((-otherVal.scale(scale)).inTolerance(minEpsilon))
+            compares.add((-otherVal).inTolerance(minEpsilon))
             otherValues.add(otherVal)
             diffValues.add(-otherVal)
         }
@@ -194,7 +194,7 @@ data class ProductionCostValue(
         names.add("人工+折旧费+其他费用")
         itValues.add(otherFee)
         compares.add(
-            (this.otherFee - other.otherFee).scale(scale).inTolerance(minEpsilon)
+            (this.otherFee - other.otherFee).inTolerance(minEpsilon)
         )
         otherValues.add(other.otherFee)
         diffValues.add((otherFee - other.otherFee))
@@ -203,7 +203,7 @@ data class ProductionCostValue(
         names.add("税费")
         itValues.add(taxFee)
         compares.add(
-            (this.taxFee - other.taxFee).scale(scale).inTolerance(minEpsilon)
+            (this.taxFee - other.taxFee).inTolerance(minEpsilon)
         )
         otherValues.add(other.taxFee)
         diffValues.add((taxFee - other.taxFee))
@@ -212,7 +212,7 @@ data class ProductionCostValue(
         names.add("制造费用合计 (${(allChange * 100).scale(2)}%)")
         itValues.add(totalFee)
         compares.add(
-            (this.totalFee - other.totalFee).scale(scale).inTolerance(minEpsilon)
+            (this.totalFee - other.totalFee).inTolerance(minEpsilon)
         )
         otherValues.add(other.totalFee)
         diffValues.add((totalFee - other.totalFee))
