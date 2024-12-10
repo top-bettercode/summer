@@ -36,7 +36,7 @@ open class DistExtension(
 
     var jdkArchiveSrc: String = ""
         get() {
-            //https://jdk.java.net/java-se-ri/17
+            //https://jdk.java.net/17/
             //https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
             //https://download.oracle.com/java/17/archive/jdk-17.0.11_windows-x64_bin.zip
             //https://download.oracle.com/java/17/archive/jdk-17.0.11_linux-x64_bin.tar.gz
