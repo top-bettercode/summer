@@ -501,7 +501,7 @@ object TestPrepareData {
                 )
             }.sortedBy { relationIndexList.indexOf(it.term) },
             materialConditionConstraints = materialConditions,
-            indicatorScale = 4
+            indicatorScale = 5
         )
         return requirement
     }

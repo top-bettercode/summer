@@ -25,13 +25,15 @@ import java.io.File
  */
 class SolverTest {
     val epsilon = 1e-2
-//    val openExcel = true
+
+    //    val openExcel = true
     val openExcel = false
     val minEpsilon = epsilon
-    val requiresJson = "p_optimal_line_require.json"
-//                val requiresJson = "p_optimal_line_require_realse.json"
 
-//    private fun filter(lineId: Long) = arrayOf(
+    //    val requiresJson = "p_optimal_line_require.json"
+    val requiresJson = "p_optimal_line_require_release.json"
+
+    //    private fun filter(lineId: Long) = arrayOf(
 //        529L,
 //        555L,
 //        530L,
@@ -49,7 +51,7 @@ class SolverTest {
         SolverType.CBC,
     )
 
-//    @Disabled
+    @Disabled
     @Test
     fun compareTo() {
 //        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
