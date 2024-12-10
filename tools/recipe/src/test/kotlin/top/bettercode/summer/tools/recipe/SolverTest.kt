@@ -33,11 +33,8 @@ class SolverTest {
     //    val requiresJson = "p_optimal_line_require.json"
     val requiresJson = "p_optimal_line_require_release.json"
 
-    //    private fun filter(lineId: Long) = arrayOf(
-//        529L,
-//        555L,
-//        530L,
-//        556L
+//    private fun filter(lineId: Long) = arrayOf(
+//        342L,
 //    ).contains(lineId)
     @Suppress("UNUSED_PARAMETER")
     private fun filter(lineId: Long) = true
@@ -68,7 +65,7 @@ class SolverTest {
         solve(requirement)
     }
 
-    @Disabled
+    //    @Disabled
     @Test
     fun all() {
         val inputStream = ClassPathResource(requiresJson).inputStream

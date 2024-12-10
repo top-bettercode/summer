@@ -442,6 +442,9 @@ data class Recipe(
         val materialRelationConstraints = requirement.materialRelationConstraints
         val calIds = mutableSetOf<String>()
         for (termThen in materialRelationConstraints) {
+            if (termThen.then.isEmpty()) {
+                continue
+            }
             val ids = termThen.term
             val usedIds = materials.filter { ids.contains(it.id) }.map { it.id }.toMaterialIDs()
             val usedWeight = materials.filter { ids.contains(it.id) }.sumOf { it.weight }
