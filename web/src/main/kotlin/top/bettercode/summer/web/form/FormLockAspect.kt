@@ -19,7 +19,6 @@ class FormLockAspect(private val formkeyService: FormkeyService) {
     @Throws(Throwable::class)
     fun logProceed(joinPoint: ProceedingJoinPoint): Any? {
         val signature = joinPoint.signature as MethodSignature
-        try {
             val method = signature.method
             val annotation = method.getAnnotation(FormLock::class.java)
             val paramKey = if (annotation.paramName.isNotBlank()) {
@@ -43,9 +42,6 @@ class FormLockAspect(private val formkeyService: FormkeyService) {
             ) {
                 joinPoint.proceed()
             }
-        } finally {
-
-        }
     }
 
     fun getNestedProperty(obj: Any?, properties: List<String>): Any? {
