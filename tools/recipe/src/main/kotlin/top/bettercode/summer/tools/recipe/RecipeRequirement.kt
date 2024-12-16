@@ -114,73 +114,8 @@ data class RecipeRequirement(
      * 指标小数位
      */
     @JsonProperty("indicatorScale")
-    val indicatorScale: Int
+    val indicatorScale: Int = 5,
 ) {
-
-
-    /**
-     * @param id 配方ID
-     * @param targetWeight 目标重量，单位KG
-     * @param yield 收率
-     * @param maxUseMaterialNum 原料进料口最大数，null不限
-     * @param maxBakeWeight 最大烘干量，单位KG，null 允许烘干全部水份
-     * @param productionCost 制造费用
-     * @param indicators 指标
-     * @param packagingMaterials 包装耗材
-     * @param materials 原料
-     * @param keepMaterialConstraints 保留用原料ID
-     * @param noUseMaterialConstraints 不能用原料ID
-     * @param indicatorRangeConstraints 指标范围约束,key：指标ID,value:指标值范围
-     * @param materialRangeConstraints 原料范围约束,key:原料ID, value: 原料使用范围约束
-     * @param materialConditionConstraints 条件约束，当条件1满足时，条件2必须满足
-     * @param materialRelationConstraints 关联原料约束,term:消耗的原料，then:关联的原料（trem 原料(relation 消耗此原料的原料)，then:关联的指标）
-     * @param materialIDConstraints 指定原料约束
-     * @param indicatorMaterialIDConstraints 指标指定用原料约束,key:指标ID,value:原料ID
-     * @param indicatorScale 指标小数位
-     */
-    @JvmOverloads
-    constructor(
-        id: String,
-        productName: String = id,
-        targetWeight: Double,
-        yield: Double = 1.0,
-        maxUseMaterialNum: Int? = null,
-        maxBakeWeight: Double? = null,
-        productionCost: ProductionCost,
-        indicators: List<RecipeIndicator>,
-        packagingMaterials: List<RecipeOtherMaterial>,
-        materials: List<RecipeMaterial>,
-        keepMaterialConstraints: MaterialIDs,
-        noUseMaterialConstraints: MaterialIDs,
-        indicatorRangeConstraints: RecipeRangeIndicators,
-        materialRangeConstraints: List<TermThen<MaterialIDs, DoubleRange>>,
-        materialConditionConstraints: List<TermThen<MaterialCondition, MaterialCondition>>,
-        materialRelationConstraints: List<TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>>,
-        materialIDConstraints: List<TermThen<MaterialIDs, MaterialIDs>> = emptyList(),
-        indicatorMaterialIDConstraints: RecipeMaterialIDIndicators = RecipeMaterialIDIndicators(),
-        indicatorScale: Int = 5
-    ) : this(
-        id = id,
-        productName = productName,
-        targetWeight = targetWeight,
-        yield = `yield`,
-        maxUseMaterialNum = maxUseMaterialNum,
-        maxBakeWeight = maxBakeWeight,
-        productionCost = productionCost,
-        indicators = indicators,
-        packagingMaterials = packagingMaterials,
-        materials = materials,
-        keepMaterialConstraints = keepMaterialConstraints,
-        noUseMaterialConstraints = noUseMaterialConstraints,
-        indicatorRangeConstraints = indicatorRangeConstraints,
-        materialRangeConstraints = materialRangeConstraints,
-        materialConditionConstraints = materialConditionConstraints,
-        materialRelationConstraints = materialRelationConstraints,
-        materialIDConstraints = materialIDConstraints,
-        indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
-        notMixMaterialConstraints = emptyList(),
-        indicatorScale = indicatorScale
-    )
 
     /** 超时时间,单位秒  */
     var timeout: Long = 30L
