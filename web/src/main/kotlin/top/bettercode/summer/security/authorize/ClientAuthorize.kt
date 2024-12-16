@@ -7,8 +7,15 @@ import java.lang.annotation.Inherited
  *
  * @author Peter Wu
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CLASS)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.CLASS
+)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
 @MustBeDocumented
-annotation class ClientAuthorize
+annotation class ClientAuthorize(
+    val scope: Array<String> = [],
+)

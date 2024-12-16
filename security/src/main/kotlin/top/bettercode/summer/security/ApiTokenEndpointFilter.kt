@@ -24,7 +24,7 @@ import top.bettercode.summer.security.token.IRevokeTokenService
 import top.bettercode.summer.security.token.MultipleBearerTokenResolver
 import top.bettercode.summer.security.token.StoreToken
 import top.bettercode.summer.tools.lang.operation.HttpOperation
-import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
+import top.bettercode.summer.tools.lang.util.AnnotatedUtils
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.RespEntity.Companion.ok
 import top.bettercode.summer.web.config.SummerWebUtil.okEnable
@@ -45,7 +45,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
     private val objectMapper: ObjectMapper,
     private val formkeyService: FormkeyService,
     tokenEndpointUri: String = DEFAULT_TOKEN_ENDPOINT_URI,
-    revokeTokenEndpointUri: String = DEFAULT_REVOKE_TOKEN_ENDPOINT_URI
+    revokeTokenEndpointUri: String = DEFAULT_REVOKE_TOKEN_ENDPOINT_URI,
 ) : OncePerRequestFilter() {
 
     companion object {
@@ -54,12 +54,12 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
          */
         private const val DEFAULT_TOKEN_ENDPOINT_URI = "/oauth/token"
         private const val DEFAULT_REVOKE_TOKEN_ENDPOINT_URI = "/oauth/revokeToken"
-        fun needClientAuthorize(request: HttpServletRequest?): Boolean {
+        fun getClientAuthorize(request: HttpServletRequest?): ClientAuthorize? {
             //ClientAuthorize
             val handler = getHandler(request!!)
             return if (handler != null) {
-                hasAnnotation(handler, ClientAuthorize::class.java)
-            } else false
+                AnnotatedUtils.getAnnotation(handler, ClientAuthorize::class.java)
+            } else null
         }
     }
 
@@ -85,7 +85,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         val storeTokenRepository = apiTokenService.storeTokenRepository
         //token相关接口
@@ -95,7 +95,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                     request = request,
                     formKeyName = summerWebProperties.formKeyName,
                 ) {
-                    val clientId = authenticateBasic(request)
+                    val clientId = authenticateBasic(request, null)
                     val grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE)
                     Assert.hasText(grantType, "grantType 不能为空")
 
@@ -139,57 +139,66 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
 //                    Assert.isTrue(scope.isNotEmpty(), "scope 不能为空")
                         Assert.isTrue(clientDetails.supportScope(scope), "不支持的scope:$scope")
 
-                        if (SecurityParameterNames.PWDNAME == grantType) {
-                            apiTokenService.beforeLogin(request, grantType, clientId, scope)
-                            val username = request.getParameter(SecurityParameterNames.USERNAME)
-                            Assert.hasText(username, "用户名不能为空")
-                            val password = request.getParameter(SecurityParameterNames.PWDNAME)
-                            Assert.hasText(password, "密码不能为空")
-                            val userDetails =
-                                apiTokenService.getUserDetails(clientId, scope, username)
-                            Assert.isTrue(
-                                passwordEncoder.matches(password, userDetails.password),
-                                "用户名或密码错误"
-                            )
-
-                            storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
-                            apiTokenService.afterLogin(storeToken, request)
-                        } else if (SecurityParameterNames.REFRESH_TOKEN == grantType) {
-                            val refreshToken =
-                                request.getParameter(SecurityParameterNames.REFRESH_TOKEN)
-                            Assert.hasText(
-                                refreshToken,
-                                SecurityParameterNames.REFRESH_TOKEN + "不能为空"
-                            )
-                            storeToken = storeTokenRepository.findByRefreshToken(
-                                refreshToken
-                            )
-                            if (storeToken == null || storeToken.refreshToken.isExpired) {
-                                if (storeToken != null) {
-                                    storeTokenRepository.remove(storeToken)
-                                }
-                                throw UnauthorizedException("请重新登录")
-                            }
-                            try {
-                                val userDetails = apiTokenService.getUserDetails(
-                                    clientId,
-                                    scope,
-                                    storeToken.username
+                        when {
+                            SecurityParameterNames.PWDNAME == grantType -> {
+                                apiTokenService.beforeLogin(request, grantType, clientId, scope)
+                                val username = request.getParameter(SecurityParameterNames.USERNAME)
+                                Assert.hasText(username, "用户名不能为空")
+                                val password = request.getParameter(SecurityParameterNames.PWDNAME)
+                                Assert.hasText(password, "密码不能为空")
+                                val userDetails =
+                                    apiTokenService.getUserDetails(clientId, scope, username)
+                                Assert.isTrue(
+                                    passwordEncoder.matches(password, userDetails.password),
+                                    "用户名或密码错误"
                                 )
-                                storeToken.accessToken =
-                                    apiTokenService.createAccessToken(clientDetails)
-                                storeToken.userDetails = userDetails
-                            } catch (e: Exception) {
-                                throw UnauthorizedException(e.message, e)
+
+                                storeToken =
+                                    apiTokenService.getStoreToken(clientId, scope, userDetails)
+                                apiTokenService.afterLogin(storeToken, request)
                             }
-                        } else if (apiTokenService.securityProperties.authorizedGrantTypes.contains(
+
+                            SecurityParameterNames.REFRESH_TOKEN == grantType -> {
+                                val refreshToken =
+                                    request.getParameter(SecurityParameterNames.REFRESH_TOKEN)
+                                Assert.hasText(
+                                    refreshToken,
+                                    SecurityParameterNames.REFRESH_TOKEN + "不能为空"
+                                )
+                                storeToken = storeTokenRepository.findByRefreshToken(
+                                    refreshToken
+                                )
+                                if (storeToken == null || storeToken.refreshToken.isExpired) {
+                                    if (storeToken != null) {
+                                        storeTokenRepository.remove(storeToken)
+                                    }
+                                    throw UnauthorizedException("请重新登录")
+                                }
+                                try {
+                                    val userDetails = apiTokenService.getUserDetails(
+                                        clientId,
+                                        scope,
+                                        storeToken.username
+                                    )
+                                    storeToken.accessToken =
+                                        apiTokenService.createAccessToken(clientDetails)
+                                    storeToken.userDetails = userDetails
+                                } catch (e: Exception) {
+                                    throw UnauthorizedException(e.message, e)
+                                }
+                            }
+
+                            apiTokenService.securityProperties.authorizedGrantTypes.contains(
                                 grantType
-                            )
-                        ) {
-                            val userDetails = apiTokenService.getUserDetails(grantType, request)
-                            storeToken = apiTokenService.getStoreToken(clientId, scope, userDetails)
-                        } else {
-                            throw IllegalArgumentException("grantType 不支持:$grantType")
+                            ) -> {
+                                val userDetails = apiTokenService.getUserDetails(grantType, request)
+                                storeToken =
+                                    apiTokenService.getStoreToken(clientId, scope, userDetails)
+                            }
+
+                            else -> {
+                                throw IllegalArgumentException("grantType 不支持:$grantType")
+                            }
                         }
                         val userDetails = storeToken.userDetails
                         val authenticationResult: Authentication =
@@ -270,8 +279,11 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                         }
                     }
                 }
-            } else if (needClientAuthorize(request)) {
-                authenticateBasic(request)
+            } else {
+                val clientAuthorize = getClientAuthorize(request)
+                if (clientAuthorize != null) {
+                    authenticateBasic(request, clientAuthorize)
+                }
             }
             filterChain.doFilter(request, response)
         }
@@ -282,7 +294,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         storeTokenRepository: StoreTokenRepository,
         storeToken: StoreToken,
         response: HttpServletResponse,
-        request: HttpServletRequest
+        request: HttpServletRequest,
     ) {
         revokeTokenService?.revokeToken(userDetails)
         storeTokenRepository.remove(storeToken)
@@ -302,9 +314,13 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         }
     }
 
-    private fun authenticateBasic(request: HttpServletRequest): String {
+    private fun authenticateBasic(
+        request: HttpServletRequest,
+        clientAuthorize: ClientAuthorize?,
+    ): String {
         val (clientId, clientSecret) = AuthenticationHelper.getClientInfo(request)
         apiTokenService.clientDetailsService.authenticate(
+            clientAuthorize?.scope,
             clientId
                 ?: throw BadCredentialsException("Unauthorized"), clientSecret
                 ?: throw BadCredentialsException("Unauthorized")

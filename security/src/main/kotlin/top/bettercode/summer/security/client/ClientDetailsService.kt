@@ -13,15 +13,19 @@ class ClientDetailsService(clientDetails: Collection<ClientDetails>) {
     val maxRefreshTokenValiditySeconds: Int = clientDetails.maxOf { it.refreshTokenValiditySeconds }
 
     private val clientDetailsMap: Map<String, ClientDetails> =
-            clientDetails.associateBy { it.clientId }
+        clientDetails.associateBy { it.clientId }
 
     fun getClientDetails(clientId: String): ClientDetails? {
         return clientDetailsMap[clientId]
     }
 
-    fun authenticate(clientId: String, clientSecret: String) {
+    fun authenticate(scope: Array<String>?, clientId: String, clientSecret: String) {
         val clientDetails = getClientDetails(clientId)
-        val auth = clientDetails?.clientSecret == clientSecret
+        val auth =
+            clientDetails?.clientSecret == clientSecret
+                    && (scope == null || clientDetails.scope.any {
+                it in scope
+            })
         if (!auth) {
             throw BadCredentialsException("Unauthorized")
         }
