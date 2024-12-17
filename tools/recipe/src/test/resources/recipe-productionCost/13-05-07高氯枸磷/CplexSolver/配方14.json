@@ -1,10 +1,48 @@
 {
-  "cost" : 1502.971605533597,
+  "cost" : 1502.9716055335969,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 474.3083003952569,
+    "weight" : 80.0,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 49.499985979277625,
+    "feedPortShare" : false,
+    "id" : "普通尿素",
+    "index" : 0,
+    "indicators" : {
+      "氮" : {
+        "id" : "氮",
+        "value" : 46.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      }
+    },
+    "name" : "普通尿素",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.822,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 384.3083258874794,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -29,7 +67,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 354.66666666666686,
+    "weight" : 304.16666666666674,
     "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 24,
@@ -83,20 +121,20 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 80.0,
+    "weight" : 82.02502146657622,
     "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
+    "id" : "石粉（尿基高塔用）",
+    "index" : 54,
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 7.000000000000001
+        "value" : 1.0
       }
     },
-    "name" : "白泥",
+    "name" : "石粉（尿基高塔用）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 0.35,
+    "price" : 0.24,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -162,10 +200,10 @@
   },
   "recipeName" : "CplexSolver-14",
   "scale" : 3,
-  "dryWaterWeight" : 8.974967061923735,
+  "dryWaterWeight" : 0.0,
   "materialCost" : 1289.316205533597,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 265.12,
-  "waterWeight" : 36.169749670619254,
-  "weight" : 1008.9749670619237
+  "totalNutrientWeight" : 253.0,
+  "waterWeight" : 32.80250007010362,
+  "weight" : 1000.0
 }

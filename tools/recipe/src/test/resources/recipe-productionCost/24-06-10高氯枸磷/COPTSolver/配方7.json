@@ -1,7 +1,7 @@
 {
-  "cost" : 2596.0021503007406,
+  "cost" : 2596.0021503007392,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
     "weight" : 380.0,
@@ -25,7 +25,31 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 330.922558743742,
+    "weight" : 2.0,
+    "feedPortShare" : false,
+    "id" : "防结油（白色）",
+    "index" : 58,
+    "indicators" : { },
+    "name" : "防结油（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 3.0,
+    "feedPortShare" : false,
+    "id" : "防结粉（白色）",
+    "index" : 59,
+    "indicators" : { },
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 319.4790716529846,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -50,40 +74,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 41.39122430006097,
-    "feedPortShare" : false,
-    "id" : "55磷酸一铵（粉）",
-    "index" : 9,
-    "indicators" : {
-      "氮" : {
-        "id" : "氮",
-        "value" : 10.0
-      },
-      "水溶磷" : {
-        "id" : "水溶磷",
-        "value" : 33.75
-      },
-      "水溶磷率" : {
-        "id" : "水溶磷率",
-        "value" : 75.0
-      },
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 2.0
-      },
-      "磷" : {
-        "id" : "磷",
-        "value" : 45.0
-      }
-    },
-    "name" : "55磷酸一铵（粉）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 3.25,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 37.89861999674211,
+    "weight" : 73.71794871794873,
     "feedPortShare" : false,
     "id" : "58磷酸一铵（粉）",
     "index" : 10,
@@ -116,7 +107,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 54.9275477772348,
+    "weight" : 60.8974358974359,
     "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 25,
@@ -145,7 +136,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 150.0,
+    "weight" : 29.617334271228486,
     "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 27,
@@ -170,27 +161,45 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 2.0,
+    "weight" : 118.40917940534902,
     "feedPortShare" : false,
-    "id" : "防结油（白色）",
-    "index" : 58,
-    "indicators" : { },
-    "name" : "防结油（白色）",
+    "id" : "95%进口白钾(粉)",
+    "index" : 30,
+    "indicators" : {
+      "氯离子" : {
+        "id" : "氯离子",
+        "value" : 47.699999999999996
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 61.0
+      }
+    },
+    "name" : "95%进口白钾(粉)",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 8.0,
+    "price" : 3.75,
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 3.0,
+    "weight" : 12.879030055053256,
     "feedPortShare" : false,
-    "id" : "防结粉（白色）",
-    "index" : 59,
-    "indicators" : { },
-    "name" : "防结粉（白色）",
+    "id" : "石粉（尿基高塔用）",
+    "index" : 55,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 1.0
+      }
+    },
+    "name" : "石粉（尿基高塔用）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 2.0,
+    "price" : 0.24,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -256,10 +265,10 @@
   },
   "recipeName" : "COPTSolver-7",
   "scale" : 3,
-  "dryWaterWeight" : 0.1399508177798907,
-  "materialCost" : 2382.3467503007405,
+  "dryWaterWeight" : 1.1368683772161603E-13,
+  "materialCost" : 2382.346750300739,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 406.45239179184705,
-  "waterWeight" : 12.13995081777992,
-  "weight" : 1000.1399508177799
+  "totalNutrientWeight" : 403.0,
+  "waterWeight" : 11.848979743998896,
+  "weight" : 1000.0000000000001
 }

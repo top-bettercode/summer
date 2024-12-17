@@ -93,7 +93,7 @@
       }
     }
   },
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "indicators" : [ {
     "id" : "总养分",
     "index" : 0,
@@ -416,7 +416,7 @@
   "materialIDConstraints" : [ ],
   "materialRangeConstraints" : [ {
     "term" : {
-      "ids" : [ "防结粉（白色）" ]
+      "ids" : [ "防结粉（白色）", "防结粉（染色）", "全水溶防结粉" ]
     },
     "then" : {
       "max" : 3.0,
@@ -426,7 +426,7 @@
     }
   }, {
     "term" : {
-      "ids" : [ "防结油（白色）" ]
+      "ids" : [ "防结油（白色）", "防结油（染色）", "全水溶防结油", "SPR全水溶防结油" ]
     },
     "then" : {
       "max" : 2.0,
@@ -436,7 +436,7 @@
     }
   }, {
     "term" : {
-      "ids" : [ "普通尿素" ]
+      "ids" : [ "普通尿素", "大颗粒尿素", "多肽尿素" ]
     },
     "then" : {
       "max" : 1000.0,

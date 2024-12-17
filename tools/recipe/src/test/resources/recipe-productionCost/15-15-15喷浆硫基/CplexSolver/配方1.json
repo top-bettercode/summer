@@ -1,7 +1,7 @@
 {
   "cost" : 2946.2922566005345,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : {
       "55磷酸一铵（粉）" : {
@@ -9,6 +9,10 @@
         "overdose" : 0.0
       },
       "58磷酸一铵（粉）" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "60磷酸一铵（云天化）" : {
         "normal" : 0.0,
         "overdose" : 0.0
       },
@@ -29,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.3727850003592916,
+        "normal" : 2.372785000359294,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -63,6 +67,89 @@
     "normalWeight" : 65.69555219200998,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
+    "unit" : "吨"
+  }, {
+    "consumes" : {
+      "喷浆硫基用95氯化钾" : {
+        "normal" : 284.7360402684569,
+        "overdose" : 28.473604026845607
+      }
+    },
+    "weight" : 313.2096442953025,
+    "feedPortShare" : false,
+    "id" : "硫酸",
+    "index" : 36,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      },
+      "硫" : {
+        "id" : "硫",
+        "value" : 32.7
+      }
+    },
+    "name" : "硫酸",
+    "normalWeight" : 284.7360402684569,
+    "overdoseWeight" : 28.473604026845607,
+    "price" : 0.22,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 3.0,
+    "feedPortShare" : false,
+    "id" : "防结粉（白色）",
+    "index" : 62,
+    "indicators" : { },
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 2.0,
+    "feedPortShare" : false,
+    "id" : "防结油（染色）",
+    "index" : 63,
+    "indicators" : { },
+    "name" : "防结油（染色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 5.0,
+    "feedPortShare" : false,
+    "id" : "生化黄腐酸钾",
+    "index" : 67,
+    "indicators" : {
+      "有机质" : {
+        "id" : "有机质",
+        "value" : 60.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 2.0
+      },
+      "腐植酸" : {
+        "id" : "腐植酸",
+        "value" : 30.0
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 10.0
+      },
+      "黄腐酸" : {
+        "id" : "黄腐酸",
+        "value" : 32.0
+      }
+    },
+    "name" : "生化黄腐酸钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.65,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -129,89 +216,6 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.85,
-    "unit" : "吨"
-  }, {
-    "consumes" : {
-      "喷浆硫基用95氯化钾" : {
-        "normal" : 284.7360402684569,
-        "overdose" : 28.473604026845607
-      }
-    },
-    "weight" : 313.2096442953025,
-    "feedPortShare" : false,
-    "id" : "硫酸",
-    "index" : 36,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 0.5
-      },
-      "硫" : {
-        "id" : "硫",
-        "value" : 32.7
-      }
-    },
-    "name" : "硫酸",
-    "normalWeight" : 284.7360402684569,
-    "overdoseWeight" : 28.473604026845607,
-    "price" : 0.22,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 2.0,
-    "feedPortShare" : false,
-    "id" : "防结油（白色）",
-    "index" : 61,
-    "indicators" : { },
-    "name" : "防结油（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 3.0,
-    "feedPortShare" : false,
-    "id" : "防结粉（白色）",
-    "index" : 62,
-    "indicators" : { },
-    "name" : "防结粉（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 5.0,
-    "feedPortShare" : false,
-    "id" : "生化黄腐酸钾",
-    "index" : 67,
-    "indicators" : {
-      "有机质" : {
-        "id" : "有机质",
-        "value" : 60.0
-      },
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 2.0
-      },
-      "腐植酸" : {
-        "id" : "腐植酸",
-        "value" : 30.0
-      },
-      "钾" : {
-        "id" : "钾",
-        "value" : 10.0
-      },
-      "黄腐酸" : {
-        "id" : "黄腐酸",
-        "value" : 32.0
-      }
-    },
-    "name" : "生化黄腐酸钾",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.65,
     "unit" : "吨"
   }, {
     "consumes" : { },

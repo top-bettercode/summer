@@ -1,8 +1,25 @@
 {
   "cost" : 1455.9716055335969,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
+    "consumes" : { },
+    "weight" : 79.99999999999999,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
     "consumes" : { },
     "weight" : 474.3083003952569,
     "feedPortShare" : false,
@@ -60,8 +77,8 @@
     "consumes" : { },
     "weight" : 99.99999999999999,
     "feedPortShare" : false,
-    "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 26,
+    "id" : "95%氯化钾结晶钾（国产）",
+    "index" : 27,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -76,27 +93,10 @@
         "value" : 60.0
       }
     },
-    "name" : "95%氯化钾烘干粉（国产）",
+    "name" : "95%氯化钾结晶钾（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 79.99999999999999,
-    "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 7.000000000000001
-      }
-    },
-    "name" : "白泥",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.35,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,

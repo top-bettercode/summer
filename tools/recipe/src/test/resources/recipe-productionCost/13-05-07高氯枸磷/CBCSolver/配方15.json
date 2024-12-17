@@ -1,8 +1,25 @@
 {
   "cost" : 1507.971605533609,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
+    "consumes" : { },
+    "weight" : 80.0,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
     "consumes" : { },
     "weight" : 474.3083003952569,
     "feedPortShare" : false,
@@ -60,8 +77,8 @@
     "consumes" : { },
     "weight" : 100.0,
     "feedPortShare" : false,
-    "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 26,
+    "id" : "95%氯化钾结晶钾（国产）",
+    "index" : 27,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -76,44 +93,22 @@
         "value" : 60.0
       }
     },
-    "name" : "95%氯化钾烘干粉（国产）",
+    "name" : "95%氯化钾结晶钾（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 80.0,
+    "weight" : 4.333333333334336,
     "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 7.000000000000001
-      }
-    },
-    "name" : "白泥",
+    "id" : "全水溶防结油",
+    "index" : 62,
+    "indicators" : { },
+    "name" : "全水溶防结油",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 0.35,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 2.166666666667168,
-    "feedPortShare" : false,
-    "id" : "1000亿微生物菌",
-    "index" : 69,
-    "indicators" : {
-      "活性菌" : {
-        "id" : "活性菌",
-        "value" : 1000.0
-      }
-    },
-    "name" : "1000亿微生物菌",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 24.0,
+    "price" : 12.0,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -179,10 +174,10 @@
   },
   "recipeName" : "CBCSolver-15",
   "scale" : 3,
-  "dryWaterWeight" : 177.90353849049575,
+  "dryWaterWeight" : 180.07020515716295,
   "materialCost" : 1294.316205533609,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 253.0,
   "waterWeight" : 193.84308300395261,
-  "weight" : 1177.9035384904957
+  "weight" : 1180.070205157163
 }

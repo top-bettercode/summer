@@ -1,7 +1,7 @@
 {
-  "cost" : 3023.2922566005395,
+  "cost" : 3023.2922566005345,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : {
       "55磷酸一铵（粉）" : {
@@ -9,6 +9,10 @@
         "overdose" : 0.0
       },
       "58磷酸一铵（粉）" : {
+        "normal" : 0.0,
+        "overdose" : 0.0
+      },
+      "60磷酸一铵（云天化）" : {
         "normal" : 0.0,
         "overdose" : 0.0
       },
@@ -21,7 +25,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.697004789280523,
+        "normal" : 4.6970047892805225,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -29,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.4681374958831155,
+        "normal" : 1.4681374958831135,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -37,7 +41,7 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 59.87028676021971,
+        "normal" : 59.87028676021972,
         "overdose" : 0.0
       },
       "磷酸" : {
@@ -45,7 +49,7 @@
         "overdose" : 0.0
       }
     },
-    "weight" : 66.03542904538335,
+    "weight" : 66.03542904538334,
     "feedPortShare" : false,
     "id" : "液氨",
     "index" : 9,
@@ -65,8 +69,120 @@
     "price" : 3.8,
     "unit" : "吨"
   }, {
+    "consumes" : {
+      "喷浆硫基用95氯化钾" : {
+        "normal" : 284.7360402684571,
+        "overdose" : 28.473604026845713
+      }
+    },
+    "weight" : 313.2096442953027,
+    "feedPortShare" : false,
+    "id" : "硫酸",
+    "index" : 36,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 0.5
+      },
+      "硫" : {
+        "id" : "硫",
+        "value" : 32.7
+      }
+    },
+    "name" : "硫酸",
+    "normalWeight" : 284.7360402684571,
+    "overdoseWeight" : 28.473604026845713,
+    "price" : 0.22,
+    "unit" : "吨"
+  }, {
     "consumes" : { },
-    "weight" : 99.12650288394116,
+    "weight" : 2.0,
+    "feedPortShare" : false,
+    "id" : "防结油（白色）",
+    "index" : 61,
+    "indicators" : { },
+    "name" : "防结油（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 3.0000000000000004,
+    "feedPortShare" : false,
+    "id" : "防结粉（白色）",
+    "index" : 62,
+    "indicators" : { },
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 0.9013359819736271,
+    "feedPortShare" : false,
+    "id" : "生化黄腐酸钾",
+    "index" : 67,
+    "indicators" : {
+      "有机质" : {
+        "id" : "有机质",
+        "value" : 60.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 2.0
+      },
+      "腐植酸" : {
+        "id" : "腐植酸",
+        "value" : 30.0
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 10.0
+      },
+      "黄腐酸" : {
+        "id" : "黄腐酸",
+        "value" : 32.0
+      }
+    },
+    "name" : "生化黄腐酸钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.65,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 4.098664018026373,
+    "feedPortShare" : false,
+    "id" : "心连心矿源黄腐酸钾",
+    "index" : 68,
+    "indicators" : {
+      "有机质" : {
+        "id" : "有机质",
+        "value" : 60.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 2.0
+      },
+      "腐植酸" : {
+        "id" : "腐植酸",
+        "value" : 50.0
+      },
+      "钾" : {
+        "id" : "钾",
+        "value" : 10.0
+      }
+    },
+    "name" : "心连心矿源黄腐酸钾",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.5,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 99.12650288394127,
     "feedPortShare" : false,
     "id" : "32-4-0硝磷",
     "index" : 11,
@@ -95,7 +211,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 139.35529706911973,
+    "weight" : 139.35529706911953,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -160,120 +276,8 @@
     "price" : 3.85,
     "unit" : "吨"
   }, {
-    "consumes" : {
-      "喷浆硫基用95氯化钾" : {
-        "normal" : 284.7360402684571,
-        "overdose" : 28.47360402684571
-      }
-    },
-    "weight" : 313.2096442953028,
-    "feedPortShare" : false,
-    "id" : "硫酸",
-    "index" : 36,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 0.5
-      },
-      "硫" : {
-        "id" : "硫",
-        "value" : 32.7
-      }
-    },
-    "name" : "硫酸",
-    "normalWeight" : 284.7360402684571,
-    "overdoseWeight" : 28.47360402684571,
-    "price" : 0.22,
-    "unit" : "吨"
-  }, {
     "consumes" : { },
-    "weight" : 1.9999999999999998,
-    "feedPortShare" : false,
-    "id" : "防结油（白色）",
-    "index" : 61,
-    "indicators" : { },
-    "name" : "防结油（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 3.0,
-    "feedPortShare" : false,
-    "id" : "防结粉（白色）",
-    "index" : 62,
-    "indicators" : { },
-    "name" : "防结粉（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 0.9013359819728421,
-    "feedPortShare" : false,
-    "id" : "生化黄腐酸钾",
-    "index" : 67,
-    "indicators" : {
-      "有机质" : {
-        "id" : "有机质",
-        "value" : 60.0
-      },
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 2.0
-      },
-      "腐植酸" : {
-        "id" : "腐植酸",
-        "value" : 30.0
-      },
-      "钾" : {
-        "id" : "钾",
-        "value" : 10.0
-      },
-      "黄腐酸" : {
-        "id" : "黄腐酸",
-        "value" : 32.0
-      }
-    },
-    "name" : "生化黄腐酸钾",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.65,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 4.098664018027157,
-    "feedPortShare" : false,
-    "id" : "心连心矿源黄腐酸钾",
-    "index" : 68,
-    "indicators" : {
-      "有机质" : {
-        "id" : "有机质",
-        "value" : 60.0
-      },
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 2.0
-      },
-      "腐植酸" : {
-        "id" : "腐植酸",
-        "value" : 50.0
-      },
-      "钾" : {
-        "id" : "钾",
-        "value" : 10.0
-      }
-    },
-    "name" : "心连心矿源黄腐酸钾",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.5,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 232.50000000000003,
+    "weight" : 232.50000000000009,
     "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 89,
@@ -361,9 +365,9 @@
   "recipeName" : "CBCSolver-20",
   "scale" : 3,
   "dryWaterWeight" : 105.43815273412702,
-  "materialCost" : 2699.8148395374237,
+  "materialCost" : 2699.8148395374187,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 117.43815273412716,
+  "waterWeight" : 117.43815273412717,
   "weight" : 1105.438152734127
 }

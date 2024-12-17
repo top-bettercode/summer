@@ -1,10 +1,27 @@
 {
-  "cost" : 1522.9716055335953,
+  "cost" : 1522.9716055335944,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 573.6478913965427,
+    "weight" : 100.0,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 542.5104989700541,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -29,7 +46,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 155.01104347089338,
+    "weight" : 194.6680541966259,
     "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 24,
@@ -58,7 +75,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 76.17452174043038,
+    "weight" : 64.46079109561512,
     "feedPortShare" : false,
     "id" : "低白肥（14%）",
     "index" : 25,
@@ -87,10 +104,10 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 100.0,
+    "weight" : 98.36065573770492,
     "feedPortShare" : false,
-    "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 26,
+    "id" : "95%进口白钾(粉)",
+    "index" : 29,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -98,51 +115,17 @@
       },
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 1.0
+        "value" : 0.5
       },
       "钾" : {
         "id" : "钾",
-        "value" : 60.0
+        "value" : 61.0
       }
     },
-    "name" : "95%氯化钾烘干粉（国产）",
+    "name" : "95%进口白钾(粉)",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.55,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 80.0,
-    "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 7.000000000000001
-      }
-    },
-    "name" : "白泥",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.35,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 15.16654339213352,
-    "feedPortShare" : false,
-    "id" : "石粉（尿基高塔用）",
-    "index" : 54,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 1.0
-      }
-    },
-    "name" : "石粉（尿基高塔用）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.24,
+    "price" : 3.75,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -209,9 +192,9 @@
   "recipeName" : "COPTSolver-18",
   "scale" : 3,
   "dryWaterWeight" : 0.0,
-  "materialCost" : 1309.3162055335954,
+  "materialCost" : 1309.3162055335943,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 253.0,
-  "waterWeight" : 49.999999999999936,
+  "totalNutrientWeight" : 253.00000000000003,
+  "waterWeight" : 49.104948945618176,
   "weight" : 1000.0
 }

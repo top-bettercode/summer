@@ -1,8 +1,25 @@
 {
   "cost" : 1455.971605533597,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
+    "consumes" : { },
+    "weight" : 80.0,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
     "consumes" : { },
     "weight" : 474.3083003952568,
     "feedPortShare" : false,
@@ -81,23 +98,6 @@
     "overdoseWeight" : 0.0,
     "price" : 3.55,
     "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 80.0,
-    "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 7.000000000000001
-      }
-    },
-    "name" : "白泥",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.35,
-    "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
   "optimalProductionCost" : {
@@ -162,10 +162,10 @@
   },
   "recipeName" : "SCIPSolver-1",
   "scale" : 3,
-  "dryWaterWeight" : 175.73687182382878,
+  "dryWaterWeight" : 175.73687182382855,
   "materialCost" : 1242.316205533597,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 253.00000000000006,
   "waterWeight" : 193.84308300395273,
-  "weight" : 1175.7368718238288
+  "weight" : 1175.7368718238286
 }

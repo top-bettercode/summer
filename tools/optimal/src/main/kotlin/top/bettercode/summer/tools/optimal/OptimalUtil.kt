@@ -24,7 +24,7 @@ object OptimalUtil {
     @JvmOverloads
     fun Double.scale(
         scale: Int,
-        roundingMode: RoundingMode = RoundingMode.HALF_UP
+        roundingMode: RoundingMode = RoundingMode.HALF_UP,
     ): Double {
         require(scale >= 0) { "小数位数不能为负数" }
         return BigDecimal(this).setScale(10, roundingMode).setScale(scale, roundingMode)
@@ -36,10 +36,11 @@ object OptimalUtil {
      */
     @JvmStatic
     fun Double.inTolerance(minEpsilon: Double): Boolean {
+        val value = this.scale(10)
         return if (minEpsilon == 0.0) {
-            this == 0.0
+            value == 0.0
         } else {
-            this > -minEpsilon && this < minEpsilon
+            value > -minEpsilon && value < minEpsilon
         }
     }
 
@@ -48,10 +49,11 @@ object OptimalUtil {
      */
     @JvmStatic
     fun Double.inRange(min: Double, max: Double, minEpsilon: Double): Boolean {
+        val value = this.scale(10)
         return if (minEpsilon == 0.0) {
-            this in min..max
+            value in min.scale(10)..max.scale(10)
         } else {
-            this > min - minEpsilon && this < max + minEpsilon
+            value > min - minEpsilon && value < max + minEpsilon
         }
     }
 

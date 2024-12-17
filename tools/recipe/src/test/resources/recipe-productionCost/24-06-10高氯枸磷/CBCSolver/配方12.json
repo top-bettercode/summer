@@ -1,7 +1,7 @@
 {
-  "cost" : 2615.0021503007333,
+  "cost" : 2615.002150300736,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
     "weight" : 379.99999999999994,
@@ -25,7 +25,31 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 330.1369078306646,
+    "weight" : 3.0,
+    "feedPortShare" : false,
+    "id" : "防结粉（白色）",
+    "index" : 59,
+    "indicators" : { },
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 1.9999999999999998,
+    "feedPortShare" : false,
+    "id" : "SPR全水溶防结油",
+    "index" : 65,
+    "indicators" : { },
+    "name" : "SPR全水溶防结油",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 20.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 308.5152862090452,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -118,8 +142,8 @@
     "consumes" : { },
     "weight" : 150.00000000000003,
     "feedPortShare" : false,
-    "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 27,
+    "id" : "95%氯化钾结晶钾（国产）",
+    "index" : 28,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -134,51 +158,27 @@
         "value" : 60.0
       }
     },
-    "name" : "95%氯化钾烘干粉（国产）",
+    "name" : "95%氯化钾结晶钾（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 15.162005212813634,
+    "weight" : 36.783626834432944,
     "feedPortShare" : false,
-    "id" : "石粉（尿基高塔用）",
-    "index" : 55,
+    "id" : "硅石粉（硝基用）",
+    "index" : 56,
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
         "value" : 1.0
       }
     },
-    "name" : "石粉（尿基高塔用）",
+    "name" : "硅石粉（硝基用）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 2.0000000000000004,
-    "feedPortShare" : false,
-    "id" : "防结油（白色）",
-    "index" : 58,
-    "indicators" : { },
-    "name" : "防结油（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 2.9999999999999996,
-    "feedPortShare" : false,
-    "id" : "防结粉（白色）",
-    "index" : 59,
-    "indicators" : { },
-    "name" : "防结粉（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.0,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -245,9 +245,9 @@
   "recipeName" : "CBCSolver-12",
   "scale" : 3,
   "dryWaterWeight" : -1.1368683772161603E-13,
-  "materialCost" : 2401.3467503007337,
+  "materialCost" : 2401.346750300736,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 411.43333333333203,
-  "waterWeight" : 8.717119565217391,
+  "totalNutrientWeight" : 405.96306306306235,
+  "waterWeight" : 8.71711956521739,
   "weight" : 999.9999999999999
 }

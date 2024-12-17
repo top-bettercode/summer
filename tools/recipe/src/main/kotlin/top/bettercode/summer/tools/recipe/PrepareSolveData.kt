@@ -38,7 +38,7 @@ data class PrepareSolveData(
         fun of(
             solver: Solver,
             requirement: RecipeRequirement,
-            includeProductionCost: Boolean = true
+            includeProductionCost: Boolean = true,
         ): PrepareSolveData {
             solver.apply {
                 setTimeLimit(requirement.timeout)
@@ -174,10 +174,17 @@ data class PrepareSolveData(
                 val calIds = mutableSetOf<String>()
                 materialRelationConstraints.filter { it.then.isNotEmpty() }
                     .forEach { (ids, relation) ->
+                        val useReplace = boolVar()
                         val consumeMaterialVars = ids.mapNotNull { recipeMaterials[it] }
+                        consumeMaterialVars.forEach {
+                            it.weight.leIf(0.0, useReplace)
+                        }
                         val replaceConsumeMaterialVars =
                             ids.replaceIds?.mapNotNull { recipeMaterials[it] }
-                        val useReplace = boolVar()
+                        replaceConsumeMaterialVars?.forEach {
+                            it.weight.leIfNot(0.0, useReplace)
+                        }
+                        val replaceRate = ids.replaceRate
 
                         relation.forEach { (t, u) ->
                             val normal = u.normal
@@ -196,7 +203,6 @@ data class PrepareSolveData(
 
                                 //原料消耗变量初始化
                                 consumeMaterialVars.forEach {
-                                    it.weight.leIf(0.0, useReplace)
                                     val normalVar = numVar(0.0, targetWeight)
                                     normalVars.add(normalVar)
                                     val overdoseVar = numVar(0.0, targetWeight)
@@ -205,10 +211,8 @@ data class PrepareSolveData(
                                         UsageVar(normal = normalVar, overdose = overdoseVar)
                                 }
                                 //替换原料消耗变量初始化
-                                if (ids.replaceRate != null)
+                                if (replaceRate != null)
                                     replaceConsumeMaterialVars?.forEach {
-                                        val replaceRate = ids.replaceRate
-                                        it.weight.leIfNot(0.0, useReplace)
                                         val normalVar = numVar(0.0, targetWeight)
                                         normalVars.add(normalVar / replaceRate)
                                         val overdoseVar = numVar(0.0, targetWeight)
@@ -391,7 +395,7 @@ data class PrepareSolveData(
             changeLogic: CostChangeLogic,
             value: IVar?,
             materialItems: List<CarrierValue<RecipeOtherMaterial, IVar>>,
-            dictItems: Map<DictType, CarrierValue<Cost, IVar>>
+            dictItems: Map<DictType, CarrierValue<Cost, IVar>>,
         ) {
             val iVars = materials.filter { changeLogic.materialId?.contains(it.key) == true }
                 .map { it.value.weight }
@@ -453,7 +457,7 @@ data class PrepareSolveData(
         solver: Solver,
         minMaterialNum: Boolean,
         recipeName: String? = null,
-        minEpsilon: Double
+        minEpsilon: Double,
     ): Recipe? {
         solver.apply {
             val minimize = objectiveVars.minimize()
@@ -503,7 +507,7 @@ data class PrepareSolveData(
     private fun Solver.recipe(
         recipeName: String?,
         minEpsilon: Double,
-        objectiveValue: Double
+        objectiveValue: Double,
     ): Recipe {
         val scale = abs(log10(epsilon)).toInt()
         val materials = recipeMaterials.mapNotNull { (_, u) ->

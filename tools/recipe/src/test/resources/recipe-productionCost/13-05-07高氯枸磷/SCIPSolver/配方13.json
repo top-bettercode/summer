@@ -1,10 +1,27 @@
 {
-  "cost" : 1497.971605533597,
+  "cost" : 1497.9716055335975,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 474.3083003952568,
+    "weight" : 80.0,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 474.30830039525705,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -29,7 +46,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 548.9932161772286,
+    "weight" : 548.9932161772283,
     "feedPortShare" : false,
     "id" : "低白肥（14%）",
     "index" : 25,
@@ -58,7 +75,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 99.99999999999999,
+    "weight" : 100.00000000000001,
     "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 26,
@@ -83,7 +100,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.19014280753477764,
+    "weight" : 0.1901428075347786,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 45,
@@ -101,23 +118,6 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 160.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 80.0,
-    "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 7.000000000000001
-      }
-    },
-    "name" : "白泥",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.35,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -183,10 +183,10 @@
   },
   "recipeName" : "SCIPSolver-13",
   "scale" : 3,
-  "dryWaterWeight" : 203.49165938002034,
-  "materialCost" : 1284.3162055335972,
+  "dryWaterWeight" : 203.4916593800201,
+  "materialCost" : 1284.3162055335974,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 256.85905026481197,
-  "waterWeight" : 203.49165938002028,
-  "weight" : 1203.4916593800203
+  "totalNutrientWeight" : 256.859050264812,
+  "waterWeight" : 203.49165938002017,
+  "weight" : 1203.49165938002
 }

@@ -1,10 +1,10 @@
 {
-  "cost" : 2620.002150300738,
+  "cost" : 2620.0021503007374,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 427.7647279657182,
+    "weight" : 380.0,
     "feedPortShare" : false,
     "id" : "普通尿素",
     "index" : 0,
@@ -25,7 +25,31 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 82.96855987585039,
+    "weight" : 2.0,
+    "feedPortShare" : false,
+    "id" : "防结油（白色）",
+    "index" : 58,
+    "indicators" : { },
+    "name" : "防结油（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 3.0,
+    "feedPortShare" : false,
+    "id" : "防结粉（白色）",
+    "index" : 59,
+    "indicators" : { },
+    "name" : "防结粉（白色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 2.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 204.36359779508902,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -50,10 +74,10 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 122.37179487179488,
+    "weight" : 107.24572638438687,
     "feedPortShare" : false,
-    "id" : "58磷酸一铵（粉）",
-    "index" : 10,
+    "id" : "60磷酸一铵（粉）",
+    "index" : 12,
     "indicators" : {
       "氮" : {
         "id" : "氮",
@@ -61,7 +85,7 @@
       },
       "水溶磷" : {
         "id" : "水溶磷",
-        "value" : 38.4
+        "value" : 40.0
       },
       "水溶磷率" : {
         "id" : "水溶磷率",
@@ -73,17 +97,17 @@
       },
       "磷" : {
         "id" : "磷",
-        "value" : 48.0
+        "value" : 50.0
       }
     },
-    "name" : "58磷酸一铵（粉）",
+    "name" : "60磷酸一铵（粉）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.51,
+    "price" : 3.71,
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 101.08974358974359,
+    "weight" : 92.28572469670975,
     "feedPortShare" : false,
     "id" : "中白肥（24%)",
     "index" : 25,
@@ -112,10 +136,10 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 150.0,
+    "weight" : 147.54098360655738,
     "feedPortShare" : false,
-    "id" : "95%氯化钾烘干粉（国产）",
-    "index" : 27,
+    "id" : "95%进口白钾(粉)",
+    "index" : 30,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -123,58 +147,34 @@
       },
       "物料水分" : {
         "id" : "物料水分",
-        "value" : 1.0
+        "value" : 0.5
       },
       "钾" : {
         "id" : "钾",
-        "value" : 60.0
+        "value" : 61.0
       }
     },
-    "name" : "95%氯化钾烘干粉（国产）",
+    "name" : "95%进口白钾(粉)",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
-    "price" : 3.55,
+    "price" : 3.75,
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 113.93676856989703,
+    "weight" : 65.5052764340384,
     "feedPortShare" : false,
-    "id" : "石粉（尿基高塔用）",
-    "index" : 55,
+    "id" : "硅石粉（硝基用）",
+    "index" : 56,
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
         "value" : 1.0
       }
     },
-    "name" : "石粉（尿基高塔用）",
+    "name" : "硅石粉（硝基用）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 2.0,
-    "feedPortShare" : false,
-    "id" : "防结油（白色）",
-    "index" : 58,
-    "indicators" : { },
-    "name" : "防结油（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 3.0,
-    "feedPortShare" : false,
-    "id" : "防结粉（白色）",
-    "index" : 59,
-    "indicators" : { },
-    "name" : "防结粉（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 2.0,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -240,10 +240,10 @@
   },
   "recipeName" : "CplexSolver-13",
   "scale" : 3,
-  "dryWaterWeight" : 3.131594873004019,
-  "materialCost" : 2406.3467503007378,
+  "dryWaterWeight" : 1.941308916781395,
+  "materialCost" : 2406.3467503007373,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 403.0,
-  "waterWeight" : 15.131594873004014,
-  "weight" : 1003.131594873004
+  "waterWeight" : 13.941308916781482,
+  "weight" : 1001.9413089167814
 }

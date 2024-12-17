@@ -1,10 +1,27 @@
 {
-  "cost" : 1482.971605533597,
+  "cost" : 1482.9716055335975,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 474.3083003952569,
+    "weight" : 80.0,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 474.30830039525694,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -29,7 +46,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 549.13730477941,
+    "weight" : 549.1373047794096,
     "feedPortShare" : false,
     "id" : "低白肥（14%）",
     "index" : 25,
@@ -83,7 +100,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.09601457495405097,
+    "weight" : 0.09601457495405341,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 45,
@@ -101,23 +118,6 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 160.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 80.00000000000001,
-    "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 7.000000000000001
-      }
-    },
-    "name" : "白泥",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.35,
     "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
@@ -183,10 +183,10 @@
   },
   "recipeName" : "SCIPSolver-10",
   "scale" : 3,
-  "dryWaterWeight" : 203.54161974962108,
+  "dryWaterWeight" : 203.54161974962062,
   "materialCost" : 1269.3162055335974,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 256.8792226691174,
-  "waterWeight" : 203.54161974962085,
-  "weight" : 1203.541619749621
+  "totalNutrientWeight" : 256.8792226691173,
+  "waterWeight" : 203.54161974962074,
+  "weight" : 1203.5416197496206
 }

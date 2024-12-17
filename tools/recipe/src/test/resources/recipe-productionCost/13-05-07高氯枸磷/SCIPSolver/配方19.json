@@ -1,10 +1,27 @@
 {
   "cost" : 1527.9716055335975,
   "includeProductionCost" : true,
-  "indicatorScale" : 4,
+  "indicatorScale" : 5,
   "materials" : [ {
     "consumes" : { },
-    "weight" : 474.3083003952569,
+    "weight" : 80.0,
+    "feedPortShare" : false,
+    "id" : "白泥",
+    "index" : 53,
+    "indicators" : {
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 7.000000000000001
+      }
+    },
+    "name" : "白泥",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 0.35,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 474.3083003952571,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 3,
@@ -29,7 +46,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 548.7050389728663,
+    "weight" : 548.7050389728659,
     "feedPortShare" : false,
     "id" : "低白肥（14%）",
     "index" : 25,
@@ -102,23 +119,6 @@
     "overdoseWeight" : 0.0,
     "price" : 160.0,
     "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 80.0,
-    "feedPortShare" : false,
-    "id" : "白泥",
-    "index" : 53,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 7.000000000000001
-      }
-    },
-    "name" : "白泥",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.35,
-    "unit" : "吨"
   } ],
   "minEpsilon" : 0.0,
   "optimalProductionCost" : {
@@ -183,10 +183,10 @@
   },
   "recipeName" : "SCIPSolver-19",
   "scale" : 3,
-  "dryWaterWeight" : 203.39173864081954,
+  "dryWaterWeight" : 203.3917386408193,
   "materialCost" : 1314.316205533598,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 256.81870545620126,
-  "waterWeight" : 203.39173864081926,
-  "weight" : 1203.3917386408195
+  "waterWeight" : 203.3917386408191,
+  "weight" : 1203.3917386408193
 }

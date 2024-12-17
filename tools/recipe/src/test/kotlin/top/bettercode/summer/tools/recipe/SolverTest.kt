@@ -30,10 +30,10 @@ class SolverTest {
     val openExcel = false
     val minEpsilon = epsilon
 
-    //    val requiresJson = "p_optimal_line_require.json"
+    //        val requiresJson = "p_optimal_line_require.json"
     val requiresJson = "p_optimal_line_require_release.json"
 
-//    private fun filter(lineId: Long) = arrayOf(
+    //    private fun filter(lineId: Long) = arrayOf(
 //        342L,
 //    ).contains(lineId)
     @Suppress("UNUSED_PARAMETER")
@@ -65,7 +65,7 @@ class SolverTest {
         solve(requirement)
     }
 
-    //    @Disabled
+    @Disabled
     @Test
     fun all() {
         val inputStream = ClassPathResource(requiresJson).inputStream
@@ -81,7 +81,7 @@ class SolverTest {
 
 
     private fun solve(
-        requirement: RecipeRequirement
+        requirement: RecipeRequirement,
     ) {
         val solvers = solverTypes.map {
             when (it) {
