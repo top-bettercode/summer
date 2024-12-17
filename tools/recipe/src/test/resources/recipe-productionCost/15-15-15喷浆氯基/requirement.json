@@ -2179,7 +2179,7 @@
         "id" : "STAFF",
         "type" : "DICT"
       } ],
-      "changeValue" : 0.01,
+      "changeValue" : -0.01,
       "eachValue" : 1.0,
       "exceedValue" : 100.0,
       "materialId" : [ "硫酸" ],

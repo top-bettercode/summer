@@ -33,18 +33,18 @@ import kotlin.math.log10
  */
 internal class RecipeSolverTest {
     val products = listOf(
-//        "13-05-07高氯枸磷",
-//        "24-06-10高氯枸磷",
+        "13-05-07高氯枸磷",
+        "24-06-10高氯枸磷",
         "15-15-15喷浆硫基",
-//        "15-15-15喷浆氯基",
-//        "15-15-15常规氯基"
+        "15-15-15喷浆氯基",
+        "15-15-15常规氯基"
     )
     val solverTypes = listOf(
         SolverType.COPT,
-//        SolverType.CPLEX,
+        SolverType.CPLEX,
+        SolverType.SCIP,
+        SolverType.CBC,
 //        SolverType.GUROBI,
-//        SolverType.SCIP,
-//        SolverType.CBC,
     )
 
     val maxResult = 20
@@ -53,8 +53,8 @@ internal class RecipeSolverTest {
     val materialUnchanged = true
     val minMaterialNum = true
     val solveTimes = 1
-    val toExcel = true
-    val epsilon = 1e-3
+    val toExcel = false
+    val epsilon = 1e-4
     val minEpsilon = 0.00
 
     @Test
@@ -89,7 +89,7 @@ internal class RecipeSolverTest {
         includeProductionCost: Boolean,
         nutrientUnchanged: Boolean,
         materialUnchanged: Boolean,
-        toExcel: Boolean = false
+        toExcel: Boolean = false,
     ): RecipeResult {
         val solver = createSolver(solverType, epsilon = epsilon)
         val recipeResult = MultiRecipeSolver.solve(

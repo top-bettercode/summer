@@ -1,5 +1,5 @@
 {
-  "cost" : 2961.292256600507,
+  "cost" : 2764.1253587806823,
   "includeProductionCost" : true,
   "indicatorScale" : 5,
   "materials" : [ {
@@ -25,7 +25,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.200377629359682,
+        "normal" : 1.1366049021066382,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -33,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.899740022669435,
+        "normal" : 1.8657262554960732,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -45,11 +45,11 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 0.0,
+        "normal" : 19.788341376467244,
         "overdose" : 0.0
       }
     },
-    "weight" : 65.97040441224883,
+    "weight" : 82.66095929428965,
     "feedPortShare" : false,
     "id" : "液氨",
     "index" : 9,
@@ -64,7 +64,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 65.97040441224883,
+    "normalWeight" : 82.66095929428967,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -75,7 +75,7 @@
         "overdose" : 28.47360402684575
       }
     },
-    "weight" : 313.20964429529965,
+    "weight" : 313.2096442953003,
     "feedPortShare" : false,
     "id" : "硫酸",
     "index" : 36,
@@ -120,7 +120,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 3.6390296655759604,
+    "weight" : 5.0,
     "feedPortShare" : false,
     "id" : "生化黄腐酸钾",
     "index" : 67,
@@ -153,61 +153,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 1.3609703344240398,
-    "feedPortShare" : false,
-    "id" : "心连心矿源黄腐酸钾",
-    "index" : 68,
-    "indicators" : {
-      "有机质" : {
-        "id" : "有机质",
-        "value" : 60.0
-      },
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 2.0
-      },
-      "腐植酸" : {
-        "id" : "腐植酸",
-        "value" : 50.0
-      },
-      "钾" : {
-        "id" : "钾",
-        "value" : 10.0
-      }
-    },
-    "name" : "心连心矿源黄腐酸钾",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.5,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 29.167728635682153,
-    "feedPortShare" : false,
-    "id" : "氯化铵（干）",
-    "index" : 6,
-    "indicators" : {
-      "氮" : {
-        "id" : "氮",
-        "value" : 25.3
-      },
-      "氯离子" : {
-        "id" : "氯离子",
-        "value" : 66.7
-      },
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 1.0
-      }
-    },
-    "name" : "氯化铵（干）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 1.25,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 180.32291659028118,
+    "weight" : 177.09433708585775,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -240,7 +186,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 219.28442035627737,
+    "weight" : 59.33746180115534,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -273,6 +219,35 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
+    "weight" : 356.5096797005979,
+    "feedPortShare" : false,
+    "id" : "磷酸",
+    "index" : 29,
+    "indicators" : {
+      "水溶磷" : {
+        "id" : "水溶磷",
+        "value" : 16.8
+      },
+      "水溶磷率" : {
+        "id" : "水溶磷率",
+        "value" : 80.0
+      },
+      "物料水分" : {
+        "id" : "物料水分",
+        "value" : 65.0
+      },
+      "磷" : {
+        "id" : "磷",
+        "value" : 21.0
+      }
+    },
+    "name" : "磷酸",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 1.055,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
     "weight" : 232.50000000000006,
     "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
@@ -298,7 +273,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 73.29712489825633,
+    "weight" : 139.6995155957936,
     "feedPortShare" : false,
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -328,7 +303,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.1320964429529967
+        "value" : -1.132096442953003
       },
       "DEPRECIATION" : {
         "it" : {
@@ -347,7 +322,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 40.64911946602754,
+    "energyFee" : 81.44691363254631,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -359,7 +334,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.8575223918804573
+      "value" : 4.330115977730079
     }, {
       "it" : {
         "id" : "生物质",
@@ -374,17 +349,17 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.0,
-    "otherFee" : 245.54805060402586,
-    "scale" : 3,
-    "taxFee" : 37.099324554362326,
-    "totalFee" : 326.5294595706599
+    "otherFee" : 66.45194939597388,
+    "scale" : 4,
+    "taxFee" : 20.98067544563765,
+    "totalFee" : 170.56833385889942
   },
   "recipeName" : "SCIPSolver-6",
-  "scale" : 3,
-  "dryWaterWeight" : 123.75223918804545,
-  "materialCost" : 2634.7627970298427,
+  "scale" : 4,
+  "dryWaterWeight" : 371.0115977729945,
+  "materialCost" : 2593.557024921783,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0000000000001,
-  "waterWeight" : 135.75223918804568,
-  "weight" : 1123.7522391880455
+  "waterWeight" : 383.01159777300796,
+  "weight" : 1371.0115977729945
 }

@@ -3,6 +3,8 @@ package top.bettercode.summer.tools.optimal.cplex
 import ilog.concert.IloNumVar
 import ilog.cplex.IloCplex
 import top.bettercode.summer.tools.optimal.IVar
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  *
@@ -12,22 +14,36 @@ class CplexNumVar(
     private val _delegate: IloNumVar,
     val model: IloCplex,
     override val isInt: Boolean,
-    override val coeff: Double = 1.0
+    override val coeff: Double = 1.0,
 ) : IVar {
 
     override val value: Double
         get() = model.getValue(_delegate)
 
     override var lb: Double
-        get() = _delegate.lb
+        get() {
+            val lb = _delegate.lb * coeff
+            val ub = _delegate.ub * coeff
+            return min(lb, ub)
+        }
         set(value) {
-            _delegate.lb = value
+            if (coeff > 0)
+                _delegate.lb = value / coeff
+            else
+                _delegate.ub = value / coeff
         }
 
     override var ub: Double
-        get() = _delegate.ub
+        get() {
+            val lb = _delegate.lb * coeff
+            val ub = _delegate.ub * coeff
+            return max(lb, ub)
+        }
         set(value) {
-            _delegate.ub = value
+            if (coeff > 0)
+                _delegate.ub = value / coeff
+            else
+                _delegate.lb = value / coeff
         }
 
     override fun times(coeff: Double): IVar {

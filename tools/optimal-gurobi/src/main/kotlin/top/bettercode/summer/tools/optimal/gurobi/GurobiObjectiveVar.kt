@@ -11,19 +11,27 @@ import top.bettercode.summer.tools.optimal.IVar
 class GurobiObjectiveVar(
     val model: GRBModel,
     override val isInt: Boolean = false,
-    override val coeff: Double = 1.0
+    override val coeff: Double = 1.0,
 ) : IVar {
 
     override val value: Double
         get() = model[GRB.DoubleAttr.ObjVal]
 
     override var lb: Double
-        get() = model[GRB.DoubleAttr.ObjVal]
-        set(_) {}
+        get() {
+            throw UnsupportedOperationException()
+        }
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     override var ub: Double
-        get() = model[GRB.DoubleAttr.ObjVal]
-        set(_) {}
+        get() {
+            throw UnsupportedOperationException()
+        }
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
 
     override fun times(coeff: Double): IVar {

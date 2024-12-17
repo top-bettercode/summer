@@ -10,19 +10,27 @@ import top.bettercode.summer.tools.optimal.IVar
 class COPTExprVar(
     private val _delegate: Expr,
     override val isInt: Boolean = false,
-    override val coeff: Double = 1.0
+    override val coeff: Double = 1.0,
 ) : IVar {
 
     override val value: Double
         get() = _delegate.evaluate()
 
     override var lb: Double
-        get() = _delegate.evaluate()
-        set(_) {}
+        get() {
+            throw UnsupportedOperationException()
+        }
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     override var ub: Double
-        get() = _delegate.evaluate()
-        set(_) {}
+        get() {
+            throw UnsupportedOperationException()
+        }
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     override fun times(coeff: Double): IVar {
         return COPTExprVar(_delegate = _delegate, isInt = isInt, coeff = coeff)

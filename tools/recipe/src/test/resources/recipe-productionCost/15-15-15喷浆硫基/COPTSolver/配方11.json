@@ -1,5 +1,5 @@
 {
-  "cost" : 2978.2922566005377,
+  "cost" : 2781.1253587805886,
   "includeProductionCost" : true,
   "indicatorScale" : 5,
   "materials" : [ {
@@ -25,7 +25,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.786265309465238,
+        "normal" : 4.786265309465198,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -33,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.4738569739626322,
+        "normal" : 1.4738569739626621,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -45,11 +45,11 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 1.4210854715202004E-14,
+        "normal" : 0.0,
         "overdose" : 0.0
       }
     },
-    "weight" : 66.13040904364756,
+    "weight" : 66.13040904364755,
     "feedPortShare" : false,
     "id" : "液氨",
     "index" : 9,
@@ -64,7 +64,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 66.13040904364757,
+    "normalWeight" : 66.13040904364755,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -178,7 +178,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 46.666018583991374,
+    "weight" : 46.66601858398735,
     "feedPortShare" : false,
     "id" : "32-4-0硝磷",
     "index" : 11,
@@ -207,7 +207,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 139.89818870500966,
+    "weight" : 139.8981887050125,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -240,7 +240,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 249.87120365590567,
+    "weight" : 249.87120365590357,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -298,7 +298,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 23.728886148976272,
+    "weight" : 23.728886148980422,
     "feedPortShare" : false,
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -328,7 +328,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.132096442953027
+        "value" : -1.1320964429530274
       },
       "DEPRECIATION" : {
         "it" : {
@@ -347,7 +347,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 38.57339304630503,
+    "energyFee" : 38.5733930463052,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -359,7 +359,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.731720790685153
+      "value" : 1.7317207906851637
     }, {
       "it" : {
         "id" : "生物质",
@@ -374,17 +374,17 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.0,
-    "otherFee" : 245.54805060402714,
-    "scale" : 3,
-    "taxFee" : 37.09932455436244,
-    "totalFee" : 324.43297588674153
+    "otherFee" : 66.45194939597286,
+    "scale" : 4,
+    "taxFee" : 20.98067544563756,
+    "totalFee" : 127.26607806679478
   },
   "recipeName" : "COPTSolver-11",
-  "scale" : 3,
-  "dryWaterWeight" : 111.17207906851536,
-  "materialCost" : 2653.859280713796,
+  "scale" : 4,
+  "dryWaterWeight" : 111.17207906851627,
+  "materialCost" : 2653.859280713794,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 123.1720790685153,
-  "weight" : 1111.1720790685154
+  "waterWeight" : 123.17207906851633,
+  "weight" : 1111.1720790685163
 }

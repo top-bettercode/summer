@@ -1,5 +1,5 @@
 {
-  "cost" : 2949.292256600534,
+  "cost" : 2752.1253587805872,
   "includeProductionCost" : true,
   "indicatorScale" : 5,
   "materials" : [ {
@@ -25,7 +25,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 3.452480431431025,
+        "normal" : 3.452480431431027,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -33,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 2.3727850003593027,
+        "normal" : 2.3727850003593063,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -45,7 +45,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 0.0,
+        "normal" : -6.661338147750939E-15,
         "overdose" : 0.0
       }
     },
@@ -120,7 +120,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 4.487179487179424,
+    "weight" : 4.487179487179559,
     "feedPortShare" : false,
     "id" : "生化黄腐酸钾",
     "index" : 67,
@@ -153,7 +153,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.5128205128205758,
+    "weight" : 0.5128205128204408,
     "feedPortShare" : false,
     "id" : "心连心矿源黄腐酸钾",
     "index" : 68,
@@ -182,7 +182,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 225.22424468651252,
+    "weight" : 225.22424468651244,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -215,7 +215,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 180.2397872291196,
+    "weight" : 180.23978722911968,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -273,7 +273,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 105.29130854582485,
+    "weight" : 105.29130854582488,
     "feedPortShare" : false,
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -303,7 +303,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.1320964429530194
+        "value" : -1.1320964429530194
       },
       "DEPRECIATION" : {
         "it" : {
@@ -349,15 +349,15 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.0,
-    "otherFee" : 245.54805060402683,
-    "scale" : 3,
-    "taxFee" : 37.09932455436241,
-    "totalFee" : 327.93070239248544
+    "otherFee" : 66.45194939597319,
+    "scale" : 4,
+    "taxFee" : 20.980675445637587,
+    "totalFee" : 130.76380457253916
   },
   "recipeName" : "CplexSolver-2",
-  "scale" : 3,
+  "scale" : 4,
   "dryWaterWeight" : 132.1605369487686,
-  "materialCost" : 2621.361554208049,
+  "materialCost" : 2621.3615542080483,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.00000000000006,
   "waterWeight" : 144.16053694876865,

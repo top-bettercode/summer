@@ -24,7 +24,7 @@ open class MPExtSolver @JvmOverloads constructor(
     solverType: SolverType,
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
     minEpsilon: Double,
-    name: String = "MPSolver"
+    name: String = "MPSolver",
 ) : Solver(
     name = name,
     type = solverType,
@@ -340,9 +340,9 @@ open class MPExtSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }
@@ -362,9 +362,9 @@ open class MPExtSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }

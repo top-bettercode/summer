@@ -25,7 +25,7 @@ class CplexSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
     minEpsilon: Double = 1e-6,
     logging: Boolean = false,
-    name: String = "CplexSolver"
+    name: String = "CplexSolver",
 ) : Solver(
     name = name,
     type = SolverType.CPLEX,
@@ -557,9 +557,9 @@ class CplexSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }
@@ -579,9 +579,9 @@ class CplexSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }

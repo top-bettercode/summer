@@ -1,5 +1,5 @@
 {
-  "cost" : 3008.292256600523,
+  "cost" : 2811.1253587805895,
   "includeProductionCost" : true,
   "indicatorScale" : 5,
   "materials" : [ {
@@ -25,7 +25,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.760917570147485,
+        "normal" : 4.823642587848771,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -33,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.3896038042034649,
+        "normal" : 1.2935047662041237,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -41,7 +41,7 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 59.870286760219685,
+        "normal" : 61.47993425541418,
         "overdose" : 0.0
       },
       "磷酸" : {
@@ -49,7 +49,7 @@
         "overdose" : 0.0
       }
     },
-    "weight" : 66.02080813457064,
+    "weight" : 67.59708160946708,
     "feedPortShare" : false,
     "id" : "液氨",
     "index" : 9,
@@ -64,18 +64,18 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 66.02080813457064,
+    "normalWeight" : 67.59708160946708,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
   }, {
     "consumes" : {
       "喷浆硫基用95氯化钾" : {
-        "normal" : 284.73604026845703,
-        "overdose" : 28.4736040268457
+        "normal" : 292.3913343853085,
+        "overdose" : 29.239133438530846
       }
     },
-    "weight" : 313.2096442953027,
+    "weight" : 321.6304678238393,
     "feedPortShare" : false,
     "id" : "硫酸",
     "index" : 36,
@@ -90,8 +90,8 @@
       }
     },
     "name" : "硫酸",
-    "normalWeight" : 284.73604026845703,
-    "overdoseWeight" : 28.4736040268457,
+    "normalWeight" : 292.3913343853085,
+    "overdoseWeight" : 29.239133438530846,
     "price" : 0.22,
     "unit" : "吨"
   }, {
@@ -153,7 +153,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 103.16682712064119,
+    "weight" : 95.54277808516957,
     "feedPortShare" : false,
     "id" : "32-4-0硝磷",
     "index" : 11,
@@ -182,7 +182,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 131.90089585353786,
+    "weight" : 122.77919572258432,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -215,7 +215,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 248.54790255917,
+    "weight" : 251.82251745386952,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -248,7 +248,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 232.5,
+    "weight" : 238.75089778058958,
     "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 89,
@@ -282,7 +282,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.132096442953027
+        "value" : -1.216304678238393
       },
       "DEPRECIATION" : {
         "it" : {
@@ -301,7 +301,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 37.612102863931696,
+    "energyFee" : 38.07028484846069,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -313,7 +313,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.673460779632224
+      "value" : 1.7012293847551931
     }, {
       "it" : {
         "id" : "生物质",
@@ -328,17 +328,17 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.0,
-    "otherFee" : 245.54805060402714,
-    "scale" : 3,
-    "taxFee" : 37.09932455436244,
-    "totalFee" : 323.46207280254447
+    "otherFee" : 62.91520351398749,
+    "scale" : 4,
+    "taxFee" : 20.662368316258874,
+    "totalFee" : 122.86433524549413
   },
   "recipeName" : "COPTSolver-17",
-  "scale" : 3,
-  "dryWaterWeight" : 105.34607796322234,
-  "materialCost" : 2684.830183797979,
+  "scale" : 4,
+  "dryWaterWeight" : 108.12293847551928,
+  "materialCost" : 2688.2610235350953,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0,
-  "waterWeight" : 117.3460779632224,
-  "weight" : 1105.3460779632223
+  "totalNutrientWeight" : 453.0000000000001,
+  "waterWeight" : 120.12293847551933,
+  "weight" : 1108.1229384755193
 }

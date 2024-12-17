@@ -19,7 +19,7 @@ class GurobiSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
     minEpsilon: Double = 1e-5,
     logging: Boolean = false,
-    name: String = "GurobiSolver"
+    name: String = "GurobiSolver",
 ) : Solver(
     name = name,
     type = SolverType.GUROBI,
@@ -190,7 +190,10 @@ class GurobiSolver @JvmOverloads constructor(
         val expr = GRBLinExpr()
         expr.addTerm(this.coeff, this.getDelegate())
         expr.addConstant(value)
-        val sum = if (this.isInt && this.coeff.isInt && value.isInt) intVar() else numVar()
+        val lb = this.lb + value
+        val ub = this.ub + value
+        val sum =
+            if (this.isInt && this.coeff.isInt && value.isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addConstr(expr, GRB.EQUAL, sum.getDelegate<GRBVar>(), "c" + (numConstraints() + 1))
         model.update()
         return sum
@@ -578,9 +581,9 @@ class GurobiSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }
@@ -601,9 +604,9 @@ class GurobiSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }

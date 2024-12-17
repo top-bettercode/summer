@@ -1,5 +1,5 @@
 {
-  "cost" : 2993.2922566005236,
+  "cost" : 2796.1253587805786,
   "includeProductionCost" : true,
   "indicatorScale" : 5,
   "materials" : [ {
@@ -33,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.921161430724144,
+        "normal" : 1.9211614307241323,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -45,7 +45,7 @@
         "overdose" : 0.0
       },
       "磷酸" : {
-        "normal" : 0.0,
+        "normal" : 1.0658141036401503E-14,
         "overdose" : 0.0
       }
     },
@@ -240,7 +240,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 0.027689369685605425,
+    "weight" : 0.027689369685610754,
     "feedPortShare" : false,
     "id" : "七钼酸铵",
     "index" : 49,
@@ -316,7 +316,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.1320964429530194
+        "value" : -1.1320964429530194
       },
       "DEPRECIATION" : {
         "it" : {
@@ -362,15 +362,15 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.0,
-    "otherFee" : 245.54805060402683,
-    "scale" : 3,
-    "taxFee" : 37.09932455436241,
-    "totalFee" : 326.9098329162175
+    "otherFee" : 66.45194939597319,
+    "scale" : 4,
+    "taxFee" : 20.980675445637587,
+    "totalFee" : 129.74293509627122
   },
   "recipeName" : "CplexSolver-14",
-  "scale" : 3,
+  "scale" : 4,
   "dryWaterWeight" : 126.03470750821702,
-  "materialCost" : 2666.3824236843066,
+  "materialCost" : 2666.3824236843075,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.00000000000006,
   "waterWeight" : 138.03470750821702,

@@ -10,19 +10,27 @@ import top.bettercode.summer.tools.optimal.IVar
 class CplexObjectiveVar(
     val model: IloCplex,
     override val isInt: Boolean = false,
-    override val coeff: Double = 1.0
+    override val coeff: Double = 1.0,
 ) : IVar {
 
     override val value: Double
         get() = model.objValue
 
     override var lb: Double
-        get() = model.objValue
-        set(_) {}
+        get() {
+            throw UnsupportedOperationException()
+        }
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     override var ub: Double
-        get() = model.objValue
-        set(_) {}
+        get() {
+            throw UnsupportedOperationException()
+        }
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
 
     override fun times(coeff: Double): IVar {

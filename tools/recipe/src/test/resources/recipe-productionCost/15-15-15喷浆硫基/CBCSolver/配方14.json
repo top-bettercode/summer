@@ -1,5 +1,5 @@
 {
-  "cost" : 2993.292256600535,
+  "cost" : 2796.12535878059,
   "includeProductionCost" : true,
   "indicatorScale" : 5,
   "materials" : [ {
@@ -25,7 +25,7 @@
         "overdose" : 0.0
       },
       "64磷酸二铵（颗粒）" : {
-        "normal" : 4.555640349918261,
+        "normal" : 4.555640349918309,
         "overdose" : 0.0
       },
       "67全水溶磷酸一铵" : {
@@ -33,7 +33,7 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 1.5708956190842744,
+        "normal" : 1.570895619084242,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
@@ -41,7 +41,7 @@
         "overdose" : 0.0
       },
       "硫酸" : {
-        "normal" : 59.87028676021972,
+        "normal" : 59.8702867602197,
         "overdose" : 0.0
       },
       "磷酸" : {
@@ -64,7 +64,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 65.99682272922226,
+    "normalWeight" : 65.99682272922225,
     "overdoseWeight" : 0.0,
     "price" : 3.8,
     "unit" : "吨"
@@ -72,7 +72,7 @@
     "consumes" : {
       "喷浆硫基用95氯化钾" : {
         "normal" : 284.7360402684571,
-        "overdose" : 28.473604026845713
+        "overdose" : 28.473604026845702
       }
     },
     "weight" : 313.2096442953028,
@@ -91,12 +91,12 @@
     },
     "name" : "硫酸",
     "normalWeight" : 284.7360402684571,
-    "overdoseWeight" : 28.473604026845713,
+    "overdoseWeight" : 28.473604026845702,
     "price" : 0.22,
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 2.0,
+    "weight" : 1.9999999999999998,
     "feedPortShare" : false,
     "id" : "防结油（白色）",
     "index" : 61,
@@ -153,7 +153,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 87.86680963828768,
+    "weight" : 87.86680963829129,
     "feedPortShare" : false,
     "id" : "32-4-0硝磷",
     "index" : 11,
@@ -182,7 +182,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 149.10907614302653,
+    "weight" : 149.1090761430235,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -215,7 +215,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 237.83122415014444,
+    "weight" : 237.83122415014685,
     "feedPortShare" : false,
     "id" : "64磷酸二铵（颗粒）",
     "index" : 18,
@@ -248,7 +248,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 232.50000000000009,
+    "weight" : 232.50000000000003,
     "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 89,
@@ -273,7 +273,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 11.959948158844185,
+    "weight" : 11.959948158840337,
     "feedPortShare" : false,
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -303,7 +303,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 3.1320964429530274
+        "value" : -1.132096442953028
       },
       "DEPRECIATION" : {
         "it" : {
@@ -322,7 +322,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 38.12813164394659,
+    "energyFee" : 38.12813164394644,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -334,7 +334,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 1.7047352511482783
+      "value" : 1.704735251148269
     }, {
       "it" : {
         "id" : "生物质",
@@ -349,17 +349,17 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.0,
-    "otherFee" : 245.54805060402714,
-    "scale" : 3,
-    "taxFee" : 37.09932455436244,
-    "totalFee" : 323.9832618703595
+    "otherFee" : 66.45194939597283,
+    "scale" : 4,
+    "taxFee" : 20.980675445637555,
+    "totalFee" : 126.81636405041239
   },
   "recipeName" : "CBCSolver-14",
-  "scale" : 3,
-  "dryWaterWeight" : 108.47352511482768,
-  "materialCost" : 2669.3089947301755,
+  "scale" : 4,
+  "dryWaterWeight" : 108.47352511482677,
+  "materialCost" : 2669.3089947301773,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.0,
-  "waterWeight" : 120.47352511482785,
-  "weight" : 1108.4735251148277
+  "totalNutrientWeight" : 453.00000000000006,
+  "waterWeight" : 120.47352511482684,
+  "weight" : 1108.4735251148268
 }

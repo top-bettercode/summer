@@ -24,28 +24,18 @@ import java.io.File
  * @author Peter Wu
  */
 class SolverTest {
-    val epsilon = 1e-2
+    val epsilon = 1e-4
+    val minEpsilon = 1e-2
 
-    //    val openExcel = true
     val openExcel = false
-    val minEpsilon = epsilon
-
-    //        val requiresJson = "p_optimal_line_require.json"
-    val requiresJson = "p_optimal_line_require_release.json"
-
-    //    private fun filter(lineId: Long) = arrayOf(
-//        342L,
-//    ).contains(lineId)
-    @Suppress("UNUSED_PARAMETER")
-    private fun filter(lineId: Long) = true
-
+    //    val openExcel = true
 
     val solverTypes = listOf(
         SolverType.COPT,
-//        SolverType.GUROBI,
         SolverType.CPLEX,
         SolverType.SCIP,
         SolverType.CBC,
+//        SolverType.GUROBI,
     )
 
     @Disabled
@@ -54,6 +44,7 @@ class SolverTest {
 //        val require = "cbc-1e-4-error" // eqIfNot 使用中间变量解决
 //        val require = "cbc-1e-4-error2" // eqIfNot 不使用中间变量解决
 //        val require = "cbc-1e-4-fail" //
+//        val require = "cbc-1e-4-fail2" //
         val require = "test"
 
         val content =
@@ -65,9 +56,20 @@ class SolverTest {
         solve(requirement)
     }
 
-    @Disabled
+    //    @Disabled
     @Test
     fun all() {
+        all("p_optimal_line_require.json") {
+//            arrayOf(537L).contains(it)
+            true
+        }
+        all("p_optimal_line_require_release.json") {
+//            arrayOf(342L).contains(it)
+            true
+        }
+    }
+
+    private fun all(requiresJson: String, filter: (Long) -> Boolean) {
         val inputStream = ClassPathResource(requiresJson).inputStream
         val type = TypeFactory.defaultInstance()
             .constructCollectionType(List::class.java, OptimalLineRequire::class.java)
