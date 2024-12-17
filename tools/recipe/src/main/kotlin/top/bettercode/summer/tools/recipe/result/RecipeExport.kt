@@ -9,6 +9,7 @@ import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
 import top.bettercode.summer.tools.recipe.material.RecipeMaterial
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
+import kotlin.math.absoluteValue
 import kotlin.math.max
 
 /**
@@ -243,7 +244,7 @@ object RecipeExport {
                             materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name =
                             if (filter.isNotEmpty()) filter.joinToString { "$it" } else logic.materialId?.joinToString()
-                        "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，能耗费用增加${logic.changeValue * 100}%"
+                        "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每${if (logic.eachValue != null && logic.eachValue >= 0) "增加" else "减少"}${logic.eachValue?.absoluteValue}公斤，能耗费用${if (logic.changeValue >= 0) "增加" else "减少"}${logic.changeValue.absoluteValue * 100}%"
                     }
 
                     ChangeLogicType.OVER -> {
@@ -251,14 +252,14 @@ object RecipeExport {
                             materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name =
                             if (filter.isNotEmpty()) filter.joinToString { "$it" } else logic.materialId?.joinToString()
-                        "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每增加${logic.eachValue}公斤，${
+                        "当产肥一吨使用${name}超过${logic.exceedValue}公斤后，每${if (logic.eachValue != null && logic.eachValue >= 0) "增加" else "减少"}${logic.eachValue?.absoluteValue}公斤，${
                             logic.changeItems?.joinToString { item ->
                                 item.toName(productionCost)
                             }
-                        }增加${logic.changeValue * 100}%"
+                        }${if (logic.changeValue >= 0) "增加" else "减少"}${logic.changeValue.absoluteValue * 100}%"
                     }
 
-                    ChangeLogicType.OTHER -> "其他额外增加制造费用${logic.changeValue * 100}%"
+                    ChangeLogicType.OTHER -> "其他额外${if (logic.changeValue >= 0) "增加" else "减少"}制造费用${logic.changeValue.absoluteValue * 100}%"
                 }
             }
             cell(r, c).value(changesStr)
