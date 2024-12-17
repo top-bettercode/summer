@@ -449,7 +449,7 @@ object TestPrepareData {
                 exceedValue = 100.0,
                 eachValue = 1.0,
                 changeItems = listOf(ChangeItem(ChangeItemType.DICT, "STAFF")),
-                changeValue = 0.01
+                changeValue = -0.01
             ),
             CostChangeLogic(type = ChangeLogicType.OTHER, changeValue = 0.01)
         )
@@ -508,7 +508,7 @@ object TestPrepareData {
 
     private fun ofMaterialConstraint(
         materialsNames: List<String>,
-        desc: String
+        desc: String,
     ): MaterialCondition {
         val split = desc.split(">=|<=|=|!=|>|<".toRegex()).dropLastWhile { it.isEmpty() }
         val materials = materialsNames.filter { it.contains(split[0]) }.toMaterialIDs()
@@ -926,7 +926,7 @@ object TestPrepareData {
     /** 获取原料价格,key: 原料名称 value: 原料价格  */
     private fun readPrices(
         factory: String,
-        specialPrices: Map<String, Double>
+        specialPrices: Map<String, Double>,
     ): Map<String, Double?> {
         // 读取原料价格:原料名称 荆州 宜城 应城 宁陵 平原 眉山 新疆 铁岭 肇东 佳木斯
         val rowGetter = RowGetter.of(

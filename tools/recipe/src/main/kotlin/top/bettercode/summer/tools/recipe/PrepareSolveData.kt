@@ -353,21 +353,19 @@ data class PrepareSolveData(
                     //能耗费用
                     val energyFee = materialItems.map {
                         val value = it.value
-                        if (value.lb < 0.0) {
-                            value.lb = 0.0
-                        }
                         value * it.it.cost
                     }.sum()
                     //人工+折旧费+其他费用
                     val otherFee = dictItems.values.map {
                         val value = it.value
-                        if (value.lb < 0.0) {
-                            value.lb = 0.0
-                        }
+
                         value * it.it.cost
                     }.sum()
                     //税费 =（人工+折旧费+其他费用）*0.09+15
                     val taxFee = otherFee * productionCost.taxRate + productionCost.taxFloat
+                    if (allChange < 0) {
+                        allChange = 0.0
+                    }
                     val fee = arrayOf(energyFee, otherFee, taxFee).sum() * allChange
 
                     objectiveVars.add(fee)

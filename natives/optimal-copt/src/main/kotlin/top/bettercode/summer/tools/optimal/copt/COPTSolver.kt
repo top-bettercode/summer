@@ -23,7 +23,7 @@ class COPTSolver @JvmOverloads constructor(
     epsilon: Double = OptimalUtil.DEFAULT_EPSILON,
     minEpsilon: Double = 1e-7,
     logging: Boolean = false,
-    name: String = "COPTSolver"
+    name: String = "COPTSolver",
 ) : Solver(
     name = name,
     type = SolverType.COPT,
@@ -151,7 +151,10 @@ class COPTSolver @JvmOverloads constructor(
         val expr = copt.Expr()
         expr.addTerm(this.getDelegate(), this.coeff)
         expr.addConstant(value)
-        val sum = if (this.isInt && this.coeff.isInt && value.isInt) intVar() else numVar()
+        val lb = this.lb + value
+        val ub = this.ub + value
+        val sum =
+            if (this.isInt && this.coeff.isInt && value.isInt) intVar(lb, ub) else numVar(lb, ub)
         model.addConstr(expr, Consts.EQUAL, sum.getDelegate<Var>(), "c" + (numConstraints() + 1))
         return sum
     }
@@ -430,9 +433,9 @@ class COPTSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }
@@ -452,9 +455,9 @@ class COPTSolver @JvmOverloads constructor(
         var ub = 0.0
         for (it in this) {
             if (lb > -INFINITY)
-                lb += it.lb * it.coeff
+                lb += it.lb
             if (ub < INFINITY)
-                ub += it.ub * it.coeff
+                ub += it.ub
             if (!it.isInt || !it.coeff.isInt) {
                 isInt = false
             }

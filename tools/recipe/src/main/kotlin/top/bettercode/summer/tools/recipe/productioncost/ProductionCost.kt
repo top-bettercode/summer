@@ -53,7 +53,7 @@ data class ProductionCost(
      * 费用增减当使用原料时生效
      */
     @JsonProperty("changeWhenMaterialUsed")
-    val changeWhenMaterialUsed: Boolean = true
+    val changeWhenMaterialUsed: Boolean = true,
 ) {
 
     fun computeFee(recipe: Recipe): ProductionCostValue {
@@ -69,7 +69,7 @@ data class ProductionCost(
         materials: List<RecipeMaterialValue>,
         waterWeight: Double,
         scale: Int,
-        minEpsilon: Double
+        minEpsilon: Double,
     ): ProductionCostValue {
         var allChange = 1.0
         val materialItems = materialItems.map { CarrierValue(it, 1.0) }
@@ -101,13 +101,16 @@ data class ProductionCost(
                 OTHER -> allChange += changeLogic.changeValue
             }
         }
+        if (allChange < 0) {
+            allChange = 0.0
+        }
         //人工+折旧费+其他费用
         val otherFee =
-            dictItems.values.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
+            dictItems.values.sumOf { it.value * it.it.price * it.it.value }
 
         //能耗费用
         val energyFee =
-            materialItems.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
+            materialItems.sumOf { it.value * it.it.price * it.it.value }
 
         //税费 =（人工+折旧费+其他费用）*0.09+15
         val taxFee = otherFee * taxRate + taxFloat
@@ -131,7 +134,7 @@ data class ProductionCost(
         materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>?,
         dictItems: Map<DictType, CarrierValue<Cost, Double>>?,
         scale: Int,
-        minEpsilon: Double
+        minEpsilon: Double,
     ): ProductionCostValue? {
         if (materialItems == null || dictItems == null) {
             return null
@@ -146,11 +149,11 @@ data class ProductionCost(
         }
         //人工+折旧费+其他费用
         val otherFee =
-            dictItems.values.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
+            dictItems.values.sumOf { it.value * it.it.price * it.it.value }
 
         //能耗费用
         val energyFee =
-            materialItems.sumOf { (if (it.value < 0.0) 0.0 else it.value) * it.it.price * it.it.value }
+            materialItems.sumOf { it.value * it.it.price * it.it.value }
 
         //税费 =（人工+折旧费+其他费用）*0.09+15
         val taxFee = otherFee * taxRate + taxFloat
@@ -175,7 +178,7 @@ data class ProductionCost(
         changeLogic: CostChangeLogic,
         value: Double?,
         materialItems: List<CarrierValue<RecipeOtherMaterial, Double>>,
-        dictItems: Map<DictType, CarrierValue<Cost, Double>>
+        dictItems: Map<DictType, CarrierValue<Cost, Double>>,
     ) {
         val useMaterial =
             materials.filter { changeLogic.materialId?.contains(it.id) == true }.sumOf { it.weight }
