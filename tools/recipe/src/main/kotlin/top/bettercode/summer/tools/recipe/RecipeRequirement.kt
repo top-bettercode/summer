@@ -188,7 +188,7 @@ data class RecipeRequirement(
             it.then = it.then.filter { t -> t.term.ids.isNotEmpty() }
         }
         materialRelationConstraints =
-            materialRelationConstraints.filter { it.term.ids.isNotEmpty() }
+            materialRelationConstraints.filter { !it.term.isEmpty() }
 
         materialConditionConstraints =
             materialConditionConstraints.filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
