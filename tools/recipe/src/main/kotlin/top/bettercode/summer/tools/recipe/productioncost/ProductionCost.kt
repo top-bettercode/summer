@@ -101,6 +101,16 @@ data class ProductionCost(
                 OTHER -> allChange += changeLogic.changeValue
             }
         }
+        materialItems.forEach {
+            if (it.value < 0) {
+                it.value = 0.0
+            }
+        }
+        dictItems.values.forEach {
+            if (it.value < 0) {
+                it.value = 0.0
+            }
+        }
         if (allChange < 0) {
             allChange = 0.0
         }
@@ -183,14 +193,16 @@ data class ProductionCost(
         val useMaterial =
             materials.filter { changeLogic.materialId?.contains(it.id) == true }.sumOf { it.weight }
         if (!changeWhenMaterialUsed || useMaterial > 0) {
+            val useVar = value ?: useMaterial
+            val exceedValue = changeLogic.exceedValue!!
+            val changeRate = changeLogic.changeValue / changeLogic.eachValue!!
             changeLogic.changeItems!!.forEach { item ->
                 when (item.type) {
                     MATERIAL -> {//能耗费用
                         //(1+(value-exceedValue)/eachValue*changeValue)
                         val material = materialItems.find { it.it.id == item.id }
                         if (material != null) {
-                            material.value += ((value
-                                ?: useMaterial) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                            material.value += (useVar - exceedValue) * changeRate
                         }
                     }
 
@@ -198,16 +210,14 @@ data class ProductionCost(
                         when (val dictType = DictType.valueOf(item.id)) {
                             ENERGY -> {
                                 materialItems.forEach {
-                                    it.value += ((value
-                                        ?: useMaterial) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                    it.value += (useVar - exceedValue) * changeRate
                                 }
                             }
 
                             else -> {
                                 val cost = dictItems[dictType]
                                 if (cost != null) {
-                                    cost.value += ((value
-                                        ?: useMaterial) - changeLogic.exceedValue!!) / changeLogic.eachValue!! * changeLogic.changeValue
+                                    cost.value += (useVar - exceedValue) * changeRate
                                 }
                             }
                         }

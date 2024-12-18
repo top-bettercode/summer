@@ -353,12 +353,15 @@ data class PrepareSolveData(
                     //能耗费用
                     val energyFee = materialItems.map {
                         val value = it.value
+                        //仅支持value>0,不支持当value<0时，value取0
+                        value.ge(0.0)
                         value * it.it.cost
                     }.sum()
                     //人工+折旧费+其他费用
                     val otherFee = dictItems.values.map {
                         val value = it.value
-
+                        //仅支持value>0,不支持当value<0时，value取0
+                        value.ge(0.0)
                         value * it.it.cost
                     }.sum()
                     //税费 =（人工+折旧费+其他费用）*0.09+15
@@ -399,7 +402,11 @@ data class PrepareSolveData(
                 .map { it.value.weight }
             if (iVars.isNotEmpty()) {
                 val useMaterial = iVars.sum()
-                val thens = mutableListOf<Expr>()
+                val useVar = value ?: useMaterial
+
+                val noUseThens = mutableListOf<Expr>()
+                val exceedValue = changeLogic.exceedValue!!
+                val changeRate = changeLogic.changeValue / changeLogic.eachValue!!
                 changeLogic.changeItems!!.forEach { item ->
                     when (item.type) {
                         ChangeItemType.MATERIAL -> {//能耗费用
@@ -407,11 +414,11 @@ data class PrepareSolveData(
                             val material = materialItems.find { it.it.id == item.id }
                             if (material != null) {
                                 //change
-                                val changeVar = ((value
-                                    ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                if (changeWhenMaterialUsed)
-                                    thens.add(changeVar.eqExpr(0.0))
+                                val changeVar = (useVar - exceedValue) * changeRate
                                 material.value += changeVar
+                                if (changeWhenMaterialUsed) {
+                                    noUseThens.add(changeVar.eqExpr(0.0))
+                                }
                             }
                         }
 
@@ -420,11 +427,11 @@ data class PrepareSolveData(
                                 DictType.ENERGY -> {
                                     materialItems.forEach {
                                         //change
-                                        val changeVar = ((value
-                                            ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                        if (changeWhenMaterialUsed)
-                                            thens.add(changeVar.eqExpr(0.0))
+                                        val changeVar = (useVar - exceedValue) * changeRate
                                         it.value += changeVar
+                                        if (changeWhenMaterialUsed) {
+                                            noUseThens.add(changeVar.eqExpr(0.0))
+                                        }
                                     }
                                 }
 
@@ -432,20 +439,22 @@ data class PrepareSolveData(
                                     val cost = dictItems[dictType]
                                     if (cost != null) {
                                         //change
-                                        val changeVar = ((value
-                                            ?: useMaterial) - changeLogic.exceedValue!!) * (changeLogic.changeValue / changeLogic.eachValue!!)
-                                        if (changeWhenMaterialUsed)
-                                            thens.add(changeVar.eqExpr(0.0))
+                                        val changeVar = (useVar - exceedValue) * changeRate
                                         cost.value += changeVar
+                                        if (changeWhenMaterialUsed) {
+                                            noUseThens.add(changeVar.eqExpr(0.0))
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-                if (changeWhenMaterialUsed)
+                //仅支持useMaterial>0,不支持当useMaterial=0时，费用系数<0时，取费用系数=0
                 //当使用原料为0时，changeVar=0.0
-                    thens.onlyEnforceIf(useMaterial.leExpr(0.0))
+                if (changeWhenMaterialUsed) {
+                    noUseThens.onlyEnforceIf(useMaterial.leExpr(0.0))
+                }
             }
         }
     }
