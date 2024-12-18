@@ -351,7 +351,7 @@ object RecipeExport {
                     .setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.it.value).format("0.00").setStyle()
-                cell(r++, c).value(it.value).format(recipe.requirement.indicatorFormat).setStyle()
+                cell(r++, c).value(it.value).format("0.00%").setStyle()
                 cell(r++, c++).value(it.value * it.it.price * it.it.value).format("0.00").setStyle()
             }
             dictItems.forEach { (k, v) ->
@@ -359,7 +359,7 @@ object RecipeExport {
                 cell(r++, c).value(k.dictName).headerStyle().width(15.0).setStyle()
                 cell(r++, c).value(v.it.price).format("0.00").setStyle()
                 cell(r++, c).value(v.it.value).format("0.00").setStyle()
-                cell(r++, c).value(v.value).format(recipe.requirement.indicatorFormat).setStyle()
+                cell(r++, c).value(v.value).format("0.00%").setStyle()
                 cell(r++, c++).value(v.value * v.it.price * v.it.value).format("0.00").setStyle()
             }
             var itemsSize = materialItems.size + dictItems.size
