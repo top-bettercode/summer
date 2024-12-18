@@ -121,6 +121,9 @@ data class RecipeRequirement(
     var timeout: Long = 30L
 
     @get:JsonIgnore
+    val indicatorFormat: String = "0.${"0".repeat(indicatorScale - 2)}%"
+
+    @get:JsonIgnore
     val indicatorMap: RecipeIndicators by lazy {
         RecipeIndicators(indicators)
     }

@@ -55,7 +55,9 @@ object RecipeExport {
                         )
 
                     cell(r, column).value(value)
-                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
+                        .format(
+                            if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) requirement.indicatorFormat else ""
+                        )
                         .setStyle()
                 }
         }
@@ -82,10 +84,10 @@ object RecipeExport {
                 val unit = indicator.unit
                 cell(r++, c).value("${indicator.name}($unit)").headerStyle().width(11.0).setStyle()
                 cell(r++, c).value(it.scaledValue.max)
-                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.00%" else "")
+                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) requirement.indicatorFormat else "")
                     .setStyle()
                 cell(r++, c++).value(it.scaledValue.min)
-                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) "0.00%" else "")
+                    .format(if (unit == IndicatorUnit.PERCENTAGE.unit) requirement.indicatorFormat else "")
                     .setStyle()
             }
             if (columnSize > c)
@@ -349,7 +351,7 @@ object RecipeExport {
                     .setStyle()
                 cell(r++, c).value(it.it.price).format("0.00").setStyle()
                 cell(r++, c).value(it.it.value).format("0.00").setStyle()
-                cell(r++, c).value(it.value).format("0.00%").setStyle()
+                cell(r++, c).value(it.value).format(recipe.requirement.indicatorFormat).setStyle()
                 cell(r++, c++).value(it.value * it.it.price * it.it.value).format("0.00").setStyle()
             }
             dictItems.forEach { (k, v) ->
@@ -357,7 +359,7 @@ object RecipeExport {
                 cell(r++, c).value(k.dictName).headerStyle().width(15.0).setStyle()
                 cell(r++, c).value(v.it.price).format("0.00").setStyle()
                 cell(r++, c).value(v.it.value).format("0.00").setStyle()
-                cell(r++, c).value(v.value).format("0.00%").setStyle()
+                cell(r++, c).value(v.value).format(recipe.requirement.indicatorFormat).setStyle()
                 cell(r++, c++).value(v.value * v.it.price * v.it.value).format("0.00").setStyle()
             }
             var itemsSize = materialItems.size + dictItems.size
@@ -449,13 +451,13 @@ object RecipeExport {
                 //配方目标最大值
                 val max = rangeIndicator.scaledValue.max
                 cell(r++, c).value(max).bold()
-                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) requirement.indicatorFormat else "")
                     .setStyle()
 
                 //配方目标最小值
                 val min = rangeIndicator.scaledValue.min
                 cell(r++, c).value(min).bold()
-                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) requirement.indicatorFormat else "")
                     .setStyle()
 
                 //实配值
@@ -483,7 +485,7 @@ object RecipeExport {
                 val valid =
                     (minDiff == 0.0 || minDiff > -minEpsilon) && (maxDiff == 0.0 || maxDiff < minEpsilon)
                 cell(r++, c).value(value).bold()
-                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
+                    .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) requirement.indicatorFormat else "")
                     .fontColor(if (valid) "1fbb7d" else "FF0000").setStyle()
                 c++
             }
@@ -558,11 +560,11 @@ object RecipeExport {
                     }
                     if (showRate && material.hasOverdose) {
                         cell(r + 1, c)
-                            .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
+                            .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) requirement.indicatorFormat else "")
                             .setStyle()
                     }
                     cell(r, c++).value(value)
-                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) "0.00%" else "")
+                        .format(if (IndicatorUnit.PERCENTAGE.eq(indicator.unit)) requirement.indicatorFormat else "")
                         .setStyle()
                 }
                 if (showRate && material.hasOverdose) {
