@@ -453,7 +453,7 @@ object TestPrepareData {
             ),
             CostChangeLogic(type = ChangeLogicType.OTHER, changeValue = 0.01)
         )
-
+//        noUseMaterials.add("硫酸")
         val productionCost = ProductionCost(
             materialItems = materialItems,
             dictItems = dictItems,
