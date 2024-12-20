@@ -5,6 +5,7 @@ import org.springframework.util.Assert
 import top.bettercode.summer.tools.optimal.Expr
 import top.bettercode.summer.tools.optimal.IVar
 import top.bettercode.summer.tools.optimal.Operator
+import top.bettercode.summer.tools.optimal.OptimalUtil.inTolerance
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Solver
 import top.bettercode.summer.tools.recipe.criteria.UsageVar
@@ -463,6 +464,7 @@ data class PrepareSolveData(
     fun solve(
         solver: Solver,
         minMaterialNum: Boolean,
+        autoFixProductionCost: Boolean,
         recipeName: String? = null,
         minEpsilon: Double,
     ): Recipe? {
@@ -479,7 +481,40 @@ data class PrepareSolveData(
                 }
                 recipe = recipe(recipeName, minEpsilon, minimize.value)
             }
+            //制造费用增减逻辑生效导致相关原料用量为epsilon
+            if (includeProductionCost && autoFixProductionCost) {
+                val changes = requirement.productionCost.changes
+                val productionCost = recipe.productionCost
+                val excludeMid = recipe.materials.filter { m ->
+                    (m.weight - epsilon).inTolerance(minEpsilon) && changes.any {
+                        it.materialId?.contains(m.id) == true && it.changeItems?.any { ci ->
+                            (ci.type == ChangeItemType.MATERIAL && productionCost.materialItems.find { it.it.id == ci.id }?.value == 1.0 + ((m.weight - it.exceedValue!!) * it.changeValue / it.eachValue!!)) || (ci.type == ChangeItemType.DICT && productionCost.dictItems[DictType.valueOf(
+                                ci.id
+                            )]?.value == 1.0 + ((m.weight - it.exceedValue!!) * it.changeValue / it.eachValue!!))
+                        } == true
+                    }
+                }.map { it.id }
+                if (excludeMid.isNotEmpty()) {
+                    solver.reset()
+                    requirement.noUseMaterialConstraints =
+                        MaterialIDs(requirement.noUseMaterialConstraints + excludeMid)
+                    requirement.init()
+                    return of(
+                        solver = solver,
+                        requirement = requirement,
+                        includeProductionCost = true
+                    ).solve(
+                        solver = solver,
+                        minMaterialNum = minMaterialNum,
+                        recipeName = recipeName,
+                        minEpsilon = minEpsilon,
+                        autoFixProductionCost = true
+                    )
+                }
+            }
 
+
+            //原料数最小化
             val maxUseMaterialNum = requirement.maxUseMaterialNum
             val materialsCount = recipeMaterials.filter { it.value.weight.value > 0.0 }.count()
             if ((maxUseMaterialNum == null || maxUseMaterialNum != materialsCount) && minMaterialNum) {

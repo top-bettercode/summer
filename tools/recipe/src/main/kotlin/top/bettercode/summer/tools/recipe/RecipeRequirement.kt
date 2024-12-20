@@ -78,7 +78,7 @@ data class RecipeRequirement(
     var keepMaterialConstraints: MaterialIDs,
     /** 不能用原料ID  */
     @JsonProperty("noUseMaterialConstraints")
-    val noUseMaterialConstraints: MaterialIDs,
+    var noUseMaterialConstraints: MaterialIDs,
     /**
      * 指标范围约束,key：指标ID,value:指标值范围
      */
@@ -161,13 +161,57 @@ data class RecipeRequirement(
         }
     }
 
+    //不用原料
+    @get:JsonIgnore
+    val nonUseMaterial = Predicate { material: IRecipeMaterial ->
+        val materialId = material.id
+        if (mustUseMaterial.test(materialId)) {
+            return@Predicate false
+        }
+
+        // 过滤不使用的原料
+        if (noUseMaterialConstraints.contains(materialId)) {
+            return@Predicate true
+        }
+
+        // 排除全局非限用原料
+        if (keepMaterialConstraints.ids.isNotEmpty()) {
+            if (!keepMaterialConstraints.contains(materialId)) return@Predicate true
+        }
+
+        // 排除非限用原料
+        materialIDConstraints.forEach { (t, u) ->
+            if (t.contains(materialId) && !u.contains(materialId)) {
+                return@Predicate true
+            }
+        }
+
+        // 过滤不在成份约束的原料
+        indicatorMaterialIDConstraints.values.forEach { indicator ->
+            val materialIDs = indicator.value
+            val materialIndicator = material.indicators[indicator.id]?.scaledValue ?: 0.0
+            if (materialIndicator > 0 && !materialIDs.contains(materialId)) {
+                return@Predicate true
+            }
+        }
+
+        false
+    }
+
     @get:JsonIgnore
     val useMaterials: List<RecipeMaterial>
+        get() =
+            (materials.filter { f -> mustUseMaterial.test(f.id) } + (materials - nonUseMaterials.toSet())).distinct()
 
     @get:JsonIgnore
     val nonUseMaterials: List<RecipeMaterial>
+        get() = materials.filter { f -> nonUseMaterial.test(f) }
 
     init {
+        init()
+    }
+
+    fun init() {
         if (targetWeight <= 0) {
             throw IllegalArgumentException("targetWeight must be greater than 0")
         }
@@ -196,52 +240,14 @@ data class RecipeRequirement(
         materialConditionConstraints =
             materialConditionConstraints.filter { it.term.materials.ids.isNotEmpty() && it.then.materials.ids.isNotEmpty() }
 
-        // 可选原料
-        val keepMaterialIds = keepMaterialConstraints.ids.toMutableList()
-        //不用原料
-        val nonUseMaterial = Predicate { material: IRecipeMaterial ->
-            val materialId = material.id
-            if (mustUseMaterial.test(materialId)) {
-                keepMaterialIds.add(materialId)
-                return@Predicate false
-            }
-
-            // 过滤不使用的原料
-            if (noUseMaterialConstraints.contains(materialId)) {
-                return@Predicate true
-            }
-
-            // 排除全局非限用原料
-            if (keepMaterialConstraints.ids.isNotEmpty()) {
-                if (!keepMaterialConstraints.contains(materialId)) return@Predicate true
-            }
-
-            // 排除非限用原料
-            materialIDConstraints.forEach { (t, u) ->
-                if (t.contains(materialId) && !u.contains(materialId)) {
-                    return@Predicate true
-                }
-            }
-
-            // 过滤不在成份约束的原料
-            indicatorMaterialIDConstraints.values.forEach { indicator ->
-                val materialIDs = indicator.value
-                val materialIndicator = material.indicators[indicator.id]?.scaledValue ?: 0.0
-                if (materialIndicator > 0 && !materialIDs.contains(materialId)) {
-                    return@Predicate true
-                }
-            }
-
-            false
-        }
         //限用原料范围
         this.keepMaterialConstraints =
-            if (keepMaterialConstraints.ids.isNotEmpty()) keepMaterialIds.distinct()
+            if (keepMaterialConstraints.ids.isNotEmpty()) (materials.filter { f ->
+                mustUseMaterial.test(
+                    f.id
+                )
+            }.map { it.id } + keepMaterialConstraints.ids).distinct()
                 .toMaterialIDs() else keepMaterialConstraints
-
-        this.nonUseMaterials = materials.filter { f -> nonUseMaterial.test(f) }
-        this.useMaterials =
-            (materials.filter { f -> mustUseMaterial.test(f.id) } + (materials - nonUseMaterials.toSet())).distinct()
     }
 
     //--------------------------------------------

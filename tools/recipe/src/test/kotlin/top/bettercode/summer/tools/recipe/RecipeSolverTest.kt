@@ -52,6 +52,7 @@ internal class RecipeSolverTest {
     val nutrientUnchanged = true
     val materialUnchanged = true
     val minMaterialNum = true
+    val autoFixProductionCost = true
     val solveTimes = 1
     val toExcel = false
     val epsilon = 1e-4
@@ -100,6 +101,7 @@ internal class RecipeSolverTest {
             nutrientUnchanged = nutrientUnchanged,
             materialUnchanged = materialUnchanged,
             minMaterialNum = minMaterialNum,
+            autoFixProductionCost = autoFixProductionCost,
             minEpsilon = minEpsilon
         )
         System.err.println("============toExcel=============")
@@ -137,6 +139,9 @@ internal class RecipeSolverTest {
                 materialUnchanged = materialUnchanged,
                 toExcel = index == 0 && toExcel
             )
+            result.recipes.forEach { recipe ->
+                System.err.println(recipe)
+            }
             recipeResult?.let { res -> assert(res, result) }
             recipeResult = result
             results[solverType] = result.time

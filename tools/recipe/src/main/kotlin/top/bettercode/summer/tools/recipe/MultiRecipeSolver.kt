@@ -28,7 +28,11 @@ object MultiRecipeSolver {
          * 是否使用最小数量原料
          */
         minMaterialNum: Boolean = true,
-        minEpsilon: Double = OptimalUtil.DEFAULT_EPSILON
+        /**
+         * 是否自动处理制造费用增减逻辑生效导致相关原料用量为epsilon
+         */
+        autoFixProductionCost: Boolean = true,
+        minEpsilon: Double = OptimalUtil.DEFAULT_EPSILON,
     ): RecipeResult {
         solver.apply {
             val s = System.currentTimeMillis()
@@ -46,10 +50,11 @@ object MultiRecipeSolver {
                 // 求解
                 val recipe =
                     prepareData.solve(
-                        this,
-                        eachMinMaterialNum,
-                        "${name}-${recipeResult.recipes.size + 1}",
-                        minEpsilon
+                        solver = this,
+                        minMaterialNum = eachMinMaterialNum,
+                        autoFixProductionCost = autoFixProductionCost,
+                        recipeName = "${name}-${recipeResult.recipes.size + 1}",
+                        minEpsilon = minEpsilon
                     )
                 if (recipe != null) {
                     recipeResult.addRecipe(recipe)
