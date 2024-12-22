@@ -486,18 +486,23 @@ data class PrepareSolveData(
                 val changes = requirement.productionCost.changes
                 val productionCost = recipe.productionCost
                 val excludeMid = recipe.materials.filter { m ->
-                    (m.weight - epsilon).inTolerance(minEpsilon) && changes.any { c ->
-                        val changeRate =
-                            (m.weight - c.exceedValue!!) * c.changeValue / c.eachValue!!
-                        changeRate > 0 && c.materialId?.contains(m.id) == true && c.changeItems?.all { ci ->
-                            (ci.type == ChangeItemType.MATERIAL
-                                    && ((productionCost.materialItems.find { it.it.id == ci.id }?.value
-                                ?: 0.0) - (1.0 + changeRate)).inTolerance(minEpsilon))
-                                    || (ci.type == ChangeItemType.DICT && ((productionCost.dictItems[DictType.valueOf(
-                                ci.id
-                            )]?.value ?: 0.0) - (1.0 + changeRate)).inTolerance(minEpsilon))
-                        } == true
+                    (m.weight - epsilon).inTolerance(minEpsilon) && changes.filter {
+                        it.type != ChangeLogicType.OTHER && it.materialId?.contains(
+                            m.id
+                        ) == true
                     }
+                        .all { c ->
+                            val changeRate =
+                                (m.weight - c.exceedValue!!) * c.changeValue / c.eachValue!!
+                            changeRate > 0 && c.changeItems?.all { ci ->
+                                (ci.type == ChangeItemType.MATERIAL
+                                        && ((productionCost.materialItems.find { it.it.id == ci.id }?.value
+                                    ?: 0.0) - (1.0 + changeRate)).inTolerance(minEpsilon))
+                                        || (ci.type == ChangeItemType.DICT && ((productionCost.dictItems[DictType.valueOf(
+                                    ci.id
+                                )]?.value ?: 0.0) - (1.0 + changeRate)).inTolerance(minEpsilon))
+                            } == true
+                        }
                 }.map { it.id }
                 if (excludeMid.isNotEmpty()) {
                     solver.reset()
