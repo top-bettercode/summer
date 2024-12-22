@@ -101,19 +101,19 @@ data class ProductionCost(
                 OTHER -> allChange += changeLogic.changeValue
             }
         }
-        materialItems.forEach {
-            if (it.value < 0) {
-                it.value = 0.0
-            }
-        }
-        dictItems.values.forEach {
-            if (it.value < 0) {
-                it.value = 0.0
-            }
-        }
-        if (allChange < 0) {
-            allChange = 0.0
-        }
+//        materialItems.forEach {
+//            if (it.value < 0) {
+//                it.value = 0.0
+//            }
+//        }
+//        dictItems.values.forEach {
+//            if (it.value < 0) {
+//                it.value = 0.0
+//            }
+//        }
+//        if (allChange < 0) {
+//            allChange = 0.0
+//        }
         //人工+折旧费+其他费用
         val otherFee =
             dictItems.values.sumOf { it.value * it.it.price * it.it.value }
