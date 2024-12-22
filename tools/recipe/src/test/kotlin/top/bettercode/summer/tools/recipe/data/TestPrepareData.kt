@@ -446,7 +446,7 @@ object TestPrepareData {
             CostChangeLogic(
                 type = ChangeLogicType.OVER,
                 materialId = listOf("硫酸"),
-                exceedValue = 100.0,
+                exceedValue = 110.0,
                 eachValue = 1.0,
                 changeItems = listOf(ChangeItem(ChangeItemType.DICT, "STAFF")),
                 changeValue = -0.01
@@ -454,6 +454,12 @@ object TestPrepareData {
             CostChangeLogic(type = ChangeLogicType.OTHER, changeValue = 0.01)
         )
 //        noUseMaterials.add("硫酸")
+//        materialRangeConstraints.add(
+//            TermThen(
+//                materialIds.filter { it.contains("硫酸") }.toMaterialIDs(),
+//                DoubleRange(0.0, 10.0)
+//            )
+//        )
         val productionCost = ProductionCost(
             materialItems = materialItems,
             dictItems = dictItems,
