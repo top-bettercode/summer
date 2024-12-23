@@ -74,18 +74,6 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 2.0,
-    "feedPortShare" : false,
-    "id" : "防结油（白色）",
-    "index" : 64,
-    "indicators" : { },
-    "name" : "防结油（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
     "weight" : 3.0,
     "feedPortShare" : false,
     "id" : "防结粉（白色）",
@@ -95,6 +83,18 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 2.0,
+    "feedPortShare" : false,
+    "id" : "防结油（染色）",
+    "index" : 66,
+    "indicators" : { },
+    "name" : "防结油（染色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
     "unit" : "吨"
   }, {
     "consumes" : { },

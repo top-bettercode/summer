@@ -74,18 +74,6 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 2.0,
-    "feedPortShare" : false,
-    "id" : "防结油（白色）",
-    "index" : 64,
-    "indicators" : { },
-    "name" : "防结油（白色）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 8.0,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
     "weight" : 3.0,
     "feedPortShare" : false,
     "id" : "防结粉（白色）",
@@ -95,6 +83,18 @@
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 2.0,
+    "unit" : "吨"
+  }, {
+    "consumes" : { },
+    "weight" : 2.0,
+    "feedPortShare" : false,
+    "id" : "防结油（染色）",
+    "index" : 66,
+    "indicators" : { },
+    "name" : "防结油（染色）",
+    "normalWeight" : 0.0,
+    "overdoseWeight" : 0.0,
+    "price" : 8.0,
     "unit" : "吨"
   }, {
     "consumes" : { },
@@ -214,7 +214,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 54.34488304858176,
+    "weight" : 54.34488304858177,
     "feedPortShare" : false,
     "id" : "喷浆硫基用95氯化钾",
     "index" : 102,
@@ -267,7 +267,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 24.436528905335877,
+    "energyFee" : 24.436528905335884,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -279,7 +279,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.8749411457779319
+      "value" : 0.8749411457779321
     }, {
       "it" : {
         "id" : "生物质",
@@ -305,6 +305,6 @@
   "materialCost" : 2340.7750174807597,
   "packagingCost" : 52.13,
   "totalNutrientWeight" : 453.0000000000001,
-  "waterWeight" : 37.49411457779321,
+  "waterWeight" : 37.49411457779322,
   "weight" : 1022.494114577793
 }

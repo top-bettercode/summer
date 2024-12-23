@@ -1,5 +1,5 @@
 {
-  "cost" : 2600.02067299658,
+  "cost" : 2526.782838811074,
   "includeProductionCost" : true,
   "indicatorScale" : 5,
   "materials" : [ {
@@ -33,15 +33,11 @@
         "overdose" : 0.0
       },
       "8-40-0再浆肥（粉）" : {
-        "normal" : 3.0756232394366103,
+        "normal" : 3.07562323943661,
         "overdose" : 0.0
       },
       "8-40-0再浆肥（颗料）" : {
         "normal" : 0.0,
-        "overdose" : 0.0
-      },
-      "硫酸" : {
-        "normal" : 3.5044320753740976E-5,
         "overdose" : 0.0
       },
       "磷酸" : {
@@ -49,7 +45,7 @@
         "overdose" : 0.0
       }
     },
-    "weight" : 5.416932013089882,
+    "weight" : 5.4168969687691275,
     "feedPortShare" : false,
     "id" : "液氨",
     "index" : 9,
@@ -64,7 +60,7 @@
       }
     },
     "name" : "液氨",
-    "normalWeight" : 5.416932013089882,
+    "normalWeight" : 5.416896968769128,
     "overdoseWeight" : 0.0,
     "price" : 4.2,
     "unit" : "吨"
@@ -94,7 +90,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 343.4095839184206,
+    "weight" : 351.5571134319126,
     "feedPortShare" : false,
     "id" : "氯化铵（干）",
     "index" : 6,
@@ -119,7 +115,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 291.93750000000006,
+    "weight" : 291.9375,
     "feedPortShare" : false,
     "id" : "8-40-0再浆肥（粉）",
     "index" : 16,
@@ -185,7 +181,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 210.655511324041,
+    "weight" : 233.33333333333334,
     "feedPortShare" : false,
     "id" : "95%氯化钾烘干粉（国产）",
     "index" : 30,
@@ -210,57 +206,7 @@
     "unit" : "吨"
   }, {
     "consumes" : { },
-    "weight" : 26.166717703029633,
-    "feedPortShare" : false,
-    "id" : "52%罗布泊硫酸钾（粉）",
-    "index" : 34,
-    "indicators" : {
-      "氯离子" : {
-        "id" : "氯离子",
-        "value" : 1.0
-      },
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 0.5
-      },
-      "硫" : {
-        "id" : "硫",
-        "value" : 18.4
-      },
-      "钾" : {
-        "id" : "钾",
-        "value" : 52.0
-      }
-    },
-    "name" : "52%罗布泊硫酸钾（粉）",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 3.85,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 9.999999997489795E-5,
-    "feedPortShare" : false,
-    "id" : "硫酸",
-    "index" : 36,
-    "indicators" : {
-      "物料水分" : {
-        "id" : "物料水分",
-        "value" : 0.5
-      },
-      "硫" : {
-        "id" : "硫",
-        "value" : 32.7
-      }
-    },
-    "name" : "硫酸",
-    "normalWeight" : 0.0,
-    "overdoseWeight" : 0.0,
-    "price" : 0.295,
-    "unit" : "吨"
-  }, {
-    "consumes" : { },
-    "weight" : 9.778473569608815,
+    "weight" : 3.8037008710184415,
     "feedPortShare" : false,
     "id" : "喷浆专用尿素",
     "index" : 90,
@@ -290,7 +236,7 @@
           "value" : 1.0,
           "cost" : 42.0
         },
-        "value" : 1.9999989999999999
+        "value" : 1.0
       },
       "DEPRECIATION" : {
         "it" : {
@@ -309,7 +255,7 @@
         "value" : 1.0
       }
     },
-    "energyFee" : 20.657858100629618,
+    "energyFee" : 20.440672903308794,
     "materialItems" : [ {
       "it" : {
         "id" : "籽煤",
@@ -321,7 +267,7 @@
         "cost" : 16.5,
         "indicators" : { }
       },
-      "value" : 0.6459307939775526
+      "value" : 0.6327680547459875
     }, {
       "it" : {
         "id" : "生物质",
@@ -336,17 +282,17 @@
       "value" : 1.0
     } ],
     "minEpsilon" : 0.0,
-    "otherFee" : 197.999958,
+    "otherFee" : 156.0,
     "scale" : 4,
-    "taxFee" : 32.81999622,
-    "totalFee" : 253.99259044383592
+    "taxFee" : 29.04,
+    "totalFee" : 207.53547963234186
   },
   "recipeName" : "COPTSolver-10",
   "scale" : 4,
-  "dryWaterWeight" : 14.593079397755105,
-  "materialCost" : 2346.028082552744,
+  "dryWaterWeight" : 13.27680547459886,
+  "materialCost" : 2319.247359178732,
   "packagingCost" : 52.13,
-  "totalNutrientWeight" : 453.00000000000006,
-  "waterWeight" : 14.593079397755247,
-  "weight" : 1014.5930793977551
+  "totalNutrientWeight" : 453.0,
+  "waterWeight" : 13.276805474598744,
+  "weight" : 1013.2768054745989
 }

@@ -167,15 +167,15 @@
     "consumes" : { },
     "weight" : 36.783626834432944,
     "feedPortShare" : false,
-    "id" : "硅石粉（硝基用）",
-    "index" : 56,
+    "id" : "石粉（尿基高塔用）",
+    "index" : 55,
     "indicators" : {
       "物料水分" : {
         "id" : "物料水分",
         "value" : 1.0
       }
     },
-    "name" : "硅石粉（硝基用）",
+    "name" : "石粉（尿基高塔用）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 0.24,

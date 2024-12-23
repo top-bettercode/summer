@@ -2148,7 +2148,7 @@
     "unit" : "吨"
   } ],
   "noUseMaterialConstraints" : {
-    "ids" : [ "喷浆硫基用95氯化钾" ]
+    "ids" : [ "喷浆硫基用95氯化钾", "硫酸" ]
   },
   "notMixMaterialConstraints" : [ ],
   "packagingMaterials" : [ {
@@ -2173,6 +2173,7 @@
       "eachValue" : 1.0,
       "exceedValue" : 50.0,
       "materialId" : [ "液氨" ],
+      "toZero" : false,
       "type" : "WATER_OVER"
     }, {
       "changeItems" : [ {
@@ -2181,11 +2182,13 @@
       } ],
       "changeValue" : -0.01,
       "eachValue" : 1.0,
-      "exceedValue" : 100.0,
+      "exceedValue" : 110.0,
       "materialId" : [ "硫酸" ],
+      "toZero" : false,
       "type" : "OVER"
     }, {
       "changeValue" : 0.01,
+      "toZero" : false,
       "type" : "OTHER"
     } ],
     "dictItems" : {
@@ -2228,6 +2231,6 @@
     "taxRate" : 0.09
   },
   "targetWeight" : 1000.0,
-  "yield" : 1.0,
-  "timeout" : 30
+  "timeout" : 30,
+  "yield" : 1.0
 }

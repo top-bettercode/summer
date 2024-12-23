@@ -77,8 +77,8 @@
     "consumes" : { },
     "weight" : 100.0,
     "feedPortShare" : false,
-    "id" : "95%氯化钾结晶钾（国产）",
-    "index" : 27,
+    "id" : "95%氯化钾烘干粉（国产）",
+    "index" : 26,
     "indicators" : {
       "氯离子" : {
         "id" : "氯离子",
@@ -93,7 +93,7 @@
         "value" : 60.0
       }
     },
-    "name" : "95%氯化钾结晶钾（国产）",
+    "name" : "95%氯化钾烘干粉（国产）",
     "normalWeight" : 0.0,
     "overdoseWeight" : 0.0,
     "price" : 3.55,
