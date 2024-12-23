@@ -109,6 +109,8 @@ class RecipeRequirementBuilder(
      */
     var indicatorScale: Int = 5
 
+    /** 超时时间,单位秒  */
+    var timeout: Long = 30L
 
     fun productName(productName: String): RecipeRequirementBuilder {
         this.productName = productName
@@ -205,6 +207,11 @@ class RecipeRequirementBuilder(
         return this
     }
 
+    fun timeout(timeout: Long): RecipeRequirementBuilder {
+        this.timeout = timeout
+        return this
+    }
+
     fun build(): RecipeRequirement {
         return RecipeRequirement(
             id = id,
@@ -226,7 +233,8 @@ class RecipeRequirementBuilder(
             materialIDConstraints = materialIDConstraints,
             indicatorMaterialIDConstraints = indicatorMaterialIDConstraints,
             notMixMaterialConstraints = notMixMaterialConstraints,
-            indicatorScale = indicatorScale
+            indicatorScale = indicatorScale,
+            timeout = timeout
         )
     }
 }

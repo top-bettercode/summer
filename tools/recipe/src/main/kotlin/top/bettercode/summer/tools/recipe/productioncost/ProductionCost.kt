@@ -72,11 +72,31 @@ data class ProductionCost(
         minEpsilon: Double,
     ): ProductionCostValue {
         var allChange = 1.0
-        val materialItems = materialItems.map { CarrierValue(it, 1.0) }
-        val dictItems = dictItems.mapValues { CarrierValue(it.value, 1.0) }
+
+        val toZeros = changes.filter { it.toZero }
+        val mIds = toZeros.flatMap {
+            it.changeItems!!.filter { it.type == MATERIAL }.map { it.id }
+        }
+        val dTypes = toZeros.flatMap {
+            it.changeItems!!.filter { it.type == DICT }
+                .map { DictType.valueOf(it.id) }
+        }
+        val materialItems =
+            materialItems.map {
+                CarrierValue(
+                    it,
+                    if (mIds.contains(it.id)) 0.0 else 1.0
+                )
+            }
+        val dictItems = dictItems.mapValues {
+            CarrierValue(
+                it.value,
+                if (dTypes.contains(it.key)) 0.0 else 1.0
+            )
+        }
 
         //费用增减
-        changes.forEach { changeLogic ->
+        changes.filter { !it.toZero }.forEach { changeLogic ->
             when (changeLogic.type) {
                 WATER_OVER -> {
                     changeProductionCost(
@@ -101,19 +121,6 @@ data class ProductionCost(
                 OTHER -> allChange += changeLogic.changeValue
             }
         }
-//        materialItems.forEach {
-//            if (it.value < 0) {
-//                it.value = 0.0
-//            }
-//        }
-//        dictItems.values.forEach {
-//            if (it.value < 0) {
-//                it.value = 0.0
-//            }
-//        }
-//        if (allChange < 0) {
-//            allChange = 0.0
-//        }
         //人工+折旧费+其他费用
         val otherFee =
             dictItems.values.sumOf { it.value * it.it.price * it.it.value }

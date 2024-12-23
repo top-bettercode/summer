@@ -115,10 +115,10 @@ data class RecipeRequirement(
      */
     @JsonProperty("indicatorScale")
     val indicatorScale: Int = 5,
-) {
-
     /** 超时时间,单位秒  */
-    var timeout: Long = 30L
+    @JsonProperty("timeout")
+    var timeout: Long = 30L,
+) {
 
     @get:JsonIgnore
     val indicatorFormat: String = "0.${"0".repeat(indicatorScale - 2)}%"

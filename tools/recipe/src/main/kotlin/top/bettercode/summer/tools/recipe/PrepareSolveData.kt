@@ -8,11 +8,14 @@ import top.bettercode.summer.tools.optimal.Operator
 import top.bettercode.summer.tools.optimal.OptimalUtil.inTolerance
 import top.bettercode.summer.tools.optimal.OptimalUtil.scale
 import top.bettercode.summer.tools.optimal.Solver
+import top.bettercode.summer.tools.recipe.criteria.DoubleRange
+import top.bettercode.summer.tools.recipe.criteria.TermThen
 import top.bettercode.summer.tools.recipe.criteria.UsageVar
 import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.material.RecipeMaterialVar
 import top.bettercode.summer.tools.recipe.material.RecipeOtherMaterial
 import top.bettercode.summer.tools.recipe.material.id.MaterialIDs
+import top.bettercode.summer.tools.recipe.material.id.MaterialIDs.Companion.toMaterialIDs
 import top.bettercode.summer.tools.recipe.productioncost.*
 import top.bettercode.summer.tools.recipe.result.Recipe
 import kotlin.math.abs
@@ -311,18 +314,33 @@ data class PrepareSolveData(
 
                 if (includeProductionCost) {
                     val productionCost = requirement.productionCost
+                    val toZeros = productionCost.changes.filter { it.toZero }
+                    val mIds = toZeros.flatMap {
+                        it.changeItems!!.filter { it.type == ChangeItemType.MATERIAL }.map { it.id }
+                    }
+                    val dTypes = toZeros.flatMap {
+                        it.changeItems!!.filter { it.type == ChangeItemType.DICT }
+                            .map { DictType.valueOf(it.id) }
+                    }
+
                     materialItems =
-                        productionCost.materialItems.map { CarrierValue(it, numVar(1.0, 1.0)) }
+                        productionCost.materialItems
+                            .map {
+                                CarrierValue(
+                                    it,
+                                    if (mIds.contains(it.id)) numVar(0.0, 0.0) else numVar(1.0, 1.0)
+                                )
+                            }
                     dictItems =
                         productionCost.dictItems.mapValues {
                             CarrierValue(
                                 it.value,
-                                numVar(1.0, 1.0)
+                                if (dTypes.contains(it.key)) numVar(0.0, 0.0) else numVar(1.0, 1.0)
                             )
                         }
                     //费用增减
                     var allChange = 1.0
-                    productionCost.changes.forEach { changeLogic ->
+                    productionCost.changes.filter { !it.toZero }.forEach { changeLogic ->
                         when (changeLogic.type) {
                             ChangeLogicType.WATER_OVER -> {
                                 changeProductionCost(
@@ -470,8 +488,8 @@ data class PrepareSolveData(
     ): Recipe? {
         solver.apply {
             val minimize = objectiveVars.minimize()
-            solve()
             var recipe: Recipe
+            solve()
             if (!isOptimal()) {
                 log.warn("${requirement.id}:${solver.name} ${solver.epsilon} Could not find optimal solution:${getResultStatus()}")
                 return null
@@ -481,11 +499,13 @@ data class PrepareSolveData(
                 }
                 recipe = recipe(recipeName, minEpsilon, minimize.value)
             }
-            //制造费用增减逻辑生效导致相关原料用量为epsilon
+            //制造费用增减逻辑自动调整
             if (includeProductionCost && autoFixProductionCost) {
-                val changes = requirement.productionCost.changes
-                val productionCost = recipe.productionCost
+                val productionCost = requirement.productionCost
+                val changes = productionCost.changes
+                val recipeProductionCost = recipe.productionCost
 
+                //当原料用量减少时，制造费用增加，自动处理相关原料用量为epsilon
                 val excludeMid = changes.filter { it.type != ChangeLogicType.OTHER }.filter { c ->
                     val weight =
                         recipe.materials.filter { m -> c.materialId?.contains(m.id) == true }
@@ -495,17 +515,18 @@ data class PrepareSolveData(
 
                     (weight - epsilon).inTolerance(minEpsilon)
                             && changeRate > 0
-                            && c.changeItems?.all { ci ->
+                            && c.changeItems?.all { ci ->//仅受这组原料影响
                         when (ci.type) {
                             ChangeItemType.MATERIAL -> {
                                 val mv =
-                                    productionCost.materialItems.find { it.it.id == ci.id }?.value
-                                mv != null && (mv - (1.0 + changeRate)).inTolerance(minEpsilon)
+                                    recipeProductionCost.materialItems.find { it.it.id == ci.id }?.value
+                                mv != null && (mv - (1.0 + changeRate)).inTolerance(0.0)
                             }
 
                             ChangeItemType.DICT -> {
-                                val dv = productionCost.dictItems[DictType.valueOf(ci.id)]?.value
-                                dv != null && (dv - (1.0 + changeRate)).inTolerance(minEpsilon)
+                                val dv =
+                                    recipeProductionCost.dictItems[DictType.valueOf(ci.id)]?.value
+                                dv != null && (dv - (1.0 + changeRate)).inTolerance(0.0)
                             }
                         }
                     } == true
@@ -513,12 +534,133 @@ data class PrepareSolveData(
 
                 if (excludeMid.isNotEmpty()) {
                     solver.reset()
-                    requirement.noUseMaterialConstraints =
-                        MaterialIDs(requirement.noUseMaterialConstraints + excludeMid)
-                    requirement.init()
                     return of(
                         solver = solver,
-                        requirement = requirement,
+                        requirement = RecipeRequirement(
+                            id = requirement.id,
+                            productName = requirement.productName,
+                            targetWeight = requirement.targetWeight,
+                            yield = requirement.yield,
+                            maxUseMaterialNum = requirement.maxUseMaterialNum,
+                            maxBakeWeight = requirement.maxBakeWeight,
+                            productionCost = productionCost,
+                            indicators = requirement.indicators,
+                            packagingMaterials = requirement.packagingMaterials,
+                            materials = requirement.materials,
+                            keepMaterialConstraints = requirement.keepMaterialConstraints,
+                            noUseMaterialConstraints = MaterialIDs(requirement.noUseMaterialConstraints + excludeMid),
+                            indicatorRangeConstraints = requirement.indicatorRangeConstraints,
+                            materialRangeConstraints = requirement.materialRangeConstraints,
+                            materialConditionConstraints = requirement.materialConditionConstraints,
+                            materialRelationConstraints = requirement.materialRelationConstraints,
+                            materialIDConstraints = requirement.materialIDConstraints,
+                            indicatorMaterialIDConstraints = requirement.indicatorMaterialIDConstraints,
+                            notMixMaterialConstraints = requirement.notMixMaterialConstraints,
+                            indicatorScale = requirement.indicatorScale,
+                            timeout = requirement.timeout
+                        ),
+                        includeProductionCost = true
+                    ).solve(
+                        solver = solver,
+                        minMaterialNum = minMaterialNum,
+                        recipeName = recipeName,
+                        minEpsilon = minEpsilon,
+                        autoFixProductionCost = true
+                    )
+                }
+                //自动处理制造费用为0时，原料可以超过exceedValue限制
+                val materialRangeConstraints = mutableListOf<TermThen<MaterialIDs, DoubleRange>>()
+                val newChanges = changes.map { c ->
+                    if (c.type == ChangeLogicType.OTHER) {
+                        c
+                    } else {
+                        val weight =
+                            recipe.materials.filter { m -> c.materialId?.contains(m.id) == true }
+                                .sumOf { it.weight }
+                        val changeRate =
+                            (weight - c.exceedValue!!) * c.changeValue / c.eachValue!!
+                        if (c.changeItems?.all { ci ->//仅受这组原料影响
+                                when (ci.type) {
+                                    ChangeItemType.MATERIAL -> {
+                                        val mv =
+                                            recipeProductionCost.materialItems.find { it.it.id == ci.id }?.value
+                                        mv != null && mv.inTolerance(0.0) && (mv - (1.0 + changeRate)).inTolerance(
+                                            0.0
+                                        )
+                                    }
+
+                                    ChangeItemType.DICT -> {
+                                        val dv =
+                                            recipeProductionCost.dictItems[DictType.valueOf(ci.id)]?.value
+                                        dv != null && dv.inTolerance(0.0) && (dv - (1.0 + changeRate)).inTolerance(
+                                            0.0
+                                        )
+                                    }
+                                }
+                            } == true
+                        ) {
+                            materialRangeConstraints.add(
+                                TermThen(
+                                    c.materialId!!.toMaterialIDs(),
+                                    if (changeRate > 0.0) DoubleRange(
+                                        weight,
+                                        requirement.targetWeight
+                                    ) else DoubleRange(
+                                        minOperator = Operator.GT,
+                                        min = 0.0,
+                                        maxOperator = Operator.LE,
+                                        max = weight
+                                    )
+                                )
+                            )
+                            CostChangeLogic(
+                                type = c.type,
+                                materialId = c.materialId,
+                                changeValue = changeRate,
+                                eachValue = c.eachValue,
+                                exceedValue = c.exceedValue,
+                                changeItems = c.changeItems,
+                                toZero = true
+                            )
+                        } else {
+                            c
+                        }
+                    }
+                }
+                if (materialRangeConstraints.isNotEmpty()) {
+                    solver.reset()
+                    return of(
+                        solver = solver,
+                        requirement = RecipeRequirement(
+                            id = requirement.id,
+                            productName = requirement.productName,
+                            targetWeight = requirement.targetWeight,
+                            yield = requirement.yield,
+                            maxUseMaterialNum = requirement.maxUseMaterialNum,
+                            maxBakeWeight = requirement.maxBakeWeight,
+                            productionCost = ProductionCost(
+                                materialItems = productionCost.materialItems,
+                                dictItems = productionCost.dictItems,
+                                taxRate = productionCost.taxRate,
+                                taxFloat = productionCost.taxFloat,
+                                changes = newChanges,
+                                changeWhenMaterialUsed = productionCost.changeWhenMaterialUsed,
+                            ),
+                            indicators = requirement.indicators,
+                            packagingMaterials = requirement.packagingMaterials,
+                            materials = requirement.materials,
+                            keepMaterialConstraints = requirement.keepMaterialConstraints,
+                            noUseMaterialConstraints = MaterialIDs(requirement.noUseMaterialConstraints + excludeMid),
+                            indicatorRangeConstraints = requirement.indicatorRangeConstraints,
+                            materialRangeConstraints = requirement.materialRangeConstraints + materialRangeConstraints,
+                            materialConditionConstraints = requirement.materialConditionConstraints,
+                            materialRelationConstraints = requirement.materialRelationConstraints,
+                            materialIDConstraints = requirement.materialIDConstraints,
+                            indicatorMaterialIDConstraints = requirement.indicatorMaterialIDConstraints,
+                            notMixMaterialConstraints = requirement.notMixMaterialConstraints,
+                            indicatorScale = requirement.indicatorScale,
+                            timeout = requirement.timeout
+                        ),
                         includeProductionCost = true
                     ).solve(
                         solver = solver,
@@ -529,7 +671,6 @@ data class PrepareSolveData(
                     )
                 }
             }
-
 
             //原料数最小化
             val maxUseMaterialNum = requirement.maxUseMaterialNum
