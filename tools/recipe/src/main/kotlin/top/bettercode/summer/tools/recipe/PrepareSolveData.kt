@@ -485,25 +485,32 @@ data class PrepareSolveData(
             if (includeProductionCost && autoFixProductionCost) {
                 val changes = requirement.productionCost.changes
                 val productionCost = recipe.productionCost
-                val excludeMid = recipe.materials.filter { m ->
-                    (m.weight - epsilon).inTolerance(minEpsilon) && changes.filter {
-                        it.type != ChangeLogicType.OTHER && it.materialId?.contains(
-                            m.id
-                        ) == true
-                    }
-                        .all { c ->
-                            val changeRate =
-                                (m.weight - c.exceedValue!!) * c.changeValue / c.eachValue!!
-                            changeRate > 0 && c.changeItems?.all { ci ->
-                                (ci.type == ChangeItemType.MATERIAL
-                                        && ((productionCost.materialItems.find { it.it.id == ci.id }?.value
-                                    ?: 0.0) - (1.0 + changeRate)).inTolerance(minEpsilon))
-                                        || (ci.type == ChangeItemType.DICT && ((productionCost.dictItems[DictType.valueOf(
-                                    ci.id
-                                )]?.value ?: 0.0) - (1.0 + changeRate)).inTolerance(minEpsilon))
-                            } == true
+
+                val excludeMid = changes.filter { it.type != ChangeLogicType.OTHER }.filter { c ->
+                    val weight =
+                        recipe.materials.filter { m -> c.materialId?.contains(m.id) == true }
+                            .sumOf { it.weight }
+                    val changeRate =
+                        (weight - c.exceedValue!!) * c.changeValue / c.eachValue!!
+
+                    (weight - epsilon).inTolerance(minEpsilon)
+                            && changeRate > 0
+                            && c.changeItems?.all { ci ->
+                        when (ci.type) {
+                            ChangeItemType.MATERIAL -> {
+                                val mv =
+                                    productionCost.materialItems.find { it.it.id == ci.id }?.value
+                                mv != null && (mv - (1.0 + changeRate)).inTolerance(minEpsilon)
+                            }
+
+                            ChangeItemType.DICT -> {
+                                val dv = productionCost.dictItems[DictType.valueOf(ci.id)]?.value
+                                dv != null && (dv - (1.0 + changeRate)).inTolerance(minEpsilon)
+                            }
                         }
-                }.map { it.id }
+                    } == true
+                }.mapNotNull { it.materialId }.flatMap { it }
+
                 if (excludeMid.isNotEmpty()) {
                     solver.reset()
                     requirement.noUseMaterialConstraints =
