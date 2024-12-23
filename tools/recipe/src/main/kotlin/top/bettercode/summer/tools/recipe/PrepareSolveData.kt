@@ -532,42 +532,6 @@ data class PrepareSolveData(
                     } == true
                 }.mapNotNull { it.materialId }.flatMap { it }
 
-                if (excludeMid.isNotEmpty()) {
-                    solver.reset()
-                    return of(
-                        solver = solver,
-                        requirement = RecipeRequirement(
-                            id = requirement.id,
-                            productName = requirement.productName,
-                            targetWeight = requirement.targetWeight,
-                            yield = requirement.yield,
-                            maxUseMaterialNum = requirement.maxUseMaterialNum,
-                            maxBakeWeight = requirement.maxBakeWeight,
-                            productionCost = productionCost,
-                            indicators = requirement.indicators,
-                            packagingMaterials = requirement.packagingMaterials,
-                            materials = requirement.materials,
-                            keepMaterialConstraints = requirement.keepMaterialConstraints,
-                            noUseMaterialConstraints = MaterialIDs(requirement.noUseMaterialConstraints + excludeMid),
-                            indicatorRangeConstraints = requirement.indicatorRangeConstraints,
-                            materialRangeConstraints = requirement.materialRangeConstraints,
-                            materialConditionConstraints = requirement.materialConditionConstraints,
-                            materialRelationConstraints = requirement.materialRelationConstraints,
-                            materialIDConstraints = requirement.materialIDConstraints,
-                            indicatorMaterialIDConstraints = requirement.indicatorMaterialIDConstraints,
-                            notMixMaterialConstraints = requirement.notMixMaterialConstraints,
-                            indicatorScale = requirement.indicatorScale,
-                            timeout = requirement.timeout
-                        ),
-                        includeProductionCost = true
-                    ).solve(
-                        solver = solver,
-                        minMaterialNum = minMaterialNum,
-                        recipeName = recipeName,
-                        minEpsilon = minEpsilon,
-                        autoFixProductionCost = true
-                    )
-                }
                 //自动处理制造费用为0时，原料可以超过exceedValue限制
                 val materialRangeConstraints = mutableListOf<TermThen<MaterialIDs, DoubleRange>>()
                 val newChanges = changes.map { c ->
@@ -627,7 +591,10 @@ data class PrepareSolveData(
                         }
                     }
                 }
-                if (materialRangeConstraints.isNotEmpty()) {
+
+                val excludeM = excludeMid.isNotEmpty()
+                val productFix = materialRangeConstraints.isNotEmpty()
+                if (excludeM || productFix) {
                     solver.reset()
                     return of(
                         solver = solver,
@@ -638,21 +605,21 @@ data class PrepareSolveData(
                             yield = requirement.yield,
                             maxUseMaterialNum = requirement.maxUseMaterialNum,
                             maxBakeWeight = requirement.maxBakeWeight,
-                            productionCost = ProductionCost(
+                            productionCost = if (productFix) ProductionCost(
                                 materialItems = productionCost.materialItems,
                                 dictItems = productionCost.dictItems,
                                 taxRate = productionCost.taxRate,
                                 taxFloat = productionCost.taxFloat,
                                 changes = newChanges,
                                 changeWhenMaterialUsed = productionCost.changeWhenMaterialUsed,
-                            ),
+                            ) else productionCost,
                             indicators = requirement.indicators,
                             packagingMaterials = requirement.packagingMaterials,
                             materials = requirement.materials,
                             keepMaterialConstraints = requirement.keepMaterialConstraints,
-                            noUseMaterialConstraints = MaterialIDs(requirement.noUseMaterialConstraints + excludeMid),
+                            noUseMaterialConstraints = if (excludeM) MaterialIDs(requirement.noUseMaterialConstraints + excludeMid) else requirement.noUseMaterialConstraints,
                             indicatorRangeConstraints = requirement.indicatorRangeConstraints,
-                            materialRangeConstraints = requirement.materialRangeConstraints + materialRangeConstraints,
+                            materialRangeConstraints = if (productFix) requirement.materialRangeConstraints + materialRangeConstraints else requirement.materialRangeConstraints,
                             materialConditionConstraints = requirement.materialConditionConstraints,
                             materialRelationConstraints = requirement.materialRelationConstraints,
                             materialIDConstraints = requirement.materialIDConstraints,
