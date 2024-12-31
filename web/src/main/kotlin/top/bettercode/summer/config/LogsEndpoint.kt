@@ -44,7 +44,7 @@ class LogsEndpoint(
     private val request: HttpServletRequest,
     private val response: HttpServletResponse,
     webEndpointProperties: WebEndpointProperties,
-    managementServerProperties: ManagementServerProperties
+    managementServerProperties: ManagementServerProperties,
 ) {
 
     private val log = LoggerFactory.getLogger(LogsEndpoint::class.java)
@@ -80,15 +80,16 @@ class LogsEndpoint(
         @Nullable traceid: String? = null,
         @Nullable logPattern: String? = null,
         @Nullable keyword: String? = null,
-        @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String? = null
+        @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String? = null,
     ) {
         val requestPath = path.replace(",", "/")
 
         if ("query" == path && !logPattern.isNullOrBlank()) {
             val files =
-                File(loggingFilesPath).listFiles()?.filter { it.name.matches(logPattern.toRegex()) }
+                File(loggingFilesPath).walkTopDown()
+                    .filter { it.name.matches(logPattern.toRegex()) }.toList()
             runBlocking {
-                val deferredLogMsgs = files?.map { file ->
+                val deferredLogMsgs = files.map { file ->
                     scope.async {
                         readLogMsgs(
                             inputStream = file.inputStream(),
@@ -98,9 +99,9 @@ class LogsEndpoint(
                         )
                     }
                 }
-                val logMsgs = deferredLogMsgs?.awaitAll()?.flatten()
+                val logMsgs = deferredLogMsgs.awaitAll().flatten()
                 if (download == true) {
-                    file("result", logMsgs?.joinToString("\n") ?: "", userAgent)
+                    file("result", logMsgs.joinToString("\n"), userAgent)
                 } else {
                     showLogFile(filename = "query", logMsgs = logMsgs, collapse = collapse)
                 }
@@ -227,7 +228,7 @@ class LogsEndpoint(
     private fun logGz(
         logPattern: String,
         userAgent: String?,
-        files: List<File>
+        files: List<File>,
     ) {
         val fileName = "$logPattern.log.gz"
         val newFileName: String =
@@ -471,7 +472,7 @@ class LogsEndpoint(
         root: Boolean,
         requestPath: String,
         filterEmpty: Boolean,
-        download: Boolean?
+        download: Boolean?,
     ) {
         if (!files.isNullOrEmpty()) {
             val path = if (root) basePath else "$basePath/$requestPath"
@@ -588,7 +589,7 @@ class LogsEndpoint(
         inputStream: InputStream,
         gzip: Boolean = false,
         traceid: String? = null,
-        keywords: Array<String>? = null
+        keywords: Array<String>? = null,
     ): List<LogMsg> {
         val lines = if (gzip) {
             GZIPInputStream(inputStream).bufferedReader().lines()
