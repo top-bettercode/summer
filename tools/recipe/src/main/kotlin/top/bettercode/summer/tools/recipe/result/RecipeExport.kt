@@ -246,7 +246,11 @@ object RecipeExport {
                             materials.filter { m -> logic.materialId?.contains(m.id) == true }
                         val name =
                             if (filter.isNotEmpty()) filter.joinToString { "$it" } else logic.materialId?.joinToString()
-                        "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每${if (logic.eachValue != null && logic.eachValue >= 0) "增加" else "减少"}${logic.eachValue?.absoluteValue}公斤，能耗费用${if (logic.changeValue >= 0) "增加" else "减少"}${logic.changeValue.absoluteValue * 100}%"
+                        "当使用${name}产肥一吨总水分超过${logic.exceedValue}公斤后，每${if (logic.eachValue != null && logic.eachValue >= 0) "增加" else "减少"}${logic.eachValue?.absoluteValue}公斤，${
+                            logic.changeItems?.joinToString { item ->
+                                item.toName(productionCost)
+                            }
+                        }${if (logic.changeValue >= 0) "增加" else "减少"}${logic.changeValue.absoluteValue * 100}%"
                     }
 
                     ChangeLogicType.OVER -> {
@@ -464,6 +468,7 @@ object RecipeExport {
                 val value = when (indicator.type) {
                     RecipeIndicatorType.TOTAL_NUTRIENT -> ((materials.sumOf { it.totalNutrientWeight }) / requirement.targetWeight)
                     RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight)
+                    RecipeIndicatorType.WATER -> (materials.sumOf { it.waterWeight } / materials.sumOf { it.weight })
                     RecipeIndicatorType.RATE_TO_OTHER -> {
                         val sumOf = materials.sumOf { it.indicatorWeight(indicator.otherId!!) }
                         if (sumOf == 0.0) {

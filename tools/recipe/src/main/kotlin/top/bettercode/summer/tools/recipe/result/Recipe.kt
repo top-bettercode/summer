@@ -324,6 +324,7 @@ data class Recipe(
             val indicatorValue = when (indicator.type) {
                 RecipeIndicatorType.TOTAL_NUTRIENT -> (totalNutrientWeight / targetWeight)
                 RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight)
+                RecipeIndicatorType.WATER -> (waterWeight / weight)
                 RecipeIndicatorType.RATE_TO_OTHER -> {
                     val sumOf = materials.sumOf {
                         it.indicatorWeight(

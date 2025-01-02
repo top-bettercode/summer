@@ -116,6 +116,15 @@ data class PrepareSolveData(
                             }.between(targetWeight * range.min, targetWeight * range.max)
                         }
 
+                        indicator.isWater -> {
+                            val sum = materialVars.sum()
+                            recipeMaterials.map {
+                                val material = it.value
+                                val coeff = material.indicators.valueOf(indicator.id)
+                                material.weight * coeff
+                            }.between(sum * range.min, sum * range.max)
+                        }
+
                         indicator.isRateToOther -> {
                             val otherVar = recipeMaterials.map {
                                 val material = it.value
