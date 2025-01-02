@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.excel
 
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.Color
+import top.bettercode.summer.tools.excel.write.HyperlinkType
 import top.bettercode.summer.tools.excel.write.style.Alignment
 import top.bettercode.summer.tools.excel.write.style.CellStyle
 import java.io.Closeable
@@ -81,6 +82,15 @@ interface Excel : Closeable {
     fun value(row: Int, column: Int, value: LocalDateTime?)
     fun value(row: Int, column: Int, value: LocalDate?)
     fun value(row: Int, column: Int, value: ZonedDateTime?)
+
+    fun hyperlink(
+        row: Int,
+        column: Int,
+        hyperlinkType: HyperlinkType,
+        displayStr: String,
+        linkStr: String,
+    )
+
     fun dataValidation(row: Int, column: Int, vararg dataValidation: String)
 
     //--------------------------------------------

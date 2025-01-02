@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.excel
 
+import org.apache.poi.common.usermodel.HyperlinkType
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.util.CellRangeAddress
@@ -9,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.Worksheet
 import top.bettercode.summer.tools.excel.write.CellData
+import top.bettercode.summer.tools.excel.write.HyperlinkType.*
 import top.bettercode.summer.tools.excel.write.RangeData
 import top.bettercode.summer.tools.excel.write.picture.ByteArrayPicture
 import top.bettercode.summer.tools.excel.write.picture.InputStreamPicture
@@ -30,7 +32,7 @@ import java.util.*
  */
 class PoiExcel @JvmOverloads constructor(
     private val outputStream: OutputStream,
-    useSxss: Boolean = true
+    useSxss: Boolean = true,
 ) : Excel {
 
     private val styleCache = mutableMapOf<CellStyle, XSSFCellStyle>()
@@ -138,6 +140,28 @@ class PoiExcel @JvmOverloads constructor(
         this.worksheet.row(row).cell(column).setCellValue(value?.toLocalDateTime())
     }
 
+    override fun hyperlink(
+        row: Int,
+        column: Int,
+        hyperlinkType: top.bettercode.summer.tools.excel.write.HyperlinkType,
+        displayStr: String,
+        linkStr: String,
+    ) {
+        val createHelper = workbook.creationHelper
+        val link = createHelper.createHyperlink(
+            when (hyperlinkType) {
+                URL -> HyperlinkType.URL
+                DOCUMENT -> HyperlinkType.DOCUMENT
+                EMAIL -> HyperlinkType.EMAIL
+                FILE -> HyperlinkType.FILE
+            }
+        )
+        link.address = linkStr
+        val cell = worksheet.row(row).cell(column)
+        cell.hyperlink = link
+        cell.setCellValue(displayStr)
+    }
+
     override fun dataValidation(row: Int, column: Int, vararg dataValidation: String) {
         // 创建数据验证规则
         val validationHelper = worksheet.dataValidationHelper
@@ -240,7 +264,7 @@ class PoiExcel @JvmOverloads constructor(
 
         private fun drawImage(
             value: Any?, wb: Workbook, drawing: Drawing<*>,
-            helper: CreationHelper, column: Int, top: Int, bottom: Int
+            helper: CreationHelper, column: Int, top: Int, bottom: Int,
         ) {
             if (value == null || "" == value) {
                 return

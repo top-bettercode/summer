@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.excel
 import org.dhatim.fastexcel.BorderSide
 import org.dhatim.fastexcel.BorderStyle
 import org.dhatim.fastexcel.ProtectionOption
+import top.bettercode.summer.tools.excel.write.HyperlinkType
 import top.bettercode.summer.tools.excel.write.style.CellStyle
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -18,7 +19,7 @@ class Cell(
     private val excel: Excel,
     private val style: CellStyle,
     private val row: Int,
-    private val column: Int
+    private val column: Int,
 ) {
 
     fun headerStyle(): Cell {
@@ -88,6 +89,17 @@ class Cell(
 
     fun value(value: ZonedDateTime?): Cell {
         this.excel.value(this.row, this.column, value)
+        return this
+    }
+
+    fun hyperlink(
+        hyperlinkType: HyperlinkType,
+        displayStr: String,
+        linkStr: String,
+    ): Cell {
+        this.excel.hyperlink(row, column, hyperlinkType, displayStr, linkStr)
+        style.underlined()
+        style.fontColor("0000FF")
         return this
     }
 

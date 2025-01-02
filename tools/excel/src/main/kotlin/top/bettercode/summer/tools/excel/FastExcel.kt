@@ -1,8 +1,10 @@
 package top.bettercode.summer.tools.excel
 
 import org.dhatim.fastexcel.AbsoluteListDataValidation
+import org.dhatim.fastexcel.HyperLink
 import org.dhatim.fastexcel.Workbook
 import org.dhatim.fastexcel.Worksheet
+import top.bettercode.summer.tools.excel.write.HyperlinkType
 import top.bettercode.summer.tools.excel.write.style.CellStyle
 import top.bettercode.summer.tools.excel.write.style.CellStyle.Companion.style
 import java.io.File
@@ -115,6 +117,21 @@ class FastExcel(outputStream: OutputStream) : Excel {
 
     override fun value(row: Int, column: Int, value: ZonedDateTime?) {
         this.worksheet.value(row, column, value)
+    }
+
+    override fun hyperlink(
+        row: Int,
+        column: Int,
+        hyperlinkType: HyperlinkType,
+        displayStr: String,
+        linkStr: String,
+    ) {
+        this.worksheet.hyperlink(
+            row, column, when (hyperlinkType) {
+                HyperlinkType.DOCUMENT -> HyperLink.internal(linkStr, displayStr)
+                else -> HyperLink(linkStr, displayStr)
+            }
+        )
     }
 
     override fun dataValidation(row: Int, column: Int, vararg dataValidation: String) {

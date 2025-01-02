@@ -38,8 +38,8 @@ dependencies {
         api("org.asciidoctor:asciidoctorj-diagram:2.3.1")
         api("org.asciidoctor:asciidoctorj-pdf:2.3.18")
 
-        api("org.dhatim:fastexcel:0.15.1")
-        api("org.dhatim:fastexcel-reader:0.18.0")
+        api("org.dhatim:fastexcel:0.18.4")
+        api("org.dhatim:fastexcel-reader:0.18.4")
         api("org.apache.poi:poi-ooxml:5.2.3")
         api("org.apache.poi:poi-scratchpad:5.2.3")
 
