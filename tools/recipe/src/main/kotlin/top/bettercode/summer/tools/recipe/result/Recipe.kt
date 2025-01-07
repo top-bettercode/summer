@@ -76,7 +76,7 @@ data class Recipe(
     @JsonProperty("minEpsilon")
     val minEpsilon: Double,
     @JsonIgnore
-    val ignoreRelationCheck: Boolean = false
+    val ignoreRelationCheck: Boolean = false,
 ) {
     private val log: Logger = LoggerFactory.getLogger(Recipe::class.java)
 
@@ -326,15 +326,15 @@ data class Recipe(
                 RecipeIndicatorType.PRODUCT_WATER -> ((waterWeight - dryWaterWeight) / targetWeight)
                 RecipeIndicatorType.WATER -> (waterWeight / weight)
                 RecipeIndicatorType.RATE_TO_OTHER -> {
-                    val sumOf = materials.sumOf {
+                    val otherIndicatorWeight = materials.sumOf {
                         it.indicatorWeight(
                             indicator.otherId!!
                         )
                     }
-                    if (sumOf == 0.0) {
+                    if (otherIndicatorWeight == 0.0) {
                         0.0
                     } else
-                        (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / sumOf)
+                        (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / otherIndicatorWeight)
                 }
 
                 else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight)
@@ -746,7 +746,7 @@ data class Recipe(
      * 消耗原料汇总相关值
      */
     fun TermThen<ReplacebleMaterialIDs, List<TermThen<RelationMaterialIDs, RecipeRelation>>>.relationValue(
-        calIds: MutableSet<String> = mutableSetOf(), errors: MutableList<String>? = null
+        calIds: MutableSet<String> = mutableSetOf(), errors: MutableList<String>? = null,
     ): Pair<DoubleRange, DoubleRange> {
         val ids = this.term
         val materials = materials

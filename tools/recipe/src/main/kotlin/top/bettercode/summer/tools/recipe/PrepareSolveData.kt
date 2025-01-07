@@ -134,7 +134,10 @@ data class PrepareSolveData(
 
                             val itVar = recipeMaterials.map {
                                 val material = it.value
-                                val coeff = material.indicators.valueOf(indicator.itId!!)
+                                val coeff =
+                                    material.indicators.valueOf(indicator.id) * material.indicators.valueOf(
+                                        indicator.otherId!!
+                                    )
                                 material.weight * coeff
                             }.sum()
 
