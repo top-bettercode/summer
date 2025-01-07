@@ -493,13 +493,13 @@ data class Recipe(
                             )
                         }]使用量：${
                             usedWeight.toPlainString()
-                        } 不等于:${
+                        } !=:${
                             usedAddWeight.toPlainString()
-                        } = 正常使用量：${
+                        }(正常使用量：${
                             usedNormalWeight.toPlainString()
                         }+过量使用量：${
                             usedOverdoseWeight.toPlainString()
-                        }，差值:${
+                        })，差值:${
                             (usedWeight - usedAddWeight).toPlainString()
                         }。${if ((usedWeight - usedAddWeight).scale(scale) < 0.0) "原料使用不足。" else "原料使用不是全部为关联原料产生。"}"
                     )

@@ -36,6 +36,10 @@ class RecipeValueIndicators(indicators: List<RecipeIndicatorValue<Double>> = emp
         return this[id]?.scaledValue ?: 0.0
     }
 
+    fun orignValueOf(id: String): Double {
+        return this[id]?.value ?: 0.0
+    }
+
     companion object {
         val EMPTY = RecipeValueIndicators(emptyList())
     }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.optimal.Operator
+import top.bettercode.summer.tools.optimal.OptimalUtil.inTolerance
+import top.bettercode.summer.tools.optimal.OptimalUtil.toPlainString
 import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.criteria.TermThen
@@ -224,8 +226,24 @@ data class RecipeRequirement(
 
         indicatorMaterialIDConstraints.init(indicatorMap)
         indicatorRangeConstraints.init(indicatorMap)
-        materials.forEach {
-            it.indicators.init(indicatorMap)
+        val indicatorsErrors = mutableListOf<String>()
+        materials.forEach { m ->
+            m.indicators.init(indicatorMap)
+            m.indicators.values.filter { it.indicator.isRateToOther }.forEach {
+                val indicator = it.indicator
+                val itIndicatorValue = m.indicators.orignValueOf(indicator.itId!!)
+                val otherValue = m.indicators.orignValueOf(indicator.otherId!!)
+                val itValue = it.value * otherValue / 100
+//                val minEpsilon = 1.0 / (10.0.pow(indicatorScale - 2))
+                if (!(itIndicatorValue - itValue).inTolerance(0.01)) {
+                    val itIndicator = indicators.find { i -> i.id == indicator.itId }!!
+                    val otherIndicator = indicators.find { i -> i.id == indicator.otherId }!!
+                    indicatorsErrors.add("${m.name}:${itIndicator.name}:${itIndicatorValue.toPlainString()}${itIndicator.unit}!=${itValue.toPlainString()}${itIndicator.unit}(${indicator.name}:${it.value}${indicator.unit}*${otherIndicator.name}:${otherValue}${otherIndicator.unit}),相差${(itIndicatorValue - itValue).toPlainString()}")
+                }
+            }
+        }
+        if (indicatorsErrors.isNotEmpty()) {
+            throw IllegalArgumentException(indicatorsErrors.joinToString("\n"))
         }
 
         //约束原料
