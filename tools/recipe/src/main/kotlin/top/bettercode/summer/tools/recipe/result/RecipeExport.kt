@@ -7,6 +7,7 @@ import top.bettercode.summer.tools.recipe.criteria.DoubleRange
 import top.bettercode.summer.tools.recipe.criteria.RecipeRelation
 import top.bettercode.summer.tools.recipe.indicator.IndicatorUnit
 import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorType
+import top.bettercode.summer.tools.recipe.indicator.RecipeIndicatorValue
 import top.bettercode.summer.tools.recipe.material.RecipeMaterial
 import top.bettercode.summer.tools.recipe.productioncost.ChangeLogicType
 import kotlin.math.absoluteValue
@@ -411,8 +412,23 @@ object RecipeExport {
                 )
             val titles2 = "投料量(公斤)\t投料比\t费用合计\t原料单价".split("\t")
             val materials = recipe.materials.toSortedSet()
+            var recipeIndicatorValues = requirement.indicatorRangeConstraints.values
+            val itIndicatorValues =
+                recipeIndicatorValues.filter { it.indicator.isRateToOther }.map { i ->
+                    val itId = i.indicator.itId!!
+                    val other = recipeIndicatorValues.find { i.indicator.otherId == it.id }!!.value
+
+                    RecipeIndicatorValue<DoubleRange>(
+                        itId,
+                        DoubleRange(i.value.min * other.min / 100, i.value.max * other.max / 100)
+                    ).apply {
+                        indicator = requirement.indicators.find { it.id == id }
+                            ?: throw IllegalArgumentException("未知指标:${id}")
+                        scaledValue = indicator.scaleOf(value)
+                    }
+                }
             val rangeIndicators =
-                requirement.indicatorRangeConstraints.values.sortedBy { it.indicator.index }
+                (recipeIndicatorValues + itIndicatorValues).sortedBy { it.indicator.index }
             val columnSize = titles.size + titles2.size + rangeIndicators.size - 1
 
             var r = 0
