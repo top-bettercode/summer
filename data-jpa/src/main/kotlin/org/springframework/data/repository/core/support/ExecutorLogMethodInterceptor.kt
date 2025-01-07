@@ -14,10 +14,7 @@ import org.springframework.data.repository.query.RepositoryQuery
 import org.springframework.transaction.support.TransactionSynchronization
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.ClassUtils
-import top.bettercode.summer.data.jpa.support.LoggerInfo
-import top.bettercode.summer.data.jpa.support.PageInfo
-import top.bettercode.summer.data.jpa.support.QuerySize
-import top.bettercode.summer.data.jpa.support.Size
+import top.bettercode.summer.data.jpa.support.*
 import top.bettercode.summer.tools.lang.log.SqlAppender
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.MDC_SQL_LIMIT
 import top.bettercode.summer.tools.lang.log.SqlAppender.Companion.MDC_SQL_OFFSET
@@ -44,7 +41,7 @@ import kotlin.reflect.jvm.isAccessible
 class ExecutorLogMethodInterceptor(
     repositoryInterface: Class<*>,
     repository: Any,
-    private val entityManager: EntityManager
+    private val entityManager: EntityManager,
 ) :
     MethodInterceptor {
 
@@ -137,6 +134,23 @@ class ExecutorLogMethodInterceptor(
     }
 
     override fun invoke(invocation: MethodInvocation): Any? {
+        val sqlLogTimeoutIgnore =
+            AnnotationUtils.getAnnotation(invocation.method, SqlLogTimeoutIgnore::class.java)
+        val timeoutIgnore =
+            if (sqlLogTimeoutIgnore != null) true else AnnotationUtils.getAnnotation(
+                invocation.`this`!!.javaClass,
+                SqlLogTimeoutIgnore::class.java
+            ) != null
+        return if (timeoutIgnore) {
+            SqlAppender.ignoreTimeout {
+                doInvoke(invocation)
+            }
+        } else {
+            doInvoke(invocation)
+        }
+    }
+
+    private fun doInvoke(invocation: MethodInvocation): Any? {
         if (sqlLog.isDebugEnabled) {
             val logAdice = loggerInfos[invocation.method]
             if (logAdice == null) {

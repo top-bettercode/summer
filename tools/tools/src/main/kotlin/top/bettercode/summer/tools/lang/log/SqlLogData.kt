@@ -25,7 +25,7 @@ class SqlLogData(val id: String? = null) {
     var offset: Long? = null
     var limit: Int? = null
     var error: String? = null
-    var noWarn: Boolean = false
+    var ignoreTimeout: Boolean = false
 
     val cost: Long?
         get() {

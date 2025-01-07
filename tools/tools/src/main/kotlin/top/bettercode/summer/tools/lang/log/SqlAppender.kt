@@ -28,7 +28,7 @@ class SqlAppender(private val timeoutAlarmMS: Long, private val alarm: Boolean) 
         const val MDC_SQL_TIME_END = "SQL_TIME_END"
         const val MDC_SQL_OFFSET = "SQL_OFFSET"
         const val MDC_SQL_LIMIT = "SQL_LIMIT"
-        const val MDC_SQL_NO_WARN = "SQL_NO_WARN"
+        const val MDC_SQL_IGNORE_TIMEOUT = "SQL_IGNORE_TIMEOUT"
         const val LOG_SLOW = "org.hibernate.SQL_SLOW"
 
         val loggerContext: LoggerContext by lazy {
@@ -204,13 +204,13 @@ class SqlAppender(private val timeoutAlarmMS: Long, private val alarm: Boolean) 
         }
 
         @JvmStatic
-        fun <T> noWarn(runnable: () -> T): T {
-            return if (MDC.get(MDC_SQL_NO_WARN).isNullOrBlank()) {
-                MDC.put(MDC_SQL_NO_WARN, "true")
+        fun <T> ignoreTimeout(runnable: () -> T): T {
+            return if (MDC.get(MDC_SQL_IGNORE_TIMEOUT).isNullOrBlank()) {
                 try {
+                    MDC.put(MDC_SQL_IGNORE_TIMEOUT, "true")
                     runnable()
                 } finally {
-                    MDC.remove(MDC_SQL_NO_WARN)
+                    MDC.remove(MDC_SQL_IGNORE_TIMEOUT)
                 }
             } else {
                 runnable()
@@ -234,11 +234,11 @@ class SqlAppender(private val timeoutAlarmMS: Long, private val alarm: Boolean) 
             }
             val id = event.mdcPropertyMap[MDC_SQL_ID] ?: ""
             val isEnd = !event.mdcPropertyMap[MDC_SQL_END].isNullOrBlank()
-            val noWarn = !event.mdcPropertyMap[MDC_SQL_NO_WARN].isNullOrBlank()
+            val noWarn = !event.mdcPropertyMap[MDC_SQL_IGNORE_TIMEOUT].isNullOrBlank()
             val key = "${traceid ?: event.threadName}:$id"
             val logData = sqlCache.computeIfAbsent(key) { SqlLogData(id) }
             if (noWarn)
-                logData.noWarn = true
+                logData.ignoreTimeout = true
             val msg = event.formattedMessage
             when (loggerName) {
                 "org.hibernate.SQL" -> {
@@ -343,7 +343,7 @@ class SqlAppender(private val timeoutAlarmMS: Long, private val alarm: Boolean) 
         if (!logData.error.isNullOrBlank()) {
             sqlLogger.error(AlarmMarker.noAlarmMarker, logData.toSql())
         } else if ((cost != null && cost > timeoutAlarmMS) || slowSql.isNotEmpty()) {
-            if (!logData.noWarn && alarm) {
+            if (!logData.ignoreTimeout && alarm) {
                 sqlLogger.warn(
                     AlarmMarker(
                         message = "${logData.id}：执行速度慢${if (cost != null) "(${cost / 1000}秒" else ""})",
