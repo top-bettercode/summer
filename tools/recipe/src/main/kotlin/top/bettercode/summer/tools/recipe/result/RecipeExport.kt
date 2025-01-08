@@ -486,15 +486,16 @@ object RecipeExport {
                     RecipeIndicatorType.PRODUCT_WATER -> ((materials.sumOf { it.waterWeight } - recipe.dryWaterWeight) / requirement.targetWeight)
                     RecipeIndicatorType.WATER -> (materials.sumOf { it.waterWeight } / materials.sumOf { it.weight })
                     RecipeIndicatorType.RATE_TO_OTHER -> {
-                        val sumOf = materials.sumOf { it.indicatorWeight(indicator.otherId!!) }
-                        if (sumOf == 0.0) {
+                        val otherIndicatorWeight =
+                            materials.sumOf { it.indicatorWeight(indicator.otherId!!) }
+                        if (otherIndicatorWeight == 0.0) {
                             0.0
                         } else
                             (materials.sumOf {
-                                it.indicatorWeight(
-                                    indicator.itId!!
+                                it.indicatorValue(indicator.id) * it.indicatorWeight(
+                                    indicator.otherId!!
                                 )
-                            } / sumOf)
+                            } / otherIndicatorWeight)
                     }
 
                     else -> (materials.sumOf { it.indicatorWeight(indicator.id) } / requirement.targetWeight)

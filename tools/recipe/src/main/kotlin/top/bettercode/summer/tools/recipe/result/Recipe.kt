@@ -334,7 +334,11 @@ data class Recipe(
                     if (otherIndicatorWeight == 0.0) {
                         0.0
                     } else
-                        (materials.sumOf { it.indicatorWeight(indicator.itId!!) } / otherIndicatorWeight)
+                        (materials.sumOf {
+                            it.indicatorValue(indicator.id) * it.indicatorWeight(
+                                indicator.otherId!!
+                            )
+                        } / otherIndicatorWeight)
                 }
 
                 else -> (materials.sumOf { it.indicatorWeight(rangeIndicator.id) } / targetWeight)

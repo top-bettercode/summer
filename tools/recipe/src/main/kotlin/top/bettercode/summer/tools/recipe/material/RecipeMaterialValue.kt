@@ -21,7 +21,7 @@ data class RecipeMaterialValue(
      * 其他原料消耗详情,key:原料ID
      */
     @JsonProperty("consumes")
-    val consumes: Map<String, Usage>
+    val consumes: Map<String, Usage>,
 ) : IRecipeMaterial by material {
 
     val feedPortShare: Boolean = material.feedPortShare
@@ -62,8 +62,12 @@ data class RecipeMaterialValue(
         indicators.nutrients.sumOf { indicatorWeight(it.id) }
     }
 
+    fun indicatorValue(id: String): Double {
+        return indicators[id]?.scaledValue ?: 0.0
+    }
+
     fun indicatorWeight(id: String): Double {
-        return (indicators[id]?.scaledValue ?: 0.0) * weight
+        return indicatorValue(id) * weight
     }
 
     override fun toString(): String {
