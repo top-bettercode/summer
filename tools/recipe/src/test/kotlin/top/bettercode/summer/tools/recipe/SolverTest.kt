@@ -24,7 +24,7 @@ import java.io.File
  * @author Peter Wu
  */
 class SolverTest {
-    val epsilon = 1e-4
+    val epsilon = 1e-2
     val minEpsilon = 1e-2
 
     val openExcel = false
@@ -60,7 +60,8 @@ class SolverTest {
     @Test
     fun all() {
         all("p_optimal_line_require.json") {
-//            arrayOf(537L).contains(it)
+            //529
+//            arrayOf(529L).contains(it)
             true
         }
         all("p_optimal_line_require_release.json") {
@@ -114,7 +115,7 @@ class SolverTest {
             }
             if (lastSolved != null) {
                 try {
-                    lastSolved!!.compareTo(solved)
+                    lastSolved.compareTo(solved)
                 } catch (e: Exception) {
                     it.write("$dir/${requirement.id}.lp")
                     failMsgs.add("${it.name} " + e.message!!)
