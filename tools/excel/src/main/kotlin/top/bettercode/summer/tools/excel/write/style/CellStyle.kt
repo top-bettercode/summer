@@ -233,19 +233,19 @@ class CellStyle(var valueFormatting: String = DEFAULT_FORMAT) : Cloneable {
 
         fun defaultFormat(propertyType: Class<*>?): String {
             return when (propertyType) {
-                Int::class.javaObjectType, Int::class.java, Int::class.java -> {
+                Int::class.javaObjectType, Int::class.java -> {
                     "0"
                 }
 
-                Long::class.javaObjectType, Long::class.java, Long::class.java -> {
+                Long::class.javaObjectType, Long::class.java -> {
                     "0"
                 }
 
-                Double::class.javaObjectType, Double::class.java, Double::class.java -> {
+                Double::class.javaObjectType, Double::class.java -> {
                     "0.00"
                 }
 
-                Float::class.javaObjectType, Float::class.java, Float::class.java -> {
+                Float::class.javaObjectType, Float::class.java -> {
                     "0.00"
                 }
 
