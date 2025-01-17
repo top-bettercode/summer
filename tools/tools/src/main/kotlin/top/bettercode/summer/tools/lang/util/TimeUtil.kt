@@ -333,7 +333,6 @@ open class TimeUtil(
         private fun getNetworkTime(): Pair<String, Long> {
             return runBlocking {
                 val ntpServers = listOf(
-                    "http://cn.pool.ntp.org",
                     "http://pool.ntp.org",
                     "http://time.windows.com",
                     "http://time.apple.com",
