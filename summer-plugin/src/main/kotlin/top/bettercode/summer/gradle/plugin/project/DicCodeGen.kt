@@ -27,7 +27,7 @@ import java.util.*
  */
 class DicCodeGen(
     private val project: Project,
-    private val packageName: String
+    private val packageName: String,
 ) {
 
     private val fieldCollectionType: CollectionType by lazy {
@@ -389,7 +389,6 @@ class DicCodeGen(
         var text =
             name.substringBefore("(").substringBefore("（").substringBefore(",").substringBefore("，")
                 .substringBefore("。")
-                .replace("/", "or")
         val regex = Regex("([a-zA-Z0-9]+)")
         text = text.replace(regex, "_$1_")
 
@@ -400,10 +399,11 @@ class DicCodeGen(
                 var partText = translator(part) ?: part
                 partText = partText.replace(regex, "_$1_")
                 partText.split(Regex("_+")).joinToString("_") { pp ->
-                    if (regex.matches(pp)) {
-                        pp
+                    val pword = pp.replace("/", " or ").trim()
+                    if (regex.matches(pword)) {
+                        pword
                     } else {
-                        HanLP.segment(pp).joinToString("_") {
+                        HanLP.segment(pword).joinToString("_") {
                             val word = it.word
                             (translator(word)
                                 ?: PinyinHelper.convertToPinyinString(
@@ -443,6 +443,7 @@ class DicCodeGen(
     private fun translator(key: String): String? {
         val result = dictMap[key] ?: dict[key] ?: coreProperties[key] ?: defaultDict[key]
         return result?.toUnderscore()?.replace(" ", "_")?.replace("-", "_")?.replace("'", "")
+            ?.replace("/", " or ")?.trim()
     }
 
     companion object {
