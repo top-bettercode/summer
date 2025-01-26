@@ -100,7 +100,7 @@ class SolverTest {
         val recipeResult = RecipeResult(requirement)
         val failMsgs = mutableListOf<String>()
         var lastSolved: Recipe? = null
-        solvers.forEach {
+        for (it in solvers) {
             val solved = RecipeSolver.solve(
                 solver = it,
                 requirement = requirement,

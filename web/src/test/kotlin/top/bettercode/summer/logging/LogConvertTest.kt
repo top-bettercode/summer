@@ -74,7 +74,7 @@ class LogConvertTest {
         val regrex =
             Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\S+) +(\\S+) +(\\S+) +(\\S*) *: (.*)")
 
-        val msgs = mutableListOf<LogMsg>()
+//        val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
         var level = "DEFAULT"
         val traceid = null
@@ -111,7 +111,7 @@ class LogConvertTest {
     @Test
     fun test() {
         val source = File("/local/downloads/all-2023-04-15-13.gz")
-        val target = File("/local/downloads/result.txt")
+//        val target = File("/local/downloads/result.txt")
         runBlocking {
             readFile(source)
         }
